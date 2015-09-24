@@ -1,0 +1,54 @@
+.LeadParamValBox{
+	background-color: #898989;
+	border-radius: 3px;
+	color: #fff;
+	opacity: 0.5;
+	position: absolute;
+	font-size: 14px;
+	padding: 2px;
+	z-index: 1;
+	display: none;
+}
+
+.TopLeftBut {
+	display: inline-block;
+	height: 45px;
+	margin-left: 15px;
+}
+
+.TopLeftBut:hover {
+	background-color: #004a7a;
+}
+
+.TopLeftChartButt {	
+	position:absolute;
+	border:none;
+	top:0px;
+	left:20px;
+	
+	height:45px;
+	color:#fff;
+	font-size:24px;
+
+	padding-left:40px;
+	background-repeat: no-repeat;
+	background-image:url(../basicImg/down.png);
+	cursor: pointer;
+	z-index:1;
+	
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+}
+
+.TopLeftChartButt:hover
+{
+	background-color:#004a7a;
+}
+
+.TopLeftChartButtSpan {	
+	margin-top: 8px;
+	line-height: 45px;
+	padding-right: 8px;
+}

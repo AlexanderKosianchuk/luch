@@ -1,0 +1,95 @@
+{
+
+"flightsPage": {	
+	"flightGeneralElements": "generalElem",
+	"flightFileConvert": "convertFl",
+	"flightFileImport": "importFl",
+	"flightProccessExceptions": "procFl",
+	"flightExport": "exportFl",
+	"flightLastView": "flightLastView",
+	"flightTwoColumnsListByPathes": "flightsListByPathes",
+	"flightListTree": "flightListTree",
+	"flightListTable": "flightListTable",
+	"folderChangePath": "folderChangePath",
+	"flightShowFolder": "showFolder",
+	"folderCreateNew": "newFolder",
+	"folderRename": "renameFolder",
+	"flightGoUpper": "upperFolder",
+	"flightChangePath": "flightMove",
+	"itemDelete": "itemDelete",
+	"itemProcess": "itemProcess",
+	"receiveTree" : "receiveTree",
+	"segmentTable": "segmentTable",
+	"showFolderContent" : "showFolderContent"
+},
+
+"printerPage": {
+	"printBlank": "printBlank",
+	"monochromePrintBlank": "monochromePrintBlank"
+},
+
+
+"uploaderPage": {
+	"flightCutFile": "cutFl",
+	"flightCyclicSliceFile": "cyclicSliceFl",
+	"flightDelete": "deleteFl",
+	"flightUploaderPreview": "preview",
+	"flightShowUploadingOptions": "uploadFl",
+	"flightEasyUpload": "easyUpload",
+	"flightProcces": "prFl",
+	"flightProccesAndCheck": "prAndChFl",
+	"flightProccesCheckAndCompareToEtalon": "prChAndEtaFl"
+},
+
+"chartPage": {
+	"putChartInNewWindow":"putChartInNewWindow",
+	"putChartContainer": "chartContainer",
+	"getApParamValue": "getApParamValue",
+	"getBpParamValue": "getBpParamValue",
+	"getParamColor": "getParamColor",
+	"getParamInfo": "getParamInfo",
+	"rcvLegend":"rcvLegend",
+	"getParamMinmax": "getMinmax",
+ 	"setParamMinmax": "setMinmax",
+ 	"getFlightExceptions" : "getExceptions",
+ 	"figurePrint": "figurePrint"
+},
+
+"slicesPage": {
+	"etalonDoNotCompare": "etalonDoNotCompare"
+},
+
+"bruTypesPage": {
+	"putBruTypeContainer": "bruTypeContainer",
+	"editingBruTypeGeneralInfo": "generalInfo",
+	"editingBruTypeTemplates": "tpls",
+	"editingBruTypeTemplatesReceiveParamsList": "paramsList",
+	"editingBruTypeTemplatesReceiveTplsList": "tplsList",
+	"editingBruTypeCyclo": "cyclo",
+	"editingBruTypeEvents": "events",
+	"createTpl": "createTpl",
+	"deleteTpl": "deleteTpl",
+	"defaultTpl": "defaultTpl",
+	"updateTpl": "updateTpl"
+},
+
+"userPage": {
+	"userLogout": "userLogout"
+},
+
+"viewOptionsPage": {
+	"putViewOptionsContainer": "viewOptionsContainer",
+	"getFlightDuration": "duration",
+	"getBruTypeId" : "getBruTypeId",
+	"getBruTemplates" : "getBruTemplates",
+	"getParamListGivenQuantity": "getParamListGivenQuantity",
+	"getSearchedParams": "getSearchedParams",
+	"getEventsList": "getEventsList",
+	"getParamCodesByTemplate": "getParamsByTpl",
+	"getDefaultTemplateParamCodes": "defaultTemplateParams",
+	"setEventReliability": "setEvRel",
+	"createTpl": "createTpl",
+	"changeParamColor": "changeParamColor"
+}
+
+}
