@@ -245,7 +245,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
 						$("<div></div>")
 							.addClass('ParamsPaginationInline')
 							.attr('id', "paginationCurPageOfTotal")
-							.text((pageNum+1) + " " + self.langStr.viewOptionsOf + " " + totalPages)
+							.text((pageNum + 1) + " " + self.langStr.viewOptionsOf + " " + totalPages)
 							.appendTo(paginationContainer$);
 						
 						$("<div></div>")
@@ -280,7 +280,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
 								self.ShowParamListPaginated(curpage, totalPages);
 								paginationCurPageOfTotal.data("curpage", curpage);
 								paginationCurPageOfTotal.button("option", "label", 
-									(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages+1)
+									(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
 								);
 							}
 						});
@@ -292,11 +292,11 @@ FlightViewOptions.prototype.ShowParamList = function() {
 							var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
 								curpage = parseInt(paginationCurPageOfTotal.data("curpage")) + 1;
 							
-							if(curpage <= totalPages){
+							if(curpage < totalPages){
 								self.ShowParamListPaginated(curpage, totalPages);
 								paginationCurPageOfTotal.data("curpage", curpage);
 								paginationCurPageOfTotal.button("option", "label", 
-									(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages+1)
+									(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
 								);
 							}
 						});
@@ -310,7 +310,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
 							self.ShowParamListPaginated(curpage, totalPages);
 							paginationCurPageOfTotal.data("curpage", curpage);
 							paginationCurPageOfTotal.button("option", "label", 
-								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages+1)
+								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
 							);
 						});
 						
@@ -325,7 +325,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
 							self.ShowParamListPaginated(curpage, totalPages);
 							paginationCurPageOfTotal.data("curpage", curpage);
 							paginationCurPageOfTotal.button("option", "label", 
-								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages+1)
+								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
 							);
 						})
 						
@@ -334,11 +334,11 @@ FlightViewOptions.prototype.ShowParamList = function() {
 							e.preventDefault();
 							e.stopPropagation();
 							var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-								curpage = totalPages;
+								curpage = totalPages - 1;
 							self.ShowParamListPaginated(curpage, totalPages);
 							paginationCurPageOfTotal.data("curpage", curpage);
 							paginationCurPageOfTotal.button("option", "label", 
-								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages+1)
+								(curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
 							);
 						});
 										

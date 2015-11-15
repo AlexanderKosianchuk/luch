@@ -26,7 +26,7 @@ class BruModel
 	function __construct($post, $session)
 	{
 		$L = new Language();
-		$this->lang = $L->GetLanguage("ru", $this->curPage);
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->bruActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 

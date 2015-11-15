@@ -411,7 +411,7 @@ class Folder
 			if($row2 = $result2->fetch_array())
 			{
 				$name = $row2['bort'] . ", " .  $row2['voyage']  . ", " . date('d/m/y H:i', $row2['startCopyTime'])  . 
-					", " . $row2['bruType']  . ", " . $row2['departureAirport']  . "-" . $row2['departureAirport'] ;
+					", " . $row2['bruType']  . ", " . $row2['departureAirport']  . "-" . $row2['arrivalAirport'] ;
 			}
 			
 			$avaliable[] = array(

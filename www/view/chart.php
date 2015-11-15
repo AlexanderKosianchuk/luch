@@ -74,7 +74,8 @@ if ($M->IsAppLoggedIn())
 				$figPrRow = "time;";
 				for($i = 0; $i < count($prms); $i++)
 				{
-					$figPrRow .= $prms[$i] . ";";
+					$paramInfo = $M->GetParamInfo($flightId, $prms[$i]);
+					$figPrRow .= $prms[$i] . ", " . $paramInfo['name'] . ";";
 				}
 				
 				$figPrRow = substr($figPrRow, 0, -1);

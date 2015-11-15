@@ -32,6 +32,7 @@ if ($M->IsAppLoggedIn())
    	$M->SliceCreationBlock(); */
 		
 	$M->PutMessageBox();
+	$M->PutHelpDialog();
 	$M->PutExportLink();
 	 
 	$M->PutFooter();

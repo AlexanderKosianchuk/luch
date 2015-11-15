@@ -54,6 +54,7 @@ FlightProccessingStatus.prototype.SetIndicatorVal = function() {
 			this.indicator.text(uploadingsCount);
 		} else {
 			this.indicator.text("");
+			location.reload();
 		}
 	}
 };

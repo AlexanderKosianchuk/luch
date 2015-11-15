@@ -103,6 +103,27 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		});
 	};
 	
+	this.changeLanguage = function(lang) {
+		var pV = {
+				action: actions['userChangeLanguage'],
+				data: { 
+					lang: lang
+				}
+		};
+		
+		$.ajax({
+			type: "POST",
+			data: pV,
+			dataType: 'json',
+			url: USER_SRC,
+			async: true
+		}).fail(function(data){
+			console.log(data);
+		}).done(function(data){
+			location.reload();
+		});
+	};
+	
 	this.FillFactoryContaider = function(factoryContainer) {
 		var self = this,
 			task = this.task,

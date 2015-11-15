@@ -37,7 +37,7 @@ ini_set('default_charset', 'utf-8');
 define("PARAM_TYPE_AP", "ap");
 define("PARAM_TYPE_BP", "bp");
 define("POINT_MAX_COUNT", 8500);
-define("PARAMS_PAGING", 150);
+define("PARAMS_PAGING", 200);
 
 //dataTable
 define("sEcho", 0);

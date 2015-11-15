@@ -698,7 +698,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
 		});
 
 		$("button.SliceFlightButt, button.SliceCyclicFlightButt").on("click", function(e) {
-			event.preventDefault();
+			e.preventDefault();
 			
 			//if all charts ploted
 			if(self.plotRequests == self.plotRequestsClosed){

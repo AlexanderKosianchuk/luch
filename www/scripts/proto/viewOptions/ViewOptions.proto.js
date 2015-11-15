@@ -61,22 +61,23 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
 			self.flightOptionsWorkspace = $('div#flightOptionsWorkspace');
 			
 			if(self.task == null){
-				self.ShowFlightViewTemplates();
-				self.task == self.actions['getBruTemplates'];
-				
+				self.ShowFlightViewTemplates();				
 			} else if(self.task == self.actions['getBruTemplates']){
-				self.ShowFlightViewTemplates();
-				self.task == self.actions['getBruTemplates'];
+				$("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
+				$("#templatesLeftMenuRow").addClass('LeftMenuRowSelected');
 				
+				self.ShowFlightViewTemplates();				
 			} else if(self.task == self.actions['getEventsList']){
-				self.ShowFlightViewEvents();
-				self.task == self.actions['getEventsList'];
-				
+				$("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
+				$("#eventsLeftMenuRow").addClass('LeftMenuRowSelected');
+			
+				self.ShowFlightViewEvents();			
 			} else if(self.task == self.actions['getParamList']){
+				$("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
+				$("#paramsListLeftMenuRow").addClass('LeftMenuRowSelected');
+				
 				self.ShowFlightViewParamsList();
-				self.task == self.actions['getParamList'];
-			}
-									
+			}									
 			
 			self.ResizeFlightViewOptionsContainer();
 			self.document.scrollTop(factoryContainer.data("index") * self.window.height());

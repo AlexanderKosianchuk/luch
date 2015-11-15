@@ -6,10 +6,26 @@ define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "../lang/Default.lang");
 
 class Language
 {	
-	function GetLanguage($extSelectedLang, $extRequesterPage)
+	public function GetLanguageName()
+	{
+		if(isset($_SESSION['lang'])) {
+			return $_SESSION['lang'];
+		} else {
+			$_SESSION['lang'] = 'ru';
+			return 'ru';
+		}
+	}
+	
+	public function SetLanguageName($extSelectedLang)
 	{
 		$selectedLang = $extSelectedLang;
+		$_SESSION['lang'] = $selectedLang;
+	}
+	
+	public function GetLanguage($extRequesterPage)
+	{
 		$requesterPage = $extRequesterPage;
+		$selectedLang = $this->GetLanguageName();
 		
 		$filePath = LANG_FILES_PATH . strtoupper($selectedLang) . ".lang";
 		$defaultFilePath = LANG_FILE_DEFAULT;
@@ -81,7 +97,7 @@ class Language
 	///
 	// GetServiceStrs
 	///
-	function GetServiceStrs($extRequesterPage)
+	public function GetServiceStrs($extRequesterPage)
 	{
 		$requesterPage = $extRequesterPage;
 	

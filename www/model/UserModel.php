@@ -18,7 +18,7 @@ class UserModel
 	function __construct($post, $session)
 	{
 		$L = new Language();
-		$this->lang = $L->GetLanguage("ru", $this->curPage);
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->userActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 
@@ -69,9 +69,11 @@ class UserModel
 		return $topMenu;
 	}
 	
-	public function Logout()
+	public function ChangeLanguage($lang)
 	{
-		$this->ulogin->SetAutologin($this->username, false);
+		$L = new Language();
+		$L->SetLanguageName($lang);
+		return 'ok';
 	}
 	
 	public function RegisterActionExecution($extAction, $extStatus,
@@ -111,6 +113,16 @@ class UserModel
 				$senderId, $senderName, $targetId, $targetName);
 	
 		unset($U);
+	}
+	
+	public function GetUserInfo()
+	{
+		$U = new User();
+		$uId = $U->GetUserIdByName($this->username);
+		$userInfo = $U->GetUserInfo($uId);
+		unset($U);
+	
+		return $userInfo;
 	}
 }
 

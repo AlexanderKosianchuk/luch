@@ -22,7 +22,7 @@ class PrinterModel {
 		require_once ("../tcpdf/config/tcpdf_config.php");
 		
 		$L = new Language ();
-		$this->lang = $L->GetLanguage ( "ru", $this->curPage );
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->printerActions = ( array ) $L->GetServiceStrs ( $this->curPage );
 		unset ( $L );
 		

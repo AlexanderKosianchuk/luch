@@ -29,7 +29,7 @@ class FlightsModel
 	function __construct($post, $session)
 	{
 		$L = new Language();
-		$this->lang = $L->GetLanguage("ru", $this->curPage);
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->flightActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 
@@ -137,33 +137,31 @@ class FlightsModel
 				in_array($Usr->slicePrivilegeArr[2], $this->privilege) ||
 				in_array($Usr->slicePrivilegeArr[3], $this->privilege))
 		{
-			$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
+			/*$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/slice.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->slicesItem);
+					</div>", $this->lang->slicesItem);*/
 		}
 	
-		if(in_array($Usr->flightPrivilegeArr[0], $this->privilege) ||
-				in_array($Usr->flightPrivilegeArr[1], $this->privilege) ||
-				in_array($Usr->flightPrivilegeArr[2], $this->privilege) ||
-				in_array($Usr->flightPrivilegeArr[3], $this->privilege) ||
-				in_array($Usr->flightPrivilegeArr[4], $this->privilege) ||
-				in_array($Usr->flightPrivilegeArr[5], $this->privilege))
+		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
+				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
+				in_array($Usr->enginePrivilegeArr[2], $this->privilege) ||
+				in_array($Usr->enginePrivilegeArr[3], $this->privilege))
 		{
-			$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
+			/*$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/engine.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->enginesItem);
+					</div>", $this->lang->enginesItem);*/
 		}
 	
 		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
 				in_array($Usr->enginePrivilegeArr[2], $this->privilege))
 		{
-			$leftMenu .= sprintf("<div id='bruTypesLeftMenuRow' class='LeftMenuRow'>
+			/*$leftMenu .= sprintf("<div id='bruTypesLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/bru.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->bruTypesItem);
+					</div>", $this->lang->bruTypesItem);*/
 		}
 	
 		if(in_array($Usr->docsPrivilegeArr[0], $this->privilege) ||
@@ -172,10 +170,10 @@ class FlightsModel
 				in_array($Usr->docsPrivilegeArr[3], $this->privilege) ||
 				in_array($Usr->docsPrivilegeArr[4], $this->privilege))
 		{
-			$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
+			/*$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/doc.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->docsItem);
+					</div>", $this->lang->docsItem);*/
 		}
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
@@ -184,10 +182,10 @@ class FlightsModel
 				in_array($Usr->userPrivilegeArr[3], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[4], $this->privilege))
 		{
-			$leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
+			/*$leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/user.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->usersItem);
+					</div>", $this->lang->usersItem);*/
 		}
 	
 		$leftMenu .= sprintf("</div>");
@@ -214,7 +212,7 @@ class FlightsModel
 		}
 	
 		$fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>
-			<div id='importConvertRadio'>
+			<div id='importConvertRadio' style='display:none;'>
 				<input type='radio' id='%s' name='radio' checked='checked'><label for='%s'>%s</label>
    				<input type='radio' id='%s' name='radio'><label for='%s'>%s</label>
 			</div>
@@ -228,7 +226,7 @@ class FlightsModel
 				<select id='bruTypeSelectForUploading' name='bruType' class='FlightUploadingInputs'>%s</select>
 			</div>
 	
-			<div id='previewCheckBoxDiv' class='FlightUploadingInputs'><label><input id='previewCheckBox' type='checkbox'></input>%s</label></div>
+			<div id='previewCheckBoxDiv' class='FlightUploadingInputs'><label><input checked='checked' id='previewCheckBox' type='checkbox'></input>%s</label></div>
 	
 			<div id='progress' class='progress' style='margin-top:10px;'>
 					<div class='progress-bar progress-bar-success'></div>
@@ -237,7 +235,7 @@ class FlightsModel
 			<br></div>",
 				$this->lang->flightUpload,
 	
-				$this->flightActions['flightFileConvert'],
+			$this->flightActions['flightFileConvert'],
 				$this->flightActions['flightFileConvert'],
 				$this->lang->fileConvert,
 				$this->flightActions['flightFileImport'],
@@ -619,6 +617,32 @@ class FlightsModel
 		}
 	}
 	
+	public function SyncFlightsHeaders($extIds) 
+	{
+		$idsArr = $extIds;
+		$info = array();
+		
+		$Fl = new Flight();
+		foreach ($idsArr as $flightId) {
+			$flightInfo = $Fl->GetFlightInfo($flightId);
+			$bruType = $flightInfo["bruType"];
+						
+			if($bruType == 'Boeing-737_BDO_New') {
+				$info['bort'] = $flightInfo['bort'];
+			} else if($bruType == 'Boeing-737_BDO_New2') {
+				$info['voyage'] = $flightInfo['voyage'];
+			}
+		}
+		
+		foreach ($idsArr as $flightId) {
+			$Fl->UpdateFlightInfo($flightId, $info);
+		}
+		
+		unset($Fl);
+		
+		return true;
+	}
+	
 	public function ProcessFlight($extId)
 	{
 		if(is_int($extId))
@@ -881,7 +905,7 @@ class FlightsModel
 		foreach($flightsInPath as $key => $val)
 		{
 			$name = $val['bort'] . ", " .  $val['voyage']  . ", " . date('d/m/y H:i', $val['startCopyTime'])  .
-			", " . $val['bruType']  . ", " . $val['departureAirport']  . "-" . $val['departureAirport'] ;
+			", " . $val['bruType']  . ", " . $val['departureAirport']  . "-" . $val['arrivalAirport'] ;
 			
 			$input = '<input class="ItemsCheck" type="checkbox" data-type="flight" data-folderpath="'.$shownFolderId.'" data-flightid="'.$val['id'].'">';
 			$flightColumn .= "<div class='JstreeContentItemFlight'><label>" . $input . " " . $name . "</label></div>";

@@ -454,7 +454,7 @@ class PSTempl
 
 		if(isset($paramsWithType[PARAM_TYPE_BP]))
 		{
-			$busyCorridor = (($apCount - 1) / $apCount * 100);
+			$busyCorridor = (($apCount -1) / $apCount * 100);
 			$freeCorridor = 100 - $busyCorridor;//100%
 
 			$bpCount = count($paramsWithType[PARAM_TYPE_BP]);

@@ -23,13 +23,14 @@ class ChartModel
 
 	public $action;
 	public $data;
-	private $userLang= 'ru';
+	private $userLang;
 	private $title = 'Title';
 
 	function __construct($post, $session, $get = null)
 	{
 		$L = new Language();
-		$this->lang = $L->GetLanguage($this->userLang, $this->curPage);
+		$this->userLang= $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->chartActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 

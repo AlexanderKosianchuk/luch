@@ -49,6 +49,43 @@ if ($M->IsAppLoggedIn())
 		}
 	
 		unset($U);
+	} else if($M->action == $M->userActions["userChangeLanguage"])
+	{
+		$U = new User();
+		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
+		{
+			if(isset($M->data['lang']))
+			{
+				$action = $M->action;
+				$lang = $M->data['lang'];					
+				
+				$M->ChangeLanguage($lang);
+	
+				$answ = array(
+						'status' => 'ok'
+				);
+	
+				echo json_encode($answ);
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page user.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
+	
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
 	}
 	else 
 	{

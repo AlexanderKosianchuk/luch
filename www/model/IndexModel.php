@@ -26,8 +26,8 @@ class IndexModel
 	function __construct()
 	{	
 		$L = new Language();
-		$this->userLang = "ru";
-		$this->lang = $L->GetLanguage($this->userLang, $this->curPage);
+		$this->userLang = $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
 		unset($L);
 		
 		$this->ulogin = new uLogin();
@@ -191,6 +191,72 @@ class IndexModel
 		printf("<div id='dialog' title='%s'>
 				<p></p>
 				</div>", $this->lang->message);
+	}
+	
+	public function PutHelpDialog()
+	{
+		printf("<div id='helpDialog' title='%s'>
+				<p>
+				1. 364356456
+				</p>
+				<p>
+				2 .2364356456
+				</p>
+				<p>
+				3 364356456
+				</p>
+				<p>
+				4 364356456
+				</p>
+				<p>
+				5 364356456
+				</p>
+				<p>
+				6 364356456
+				</p>
+				<p>
+				7 364356456
+				</p>
+				<p>
+				8 364356456
+				</p>
+				<p>
+				9 364356456
+				</p>
+				<p>
+				10 364356456
+				</p>
+				<p>
+				11 364356456
+				</p>
+				<p>
+				12 364356456
+				</p>
+				<p>
+				13 364356456
+				</p>
+				<p>
+				13 364356456
+				</p>
+				<p>
+				134 364356456
+				</p>
+				<p>
+				15 364356456
+				</p>
+				<p>
+				16 364356456
+				</p>
+				<p>
+				17 364356456
+				</p>
+				<p>
+				18 364356456
+				</p>
+				<p>
+				19 364356456
+				</p>
+				</div>", $this->lang->helpTitle);
 	}
 	
 	public function PutExportLink()

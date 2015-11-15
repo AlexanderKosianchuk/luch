@@ -1000,6 +1000,51 @@ if ($M->IsAppLoggedIn())
 	
 		unset($U);
 	}
+	else if($M->action == $M->flightActions["syncItemsHeaders"])
+	{
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_EDIT_FLIGHTS, $M->privilege))
+		{
+			if(isset($M->data['ids']))
+			{
+				$ids = $M->data['ids'];
+				$result = $M->SyncFlightsHeaders($ids);
+	
+				$answ = array();
+				if($result)
+				{
+					$answ['status'] = 'ok';
+					$action = $M->action;
+					$M->RegisterActionExecution($action, "executed", implode(",", $ids), "itemsId");
+				}
+				else
+				{
+					$answ['status'] = 'err';
+					$answ['data']['error'] = 'Error during flights headerSync.';
+					$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				}
+				echo json_encode($answ);
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page flights.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	}
 	else 
 	{
 		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 

@@ -113,10 +113,10 @@ Param.prototype.GetApParam = function(paramCode, i, dfd){
 			async: true
 		}).done(function(receivedInfo){
 			var color = receivedInfo['color'],
-				nm = receivedInfo['name'];
+				ch = receivedInfo['channel'];
 			var apDataFlotSeries = {
 					data: apDataArray,
-					label: paramCode + " " + nm + " = 0.00", 
+					label: paramCode + "_" + ch + " = 0.00", 
 					yaxis: i + 1,
 					color: "#" + color,
 					shadowSize: 0, 
@@ -165,7 +165,7 @@ Param.prototype.GetBpParam = function(paramCode, i, dfd){
 		bpDataArray = receivedParamPoints;
 		
 		var pV = {
-				action: self.actions['getParamInfo'],
+				action: self.actions['getParamColor'],
 				data: {
 					flightId: self.flightId,
 					paramCode: paramCode
@@ -178,13 +178,11 @@ Param.prototype.GetBpParam = function(paramCode, i, dfd){
 			dataType: 'json',
 			url: CHART_SRC,
 			async: true
-		}).done(function(receivedInfo){
-			var color = receivedInfo['color'],
-				nm = receivedInfo['name'];
-			
+		}).done(function(receivedColor){
+			color = receivedColor;
 			var bpDataFlotSeries = {
 					data: bpDataArray,
-					label: paramCode + " " + nm + " = F", 
+					label: paramCode +  " = F", 
 					yaxis: self.apCount + i + 1,
 					color: "#" + color,
 					points: { symbol: "square", show: true, radius: 1, }, 

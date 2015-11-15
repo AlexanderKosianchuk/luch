@@ -29,7 +29,7 @@ class UploaderModel
 	function __construct($post, $session)
 	{
 		$L = new Language();
-		$this->lang = $L->GetLanguage("ru", $this->curPage);
+		$this->lang = $L->GetLanguage($this->curPage);
 		$this->flightActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 

@@ -930,7 +930,7 @@ class Bru
 	
 		$apHeader = array();
 		$query = "SELECT * FROM `".$cycloApTableName."` GROUP BY `code` ".
-			"LIMIT " . $startIndex . ", " . $endIndex . ";";
+			"LIMIT " . $startIndex . ", " . ($endIndex - $startIndex) . ";";
 		$result = $link->query($query);
 	
 		while($row = $result->fetch_array())
@@ -971,7 +971,7 @@ class Bru
 	
 		$apHeader = array();
 		$query = "SELECT * FROM `".$cycloApTableName."` ".
-				"WHERE `code` LIKE '%" . $request . "%' OR `name` LIKE '%" . $request . "%' GROUP BY `code` ;";
+				"WHERE `code` LIKE '%" . $request . "%' OR `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%' GROUP BY `code` ;";
 		$result = $link->query($query);
 	
 		while($row = $result->fetch_array())
@@ -1055,7 +1055,7 @@ class Bru
 		$bpHeader = array();
 	
 		$query = "SELECT * FROM `".$cycloBpTableName."` GROUP BY `code` ".
-			"LIMIT " . $startIndex . ", " . $endIndex . ";";
+			"LIMIT " . $startIndex . ", " . ($endIndex - $startIndex) . ";";
 				
 		$result = $link->query($query);
 	
@@ -1099,7 +1099,7 @@ class Bru
 		$bpHeader = array();
 	
 		$query = "SELECT * FROM `".$cycloBpTableName."` ".
-				"WHERE `code` LIKE '%" . $request . "%' OR  `name` LIKE '%" . $request . "%' GROUP BY `code` ;";
+				"WHERE `code` LIKE '%" . $request . "%' OR  `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%' GROUP BY `code` ;";
 	
 		$result = $link->query($query);
 	
@@ -1426,7 +1426,7 @@ class Bru
 			$result = $link->query($query);
 			$row = $result->fetch_array();
 			
-			if(strpos(",", $row['channel']) !== 0)
+			if(strpos(",", $row['channel']) != 0)
 			{
 				$freq = explode(",", $row['channel']);			
 				$freq = array_map("trim", $freq);

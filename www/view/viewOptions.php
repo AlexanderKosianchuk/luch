@@ -315,10 +315,10 @@ if ($M->IsAppLoggedIn())
 						$pageNum = 0;
 						$bruTypeParams = $M->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
 						
-						$totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING)) - 1;
+						$totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING));
 						if(count($paramsCount['apCount']) > count($paramsCount['bpCount']))
 						{
-							$totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING)) - 1;
+							$totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING));
 						}
 							
 						$data = array(

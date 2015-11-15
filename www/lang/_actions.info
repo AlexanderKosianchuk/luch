@@ -20,7 +20,9 @@
 	"itemProcess": "itemProcess",
 	"receiveTree" : "receiveTree",
 	"segmentTable": "segmentTable",
-	"showFolderContent" : "showFolderContent"
+	"getEventsList": "getEventsList",
+	"showFolderContent" : "showFolderContent",
+	"syncItemsHeaders": "syncItemsHeaders"
 },
 
 "printerPage": {
@@ -74,7 +76,8 @@
 },
 
 "userPage": {
-	"userLogout": "userLogout"
+	"userLogout": "userLogout",
+	"userChangeLanguage": "userChangeLanguage"
 },
 
 "viewOptionsPage": {

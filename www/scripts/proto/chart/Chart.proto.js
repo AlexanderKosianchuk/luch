@@ -314,7 +314,7 @@ Chart.prototype.LoadFlotChart = function() {
 			xaxis: {
 				mode: "time",
 				timezone: "browser",	
-				tickColor: "rgba(0, 0, 0, 0)",
+				tickColor: "rgba(220, 220, 220, 0.8)",
 				min: (new Date(self.startFrameTime * 1000)).getTime(),
 				max: (new Date(self.endFrameTime * 1000)).getTime()
 			},
@@ -334,10 +334,9 @@ Chart.prototype.LoadFlotChart = function() {
 				mode: "x",
 			},
 			grid: { 
-				aboveData: true,
 				hoverable: true, 
 				clickable: true,
-				tickColor: "rgba(220, 220, 220, 1)",
+				tickColor: "rgba(220, 220, 220, 0.8)",
 				borderWidth: 1,
 				backgroundColor: "#fff",
 				markingsLineWidth: 1,

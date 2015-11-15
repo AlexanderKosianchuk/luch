@@ -5,11 +5,17 @@ function WindowFactory(window, document) {
 	this.body.append("<div id='self' class='MoveMenu'></div>");
 	this.moveMenu = $("div#self.MoveMenu");
 	
+	this.body.append("<div id='help' class='Help'>?</div>");
+	this.help = $("div#help.Help");
+	
 	this.windowStack = new Array();
 	
 	this.topMenuHeight = 45;
 	this.optionsMenuHeight = 45;
 	this.leftMenuWidth = 210;
+	
+	$("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
+	this.help.on("click", function(){$("#helpDialog").dialog("open")});
 }
 
 WindowFactory.prototype.SupportMoveMenu = function() {
