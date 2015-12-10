@@ -701,7 +701,8 @@ class UploaderModel
 			$extDepartureAirport,
 			$extArrivalAirport,
 			$extAditionalInfo,
-			$extUploadedFile
+			$extUploadedFile,
+			$extTotalPersentage
 		)
 	{
 
@@ -711,6 +712,7 @@ class UploaderModel
 		$voyage = $extVoyage;
 		$copyCreationTime = $extCopyCreationTime;
 		$copyCreationDate = $extCopyCreationDate;
+		$totalPersentage = $extTotalPersentage;
 		
 		if(strlen($copyCreationTime) > 5)
 		{
@@ -857,7 +859,7 @@ class UploaderModel
 		
 				}
 					
-				$tmpStatus =  round(100 / $fileSize * $frameNum * $frameLength) . "%";
+				$tmpStatus =  round($totalPersentage / $fileSize * $frameNum * $frameLength) . "%";
 
 				$fp = fopen($tempFilePath, "w");
 				fwrite($fp, json_encode($tmpStatus));
@@ -904,7 +906,7 @@ class UploaderModel
 	
 				$frameNum++;
 				
-				$tmpStatus =  round(100 / $fileSize * $frameNum * $frameLength) . "%";
+				$tmpStatus =  round($totalPersentage / $fileSize * $frameNum * $frameLength) . "%";
 				
 				$fp = fopen($tempFilePath, "w");
 				fwrite($fp, json_encode($tmpStatus));
@@ -1008,9 +1010,12 @@ class UploaderModel
 			//perform proc be cached table
 			for($i = 0; $i < count($exList); $i++)
 			{
+				//50 because we think previous 50 ware used during proc
+				$tmpStatus =  round(50 + (50 / count($exList) * $i)) . "%";
+				
 				$fp = fopen($tempFilePath, "w");
-				fwrite($fp, json_encode($exList[$i]["code"]));
-						fclose($fp);
+				fwrite($fp, json_encode($tmpStatus));
+				fclose($fp);
 					
 				$curExList = $exList[$i];
 				$FEx->PerformProcessingByExceptions($curExList, 
@@ -1018,10 +1023,8 @@ class UploaderModel
 						$apTableName, $bpTableName, 
 						$startCopyTime, $stepLength);
 			}
-		
-					error_reporting(E_ALL);
-		
 			unlink($tempFilePath);
+			error_reporting(E_ALL);
 		}
 		else
 		{

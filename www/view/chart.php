@@ -47,6 +47,7 @@ if ($M->IsAppLoggedIn())
 	}
 	else if($M->action == $M->chartActions["figurePrint"])
 	{
+				
 		$U = new User();
 	
 		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
@@ -56,12 +57,11 @@ if ($M->IsAppLoggedIn())
 					isset($M->data['toTime']) &&
 					isset($M->data['prms']))
 			{
-	
 				$flightId = $M->data['flightId'];
 				$fromTime = $M->data['fromTime'] / 1000; //to cast js to php timestamps
 				$toTime = $M->data['toTime'] / 1000;
 				$prms = $M->data['prms'];
-	
+				
 				$globalRawParamArr = $M->GetTableRawData($flightId, $prms, $fromTime, $toTime);
 				$totalRecords = count($globalRawParamArr[1]); // 0 is time and may be lager than data
 				
@@ -77,6 +77,8 @@ if ($M->IsAppLoggedIn())
 					$paramInfo = $M->GetParamInfo($flightId, $prms[$i]);
 					$figPrRow .= $prms[$i] . ", " . $paramInfo['name'] . ";";
 				}
+				
+
 				
 				$figPrRow = substr($figPrRow, 0, -1);
 				$figPrRow .= PHP_EOL;
@@ -469,8 +471,8 @@ if ($M->IsAppLoggedIn())
 }
 else 
 {
-	echo("Authorization error. Page: " . $M->currPage);
-	error_log("Authorization error. Page: " . $M->currPage);
+	echo("Authorization error. Page: " . $M->curPage);
+	error_log("Authorization error. Page: " . $M->curPage);
 }
 
 ?>

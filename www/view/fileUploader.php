@@ -213,6 +213,7 @@ if ($M->IsAppLoggedIn())
 				$performer = $flightInfo["performer"];
 				$departureAirport = $flightInfo["departureAirport"];
 				$arrivalAirport = $flightInfo["arrivalAirport"];
+				$totalPersentage = 100;
 				
 				$M->ProccessFlightData($tempFileName,
 					$bort,
@@ -224,7 +225,8 @@ if ($M->IsAppLoggedIn())
 					$departureAirport,
 					$arrivalAirport,
 					$aditionalInfoVars,
-					$uploadedFile
+					$uploadedFile,
+					$totalPersentage
 				);
 				
 				$answ = array(
@@ -311,6 +313,7 @@ if ($M->IsAppLoggedIn())
 					$performer = $flightInfo["performer"];
 					$departureAirport = $flightInfo["departureAirport"];
 					$arrivalAirport = $flightInfo["arrivalAirport"];
+					$totalPersentage = 50;
 					
 					$flightId = $M->ProccessFlightData($tempFileName,
 						$bort,
@@ -322,7 +325,8 @@ if ($M->IsAppLoggedIn())
 						$departureAirport,
 						$arrivalAirport,
 						$aditionalInfoVars,
-						$uploadedFile
+						$uploadedFile,
+						$totalPersentage
 					);
 					
 					$M->ProccesFlightException($flightId,
@@ -454,7 +458,8 @@ if ($M->IsAppLoggedIn())
 					$performer = null;
 					
 					$aditionalInfoVars = $M->CheckAditionalInfoFromHeader($bruType, $flightInfoFromHeader);
-						
+					$totalPersentage = 50;
+					
 					$flightId = $M->ProccessFlightData($tempFileName,
 							$bort,
 							$voyage,
@@ -465,7 +470,8 @@ if ($M->IsAppLoggedIn())
 							$departureAirport,
 							$arrivalAirport,
 							$aditionalInfoVars,
-							$uploadedFile
+							$uploadedFile,
+							$totalPersentage
 					);
 						
 					$M->ProccesFlightException($flightId,

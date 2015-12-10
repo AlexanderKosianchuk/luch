@@ -1419,6 +1419,7 @@ class Bru
 		{			
 			$paramType = $this->GetParamType($paramCode, $cycloApTableName, $cycloBpTableName);
 		}
+
 		
 		if($paramType == PARAM_TYPE_AP)	
 		{	
@@ -1426,7 +1427,7 @@ class Bru
 			$result = $link->query($query);
 			$row = $result->fetch_array();
 			
-			if(strpos(",", $row['channel']) != 0)
+			if(strpos($row['channel'], ",") != 0)
 			{
 				$freq = explode(",", $row['channel']);			
 				$freq = array_map("trim", $freq);

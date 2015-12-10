@@ -59,24 +59,18 @@ FlightUploader.prototype.ResizeFlightUploader = function(e) {
 			(self.flightUploaderFactoryContainer != null)){
 		self.flightUploaderOptions.css({
 			'width': self.flightUploaderFactoryContainer.width(),
-			'heigth': '50px'
+			'height': '50px'
 		});
 	}
 	
 	if((self.flightUploaderTopMenu != null) && 
 			(self.flightUploaderOptions != null) && 
 			(self.flightUploaderFactoryContainer != null)){
-		self.flightUploaderOptions.css({
-			'width': self.flightUploaderFactoryContainer.width(),
-			'heigth': self.flightUploaderFactoryContainer.height() - self.flightUploaderTopMenu.height()
+		self.flightUploaderContent.css({
+			'width': self.flightUploaderFactoryContainer.width() - 10,
+			"height": self.window.height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35, //35 because padding and margin
 		});
 	}
-	/*var tree = $(".Tree"),
-		treeContent = $(".TreeContent");
-	if((tree.length > 0) && (treeContent.length > 0)){
-		tree.css('height', self.flightUploaderContent.height() - 5);
-		treeContent.css('height', self.flightUploaderContent.height() - 5);
-	}*/
 }
 
 FlightUploader.prototype.CaptureUploadingItems = function() { 	
@@ -204,7 +198,7 @@ FlightUploader.prototype.GetFlightParams = function(
 					}
 			};
 	        
-		if((index == 0) || (this.firstUploadedComplt == false)){
+		if((index == 0) || (self.firstUploadedComplt == false)){
 	        $.ajax({
 				type: "POST",
 				data: pV,
@@ -238,7 +232,7 @@ FlightUploader.prototype.GetFlightParams = function(
 							chartWidth);
 					
 					self.SliceFlightButtInitialSupport(parentContainer, previewParams);
-					this.firstUploadedComplt = true;							
+					self.firstUploadedComplt = true;
 				} else {
 					console.log(answ["error"]);
 				}
@@ -281,6 +275,7 @@ FlightUploader.prototype.GetFlightParams = function(
 							chartWidth);
 					
 					self.SliceFlightButtInitialSupport(parentContainer, previewParams);
+					
 				} else {
 					console.log(answ["error"]);
 				}
@@ -365,7 +360,12 @@ FlightUploader.prototype.PreviewChart = function (parent,
 		chartWidth){
 	
 	var self = this;
-
+	
+	//$("#flightUploaderContent").css("height", self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35);
+	//console.log($("#flightUploaderContent").css("height"));
+	
+	self.ResizeFlightUploader();
+	
 	if((previewParams.length > 0) && (previewParams[0] != "")) {
 		
 		var gCont = parent.find("div#previewChartContainer" + index),

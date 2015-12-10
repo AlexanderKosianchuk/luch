@@ -630,12 +630,12 @@ class ChartModel
 			$framesCount, $startCopyTime, $startFrame, $endFrame);
 		$globalRawParamArr = array();
 		array_push($globalRawParamArr, $normParam);
-		
+				
 		for($i = 0; $i < count($paramCodeArr); $i++)
 		{
 			$paramType = $Bru->GetParamType($paramCodeArr[$i],
 				$cycloApTableName, $cycloBpTableName);
-			
+						
 			if($paramType == PARAM_TYPE_AP)
 			{
 				$paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, '', 
@@ -655,33 +655,13 @@ class ChartModel
 						$stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
 						$startFrame, $endFrame);
 				array_push($globalRawParamArr, $normParam);
-				
-// 				$channelsAndMasks = $Bru->GetChannelsAndMasksByCode(
-// 					$cycloBpTableName, $paramCodeArr[$i]);
-// 				$normParam = $Ch->NormalizeBpParam($bpTableName,
-// 					$stepDivider, $channelsAndMasks[0], $channelsAndMasks[1],
-// 					$startFrame, $endFrame);
-// 				array_push($globalRawParamArr, $normParam);
+	
 			}
 		}
 			
 		unset($Ch);
 		unset($Bru);
 		
-// 		$totalRecords = $framesCount * $stepDivider;
-		
-// 		$normData = array();
-// 		for($i = 0; $i < $totalRecords; $i++)
-// 		{
-// 			$figPrRow = array();
-// 			//array_push($figPrRow, $globalRawParamArr[0][$i][0]);//time
-// 			for($j = 0; $j < count($globalRawParamArr); $j++)
-// 			{
-// 				array_push($figPrRow, $globalRawParamArr[$j][$i]);
-// 			}
-// 			array_push($normData, $figPrRow);
-// 		}
-
 		return $globalRawParamArr;
 	}
 	
