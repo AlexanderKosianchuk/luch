@@ -94,7 +94,7 @@ class FlightsModel
 				</label>
 	
 				<label id='uploadTopButt' class='UploadButt'>
-					<span style='position:absolute; margin-top:8px;'>Загрузить</span>
+					<span style='position:absolute; margin-top:8px;'>Загрузка</span>
 				</label>
 	
 				<label id='userTopButt' class='UserButt' style='background-image:url(stylesheets/basicImg/userPreferences.png); " .
@@ -623,16 +623,33 @@ class FlightsModel
 		$info = array();
 		
 		$Fl = new Flight();
-		foreach ($idsArr as $flightId) {
+		foreach ($idsArr as $flightId) 
+	{
 			$flightInfo = $Fl->GetFlightInfo($flightId);
 			$bruType = $flightInfo["bruType"];
 						
-			if($bruType == 'Boeing-737_BDO_New') {
-				$info['bort'] = $flightInfo['bort'];
-			} else if($bruType == 'Boeing-737_BDO_New2') {
+		if($bruType == 'BUR-92A_An-148(158)') 
+			{
 				$info['voyage'] = $flightInfo['voyage'];
+				$info['departureAirport'] = $flightInfo['departureAirport'];
+				$info['arrivalAirport'] = $flightInfo['arrivalAirport'];
+//				$info['capitan'] = $flightInfo['capitan'];
+//				$info['weightto'] = $flightInfo['weightto'];
+//				$info['weightlndg'] = $flightInfo['weightlndg'];
 			}
-		}
+//		else if($bruType == 'ER_BSTO_An-148(158)') 
+//			{
+//				$info['voyage'] = $flightInfo['voyage'];
+//				$info['departureAirport'] = $flightInfo['departureAirport'];
+//				$info['arrivalAirport'] = $flightInfo['arrivalAirport'];
+//			}
+//			else if($bruType == 'RPP_Fly_An-148(158)') 
+//			{
+//				$info['voyage'] = $flightInfo['voyage'];
+//				$info['departureAirport'] = $flightInfo['departureAirport'];
+//				$info['arrivalAirport'] = $flightInfo['arrivalAirport'];
+//			}
+	}
 		
 		foreach ($idsArr as $flightId) {
 			$Fl->UpdateFlightInfo($flightId, $info);
@@ -1041,5 +1058,3 @@ class FlightsModel
 	}
 	
 }
-
-?>

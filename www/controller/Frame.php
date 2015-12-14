@@ -901,6 +901,21 @@ array_push($interview, $phisics);
 						array_push($phisicsBinaryParamsFrame, $param);
 					}
 				}
+				else if($binParamType == 80)//rotation bytes in word and inversion from 65535 and code = MASK
+				{
+					$tempStr1 = substr ($codeValue, 0, 2);
+					$tempStr2 = substr ($codeValue, 2, 2);
+					$rotatedStr = $tempStr2 . $tempStr1;
+					$bpCode = 65535 - hexdec($rotatedStr);
+					if(($bpCode == $binParam['mask']))
+					{
+						$param = array("frameNum" => $frameNum,
+								"time" => ($startTime + ($frameNum * $stepLength) + 
+									($stepLength / $channelFreq * $chInd)) * 1000,
+								"code" => $binParam['code']);
+						array_push($phisicsBinaryParamsFrame, $param);
+					}
+				}
 				else if($binParamType == 81)//rotation bytes in word and inversion from 65535 and code >= MASK
 				{
 					$tempStr1 = substr ($codeValue, 0, 2);
@@ -2634,5 +2649,3 @@ array_push($interview, $phisics);
 	}
 
 }
-
-?>

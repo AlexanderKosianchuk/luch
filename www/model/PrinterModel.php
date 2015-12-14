@@ -534,7 +534,7 @@ class PrinterModel {
 				$pdf->writeHTML ( $str, false, false, false, false, '' );
 				
 				$pdf->SetFont ( 'dejavusans', '', 12, '', true );
-				$str = "</br></br>" . $this->lang->performer . ' - ' . $flightInfo['performer']. ', ' . date ( 'd-m-Y' ) . '';
+				$str = "</br></br>" . $this->lang->performer . ' : ' . '_____________________ ' . $flightInfo['performer']. ', ' . date ( 'd-m-Y' ) . '';
 				
 				$pdf->writeHTML ( $str, false, false, false, false, '' );
 			} else {
