@@ -93,14 +93,17 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	var previewCheckBoxDiv = $("div#previewCheckBoxDiv"),
 		bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
 	//radiobuttons import/convert
+	var import = false;
 	$("div#importConvertRadio").buttonset().change(function(e){
 		var el = $(e.target);
 		if(el.attr("id") == self.flightFileActions["flightFileConvert"]){
 			previewCheckBoxDiv.slideToggle();
 			bruTypeSelectForUploadingDiv.slideToggle();
+			import = false;
 		} else if(el.attr("id") == self.flightFileActions["flightFileImport"]){
 			previewCheckBoxDiv.slideToggle();
 			bruTypeSelectForUploadingDiv.slideToggle();
+			import = true;
 		}
 	});
 
@@ -120,23 +123,27 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	        done: function (e, data) {        	
 	        	var selectedBruType = $('select#bruTypeSelectForUploading').find(":selected").text();
 	    	        	
-	        	if($("input#previewCheckBox:checked").length > 0) {
-	        		//show flight info and preview
-	        		
-	        		self.eventHandler.trigger("uploadWithPreview");
-	        		
-	        	    $.each(data.result.files, function (index, file) {
-	        	        $('<p/>').text(file.name).appendTo('#files');
-    	        		self.GetFlightParams(filesCount, file.name, selectedBruType);       	        	        	        
-	        	        filesCount++;       	        
-	        	    });
-	        	} else { 
-	        		//else background uploading
-	        		$.each(data.result.files, function (index, file) {
-	        	        $('<p/>').text(file.name).appendTo('#files');
-	        	        self.EasyUploading(selectedBruType, file.name);        	        
-	        	        filesCount++; 
-	        	    });
+	        	if(import) {
+	        		//import
+	        	} else {
+		        	if($("input#previewCheckBox:checked").length > 0) {
+		        		//show flight info and preview
+		        		
+		        		self.eventHandler.trigger("uploadWithPreview");
+		        		
+		        	    $.each(data.result.files, function (index, file) {
+		        	        $('<p/>').text(file.name).appendTo('#files');
+	    	        		self.GetFlightParams(filesCount, file.name, selectedBruType);       	        	        	        
+		        	        filesCount++;       	        
+		        	    });
+		        	} else { 
+		        		//else background uploading
+		        		$.each(data.result.files, function (index, file) {
+		        	        $('<p/>').text(file.name).appendTo('#files');
+		        	        self.EasyUploading(selectedBruType, file.name);        	        
+		        	        filesCount++; 
+		        	    });
+		        	}
 	        	}
 	        },
 	        progressall: function (e, data) {

@@ -212,7 +212,7 @@ class FlightsModel
 		}
 	
 		$fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>
-			<div id='importConvertRadio' style='display:none;'>
+			<div id='importConvertRadio'>
 				<input type='radio' id='%s' name='radio' checked='checked'><label for='%s'>%s</label>
    				<input type='radio' id='%s' name='radio'><label for='%s'>%s</label>
 			</div>
