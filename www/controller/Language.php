@@ -1,8 +1,8 @@
 <?php
 
-define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "../lang/_actions.info");
-define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "../lang/");
-define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "../lang/Default.lang");
+define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "/lang/_actions.info");
+define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/lang/");
+define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/lang/Default.lang");
 
 class Language
 {	
