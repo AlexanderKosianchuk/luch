@@ -30,7 +30,7 @@ class Folder
 		$result = $link->query($query);
 		if(!$result->fetch_array())
 		{
-			$query = "CREATE TABLE `flightsInFolders` (`id` BIGINT NOT NULL AUTO_INCREMENT,
+			$query = "CREATE TABLE `flightsinfolders` (`id` BIGINT NOT NULL AUTO_INCREMENT,
 				`flightId` INT(11),
 				`folderId` INT(11) DEFAULT 0,
 				`userId` INT(11),
@@ -145,7 +145,7 @@ class Folder
 		$userId = $extUserId;
 	
 		$result = array();
-		$query = "INSERT INTO `flightsInFolders` (`flightId`, `folderId`, `userId`) " .
+		$query = "INSERT INTO `flightsinfolders` (`flightId`, `folderId`, `userId`) " .
 				"VALUES (".$flightId.", ".$folderId.", ".$userId.");";
 		$result['query'] = $query;
 	
@@ -167,7 +167,7 @@ class Folder
 		$userId = $extUserId;
 	
 		$result = array();
-		$query = "UPDATE `flightsInFolders` SET `folderId` = '" . $folderId . "' ".
+		$query = "UPDATE `flightsinfolders` SET `folderId` = '" . $folderId . "' ".
 				"WHERE `flightId` = '" . $flightId . "' AND `userId` = " . $userId . ";";
 		$result['query'] = $query;
 	
@@ -187,7 +187,7 @@ class Folder
 		$flightId = $extFlightId;
 	
 		$result = array();
-		$query = "DELETE FROM `flightsInFolders` " .
+		$query = "DELETE FROM `flightsinfolders` " .
 				"WHERE `flightId` = '" . $flightId . "';";
 		$result['query'] = $query;
 	
@@ -207,7 +207,7 @@ class Folder
 		$folderId = $extFolderId;
 	
 		$result = array();
-		$query = "DELETE FROM `flightsInFolders` " .
+		$query = "DELETE FROM `flightsinfolders` " .
 				"WHERE `folderId` = '" . $folderId . "';";
 		$result['query'] = $query;
 	
@@ -263,7 +263,7 @@ class Folder
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
-		$query = "SELECT `folderId` FROM `flightsInFolders` WHERE `flightId`=".$flightId." " .
+		$query = "SELECT `folderId` FROM `flightsinfolders` WHERE `flightId`=".$flightId." " .
 				"AND `userId` = ".$userId." LIMIT 1;";
 		
 		//error_log($query);
@@ -288,7 +288,7 @@ class Folder
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
-		$query = "SELECT `flightId` FROM `flightsInFolders` WHERE `folderId`='".$folderId."' " .
+		$query = "SELECT `flightId` FROM `flightsinfolders` WHERE `folderId`='".$folderId."' " .
 				"AND `userId` = ".$userId.";";		
 
 		//error_log($query);
