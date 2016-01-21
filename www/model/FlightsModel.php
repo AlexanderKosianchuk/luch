@@ -94,7 +94,7 @@ class FlightsModel
 				</label>
 	
 				<label id='uploadTopButt' class='UploadButt'>
-					<span style='position:absolute; margin-top:8px;'>Загрузка</span>
+					<span style='position:absolute; margin-top:8px;'>%s</span>
 				</label>
 	
 				<label id='userTopButt' class='UserButt' style='background-image:url(stylesheets/basicImg/userPreferences.png); " .
@@ -108,7 +108,13 @@ class FlightsModel
 					<span style='position:absolute; margin-top:8px;'>%s</span>
 				</label></div>
 	
-				</div>", $styleWidth, $styleFontSize, $username, $styleTop, $username, $this->lang->viewItem);
+				</div>", $this->lang->upload,
+				$styleWidth, 
+				$styleFontSize, 
+				$username, 
+				$styleTop, 
+				$username, 
+				$this->lang->viewItem);
 	
 		return $topMenu;
 	}

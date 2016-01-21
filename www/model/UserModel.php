@@ -69,6 +69,11 @@ class UserModel
 		return $topMenu;
 	}
 	
+	public function Logout()
+	{
+		$this->ulogin->SetAutologin($this->username, false);
+	}
+	
 	public function ChangeLanguage($lang)
 	{
 		$L = new Language();

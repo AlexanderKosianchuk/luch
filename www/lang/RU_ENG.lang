@@ -225,6 +225,7 @@
 },
 
 "flightsPage":{	
+	"upload": "Upload",
 	"flightsItem": "Flights",
 	"slicesItem": "Slices",
 	"enginesItem": "Engines",

@@ -1,11 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
+
 body {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	font-size:14px;
 	background-color:#fff;
 	color:#000;
-	overflow:hidden;
+	overflow-x:hidden;
 }
 
 .FactoryWindow {
@@ -81,7 +82,7 @@ body {
 	margin-top:5px;
 	color:#676767;
 	border-bottom: 1px solid #bbb;
-	overflow-y:auto;
+	overflow-y:scroll;
 }
 
 .Logo

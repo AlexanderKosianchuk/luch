@@ -1,5 +1,5 @@
 {
-"exit": "exit",
+"exit": "Exit",
 "continueLabel": "Next",
 "tplHasBeenAdded": "Template added. Demonstrate how changes to refresh the page (Shift + F5)",
 "tplHasBeenDeleted": "Template deleted. To demonstrate how the changes refresh the page (Shift + F5)",
@@ -51,6 +51,7 @@
 "processItem" : "Process",
 "moveItem" : "Rename",
 "removeSelection" : "Cancel Selection",
+"syncFlightHeaders": "Sync Headers",
 	
 "flightFilesList": "Flight files for convertion",
 "flightsConvertSelected": "Convert selected",
@@ -63,7 +64,7 @@
 "saveParamsAsTpl": "Save as List",
 "flightViewOptionsEditTpls": "Change",
 "flightUploaderUpload": "Upload",
-"flightViewOptionsShow": "Show",
+"flightViewOptionsShow": "Graphics",
 
 "viewOptionsNextPage": "Next Page",
 "viewOptionsPrevPage": "Prev Page",
@@ -132,6 +133,7 @@
 "prefix": "Префикс",
 
 "chartPrintTable" : "Digital Table",
+"chartPrintInNewWindow" : "Print Chart",
 "monochromeEventsPrint" : "Mono print",
 "eventListSave" : "Report",
 
@@ -226,6 +228,7 @@
 },
 
 "flightsPage":{	
+	"upload": "Upload",
 	"flightsItem": "Flights",
 	"slicesItem": "Slices",
 	"enginesItem": "Engines",
@@ -393,6 +396,8 @@
 	"capitan": "F/O",
 	"departureAirport": "Departure Airport",
 	"arrivalAirport": "Arrival Airport",
+	"departureAirportName": "Departure Airport Name",
+	"arrivalAirportName": "Arrival Airport Name",
 	"aditionalInfo": "Add Information",
 	"bortNum": "A/C",
 	"voyage":"Flight",
@@ -403,6 +408,7 @@
 	"ignoreDueUploading": "Ignore Uploading",
 	"continue": "Next",
 	"slice": "Slice",
+	"sliceCyclic": "Slice/Return",
 	"compareToEtalon": "Сравнивать с эталоном",
 	"doNotCompate": "No",
 	"message": "Message",
