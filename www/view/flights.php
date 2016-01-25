@@ -7,8 +7,6 @@ $M = new FlightsModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->flightActions["flightGeneralElements"])
 	{
 		$U = new User();

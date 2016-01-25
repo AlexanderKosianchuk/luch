@@ -7,8 +7,6 @@ $M = new UploaderModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->flightActions["flightShowUploadingOptions"]) //show form for uploading
 	{
 		$U = new User();

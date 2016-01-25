@@ -6,9 +6,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/ChartModel.php");
 $M = new ChartModel($_POST, $_SESSION, $_GET);
 
 if ($M->IsAppLoggedIn())
-{
-	$M->GetUserPrivilege();	
-	
+{	
 	if($M->action == $M->chartActions["putChartInNewWindow"]) //show form for uploading
 	{
 		$U = new User();

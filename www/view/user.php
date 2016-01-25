@@ -7,8 +7,6 @@ $M = new UserModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->userActions["userLogout"])
 	{
 		$U = new User();

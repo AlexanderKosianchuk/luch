@@ -24,12 +24,7 @@ class IndexModel
 	public $flightActions;
 
 	function __construct()
-	{	
-		$L = new Language();
-		$this->userLang = $L->GetLanguageName();
-		$this->lang = $L->GetLanguage($this->curPage);
-		unset($L);
-		
+	{		
 		$this->ulogin = new uLogin();
 		
 		//check COOKIE for autorization posibisity
@@ -44,6 +39,21 @@ class IndexModel
 		{
 			$this->AppLogin();
 		}
+		
+		$this->GetUserPrivilege();
+		$usrLang = '';
+		if(isset($this->username) && ($this->username != '')) {
+			$Usr = new User();
+			$usrInfo = $Usr->GetUsersInfo($this->username);
+			$usrLang = $usrInfo['lang'];
+			unset($Usr);
+		}
+				
+		$L = new Language();
+		$L->SetLanguageName($usrLang);
+		$this->userLang = $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
+		unset($L);
 	}
 		
 	private function AppLogin()
@@ -170,7 +180,7 @@ class IndexModel
 	
 	public function GetUserPrivilege()
 	{
-		$this->username = $_SESSION['username'];
+		$this->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
 		$Usr = new User();
 		$this->privilege = $Usr->GetUserPrivilege($this->username);	
 		unset($Usr);

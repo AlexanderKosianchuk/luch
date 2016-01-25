@@ -7,8 +7,6 @@ $M = new BruModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->bruActions["putBruTypeContainer"])
 	{
 		$U = new User();

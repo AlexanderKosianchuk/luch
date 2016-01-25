@@ -7,8 +7,6 @@ $M = new ViewOptionsModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->viewOptionsActions["putViewOptionsContainer"]) //show form for uploading
 	{
 		$U = new User();

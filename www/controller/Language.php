@@ -8,11 +8,11 @@ class Language
 {	
 	public function GetLanguageName()
 	{
-		if(isset($_SESSION['lang'])) {
+		if(isset($_SESSION['lang']) && ($_SESSION['lang'] != '')) {
 			return $_SESSION['lang'];
 		} else {
-			$_SESSION['lang'] = 'ru';
-			return 'ru';
+			$_SESSION['lang'] = 'en';
+			return 'en';
 		}
 	}
 	

@@ -16,21 +16,10 @@ if ($M->IsAppLoggedIn())
 	$M->PutCharset();
 	$M->PutTitle();
 	$M->PutStyleSheets();
-	$M->GetUserPrivilege();
 	
 	$M->PutHeader();
 	$M->EventHandler();
-		
-/*	$M->PutMainMenu();
-	$M->PutLeftMenu();
-	$M->PutMainContainer();
-	
-	$M->FileUploadBlock(); */
-	
-/* 	$M->FileUploadBlock();
-  	$M->FileImportBlock();
-   	$M->SliceCreationBlock(); */
-		
+				
 	$M->PutMessageBox();
 	$M->PutHelpDialog();
 	$M->PutExportLink();

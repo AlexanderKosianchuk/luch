@@ -28,11 +28,6 @@ class ViewOptionsModel
 
 	function __construct($post, $session)
 	{
-		$L = new Language();
-		$this->lang = $L->GetLanguage($this->curPage);
-		$this->viewOptionsActions = (array)$L->GetServiceStrs($this->curPage);
-		unset($L);
-
 		$this->ulogin = new uLogin();
 		$this->ulogin->Autologin();
 		if(isset($session['username']))
@@ -43,6 +38,22 @@ class ViewOptionsModel
 		{
 			$this->username = '';
 		}
+		
+		$this->GetUserPrivilege();
+		$usrLang = '';
+		if(isset($this->username) && ($this->username != '')) {
+			$Usr = new User();
+			$usrInfo = $Usr->GetUsersInfo($this->username);
+			$usrLang = $usrInfo['lang'];
+			unset($Usr);
+		}
+				
+		$L = new Language();
+		$L->SetLanguageName($usrLang);
+		$this->userLang = $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
+		$this->viewOptionsActions = (array)$L->GetServiceStrs($this->curPage);
+		unset($L);
 		
 		//even if flight was selected if file send this variant will be processed
 		if((isset($post['action']) && ($post['action'] != '')) && 
@@ -73,9 +84,9 @@ class ViewOptionsModel
 	
 	public function GetUserPrivilege()
 	{
-		$this->username = $_SESSION['username'];
+		$this->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
 		$Usr = new User();
-		$this->privilege = $Usr->GetUserPrivilege($this->username);
+		$this->privilege = $Usr->GetUserPrivilege($this->username);	
 		unset($Usr);
 	}
 	

@@ -7,8 +7,6 @@ $M = new PrinterModel($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
-	$M->GetUserPrivilege();	
-	
 	if($M->action == $M->printerActions["printBlank"])
 	{
 		$U = new User();

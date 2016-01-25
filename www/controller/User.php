@@ -542,13 +542,18 @@ class User
 
 		if($row = $result->fetch_array())
 		{
-			$userInfo = array("id"=>$row['id'],
+			foreach ($row as $key => $value)
+			{
+				$userInfo[$key] = $value;
+				
+				/*array("id"=>$row['id'],
 					"login"=>$row['login'],
 					"company"=>$row['company'],
 					"privilege"=>$row['privilege'],
 					"options"=>$row['options'],
 					"subscribers"=>$row['subscribers'],
-					"author"=>$row['author']);
+					"author"=>$row['author']);*/
+			}
 		}
 
 		$c->Disconnect();
@@ -560,21 +565,25 @@ class User
 	public function GetUserPrivilege($extUsername)
 	{
 		$username = $extUsername;
+				
+		if($username != '') {
+			$c = new DataBaseConnector();
+			$link = $c->Connect();
 		
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `privilege` FROM `user_personal` WHERE `login`='".$username."' LIMIT 1;");
-	
-		$userInfo = array();
-		$row = $result->fetch_array();
-		$privilege = $row['privilege'];
-		$privilege = explode(',', $privilege);
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $privilege;
+			$result = $link->query("SELECT `privilege` FROM `user_personal` WHERE `login`='".$username."' LIMIT 1;");
+		
+			$userInfo = array();
+			$row = $result->fetch_array();
+			$privilege = $row['privilege'];
+			$privilege = explode(',', $privilege);
+		
+			$c->Disconnect();
+			unset($c);
+		
+			return $privilege;
+		} else {
+			return [];
+		}
 	}
 	
 	public function CreateUserPersonal($extLogin, $extPrivilege, $extAuthor, $extCompany)
@@ -1516,6 +1525,22 @@ class User
 		$stmt->execute();
 		$stmt->close();
 	
+		$c->Disconnect();
+		unset($c);
+	}
+	
+	public function SetUserLanguage($login, $lang)
+	{	
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+
+		$query = "UPDATE `user_personal` SET `lang` = '".$lang."'
+				WHERE `login` = '".$login."';";
+
+		$stmt = $link->prepare($query);
+		$stmt->execute();
+		$stmt->close();
+			
 		$c->Disconnect();
 		unset($c);
 	}

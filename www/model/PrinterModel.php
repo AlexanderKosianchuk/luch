@@ -21,11 +21,6 @@ class PrinterModel {
 		require_once ("../tcpdf/tcpdf.php");
 		require_once ("../tcpdf/config/tcpdf_config.php");
 		
-		$L = new Language ();
-		$this->lang = $L->GetLanguage($this->curPage);
-		$this->printerActions = ( array ) $L->GetServiceStrs ( $this->curPage );
-		unset ( $L );
-		
 		$this->ulogin = new uLogin ();
 		$this->ulogin->Autologin ();
 		if (isset ( $session ['username'] )) {
@@ -33,6 +28,22 @@ class PrinterModel {
 		} else {
 			$this->username = '';
 		}
+		
+		$this->GetUserPrivilege();
+		$usrLang = '';
+		if(isset($this->username) && ($this->username != '')) {
+			$Usr = new User();
+			$usrInfo = $Usr->GetUsersInfo($this->username);
+			$usrLang = $usrInfo['lang'];
+			unset($Usr);
+		}
+				
+		$L = new Language();
+		$L->SetLanguageName($usrLang);
+		$this->userLang = $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
+		$this->printerActions = ( array ) $L->GetServiceStrs ( $this->curPage );
+		unset($L);
 		
 		// even if flight was selected if file send this variant will be processed
 		if ((isset ( $post ['action'] ) && ($post ['action'] != '')) && (isset ( $post ['data'] ) && ($post ['data'] != ''))) {
@@ -47,12 +58,15 @@ class PrinterModel {
 	public function IsAppLoggedIn() {
 		return isset ( $_SESSION ['uid'] ) && isset ( $_SESSION ['username'] ) && isset ( $_SESSION ['loggedIn'] ) && ($_SESSION ['loggedIn'] === true);
 	}
-	public function GetUserPrivilege() {
-		$this->username = $_SESSION ['username'];
-		$Usr = new User ();
-		$this->privilege = $Usr->GetUserPrivilege ( $this->username );
-		unset ( $Usr );
+	
+	public function GetUserPrivilege()
+	{
+		$this->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
+		$Usr = new User();
+		$this->privilege = $Usr->GetUserPrivilege($this->username);	
+		unset($Usr);
 	}
+	
 	public function ConstructColorFlightEventsList($extFlightId) {
 		$flightId = $extFlightId;
 		$user = $this->username;
