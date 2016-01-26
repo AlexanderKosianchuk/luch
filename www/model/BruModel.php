@@ -49,6 +49,7 @@ class BruModel
 		$L->SetLanguageName($usrLang);
 		$this->userLang = $L->GetLanguageName();
 		$this->lang = $L->GetLanguage($this->curPage);
+		$this->bruActions = (array)$L->GetServiceStrs($this->curPage);
 		unset($L);
 		
 		//even if flight was selected if file send this variant will be processed
