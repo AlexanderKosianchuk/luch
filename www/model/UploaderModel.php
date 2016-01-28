@@ -742,7 +742,6 @@ class UploaderModel
 		
 		$departureAirport = $extDepartureAirport;			
 		$arrivalAirport = $extArrivalAirport;
-		$aditionalInfo = $extAditionalInfo;
 		$uploadedFile = $extUploadedFile;
 			
 		$Fl = new Flight();

@@ -203,7 +203,8 @@ FlightProccessingStatus.prototype.UpdateStatus = function() {
 					$.ajax({
 						url: progressFile,
 						dataType: 'json',
-					}).done(function(serverAnswer) {				
+					}).done(function(serverAnswer) {	
+						el['completeStatus']=0;
 						if((serverAnswer != null) && (serverAnswer.toString() != "")) {
 							if(el['status'] != serverAnswer){
 								el['status'] = serverAnswer;
@@ -213,7 +214,12 @@ FlightProccessingStatus.prototype.UpdateStatus = function() {
 							setTimeout(function(){ self.UpdateStatus(); }, 3000);
 						}
 					}).fail(function(){
-						setTimeout(function(){ self.UpdateStatus(); }, 3000);
+						el['completeStatus']--;
+						if(el['completeStatus'] >= -3) {
+							setTimeout(function(){ self.UpdateStatus(); }, 3000);
+						} else {
+							self.RemoveUpload(el['uploadingFile']);
+						}
 					});
 				}
 			});

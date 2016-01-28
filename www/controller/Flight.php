@@ -236,7 +236,7 @@ class Flight
 		$departureAirport = $extDepartureAirport;
 		$arrivalAirport = $extArrivalAirport;
 		$uploadedFile = $extFile;
-		$aditionalInfo = $extAditionalInfo;		
+		$aditionalInfo = strval($extAditionalInfo);		
 		
 		$tableName = uniqid();
 		$tableNameAp = "_".$tableName."_ap";

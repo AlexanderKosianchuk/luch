@@ -290,7 +290,7 @@ if ($M->IsAppLoggedIn())
 					}
 					
 					$aditionalInfoVars = '';
-					if($receivedFlightAditionalInfo != '0')
+					if($receivedFlightAditionalInfo != 0)
 					{
 						for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2)
 						{
