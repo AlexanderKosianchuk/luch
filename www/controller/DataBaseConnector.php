@@ -50,13 +50,12 @@ class DataBaseConnector
 		$this->link->close();		
 	}
 	
-	public function ExportTable($extTableName, $extFileName)
+	public function ExportTable($extTableName, $extFileName, $root)
 	{
 		$tableName = $extTableName;
 		$fileName = $extFileName;
 		$link = $this->Connect();
 		
-		$root = @$_SERVER['DOCUMENT_ROOT'] . "/uploadedFiles/";
 		$exportedFileName['dir'] = $root;
 		$exportedFileName['root'] = $root.$fileName.".csv";
 		$exportedFileName['filename'] = $fileName.".csv";
@@ -72,8 +71,5 @@ class DataBaseConnector
 		
 		return $exportedFileName;
 	}
-	
-
 }
 
-?>

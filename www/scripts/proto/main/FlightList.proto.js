@@ -1280,6 +1280,31 @@ FlightList.prototype.ProcessItem = function(id) {
 	});
 }
 
+FlightList.prototype.ExportItem = function(id) { 
+	var self = this;
+	
+	var pV = {
+		action: self.actions["itemExport"],
+		data: {
+			id: id
+		}
+	};
+	
+	return $.ajax({
+		type: "POST",
+		data: pV,
+		url: FLIGHTS_VIEW_SRC,
+		dataType: 'json',
+		async: true
+	}).done(function(msg){
+		if(msg['status'] === 'ok') {
+			window.location = msg['zipUrl'];
+		}
+	}).fail(function(msg){
+		console.log(msg);
+	});
+}
+
 FlightList.prototype.ShowFlight = function(id) { 
 	$("div#flightLeftMenuRow").trigger("showOptions", id);
 	return false;
@@ -1457,6 +1482,34 @@ FlightList.prototype.SupportJsTree = function() {
 				treePrivate.jstree("refresh");
 			}
 		}
+	}).on("export_node.jstree", function(e, data){
+
+		console.log(e);
+		console.log(data);
+		
+		console.log("export");
+		/*if(isNewParentInt){
+			var parentNode = $("li#" + newParent).find("a").find("i");
+			
+			if(parentNode.hasClass('jstree-folder')){
+				
+				self.ActionChangePath(type, id, newParent).done(function(e){
+					self.ShowContent(newParent).done(function(answ){
+						contentPlace.empty();
+						if(answ['status'] == 'ok'){
+							var content = answ['data'];
+							contentPlace.append(content);
+							self.SupportContent();
+						} else {
+							console.log(answ)
+						}
+					});
+				});
+			} else {
+				alert("Incorrect action");
+				treePrivate.jstree("refresh");
+			}
+		}*/
 	}).jstree({
 		"types" : {
 			"folder" : {
@@ -1491,7 +1544,7 @@ FlightList.prototype.SupportJsTree = function() {
 	                "Create": {
 	                    "separator_before": false,
 	                    "separator_after": false,
-	                    "label": "Create",
+	                    "label": self.langStr.jsTree.create,
 	                    "action": function (obj) { 
 	                        $node = tree.create_node($node);
 	                        tree.edit($node);
@@ -1500,7 +1553,7 @@ FlightList.prototype.SupportJsTree = function() {
 	                "Rename": {
 	                    "separator_before": false,
 	                    "separator_after": false,
-	                    "label": "Rename",
+	                    "label": self.langStr.jsTree.rename,
 	                    "action": function (obj) {
 	                    	if($node.type != "flight") {
 		                        tree.edit($node);
@@ -1512,11 +1565,19 @@ FlightList.prototype.SupportJsTree = function() {
 	                "Remove": {
 	                    "separator_before": false,
 	                    "separator_after": false,
-	                    "label": "Remove",
+	                    "label":  self.langStr.jsTree.remove,
 	                    "action": function (obj) { 
 	                        tree.delete_node($node);
 	                    }
-	                }
+	                },
+	                /*"Export": {
+	                    "separator_before": false,
+	                    "separator_after": false,
+	                    "label":  self.langStr.jsTree.export,
+	                    "action": function (obj) { 
+	                        tree.trigger('export_node', $node);
+	                    }
+	                }*/
 	            };
 	        }
 	    }
@@ -1569,8 +1630,8 @@ FlightList.prototype.SupportContent = function() {
 			
 			$("div#view").css("display", "block");
 			
-			/*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');
-			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
+			/*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');*/
+			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -1793,6 +1854,29 @@ FlightList.prototype.SupportContent = function() {
 				}
 			});
 		});
+
+		$("li#export").on('click', function(e){
+			var inputItemsCheck = $(".ItemsCheck:checked");
+			
+			$.each(inputItemsCheck, function(i, el){
+				var el = $(el),
+					type = el.data('type'),
+					id = undefined;
+				
+				if(type == 'flight'){
+					id = el.data('flightid');
+					self.ExportItem(id).done(function(answ) {
+						if(answ['status'] == 'ok'){
+							el.removeAttr("checked");
+							var parent = el.parents("li");
+							parent.fadeOut(200);
+						} else {
+							console.log(answ['data']['error']);
+						}
+					});
+				}
+			});
+		});
 	});
 }
 	
@@ -1925,8 +2009,8 @@ FlightList.prototype.SupportTableContent = function() {
 			
 			$("div#view").css("display", "block");
 			
-			/*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');
-			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
+			/*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');*/
+			/*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -2125,6 +2209,29 @@ FlightList.prototype.SupportTableContent = function() {
 				if(type == 'flight'){
 					id = el.data('flightid');
 					self.ProcessItem(id).done(function(answ) {
+						if(answ['status'] == 'ok'){
+							el.removeAttr("checked");
+							var parent = el.parents("li");
+							parent.fadeOut(200);
+						} else {
+							console.log(answ['data']['error']);
+						}
+					});
+				}
+			});
+		});
+
+		$("li#export").on('click', function(e){
+			var inputItemsCheck = $("input.ItemsCheck:checked");
+			
+			$.each(inputItemsCheck, function(i, el){
+				var el = $(el),
+					type = el.data('type'),
+					id = undefined;
+				
+				if(type == 'flight'){
+					id = el.data('flightid');
+					self.ExportItem(id).done(function(answ) {
 						if(answ['status'] == 'ok'){
 							el.removeAttr("checked");
 							var parent = el.parents("li");

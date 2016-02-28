@@ -515,6 +515,54 @@ if ($M->IsAppLoggedIn())
 			echo($M->lang->notAllowedByPrivilege);
 		}
 	}
+	else if($M->action == $M->flightActions["itemImport"]) 
+	{
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
+		{
+			if(isset($M->data['file']))
+			{
+				$file = $M->data['file'];
+				$result = $M->ImportFlight($file);
+						
+				$answ = array();
+				if($result)
+				{
+					$answ = [
+						'status' => 'ok'
+					];
+
+					$action = $M->action;
+					$M->RegisterActionExecution($action, "executed", $file, "fileName");
+				}
+				else
+				{
+					$answ['status'] = 'err';
+					$answ['data']['error'] = 'Error during flight import.';
+					$M->RegisterActionReject($M->action, "rejected", 0, $answ['data']['error']);
+				}
+				echo json_encode($answ);
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ['data']['error'] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page fileUploader.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ['data']['error']);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	}
 	else 
 	{
 			echo("Undefined action. Data: " . json_encode($_POST['data']) . 

@@ -18,6 +18,7 @@
 	"flightChangePath": "flightMove",
 	"itemDelete": "itemDelete",
 	"itemProcess": "itemProcess",
+	"itemExport": "itemExport",
 	"receiveTree" : "receiveTree",
 	"segmentTable": "segmentTable",
 	"getEventsList": "getEventsList",
@@ -38,6 +39,7 @@
 	"flightUploaderPreview": "preview",
 	"flightShowUploadingOptions": "uploadFl",
 	"flightEasyUpload": "easyUpload",
+	"itemImport": "itemImport",
 	"flightProcces": "prFl",
 	"flightProccesAndCheck": "prAndChFl",
 	"flightProccesCheckAndCompareToEtalon": "prChAndEtaFl"

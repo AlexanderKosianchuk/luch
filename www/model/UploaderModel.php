@@ -418,7 +418,14 @@ class UploaderModel
 		}
 		
 		unset($Bru);
-		return $aditionalInfo;
+
+		$aditionalInfoVars = '';		
+		foreach($aditionalInfo as $key => $val) 
+		{
+			$aditionalInfoVars .= $key . ":" . $val . ";";
+		}
+
+		return $aditionalInfoVars;
 	}
 	
 	public function CopyPreview($extBruType, $extFilePath)
@@ -743,6 +750,7 @@ class UploaderModel
 		$departureAirport = $extDepartureAirport;			
 		$arrivalAirport = $extArrivalAirport;
 		$uploadedFile = $extUploadedFile;
+		$aditionalInfo = $extAditionalInfo;
 			
 		$Fl = new Flight();
 		$flightId = $Fl->InsertNewFlight($bort, $voyage,
@@ -1137,6 +1145,164 @@ class UploaderModel
 		
 		unset($Fl);
 	}
+
+	public function ImportFlight($importedFileName)
+	{
+		$copiedFilesDir = UPLOADED_FILES_PATH;
+		$copiedFilePath = $copiedFilesDir . $importedFileName;
+
+		$zip = new ZipArchive;
+		$res = $zip->open($copiedFilePath);
+		
+		if ($res === TRUE) {
+			$i = 0;
+			do 
+			{
+				$name = $zip->getNameIndex($i);
+				
+				$i++;
+			} while((strpos($name, "header") > 0) && ($i < $zip->numFiles));
+			
+			$zip->extractTo($copiedFilesDir, $name);
+			
+			$json = file_get_contents($copiedFilesDir."/".$name);
+			unlink($copiedFilesDir."/".$name);
+			$flightInfoImported = json_decode($json, true);
+			
+			$bruType = $flightInfoImported['bruType'];
+			
+			$Fl = new Flight();
+			$flightId = $Fl->InsertNewFlight($flightInfoImported['bort'], $flightInfoImported['voyage'], 
+				$flightInfoImported['startCopyTime'],
+				$flightInfoImported['bruType'], $flightInfoImported['performer'],
+				$flightInfoImported['departureAirport'], $flightInfoImported['arrivalAirport'],
+				$importedFileName, $flightInfoImported['flightAditionalInfo']);
+			
+			$flightInfo = $Fl->GetFlightInfo($flightId);
+			
+			$tableNameAp = $flightInfo['apTableName'];
+			$tableNameBp = $flightInfo['bpTableName'];
+			
+			$Bru = new Bru();
+			$bruInfo = $Bru->GetBruInfo($bruType);
+			$apPrefixes = $Bru->GetBruApCycloPrefixes($bruType);
+			$bpPrefixes = $Bru->GetBruBpCycloPrefixes($bruType);
+
+			$apCyclo = $Bru->GetBruApCycloPrefixOrganized($bruType);
+
+			unset($Bru);
+			$tables = $Fl->CreateFlightParamTables($flightId, 
+				$apCyclo, $bpPrefixes);	
+			
+			$apTables = $flightInfoImported["apTables"];
+			
+			$Fr = new Frame();
+			for($j = 0; $j < count($apTables); $j++)
+			{
+				$zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
+				if(file_exists($copiedFilesDir.$apTables[$j]["file"])) {
+					$Fr->LoadFileToTable($tableNameAp . "_" . $apTables[$j]["pref"], $copiedFilesDir.$apTables[$j]["file"]);
+					unlink($copiedFilesDir.$apTables[$j]["file"]);
+				}
+			}
+			
+			$bpTables = $flightInfoImported["bpTables"];
+			for($j = 0; $j < count($bpTables); $j++)
+			{
+				$zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
+				if(file_exists($copiedFilesDir.$bpTables[$j]["file"])) {
+					$Fr->LoadFileToTable($tableNameBp . "_" . $bpTables[$j]["pref"], $copiedFilesDir.$bpTables[$j]["file"]);
+					unlink($copiedFilesDir.$bpTables[$j]["file"]);
+				}
+			}
+			
+			$FlE = new FlightException();
+			if(isset($flightInfoImported["exTableName"]) && 
+				$flightInfoImported["exTableName"] != "")
+			{
+				$tableGuid = substr($tableNameAp, 0, 14);
+				$FlE->CreateFlightExceptionTable($flightId, $tableGuid);
+				$flightInfo = $Fl->GetFlightInfo($flightId);
+				
+				$exTables = $flightInfoImported["exTables"];
+				$zip->extractTo($copiedFilesDir, $exTables);
+				$Fr->LoadFileToTable($flightInfo["exTableName"], $copiedFilesDir.$exTables);
+				if(file_exists($copiedFilesDir.$exTables)) {
+					unlink($copiedFilesDir.$exTables);
+				}
+			}
+			unset($Fl);
+			unset($FlE);
+			unset($Fr);
+			
+			$zip->close();
+			unset($zip);
+			
+			$Usr = new User();
+			$Usr->SetFlightAvaliable($this->username, $flightId);
+			
+			
+			$userId = $Usr->GetUserIdByName($this->username);
+			$Fd = new Folder();
+			$Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
+			unset($Fd);
+			unset($Usr);
+			
+			unlink($copiedFilePath);
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function RegisterActionExecution($extAction, $extStatus, 
+		$extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+	{
+		$action = $extAction;
+		$status = $extStatus;
+		$senderId = $extSenderId;
+		$senderName = $extSenderName;
+		$targetId = $extTargetId;
+		$targetName = $extTargetName;
+		
+		$userInfo = $this->GetUserInfo();
+		$userId = $userInfo['id'];
+		
+		$U = new User();
+		$U->RegisterUserAction($action, $status, $userId,
+			$senderId, $senderName, $targetId, $targetName);
+		
+		unset($U);
+	}
+	
+	public function RegisterActionReject($extAction, $extStatus,
+		$extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+	{
+		$action = $extAction;
+		$status = $extStatus;
+		$senderId = $extSenderId;
+		$senderName = $extSenderName;
+		$targetId = $extTargetId;
+		$targetName = $extTargetName;
+		$userInfo = $this->GetUserInfo();
+		$userId = $userInfo['id'];
+		
+		$U = new User();
+		$U->RegisterUserAction($action, $status, $userId,
+				$senderId, $senderName, $targetId, $targetName);
+		
+		unset($U);
+	}
+
+	public function GetUserInfo()
+	{
+		$U = new User();
+		$uId = $U->GetUserIdByName($this->username);
+		$userInfo = $U->GetUserInfo($uId);
+		unset($U);
+		
+		return $userInfo;
+	}
 }
 
-?>

@@ -153,6 +153,13 @@
 	}
 },
 
+"jsTree": {
+	"create": "Create",
+	"rename": "Rename",
+	"remove": "Remove",
+	"export": "Export"
+},
+
 "indexPage":{
 	"title": "Welcome",
 	"search": "Search",

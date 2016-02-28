@@ -124,7 +124,12 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	        	var selectedBruType = $('select#bruTypeSelectForUploading').find(":selected").text();
 	    	        	
 	        	if(importInsteadConvert) {
-	        		//import
+			$.each(data.result.files, function (index, file) {
+				$('<p/>').text(file.name).appendTo('#files');
+				self.Import(file.name);
+				filesCount++;
+			});
+
 	        	} else {
 		        	if($("input#previewCheckBox:checked").length > 0) {
 		        		//show flight info and preview
@@ -877,7 +882,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
 //EasyUploading
 ///
 FlightUploader.prototype.EasyUploading = function(
-		extBruType,
+		item,
 		extFile
 ) { 
 	
@@ -898,6 +903,39 @@ FlightUploader.prototype.EasyUploading = function(
 	
 	self.InitiateFlightProccessing(pV);
 }
+
+///
+//Import
+///
+FlightUploader.prototype.Import = function(
+		file
+) { 
+	var self = this, 
+	pV = {
+		'action': self.flightUploaderActions["itemImport"],
+		'data': {
+			'file': file
+		}	
+	};
+	
+	$.ajax({
+		type: "POST",
+		data: pV,
+		dataType: 'json',
+		url: FILE_PROCCESSOR_SRC,
+		async: true
+	}).done(function(answ){
+		if(answ["status"] == 'ok') {
+			location.reload();
+		} else {
+			console.log(answ["error"]);
+		}
+	}).fail(function(mess){
+		console.log(mess);
+	});
+}
+
+
 //=============================================================
 function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)

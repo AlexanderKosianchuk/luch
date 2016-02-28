@@ -998,6 +998,55 @@ if ($M->IsAppLoggedIn())
 	
 		unset($U);
 	}
+	else if($M->action == $M->flightActions["itemExport"]) 
+	{
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
+		{
+			if(isset($M->data['id']))
+			{
+				$id = intval($M->data['id']);
+				$zipUrl = $M->ExportFlight($id);
+						
+				$answ = array();
+				if($zipUrl)
+				{
+					$answ = [
+						'status' => 'ok',
+						'zipUrl' => $zipUrl
+					];
+
+					$action = $M->action;
+					$M->RegisterActionExecution($action, "executed", $id, "itemId");
+				}
+				else
+				{
+					$answ['status'] = 'err';
+					$answ['data']['error'] = 'Error during flight export.';
+					$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				}
+				echo json_encode($answ);
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page flights.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	}
 	else if($M->action == $M->flightActions["syncItemsHeaders"])
 	{
 		$U = new User();

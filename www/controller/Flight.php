@@ -236,7 +236,11 @@ class Flight
 		$departureAirport = $extDepartureAirport;
 		$arrivalAirport = $extArrivalAirport;
 		$uploadedFile = $extFile;
-		$aditionalInfo = strval($extAditionalInfo);		
+		$aditionalInfo = "";
+		if(($extAditionalInfo !== null) && 
+			($extAditionalInfo !== false))  {
+			$aditionalInfo = strval($extAditionalInfo);
+		}
 		
 		$tableName = uniqid();
 		$tableNameAp = "_".$tableName."_ap";
@@ -335,7 +339,7 @@ class Flight
 		
 		foreach($cycloBp as $prefix => $prefixCyclo)
 		{
-			$query = "CREATE TABLE `".$tableNameBp."_".$prefix."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
+			$query = "CREATE TABLE `".$tableNameBp."_".$prefixCyclo."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
 				"DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
 			$stmt = $link->prepare($query);
 			$stmt->execute();

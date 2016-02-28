@@ -688,20 +688,7 @@ class FlightsModel
 			unset($U);
 
 			if(in_array($flightId, $avaliableFlights))
-			{				
-// 				$tempFile = $extTempFileName;
-// 				$tempFilePath = UPLOADED_FILES_PATH . "proccessStatus/" . $tempFile;
-				
-// 				$tmpProccStatusFilesDir = UPLOADED_FILES_PATH . "proccessStatus";
-// 				if (!is_dir($tmpProccStatusFilesDir)) {
-// 					mkdir($tmpProccStatusFilesDir);
-// 				}
-					
-// 				$tmpStatus = $this->lang->startFlExcProcc;
-// 				$fp = fopen($tempFilePath, "w");
-// 				fwrite($fp, json_encode($tmpStatus));
-// 				fclose($fp);
-					
+			{
 				$Fl = new Flight();
 				$flightInfo = $Fl->GetFlightInfo($flightId);
 				$apTableName = $flightInfo["apTableName"];
@@ -1059,6 +1046,115 @@ class FlightsModel
 		}
 		
 		return $tableSegment;
+	}
+
+	public function ExportFlight($flightId)
+	{
+		error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
+
+		$Fl = new Flight();
+		$flightInfo = $Fl->GetFlightInfo($flightId);
+
+		$fileGuid = uniqid();
+		
+		$exportedFileDir = UPLOADED_FILES_PATH;
+		$exportedFileName = $flightInfo['bort'] . "_" . 
+			date("Y-m-d", $flightInfo['startCopyTime'])  . "_" . 
+			$flightInfo['voyage'] . "_" . $fileGuid;
+		$exportedFileRoot = $exportedFileDir . $exportedFileName;
+				
+		$exportedFiles = array();
+		
+		$headerFile['dir'] = $exportedFileDir;
+		$headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
+		$headerFile['root'] = $headerFile['dir'].$headerFile['filename'];
+		
+		$exportedFiles[] = $headerFile;
+		
+		$C = new DataBaseConnector();
+		$Bru = new Bru();
+		$apPrefixes = $Bru->GetBruApCycloPrefixes($flightInfo["bruType"]);
+		
+		for($i = 0; $i < count($apPrefixes); $i++)
+		{
+			$exportedTable = $C->ExportTable($flightInfo["apTableName"]."_".$apPrefixes[$i], 
+					$flightInfo["apTableName"]."_".$apPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
+							
+			$exportedFiles[] = $exportedTable;
+			
+			$flightInfo["apTables"][] = array(
+					"pref" => $apPrefixes[$i],
+					"file" => $exportedTable["filename"]); 
+		}
+		
+		$bpPrefixes = $Bru->GetBruBpCycloPrefixes($flightInfo["bruType"]);
+
+		for($i = 0; $i < count($bpPrefixes); $i++)
+		{
+			$exportedTable = $C->ExportTable($flightInfo["bpTableName"]."_".$apPrefixes[$i], 
+					$flightInfo["bpTableName"]."_".$bpPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
+							
+			$exportedFiles[] = $exportedTable;
+			
+			$flightInfo["bpTables"][] = array(
+					"pref" => $bpPrefixes[$i],
+					"file" => $exportedTable["filename"]); 
+		}
+		
+		if($flightInfo["exTableName"] != "")
+		{
+			$exportedTable = $C->ExportTable($flightInfo["exTableName"],
+					$flightInfo["exTableName"] . "_" . $fileGuid, $exportedFileDir);
+			$exportedFiles[] = $exportedTable;
+			
+			$flightInfo["exTables"] = $exportedTable["filename"];
+		}
+		
+		unset($C);	
+
+		$exportedFileDesc = fopen($headerFile['root'], "w");
+		fwrite ($exportedFileDesc , json_encode($flightInfo));
+		fclose($exportedFileDesc);
+		
+		$zip = new ZipArchive;
+		if ($zip->open($exportedFileRoot . '.zip', ZipArchive::CREATE) === TRUE) 
+		{
+			for($i = 0; $i < count($exportedFiles); $i++)
+			{
+				$zip->addFile($exportedFiles[$i]['root'], $exportedFiles[$i]['filename']);
+			}
+			$zip->close();
+		} 
+		else 
+		{
+			error_log('Failed zipping flight. Page asyncFileProcessor.php"');
+		}
+		
+		for($i = 0; $i < count($exportedFiles); $i++)
+		{
+			if(file_exists($exportedFiles[$i]['root'])) {
+				unlink($exportedFiles[$i]['root']);
+			}
+		}
+		
+		$zipURL = 'http';
+		if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on"))
+		{
+			$zipURL .= "s";
+		}
+		$zipURL .= "://";
+		if ($_SERVER["SERVER_PORT"] != "80") {
+			$zipURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
+		} 
+		else 
+		{
+			$zipURL .= $_SERVER["SERVER_NAME"];
+		}
+		$zipURL .=  UPLOADED_FILES_DIR . $exportedFileName . '.zip';
+		
+		error_reporting(E_ALL);
+
+		return $zipURL;
 	}
 	
 	public function GetLastSortTableType()
