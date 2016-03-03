@@ -882,13 +882,11 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
 //EasyUploading
 ///
 FlightUploader.prototype.EasyUploading = function(
-		item,
-		extFile
+		bruType,
+		fileName
 ) { 
 	
 	var self = this,
-		bruType = extBruType,
-		fileName = extFile,
 		flightConvertionAction = self.flightUploaderActions["flightEasyUpload"],
 		tempFileName = guid() + "_tempStatus.json";
 	
