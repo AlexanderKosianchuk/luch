@@ -1004,10 +1004,22 @@ if ($M->IsAppLoggedIn())
 	
 		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
 		{
-			if(isset($M->data['id']))
+			if(isset($M->data['flightIds']) || isset($M->data['folderDest']))
 			{
-				$id = intval($M->data['id']);
-				$zipUrl = $M->ExportFlight($id);
+				$flightIds = [];
+				$folderDest = [];
+				if(isset($M->data['flightIds']) && 
+						is_array($M->data['flightIds'])) {
+					$flightIds = array_merge($flightIds, $M->data['flightIds']);
+				}
+				
+				$folderDest = [];
+				if(isset($M->data['folderDest']) &&
+					is_array($M->data['folderDest'])) {
+						$folderDest = array_merge($folderDest, $M->data['folderDest']);
+				}
+
+				$zipUrl = $M->ExportFlightsAndFolders($flightIds, $folderDest);
 						
 				$answ = array();
 				if($zipUrl)
@@ -1018,13 +1030,14 @@ if ($M->IsAppLoggedIn())
 					];
 
 					$action = $M->action;
-					$M->RegisterActionExecution($action, "executed", $id, "itemId");
+					$M->RegisterActionExecution($action, "executed", json_encode(array_merge($flightIds, $flightIds)), "itemId");
 				}
 				else
 				{
-					$answ['status'] = 'err';
-					$answ['data']['error'] = 'Error during flight export.';
-					$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+					$answ = [
+						'status' => 'empty',
+						'info' => 'No flights to export'
+					];
 				}
 				echo json_encode($answ);
 			}

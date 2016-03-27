@@ -124,12 +124,11 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	        	var selectedBruType = $('select#bruTypeSelectForUploading').find(":selected").text();
 	    	        	
 	        	if(importInsteadConvert) {
-			$.each(data.result.files, function (index, file) {
-				$('<p/>').text(file.name).appendTo('#files');
-				self.Import(file.name);
-				filesCount++;
-			});
-
+					$.each(data.result.files, function (index, file) {
+						$('<p/>').text(file.name).appendTo('#files');
+						self.Import(file.name);
+						filesCount++;
+					});
 	        	} else {
 		        	if($("input#previewCheckBox:checked").length > 0) {
 		        		//show flight info and preview
@@ -886,7 +885,6 @@ FlightUploader.prototype.EasyUploading = function(
 		fileName
 ) { 
 	
-	var self = this,
 		flightConvertionAction = self.flightUploaderActions["flightEasyUpload"],
 		tempFileName = guid() + "_tempStatus.json";
 	

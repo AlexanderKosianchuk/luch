@@ -299,15 +299,6 @@ class Folder
 		{
 			$flightArr[] = $row['flightId'];
 		}
-		
-		/*if($folderId == 0)
-		{
-			$folderInfo['name'] = 'root';
-		}
-		else 
-		{
-			$folderInfo = $this->GetFolderInfo($folderId);
-		}*/
 	
 		$c->Disconnect();
 		unset($c);
@@ -338,6 +329,31 @@ class Folder
 		$c->Disconnect();
 		unset($c);
 		
+		return $subfolders;
+	}
+	
+	public function SubfoldersDeepScan($extFolderId, $extUserId)
+	{
+		$id = $extFolderId;
+		$userId = $extUserId;
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
+				"AND (`userId` = '".$userId."'));";
+	
+		$result = $link->query($query);
+		$subfolders = array();
+		while($row = $result->fetch_array())
+		{
+			$folderId = $row['id'];
+			$subfolders[] = $folderId;
+			$subfolders = array_merge($subfolders, $this->SubfoldersDeepScan($folderId, $userId));
+		}
+		
+		$c->Disconnect();
+		unset($c);
+	
 		return $subfolders;
 	}
 	

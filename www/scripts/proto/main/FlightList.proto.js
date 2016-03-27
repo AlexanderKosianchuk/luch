@@ -1280,13 +1280,14 @@ FlightList.prototype.ProcessItem = function(id) {
 	});
 }
 
-FlightList.prototype.ExportItem = function(id) { 
+FlightList.prototype.ExportItem = function(flightIds, folderDest) { 
 	var self = this;
 	
 	var pV = {
 		action: self.actions["itemExport"],
 		data: {
-			id: id
+			flightIds: flightIds,
+			folderDest: folderDest
 		}
 	};
 	
@@ -1655,7 +1656,7 @@ FlightList.prototype.SupportContent = function() {
 			fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
 			fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
 		
-			/*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
+			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -1676,8 +1677,8 @@ FlightList.prototype.SupportContent = function() {
 		} else if((flights.length > 1) && (folders.length == 0)){
 			fileMenu.empty();
 			
-			/*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-			fileMenu.append('<li id="syncFlightHeaders">' + self.langStr.syncFlightHeaders + '</li>');
+			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
+			/*fileMenu.append('<li id="syncFlightHeaders">' + self.langStr.syncFlightHeaders + '</li>');*/
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -1698,6 +1699,7 @@ FlightList.prototype.SupportContent = function() {
 		} else if((flights.length == 0) && (folders.length > 1)){
 			fileMenu.empty();
 			
+			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -1718,6 +1720,7 @@ FlightList.prototype.SupportContent = function() {
 		} else if((flights.length >= 1) && (folders.length >= 1)){
 			fileMenu.empty();
 			
+			fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
 			fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
 			fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 			
@@ -1845,8 +1848,6 @@ FlightList.prototype.SupportContent = function() {
 					self.ProcessItem(id).done(function(answ) {
 						if(answ['status'] == 'ok'){
 							el.removeAttr("checked");
-							var parent = el.parents("li");
-							parent.fadeOut(200);
 						} else {
 							console.log(answ['data']['error']);
 						}
@@ -1856,24 +1857,28 @@ FlightList.prototype.SupportContent = function() {
 		});
 
 		$("li#export").on('click', function(e){
-			var inputItemsCheck = $(".ItemsCheck:checked");
+			var inputItemsCheck = $(".ItemsCheck:checked"),
+				flightIds = [],
+				folderDest = [];
 			
 			$.each(inputItemsCheck, function(i, el){
 				var el = $(el),
-					type = el.data('type'),
-					id = undefined;
-				
-				if(type == 'flight'){
-					id = el.data('flightid');
-					self.ExportItem(id).done(function(answ) {
-						if(answ['status'] == 'ok'){
-							el.removeAttr("checked");
-							var parent = el.parents("li");
-							parent.fadeOut(200);
-						} else {
-							console.log(answ['data']['error']);
-						}
+					type = el.data('type');
+						
+				if((type == 'flight')){
+					flightIds.push(el.data('flightid'));
+				} else if (type == 'folder'){
+					folderDest.push(el.data('folderdestination'));
+				}
+			});
+			
+			self.ExportItem(flightIds, folderDest).done(function(answ) {
+				if(answ['status'] == 'ok'){
+					$.each(inputItemsCheck, function(i, el){
+						$(el).removeAttr("checked");
 					});
+				} else {
+					console.log(answ);
 				}
 			});
 		});

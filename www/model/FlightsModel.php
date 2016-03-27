@@ -154,10 +154,10 @@ class FlightsModel
 				in_array($Usr->slicePrivilegeArr[2], $this->privilege) ||
 				in_array($Usr->slicePrivilegeArr[3], $this->privilege))
 		{
-			/*$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
+			$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/slice.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->slicesItem);*/
+					</div>", $this->lang->slicesItem);
 		}
 	
 		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
@@ -165,20 +165,20 @@ class FlightsModel
 				in_array($Usr->enginePrivilegeArr[2], $this->privilege) ||
 				in_array($Usr->enginePrivilegeArr[3], $this->privilege))
 		{
-			/*$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
+			$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/engine.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->enginesItem);*/
+					</div>", $this->lang->enginesItem);
 		}
 	
 		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
 				in_array($Usr->enginePrivilegeArr[2], $this->privilege))
 		{
-			/*$leftMenu .= sprintf("<div id='bruTypesLeftMenuRow' class='LeftMenuRow'>
+			$leftMenu .= sprintf("<div id='bruTypesLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/bru.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->bruTypesItem);*/
+					</div>", $this->lang->bruTypesItem);
 		}
 	
 		if(in_array($Usr->docsPrivilegeArr[0], $this->privilege) ||
@@ -187,10 +187,10 @@ class FlightsModel
 				in_array($Usr->docsPrivilegeArr[3], $this->privilege) ||
 				in_array($Usr->docsPrivilegeArr[4], $this->privilege))
 		{
-			/*$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
+			$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/doc.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->docsItem);*/
+					</div>", $this->lang->docsItem);
 		}
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
@@ -199,10 +199,10 @@ class FlightsModel
 				in_array($Usr->userPrivilegeArr[3], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[4], $this->privilege))
 		{
-			/*$leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
+			$leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/user.png'></img>
 					%s&nbsp;
-					</div>", $this->lang->usersItem);*/
+					</div>", $this->lang->usersItem);
 		}
 	
 		$leftMenu .= sprintf("</div>");
@@ -1048,73 +1048,94 @@ class FlightsModel
 		return $tableSegment;
 	}
 
-	public function ExportFlight($flightId)
+	public function ExportFlightsAndFolders($flightIds, $folderDest)
 	{
-		error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
-		$Fl = new Flight();
-		$flightInfo = $Fl->GetFlightInfo($flightId);
-
-		$fileGuid = uniqid();
+		$Fd = new Folder();
+		$U = new User();
+		$uId = $U->GetUserIdByName($this->username);
+		$allFolders = [];
+		foreach ($folderDest as $dest) {
+			$allFolders = $Fd->SubfoldersDeepScan($dest, $uId);
+		}
 		
-		$exportedFileDir = UPLOADED_FILES_PATH;
-		$exportedFileName = $flightInfo['bort'] . "_" . 
-			date("Y-m-d", $flightInfo['startCopyTime'])  . "_" . 
-			$flightInfo['voyage'] . "_" . $fileGuid;
-		$exportedFileRoot = $exportedFileDir . $exportedFileName;
-				
+		foreach ($allFolders as $folderId) {
+			$flightIds = array_merge($flightIds, 
+					$Fd->GetFlightsByFolder($folderId, $uId));
+		}
+		unset($Fd);
+		unset($U);
+		
 		$exportedFiles = array();
-		
-		$headerFile['dir'] = $exportedFileDir;
-		$headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
-		$headerFile['root'] = $headerFile['dir'].$headerFile['filename'];
-		
-		$exportedFiles[] = $headerFile;
-		
+		$exportedFileName = '';
+		error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
+		$Fl = new Flight();
 		$C = new DataBaseConnector();
 		$Bru = new Bru();
-		$apPrefixes = $Bru->GetBruApCycloPrefixes($flightInfo["bruType"]);
 		
-		for($i = 0; $i < count($apPrefixes); $i++)
-		{
-			$exportedTable = $C->ExportTable($flightInfo["apTableName"]."_".$apPrefixes[$i], 
-					$flightInfo["apTableName"]."_".$apPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
-							
-			$exportedFiles[] = $exportedTable;
-			
-			$flightInfo["apTables"][] = array(
-					"pref" => $apPrefixes[$i],
-					"file" => $exportedTable["filename"]); 
-		}
-		
-		$bpPrefixes = $Bru->GetBruBpCycloPrefixes($flightInfo["bruType"]);
+		foreach ($flightIds as $flightId) {
 
-		for($i = 0; $i < count($bpPrefixes); $i++)
-		{
-			$exportedTable = $C->ExportTable($flightInfo["bpTableName"]."_".$apPrefixes[$i], 
-					$flightInfo["bpTableName"]."_".$bpPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
-							
-			$exportedFiles[] = $exportedTable;
+			$flightInfo = $Fl->GetFlightInfo($flightId);
+	
+			$fileGuid = uniqid();
 			
-			$flightInfo["bpTables"][] = array(
-					"pref" => $bpPrefixes[$i],
-					"file" => $exportedTable["filename"]); 
-		}
-		
-		if($flightInfo["exTableName"] != "")
-		{
-			$exportedTable = $C->ExportTable($flightInfo["exTableName"],
-					$flightInfo["exTableName"] . "_" . $fileGuid, $exportedFileDir);
-			$exportedFiles[] = $exportedTable;
+			$exportedFileDir = UPLOADED_FILES_PATH;
+			$exportedFileName = $flightInfo['bort'] . "_" . 
+				date("Y-m-d", $flightInfo['startCopyTime'])  . "_" . 
+				$flightInfo['voyage'] . "_" . $fileGuid;
+			$exportedFileRoot = $exportedFileDir . $exportedFileName;
 			
-			$flightInfo["exTables"] = $exportedTable["filename"];
-		}
-		
-		unset($C);	
+			$headerFile['dir'] = $exportedFileDir;
+			$headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
+			$headerFile['root'] = $headerFile['dir'].$headerFile['filename'];
+			
+			$exportedFiles[] = $headerFile;
 
-		$exportedFileDesc = fopen($headerFile['root'], "w");
-		fwrite ($exportedFileDesc , json_encode($flightInfo));
-		fclose($exportedFileDesc);
+			$apPrefixes = $Bru->GetBruApCycloPrefixes($flightInfo["bruType"]);
+			
+			for($i = 0; $i < count($apPrefixes); $i++)
+			{
+				$exportedTable = $C->ExportTable($flightInfo["apTableName"]."_".$apPrefixes[$i], 
+						$flightInfo["apTableName"]."_".$apPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
+								
+				$exportedFiles[] = $exportedTable;
+				
+				$flightInfo["apTables"][] = array(
+						"pref" => $apPrefixes[$i],
+						"file" => $exportedTable["filename"]); 
+			}
+			
+			$bpPrefixes = $Bru->GetBruBpCycloPrefixes($flightInfo["bruType"]);
+	
+			for($i = 0; $i < count($bpPrefixes); $i++)
+			{
+				$exportedTable = $C->ExportTable($flightInfo["bpTableName"]."_".$apPrefixes[$i], 
+						$flightInfo["bpTableName"]."_".$bpPrefixes[$i] . "_" . $fileGuid, $exportedFileDir);
+								
+				$exportedFiles[] = $exportedTable;
+				
+				$flightInfo["bpTables"][] = array(
+						"pref" => $bpPrefixes[$i],
+						"file" => $exportedTable["filename"]); 
+			}
+			
+			if($flightInfo["exTableName"] != "")
+			{
+				$exportedTable = $C->ExportTable($flightInfo["exTableName"],
+						$flightInfo["exTableName"] . "_" . $fileGuid, $exportedFileDir);
+				$exportedFiles[] = $exportedTable;
+				
+				$flightInfo["exTables"] = $exportedTable["filename"];
+			}
+	
+			$exportedFileDesc = fopen($headerFile['root'], "w");
+			fwrite ($exportedFileDesc , json_encode($flightInfo));
+			fclose($exportedFileDesc);
+		
+		}
+		
+		unset($Fl);
+		unset($C);
+		unset($Bru);
 		
 		$zip = new ZipArchive;
 		if ($zip->open($exportedFileRoot . '.zip', ZipArchive::CREATE) === TRUE) 
@@ -1153,7 +1174,11 @@ class FlightsModel
 		$zipURL .=  UPLOADED_FILES_DIR . $exportedFileName . '.zip';
 		
 		error_reporting(E_ALL);
-
+		
+		if($exportedFileName == '') {
+			return false;
+		}
+		
 		return $zipURL;
 	}
 	
