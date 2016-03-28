@@ -23,55 +23,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		userListTopMenu = null,
 		userListLeftMenu = null,
 		userListWorkspace = null;
-		
-	var LeftMenuClick = function(e) {
-		var target = $(e.target);
-		
-//		if(target.attr('id') == "editBruGeneralInfoLeftMenuRow"){
-//			if(!target.hasClass('LeftMenuRowSelected')){
-//				$("#leftMenuuser .LeftMenuRowSelected").removeClass('LeftMenuRowSelected', {duration:500});
-//				
-//				target.addClass('LeftMenuRowSelected', {duration:500});
-//				
-//				if(GeneralInfo == null){
-//					GeneralInfo = new userGeneralInfo(langStr, srvcStrObj, eventHandler, userListFactoryContainer);
-//				};
-//				
-//				GeneralInfo.Show(userId, userListTopMenu, userListWorkspace);
-//			}
-//		} else if(target.attr('id') == "editBruTplsLeftMenuRow"){
-//			if(!target.hasClass('LeftMenuRowSelected') &&
-//					(Templates != null)){
-//				$("#leftMenuuser .LeftMenuRowSelected").removeClass('LeftMenuRowSelected', {duration:500});
-//				
-//				target.addClass('LeftMenuRowSelected', {duration:500});
-//				
-//				if(Templates == null){
-//					Templates = new userTemplates(langStr, srvcStrObj, eventHandler, userListFactoryContainer);
-//				};
-//				
-//				Templates.Show(userId, userListTopMenu, userListWorkspace);
-//			}
-//		} else if(target.attr('id') == "editBruCycloLeftMenuRow"){
-//			if(!target.hasClass('LeftMenuRowSelected')){
-//				$("#leftMenuuser .LeftMenuRowSelected").removeClass('LeftMenuRowSelected', {duration:500});
-//				
-//				target.addClass('LeftMenuRowSelected', {duration:500});
-//				
-//				//self.ShowFlightViewParamsList();
-//			}
-//		} else if(target.attr('id') == "editBruEventsLeftMenuRow"){
-//			if(!target.hasClass('LeftMenuRowSelected')){
-//				$("#leftMenuuser .LeftMenuRowSelected").removeClass('LeftMenuRowSelected', {duration:500});
-//				
-//				target.addClass('LeftMenuRowSelected', {duration:500});
-//				
-//				//self.ShowFlightViewParamsList();
-//			}
-//		}
-		
-		return this;
-	}
+				
 	
 	///
 	// PRIVILEGED

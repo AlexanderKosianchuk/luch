@@ -115,6 +115,7 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
 			'data-yax': yAxNum,
 			'data-id': id,
 			'data-code': content,
+			'data-color': color,
 			'data-title': comment,
 			'data-supporttoolsshown': false,
 			'data-subscribers': '',
@@ -123,13 +124,13 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
 		.css({
 			"position": 'absolute',
 			"display": 'none',
-			"border": '1px solid #999',
+			"border": '2px solid #' + color,
 			"font-size": '14px',
 			"padding": '2px',
-			"background-color": "#" + color,
+			"background-color": "#fff",
 			"border-radius": '3px',
 			"z-index": '1',
-			"opacity": '0.6'})
+			"opacity": '0.9'})
 		.appendTo(self.ccCont).fadeIn(200);	
 		
 		if(visType.indexOf("C") > -1){
@@ -412,8 +413,7 @@ Exception.prototype.ShowHideExcStartSection = function(sender, xAxis){
 			var excContStartTime = excCont.data('time'),
 				apValues = self.GetValue(self.dataset, excContStartTime),
 				bpValues = self.GetBinaries(self.dataset, excContStartTime),
-				color = excCont.css('background-color');
-				color = self.rgb2hex(color);
+				color = excCont.data('color');
 			
 			self.PutSectionBar(excContId, "S", excContCode, excContStartTime, apValues, bpValues, color);
 			
@@ -447,9 +447,8 @@ Exception.prototype.ShowHideExcEndSection = function(sender, xAxis){
 			var excContStartTime = excCont.data('endtime'),
 				apValues = self.GetValue(self.dataset, excContStartTime),
 				bpValues = self.GetBinaries(self.dataset, excContStartTime),
-				color = excCont.css('background-color');
-				color = self.rgb2hex(color);
-			
+				color = excCont.data('color');
+				
 			self.PutSectionBar(excContId, "E", excContCode, excContStartTime, apValues, bpValues, color);
 			
 		}
@@ -757,15 +756,3 @@ Exception.prototype.toHHMMSS = function(UNIX_timestamp){
      return time;
 }
 //=============================================================
-
-//=============================================================
-Exception.prototype.rgb2hex = function(rgb) {
-	rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-	return "" + this.hex(rgb[1]) + this.hex(rgb[2]) + this.hex(rgb[3]);
-}
-Exception.prototype.hex = function(x) {
-	var hexDigits = new Array
-    ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"); 
-	
-	return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
-}

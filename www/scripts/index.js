@@ -134,9 +134,7 @@
 	///=======================================================
 	//FlightViewOptions
 	///	
-	eventHandler.on("viewFlightOptions", function(e, flightId, task, showcase){
-		console.log(task);
-		
+	eventHandler.on("viewFlightOptions", function(e, flightId, task, showcase){	
 		if(showcase == null){
 			W.RemoveShowcases(1);
 			showcase = W.NewShowcase();
@@ -191,6 +189,17 @@
 	
 	eventHandler.on("userChangeLanguage", function(e, lang){		
 		U.changeLanguage(lang);
+	});
+	
+	eventHandler.on("userShowList", function(e, showcase){		
+		if(showcase == null){
+			W.RemoveShowcases(1);
+			showcase = W.NewShowcase();
+		} else {
+			W.ClearShowcase(showcase);
+		}
+		
+		U.FillFactoryContaider(showcase);
 	});
 	
 	///=======================================================

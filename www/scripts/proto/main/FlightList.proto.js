@@ -104,7 +104,9 @@ FlightList.prototype.leftMenuClick = function(e){
 			
 			target.addClass('LeftMenuRowSelected', {duration:500});
 			
-			//self.ShowFlightViewTemplates();
+			self.ShowFlightsListInitial();
+			self.TriggerResize();
+			self.TriggerUploading();	
 		}
 	} else if(target.attr('id') == "bruTypesLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
@@ -131,7 +133,7 @@ FlightList.prototype.leftMenuClick = function(e){
 			
 			target.addClass('LeftMenuRowSelected', {duration:500});
 			
-			//self.ShowFlightViewParamsList();
+			self.eventHandler.trigger("userShowList", [self.flightListWorkspace]);
 		}
 	}
 }
