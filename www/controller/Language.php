@@ -1,6 +1,6 @@
 <?php
 
-define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "/lang/_actions.info");
+define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "/view/_actions.json");
 define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/lang/");
 define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/lang/Default.lang");
 

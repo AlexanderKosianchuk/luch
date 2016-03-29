@@ -47,8 +47,7 @@ if ($M->IsAppLoggedIn())
 		}
 	
 		unset($U);
-	} else if($M->action == $M->userActions["userChangeLanguage"])
-	{
+	} else if($M->action == $M->userActions["userChangeLanguage"]) {
 		$U = new User();
 		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
 		{
@@ -84,9 +83,112 @@ if ($M->IsAppLoggedIn())
 		}
 	
 		unset($U);
-	}
-	else 
-	{
+	} else if($M->action == $M->userActions["buildUserTable"]) {
+		$U = new User();
+		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
+		{
+			if(isset($M->data['data']))
+			{
+				$action = $M->action;		
+				$table = $M->BuildUserTable();
+				$M->RegisterActionExecution($action, "executed", 0, 'getUserList', '', '');
+				
+				$answ = [
+					"status" => "ok",
+					"data" => $table,
+					"sortCol" => 2, // id
+					"sortType" => 'desc'
+				];
+	
+				echo json_encode($answ);
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page user.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
+	
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	} else if($M->action == $M->userActions["segmentTable"]) {
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_VIEW_USERS, $M->privilege))
+		{
+			if(isset($M->data['data']))
+			{
+				$aoData = $M->data['data'];
+				$sEcho = $aoData[sEcho]['value'];
+				$iDisplayStart = $aoData[iDisplayStart]['value'];
+				$iDisplayLength = $aoData[iDisplayLength]['value'];
+				$action = $M->action;
+	
+				$sortValue = count($aoData) - 3;
+				$sortColumnName = 'id';
+				$sortColumnNum = $aoData[$sortValue]['value'];
+				$sortColumnType = strtoupper($aoData[$sortValue + 1]['value']);
+	
+				switch ($sortColumnNum){
+					case(1):
+						{
+							$sortColumnName = 'login';
+							break;
+						}
+					case(2):
+						{
+							$sortColumnName = 'lang';
+							break;
+						}
+					case(3):
+						{
+							$sortColumnName = 'company';
+							break;
+						}
+				}
+	
+				$totalRecords = -1;
+				$aaData["sEcho"] = $sEcho;
+				$aaData["iTotalRecords"] = $totalRecords;
+				$aaData["iTotalDisplayRecords"] = $totalRecords;
+	
+				$M->RegisterActionExecution($action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+	
+				$tableSegment = $M->BuildTableSegment($sortColumnName, $sortColumnType);
+				$aaData["aaData"] = $tableSegment;
+	
+				echo(json_encode($aaData));
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+						json_encode($_POST) . ". Page flights.php";
+						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+						echo(json_encode($answ));
+			}
+		}
+		else
+		{
+	
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	} else {
 		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
 				" . Action: " . json_encode($_POST['action']) . 
 				" . Page: " . $M->curPage. ".";

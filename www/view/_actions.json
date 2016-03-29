@@ -79,7 +79,9 @@
 
 "userPage": {
 	"userLogout": "userLogout",
-	"userChangeLanguage": "userChangeLanguage"
+	"userChangeLanguage": "userChangeLanguage",
+	"buildUserTable": "buildUserTable",
+	"segmentTable": "segmentTable"
 },
 
 "viewOptionsPage": {

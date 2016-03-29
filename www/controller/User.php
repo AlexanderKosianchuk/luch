@@ -489,10 +489,17 @@ class User
 		return $answer;
 	}
 	
-	public function GetUsersList($extAvaliableUsersIds)
+	public function GetUsersList($userId)
+	{
+		$userName = $this->GetUserNameById($userId);
+		$avalibleUsers = $this->GetAvaliableUsers($userName);
+		return $this->GetUsersListByAvaliableIds($avalibleUsers);
+	}
+	
+	public function GetUsersListByAvaliableIds($extAvaliableUsersIds)
 	{
 		$avaliableUsersIds = $extAvaliableUsersIds;
-		
+	
 		$userInfoArr = array();
 		if(count($avaliableUsersIds) > 0)
 		{
@@ -501,28 +508,20 @@ class User
 			{
 				$inString .= "'" . $id ."',";
 			}
-				
+	
 			$inString = substr($inString, 0, -1);
-			
+				
 			$c = new DataBaseConnector();
 			$link = $c->Connect();
-		
-			$result = $link->query("SELECT * FROM `user_personal` WHERE 
+	
+			$result = $link->query("SELECT * FROM `user_personal` WHERE
 					`id` IN (".$inString.") ORDER BY `id`;");
-
+	
 			while($row = $result->fetch_array())
 			{	
-				$userInfo = array("id"=>$row['id'],
-					"login"=>$row['login'],
-					"company"=>$row['company'],
-					"privilege"=>$row['privilege'],
-					"options"=>$row['options'],
-					"subscribers"=>$row['subscribers'],
-					"author"=>$row['author']);
-				
-				$userInfoArr[] = $userInfo;
+				$userInfoArr[] = $row;
 			}
-		
+	
 			$c->Disconnect();
 			unset($c);
 		}

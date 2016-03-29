@@ -137,6 +137,62 @@ class UserModel
 		unset($U);
 	}
 	
+	public function GetUserList()
+	{
+		$userInfo = $this->GetUserInfo();
+		$U = new User();
+		
+		$avalibleUsers = $U->GetUsersList($userInfo['id']);
+		
+		unset($U);
+		
+		return $avalibleUsers;
+	}
+		
+	public function BuildUserTable()
+	{
+		$table = sprintf("<table id='userTable' cellpadding='0' cellspacing='0' border='0'>
+				<thead><tr>");
+	
+		$table .= sprintf("<th name='checkbox' style='width:%s;'>%s</th>", "1%", "<input id='tableCheckAllItems' type='checkbox'/>");
+		$table .= sprintf("<th name='login'>%s</th>", '1');
+		$table .= sprintf("<th name='lang'>%s</th>", '2');
+		$table .= sprintf("<th name='company'>%s</th>", '3');
+		$table .= sprintf("<th name='company'>%s</th>", '4');
+	
+		$table .= sprintf("</tr></thead><tfoot style='display: none;'><tr>");
+	
+		for($i = 0; $i < 5; $i++) {
+			$table .= sprintf("<th></th>");
+		}
+	
+		$table .= sprintf("</tr></tfoot><tbody></tbody></table>");
+		return $table;
+	}
+	
+	public function BuildTableSegment($extOrderColumn, $extOrderType)
+	{
+		$orderColumn = $extOrderColumn;
+		$orderType = $extOrderType;
+	
+		$userList = $this->GetUserList();
+	
+		$tableSegment = [];
+	
+		foreach($userList as $user)
+		{				
+			$tableSegment[] = array(
+					"<input class='ItemsCheck' data-type='user' data-iserid='".$user['id']."' type='checkbox'/>",
+					$user['login'],
+					$user['lang'],
+					$user['company'],
+					str_replace(",", ", ", $user['privilege'])
+			);
+		}
+	
+		return $tableSegment;
+	}
+	
 	public function GetUserInfo()
 	{
 		$U = new User();

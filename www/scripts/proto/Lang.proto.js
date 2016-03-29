@@ -1,4 +1,4 @@
-var SERVICE_STRS = location.protocol + '//' + location.host + "/lang/" + "_actions.info",
+var SERVICE_STRS = location.protocol + '//' + location.host + "/view/" + "_actions.json",
 	
 	LANG_FILES_PATH = location.protocol + '//' + location.host + "/lang/",
 	LANG_FILE_DEFAULT =  location.protocol + '//' + location.host + "/lang/" + "Default.lang";
