@@ -12,7 +12,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 //╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┃┃
 //╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┗┛
 //================================================================
-class ViewOptionsModel
+class ViewOptionsController
 {
 	public $curPage = 'viewOptionsPage';
 	
@@ -99,7 +99,7 @@ class ViewOptionsModel
 	public function PutLeftMenu()
 	{
 		$leftMenu = "<div id='leftMenuOptionsView' class='LeftMenu'>";
-		$leftMenu .= "<input class='SearchBox' value=' Поиск' size='24' disabled></input>";
+		$leftMenu .= "<input class='SearchBox' value=' Поиск' size='20' disabled></input>";
 		$leftMenu .= "<div id='templatesLeftMenuRow' class='LeftMenuRowOptions LeftMenuRowSelected'>" .
 				"<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>" .
 				" " . $this->lang->flightViewOptionsTemplates .
@@ -358,39 +358,36 @@ class ViewOptionsModel
 		for ($i = 0; $i < count($flightApHeaders); $i++)
 		{
 			$paramList .= sprintf ("
-    <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-     data-colorpicker='false' readonly/>
-    <label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
-    %s, %s_%s </label>
-    </br>",
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['name'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['channel']);
+				<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+					data-colorpicker='false' readonly/>
+				<label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
+				%s, %s </label>
+				</br>",
+					$flightApHeaders[$i]['color'],
+					$flightApHeaders[$i]['color'],
+					$flightApHeaders[$i]['code'],
+					$flightApHeaders[$i]['color'],
+					$flightApHeaders[$i]['code'],
+					$flightApHeaders[$i]['name'],
+					$flightApHeaders[$i]['code']);
 		}
 		
 		$paramList .= sprintf ("</div><div class='BpList'>");
 	
 		for ($i = 0; $i < count($flightBpHeaders); $i++)
 		{
-		 $paramList .= sprintf ("
-   <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-    data-colorpicker='false' readonly/>
-   <label style='display:inline;'>
-   <input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
-   %s, %s_%s</label></br>",
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['name'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['channel']);
+			$paramList .= sprintf ("<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+				data-colorpicker='false' readonly/>
+			<label style='display:inline;'>
+			<input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
+			%s, %s</label></br>",
+					$flightBpHeaders[$i]['color'],
+					$flightBpHeaders[$i]['color'],
+							$flightBpHeaders[$i]['code'],
+							$flightBpHeaders[$i]['color'],
+							$flightBpHeaders[$i]['code'],
+							$flightBpHeaders[$i]['name'],
+							$flightBpHeaders[$i]['code']);
 		}
 		
 		$paramList .= sprintf("</div></div></br>");
@@ -453,39 +450,36 @@ class ViewOptionsModel
 		for ($i = 0; $i < count($flightApHeaders); $i++)
 		{
 			$paramList .= sprintf ("
-    <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-     data-colorpicker='false' readonly/>
-    <label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
-    %s, %s_%s </label>
-    </br>",
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['name'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['channel']);
+				<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+					data-colorpicker='false' readonly/>
+				<label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroupPaged' value='%s'/>
+				%s, %s </label>
+				</br>",
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['code'],
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['code'],
+				$flightApHeaders[$i]['name'],
+				$flightApHeaders[$i]['code']);
 		}
 	
 		$paramList .= sprintf ("</div><div class='BpList'>");
 	
 		for ($i = 0; $i < count($flightBpHeaders); $i++)
 		{
-		$paramList .= sprintf ("
-   <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-    data-colorpicker='false' readonly/>
-   <label style='display:inline;'>
-   <input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
-   %s, %s_%s</label></br>",
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['name'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['channel']);
+		$paramList .= sprintf ("<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+				data-colorpicker='false' readonly/>
+			<label style='display:inline;'>
+			<input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroupPaged' value='%s'/>
+			%s, %s</label></br>",
+					$flightBpHeaders[$i]['color'],
+						$flightBpHeaders[$i]['color'],
+						$flightBpHeaders[$i]['code'],
+						$flightBpHeaders[$i]['color'],
+						$flightBpHeaders[$i]['code'],
+						$flightBpHeaders[$i]['name'],
+						$flightBpHeaders[$i]['code']);
 		}
 	
 		$paramList .= sprintf("</div></div></br>");
@@ -521,39 +515,36 @@ class ViewOptionsModel
 		for ($i = 0; $i < count($flightApHeaders); $i++)
 		{
 		$paramList .= sprintf ("
-    <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-     data-colorpicker='false' readonly/>
-    <label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
-    %s, %s_%s </label>
-    </br>",
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['color'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['name'],
-     $flightApHeaders[$i]['code'],
-     $flightApHeaders[$i]['channel']);
+				<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+					data-colorpicker='false' readonly/>
+				<label style='display:inline;'><input type='checkbox' class='ParamsCheckboxSearched' value='%s'/>
+				%s, %s </label>
+				</br>",
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['code'],
+				$flightApHeaders[$i]['color'],
+				$flightApHeaders[$i]['code'],
+				$flightApHeaders[$i]['name'],
+				$flightApHeaders[$i]['code']);
 		}
 	
 			$paramList .= sprintf ("</div><div class='BpList'>");
 	
 		for ($i = 0; $i < count($flightBpHeaders); $i++)
 			{
-			$paramList .= sprintf ("
-   <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-    data-colorpicker='false' readonly/>
-   <label style='display:inline;'>
-   <input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
-   %s, %s_%s</label></br>",
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['color'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['name'],
-     $flightBpHeaders[$i]['code'],
-     $flightBpHeaders[$i]['channel']);
+			$paramList .= sprintf ("<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
+				data-colorpicker='false' readonly/>
+			<label style='display:inline;'>
+			<input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxSearched' value='%s'/>
+			%s, %s</label></br>",
+					$flightBpHeaders[$i]['color'],
+					$flightBpHeaders[$i]['color'],
+					$flightBpHeaders[$i]['code'],
+					$flightBpHeaders[$i]['color'],
+					$flightBpHeaders[$i]['code'],
+					$flightBpHeaders[$i]['name'],
+					$flightBpHeaders[$i]['code']);
 			}
 	
 			$paramList .= sprintf("</div></div></br>");

@@ -9,7 +9,7 @@ require_once (@$_SERVER ['DOCUMENT_ROOT'] . "/includes.php");
 // ║║──║║║║║║║╚╣║═╣║
 // ╚╝──╚╝╚╩╝╚╩═╩══╩╝
 // ================================================================
-class PrinterModel {
+class PrinterController {
 	public $curPage = 'printerPage';
 	private $ulogin;
 	private $username;

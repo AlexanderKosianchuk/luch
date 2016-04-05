@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/BruModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
 
-$M = new BruModel($_POST, $_SESSION);
+$M = new BruController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

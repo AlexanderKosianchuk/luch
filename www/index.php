@@ -1,7 +1,7 @@
 <?php 
 
 require_once(@__DIR__."/includes.php"); 
-require_once(@__DIR__."/model/IndexModel.php");
+require_once(@__DIR__."/controller/IndexController.php");
 
 // Start a secure session if none is running
 if (!sses_running())
@@ -9,7 +9,7 @@ if (!sses_running())
 	sses_start();
 }
 
-$M = new IndexModel();
+$M = new IndexController();
 
 if ($M->IsAppLoggedIn())
 {

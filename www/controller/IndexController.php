@@ -10,7 +10,7 @@ require_once(@"includes.php");
 //╔╣╠╣║║║╚╝║║═╬╬╬╗
 //╚══╩╝╚╩══╩══╩╝╚╝
 //================================================================
-class IndexModel
+class IndexController
 {
 	private $curPage = 'indexPage';
 	

@@ -19,7 +19,7 @@
 		var langStr = data;
 		LA.GetServiceStrs().done(function(data){
 			var srvcStrObj = data,
-				showcase = W.NewShowcase();
+				wsp = W.NewShowcase();
 			FL = new FlightList(langStr, srvcStrObj, eventHandler);
 			FU = new FlightUploader($window, $document, langStr, srvcStrObj, eventHandler);
 			FP = new FlightProccessingStatus(langStr);
@@ -27,9 +27,8 @@
 			B = new BruType($window, $document, langStr, srvcStrObj, eventHandler);
 			C = new Chart($window, $document, langStr, srvcStrObj, eventHandler);	
 			U = new User($window, $document, langStr, srvcStrObj, eventHandler);
-				
-			FL.FillFactoryContaider(showcase);
-			FP.SupportUploadingStatus();
+			
+			FL.FillFactoryContaider(wsp);
 		});
 	});
 	
@@ -99,6 +98,24 @@
 	eventHandler.on("removeShowcase", function(e, data){
 		var flightUploaderFactoryContainer = data;
 		W.RemoveShowcase(flightUploaderFactoryContainer);
+	});
+
+	///=======================================================
+	//FlightList
+	///
+	
+	eventHandler.on("flightShowList", function(e, showcase){
+		if(showcase == null){
+			W.RemoveShowcases(1);
+			showcase = W.NewShowcase();
+		} else {
+			W.ClearShowcase(showcase);
+		}
+		
+		if((FP != null) && (FL != null)) {		
+			FL.ShowFlightsListInitial(showcase);
+			FP.SupportUploadingStatus();
+		}
 	});
 		
 	///=======================================================

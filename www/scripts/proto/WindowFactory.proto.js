@@ -132,12 +132,12 @@ WindowFactory.prototype.ResizeShowcase = function(e) {
 	$(".LeftMenu").css("height", self.window.height() - self.topMenuHeight);
 	$(".WorkSpace").css({
 		"height": self.window.height() - self.topMenuHeight - 10, //10 because padding
-		"width": self.window.width() - self.leftMenuWidth - 10,
+		"width": self.window.width() - self.leftMenuWidth,
 	});
 	$(".OptionsMenu").css("width", self.window.width() - self.leftMenuWidth - 20);
 	$(".Content").css({
 		"height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35, //35 because padding and margin
-		"width": self.window.width() - self.leftMenuWidth - 20
+		"width": self.window.width() - self.leftMenuWidth
 	});
 	
 	$(".OptionsMenuFullWidth").css("width", self.window.width() - 10);

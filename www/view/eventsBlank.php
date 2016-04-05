@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/PrinterModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
 
-$M = new PrinterModel($_POST, $_SESSION);
+$M = new PrinterController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

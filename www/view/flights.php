@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/FlightsModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
 
-$M = new FlightsModel($_POST, $_SESSION);
+$M = new FlightsController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

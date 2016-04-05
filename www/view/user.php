@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/UserModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
 
-$M = new UserModel($_POST, $_SESSION);
+$M = new UserController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

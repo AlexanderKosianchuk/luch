@@ -12,7 +12,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 //────║║
 //────╚╝
 //================================================================
-class UploaderModel
+class UploaderController
 {
 	public $curPage = 'uploaderPage';
 	
@@ -616,9 +616,9 @@ class UploaderModel
 		else
 		{
 			$answ["status"] = "err";
-			$answ["error"] = "Invalid slice range. Page UploaderModel.php";
+			$answ["error"] = "Invalid slice range. Page UploaderController.php";
 			
-			error_log("Invalid slice range. Page UploaderModel.php");
+			error_log("Invalid slice range. Page UploaderController.php");
 			echo(json_encode($answ));
 			exit();
 		}
@@ -701,9 +701,9 @@ class UploaderModel
 		else
 		{
 			$answ["status"] = "err";
-			$answ["error"] = "Invalid slice range. Page UploaderModel.php";
+			$answ["error"] = "Invalid slice range. Page UploaderController.php";
 				
-			error_log("Invalid slice range. Page UploaderModel.php");
+			error_log("Invalid slice range. Page UploaderController.php");
 			echo(json_encode($answ));
 			exit();
 		}

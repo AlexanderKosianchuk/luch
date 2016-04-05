@@ -2,7 +2,7 @@
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
 
-class UserModel
+class UserController
 {
 	public $curPage = 'userPage';
 	
@@ -155,14 +155,15 @@ class UserModel
 				<thead><tr>");
 	
 		$table .= sprintf("<th name='checkbox' style='width:%s;'>%s</th>", "1%", "<input id='tableCheckAllItems' type='checkbox'/>");
-		$table .= sprintf("<th name='login'>%s</th>", '1');
-		$table .= sprintf("<th name='lang'>%s</th>", '2');
-		$table .= sprintf("<th name='company'>%s</th>", '3');
-		$table .= sprintf("<th name='company'>%s</th>", '4');
+		$table .= sprintf("<th name='login'>%s</th>", $this->lang->userLogin);
+		$table .= sprintf("<th name='lang'>%s</th>", $this->lang->userLang);
+		$table .= sprintf("<th name='company'>%s</th>", $this->lang->userCompany);
+		$table .= sprintf("<th name='privilege'>%s</th>", $this->lang->userPrivilege);
+		$table .= sprintf("<th name='logo'>%s</th>", $this->lang->userLogo);
 	
 		$table .= sprintf("</tr></thead><tfoot style='display: none;'><tr>");
 	
-		for($i = 0; $i < 5; $i++) {
+		for($i = 0; $i < 6; $i++) {
 			$table .= sprintf("<th></th>");
 		}
 	
@@ -186,7 +187,8 @@ class UserModel
 					$user['login'],
 					$user['lang'],
 					$user['company'],
-					str_replace(",", ", ", $user['privilege'])
+					str_replace(",", ", ", $user['privilege']),
+					$user['logo']
 			);
 		}
 	

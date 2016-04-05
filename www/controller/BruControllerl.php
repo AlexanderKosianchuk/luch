@@ -10,7 +10,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 //║╚═╝║║║╚╝║
 //╚═══╩╝╚══╝
 //================================================================
-class BruModel
+class BruController
 {
 	public $curPage = 'bruTypesPage';
 	

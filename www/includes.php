@@ -7,23 +7,23 @@ require_once(@SITE_ROOT_DIR."/ulogin/config/all.inc.php");
 require_once(@SITE_ROOT_DIR."/ulogin/main.inc.php");
 
 //service scr
-require_once(@SITE_ROOT_DIR."/controller/Language.php");
+require_once(@SITE_ROOT_DIR."/model/Language.php");
 
 //controller
-require_once(@SITE_ROOT_DIR."/controller/DataBaseConnector.php");
-require_once(@SITE_ROOT_DIR."/controller/Flight.php");
-require_once(@SITE_ROOT_DIR."/controller/Folder.php");
-require_once(@SITE_ROOT_DIR."/controller/Bru.php");
-require_once(@SITE_ROOT_DIR."/controller/Frame.php");
-require_once(@SITE_ROOT_DIR."/controller/Channel.php");
-//require_once(@"/controller/Cacher.php");
-require_once(@SITE_ROOT_DIR."/controller/FlightException.php");
-require_once(@SITE_ROOT_DIR."/controller/ParamSetTemplate.php");
-require_once(@SITE_ROOT_DIR."/controller/Slice.php");
-require_once(@SITE_ROOT_DIR."/controller/Engine.php");
-require_once(@SITE_ROOT_DIR."/controller/User.php");
-require_once(@SITE_ROOT_DIR."/controller/Airport.php");
-require_once(@SITE_ROOT_DIR."/controller/Vocabulary.php");
+require_once(@SITE_ROOT_DIR."/model/DataBaseConnector.php");
+require_once(@SITE_ROOT_DIR."/model/Flight.php");
+require_once(@SITE_ROOT_DIR."/model/Folder.php");
+require_once(@SITE_ROOT_DIR."/model/Bru.php");
+require_once(@SITE_ROOT_DIR."/model/Frame.php");
+require_once(@SITE_ROOT_DIR."/model/Channel.php");
+
+require_once(@SITE_ROOT_DIR."/model/FlightException.php");
+require_once(@SITE_ROOT_DIR."/model/ParamSetTemplate.php");
+require_once(@SITE_ROOT_DIR."/model/Slice.php");
+require_once(@SITE_ROOT_DIR."/model/Engine.php");
+require_once(@SITE_ROOT_DIR."/model/User.php");
+require_once(@SITE_ROOT_DIR."/model/Airport.php");
+require_once(@SITE_ROOT_DIR."/model/Vocabulary.php");
 
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
 define("UPLOADED_FILES_PATH", 

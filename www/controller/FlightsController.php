@@ -12,7 +12,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 //───────╔═╝║
 //───────╚══╝
 //================================================================
-class FlightsModel
+class FlightsController
 {
 	public $curPage = 'flightsPage';
 	
@@ -149,31 +149,33 @@ class FlightsModel
 					</div>", $this->lang->flightsItem);
 		}
 	
-		if(in_array($Usr->slicePrivilegeArr[0], $this->privilege) ||
-				in_array($Usr->slicePrivilegeArr[1], $this->privilege) ||
-				in_array($Usr->slicePrivilegeArr[2], $this->privilege) ||
-				in_array($Usr->slicePrivilegeArr[3], $this->privilege))
-		{
-			$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
-					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/slice.png'></img>
-					%s&nbsp;
-					</div>", $this->lang->slicesItem);
-		}
+// 		if(in_array($Usr->slicePrivilegeArr[0], $this->privilege) ||
+// 				in_array($Usr->slicePrivilegeArr[1], $this->privilege) ||
+// 				in_array($Usr->slicePrivilegeArr[2], $this->privilege) ||
+// 				in_array($Usr->slicePrivilegeArr[3], $this->privilege))
+// 		{
+// 			$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
+// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/slice.png'></img>
+// 					%s&nbsp;
+// 					</div>", $this->lang->slicesItem);
+// 		}
 	
-		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
-				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
-				in_array($Usr->enginePrivilegeArr[2], $this->privilege) ||
-				in_array($Usr->enginePrivilegeArr[3], $this->privilege))
-		{
-			$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
-					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/engine.png'></img>
-					%s&nbsp;
-					</div>", $this->lang->enginesItem);
-		}
+// 		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
+// 				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
+// 				in_array($Usr->enginePrivilegeArr[2], $this->privilege) ||
+// 				in_array($Usr->enginePrivilegeArr[3], $this->privilege))
+// 		{
+// 			$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
+// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/engine.png'></img>
+// 					%s&nbsp;
+// 					</div>", $this->lang->enginesItem);
+// 		}
 	
-		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
-				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
-				in_array($Usr->enginePrivilegeArr[2], $this->privilege))
+		if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
+				in_array($Usr->bruTypesPrivilegeArr[1], $this->privilege) ||
+				in_array($Usr->bruTypesPrivilegeArr[2], $this->privilege) ||
+				in_array($Usr->bruTypesPrivilegeArr[3], $this->privilege) ||
+				in_array($Usr->bruTypesPrivilegeArr[4], $this->privilege))
 		{
 			$leftMenu .= sprintf("<div id='bruTypesLeftMenuRow' class='LeftMenuRow'>
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/bru.png'></img>
@@ -181,17 +183,17 @@ class FlightsModel
 					</div>", $this->lang->bruTypesItem);
 		}
 	
-		if(in_array($Usr->docsPrivilegeArr[0], $this->privilege) ||
-				in_array($Usr->docsPrivilegeArr[1], $this->privilege) ||
-				in_array($Usr->docsPrivilegeArr[2], $this->privilege) ||
-				in_array($Usr->docsPrivilegeArr[3], $this->privilege) ||
-				in_array($Usr->docsPrivilegeArr[4], $this->privilege))
-		{
-			$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
-					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/doc.png'></img>
-					%s&nbsp;
-					</div>", $this->lang->docsItem);
-		}
+// 		if(in_array($Usr->docsPrivilegeArr[0], $this->privilege) ||
+// 				in_array($Usr->docsPrivilegeArr[1], $this->privilege) ||
+// 				in_array($Usr->docsPrivilegeArr[2], $this->privilege) ||
+// 				in_array($Usr->docsPrivilegeArr[3], $this->privilege) ||
+// 				in_array($Usr->docsPrivilegeArr[4], $this->privilege))
+// 		{
+// 			$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
+// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/doc.png'></img>
+// 					%s&nbsp;
+// 					</div>", $this->lang->docsItem);
+// 		}
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[1], $this->privilege) ||
@@ -571,7 +573,7 @@ class FlightsModel
 			{
 				unset($Fd);
 				$dat = "Not avaliable for current user. DeleteFolder id - " . $id . ". " .
-					"Username - " . $this->username . ". Page FlightsModel.php";
+					"Username - " . $this->username . ". Page FlightsController.php";
 				error_log($dat);
 				$result['status'] = false;
 				$result['data'] = $dat;
@@ -580,7 +582,7 @@ class FlightsModel
 		}
 		else
 		{
-			error_log("Incorrect input data. DeleteFolder id - " . json_encode($extId) . ". Page FlightsModel.php");
+			error_log("Incorrect input data. DeleteFolder id - " . json_encode($extId) . ". Page FlightsController.php");
 			$result['status'] = false;
 			return $result;
 		}
@@ -621,14 +623,14 @@ class FlightsModel
 			else
 			{
 				error_log("Not avaliable for current user. DeleteFlight id - " . $id . ". " .
-						"Username - " . $this->username . ". Page FlightsModel.php");
+						"Username - " . $this->username . ". Page FlightsController.php");
 				$result['status'] = false;
 				return $result['status'];
 			}
 		}
 		else
 		{
-			error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsModel.php");
+			error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsController.php");
 			$result['status'] = false;
 			return $result['status'];
 		}
@@ -753,14 +755,14 @@ class FlightsModel
 			else
 			{
 				error_log("Not avaliable for current user. ProcessFlight id - " . $id . ". " .
-						"Username - " . $this->username . ". Page FlightsModel.php");
+						"Username - " . $this->username . ". Page FlightsController.php");
 				$result['status'] = false;
 				return $result['status'];
 			}
 		}
 		else
 		{
-			error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsModel.php");
+			error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsController.php");
 			$result['status'] = false;
 			return $result['status'];
 		}

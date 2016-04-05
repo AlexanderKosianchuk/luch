@@ -52,7 +52,7 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
 			
 			self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
 			self.flightListWorkspace = $("div#flightListWorkspace");
-			
+						
 			self.ShowFlightsListInitial();
 			self.TriggerResize();
 			self.TriggerUploading();			
@@ -116,15 +116,6 @@ FlightList.prototype.leftMenuClick = function(e){
 			target.addClass('LeftMenuRowSelected', {duration:500});
 			
 			//self.ShowFlightViewEvents();
-		}
-	} else if(target.attr('id') == "docsLeftMenuRow"){
-		if(!target.hasClass('LeftMenuRowSelected')){
-			$("#leftMenuFlightList .LeftMenuRowSelected")
-				.removeClass('LeftMenuRowSelected', {duration:500});
-			
-			target.addClass('LeftMenuRowSelected', {duration:500});
-			
-			//self.ShowFlightViewParamsList();
 		}
 	} else if(target.attr('id') == "usersLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
@@ -239,9 +230,10 @@ FlightList.prototype.ShowFlightViewOptions = function() {
 FlightList.prototype.ShowFlightsListInitial = function() { 
 	var self = this;
 
-	self.ShowFlightViewOptions();
-	
 	if(self.flightListWorkspace != null) {
+		self.flightListWorkspace.empty();
+		
+		self.ShowFlightViewOptions();
 		
 		self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
 		self.flightListContent = $("div#flightListContent");

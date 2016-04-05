@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/ViewOptionsModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ViewOptionsController.php");
 
-$M = new ViewOptionsModel($_POST, $_SESSION);
+$M = new ViewOptionsController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

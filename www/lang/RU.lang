@@ -685,6 +685,8 @@
 	"userLogin": "Логин",
 	"userCompany": "Организация",
 	"userAuthor": "Автор",
+	"userLang": "Язык",
+	"userLogo": "Логотип",
 	"noDataToOpenAccess" : "Нет доступных данных",
     "notAllowedByPrivilege" : "Не достаточно привилегий для выполнения действия"
 }

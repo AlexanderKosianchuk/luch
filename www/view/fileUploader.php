@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/UploaderModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UploaderController.php");
 
-$M = new UploaderModel($_POST, $_SESSION);
+$M = new UploaderController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {

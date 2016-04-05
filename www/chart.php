@@ -1,9 +1,9 @@
 <?php 
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/model/ChartModel.php");
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 
-$M = new ChartModel($_POST, $_SESSION, $_GET);
+$M = new ChartController($_POST, $_SESSION, $_GET);
 
 if ($M->IsAppLoggedIn())
 {	

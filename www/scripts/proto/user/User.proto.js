@@ -116,9 +116,6 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		var self = this,
 			sortType = sortType.toLowerCase();
 		
-		console.log(sortColumn);
-		console.log(sortType);
-					
 		var oTable = $('#userTable').dataTable( {
 			"bInfo": false,
 			"bSort": true,
@@ -159,7 +156,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 	        "oLanguage": langStr.dataTable,
 		});	
 		
-		/*$("#tableCheckAllItems").on("click", function(e){
+		$("#tableCheckAllItems").on("click", function(e){
 			var el = $(e.target);
 			
 			if(el.attr("checked") == "checked"){
@@ -171,7 +168,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 				$(".ItemsCheck").prop("checked", true);
 				el.attr("checked", "checked");
 			}
-		});*/
+		});
 	}
 }
 
