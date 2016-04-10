@@ -19,10 +19,11 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 	// PRIVATE
 	///
 	 
-	var userListFactoryContainer = null,
-		userListTopMenu = null,
-		userListLeftMenu = null,
-		userListWorkspace = null;
+	var userListWorkspace = null;
+	var userListContainer = null;
+	var userListTopMenu = null;
+	var userListLeftMenu = null;
+		
 				
 	
 	///
@@ -33,7 +34,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		eventHandler.trigger("resizeShowcase");
 		return this;
 	};
-	
+
 	this.logout = function(e) {
 		var pV = {
 				action: actions['userLogout'],
@@ -76,11 +77,11 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		});
 	};
 	
-	this.FillFactoryContaider = function(factoryContainer) {
-		var self = this,
-			userListFactoryContainer = factoryContainer;
-		
+	this.FillFactoryContaider = function(userListWorkspace) {
+		var self = this;
 		userId = this.userId;
+		this.userListWorkspace = userListWorkspace;		
+		this.ShowUserViewOptions();		
 
 		var pV = {
 				action: actions["buildUserTable"],
@@ -98,11 +99,15 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 		}).fail(function(msg){
 			console.log(msg);
 		}).done(function(answ) {
-			if(answ["status"] == "ok") {
+			if(answ["status"] == "ok") {				
 				var userTable = answ['data'],
 					sortCol = answ['sortCol'],
 					sortType = answ['sortType'];
-				userListFactoryContainer.append(userTable);
+
+				self.userListWorkspace.append("<div id='userListContent' class='Content'></div>");
+				self.userListContainer = $("div#userListContent");
+				self.userListContainer.append(userTable);
+				
 				self.SupportDataTable(sortCol, sortType);											
 				self.ResizeUserContainer();
 				
@@ -111,6 +116,25 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 			}
 	    });
 	};
+	
+	this.ShowUserViewOptions = function() {
+		var self = this;
+
+		if(self.userListWorkspace != null) {
+			self.userListWorkspace.append("<div id='userListOptions' class='OptionsMenu'></div>");
+			self.userListOptions = $("div#userListOptions");
+			
+			var fligthOptionsStr = "<table v-align='top'><tr><td><label>" + '1' + " - " + "</label></td><td>";	
+			fligthOptionsStr += 
+				'<div>' +
+			    	'<button id="selectFligthOptionsMenu" class="Button" style="margin-right:1px; min-width:155px;">' + 't1' + '</button>' +
+			    '</div>' +
+			    '</table>';
+		    
+			self.userListOptions.append(fligthOptionsStr);
+
+		}
+	}
 	
 	this.SupportDataTable = function(sortColumn, sortType) {
 		var self = this,
