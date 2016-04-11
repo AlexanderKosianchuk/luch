@@ -124,14 +124,34 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 			self.userListWorkspace.append("<div id='userListOptions' class='OptionsMenu'></div>");
 			self.userListOptions = $("div#userListOptions");
 			
-			var fligthOptionsStr = "<table v-align='top'><tr><td><label>" + '1' + " - " + "</label></td><td>";	
-			fligthOptionsStr += 
-				'<div>' +
-			    	'<button id="selectFligthOptionsMenu" class="Button" style="margin-right:1px; min-width:155px;">' + 't1' + '</button>' +
-			    '</div>' +
-			    '</table>';
+			var userOptions = $('<table></table')
+				.attr('v-align','top')
+				.append(
+					$('<tr></tr>')
+						.append(
+							$('<td></td>')
+								.append(
+									$('<label></label>')
+										.append(langStr.userList)
+										.append(' - ')
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsMenuButton')
+												.addClass('Button')
+												.append(langStr.userMenu)
+										)
+							)
+						)
+				);
 		    
-			self.userListOptions.append(fligthOptionsStr);
+			self.userListOptions.append(userOptions);
+			$('button#userOpitonsMenuButton').button();
 
 		}
 	}

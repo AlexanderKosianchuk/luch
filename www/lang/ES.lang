@@ -1,5 +1,5 @@
 {
-"exit": "Выход",
+"exit": "Salida",
 "continueLabel": "Далее",
 "tplHasBeenAdded": "Шаблон добавлен. Для приминения изменений обновите страницу (Shift+F5)",
 "tplHasBeenDeleted": "Шаблон удален. Для приминения изменений обновите страницу (Shift+F5)",
@@ -63,7 +63,7 @@
 "flightViewOptionsTimeRange": "Интервал",
 "saveParamsAsTpl": "В шаблон",
 "flightViewOptionsEditTpls": "Изменить",
-"flightUploaderUpload": "Загрузить",
+"flightUploaderUpload": "Descargar",
 "flightViewOptionsShow": "График",
 
 "viewOptionsNextPage": "Следующая страница",
@@ -131,9 +131,6 @@
 "minVal": "Мин. зн.",
 "maxVal": "Макс. зн.",
 "prefix": "Префикс",
-
-"userList": "Перечень пользователей",
-"userMenu" : "Меню",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",
@@ -239,7 +236,7 @@
 },
 
 "flightsPage":{	
-	"upload": "Загрузить",
+	"upload": "Descargar",
 	"flightsItem": "Полеты",
 	"slicesItem": "Срезы",
 	"enginesItem": "Двигатели",

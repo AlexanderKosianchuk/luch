@@ -69,6 +69,7 @@ FlightList.prototype.topMenuUserButtClick = function(){
 	var fligthOptionsStr = '<ul id="userMenu" class="UserMenuGroup">' +
 	    	'<li class="UserChangeLang" data-lang="ru">' + "Русский" + '</li>' +
 	    	'<li class="UserChangeLang" data-lang="en">' + "English" + '</li>' +
+	    	'<li class="UserChangeLang" data-lang="es">' + "Español" + '</li>' +
 	    	'<li id="userExit">' + this.langStr.exit + '</li>' +
 	    '</ul>';
     
@@ -139,8 +140,7 @@ FlightList.prototype.ShowFlightViewOptions = function() {
 		var fligthOptionsStr = "<table v-align='top'><tr><td><label>" + this.langStr.flightList + " - " + "</label></td><td>";	
 		fligthOptionsStr += 
 			'<div>' +
-		    	'<button id="selectFligthOptionsMenu" class="Button" style="margin-right:1px; min-width:155px;">' + this.langStr.initial + '</button>' +
-		    	/*'<button id="sortFligthOptionsMenu">' + this.langStr.groupType + '</button>' +*/
+		    	'<button id="selectFligthOptionsMenu" class="Button view-options-button">' + this.langStr.initial + '</button>' +
 		    '</div>' +
 		    '<ul class="GroupType">' +
 		    	'<li id="inTwoColumns">' + this.langStr.inTwoColumns + '</li>' +

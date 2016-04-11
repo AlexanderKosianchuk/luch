@@ -353,6 +353,11 @@ body {
 	font-size:16px;
 }
 
+.view-options-button {
+	margin-right:1px; 
+	min-width:155px;
+}
+
 #helpDialog {
 	display: none;	
 }
