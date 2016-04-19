@@ -107,7 +107,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 		}
 	});
 
-	$("#uploadTopButt").on("click", function(e){
+	$("#uploadTopButt").one("click", function(e){
 		$('#progress .progress-bar').css(
             'width',
             0 + '%'

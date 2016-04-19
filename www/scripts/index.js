@@ -151,12 +151,12 @@
 	///=======================================================
 	//FlightViewOptions
 	///	
-	eventHandler.on("viewFlightOptions", function(e, flightId, task, showcase){	
-		if(showcase == null){
+	eventHandler.on("viewFlightOptions", function(e, flightId, task, someshowcase){	
+		if(someshowcase == null){
 			W.RemoveShowcases(1);
-			showcase = W.NewShowcase();
+			someshowcase = W.NewShowcase();
 		} else {
-			W.ClearShowcase(showcase);
+			W.ClearShowcase(someshowcase);
 		}
 		
 		if(flightId != null){
@@ -168,7 +168,7 @@
 		}
 		
 		if(FO.flightId != null){
-			FO.FillFactoryContaider(showcase);
+			FO.FillFactoryContaider(someshowcase);
 		}
 	});
 	///=======================================================

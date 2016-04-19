@@ -84,13 +84,26 @@ FlightList.prototype.topMenuUserButtClick = function(){
 		 });
 	 });
 	
-	$("#userExit").on("click", function(e){
+	$("#userExit").one("click", function(e){
 		self.eventHandler.trigger("userLogout");
 	});
 	
-	$(".UserChangeLang").on("click", function(e){
+	$(".UserChangeLang").one("click", function(e){
 		var lang = $(this).data("lang");
 		self.eventHandler.trigger("userChangeLanguage", [lang]);
+	});
+	
+	$("div#view").one("click", function(e){
+		var itemsCheck = $(".ItemsCheck:checked");
+		if(itemsCheck.length == 1){
+			document.title = itemsCheck.parent().text();
+			var itemsCheckType = itemsCheck.data("type");
+			if(itemsCheckType = 'flight'){
+				var flightId = itemsCheck.data("flightid"),
+					data = [flightId, 'getEventsList', null]
+				self.eventHandler.trigger("viewFlightOptions", data);
+			}
+		}
 	});
 }
 
@@ -207,19 +220,6 @@ FlightList.prototype.ShowFlightViewOptions = function() {
 				  label: self.langStr.tableView
 			 });
 		 });
-		 
-		$("div#view").on("click", function(e){
-			var itemsCheck = $(".ItemsCheck:checked");
-			if(itemsCheck.length == 1){
-				document.title = itemsCheck.parent().text();
-				var itemsCheckType = itemsCheck.data("type");
-				if(itemsCheckType = 'flight'){
-					var flightId = itemsCheck.data("flightid"),
-						data = [flightId, 'getEventsList', null]
-					self.eventHandler.trigger("viewFlightOptions", data);
-				}
-			}
-		});
 	}
 }
 
