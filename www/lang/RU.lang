@@ -132,8 +132,13 @@
 "maxVal": "Макс. зн.",
 "prefix": "Префикс",
 
-"userList": "Перечень пользователей",
-"userMenu" : "Меню",
+"userActions": "Действия над пользователями",
+"userAdd" : "Создать",
+"userEdit" : "Редактировать",
+"userDelete" : "Удалить",
+"userList" : "Перечень",
+"userSave" : "Сохранить",
+"userCancel" : "Очистить",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",

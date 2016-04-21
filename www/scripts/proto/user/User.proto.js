@@ -78,6 +78,10 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 	};
 	
 	this.FillFactoryContaider = function(userListWorkspace) {
+		this.FillFactoryContaiderByUserList(userListWorkspace);
+	};
+	
+	this.FillFactoryContaiderByUserList = function(userListWorkspace) {
 		var self = this;
 		userId = this.userId;
 		this.userListWorkspace = userListWorkspace;		
@@ -106,10 +110,13 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 
 				self.userListWorkspace.append("<div id='userListContent' class='Content'></div>");
 				self.userListContainer = $("div#userListContent");
-				self.userListContainer.append(userTable);
-				
-				self.SupportDataTable(sortCol, sortType);											
-				self.ResizeUserContainer();
+				self.userListContainer
+					.hide()
+					.append(userTable)
+					.slideDown(function() {													
+						self.ResizeUserContainer();
+					});
+					self.SupportDataTable(sortCol, sortType);	
 				
 			} else {
 				console.log(answ["error"]);
@@ -132,7 +139,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 							$('<td></td>')
 								.append(
 									$('<label></label>')
-										.append(langStr.userList)
+										.append(langStr.userActions)
 										.append(' - ')
 							)
 						)
@@ -142,19 +149,127 @@ function User(window, document, langStr, srvcStrObj, eventHandler)
 									$('<div></div>')
 										.append(
 											$('<button></button>')
-												.attr('id', 'userOpitonsMenuButton')
-												.addClass('Button')
-												.append(langStr.userMenu)
+												.attr('id', 'userOpitonsListButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userList)
+										)
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsCreateButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userAdd)
+										)
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsEditButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userEdit)
+										)
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsDeleteButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userDelete)
+
+										)
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsSaveButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userSave)
+										)
+							)
+						)
+						.append(
+							$('<td></td>')
+								.append(
+									$('<div></div>')
+										.append(
+											$('<button></button>')
+												.attr('id', 'userOpitonsCancelButton')
+												.addClass('Button user-opitons-button')
+												.append(langStr.userCancel)
 										)
 							)
 						)
 				);
 		    
 			self.userListOptions.append(userOptions);
-			$('button#userOpitonsMenuButton').button();
-
+			self.UserViewOptionsInitialState();
+			self.NoUserCheckedViewOptionsState();
 		}
 	}
+	
+	this.viewOptionsButtons;
+	this.UserViewOptionsInitialState = function() {
+		if(!this.viewOptionsButtons) {
+			this.viewOptionsButtons = $('button.user-opitons-button');
+		}
+		$('button.user-opitons-button').button({ disabled: true }).addClass('hidden');
+	};
+	
+	this.NoUserCheckedViewOptionsState = function() {
+		this.UserViewOptionsInitialState();
+		
+		/*$('button#userOpitonsListButton')
+		$('button#userOpitonsCreateButton')
+		$('button#userOpitonsEditButton')
+		$('button#userOpitonsDeleteButton')
+		$('button#userOpitonsSaveButton')
+		$('button#userOpitonsCancelButton')*/
+		
+		$('button#userOpitonsCreateButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsEditButton').removeClass('hidden');
+		$('button#userOpitonsDeleteButton').removeClass('hidden');
+	};
+	
+	this.OneUserCheckedViewOptionsState = function() { 
+		self.UserViewOptionsInitialState();
+		
+		$('button#userOpitonsCreateButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsEditButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsDeleteButton').button({ disabled: false }).removeClass('hidden');
+	};
+	
+	this.ManyUserCheckedViewOptionsState = function() { 
+		self.UserViewOptionsInitialState();
+		
+		$('button#userOpitonsCreateButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsEditButton').removeClass('hidden');
+		$('button#userOpitonsDeleteButton').button({ disabled: false }).removeClass('hidden');
+	};
+	
+	this.CreateOrUpdateUserViewOptionsState = function() { 
+		self.UserViewOptionsInitialState();
+		
+		$('button#userOpitonsListButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsSaveButton').button({ disabled: false }).removeClass('hidden');
+		$('button#userOpitonsCancelButton').button({ disabled: false }).removeClass('hidden');
+	};
 	
 	this.SupportDataTable = function(sortColumn, sortType) {
 		var self = this,

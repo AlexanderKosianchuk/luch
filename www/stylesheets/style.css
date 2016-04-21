@@ -358,6 +358,10 @@ body {
 	min-width:155px;
 }
 
+.hidden {
+	display: none;
+}
+
 #helpDialog {
 	display: none;	
 }
