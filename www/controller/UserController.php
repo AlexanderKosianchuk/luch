@@ -204,6 +204,14 @@ class UserController
 	
 		return $userInfo;
 	}
+	
+	public function BuildCRUuserModal() {
+		$modal = sprintf("<div id='user-cru-modal' title='%s'>%s<div>",
+				$this->lang->userModal,
+				"<input id='someid'/>");
+		
+		return $modal;
+	}
 }
 
 ?>

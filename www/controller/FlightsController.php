@@ -426,12 +426,26 @@ class FlightsController
 		$U = new User();
 		$avalIds = $U->GetAvaliableFlights($this->username);
 		$userId = $U->GetUserIdByName($this->username);
+		$username = $this->username;
+		$userInfo = $this->GetUserInfo();
+		$role = $userInfo['role'];
+		$adminRole = User::isAdmin($role);
 		unset($U);
+		
+		$flightIdsArr = [];
 		
 		$Fl = new Flight();
 		$Fd = new Folder();
-		$flightIdsArr = (array)$Fd->GetFlightsByFolder($folderId, $userId);
-		$flightsInfoArr = array();
+		if(User::isAdmin($role)) {
+			$flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId, $adminRole);
+		} else if(User::isModerator($role)) {
+			$userIds = $U->GetUserIdsByAuthor($username);
+			$flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userIds);
+		} else {
+			$flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId);
+		}
+				
+		$flightsInfoArr = [];
 		foreach ($flightIdsArr as $id)
 		{
 			$flightsInfoArr[] = $Fl->GetFlightInfo($id);
@@ -448,12 +462,23 @@ class FlightsController
 		$folderId = $extFolderId;
 	
 		$U = new User();
-		$userId = $U->GetUserIdByName($this->username);
+		$userInfo = $this->GetUserInfo();
+		$username = $this->username;
+		$userId = $userInfo['id'];
+		$role = $userInfo['role'];
+		$adminRole = User::isAdmin($role);
 		unset($U);
-	
+		$subFoldersArr = [];
 		$Fd = new Folder();
-	
-		$subFoldersArr = (array)$Fd->GetSubfoldersByFolder($folderId, $userId);
+		
+		if(User::isAdmin($role)) {
+			$subFoldersArr = $Fd->GetSubfoldersByFolder($folderId, $userId, $adminRole);
+		} else if(User::isModerator($role)) {
+			$userIds = $U->GetUserIdsByAuthor($username);
+			$flightIdsArr = $Fd->GetSubfoldersByFolder($folderId, $userIds);
+		} else {
+			$flightIdsArr = $Fd->GetSubfoldersByFolder($folderId, $userId);
+		}
 		unset($Fd);
 	
 		return $subFoldersArr;
@@ -891,10 +916,21 @@ class FlightsController
 		$U = new User();
 		$userInfo = $this->GetUserInfo();
 		$userId = $userInfo['id'];
-		unset($U);
-	
+		$username = $this->username;
+		$role = $userInfo['role'];
+		$adminRole = User::isAdmin($role);
+		unset($U);	
+		
 		$Fd = new Folder();
-		$content = $Fd->GetAvaliableContent($shownFolderId, $userId);
+		if(User::isAdmin($role)) {
+			$content = $Fd->GetAvaliableContent($shownFolderId, $userId, $adminRole);
+		} else if(User::isModerator($role)) {
+			$userIds = $U->GetUserIdsByAuthor($username);
+			$content = $Fd->GetAvaliableContent($shownFolderId, $userIds);
+		} else {
+			$content = $Fd->GetAvaliableContent($shownFolderId, $userId);
+		}
+	
 		unset($Fd);
 		
 		$relatedNodes = false;
@@ -913,12 +949,11 @@ class FlightsController
 		$flightColumn = "";
 		
 		$Fd = new Folder();
-		$flightsInPath = (array)$this->GetFlightsByPath($shownFolderId);
+		$flightsInPath = $this->GetFlightsByPath($shownFolderId);
 		$subFolders = (array)$this->GetFoldersByPath($shownFolderId);		
 		$shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
 		$shownFolder = $shownFolderInfo['name'];
-		unset($Fd);
-		
+		unset($Fd);		
 		foreach($subFolders as $key => $val)
 		{
 			$input = '<input class="ItemsCheck" type="checkbox" data-type="folder" data-folderpath="'.$shownFolderId.'" data-folderdestination="'.$val['id'].'">';
@@ -1054,15 +1089,25 @@ class FlightsController
 	{
 		$Fd = new Folder();
 		$U = new User();
-		$uId = $U->GetUserIdByName($this->username);
+		$userInfo = $this->GetUserInfo();
+		$username = $this->username;
+		$uId = $userInfo['id'];
+		$role = $userInfo['role'];
+		$adminRole = User::isAdmin($role);
+		unset($U);
 		$allFolders = [];
+		
+		if(User::isModerator($role)) {
+			$uId = $U->GetUserIdsByAuthor($username);
+		}
+		
 		foreach ($folderDest as $dest) {
-			$allFolders = $Fd->SubfoldersDeepScan($dest, $uId);
+			$allFolders = $Fd->SubfoldersDeepScan($dest, $uId, $adminRole);
 		}
 		
 		foreach ($allFolders as $folderId) {
 			$flightIds = array_merge($flightIds, 
-					$Fd->GetFlightsByFolder($folderId, $uId));
+					$Fd->GetFlightsByFolder($folderId, $uId, $adminRole));
 		}
 		unset($Fd);
 		unset($U);

@@ -175,6 +175,7 @@ class IndexController
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsParams.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsEvents.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/chart.css' />
+				<link rel='stylesheet' type='text/css' href='stylesheets/pages/user.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
 	}
 	

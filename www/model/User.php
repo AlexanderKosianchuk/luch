@@ -16,6 +16,36 @@ viewDocs,shareDocs,addDocs,editDocs,delDocs,
 
 class User
 {
+	public static $role = [
+		'admin' => 'admin',
+		'moderator' => 'moderator',
+		'user' => 'user'
+	];
+	
+	public static function isAdmin($userRole) {
+		if($userRole == self::$role['admin']) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static function isModerator($userRole) {
+		if($userRole == self::$role['moderator']) {
+			return true;
+		}
+	
+		return false;
+	}
+	
+	public static function isUser($userRole) {
+		if($userRole == self::$role['user']) {
+			return true;
+		}
+	
+		return false;
+	}	
+	
 	public static $AVALIABILITY_FLIGHTS = 'flight';
 	public static $AVALIABILITY_FDR_TYPES = 'brutype';
 	public static $AVALIABILITY_SLICES = 'slice';
@@ -256,12 +286,14 @@ class User
 		$result = $link->query($query);
 		if(!$result->fetch_array())
 		{
-			$query = "CREATE TABLE `user_personal` (`id` BIGINT NOT NULL AUTO_INCREMENT,
+			$query = "CREATE TABLE `user_personal` (
+				`id` BIGINT NOT NULL AUTO_INCREMENT,
 				`login` VARCHAR(200),
 				`privilege` TINYTEXT,
 				`options` TEXT,
-				`subscribers` TINYTEXT,
+				`role` VARCHAR(255),
 				`author` VARCHAR(200) DEFAULT ' ',
+				`logo` MEDIUMBLOB,
 				PRIMARY KEY (`id`));";
 			$stmt = $link->prepare($query);
 			if (!$stmt->execute()) 
@@ -842,19 +874,32 @@ class User
 		$username = $extUsername;
 	
 		$userId = $this->GetIdByUsername($username);
+		$userInfo = $this->GetUserInfo($userId);
+		$role = $userInfo['role'];
+		
 		$avaliabeFlights = array();
 	
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 		
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
+		$result = null;
+		if(self::isAdmin($role)) {
+			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
+					"WHERE `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+		} else if(self::isModerator($role)) {
+			$userIds = $this->GetUserIdsByAuthor($username);
+			$userIds = implode("','", $userIds);
+			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
+					"WHERE `userId` IN('".$userIds."' AND `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+		} else {
+			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
 				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+		}
 		
-		while($row = $result->fetch_array())
-		{
+		while(($result !== null) && ($row = $result->fetch_array())) {
 			$avaliabeFlights[] = $row['targetId'];
 		}
-
+		
 		$c->Disconnect();
 		unset($c);
 	
@@ -1399,6 +1444,29 @@ class User
 	
 		$c->Disconnect();
 		unset($c);
+	}
+	
+	public function GetUserIdsByAuthor($extUsername)
+	{
+		$username = $extUsername;
+	
+		$avaliableUserIds = array();
+	
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$result = $link->query("SELECT `id` FROM `user_personal` ".
+				"WHERE `author`='".$username."';");
+	
+		while($row = $result->fetch_array())
+		{
+			$avaliableUserIds[] = $row['id'];
+		}
+	
+		$c->Disconnect();
+		unset($c);
+	
+		return $avaliabeUsers;
 	}
 	
 	public function GetAvaliableUsers($extUsername)

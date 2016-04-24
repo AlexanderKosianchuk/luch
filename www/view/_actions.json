@@ -81,7 +81,8 @@
 	"userLogout": "userLogout",
 	"userChangeLanguage": "userChangeLanguage",
 	"buildUserTable": "buildUserTable",
-	"segmentTable": "segmentTable"
+	"segmentTable": "segmentTable",
+	"modal": "modal"
 },
 
 "viewOptionsPage": {

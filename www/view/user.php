@@ -188,6 +188,26 @@ if ($M->IsAppLoggedIn())
 		}
 	
 		unset($U);
+		} else if($M->action == $M->userActions["modal"]) {
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_EDIT_USERS, $M->privilege))
+		{
+			$modal = $M->BuildCRUuserModal();
+			$action = $M->action;		
+			$M->RegisterActionExecution($action, "executed");
+			echo(json_encode($modal));
+		}
+		else
+		{
+	
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
 	} else {
 		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
 				" . Action: " . json_encode($_POST['action']) . 
