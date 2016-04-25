@@ -1,0 +1,11 @@
+table user_personal
+
+remove
+options
+subscribers
+
+add
+role
+
+change 
+logo to mediumblob (65K max)

@@ -204,13 +204,303 @@ class UserController
 	
 		return $userInfo;
 	}
-	
-	public function BuildCRUuserModal() {
-		$modal = sprintf("<div id='user-cru-modal' title='%s'>%s<div>",
-				$this->lang->userModal,
-				"<input id='someid'/>");
 		
-		return $modal;
+	public function BuildCRUuserModal()
+	{
+		//$this->lang->userModal
+		$Usr = new User();
+		$privilege = $Usr->allPrivilegeArray;
+		$form = sprintf("<div id='user-cru-form'>");
+		$privilegeOptions = '';
+		foreach ($privilege as $val)
+		{
+			$privilegeOptions .= "<option id='privilege' data-privilege='".$val."'>".$val."</option>";
+		}
+	
+		$form .= sprintf("<div align='center'><p class='Label'>%s</p>
+			<label id='userCreationInfo' style='color:darkred;'>%s</label></br></br>
+			<form>
+			<table>
+			<tr><td>%s</td><td>
+				<input id='login' type='text' name='user' size='50'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input id='company' type='text' name='company' size='50'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input id='pwd1' type='password' name='pwd' size='50'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input id='pwd2' type='password' name='pwd2' size='50'>
+			</td></tr>
+			<tr><td>%s</td><td align='center'>
+				<select id='privilege' multiple size='10' style='width: 335px'>%s<select>
+			</td></tr>
+			<tr><td>%s</td><td align='center'>
+				<input id='mySubscriber' type='checkbox' name='mySubscriber' value='1'>
+			</td></tr>
+			<tr style='visibility:hidden;'><td>
+				Nonce:
+			</td><td>
+				<input id='nonce' type='text' id='nonce' name='nonce' value='%s'>
+			</td></tr>
+		</table>
+			<input align='center' id='createUserBut' class='Button' type='submit' value='%s'>
+			</form>
+			</div>",
+				$this->lang->userCreationForm,
+				'',
+				$this->lang->userName,
+				$this->lang->company,
+				$this->lang->pass,
+				$this->lang->repeatPass,
+				$this->lang->userPrivilege,
+				$privilegeOptions,
+				$this->lang->userMySubscriber,
+				ulNonce::Create('login'),
+				$this->lang->userCreate);
+	
+		//==========================================
+		//access to flights
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege))
+		{
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
+				
+			$Fl = new Flight();
+			$avaliableFlightIds = $Usr->GetAvaliableFlights($this->username);
+			$avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
+				
+			if(count($avaliableFlights) > 0)
+			{
+				//if more than 30 rows make table scrollable
+				if(count($avaliableFlights) > 30)
+				{
+					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
+				}
+	
+				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
+	
+				$form .= sprintf("<tr class='ExeptionsTableHeader'>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
+						$this->lang->bortNum,
+						$this->lang->voyage,
+						$this->lang->flightDate,
+						$this->lang->bruTypeName,
+						$this->lang->author,
+						$this->lang->departureAirport,
+						$this->lang->arrivalAirport,
+						$this->lang->access);
+	
+				$greyHightLight = false;
+				foreach ($avaliableFlights as $fligthInfo)
+				{
+					if($greyHightLight)
+					{
+						printf("<tr>");
+					}
+					else
+					{
+						$form .= sprintf("<tr style='background-color:lightgrey'>");
+					}
+					$greyHightLight = !$greyHightLight;
+						
+					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>
+								<input id='flightToAllowAccess' data-flightid='%s' type='checkbox'/>
+							</td></tr>",
+							$fligthInfo['bort'],
+							$fligthInfo['voyage'],
+							$fligthInfo['flightDate'],
+							$fligthInfo['bruType'],
+							$fligthInfo['performer'],
+							$fligthInfo['departureAirport'],
+							$fligthInfo['arrivalAirport'],
+							$fligthInfo['id']);
+				}
+				$form .= sprintf("</table>");
+	
+				if(count($avaliableFlights) > 30)
+				{
+					$form .= sprintf("</div>");
+				}
+			}
+			else
+			{
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+			unset($Fl);
+		}
+	
+		//==========================================
+		//access to brutypes
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->privilege))
+		{
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
+	
+			$Bru = new Bru();
+			$avaliableIds = $Usr->GetAvaliableBruTypes($this->username);
+			$avaliableBruTypes = $Bru->GetBruList($avaliableIds);
+	
+			if(count($avaliableBruTypes) > 0)
+			{
+				//if more than 30 rows make table scrollable
+				if(count($avaliableBruTypes) > 30)
+				{
+					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
+				}
+	
+				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
+	
+				$form .= sprintf("<tr class='ExeptionsTableHeader'>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
+						$this->lang->bruTypesName,
+						$this->lang->bruTypesStepLenth,
+						$this->lang->bruTypesFrameLength,
+						$this->lang->bruTypesWordLength,
+						$this->lang->bruTypesAuthor,
+						$this->lang->access);
+	
+				$greyHightLight = false;
+				foreach ($avaliableBruTypes as $bruTypeInfo)
+				{
+					if($greyHightLight)
+					{
+						$form .= sprintf("<tr>");
+					}
+					else
+					{
+						$form .= sprintf("<tr style='background-color:lightgrey'>");
+					}
+					$greyHightLight = !$greyHightLight;
+	
+					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>
+								<input id='bruTypeToAllowAccess' data-brutypeid='%s' type='checkbox'/>
+							</td></tr>",
+							$bruTypeInfo['bruType'],
+							$bruTypeInfo['stepLength'],
+							$bruTypeInfo['frameLength'],
+							$bruTypeInfo['wordLength'],
+							$bruTypeInfo['author'],
+							$bruTypeInfo['id']);
+				}
+				$form .= sprintf("</table>");
+	
+				if(count($avaliableBruTypes) > 30)
+				{
+					$form .= sprintf("</div>");
+				}
+			}
+			else
+			{
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+			unset($Bru);
+		}
+	
+		//==========================================
+		//access to users
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->privilege))
+		{
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
+	
+			//$Usr = new User();
+			$avaliableIds = $Usr->GetAvaliableUsers($this->username);
+			$avaliableUsers = $Usr->GetUsersList($avaliableIds);
+	
+			if(count($avaliableUsers) > 0)
+			{
+				//if more than 30 rows make table scrollable
+				if(count($avaliableUsers) > 30)
+				{
+					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
+				}
+	
+				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
+	
+				$form .= sprintf("<tr class='ExeptionsTableHeader'>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell'>%s</td>
+					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
+						$this->lang->userLogin,
+						$this->lang->userCompany,
+						$this->lang->userAuthor,
+						$this->lang->access);
+	
+				$greyHightLight = false;
+				foreach ($avaliableUsers as $userInfo)
+				{
+					if($greyHightLight)
+					{
+						$form .= sprintf("<tr>");
+					}
+					else
+					{
+						$form .= sprintf("<tr style='background-color:lightgrey'>");
+					}
+					$greyHightLight = !$greyHightLight;
+	
+					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>%s</td>
+							<td class='ExeptionsCell' align='center'>
+								<input id='usersToAllowAccess' data-userid='%s' type='checkbox'/>
+							</td></tr>",
+							$userInfo['login'],
+							$userInfo['company'],
+							$userInfo['author'],
+							$userInfo['id']);
+				}
+				$form .= sprintf("</table>");
+	
+				if(count($avaliableUsers) > 30)
+				{
+					$form .= sprintf("</div>");
+				}
+			}
+			else
+			{
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+		}
+	
+		$form .= sprintf("<input id='author' value='%s' style='visibility:hidden;'/>", $this->username);
+		$form .= '</div>';
+		unset($Usr);
+		
+		return $form;
 	}
 }
 

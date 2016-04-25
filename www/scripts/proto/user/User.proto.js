@@ -21,7 +21,10 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	var userListTopMenu = null;
 	var userListLeftMenu = null;
 	
-	var modal = null;
+	var userTable = null;
+	var createUpdateUserForm = null;
+	
+	var userList = null;
 
 	// /
 	// PRIVILEGED
@@ -105,15 +108,13 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 			if (answ["status"] == "ok") {
 				var userTable = answ['data'], sortCol = answ['sortCol'], sortType = answ['sortType'];
 
-				self.userListWorkspace
-						.append("<div id='userListContent' class='Content'></div>");
+				self.userListWorkspace.append("<div id='userListContent' class='Content'></div>");
 				self.userListContainer = $("div#userListContent");
 				self.userListContainer.hide().append(userTable)
 						.slideDown(function() {
 							self.ResizeUserContainer();
 						});
 				self.SupportDataTable(sortCol, sortType);
-				self.AddUserCRUmodal();
 
 			} else {
 				console.log(answ["error"]);
@@ -232,17 +233,16 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	};
 	
 	this.BindButtonEvents = function() {
+		var self = this;
 		$('button#userOpitonsCreateButton').on('click', function() {
-			if(modal !== null) {
-				modal.dialog("open");
-			}
+			self.ShowCreateUpdateUserForm();
 		});
 	}
 
 	this.SupportDataTable = function(sortColumn, sortType) {
 		var self = this, sortType = sortType.toLowerCase();
 
-		var oTable = $('#userTable').dataTable({
+		userTable = $('#userTable').dataTable({
 			"bInfo" : false,
 			"bSort" : true,
 			"aoColumnDefs" : [ {
@@ -313,29 +313,28 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 		});
 	}
 	
-	this.AddUserCRUmodal = function() {
-		if(modal === null) {
-			$.ajax({
-				"dataType" : 'json',
-				"type" : "POST",
-				"data" : {
-					'action' : actions["modal"],
-					'data' : {
-						'data' : 'dummy'
-					}
-				},
-				"url" : USER_SRC,
-				"async" : true
-			}).done(function(html) {
-				$('body').append(html);
-				modal = $("#user-cru-modal").dialog({
-					minWidth: '70%',
-					maxHeight: '90%',
-					autoOpen: false
-				});
-			}).fail(function(a) {
-				console.log(a);
+	this.ShowCreateUpdateUserForm = function() {
+		var self = this;
+		$.ajax({
+			"dataType" : 'json',
+			"type" : "POST",
+			"data" : {
+				'action' : actions["modal"],
+				'data' : {
+					'data' : 'dummy'
+				}
+			},
+			"url" : USER_SRC,
+			"async" : true
+		}).done(function(html) {
+			userTable.slideUp(function() {
+				self.userListContainer.append(html);
+				createUpdateUserForm = $('#user-cru-form');
+				createUpdateUserForm.hide().slideDown();
+				self.ResizeUserContainer();
 			});
-		}
+		}).fail(function(a) {
+			console.log(a);
+		});
 	}
 }
