@@ -6,12 +6,9 @@ require_once(@SITE_ROOT_DIR ."/includes.php");
 //------------
 
 /*
- viewFlight,shareFlight,addFlight,editFlight,delFlight,followFlight,tuneFlight,
-viewSlice,shareSlice,addSlice,editSlice,delSlice,
-viewEngine,shareEngine,editEngine,delEngine,
+viewFlight,shareFlight,addFlight,editFlight,delFlight,followFlight,tuneFlight,
 viewBruType,shareBruType,addBruType,editBruType,delBruType,
 optionsUsers,viewUsers,shareUsers,addUser,delUser,editUser
-viewDocs,shareDocs,addDocs,editDocs,delDocs,
 */
 
 class User
@@ -48,9 +45,6 @@ class User
 	
 	public static $AVALIABILITY_FLIGHTS = 'flight';
 	public static $AVALIABILITY_FDR_TYPES = 'brutype';
-	public static $AVALIABILITY_SLICES = 'slice';
-	public static $AVALIABILITY_ENGINES = 'engine';
-	public static $AVALIABILITY_DOCS = 'doc';
 	public static $AVALIABILITY_USERS = 'user';
 	
 	public static $PRIVILEGE_VIEW_FLIGHTS = 'viewFlight';
@@ -60,29 +54,12 @@ class User
 	public static $PRIVILEGE_DEL_FLIGHTS = 'delFlight';
 	public static $PRIVILEGE_FOLLOW_FLIGHTS = 'followFlight';
 	public static $PRIVILEGE_TUNE_FLIGHTS = 'tuneFlight';
-	
-	public static $PRIVILEGE_VIEW_SLICES = 'viewSlice';
-	public static $PRIVILEGE_SHARE_SLICES = 'shareSlice';
-	public static $PRIVILEGE_ADD_SLICES = 'addSlice';
-	public static $PRIVILEGE_EDIT_SLICES = 'editSlice';
-	public static $PRIVILEGE_DEL_SLICES = 'delSlice';
-	
-	public static $PRIVILEGE_VIEW_ENGINES = 'viewEngine';
-	public static $PRIVILEGE_SHARE_ENGINES = 'shareEngine';
-	public static $PRIVILEGE_EDIT_ENGINES = 'editEngine';
-	public static $PRIVILEGE_DEL_ENGINES = 'delEngine';
-	
+		
 	public static $PRIVILEGE_VIEW_BRUTYPES = 'viewBruType';
 	public static $PRIVILEGE_SHARE_BRUTYPES = 'shareBruType';
 	public static $PRIVILEGE_ADD_BRUTYPES = 'addBruType';
 	public static $PRIVILEGE_EDIT_BRUTYPES = 'editBruType';
 	public static $PRIVILEGE_DEL_BRUTYPES = 'delBruType';
-	
-	public static $PRIVILEGE_VIEW_DOCS = 'viewDocs';
-	public static $PRIVILEGE_SHARE_DOCS = 'shareDocs';
-	public static $PRIVILEGE_ADD_DOCS = 'addDocs';
-	public static $PRIVILEGE_EDIT_DOCS = 'editDocs';
-	public static $PRIVILEGE_DEL_DOCS = 'delDocs';
 	
 	public static $PRIVILEGE_OPTIONS_USERS = 'optionsUsers';
 	public static $PRIVILEGE_VIEW_USERS = 'viewUsers';
@@ -93,8 +70,6 @@ class User
 	
 	public $allPrivilegeArray;
 	public $flightPrivilegeArr;
-	public $slicePrivilegeArr;
-	public $enginePrivilegeArr;
 	public $bruTypesPrivilegeArr;
 	public $userPrivilegeArr;
 	
@@ -102,10 +77,7 @@ class User
 	{
 		$this->SetAllPrivilegeArr();
 		$this->SetFlightPrivilegeArr();
-		$this->SetSlicePrivilegeArr();
-		$this->SetEnginePrivilegeArr();
 		$this->SetBruTypesPrivilegeArr();
-		$this->SetDocsPrivilegeArr();
 		$this->SetUserPrivilegeArr();
 		
 		//$this->CreateUsersTables();
@@ -122,28 +94,11 @@ class User
 			$this::$PRIVILEGE_FOLLOW_FLIGHTS,
 			$this::$PRIVILEGE_TUNE_FLIGHTS,
 				
-			$this::$PRIVILEGE_VIEW_SLICES,
-			$this::$PRIVILEGE_SHARE_SLICES,
-			$this::$PRIVILEGE_ADD_SLICES,
-			$this::$PRIVILEGE_EDIT_SLICES,
-			$this::$PRIVILEGE_DEL_SLICES,
-				
-			$this::$PRIVILEGE_VIEW_ENGINES,
-			$this::$PRIVILEGE_SHARE_ENGINES,
-			$this::$PRIVILEGE_EDIT_ENGINES,
-			$this::$PRIVILEGE_DEL_ENGINES,
-				
 			$this::$PRIVILEGE_VIEW_BRUTYPES,
 			$this::$PRIVILEGE_SHARE_BRUTYPES,
 			$this::$PRIVILEGE_ADD_BRUTYPES,
 			$this::$PRIVILEGE_EDIT_BRUTYPES,
 			$this::$PRIVILEGE_DEL_BRUTYPES,
-				
-			$this::$PRIVILEGE_VIEW_DOCS,
-			$this::$PRIVILEGE_SHARE_DOCS,
-			$this::$PRIVILEGE_ADD_DOCS,
-			$this::$PRIVILEGE_EDIT_DOCS,
-			$this::$PRIVILEGE_DEL_DOCS,
 				
 			$this::$PRIVILEGE_OPTIONS_USERS,
 			$this::$PRIVILEGE_VIEW_USERS,
@@ -166,26 +121,7 @@ class User
 				$this::$PRIVILEGE_FOLLOW_FLIGHTS,
 				$this::$PRIVILEGE_TUNE_FLIGHTS);
 	}
-	
-	private function SetSlicePrivilegeArr()
-	{
-		$this->slicePrivilegeArr = array(
-				$this::$PRIVILEGE_VIEW_SLICES,
-				$this::$PRIVILEGE_SHARE_SLICES,
-				$this::$PRIVILEGE_ADD_SLICES,
-				$this::$PRIVILEGE_EDIT_SLICES,
-				$this::$PRIVILEGE_DEL_SLICES);
-	}
-	
-	private function SetEnginePrivilegeArr()
-	{
-		$this->enginePrivilegeArr = array(
-				$this::$PRIVILEGE_VIEW_ENGINES,
-				$this::$PRIVILEGE_SHARE_ENGINES,
-				$this::$PRIVILEGE_EDIT_ENGINES,
-				$this::$PRIVILEGE_DEL_ENGINES);
-	}
-	
+		
 	private function SetBruTypesPrivilegeArr()
 	{
 		$this->bruTypesPrivilegeArr = array(
@@ -195,17 +131,7 @@ class User
 				$this::$PRIVILEGE_EDIT_BRUTYPES,
 				$this::$PRIVILEGE_DEL_BRUTYPES);
 	}
-	
-	private function SetDocsPrivilegeArr()
-	{
-		$this->docsPrivilegeArr = array(
-			$this::$PRIVILEGE_VIEW_DOCS,
-			$this::$PRIVILEGE_SHARE_DOCS,
-			$this::$PRIVILEGE_ADD_DOCS,
-			$this::$PRIVILEGE_EDIT_DOCS,
-			$this::$PRIVILEGE_DEL_DOCS);
-	}
-	
+		
 	private function SetUserPrivilegeArr()
 	{
 		$this->userPrivilegeArr = array(
@@ -233,31 +159,13 @@ class User
 				$privilegeString .= "FlightGrant";
 				$inputPrivilege = array_diff($inputPrivilege, $this->flightPrivilegeArr);
 			}
-				
-			if(count(array_intersect($inputPrivilege, $this->slicePrivilegeArr)) == count($this->slicePrivilegeArr))
-			{
-				$privilegeString .= "; SliceGrant";
-				$inputPrivilege = array_diff($inputPrivilege, $this->slicePrivilegeArr);
-			}
-				
-			if(count(array_intersect($inputPrivilege, $this->enginePrivilegeArr)) == count($this->enginePrivilegeArr))
-			{
-				$privilegeString .= "; EngineGrant";
-				$inputPrivilege = array_diff($inputPrivilege, $this->enginePrivilegeArr);
-			}
-				
+								
 			if(count(array_intersect($inputPrivilege, $this->bruTypesPrivilegeArr)) == count($this->bruTypesPrivilegeArr))
 			{
 				$privilegeString .= "; BruTypesGrant";
 				$inputPrivilege = array_diff($inputPrivilege, $this->bruTypesPrivilegeArr);
 			}
-				
-			if(count(array_intersect($inputPrivilege, $this->docsPrivilegeArr)) == count($this->docsPrivilegeArr))
-			{
-				$privilegeString .= "; DocsGrant";
-				$inputPrivilege = array_diff($inputPrivilege, $this->docsPrivilegeArr);
-			}
-				
+								
 			if(count(array_intersect($inputPrivilege, $this->userPrivilegeArr)) == count($this->userPrivilegeArr))
 			{
 				$privilegeString .= "; UsersGrant";
@@ -489,14 +397,14 @@ class User
 		{
 			foreach ($row as $key => $val)
 			{
-				$userLogin[$key] = $val;
+				$userInfo[$key] = $val;
 			}			
 		}
 	
 		$c->Disconnect();
 		unset($c);
 	
-		return $userLogin;
+		return $userInfo;
 	}
 	
 	public function GetLastActionByActionName($extUserId, $extActionName)
@@ -582,7 +490,6 @@ class User
 					"company"=>$row['company'],
 					"privilege"=>$row['privilege'],
 					"options"=>$row['options'],
-					"subscribers"=>$row['subscribers'],
 					"author"=>$row['author']);*/
 			}
 		}
@@ -670,7 +577,6 @@ class User
 		
 		$stmt->close();
 		
-		$this->DeleteUserAsSubscriber($login);
 		$userId = $this->GetUserIdByName($login);
 		$this->DeleteUserAvaliableData($userId);
 	
@@ -698,118 +604,7 @@ class User
 	
 		return $exist;
 	}
-	
-	public function SelectSubscribers($extAuthor)
-	{
-		$author = $extAuthor;
-		
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		
-		$result = $link->query("SELECT `subscribers` FROM `user_personal` WHERE `login`='".$author."';");
-		
-		$subscribersArr = array();
-		$subscribersStr = "";
-		if($row = $result->fetch_array())
-		{
-			$subscribersStr = $row['subscribers'];
-		}
-		
-		if($subscribersStr != '')
-		{
-			if(strpos(",", $subscribersStr) != 0)
-			{
-				$subscribersArr = (array)explode(",", $subscribersStr);
-				$subscribersArr = array_unique($subscribersArr);
-			}
-			else
-			{
-				$subscribersArr[] = $subscribersStr;
-			}
-		}
-
-		$c->Disconnect();
-		unset($c);
-		
-		return $subscribersArr;
-	}
-
-	public function AppendSubscriber($extAuthor, $extSubscriber)
-	{
-		$author = $extAuthor;
-		$subscriber = $extSubscriber;
-		
-		$existSubscribers = $this->SelectSubscribers($author);
-		
-		if(!in_array($subscriber, $existSubscribers))
-		{
-			if(count($existSubscribers) == 0)
-			{
-				$newSubscribers = $subscriber;
-			}
-			else
-			{
-				$newSubscribers = $existSubscribers;
-				$newSubscribers[] = $subscriber;
-				$newSubscribers = implode(",", $newSubscribers);
-			}
 			
-			$c = new DataBaseConnector();
-			$link = $c->Connect();
-		
-			$query = "UPDATE `user_personal` SET `subscribers` = '".$newSubscribers."' 
-					WHERE `login` = '".$author."';";
-		
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-			
-			$c->Disconnect();
-			unset($c);
-		}
-		
-		$newSubscribers = $this->SelectSubscribers($author);
-		
-		return $newSubscribers;
-	}
-	
-	public function DeleteUserAsSubscriber($extLogin)
-	{
-		$login = $extLogin;
-
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		
-		$result = $link->query("SELECT `id`, `subscribers` FROM `user_personal` 
-				WHERE `subscribers` LIKE '%".$login."%';");
-		
-		$userWhereCurSubscriberPresent = array();
-		
-		while($row = $result->fetch_array())
-		{
-			$userWhereCurSubscriberPresent[] = array(
-					'id' => $row['id'],
-					'subscribers' => $row['subscribers'],
-			);
-		}
-		
-		foreach($userWhereCurSubscriberPresent as $val)
-		{
-			$newSubscribers = str_replace($login, "", $val["subscribers"]);
-			$newSubscribers = str_replace(",,", ",", $newSubscribers);
-			
-			$query = "UPDATE `user_personal` SET `subscribers` = '".$newSubscribers."'
-						WHERE `id` = '".$val["id"]."';";
-			
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-		}
-
-		$c->Disconnect();
-		unset($c);
-	}
-	
 	public function GetIdByUsername($extUsername)
 	{
 		$username = $extUsername;
@@ -869,108 +664,80 @@ class User
 		unset($c);
 	}
 	
-	public function GetAvaliableFlights($extUsername)
-	{
-		$username = $extUsername;
+	/** ------------------------
+	 *  GET AVALIABLE
+	 */
 	
-		$userId = $this->GetIdByUsername($username);
+	public function GetAvaliable($userIdentity, $type) 
+	{	
+		$userId = $userIdentity;
+		if(is_string($userIdentity)) {
+			$userId = $this->GetIdByUsername($userIdentity);
+		}
+		
 		$userInfo = $this->GetUserInfo($userId);
 		$role = $userInfo['role'];
 		
-		$avaliabeFlights = array();
-	
+		$avaliableItems = [];
+		
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 		
 		$result = null;
 		if(self::isAdmin($role)) {
 			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-					"WHERE `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+					"WHERE `type`='".$type."';");
 		} else if(self::isModerator($role)) {
 			$userIds = $this->GetUserIdsByAuthor($username);
 			$userIds = implode("','", $userIds);
 			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-					"WHERE `userId` IN('".$userIds."' AND `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+					"WHERE `userId` IN('".$userIds."' AND `type`='".$type."';");
 		} else {
 			$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_FLIGHTS."';");
+					"WHERE `userId`='".$userId."' AND `type`='".$type."';");
 		}
 		
 		while(($result !== null) && ($row = $result->fetch_array())) {
-			$avaliabeFlights[] = $row['targetId'];
+			$avaliableItems[] = $row['targetId'];
 		}
 		
 		$c->Disconnect();
 		unset($c);
-	
-		return $avaliabeFlights;
+		
+		return $avaliableItems;
 	}
 	
-	public function SetFlightAvaliable($extUsername, $extFlightId)
+	public function GetAvaliableFlights($username)
 	{
-		$username = $extUsername;
-		$flightId = $extFlightId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`) 
-				VALUES ('".$this::$AVALIABILITY_FLIGHTS."', '".$userId."', '".$flightId."', '".$username."');";
-		
-		//error_log($query);
-		
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-		
-		$c->Disconnect();
-		unset($c);
-		
-		$this->SetFlightAvaliableForSubscribers($username, $flightId);
+		return $this->GetAvaliable($username, $this::$AVALIABILITY_FLIGHTS);
 	}
 	
-	public function SetFlightAvaliableForSubscribers($extUsername, $extFlightId)
+	public function GetAvaliableUsers($username)
 	{
-		$username = $extUsername;
-		$flightId = $extFlightId;
-		
-		$subscribersArr = $this->SelectSubscribers($username);
+		return $this->GetAvaliable($username, $this::$AVALIABILITY_USERS);
+	}
 	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		for($i = 0; $i < count($subscribersArr); $i++)
-		{
-			$subscriber = $subscribersArr[$i];
-			$userId = $this->GetIdByUsername($subscriber);
-			$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_FLIGHTS."', '".$userId."', '".$flightId."', '".$username."');";
-			
-			//error_log($query);
-		
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
+	public function GetAvaliableBruTypes($username)
+	{
+		return $this->GetAvaliable($username, $this::$AVALIABILITY_FDR_TYPES);
+	}
+	
+	/** ------------------------
+	 *  SET AVALIABLE
+	 */
+	
+	public function SetAvaliable($userIdentity, $id, $type)
+	{
+		$userId = $userIdentity;
+		if(is_string($userIdentity)) {
+			$userId = $this->GetIdByUsername($userIdentity);
 		}
 	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetFlightAvaliableForUser($extUsername, $extFlightId)
-	{
-		$username = $extUsername;
-		$flightId = $extFlightId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
-		
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'	AND
-				`targetId` = '".$flightId."' AND `type`='".$this::$AVALIABILITY_FLIGHTS."';";
+		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
+				VALUES ('".$type."', '".$userId."', '".$id."', '".$username."');";
 	
 		$stmt = $link->prepare($query);
 		$stmt->execute();
@@ -980,110 +747,43 @@ class User
 		unset($c);
 	}
 	
-	public function UnsetFlightAvaliable($extFlightId)
+	public function SetFlightAvaliable($userIdentity, $flightId)
 	{
-		$flightId = $extFlightId;
-		
+		$this->SetAvaliable($userIdentity, $flightId, $this::$AVALIABILITY_FLIGHTS);
+	}
+	
+	public function SetBruTypeAvaliable($userIdentity, $FDRid)
+	{
+		$this->SetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
+	}
+	
+	public function SetUsersAvaliable($userIdentity, $userId)
+	{
+		$this->SetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_USERS);
+	}
+	
+	/** ------------------------
+	 *  UNSET AVALIABLE
+	 */
+	
+	public function UnsetAvaliable($userIdentity, $itemId, $type)
+	{
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
-	
 	
 		$query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$flightId."' AND " .
-			"`type`='".$this::$AVALIABILITY_FLIGHTS."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function GetAvaliableSlices($extUsername)
-	{
-		$username = $extUsername;
-	
-		$userId = $this->GetIdByUsername($username);
-		$avaliabeSlices = array();
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `targetId`='".$userId."' AND `type`='".$this::$AVALIABILITY_SLICES."';");
-	
-		while($row = $result->fetch_array())
-		{
-			$avaliabeSlices[] = $row['targetId'];
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $avaliabeSlices;
-	}
-	
-	public function SetSliceAvaliable($extUsername, $extSliceId)
-	{
-		$username = $extUsername;
-		$sliceId = $extSliceId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_avaliability` (`type`,`userId`, `targetId`, `allowedBy`)
-				VALUES ('".$this::$AVALIABILITY_SLICES."', '".$userId."', '".$sliceId."', '".$username."');";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
+				"`type`='".$type."';";
 		
-		$this->SetSliceAvaliableForSubscribers($username, $sliceId);
-	}
-	
-	public function SetSliceAvaliableForSubscribers($extUsername, $extSliceId)
-	{
-		$username = $extUsername;
-		$sliceId = $extSliceId;
-	
-		$subscribersArr = $this->SelectSubscribers($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		foreach ($subscribersArr as $subscriber)
-		{
-			$userId = $this->GetIdByUsername($username);
-			$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_SLICES."', '".$userId."', '".$sliceId."', '".$username."');";
-	
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
+		if($userIdentity !== null) {
+			$userId = $userIdentity;
+			if(is_string($userIdentity)) {
+				$userId = $this->GetIdByUsername($userIdentity);
+			}
+			
+			$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'	AND
+				`targetId` = '".$flightId."' AND `type`='".$type."';";
 		}
 	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetSliceAvaliableForUser($extUsername, $extSliceId)
-	{
-		$username = $extUsername;
-		$sliceId = $extSliceId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."' AND " .
-				"`targetId` = '".$sliceId."' AND `type`='".$this::$AVALIABILITY_SLICES."';";
-	
 		$stmt = $link->prepare($query);
 		$stmt->execute();
 		$stmt->close();
@@ -1092,360 +792,38 @@ class User
 		unset($c);
 	}
 	
-	public function UnsetSliceAvaliable($extSliceId)
+	public function UnsetFlightAvaliableForUser($userIdentity, $flightId)
 	{
-		$sliceId = $extSliceId;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$sliceId."' AND ".
-			"`type`='".$this::$AVALIABILITY_SLICES."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
+		$this->UnsetAvaliable($userIdentity, $flightId, $this::$AVALIABILITY_FLIGHTS);
 	}
 	
-	public function GetAvaliableEngines($extUsername)
+	public function UnsetFlightAvaliable($flightId)
 	{
-		$username = $extUsername;
-	
-		$userId = $this->GetIdByUsername($username);
-		$avaliabeEngines = array();
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_ENGINES."';");
-	
-		while($row = $result->fetch_array())
-		{
-			$avaliabeEngines[] = $row['targetId'];
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $avaliabeEngines;
+		$this->UnsetAvaliable(null, $flightId, $this::$AVALIABILITY_FLIGHTS);
 	}
 	
-	public function SetEnginesAvaliable($extUsername, $extEngineId)
+	public function UnsetBruTypesAvaliableForUser($userIdentity, $FDRid)
 	{
-		$username = $extUsername;
-		$engineId = $extEngineId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_engine` (`type`, `userId`, `targetId`, `allowedBy`)
-				VALUES ('".$this::$AVALIABILITY_ENGINES."', '".$userId."', '".$engineId."', '".$username."');";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-		
-		$this->SetEnginesAvaliableForSubscribers($username, $engineId);
+		$this->UnsetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
 	}
 	
-	public function SetEnginesAvaliableForSubscribers($extUsername, $extEngineId)
+	public function UnsetBruTypesAvaliable($FDRid)
 	{
-		$username = $extUsername;
-		$engineId = $extEngineId;
-	
-		$subscribersArr = $this->SelectSubscribers($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		foreach ($subscribersArr as $subscriber)
-		{
-			$userId = $this->GetIdByUsername($username);
-			$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_ENGINES."', '".$userId."', '".$engineId."', '".$username."');";
-	
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-		}
-	
-		$c->Disconnect();
-		unset($c);
+		$this->UnsetAvaliable(null, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
 	}
 	
-	public function UnsetEngineAvaliableForUser($extUsername, $extEngineId)
+	public function UnsetUsersAvaliableForUser($userIdentity, $userId)
 	{
-		$username = $extUsername;
-		$engineId = $extEngineId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'	AND
-				`targetId` = '".$engineId."' AND `type`='".$this::$AVALIABILITY_ENGINES."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
+		$this->UnsetAvaliable($userIdentity, $userId, $this::$AVALIABILITY_USERS);
 	}
 	
-	public function UnsetEngineAvaliable($extEngineId)
+	public function UnsetUsersAvaliable($userId)
 	{
-		$engineId = $extEngineId;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$engineId."' ".
-			"AND `type`='".$this::$AVALIABILITY_ENGINES."';";
-		
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
+		$this->UnsetAvaliable(null, $userId, $this::$AVALIABILITY_USERS);
 	}
 	
-	public function GetAvaliableBruTypes($extUsername)
-	{
-		$username = $extUsername;
-	
-		$userId = $this->GetIdByUsername($username);
-		$avaliabeBruTypes = array();
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_FDR_TYPES."';");
-	
-		while($row = $result->fetch_array())
-		{
-			$avaliabeBruTypes[] = $row['targetId'];
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $avaliabeBruTypes;
-	}
-	
-	public function SetBruTypeAvaliable($extUsername, $extBruTypeId)
-	{
-		$username = $extUsername;
-		$bruTypeId = $extBruTypeId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-				VALUES ('".$this::$AVALIABILITY_FDR_TYPES."', '".$userId."', '".$bruTypeId."', '".$username."');";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-		
-		$this->SetBruTypeAvaliableForSubscribers($username, $bruTypeId);
-	}
-	
-	public function SetBruTypeAvaliableForSubscribers($extUsername, $extBruTypeId)
-	{
-		$username = $extUsername;
-		$bruTypeId = $extBruTypeId;
-	
-		$subscribersArr = $this->SelectSubscribers($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		foreach ($subscribersArr as $subscriber)
-		{
-			$userId = $this->GetIdByUsername($username);
-			$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_FDR_TYPES."', ".$userId."', '".$bruTypeId."', '".$username."');";
-	
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetBruTypesAvaliableForUser($extUsername, $extBruTypeId)
-	{
-		$username = $extUsername;
-		$bruTypeId = $extBruTypeId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'	AND
-				`targetId` = '".$bruTypeId."' AND `type`='".$this::$AVALIABILITY_FDR_TYPES."';";
-		
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetBruTypesAvaliable($extBruTypeId)
-	{
-		$bruTypeId = $extBruTypeId;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "DELETE FROM `user_avaliability` ".
-			"WHERE `targetId` = '".$bruTypeId."' AND `type`='".$this::$AVALIABILITY_FDR_TYPES."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function GetAvaliableDocs($extUsername)
-	{
-		$username = $extUsername;
-	
-		$userId = $this->GetIdByUsername($username);
-		$avaliabeDocs = array();
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_DOCS."';");
-	
-		while($row = $result->fetch_array())
-		{
-			$avaliabeDocs[] = $row['targetId'];
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $avaliabeDocs;
-	}
-	
-	public function SetDocsAvaliable($extUsername, $extDocId)
-	{
-		$username = $extUsername;
-		$docId = $extDocId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-				VALUES ('".$this::$AVALIABILITY_DOCS."', '".$userId."', '".$docId."', '".$username."');";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-		
-		$this->SetDocsAvaliableForSubscribers($username, $docId);
-	}
-	
-	public function SetDocsAvaliableForSubscribers($extUsername, $extDocId)
-	{
-		$username = $extUsername;
-		$docId = $extDocId;
-	
-		$subscribersArr = $this->SelectSubscribers($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		foreach ($subscribersArr as $subscriber)
-		{
-			$userId = $this->GetIdByUsername($username);
-			$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_DOCS."', ".$userId."', '".$docId."', '".$username."');";
-	
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetDocsAvaliableForUser($extUsername, $extDocId)
-	{
-		$username = $extUsername;
-		$docId = $extDocId;
-	
-		$userId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."' AND
-				`targetId` = '".$docId."' AND `type`='".$this::$AVALIABILITY_DOCS."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetDocsAvaliable($extDocId)
-	{
-		$docId = $extDocId;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-	
-		$query = "DELETE FROM `user_avaliability` ".
-			"WHERE `targetId` = '".$docId."' AND `type`='".$this::$AVALIABILITY_DOCS."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
+	/** ------------------------ **/
+						
 	public function GetUserIdsByAuthor($extUsername)
 	{
 		$username = $extUsername;
@@ -1468,117 +846,7 @@ class User
 	
 		return $avaliabeUsers;
 	}
-	
-	public function GetAvaliableUsers($extUsername)
-	{
-		$username = $extUsername;
-	
-		$userId = $this->GetIdByUsername($username);
-		$avaliabeUsers = array();
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-				"WHERE `userId`='".$userId."' AND `type`='".$this::$AVALIABILITY_USERS."';");
-	
-		while($row = $result->fetch_array())
-		{
-			$avaliabeUsers[] = $row['targetId'];
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	
-		return $avaliabeUsers;
-	}
-	
-	public function SetUsersAvaliable($extUsername, $extUserId)
-	{
-		$username = $extUsername;
-		$userSlaveId = $extUserId;
-	
-		$userMasterId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-				VALUES ('".$this::$AVALIABILITY_USERS."', '".$userMasterId."', '".$userSlaveId."', '".$username."');";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-		
-		$this->SetUsersAvaliableForSubscribers($username, $userSlaveId);
-	}
-	
-	public function SetUsersAvaliableForSubscribers($extUsername, $extUserId)
-	{
-		$username = $extUsername;
-		$userSlaveId = $extUserId;
-	
-		$subscribersArr = $this->SelectSubscribers($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		foreach ($subscribersArr as $subscriber)
-		{
-			$userMasterId = $this->GetIdByUsername($username);
-			$query = "INSERT INTO `user_avaliability` (`type`,`userId`, `targetId`, `allowedBy`)
-					VALUES ('".$this::$AVALIABILITY_USERS."', '".$userMasterId."', '".$userSlaveId."', '".$username."');";
-	
-			$stmt = $link->prepare($query);
-			$stmt->execute();
-			$stmt->close();
-		}
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetUsersAvaliableForUser($extUsername, $extUserId)
-	{
-		$username = $extUsername;
-		$userSlaveId = $extUserId;
-	
-		$userMasterId = $this->GetIdByUsername($username);
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userMasterId."'	AND
-				`targetId` = '".$userSlaveId."' AND `type`='".$this::$AVALIABILITY_USERS."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
-	public function UnsetUsersAvaliable($extUserId)
-	{
-		$userSlaveId = $extUserId;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-	
-		$query = "DELETE FROM `user_avaliability` WHERE " . 
-			"`targetId` = '".$userSlaveId."' AND `type`='".$this::$AVALIABILITY_USERS."';";
-	
-		$stmt = $link->prepare($query);
-		$stmt->execute();
-		$stmt->close();
-	
-		$c->Disconnect();
-		unset($c);
-	}
-	
+					
 	public function DeleteUserAvaliableData($extUserId)
 	{
 		$userId = $extUserId;

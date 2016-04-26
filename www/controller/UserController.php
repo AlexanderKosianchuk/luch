@@ -210,19 +210,36 @@ class UserController
 		//$this->lang->userModal
 		$Usr = new User();
 		$privilege = $Usr->allPrivilegeArray;
-		$form = sprintf("<div id='user-cru-form'>");
-		$privilegeOptions = '';
+		$uId = $Usr->GetUserIdByName($this->username);
+		$userInfo = $Usr->GetUserInfo($uId);
+		$role = $userInfo['role'];
+		
+		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form'>");
+
+		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
+		$privilegeOptions .= "<select id='privilege' name='privilege' multiple size='10' style='width: 335px'>";
+		
 		foreach ($privilege as $val)
 		{
-			$privilegeOptions .= "<option id='privilege' data-privilege='".$val."'>".$val."</option>";
+			$privilegeOptions .= "<option>".$val."</option>";
 		}
+		$privilegeOptions .= "</select></td></tr>";
+		
+		$roleOptions = '';
+		if($Usr::isAdmin($role)) {
+			$roleOptions .= "<tr><td>".$this->lang->userRole."</td><td align='center'>";
+			$roleOptions .= "<select name='role' size='3' style='width: 335px'>";
+			foreach ($Usr::$role as $val)
+			{
+				$roleOptions .= "<option>".$val."</option>";
+			}
+			$roleOptions .= "</select></td></tr>";
+		}		
 	
-		$form .= sprintf("<div align='center'><p class='Label'>%s</p>
-			<label id='userCreationInfo' style='color:darkred;'>%s</label></br></br>
-			<form>
-			<table>
+		$form .= sprintf("<table align='center'>
+			<p class='Label'>%s</p>
 			<tr><td>%s</td><td>
-				<input id='login' type='text' name='user' size='50'>
+				<input id='login' type='text' name='login' size='50'>
 			</td></tr>
 			<tr><td>%s</td><td>
 				<input id='company' type='text' name='company' size='50'>
@@ -233,30 +250,25 @@ class UserController
 			<tr><td>%s</td><td>
 				<input id='pwd2' type='password' name='pwd2' size='50'>
 			</td></tr>
+				%s
+				%s
 			<tr><td>%s</td><td align='center'>
-				<select id='privilege' multiple size='10' style='width: 335px'>%s<select>
-			</td></tr>
-			<tr><td>%s</td><td align='center'>
-				<input id='mySubscriber' type='checkbox' name='mySubscriber' value='1'>
+				<input id='file' type='file' name='logo'>
 			</td></tr>
 			<tr style='visibility:hidden;'><td>
 				Nonce:
 			</td><td>
 				<input id='nonce' type='text' id='nonce' name='nonce' value='%s'>
 			</td></tr>
-		</table>
-			<input align='center' id='createUserBut' class='Button' type='submit' value='%s'>
-			</form>
-			</div>",
+		</table>",
 				$this->lang->userCreationForm,
-				'',
 				$this->lang->userName,
 				$this->lang->company,
 				$this->lang->pass,
 				$this->lang->repeatPass,
-				$this->lang->userPrivilege,
 				$privilegeOptions,
-				$this->lang->userMySubscriber,
+				$roleOptions,
+				$this->lang->userLogo,
 				ulNonce::Create('login'),
 				$this->lang->userCreate);
 	
@@ -304,7 +316,7 @@ class UserController
 				{
 					if($greyHightLight)
 					{
-						printf("<tr>");
+						$form .= sprintf("<tr>");
 					}
 					else
 					{
@@ -320,7 +332,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input id='flightToAllowAccess' data-flightid='%s' type='checkbox'/>
+								<input name='flightsAvaliable' data-flightid='%s' type='checkbox'/>
 							</td></tr>",
 							$fligthInfo['bort'],
 							$fligthInfo['voyage'],
@@ -401,7 +413,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input id='bruTypeToAllowAccess' data-brutypeid='%s' type='checkbox'/>
+								<input name='FDRsAvaliable' data-brutypeid='%s' type='checkbox'/>
 							</td></tr>",
 							$bruTypeInfo['bruType'],
 							$bruTypeInfo['stepLength'],
@@ -435,8 +447,8 @@ class UserController
 	
 			//$Usr = new User();
 			$avaliableIds = $Usr->GetAvaliableUsers($this->username);
-			$avaliableUsers = $Usr->GetUsersList($avaliableIds);
-	
+			$avaliableUsers = $Usr->GetUsersListByAvaliableIds($avaliableIds);	
+			
 			if(count($avaliableUsers) > 0)
 			{
 				//if more than 30 rows make table scrollable
@@ -474,7 +486,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input id='usersToAllowAccess' data-userid='%s' type='checkbox'/>
+								<input name='usersAvaliable' data-userid='%s' type='checkbox'/>
 							</td></tr>",
 							$userInfo['login'],
 							$userInfo['company'],
@@ -496,8 +508,7 @@ class UserController
 			$form .= sprintf("</div>");
 		}
 	
-		$form .= sprintf("<input id='author' value='%s' style='visibility:hidden;'/>", $this->username);
-		$form .= '</div>';
+		$form .= '</form></div>';
 		unset($Usr);
 		
 		return $form;

@@ -138,7 +138,7 @@
 "userDelete" : "Удалить",
 "userList" : "Перечень",
 "userSave" : "Сохранить",
-"userCancel" : "Очистить",
+"userCancel" : "Отменить",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",
@@ -662,6 +662,7 @@
     "notAllFieldsMatched": "Не все поля заполнены",
     "userCreate":"Создать",
     "userPrivilege":"Привилегии",
+    "userRole":"Полномочия",
     "userMySubscriber":"Мой подписчик",
     "message": "Сообщение",
     "userCreatedSuccesfully": "Пользователь создан",

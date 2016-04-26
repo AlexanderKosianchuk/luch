@@ -21,8 +21,8 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	var userListTopMenu = null;
 	var userListLeftMenu = null;
 	
-	var userTable = null;
-	var createUpdateUserForm = null;
+	var userListContent = null;
+	var createUpdateUserContent = null;
 	
 	var userList = null;
 
@@ -86,40 +86,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 		userId = this.userId;
 		this.userListWorkspace = userListWorkspace;
 		this.ShowUserViewOptions();
-
-		var pV = {
-			action : actions["buildUserTable"],
-			data : {
-				data : 'data'
-			}
-		};
-
-		$.ajax({
-			type : "POST",
-			data : pV,
-			dataType : 'json',
-			url : USER_SRC,
-			async : true
-		})
-		.fail(function(msg) {
-			console.log(msg);
-		})
-		.done(function(answ) {
-			if (answ["status"] == "ok") {
-				var userTable = answ['data'], sortCol = answ['sortCol'], sortType = answ['sortType'];
-
-				self.userListWorkspace.append("<div id='userListContent' class='Content'></div>");
-				self.userListContainer = $("div#userListContent");
-				self.userListContainer.hide().append(userTable)
-						.slideDown(function() {
-							self.ResizeUserContainer();
-						});
-				self.SupportDataTable(sortCol, sortType);
-
-			} else {
-				console.log(answ["error"]);
-			}
-		});
+		this.ShowUserList();
 	};
 
 	this.ShowUserViewOptions = function() {
@@ -163,6 +130,64 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 			self.UserViewOptionsInitialState();
 			self.NoUserCheckedViewOptionsState();
 			self.BindButtonEvents();
+		}
+	};
+	
+	this.ShowUserList = function() {
+		var self = this;
+		
+		if ((userListContent != null) && ($('#userListContent').length > 0)) {
+			$('.user-content').slideUp(function() {
+					userListContent.slideDown();
+					self.NoUserCheckedViewOptionsState();
+					
+					$(".ItemsCheck").removeAttr("checked");
+					$(".ItemsCheck").prop("checked", false);
+			});
+		} else {		
+			var pV = {
+				action : actions["buildUserTable"],
+				data : {
+					data : 'data'
+				}
+			};
+
+			$.ajax({
+				type : "POST",
+				data : pV,
+				dataType : 'json',
+				url : USER_SRC,
+				async : true
+			})
+			.fail(function(msg) {
+				console.log(msg);
+			})
+			.done(function(answ) {
+				if (answ["status"] == "ok") {
+					var userTable = answ['data'], sortCol = answ['sortCol'], sortType = answ['sortType'];
+					var append = function() {
+						self.userListWorkspace.append("<div id='userListContent' class='Content user-content'></div>");
+						userListContent = $('#userListContent');
+						
+						userListContent
+							.append(userTable)
+							.slideDown();
+						self.SupportDataTable(sortCol, sortType);
+						self.NoUserCheckedViewOptionsState();
+						self.ResizeUserContainer();
+					}
+					
+					if($('.user-content').length > 0) {
+						$('.user-content').slideUp(function() {
+							append();
+						});
+					} else {
+						append();
+					}
+				} else {
+					console.log(answ["error"]);
+				}
+			});
 		}
 	}
 
@@ -237,12 +262,16 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 		$('button#userOpitonsCreateButton').on('click', function() {
 			self.ShowCreateUpdateUserForm();
 		});
+		
+		$('button#userOpitonsCancelButton').on('click', function() {
+			self.ShowUserList();
+		});
 	}
 
 	this.SupportDataTable = function(sortColumn, sortType) {
 		var self = this, sortType = sortType.toLowerCase();
 
-		userTable = $('#userTable').dataTable({
+		$('#userTable').dataTable({
 			"bInfo" : false,
 			"bSort" : true,
 			"aoColumnDefs" : [ {
@@ -315,26 +344,46 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	
 	this.ShowCreateUpdateUserForm = function() {
 		var self = this;
-		$.ajax({
-			"dataType" : 'json',
-			"type" : "POST",
-			"data" : {
-				'action' : actions["modal"],
-				'data' : {
-					'data' : 'dummy'
-				}
-			},
-			"url" : USER_SRC,
-			"async" : true
-		}).done(function(html) {
-			userTable.slideUp(function() {
-				self.userListContainer.append(html);
-				createUpdateUserForm = $('#user-cru-form');
-				createUpdateUserForm.hide().slideDown();
-				self.ResizeUserContainer();
+		
+		if((createUpdateUserContent !== null)  && $('#createUpdateUserContent').length > 0) {
+			$('.user-content').slideUp(function() {
+				createUpdateUserContent.slideDown();
+				self.CreateOrUpdateUserViewOptionsState();
 			});
-		}).fail(function(a) {
-			console.log(a);
-		});
+		} else {		
+			$.ajax({
+				"dataType" : 'json',
+				"type" : "POST",
+				"data" : {
+					'action' : actions["modal"],
+					'data' : {
+						'data' : 'dummy'
+					}
+				},
+				"url" : USER_SRC,
+				"async" : true
+			}).done(function(html) {	
+				var append = function() {
+					self.userListWorkspace.append("<div id='createUpdateUserContent' class='Content user-content'></div>");
+					createUpdateUserContent = $('#createUpdateUserContent');
+					
+					createUpdateUserContent
+						.append(html)
+						.slideDown();
+					self.CreateOrUpdateUserViewOptionsState();
+					self.ResizeUserContainer();
+				}
+				
+				if($('.user-content').length > 0) {
+					$('.user-content').slideUp(function() {
+						append();
+					});
+				} else {
+					append();
+				}
+			}).fail(function(a) {
+				console.log(a);
+			});
+		}
 	}
 }
