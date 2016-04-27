@@ -7,9 +7,10 @@ $M = new UserController($_POST, $_SESSION);
 
 if ($M->IsAppLoggedIn())
 {
+	$U = new User();
+	
 	if($M->action == $M->userActions["userLogout"])
 	{
-		$U = new User();
 		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
 		{
 			if(isset($M->data['data']))
@@ -45,10 +46,7 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
-	
-		unset($U);
 	} else if($M->action == $M->userActions["userChangeLanguage"]) {
-		$U = new User();
 		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
 		{
 			if(isset($M->data['lang']))
@@ -81,10 +79,7 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
-	
-		unset($U);
 	} else if($M->action == $M->userActions["buildUserTable"]) {
-		$U = new User();
 		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
 		{
 			if(isset($M->data['data']))
@@ -119,11 +114,7 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
-	
-		unset($U);
 	} else if($M->action == $M->userActions["segmentTable"]) {
-		$U = new User();
-	
 		if(in_array($U::$PRIVILEGE_VIEW_USERS, $M->privilege))
 		{
 			if(isset($M->data['data']))
@@ -173,7 +164,7 @@ if ($M->IsAppLoggedIn())
 			{
 				$answ["status"] = "err";
 				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page flights.php";
+						json_encode($_POST) . ". Page user.php";
 						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
 						echo(json_encode($answ));
 			}
@@ -186,11 +177,7 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
-	
-		unset($U);
-		} else if($M->action == $M->userActions["modal"]) {
-		$U = new User();
-	
+	} else if($M->action == $M->userActions["modal"]) {	
 		if(in_array($U::$PRIVILEGE_EDIT_USERS, $M->privilege))
 		{
 			$modal = $M->BuildCRUuserModal();
@@ -206,8 +193,53 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
+	} else if($M->action == $M->userActions["saveUser"]) {
+		if(in_array($U::$PRIVILEGE_ADD_USERS, $M->privilege))
+		{			
+			if(isset($M->data) && 
+					isset($_FILES['logo']) && 
+					isset($_FILES['logo']['tmp_name']))
+			{
+				$form = $_POST;
+				$file = $_FILES['logo']['tmp_name'];
+				
+				error_log(json_encode($_POST));
+				error_log(json_encode($_FILES));
+				
+				$action = $M->action;
+				$res = $M->CreateUser($form, $file);
+				
+				$answ = [
+					'status' => 'ok'
+				];
+				
+				if(!$res) {
+					$answ = [
+						'status' => 'fail',
+						'error' => $M->lang->userCreationFail
+					];
+				}
+						
+				$M->RegisterActionExecution($action, "executed");
+				echo(json_encode($answ));
+			}
+			else
+			{
+				$answ["status"] = "err";
+				$answ["error"] = "Not all nessesary params sent. Post: ".
+					json_encode($_POST) . ". Page user.php";
+				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
+				echo(json_encode($answ));
+			}
+		}
+		else
+		{
 	
-		unset($U);
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
 	} else {
 		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
 				" . Action: " . json_encode($_POST['action']) . 

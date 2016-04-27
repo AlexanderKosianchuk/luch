@@ -82,6 +82,7 @@
 	"userChangeLanguage": "userChangeLanguage",
 	"buildUserTable": "buildUserTable",
 	"segmentTable": "segmentTable",
+	"saveUser": "saveUser",
 	"modal": "modal"
 },
 

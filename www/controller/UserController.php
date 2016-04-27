@@ -214,10 +214,10 @@ class UserController
 		$userInfo = $Usr->GetUserInfo($uId);
 		$role = $userInfo['role'];
 		
-		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form'>");
+		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form' enctype='multipart/form-data'>");
 
 		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
-		$privilegeOptions .= "<select id='privilege' name='privilege' multiple size='10' style='width: 335px'>";
+		$privilegeOptions .= "<select id='privilege' name='privilege[]' multiple size='10' style='width: 335px'>";
 		
 		foreach ($privilege as $val)
 		{
@@ -228,7 +228,7 @@ class UserController
 		$roleOptions = '';
 		if($Usr::isAdmin($role)) {
 			$roleOptions .= "<tr><td>".$this->lang->userRole."</td><td align='center'>";
-			$roleOptions .= "<select name='role' size='3' style='width: 335px'>";
+			$roleOptions .= "<select name='role[]' size='3' style='width: 335px'>";
 			foreach ($Usr::$role as $val)
 			{
 				$roleOptions .= "<option>".$val."</option>";
@@ -238,6 +238,7 @@ class UserController
 	
 		$form .= sprintf("<table align='center'>
 			<p class='Label'>%s</p>
+			<div class='user-creation-info'><p>%s</p></div>
 			<tr><td>%s</td><td>
 				<input id='login' type='text' name='login' size='50'>
 			</td></tr>
@@ -255,22 +256,20 @@ class UserController
 			<tr><td>%s</td><td align='center'>
 				<input id='file' type='file' name='logo'>
 			</td></tr>
-			<tr style='visibility:hidden;'><td>
-				Nonce:
-			</td><td>
-				<input id='nonce' type='text' id='nonce' name='nonce' value='%s'>
-			</td></tr>
 		</table>",
 				$this->lang->userCreationForm,
+				'',
 				$this->lang->userName,
 				$this->lang->company,
 				$this->lang->pass,
 				$this->lang->repeatPass,
 				$privilegeOptions,
 				$roleOptions,
-				$this->lang->userLogo,
-				ulNonce::Create('login'),
-				$this->lang->userCreate);
+				$this->lang->userLogo);
+		
+		$form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
+		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["saveUser"]);
+		$form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 	
 		//==========================================
 		//access to flights
@@ -320,7 +319,7 @@ class UserController
 					}
 					else
 					{
-						$form .= sprintf("<tr style='background-color:lightgrey'>");
+						$form .= sprintf("<tr class='table-stripe'>");
 					}
 					$greyHightLight = !$greyHightLight;
 						
@@ -332,7 +331,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input name='flightsAvaliable' data-flightid='%s' type='checkbox'/>
+								<input name='flightsAvaliable[]' data-flightid='%s' type='checkbox'/>
 							</td></tr>",
 							$fligthInfo['bort'],
 							$fligthInfo['voyage'],
@@ -403,7 +402,7 @@ class UserController
 					}
 					else
 					{
-						$form .= sprintf("<tr style='background-color:lightgrey'>");
+						$form .= sprintf("<tr class='table-stripe'>");
 					}
 					$greyHightLight = !$greyHightLight;
 	
@@ -413,7 +412,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input name='FDRsAvaliable' data-brutypeid='%s' type='checkbox'/>
+								<input name='FDRsAvaliable[]' data-brutypeid='%s' type='checkbox'/>
 							</td></tr>",
 							$bruTypeInfo['bruType'],
 							$bruTypeInfo['stepLength'],
@@ -486,7 +485,7 @@ class UserController
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>%s</td>
 							<td class='ExeptionsCell' align='center'>
-								<input name='usersAvaliable' data-userid='%s' type='checkbox'/>
+								<input name='usersAvaliable[]' data-userid='%s' type='checkbox'/>
 							</td></tr>",
 							$userInfo['login'],
 							$userInfo['company'],
@@ -512,6 +511,10 @@ class UserController
 		unset($Usr);
 		
 		return $form;
+	}
+	
+	public function CreateUser($form, $file) {
+		return true;
 	}
 }
 

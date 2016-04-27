@@ -139,6 +139,7 @@
 "userList" : "Перечень",
 "userSave" : "Сохранить",
 "userCancel" : "Отменить",
+"userCreaitonFailServerError": "Ошибка связи при попытке создания пользователя. Попробуйте позже.",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",
@@ -663,6 +664,7 @@
     "userCreate":"Создать",
     "userPrivilege":"Привилегии",
     "userRole":"Полномочия",
+    "userCreationFail":"Не удалось создать пользователя. Проверьте корректность введенных данных и повторите попытку.",
     "userMySubscriber":"Мой подписчик",
     "message": "Сообщение",
     "userCreatedSuccesfully": "Пользователь создан",

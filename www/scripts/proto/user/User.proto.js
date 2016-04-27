@@ -24,7 +24,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	var userListContent = null;
 	var createUpdateUserContent = null;
 	
-	var userList = null;
+	var usersTable = null;
 
 	// /
 	// PRIVILEGED
@@ -266,12 +266,22 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 		$('button#userOpitonsCancelButton').on('click', function() {
 			self.ShowUserList();
 		});
+		
+		$('button#userOpitonsSaveButton').on('click', function() {
+			self.UserSave()/*.done(function(answ){
+				console.log(answ);
+				usersTable.fnDraw(false);
+				//self.ShowUserList();
+			}).fail(function(answ){
+				console.log(answ);
+			})*/;
+		});
 	}
 
 	this.SupportDataTable = function(sortColumn, sortType) {
 		var self = this, sortType = sortType.toLowerCase();
 
-		$('#userTable').dataTable({
+		usersTable = $('#userTable').dataTable({
 			"bInfo" : false,
 			"bSort" : true,
 			"aoColumnDefs" : [ {
@@ -385,5 +395,29 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 				console.log(a);
 			});
 		}
-	}
+	};
+	
+	this.UserSave = function(done) {
+		$('form#user-cru-form')
+			.one('submit', function(e){
+				$.ajax({
+					url: USER_SRC,
+					type: 'POST',
+					data: new FormData(this),
+					processData: false,
+					contentType: false,
+					done: function(a) {
+						if((a['status'] == 'error') && a['error'].langth > 0) {
+							$('.user-creation-info')[0].text();
+						} else {
+							done(a);
+						}
+					},
+					fail: function(a) {
+						$('.user-creation-info')[0].text(langStr.userCreaitonFailServerError);
+					}
+				});
+				e.preventDefault();
+			}).submit();
+	};
 }

@@ -221,10 +221,10 @@ class PrinterController {
 						$val = $nameVal [1];
 						
 						if ($counterNeedBrake) {
-							$str .= $this->lang->$name . " - " . $val . ";</br>";
+							$str .= isset($this->lang->$name) ? $this->lang->$name : $name . " - " . $val . ";</br>";
 							$counterNeedBrake = ! $counterNeedBrake;
 						} else {
-							$str .= $this->lang->$name . " - " . $val . "; ";
+							$str .= isset($this->lang->$name) ? $this->lang->$name : $name . " - " . $val . "; ";
 							$counterNeedBrake = ! $counterNeedBrake;
 						}
 					}

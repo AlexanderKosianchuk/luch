@@ -109,7 +109,9 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
           	})).append($('<input/>', {
                 name: 'action',
                 value: eventsPrintAction
-          	})).submit();
+          	})).appendTo(
+      			$('body')
+          	).submit();
 			
 			return false;
 		});
