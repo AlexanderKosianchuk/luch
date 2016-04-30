@@ -181,14 +181,23 @@ class UserController
 		$tableSegment = [];
 	
 		foreach($userList as $user)
-		{				
+		{		
+			$img = '';
+			if(!empty($user['logo'])) {
+				$img = '<div id="userlist-img-container">
+			        <div class="userlist-img-image-container">
+			            <img src="data:image/jpeg;base64,' . base64_encode($user['logo']) . '">
+			        </div>
+			    </div>​';
+			}
+			
 			$tableSegment[] = array(
-					"<input class='ItemsCheck' data-type='user' data-iserid='".$user['id']."' type='checkbox'/>",
+					"<input class='ItemsCheck' data-type='user' data-userid='".$user['id']."' type='checkbox'/>",
 					$user['login'],
 					$user['lang'],
 					$user['company'],
 					str_replace(",", ", ", $user['privilege']),
-					$user['logo']
+					$img
 			);
 		}
 	
@@ -204,8 +213,49 @@ class UserController
 	
 		return $userInfo;
 	}
+	
+	private function printTableAvaliability($cellNames, $avaliableRows, $rowKeys, $dataKey, $avaliable = []) {
+		$form = '';
+		//if more than 30 rows make table scrollable
+		if(count($avaliableRows) > 30)
+		{
+			$form .= sprintf("<div class='items-avaliability-table-wrap'>");
+		}
+			
+		$form .= sprintf("<table class='items-avaliability-table'>");
+		$form .= sprintf("<tr class='items-avaliability-table-header'>");
+		for($ii = 0; $ii < count($cellNames) - 1; $ii++) {
+			$form .= sprintf("<td class='items-avaliability-table-cell'>%s</td>", $cellNames[$ii]);
+		}
+		$form .= sprintf("<td class='items-avaliability-table-cell' width='50px'>%s</td>", $cellNames[count($cellNames) - 1]);
+		$form .= sprintf("</tr>");
+	
+		foreach ($avaliableRows as $rowInfo) {
+			$form .= sprintf("<tr class='table-stripe'>");
+			for($ii = 1; $ii < count($rowKeys); $ii++) {
+				$form .= sprintf("<td class='items-avaliability-table-cell'>%s</td>", $rowInfo[$rowKeys[$ii]]);
+			}
+			
+			$checked = '';
+			if(in_array($rowInfo[$rowKeys[0]], $avaliable)) {
+				$checked = " checked='checked' ";
+			}
+			
+			$form .= sprintf("<td class='items-avaliability-table-cell' align='center'>
+							<input name='".$dataKey."Avaliable[]' value='%s' type='checkbox' ".$checked."/>
+						</td>", $rowInfo[$rowKeys[0]]); // always id should be
+			$form .= sprintf("</tr>");
+		}
+		$form .= sprintf("</table>");
+			
+		if(count($avaliableRows) > 30) {
+			$form .= sprintf("</div>");
+		}
+			
+		return $form;
+	}
 		
-	public function BuildCRUuserModal()
+	public function BuildCreateUserModal()
 	{
 		//$this->lang->userModal
 		$Usr = new User();
@@ -221,7 +271,7 @@ class UserController
 		
 		foreach ($privilege as $val)
 		{
-			$privilegeOptions .= "<option>".$val."</option>";
+			$privilegeOptions .= "<option selected='selected'>".$val."</option>";
 		}
 		$privilegeOptions .= "</select></td></tr>";
 		
@@ -231,30 +281,32 @@ class UserController
 			$roleOptions .= "<select name='role[]' size='3' style='width: 335px'>";
 			foreach ($Usr::$role as $val)
 			{
-				$roleOptions .= "<option>".$val."</option>";
+				$roleOptions .= "<option selected='selected'>".$val."</option>";
 			}
 			$roleOptions .= "</select></td></tr>";
+		} else {
+			$roleOptions .= "<input type='hidden' name='role' size='50' value='user'>";
 		}		
 	
 		$form .= sprintf("<table align='center'>
 			<p class='Label'>%s</p>
 			<div class='user-creation-info'><p>%s</p></div>
 			<tr><td>%s</td><td>
-				<input id='login' type='text' name='login' size='50'>
+				<input type='text' name='login' size='50'>
 			</td></tr>
 			<tr><td>%s</td><td>
-				<input id='company' type='text' name='company' size='50'>
+				<input type='text' name='company' size='50'>
 			</td></tr>
 			<tr><td>%s</td><td>
-				<input id='pwd1' type='password' name='pwd' size='50'>
+				<input class='user-pwd' type='password' name='pwd' size='50'>
 			</td></tr>
 			<tr><td>%s</td><td>
-				<input id='pwd2' type='password' name='pwd2' size='50'>
+				<input class='user-pwd' type='password' name='pwd2' size='50'>
 			</td></tr>
 				%s
 				%s
 			<tr><td>%s</td><td align='center'>
-				<input id='file' type='file' name='logo'>
+				<input type='file' name='logo'>
 			</td></tr>
 		</table>",
 				$this->lang->userCreationForm,
@@ -270,87 +322,42 @@ class UserController
 		$form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
 		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["saveUser"]);
 		$form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
-	
+		
 		//==========================================
 		//access to flights
 		//==========================================
-		if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege))
-		{
+		if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege)) {
 			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 				
 			$Fl = new Flight();
 			$avaliableFlightIds = $Usr->GetAvaliableFlights($this->username);
 			$avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
 				
-			if(count($avaliableFlights) > 0)
-			{
-				//if more than 30 rows make table scrollable
-				if(count($avaliableFlights) > 30)
-				{
-					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
-				}
-	
-				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
-	
-				$form .= sprintf("<tr class='ExeptionsTableHeader'>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
-						$this->lang->bortNum,
-						$this->lang->voyage,
-						$this->lang->flightDate,
-						$this->lang->bruTypeName,
-						$this->lang->author,
-						$this->lang->departureAirport,
-						$this->lang->arrivalAirport,
-						$this->lang->access);
-	
-				$greyHightLight = false;
-				foreach ($avaliableFlights as $fligthInfo)
-				{
-					if($greyHightLight)
-					{
-						$form .= sprintf("<tr>");
-					}
-					else
-					{
-						$form .= sprintf("<tr class='table-stripe'>");
-					}
-					$greyHightLight = !$greyHightLight;
-						
-					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>
-								<input name='flightsAvaliable[]' data-flightid='%s' type='checkbox'/>
-							</td></tr>",
-							$fligthInfo['bort'],
-							$fligthInfo['voyage'],
-							$fligthInfo['flightDate'],
-							$fligthInfo['bruType'],
-							$fligthInfo['performer'],
-							$fligthInfo['departureAirport'],
-							$fligthInfo['arrivalAirport'],
-							$fligthInfo['id']);
-				}
-				$form .= sprintf("</table>");
-	
-				if(count($avaliableFlights) > 30)
-				{
-					$form .= sprintf("</div>");
-				}
-			}
-			else
-			{
+			if(count($avaliableFlights) > 0) {
+				$headerLables = [
+					$this->lang->bortNum,
+					$this->lang->voyage,
+					$this->lang->flightDate,
+					$this->lang->bruTypeName,
+					$this->lang->author,
+					$this->lang->departureAirport,
+					$this->lang->arrivalAirport,
+					$this->lang->access
+				];
+				
+				$rowsInfoKeys = [
+					'id',
+					'bort',
+					'voyage',
+					'flightDate',
+					'bruType',
+					'performer',
+					'departureAirport',
+					'arrivalAirport'
+				];
+				
+				$form .= $this->printTableAvaliability($headerLables, $avaliableFlights, $rowsInfoKeys, 'flights');
+			} else {
 				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
 						$this->lang->noDataToOpenAccess);
 			}
@@ -369,67 +376,27 @@ class UserController
 			$avaliableIds = $Usr->GetAvaliableBruTypes($this->username);
 			$avaliableBruTypes = $Bru->GetBruList($avaliableIds);
 	
-			if(count($avaliableBruTypes) > 0)
-			{
-				//if more than 30 rows make table scrollable
-				if(count($avaliableBruTypes) > 30)
-				{
-					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
-				}
-	
-				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
-	
-				$form .= sprintf("<tr class='ExeptionsTableHeader'>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
-						$this->lang->bruTypesName,
-						$this->lang->bruTypesStepLenth,
-						$this->lang->bruTypesFrameLength,
-						$this->lang->bruTypesWordLength,
-						$this->lang->bruTypesAuthor,
-						$this->lang->access);
-	
-				$greyHightLight = false;
-				foreach ($avaliableBruTypes as $bruTypeInfo)
-				{
-					if($greyHightLight)
-					{
-						$form .= sprintf("<tr>");
-					}
-					else
-					{
-						$form .= sprintf("<tr class='table-stripe'>");
-					}
-					$greyHightLight = !$greyHightLight;
-	
-					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>
-								<input name='FDRsAvaliable[]' data-brutypeid='%s' type='checkbox'/>
-							</td></tr>",
-							$bruTypeInfo['bruType'],
-							$bruTypeInfo['stepLength'],
-							$bruTypeInfo['frameLength'],
-							$bruTypeInfo['wordLength'],
-							$bruTypeInfo['author'],
-							$bruTypeInfo['id']);
-				}
-				$form .= sprintf("</table>");
-	
-				if(count($avaliableBruTypes) > 30)
-				{
-					$form .= sprintf("</div>");
-				}
-			}
-			else
-			{
+			if(count($avaliableBruTypes) > 0) {
+				$headerLables = [
+					$this->lang->bruTypesName,
+					$this->lang->bruTypesStepLenth,
+					$this->lang->bruTypesFrameLength,
+					$this->lang->bruTypesWordLength,
+					$this->lang->bruTypesAuthor,
+					$this->lang->access
+				];
+				
+				$rowsInfoKeys = [
+					'id',
+					'bruType',
+					'stepLength',
+					'frameLength',
+					'wordLength',
+					'author'
+				];
+				
+				$form .= $this->printTableAvaliability($headerLables, $avaliableBruTypes, $rowsInfoKeys, 'FDRs');
+			} else {
 				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
 						$this->lang->noDataToOpenAccess);
 			}
@@ -450,54 +417,21 @@ class UserController
 			
 			if(count($avaliableUsers) > 0)
 			{
-				//if more than 30 rows make table scrollable
-				if(count($avaliableUsers) > 30)
-				{
-					$form .= sprintf("<div style='overflow-y:scroll; height:300px'>");
-				}
-	
-				$form .= sprintf("<table width='%s' class='ExeptionsTable'>", "99%");
-	
-				$form .= sprintf("<tr class='ExeptionsTableHeader'>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell'>%s</td>
-					<td class='ExeptionsCell' width='50px'>%s</td></tr>",
-						$this->lang->userLogin,
-						$this->lang->userCompany,
-						$this->lang->userAuthor,
-						$this->lang->access);
-	
-				$greyHightLight = false;
-				foreach ($avaliableUsers as $userInfo)
-				{
-					if($greyHightLight)
-					{
-						$form .= sprintf("<tr>");
-					}
-					else
-					{
-						$form .= sprintf("<tr style='background-color:lightgrey'>");
-					}
-					$greyHightLight = !$greyHightLight;
-	
-					$form .= sprintf("<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>%s</td>
-							<td class='ExeptionsCell' align='center'>
-								<input name='usersAvaliable[]' data-userid='%s' type='checkbox'/>
-							</td></tr>",
-							$userInfo['login'],
-							$userInfo['company'],
-							$userInfo['author'],
-							$userInfo['id']);
-				}
-				$form .= sprintf("</table>");
-	
-				if(count($avaliableUsers) > 30)
-				{
-					$form .= sprintf("</div>");
-				}
+				$headerLables = [
+					$this->lang->userLogin,
+					$this->lang->userCompany,
+					$this->lang->userAuthor,
+					$this->lang->access
+				];
+				
+				$rowsInfoKeys = [
+						'id',
+						'login',
+						'company',
+						'author',
+				];
+				
+				$form .= $this->printTableAvaliability($headerLables, $avaliableUsers, $rowsInfoKeys, 'users');
 			}
 			else
 			{
@@ -513,9 +447,299 @@ class UserController
 		return $form;
 	}
 	
-	public function CreateUser($form, $file) {
+	public function BuildUpdateUserModal($updatedUsersId)
+	{
+		//$this->lang->userModal
+		$Usr = new User();
+		$privilege = $Usr->allPrivilegeArray;
+		$authorId = $Usr->GetUserIdByName($this->username);
+		$userInfo = $Usr->GetUserInfo($updatedUsersId);
+		$role = $userInfo['role'];
+		$privilege = explode(",", $userInfo['privilege']);
+	
+		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form' enctype='multipart/form-data'>");
+	
+		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
+		$privilegeOptions .= "<select id='privilege' name='privilege[]' multiple size='10' style='width: 335px'>";
+	
+		foreach ($privilege as $val)
+		{
+			$selected = '';
+			if(in_array($val, $privilege)) {
+				$selected = " selected='selected' ";
+			}
+			$privilegeOptions .= "<option ".$selected.">".$val."</option>";
+		}
+		$privilegeOptions .= "</select></td></tr>";
+	
+		$roleOptions = '';
+		if($Usr::isAdmin($role)) {
+			$roleOptions .= "<tr><td>".$this->lang->userRole."</td><td align='center'>";
+			$roleOptions .= "<select name='role[]' size='3' style='width: 335px'>";
+			foreach ($Usr::$role as $val)
+			{
+				$selected = '';
+				if($val == $role) {
+					$selected = " selected='selected' ";
+				}
+				$roleOptions .= "<option ".$selected.">".$val."</option>";
+			}
+			$roleOptions .= "</select></td></tr>";
+		} else {
+			$roleOptions .= "<input type='hidden' name='role' size='50' value='user'>";
+		}
+	
+		$form .= sprintf("<table align='center'>
+			<p class='Label'>%s</p>
+			<div class='user-creation-info'><p>%s</p></div>
+			<tr><td>%s</td><td>
+				<input type='text' name='login' size='50' value='%s'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input type='text' name='company' size='50' value='%s'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input class='user-pwd' type='password' name='pwd' size='50'>
+			</td></tr>
+			<tr><td>%s</td><td>
+				<input class='user-pwd' type='password' name='pwd2' size='50'>
+			</td></tr>
+				%s
+				%s
+			<tr><td>%s</td><td align='center'>
+				<input type='file' name='logo'>
+			</td></tr>
+		</table>",
+				$this->lang->userCreationForm,
+				'',
+				$this->lang->userName,
+				$userInfo['login'],
+				$this->lang->company,
+				$userInfo['company'],
+				$this->lang->pass,
+				$this->lang->repeatPass,
+				$privilegeOptions,
+				$roleOptions,
+				$this->lang->userLogo);
+	
+		$form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
+		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["saveUser"]);
+		$form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
+	
+		//==========================================
+		//access to flights
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege)) {
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
+	
+			$Fl = new Flight();
+			$avaliableFlightIds = $Usr->GetAvaliableFlights($this->username);
+			$avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
+			$attachedFlightIds = $Usr->GetAvaliableFlights($userInfo['login']);
+	
+			if(count($avaliableFlights) > 0) {
+				$headerLables = [
+					$this->lang->bortNum,
+					$this->lang->voyage,
+					$this->lang->flightDate,
+					$this->lang->bruTypeName,
+					$this->lang->author,
+					$this->lang->departureAirport,
+					$this->lang->arrivalAirport,
+					$this->lang->access
+				];
+	
+				$rowsInfoKeys = [
+					'id',
+					'bort',
+					'voyage',
+					'flightDate',
+					'bruType',
+					'performer',
+					'departureAirport',
+					'arrivalAirport'
+				];
+	
+				$form .= $this->printTableAvaliability(
+					$headerLables, 
+					$avaliableFlights,
+					$rowsInfoKeys, 
+					'flights', 
+					$attachedFlightIds
+				);
+			} else {
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+			unset($Fl);
+		}
+	
+		//==========================================
+		//access to brutypes
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->privilege))
+		{
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
+	
+			$Bru = new Bru();
+			$avaliableIds = $Usr->GetAvaliableBruTypes($this->username);
+			$avaliableBruTypes = $Bru->GetBruList($avaliableIds);
+			$attachedFDRIds = $Usr->GetAvaliableBruTypes($userInfo['login']);
+	
+			if(count($avaliableBruTypes) > 0) {
+				$headerLables = [
+					$this->lang->bruTypesName,
+					$this->lang->bruTypesStepLenth,
+					$this->lang->bruTypesFrameLength,
+					$this->lang->bruTypesWordLength,
+					$this->lang->bruTypesAuthor,
+					$this->lang->access
+				];
+	
+				$rowsInfoKeys = [
+					'id',
+					'bruType',
+					'stepLength',
+					'frameLength',
+					'wordLength',
+					'author'
+				];
+	
+				$form .= $this->printTableAvaliability(
+					$headerLables, 
+					$avaliableBruTypes, 
+					$rowsInfoKeys, 
+					'FDRs', 
+					$attachedFDRIds
+				);
+			} else {
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+			unset($Bru);
+		}
+	
+		//==========================================
+		//access to users
+		//==========================================
+		if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->privilege))
+		{
+			$form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
+	
+			//$Usr = new User();
+			$avaliableIds = $Usr->GetAvaliableUsers($this->username);
+			$avaliableUsers = $Usr->GetUsersListByAvaliableIds($avaliableIds);
+			$attachedUserIds = $Usr->GetAvaliableUsers($userInfo['login']);
+				
+			if(count($avaliableUsers) > 0)
+			{
+				$headerLables = [
+					$this->lang->userLogin,
+					$this->lang->userCompany,
+					$this->lang->userAuthor,
+					$this->lang->access
+				];
+	
+				$rowsInfoKeys = [
+					'id',
+					'login',
+					'company',
+					'author',
+				];
+	
+				$form .= $this->printTableAvaliability(
+					$headerLables, 
+					$avaliableUsers, 
+					$rowsInfoKeys, 
+					'users',
+					$attachedUserIds
+				);
+			}
+			else
+			{
+				$form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
+						$this->lang->noDataToOpenAccess);
+			}
+			$form .= sprintf("</div>");
+		}
+	
+		$form .= '</form></div>';
+		unset($Usr);
+	
+		return $form;
+	}
+	
+	public function CreateUser($form, $file) 
+	{
+		$login = $form['login'];
+		$company = $form['company'];
+		$pwd = $form['pwd'];
+		$privilege = $form['privilege'];
+		$role = $form['role'];
+		if(is_array($role)) {
+			$role = $role[count($role) - 1];
+		}
+		$author = $this->username;
+		$permittedFlights = isset($form['flightsAvaliable']) ? $form['flightsAvaliable'] : [];
+		$permittedBruTypes = isset($form['FDRsAvaliable']) ? $form['FDRsAvaliable'] : [];
+		$permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
+		$file = str_replace("\\", "/", $file);
+		
+		$U = new User();
+		$msg = '';
+		
+		if (!$U->CheckUserPersonalExist($login)) {			
+			$ulogin = new uLogin();
+			
+			if ($ulogin->CreateUser($login, $pwd)) {
+				$U->CreateUserPersonal($login, $privilege, $author, $company, $role, $file);				
+				$createdUserId = $U->GetIdByUsername($login);
+				$authorId = $U->GetUserIdByName($this->username);
+				$U->SetUsersAvaliable($author, $createdUserId, $authorId);
+					
+				foreach($permittedFlights as $id) {
+					$U->SetFlightAvaliable($author, $id, $createdUserId);
+				}
+				
+				foreach($permittedBruTypes as $id) {
+					$U->SetBruTypeAvaliable($author, $id, $createdUserId);
+				}
+				
+				foreach($permittedUsers as $id) {
+					$U->SetUsersAvaliable($author, $id, $createdUserId);
+				}
+			} else {
+				$msg = $this->lang->userAlreadyExistOrImpossible;
+			}
+		} else {
+			$msg = $this->lang->userAlreadyExist;
+		}
+		
+		return $msg;
+	}
+	
+	public function DeleteUser($userIds) 
+	{
+		$username = $this->username;
+		$ulogin = new uLogin();
+		$U = new User();
+		
+		foreach ($userIds as $userDeleteId) {
+			if(is_int(intval($userDeleteId))) {
+				$userInfo = $U->GetUserInfo($userDeleteId);
+				$login = $userInfo['login'];
+			
+				$uloginUid = $ulogin->Uid($login);
+				$ulogin->DeleteUser($uloginUid);
+			
+				$U->DeleteUserPersonal($login);
+				$U->DeleteUserAvaliableData($userDeleteId);
+				$U->DeleteUserAvaliabilityForUsers($userDeleteId);
+			}
+		}
+		
 		return true;
 	}
 }
-
-?>

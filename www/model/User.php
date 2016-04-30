@@ -524,25 +524,30 @@ class User
 		}
 	}
 	
-	public function CreateUserPersonal($extLogin, $extPrivilege, $extAuthor, $extCompany)
+	public function CreateUserPersonal($login, $privilege, $author, $company, $role, $logo)
 	{
-		$login = $extLogin;
-		$privilege = $extPrivilege;
-		$author = $extAuthor;
-		$company = $extCompany;
+		if(is_array($privilege)) {
+			$privilege = implode(',', $privilege);
+		}
 	
 		$query = "INSERT INTO `user_personal` (`login`,
 				`privilege`,
 				`author`,
-				`company`)
+				`company`,
+				`lang`,
+				`role`,
+				`logo`)
 				VALUES ('".$login."',
 						'".$privilege."',
 						'".$author."',
-						'".$company."');";
-	
+						'".$company."',
+						'en',
+						'".$role."',
+						LOAD_FILE('".$logo."'));";
+		
 		$execInfo['query'] = $query;
 		$execInfo['status'] = 0;
-	
+			
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
@@ -583,10 +588,8 @@ class User
 		return $msg;
 	}
 	
-	public function CheckUserPersonalExist($extLogin)
+	public function CheckUserPersonalExist($login)
 	{
-		$login = $extLogin;
-
 		$query = "SELECT `login` FROM `user_personal` WHERE `login` = '".$login."';";
 				
 		$c = new DataBaseConnector();
@@ -726,18 +729,17 @@ class User
 	 *  SET AVALIABLE
 	 */
 	
-	public function SetAvaliable($userIdentity, $id, $type)
+	public function SetAvaliable($allowedBy, $id, $type, $userId = null)
 	{
-		$userId = $userIdentity;
-		if(is_string($userIdentity)) {
-			$userId = $this->GetIdByUsername($userIdentity);
+		if($userId === null) { //user allowed by him self (upload flight for ex)
+			$userId = $this->GetIdByUsername($allowedBy);
 		}
 	
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
 		$query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-				VALUES ('".$type."', '".$userId."', '".$id."', '".$username."');";
+				VALUES ('".$type."', '".$userId."', '".$id."', '".$allowedBy."');";
 	
 		$stmt = $link->prepare($query);
 		$stmt->execute();
@@ -747,19 +749,19 @@ class User
 		unset($c);
 	}
 	
-	public function SetFlightAvaliable($userIdentity, $flightId)
+	public function SetFlightAvaliable($allowedBy, $flightId, $userIdentity = null)
 	{
-		$this->SetAvaliable($userIdentity, $flightId, $this::$AVALIABILITY_FLIGHTS);
+		$this->SetAvaliable($allowedBy, $flightId, $this::$AVALIABILITY_FLIGHTS, $userIdentity);
 	}
 	
-	public function SetBruTypeAvaliable($userIdentity, $FDRid)
+	public function SetBruTypeAvaliable($allowedBy, $FDRid, $userIdentity = null)
 	{
-		$this->SetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
+		$this->SetAvaliable($allowedBy, $FDRid, $this::$AVALIABILITY_FDR_TYPES, $userIdentity);
 	}
 	
-	public function SetUsersAvaliable($userIdentity, $userId)
+	public function SetUsersAvaliable($allowedBy, $userId, $userIdentity = null)
 	{
-		$this->SetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_USERS);
+		$this->SetAvaliable($allowedBy, $userId, $this::$AVALIABILITY_USERS, $userIdentity);
 	}
 	
 	/** ------------------------
@@ -771,7 +773,7 @@ class User
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
-		$query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$flightId."' AND " .
+		$query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$itemId."' AND " .
 				"`type`='".$type."';";
 		
 		if($userIdentity !== null) {
@@ -781,7 +783,7 @@ class User
 			}
 			
 			$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'	AND
-				`targetId` = '".$flightId."' AND `type`='".$type."';";
+				`targetId` = '".$itemId."' AND `type`='".$type."';";
 		}
 	
 		$stmt = $link->prepare($query);
@@ -855,6 +857,22 @@ class User
 		$link = $c->Connect();
 	
 		$query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."';";
+	
+		$stmt = $link->prepare($query);
+		$stmt->execute();
+		$stmt->close();
+	
+		$c->Disconnect();
+		unset($c);
+	}
+	
+	public function DeleteUserAvaliabilityForUsers($userId)
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+		
+		$query = "DELETE FROM `user_avaliability` WHERE " .
+				"`targetId` = '".$userId."' AND `type`='".$this::$AVALIABILITY_USERS."';";
 	
 		$stmt = $link->prepare($query);
 		$stmt->execute();

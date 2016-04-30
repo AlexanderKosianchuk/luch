@@ -260,21 +260,46 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	this.BindButtonEvents = function() {
 		var self = this;
 		$('button#userOpitonsCreateButton').on('click', function() {
-			self.ShowCreateUpdateUserForm();
+			self.ShowCreateUserForm();
 		});
 		
 		$('button#userOpitonsCancelButton').on('click', function() {
 			self.ShowUserList();
+			$("form#user-cru-form")[0].reset();
 		});
 		
 		$('button#userOpitonsSaveButton').on('click', function() {
-			self.UserSave()/*.done(function(answ){
-				console.log(answ);
-				usersTable.fnDraw(false);
-				//self.ShowUserList();
-			}).fail(function(answ){
-				console.log(answ);
-			})*/;
+			self.UserSave().done(function(answ){
+				userListContent.remove();
+				userListContent = null;
+				delete usersTable;
+				self.ShowUserList();
+				$("form#user-cru-form")[0].reset();
+			});
+		});
+		
+		$('button#userOpitonsEditButton').on('click', function() {
+			var userId = $('.ItemsCheck:checked').eq(0).data('userid');
+			self.ShowUpdateUserForm(userId);
+		});
+		
+		$('button#userOpitonsDeleteButton').on('click', function() {
+			if (confirm(langStr.confimUserDeletion)) {
+				var itemsChecked = $('.ItemsCheck:checked');
+				var userIds = [];
+				$.each(itemsChecked, function(index, item) {
+					userIds.push(parseInt($(item).data('userid')));
+				});
+								
+				if(userIds.length > 0) {
+					self.UserDelete(userIds).done(function(answ){
+						userListContent.remove();
+						userListContent = null;
+						delete usersTable;
+						self.ShowUserList();
+					});
+				}
+			}
 		});
 	}
 
@@ -352,7 +377,7 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 		});
 	}
 	
-	this.ShowCreateUpdateUserForm = function() {
+	this.ShowUserForm = function(action, data) {
 		var self = this;
 		
 		if((createUpdateUserContent !== null)  && $('#createUpdateUserContent').length > 0) {
@@ -365,10 +390,8 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 				"dataType" : 'json',
 				"type" : "POST",
 				"data" : {
-					'action' : actions["modal"],
-					'data' : {
-						'data' : 'dummy'
-					}
+					'action' : action,
+					'data' : data
 				},
 				"url" : USER_SRC,
 				"async" : true
@@ -395,29 +418,56 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 				console.log(a);
 			});
 		}
+		
+		return true;
 	};
 	
-	this.UserSave = function(done) {
+	this.ShowCreateUserForm = function() {
+		return this.ShowUserForm(actions['modal'], {"data": 'dummy'});
+	};
+	
+	this.ShowUpdateUserForm = function($id) {
+		return this.ShowUserForm(actions['updateUser'], {"userid": $id});
+	}
+	
+	this.UserSave = function() {
+		var dfd = $.Deferred();
 		$('form#user-cru-form')
 			.one('submit', function(e){
-				$.ajax({
+				dfd = $.ajax({
 					url: USER_SRC,
 					type: 'POST',
 					data: new FormData(this),
 					processData: false,
 					contentType: false,
-					done: function(a) {
-						if((a['status'] == 'error') && a['error'].langth > 0) {
-							$('.user-creation-info')[0].text();
+					success: function(a) {
+						var answ = $.parseJSON(a);
+						if((answ['status'] == 'err') && answ['error'].length > 0) {
+							$('.user-creation-info').eq(0).find('p').text(answ['error']);
 						} else {
-							done(a);
+							$('.user-creation-info').eq(0).find('p').text('');
 						}
 					},
 					fail: function(a) {
-						$('.user-creation-info')[0].text(langStr.userCreaitonFailServerError);
-					}
+						$('.user-creation-info').eq(0).find('p').text(langStr.userCreaitonFailServerError);
+					},
 				});
 				e.preventDefault();
 			}).submit();
+		return dfd;
+	};
+	
+	this.UserDelete = function(userIds) {
+		return $.ajax({
+			"dataType" : 'json',
+			"type" : "POST",
+			"data" : {
+				'action' : actions["deleteUser"],
+				'data' : {
+					'userIds' : userIds
+				}
+			},
+			"url" : USER_SRC,
+		});
 	};
 }
