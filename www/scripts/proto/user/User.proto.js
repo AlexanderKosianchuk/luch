@@ -149,6 +149,8 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 					data : 'data'
 				}
 			};
+			console.log(pV);
+			console.log(USER_SRC);
 
 			$.ajax({
 				type : "POST",

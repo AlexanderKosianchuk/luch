@@ -1,4 +1,4 @@
-var USER_SRC = location.protocol + '//' + location.host + "/view/searchFlights.php";
+var SEARCH_FLIGHT_SRC = location.protocol + '//' + location.host + "/view/searchFlights.php";
 
 function SearchFlight(window, document, langStr, srvcStrObj, eventHandler) {
 	var langStr = langStr, srvcStrObj = srvcStrObj, actions = srvcStrObj["searchFlightPage"];
@@ -89,7 +89,7 @@ function SearchFlight(window, document, langStr, srvcStrObj, eventHandler) {
 			type : "POST",
 			data : pV,
 			dataType : 'json',
-			url : USER_SRC,
+			url : SEARCH_FLIGHT_SRC,
 			async : true
 		})
 		.fail(function(msg) {
@@ -150,7 +150,7 @@ function SearchFlight(window, document, langStr, srvcStrObj, eventHandler) {
 				type : "POST",
 				data : pV,
 				dataType : 'json',
-				url : USER_SRC,
+				url : SEARCH_FLIGHT_SRC,
 				async : true
 			})
 			.fail(function(msg) {
