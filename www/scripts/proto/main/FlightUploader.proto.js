@@ -658,11 +658,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
 							$el.find("select.FlightUploadingInputs :selected").data("sliceid");	
 					
 					if(performProc == true){
-						if((etalonIdToCompare == self.sliceActions['etalonDoNotCompare'])){
-							flightConvertionAction = self.flightUploaderActions["flightProccesAndCheck"];
-						} else {
-							flightConvertionAction = self.flightUploaderActions["flightProccesCheckAndCompareToEtalon"];
-						}
+						flightConvertionAction = self.flightUploaderActions["flightProccesAndCheck"];
 					}
 									
 					var pV = {

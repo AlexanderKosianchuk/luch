@@ -106,7 +106,8 @@
 
 "searchFlightPage": {
 	"showSearchForm": "showSearchForm",
-	"getFilters": "getFilters"
+	"getFilters": "getFilters",
+	"applyFilter": "applyFilter"
 }
 
 }

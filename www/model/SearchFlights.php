@@ -55,4 +55,25 @@ class SearchFlights
 	
 		return $searchFlightsQueries;
 	}
+	
+	public function GetSearchAlgorithById($id)
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$result = $link->query("SELECT * FROM `search_flights_queries` WHERE `id`=".$id.";");
+	
+		$alg = null;
+		if($row = $result->fetch_array())
+		{
+			foreach($row as $key => $val) {
+				$alg[$key] = $val;
+			}
+		}
+	
+		$c->Disconnect();
+		unset($c);
+	
+		return $alg;
+	}
 }

@@ -84,16 +84,16 @@ FlightList.prototype.topMenuUserButtClick = function(){
 		 });
 	 });
 	
-	$("#userExit").one("click", function(e){
+	$("#userExit").on("click", function(e){
 		self.eventHandler.trigger("userLogout");
 	});
 	
-	$(".UserChangeLang").one("click", function(e){
+	$(".UserChangeLang").on("click", function(e){
 		var lang = $(this).data("lang");
 		self.eventHandler.trigger("userChangeLanguage", [lang]);
 	});
 	
-	$("div#view").one("click", function(e){
+	$("div#view").on("click", function(e){
 		var itemsCheck = $(".ItemsCheck:checked");
 		if(itemsCheck.length == 1){
 			document.title = itemsCheck.parent().text();
@@ -128,21 +128,21 @@ FlightList.prototype.leftMenuClick = function(e){
 				.removeClass('LeftMenuRowSelected', {duration:500});
 			
 			target.addClass('LeftMenuRowSelected', {duration:500});
-			
+			$("div#view").css("display", "none");
 			self.eventHandler.trigger("flightSearchFormShow", [self.flightListWorkspace]);
 		}
 	}  else if(target.attr('id') == "bruTypesLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
 			$("#leftMenuFlightList .LeftMenuRowSelected")
 				.removeClass('LeftMenuRowSelected', {duration:500});
-			
+			$("div#view").css("display", "none");
 			target.addClass('LeftMenuRowSelected', {duration:500});
 		}
 	} else if(target.attr('id') == "usersLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
 			$("#leftMenuFlightList .LeftMenuRowSelected")
 				.removeClass('LeftMenuRowSelected', {duration:500});
-			
+			$("div#view").css("display", "none");
 			target.addClass('LeftMenuRowSelected', {duration:500});
 			
 			self.eventHandler.trigger("userShowList", [self.flightListWorkspace]);

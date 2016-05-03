@@ -30,3 +30,37 @@
 	max-width: 100%;
 	width: 90%;
 }
+
+.search-form-alg-item-row {
+	width:100%;
+}
+
+.search-form-alg-item {
+	margin: 5px 10px;
+	float:left;
+}
+
+.search-form-alg-text {
+	float:left;
+}
+
+.search-form-alg-clear {
+	clear:both;
+}
+
+.found-flight-row {
+	width:100%;
+}
+
+.found-flight-item {
+	margin: 5px 10px;
+	float:left;
+}
+
+.found-flight-text {
+	float:left;
+}
+
+.found-flight-clear {
+	clear:both;
+}

@@ -128,16 +128,60 @@ function SearchFlight(window, document, langStr, srvcStrObj, eventHandler) {
 	this.BindButtonEvents = function() {
 		var self = this;
 		$('button#searchFlightsButton').on('click', function() {
+			$("div#view").css("display", "none");
 			self.ApplyFilter();
 		});
 	}
 	
 	this.ApplyFilter = function() {
+		var self = this;
+		if($(".search-form-alg-item:checked").length > 0) {
+			var algId = $(".search-form-alg-item:checked").eq(0).val();
+			var pV = {
+					action : actions["applyFilter"],
+					data : {
+						algId : algId,
+						form: $("#search-form").serialize()
+					}
+				};
 
+			$.ajax({
+				type : "POST",
+				data : pV,
+				dataType : 'json',
+				url : SEARCH_FLIGHT_SRC,
+				async : true
+			})
+			.fail(function(msg) {
+				console.log(msg);
+			})
+			.done(function(answ) {
+				if (answ["status"] == "ok") {
+					var html = answ["data"];
+					$("#search-form-flights").empty().append(html);
+					self.BindFlightRadio();
+				} else {
+					console.log(answ["error"]);
+				}
+			});
+		}
+	}
+	
+	this.BindFlightRadio = function() {
+		var self = this;
+		$(".found-flight-item").click(function(event) {
+			if($(".found-flight-item:checked").length > 0) {
+				$("div#view").css("display", "block");
+			} else {
+				$("div#view").css("display", "none");
+			}
+		});
 	}
 	
 	this.SupportForm = function() {
+		var self = this;
 		$("#fdrForFilter").on('change', function() {
+			$("#search-form-flights").empty();
 			var fdrId = $("#fdrForFilter option:selected").val();
 			var pV = {
 				action : actions["getFilters"],
@@ -160,10 +204,22 @@ function SearchFlight(window, document, langStr, srvcStrObj, eventHandler) {
 				if (answ["status"] == "ok") {
 					var html = answ["data"];
 					$("#search-form-alg-list").empty().append(html);
+					self.BindRadio();
 				} else {
 					console.log(answ["error"]);
 				}
 			});
+		});
+	}
+	
+	this.BindRadio = function() {
+		var self = this;
+		$(".search-form-alg-item").click(function(event) {
+			if($(".search-form-alg-item:checked").length > 0) {
+				self.ShowSearchButtom();
+			} else {
+				self.DeactiveSearchButtom();
+			}
 		});
 	}
 

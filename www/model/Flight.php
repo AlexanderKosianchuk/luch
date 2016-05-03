@@ -427,6 +427,39 @@ class Flight
 		}
 	}
 	
+	public function GetFlightsByFilter($filter)
+	{
+		$query = "SELECT `id` FROM `flights` WHERE ";
+			
+		foreach ($filter as $key => $val) {
+			if($key === 'from') {
+				$query .= "(`startCopyTime` > ".$val.") AND ";
+			} else if($key === 'to') {
+				$query .= "(`startCopyTime` < ".$val.") AND ";
+			} else {
+				$query .= "(`".$key."` LIKE '%".$val."%') AND ";
+			}
+		}
+		
+		$query = substr($query, 0, -4);
+		$query .= ";";
+
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+		$result = $link->query($query);
+		
+		$arr = [];
+		while($row = $result->fetch_array()) {
+			$arr[] = $row['id'];
+		}
+
+		$result->free();
+		$c->Disconnect();
+		unset($c);
+			
+		return $arr;
+	}
+	
 	public function DeleteFlight($extFlightId, $extPrefixApArr, $extPrefixBpArr)
 	{
 		$flightId = $extFlightId;
