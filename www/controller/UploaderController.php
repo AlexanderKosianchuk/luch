@@ -241,44 +241,6 @@ class UploaderController
 		}
 		
 		$U = new User();
-		if(in_array($U::$PRIVILEGE_EDIT_ENGINES, $this->privilege))
-		{
-			$avalibleSlices = $U->GetAvaliableSlices($this->username);
-				
-			$Sl = new Slice();
-			$Sl->CreateSliceTable();
-			$sliceList = (array)$Sl->GetSliceList($avalibleSlices);
-
-			$etalonsFound = false;
-			$etalonsArr = array();
-		
-			foreach ($sliceList as $sliceInfo)
-			{
-				if($sliceInfo["etalonTableName"] != "")
-				{
-					$etalonsArr[] = $sliceInfo;
-				}
-			}
-		
-			$L = new Language();
-			$this->sliceActions = (array)$L->GetServiceStrs("slicesPage");
-			unset($L);
-			
-			$etalonsOptions = "<option data-sliceId='".$this->sliceActions["etalonDoNotCompare"].
-				"' selected='selected'>".$this->lang->doNotCompate."</option>";
-			foreach ($etalonsArr as $sliceInfo)
-			{
-				$curSliceTypeInfo = $Sl->GetSliceTypeInfo($sliceInfo["code"]);
-				if($curSliceTypeInfo["bruType"] == $bruType)
-				{
-					$etalonsOptions .= "<option data-sliceId='".$sliceInfo["id"]."'>".$sliceInfo["name"]."</option>";
-				}
-			}
-			
-			$flightParamsSrt .= "<tr><td>" . $this->lang->compareToEtalon . "</td><td>" . 
-				"<select id='compareToEtalon' class='FlightUploadingInputs'>" . 
-				$etalonsOptions . "</select> </td></tr>";
-		}
 		
 		if(in_array($U::$PRIVILEGE_TUNE_FLIGHTS, $this->privilege))
 		{

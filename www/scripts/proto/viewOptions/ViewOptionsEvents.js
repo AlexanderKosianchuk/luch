@@ -103,7 +103,9 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                 method: 'POST',
                 action: '/view/eventsBlank.php',
                 target: '_blank'
-          	}).append($('<input/>', {
+          	})
+          	.css('display', 'none')
+          	.append($('<input/>', {
                 name: 'data[flightId]',
                 value: flightId
           	})).append($('<input/>', {

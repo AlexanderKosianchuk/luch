@@ -82,10 +82,11 @@
 	"userChangeLanguage": "userChangeLanguage",
 	"buildUserTable": "buildUserTable",
 	"segmentTable": "segmentTable",
-	"saveUser": "saveUser",
+	"createUserForm": "createUserForm",
+	"createUser": "createUser",
+	"updateUserForm": "updateUserForm",
 	"updateUser": "updateUser",
-	"deleteUser": "deleteUser",
-	"modal": "modal"
+	"deleteUser": "deleteUser"
 },
 
 "viewOptionsPage": {
@@ -101,6 +102,11 @@
 	"setEventReliability": "setEvRel",
 	"createTpl": "createTpl",
 	"changeParamColor": "changeParamColor"
+},
+
+"searchFlightPage": {
+	"showSearchForm": "showSearchForm",
+	"getFilters": "getFilters"
 }
 
 }

@@ -1,11 +1,11 @@
 table user_personal
 
-remove
+remove ->
 options
 subscribers
 
-add
+add ->
 role
 
-change 
-logo to mediumblob (65K max)
+change -> 
+logo to mediumblob (15M max)

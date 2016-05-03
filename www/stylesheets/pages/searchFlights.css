@@ -1,0 +1,32 @@
+.search-flight-filter {
+	float: left; 
+	width: 180px; 
+	height: 100%; 
+	padding: 0px 8px;
+	border-right: 1px solid #ccc;
+}
+
+.search-form-alg {
+	float: left; 
+	width: 180px; 
+	height: 100%; 
+	padding: 0px 8px;
+	border-right: 1px solid #ccc;
+}
+
+.search-form-flights {
+	float: left; 
+	padding: 0px 8px;
+	width: calc(100% - 410px); 
+	height: 100%; 
+}
+
+.search-form-clear {
+	clear: both;
+}
+
+.search-form-inputs, .search-form-labels {
+	margin: 5px auto;
+	max-width: 100%;
+	width: 90%;
+}

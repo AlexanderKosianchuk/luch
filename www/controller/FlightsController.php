@@ -149,27 +149,13 @@ class FlightsController
 					</div>", $this->lang->flightsItem);
 		}
 	
-// 		if(in_array($Usr->slicePrivilegeArr[0], $this->privilege) ||
-// 				in_array($Usr->slicePrivilegeArr[1], $this->privilege) ||
-// 				in_array($Usr->slicePrivilegeArr[2], $this->privilege) ||
-// 				in_array($Usr->slicePrivilegeArr[3], $this->privilege))
-// 		{
-// 			$leftMenu .= sprintf("<div id='sliceLeftMenuRow' class='LeftMenuRow'>
-// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/slice.png'></img>
-// 					%s&nbsp;
-// 					</div>", $this->lang->slicesItem);
-// 		}
-	
-// 		if(in_array($Usr->enginePrivilegeArr[0], $this->privilege) ||
-// 				in_array($Usr->enginePrivilegeArr[1], $this->privilege) ||
-// 				in_array($Usr->enginePrivilegeArr[2], $this->privilege) ||
-// 				in_array($Usr->enginePrivilegeArr[3], $this->privilege))
-// 		{
-// 			$leftMenu .= sprintf("<div id='enginesLeftMenuRow' class='LeftMenuRow'>
-// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/engine.png'></img>
-// 					%s&nbsp;
-// 					</div>", $this->lang->enginesItem);
-// 		}
+		if(in_array($Usr->flightPrivilegeArr[0], $this->privilege))
+		{
+			$leftMenu .= sprintf("<div id='searchLeftMenuRow' class='LeftMenuRow'>
+					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/search.png'></img>
+					%s&nbsp;
+					</div>", $this->lang->searchItem);
+		}
 	
 		if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->bruTypesPrivilegeArr[1], $this->privilege) ||
@@ -183,17 +169,7 @@ class FlightsController
 					</div>", $this->lang->bruTypesItem);
 		}
 	
-// 		if(in_array($Usr->docsPrivilegeArr[0], $this->privilege) ||
-// 				in_array($Usr->docsPrivilegeArr[1], $this->privilege) ||
-// 				in_array($Usr->docsPrivilegeArr[2], $this->privilege) ||
-// 				in_array($Usr->docsPrivilegeArr[3], $this->privilege) ||
-// 				in_array($Usr->docsPrivilegeArr[4], $this->privilege))
-// 		{
-// 			$leftMenu .= sprintf("<div id='docsLeftMenuRow' class='LeftMenuRow'>
-// 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/doc.png'></img>
-// 					%s&nbsp;
-// 					</div>", $this->lang->docsItem);
-// 		}
+
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[1], $this->privilege) ||

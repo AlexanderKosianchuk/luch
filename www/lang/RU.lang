@@ -142,6 +142,9 @@
 "confimUserDeletion": "Подтвердите удаление пользователей",
 "userCreaitonFailServerError": "Ошибка связи при попытке создания пользователя. Попробуйте позже.",
 
+"searchFlights": "Поиск по полетам",
+"searchFlightsApplyAlg": "Найти",
+
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",
 "monochromeEventsPrint" : "Ч/Б печать",
@@ -180,13 +183,6 @@
 	"filePreview": "Предпросмотр",
 	"chooseFile": "Выберите файл",
 	"helpTitle": "Краткая информация",
-	
-	"flightsItem": "Полеты",
-	"slicesItem": "Срезы",
-	"enginesItem": "Двигатели",
-	"bruTypesItem": "Регистраторы",
-	"docsItem": "Документы",
-	"usersItem": "Пользователи",
 	
 	"viewItem" : "Обзор",
 	
@@ -248,11 +244,9 @@
 "flightsPage":{	
 	"upload": "Загрузить",
 	"flightsItem": "Полеты",
-	"slicesItem": "Срезы",
-	"enginesItem": "Двигатели",
 	"bruTypesItem": "Регистраторы",
-	"docsItem": "Документы",
 	"usersItem": "Пользователи",
+	"searchItem": "Поиск",
 	
 	"viewItem" : "Обзор",
 	
@@ -711,6 +705,20 @@
 	"noDataToOpenAccess" : "Нет доступных данных",
 	"userModal": "Форма управления пользовательскими данными",
     "notAllowedByPrivilege" : "Не достаточно привилегий для выполнения действия"
+},
+
+"searchFlightPage":{
+	"bort":"Номер борта",
+	"voyage":"Рейс",
+	"flightDateFrom": "C",
+	"flightDateTo": "По",
+	"uploadTime":"Время и дата загрузки", 
+	"flightTime":"Время и дата начала полета", 
+	"departureAirport": "Аэропорт вылета",
+	"arrivalAirport": "Аэропорт посадки",
+	"bruType":"Тип регистратора", 
+	"performer":"Обработал",
+	"aditionalInfo": "Доп. инф."
 }
 
 

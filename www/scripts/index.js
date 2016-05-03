@@ -13,7 +13,8 @@
 	B = null,
 	C = null, 
 	U = null, 
-	FL = null;
+	FL = null,
+	SF = null;
 	
 	LA.GetLanguage().done(function(data){
 		var langStr = data;
@@ -27,6 +28,7 @@
 			B = new BruType($window, $document, langStr, srvcStrObj, eventHandler);
 			C = new Chart($window, $document, langStr, srvcStrObj, eventHandler);	
 			U = new User($window, $document, langStr, srvcStrObj, eventHandler);
+			SF = new SearchFlight($window, $document, langStr, srvcStrObj, eventHandler);
 			
 			FL.FillFactoryContaider(wsp);
 		});
@@ -104,7 +106,7 @@
 	//FlightList
 	///
 	
-	eventHandler.on("flightShowList", function(e, showcase){
+	eventHandler.on("flightSearchFormShow", function(e, showcase){
 		if(showcase == null){
 			W.RemoveShowcases(1);
 			showcase = W.NewShowcase();
@@ -207,7 +209,7 @@
 	eventHandler.on("userChangeLanguage", function(e, lang){		
 		U.changeLanguage(lang);
 	});
-	
+		
 	eventHandler.on("userShowList", function(e, showcase){		
 		if(showcase == null){
 			W.RemoveShowcases(1);
@@ -217,6 +219,17 @@
 		}
 		
 		U.FillFactoryContaider(showcase);
+	});
+	
+	eventHandler.on("flightSearchFormShow", function(e, showcase){		
+		if(showcase == null){
+			W.RemoveShowcases(1);
+			showcase = W.NewShowcase();
+		} else {
+			W.ClearShowcase(showcase);
+		}
+		
+		SF.FillFactoryContaider(showcase);
 	});
 	
 	///=======================================================

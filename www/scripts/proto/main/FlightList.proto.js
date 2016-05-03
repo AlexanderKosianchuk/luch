@@ -122,14 +122,21 @@ FlightList.prototype.leftMenuClick = function(e){
 			self.TriggerResize();
 			self.TriggerUploading();	
 		}
-	} else if(target.attr('id') == "bruTypesLeftMenuRow"){
+	} else if(target.attr('id') == "searchLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
 			$("#leftMenuFlightList .LeftMenuRowSelected")
 				.removeClass('LeftMenuRowSelected', {duration:500});
 			
 			target.addClass('LeftMenuRowSelected', {duration:500});
 			
-			//self.ShowFlightViewEvents();
+			self.eventHandler.trigger("flightSearchFormShow", [self.flightListWorkspace]);
+		}
+	}  else if(target.attr('id') == "bruTypesLeftMenuRow"){
+		if(!target.hasClass('LeftMenuRowSelected')){
+			$("#leftMenuFlightList .LeftMenuRowSelected")
+				.removeClass('LeftMenuRowSelected', {duration:500});
+			
+			target.addClass('LeftMenuRowSelected', {duration:500});
 		}
 	} else if(target.attr('id') == "usersLeftMenuRow"){
 		if(!target.hasClass('LeftMenuRowSelected')){
@@ -284,6 +291,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
 					}
 					
 				} else {
+					console.log(answ);
 					console.log(data['error']);
 				}
 			}
@@ -1341,6 +1349,7 @@ FlightList.prototype.ShowFlightsTree = function() {
 								self.ResizeFlightList(e);
 							});
 						} else {
+							console.log(answ);
 							console.log(data['error']);
 						}
 					}

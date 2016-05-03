@@ -469,10 +469,8 @@ class User
 		return $userInfoArr;
 	}
 	
-	public function GetUsersInfo($extUsername)
+	public function GetUsersInfo($username)
 	{
-		$username = $extUsername;
-			
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 
@@ -565,6 +563,35 @@ class User
 		$stmt->close();
 	
 		return $execInfo;
+	}
+	
+	public function UpdateUserPersonal($uId, $data)
+	{
+		if(!is_array($data)) {
+			return false;
+		}	
+		
+		$set = '';
+		foreach ($data as $key => $val) {
+			if($key == 'logo') {
+				$set .= "`".$key."` = LOAD_FILE('".$val."'), ";
+			} else {
+				$set .= "`".$key."` = '".$val."', ";
+			}
+		}
+		$set = substr($set, 0, -2);
+		$query = "UPDATE `user_personal` SET ".$set." WHERE `id` = '".$uId."';";
+
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$stmt = $link->prepare($query);
+		$stmt->execute();
+		$msg = $stmt;
+	
+		$stmt->close();
+		
+		return $msg;
 	}
 	
 	public function DeleteUserPersonal($extLogin)

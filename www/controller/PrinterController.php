@@ -112,19 +112,37 @@ class PrinterController {
 		unset ( $Usr );
 		
 		$headerStr = $usrInfo ['company'];
-		// set default header data
-		$pdf->SetHeaderData(/*PDF_HEADER_LOGO*/ "",
-				/*PDF_HEADER_LOGO_WIDTH*/ "",
-				/*HEADER_TITLE*/ $headerStr,
-				/*HEADER_STRING*/ "", array (
-				0,
-				10,
-				50 
-		), array (
-				0,
-				10,
-				50 
-		) );
+		$imageFile = '';
+		if($usrInfo['logo'] != '') {
+			$imageFile =  @'../fileUploader/files/'.uniqid();
+			file_put_contents($imageFile, $usrInfo['logo']);
+			
+			$pdf->SetHeaderData($imageFile,
+					/*PDF_HEADER_LOGO_WIDTH*/ "20",
+					/*HEADER_TITLE*/ $headerStr,
+					/*HEADER_STRING*/ "", array (
+					0,
+					10,
+					50 
+			), array (
+					0,
+					10,
+					50 
+			) );
+			
+		} else {
+			// set default header data
+			$pdf->SetHeaderData("", "", $headerStr, "", 
+				array (
+					0,
+					10,
+					50
+				), array (
+					0,
+					10,
+					50
+				));
+		}
 		
 		$pdf->setFooterData ( array (
 				0,
@@ -177,6 +195,10 @@ class PrinterController {
 		// Add a page
 		// This method has several options, check the source code documentation for more information.
 		$pdf->AddPage ();
+		
+		if($imageFile !== '') {
+			unlink($imageFile);
+		}
 		
 		// set text shadow effect
 		$pdf->setTextShadow ( array (
@@ -448,7 +470,7 @@ class PrinterController {
 		$str = '<p style="' . $strStyle . '">' . $this->lang->pasport . '</p>';
 		
 		$pdf->writeHTML ( $str, true, false, false, false, '' );
-		
+				
 		// Pasport info
 		$strStyle = "text-align:center;";
 		$str = '<p style="' . $strStyle . '">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' . 

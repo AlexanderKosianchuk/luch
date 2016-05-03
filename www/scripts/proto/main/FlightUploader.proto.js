@@ -885,7 +885,7 @@ FlightUploader.prototype.EasyUploading = function(
 		fileName
 ) { 
 	
-		flightConvertionAction = self.flightUploaderActions["flightEasyUpload"],
+	var flightConvertionAction = this.flightUploaderActions["flightEasyUpload"],
 		tempFileName = guid() + "_tempStatus.json";
 	
 	var pV = {
@@ -897,7 +897,7 @@ FlightUploader.prototype.EasyUploading = function(
 			}					
 		};
 	
-	self.InitiateFlightProccessing(pV);
+	this.InitiateFlightProccessing(pV);
 }
 
 ///

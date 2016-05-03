@@ -78,6 +78,13 @@ class IndexController
 	
 	private function AppLoginFail()
 	{
+		$usrLang = 'en';
+		$L = new Language();
+		$L->SetLanguageName($usrLang);
+		$this->userLang = $L->GetLanguageName();
+		$this->lang = $L->GetLanguage($this->curPage);
+		unset($L);
+		
 		$this->uloginMsg = $this->lang->loginFailed;
 	}
 	
@@ -176,6 +183,7 @@ class IndexController
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsEvents.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/chart.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/user.css' />
+				<link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlights.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
 	}
 	
@@ -322,6 +330,9 @@ public function PutHelpDialog()
 		
 		//user
 		printf("<script type='text/javascript' src='scripts/proto/user/User.proto.js'></script>");
+		
+		//searchFlight
+		printf("<script type='text/javascript' src='scripts/proto/searchFlight/SearchFlight.proto.js'></script>");
 		
 		//viewOptions
 		printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptions.proto.js'></script>");

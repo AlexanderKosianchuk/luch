@@ -18,8 +18,6 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 
 	var userListWorkspace = null;
 	var userListContainer = null;
-	var userListTopMenu = null;
-	var userListLeftMenu = null;
 	
 	var userListContent = null;
 	var createUpdateUserContent = null;
@@ -274,7 +272,11 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 				userListContent = null;
 				delete usersTable;
 				self.ShowUserList();
-				$("form#user-cru-form")[0].reset();
+				$(':input','#user-cru-form')
+				 .not(':button, :submit, :reset, :hidden')
+				 .val('')
+				 .removeAttr('checked')
+				 .removeAttr('selected');
 			});
 		});
 		
@@ -423,11 +425,11 @@ function User(window, document, langStr, srvcStrObj, eventHandler) {
 	};
 	
 	this.ShowCreateUserForm = function() {
-		return this.ShowUserForm(actions['modal'], {"data": 'dummy'});
+		return this.ShowUserForm(actions['createUserForm'], {"data": 'dummy'});
 	};
 	
 	this.ShowUpdateUserForm = function($id) {
-		return this.ShowUserForm(actions['updateUser'], {"userid": $id});
+		return this.ShowUserForm(actions['updateUserForm'], {"userid": $id});
 	}
 	
 	this.UserSave = function() {

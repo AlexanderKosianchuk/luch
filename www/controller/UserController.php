@@ -261,19 +261,22 @@ class UserController
 		$Usr = new User();
 		$privilege = $Usr->allPrivilegeArray;
 		$uId = $Usr->GetUserIdByName($this->username);
-		$userInfo = $Usr->GetUserInfo($uId);
-		$role = $userInfo['role'];
+		$authorInfo = $Usr->GetUserInfo($uId);
+		$role = $authorInfo['role'];
 		
 		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form' enctype='multipart/form-data'>");
 
 		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
 		$privilegeOptions .= "<select id='privilege' name='privilege[]' multiple size='10' style='width: 335px'>";
 		
-		foreach ($privilege as $val)
+		foreach ($authorInfo['privilege'] as $val)
 		{
-			$privilegeOptions .= "<option selected='selected'>".$val."</option>";
+			$selected = '';
+			if(in_array($val, $privilege)) {
+				$selected = " selected='selected' ";
+			}
+			$privilegeOptions .= "<option ".$selected.">".$val."</option>";
 		}
-		$privilegeOptions .= "</select></td></tr>";
 		
 		$roleOptions = '';
 		if($Usr::isAdmin($role)) {
@@ -320,7 +323,7 @@ class UserController
 				$this->lang->userLogo);
 		
 		$form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
-		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["saveUser"]);
+		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["createUser"]);
 		$form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 		
 		//==========================================
@@ -453,6 +456,7 @@ class UserController
 		$Usr = new User();
 		$privilege = $Usr->allPrivilegeArray;
 		$authorId = $Usr->GetUserIdByName($this->username);
+		$authorInfo = $Usr->GetUserInfo($authorId);
 		$userInfo = $Usr->GetUserInfo($updatedUsersId);
 		$role = $userInfo['role'];
 		$privilege = explode(",", $userInfo['privilege']);
@@ -462,7 +466,8 @@ class UserController
 		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
 		$privilegeOptions .= "<select id='privilege' name='privilege[]' multiple size='10' style='width: 335px'>";
 	
-		foreach ($privilege as $val)
+		$authorPrivilege = explode(',', $authorInfo['privilege']);
+		foreach ($authorPrivilege as $val)
 		{
 			$selected = '';
 			if(in_array($val, $privilege)) {
@@ -493,7 +498,7 @@ class UserController
 			<p class='Label'>%s</p>
 			<div class='user-creation-info'><p>%s</p></div>
 			<tr><td>%s</td><td>
-				<input type='text' name='login' size='50' value='%s'>
+				<input type='text' name='login' size='50' value='%s' disabled='disabled'>
 			</td></tr>
 			<tr><td>%s</td><td>
 				<input type='text' name='company' size='50' value='%s'>
@@ -523,9 +528,10 @@ class UserController
 				$this->lang->userLogo);
 	
 		$form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
-		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["saveUser"]);
+		$form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["updateUser"]);
 		$form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
-	
+		$form .= sprintf("<input type='text' name='useridtoupdate' value='%s' style='visibility:hidden;'/>", $updatedUsersId);
+		
 		//==========================================
 		//access to flights
 		//==========================================
@@ -717,6 +723,69 @@ class UserController
 			$msg = $this->lang->userAlreadyExist;
 		}
 		
+		return $msg;
+	}
+	
+	public function UpdateUser($userIdToUpdate, $form, $file)
+	{
+		$avaliableForUpdate = false;
+		$U = new User();
+		$author = $this->username;
+		$authorId = $U->GetUserIdByName($author);
+		$authorInfo = $U->GetUserInfo($authorId);
+		$userInfo = $U->GetUserInfo($userIdToUpdate);
+		if($U::isAdmin($authorInfo['role'])) {
+			$avaliableForUpdate = true;
+		} else {
+			$avaliableIds = $U->GetAvaliableUsers($author);
+			if(in_array($userIdToUpdate, $avaliableIds)) {
+				$avaliableForUpdate = true;
+			}
+		}
+		
+		if(isset($form['pwd'])) {
+			$ulogin = new uLogin();
+			$uloginUid = $ulogin->Uid($userInfo['login']);
+			$ulogin->SetPassword($uloginUid, $form['pwd']);
+		}
+
+		$prsonalDataToUpdata = [];
+		if(isset($form['company'])) {
+			$prsonalDataToUpdata['company'] = $form['company'];
+		}
+		
+		if(isset($form['privilege'])) {
+			$prsonalDataToUpdata['privilege'] = implode(",", $form['privilege']);
+		}
+		
+		if(isset($form['role'])) {
+			$prsonalDataToUpdata['role'] = $form['role'];
+		}
+		
+		if($file !== null) {
+			$prsonalDataToUpdata['logo'] = str_replace("\\", "/", $file);
+		}
+		
+		$U->UpdateUserPersonal($userIdToUpdate, $prsonalDataToUpdata);
+
+		$permittedFlights = isset($form['flightsAvaliable']) ? $form['flightsAvaliable'] : [];
+		$permittedBruTypes = isset($form['FDRsAvaliable']) ? $form['FDRsAvaliable'] : [];
+		$permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
+		
+		$msg = '';
+		$U->DeleteUserAvaliableData($userIdToUpdate);
+		foreach($permittedFlights as $id) {
+			$U->SetFlightAvaliable($author, $id, $userIdToUpdate);
+		}
+
+		foreach($permittedBruTypes as $id) {
+			$U->SetBruTypeAvaliable($author, $id, $userIdToUpdate);
+		}
+
+		foreach($permittedUsers as $id) {
+			$U->SetUsersAvaliable($author, $id, $userIdToUpdate);
+		}
+	
 		return $msg;
 	}
 	
