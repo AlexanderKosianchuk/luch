@@ -1,0 +1,7 @@
+CREATE TABLE `search_flights_queries` (
+`id` BIGINT NOT NULL AUTO_INCREMENT,
+`name` VARCHAR(200),
+`fdr` INT,
+`alg` TEXT,
+`authorId` INT,
+PRIMARY KEY (`id`));
