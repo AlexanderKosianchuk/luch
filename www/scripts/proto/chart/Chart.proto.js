@@ -652,9 +652,18 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 	
 	//build bar
 	self.document.keyup(function(event) {
+		if(self.Legnd.verticalTextInput) {
+			return false;
+		}
+				
 		if (event.which == KEY_V) {
-			var barContainer = self.Legnd.AppendSectionBar();
-			self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+			if(self.shiftPressed) {
+				self.Legnd.AppendSectionBar(self.Legnd.pos.x, true);
+				self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+			} else {
+				self.Legnd.AppendSectionBar();
+				self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+			}
 		}
 		//build bar whith names
 		if(event.which == KEY_N) {
@@ -821,7 +830,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 		}
 	});
 	var moveVerticalTimeout = true;
-	self.document.keydown(function(event) {
+	self.document.keydown(function(event) {		
 		if(event.which == KEY_ARROW_LEFT){
 			if(self.shiftPressed) {
 				if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {

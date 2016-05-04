@@ -40,6 +40,7 @@ function Legend(flightId, legendContainer, apParams, bpParams, associativeParams
 	this.legendTitlesNotSet = true;
 	this.updateLegendTimeout = null;
 	this.lastMovedPosX = null;
+	this.verticalTextInput = false;
 	
 	this.paramInfo = new Array();
 	this.dfr = $.Deferred();
@@ -70,6 +71,7 @@ function Legend(flightId, legendContainer, apParams, bpParams, associativeParams
 	this.barContainersArr = new Array();
 	this.barMainContainersArr = new Array();
 	this.linesContainersArr = new Array();
+	this.textsContainersArr = [];
 	this.horizontsContainersArr = new Array();
 	this.horizontsValueContainersArr = new Array();
 	this.seriesNamContainersArr = new Array();
@@ -216,7 +218,7 @@ Legend.prototype.ShowLeadParamVal = function(val, label){
 
 //=============================================================
 //
-Legend.prototype.AppendSectionBar = function(manualPosX){
+Legend.prototype.AppendSectionBar = function(manualPosX, hasText){
 	var self = this;
 	var posx = this.pos.x;
 	if(manualPosX) {
@@ -263,9 +265,17 @@ Legend.prototype.AppendSectionBar = function(manualPosX){
 
 		var line = this.CreateLineContainer(posx);
 		this.linesContainersArr.push(line);
-		var barMainContainer = this.CreateBarMainContainer(posx, self.toHHMMSS(posx), startId, 
-				this.barContainersArr.length,
-				this.linesContainersArr.length);
+		
+		var text = this.CreateTextContainer(posx, hasText);
+		this.textsContainersArr.push(text);
+		
+		var barMainContainer = this.CreateBarMainContainer(posx, 
+			self.toHHMMSS(posx), 
+			startId, 
+			this.barContainersArr.length,
+			this.linesContainersArr.length,
+			this.textsContainersArr.length
+		);
 		this.barMainContainersArr.push(barMainContainer);
 		
 		//delete bar on mainLable click
@@ -275,6 +285,7 @@ Legend.prototype.AppendSectionBar = function(manualPosX){
 			
 		return {
 			line: line,
+			text: text,
 			barMainContainer: barMainContainer
 		};
 	} else {
@@ -294,15 +305,16 @@ Legend.prototype.MoveLastVertical = function(xAxis, yAxArr, posx){
 
 //=============================================================
 //
-Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId, lineId) {
+Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId, lineId, textId) {
 	 var self = this,
 	 barMainLabel = $('<div/>', {
-		id: 'barMainLabel' + (self.barMainContainersArr.length + 1),
-		class: 'BarMainLabel',
+		'id': 'barMainLabel' + (self.barMainContainersArr.length + 1),
+		'class': 'BarMainLabel',
 		'data-time': time,
 		'data-startid': startId,
 		'data-endid': endId,
 		'data-lineid': lineId,
+		'data-textid': textId,
 		html: content})
 	.css({
 		"position": 'absolute',
@@ -327,9 +339,9 @@ Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId
 Legend.prototype.CreateBarContainer = function(id, refParam, time, value, content, yAxNum, color) {
 	var self = this;
 	
-	return $('<div/>', {
-		id: id,
-		class: 'BarLabel',
+	return $('<div></div>', {
+		'id': id,
+		'class': 'BarLabel',
 		'data-refParam': refParam,
 		'data-time': time,
 		'data-yAx': yAxNum,
@@ -364,6 +376,58 @@ Legend.prototype.CreateLineContainer = function(time) {
 		"background-color": self.vLineColor})
 	.appendTo(self.ccCont);
 };
+
+//=============================================================
+
+//=============================================================
+//
+Legend.prototype.CreateTextContainer = function(time, hasText) {
+	var self = this;
+	if(!hasText) {
+		var text = $('<div></div>', {
+				'id': 'text' + (self.textsContainersArr.length + 1),
+				'data-time': time })
+			.css({
+				"display": 'none'
+			});
+		return text;
+	}
+
+	var text = $('<div></div>', {
+		id: 'text' + (self.textsContainersArr.length + 1),
+		'data-time': time })
+	.css({
+		"top": '38px',
+		"width": '30px',
+		"display": 'block',
+		"height": self.ph.height() - 30,
+		"position": 'absolute',
+		"text-align": "center",
+		"writing-mode": "vertical-lr",
+		"text-orientation": "sideways-left",
+		"color": '#555'})
+	.append($("<input/>")
+		.addClass('verticalText')
+		.css({
+			"text-align": "center",
+			"width": '30px',
+			"height": self.ph.height() - 40
+		})
+	)		
+	.appendTo(self.ccCont);
+	
+	self.verticalTextInput = true;
+	$(".verticalText")
+		.focus()
+		.on('focusout', function(event) {
+			var target = $(this).eq(0);
+			var val = target.val();
+			target.parent().html(val);
+			self.verticalTextInput = false;
+		});
+	 
+	 return text;
+};
 //=============================================================
 
 //=============================================================
@@ -371,8 +435,10 @@ Legend.prototype.CreateLineContainer = function(time) {
 Legend.prototype.RemoveSectionBar = function(mainBar) {
 	var startId = mainBar.data('startid'),
 		endId = mainBar.data('endid'),
-		lineId = mainBar.data('lineid');
+		lineId = mainBar.data('lineid'),
+		textid = mainBar.data('textid');
 	this.linesContainersArr[lineId - 1].remove();
+	this.textsContainersArr[textid - 1].remove();
 	for(var i = startId; i < endId; i++)
 	{
 		this.barContainersArr[i].remove();
@@ -422,6 +488,22 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			barCont.fadeOut(200);				
 		};
 	};	
+	
+	for(var i = 0; i < this.textsContainersArr.length; i++){
+		var barCont = this.textsContainersArr[i],
+			barTime = barCont.data('time'),
+			excCoordX = xAxis.p2c(barTime);
+			
+		if((barTime > xMin) && (barTime < xMax)){
+			barCont.css({
+				"left": excCoordX - 18,
+				"height": this.ph.height() - 30
+			})
+			.fadeIn(200);				
+		} else {
+			barCont.fadeOut(200);				
+		};
+	};
 	
 	for(var i = 0; i < this.linesContainersArr.length; i++){
 		var barCont = this.linesContainersArr[i],
