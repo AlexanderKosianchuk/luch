@@ -39,6 +39,7 @@ function Legend(flightId, legendContainer, apParams, bpParams, associativeParams
 	this.legendTitlesNotReceived = true;
 	this.legendTitlesNotSet = true;
 	this.updateLegendTimeout = null;
+	this.lastMovedPosX = null;
 	
 	this.paramInfo = new Array();
 	this.dfr = $.Deferred();
@@ -75,15 +76,14 @@ function Legend(flightId, legendContainer, apParams, bpParams, associativeParams
 	this.seriesLeftLabelsContainersArr = new Array();
 }
 
-Legend.prototype.UpdateLegend = function(pos, valuesArr, 
+Legend.prototype.UpdateLegend = function(posx, valuesArr, 
 	binariesArr) 
 {
 	//update each time legends because it can be lost after zoom or pan
 	this.updateLegendTimeout = null;
 	var legndLabls = this.legndCont.find(".legendLabel");
 	
-	if (pos.x < this.axes.xaxis.min || pos.x > this.axes.xaxis.max ||
-		pos.y < this.axes.yaxis.min || pos.y > this.axes.yaxis.max) {
+	if (posx < this.axes.xaxis.min || posx > this.axes.xaxis.max) {
 		return;
 	}
 	//update legend only for ap
@@ -216,9 +216,14 @@ Legend.prototype.ShowLeadParamVal = function(val, label){
 
 //=============================================================
 //
-Legend.prototype.AppendSectionBar = function(){
+Legend.prototype.AppendSectionBar = function(manualPosX){
 	var self = this;
-	if (this.pos.x > this.axes.xaxis.min && this.pos.x < this.axes.xaxis.max) {
+	var posx = this.pos.x;
+	if(manualPosX) {
+		posx = manualPosX;
+	}
+	this.lastMovedPosX = posx;
+	if (posx > this.axes.xaxis.min && posx < this.axes.xaxis.max) {
 		var startId = this.barContainersArr.length,
 			legndLabls = this.legndCont.find(".legendLabel"),
 			labelText = legndLabls.eq(0).text(),
@@ -228,7 +233,7 @@ Legend.prototype.AppendSectionBar = function(){
 				var labelText = legndLabls.eq(i).text(),
 					id = "barLabel" + (this.barContainersArr.length + 1),
 					refParam = this.apArr[i],
-					time = this.pos.x,
+					time = posx,
 					value = labelText.substring(labelText.indexOf('=') + 2, labelText.length),
 					yAxNum = i,
 					color = this.associativeParamsArr[refParam][1];
@@ -243,7 +248,7 @@ Legend.prototype.AppendSectionBar = function(){
 			var labelText = legndLabls.eq(i).text(),
 				id = 'barLabel' + (this.barContainersArr.length + 1),
 				refParam = this.bpArr[j],
-				time = this.pos.x,
+				time = posx,
 				value = 1,
 				content = labelText.substring(labelText.indexOf('=') + 2, labelText.length),
 				yAxNum = i,
@@ -255,22 +260,35 @@ Legend.prototype.AppendSectionBar = function(){
 			}
 			j++;
 		}
-		var s = this.CreateLineContainer(this.pos.x);
-		this.linesContainersArr.push(s);
-		s = this.CreateBarMainContainer(this.pos.x, self.toHHMMSS(this.pos.x), startId, 
+
+		var line = this.CreateLineContainer(posx);
+		this.linesContainersArr.push(line);
+		var barMainContainer = this.CreateBarMainContainer(posx, self.toHHMMSS(posx), startId, 
 				this.barContainersArr.length,
 				this.linesContainersArr.length);
-		this.barMainContainersArr.push(s);
+		this.barMainContainersArr.push(barMainContainer);
 		
 		//delete bar on mainLable click
-		s[0].ondblclick = function(){
-			self.RemoveSectionBar(s);	
+		barMainContainer[0].ondblclick = function(){
+			self.RemoveSectionBar(barMainContainer);	
 		};
 			
-		return s;
+		return {
+			line: line,
+			barMainContainer: barMainContainer
+		};
 	} else {
 		return null;
 	}
+};
+//=============================================================
+
+//=============================================================
+//
+Legend.prototype.MoveLastVertical = function(xAxis, yAxArr, posx){
+	this.RemoveSectionBar(this.barMainContainersArr[this.barMainContainersArr.length - 1]);		
+	this.AppendSectionBar(posx);
+	this.UpdateBarContainersPos(xAxis, yAxArr);
 };
 //=============================================================
 

@@ -448,14 +448,14 @@ Chart.prototype.SupportPlotEvents = function(e) {
 					setTimeout(function() {
 						var values = self.Prm.GetValue(self.plotDataset, pos.x);
 						var binaries = self.Prm.GetBinaries(self.plotDataset, pos.x);
-						self.Legnd.UpdateLegend(pos, values, binaries);
+						self.Legnd.UpdateLegend(pos.x, values, binaries);
 					}, 200);
 			} else {
 				self.Legnd.updateLegendTimeout = 
 					setTimeout(function() {
 						var values = self.Prm.GetValue(self.plotDataset, self.Legnd.vizirFreezePos.x);
 						var binaries = self.Prm.GetBinaries(self.plotDataset, self.Legnd.vizirFreezePos.x);
-						self.Legnd.UpdateLegend(self.Legnd.vizirFreezePos, values, binaries);
+						self.Legnd.UpdateLegend(self.Legnd.vizirFreezePos.x, values, binaries);
 					}, 200);
 			}
 		}		
@@ -653,7 +653,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 	//build bar
 	self.document.keyup(function(event) {
 		if (event.which == KEY_V) {
-			var barContainer = $(self.Legnd.AppendSectionBar());
+			var barContainer = self.Legnd.AppendSectionBar();
 			self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
 		}
 		//build bar whith names
@@ -820,21 +820,51 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 			}
 		}
 	});
-	
+	var moveVerticalTimeout = true;
 	self.document.keydown(function(event) {
 		if(event.which == KEY_ARROW_LEFT){
-			var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;// 0.5 percent
-			self.plotAxes.xaxis.max += delta;
-			self.plotAxes.xaxis.min += delta;		
-			self.plot.draw();
-			self.plot.pan(0);
+			if(self.shiftPressed) {
+				if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {
+					moveVerticalTimeout = false;
+					var movedPosX = self.Legnd.lastMovedPosX - 10000;
+					var values = self.Prm.GetValue(self.plotDataset, movedPosX);
+					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
+					self.Legnd.UpdateLegend(movedPosX, values, binaries);
+					
+					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
+					setTimeout(function() {
+						moveVerticalTimeout = true;
+					}, 500);
+				}
+			} else {
+				var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;// 0.5 percent
+				self.plotAxes.xaxis.max += delta;
+				self.plotAxes.xaxis.min += delta;		
+				self.plot.draw();
+				self.plot.pan(0);
+			}
 		}	
 		if(event.which == KEY_ARROW_RIGHT){
-			var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;
-			self.plotAxes.xaxis.max -= delta;
-			self.plotAxes.xaxis.min -= delta;
-			self.plot.draw();
-			self.plot.pan(0);
+			if(self.shiftPressed) {
+				if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {
+					moveVerticalTimeout = false;
+					var movedPosX = self.Legnd.lastMovedPosX + 10000;
+					var values = self.Prm.GetValue(self.plotDataset, movedPosX);
+					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
+					self.Legnd.UpdateLegend(movedPosX, values, binaries);
+					
+					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
+					setTimeout(function() {
+						moveVerticalTimeout = true;
+					}, 500);
+				}
+			} else {
+				var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;
+				self.plotAxes.xaxis.max -= delta;
+				self.plotAxes.xaxis.min -= delta;
+				self.plot.draw();
+				self.plot.pan(0);
+			}
 		}
 		
 		if(event.which == KEY_ARROW_UP){
