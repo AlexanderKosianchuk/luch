@@ -101,7 +101,9 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
 		//VISUALIZATION TYPES
 		//A - autoshow 
 		//E - right verticle line
+		//R - right verticle line with mainbar
 		//S - left verticle line
+		//L - left verticle line with mainbar
 		//U - underground rectangle
 		//C - full description in box
 			
@@ -617,8 +619,8 @@ Exception.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
-				left: excCoordX + 7 } ).
-			fadeIn(200);				
+				left: excCoordX + 7 } )//.
+			//fadeIn(200);				
 		} else {
 			barCont.fadeOut(200);				
 		};

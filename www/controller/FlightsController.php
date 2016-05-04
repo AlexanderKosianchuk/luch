@@ -157,7 +157,7 @@ class FlightsController
 					</div>", $this->lang->searchItem);
 		}
 	
-		if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
+		/*if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->bruTypesPrivilegeArr[1], $this->privilege) ||
 				in_array($Usr->bruTypesPrivilegeArr[2], $this->privilege) ||
 				in_array($Usr->bruTypesPrivilegeArr[3], $this->privilege) ||
@@ -167,9 +167,7 @@ class FlightsController
 					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/bru.png'></img>
 					%s&nbsp;
 					</div>", $this->lang->bruTypesItem);
-		}
-	
-
+		}*/
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[1], $this->privilege) ||

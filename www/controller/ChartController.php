@@ -695,6 +695,34 @@ class ChartController
 			'path' => $exportedFileDir . $exportedFileName
 		);
 	}
+	
+	public function GetTableStep($flightId) 
+	{
+		$F = new Flight();
+		$flightInfo = $F->GetFlightInfo($flightId);
+		unset($F);
+		
+		$FDR = new Bru();
+		$FDRinfo = $FDR->GetBruInfo($flightInfo['bruType']);
+		unset($FDR);
+		
+		$U = new User();
+		$userId = $U->GetUserIdByName($this->username);
+		unset($U);
+		
+
+		$UP = new UserOptions();
+		$step = $UP->GetOptionValue($userId, 'printTableStep');
+
+		unset($UP);
+		if($step === null) {
+			$step = 0;
+		} else {
+			$step = $step * $FDRinfo['stepDivider'];
+		}
+				
+		return $step;
+	}
 }
 
 ?>

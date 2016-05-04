@@ -181,56 +181,6 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
 	}
 }
 
-/*Chart.prototype.ShowChartContainer = function() {
-	var self = this;
-	
-	if(self.chartWorkspace != null){
-		self.chartWorkspace.remove();
-	}
-		
-	var pV = {
-			action: self.actions["putChartContainer"],
-			data: { 
-				data: null
-			}
-	};
-	
-	$.ajax({
-		type: "POST",
-		data: pV,
-		dataType: 'json',
-		url: CHART_SRC,
-		async: true
-	}).fail(function(msg){
-		console.log(msg);
-	}).done(function(answ) {
-		if(answ["status"] == "ok") {
-			var data = answ['data'];
-
-			self.mainContainer.after(data['chartWorkspace']);
-			
-			self.chartWorkspace = $('div#chartWorkspace');
-			
-			self.chartWorkspace.append(data['topMenu']);
-			self.chartWorkspace.append(data['chartContent']);
-			
-			self.chartTopMenu = $('div#chartTopMenu');
-			self.chartContent = $('div#graphContainer');
-
-			self.loadingBox = $("div#loadingBox").css("top", self.window.height() / 2 - 40);
-			self.legend = $('div#legend');
-			self.placeholder = $('div#placeholder');
-			
-			self.ResizeChartContainer();
-			self.window.scrollTop(self.window.height() * 2);
-			
-			self.LoadFlotChart();
-		} else {
-			console.log(answ["error"]);
-		}
-    });
-}*/
-
 Chart.prototype.ResizeChartContainer = function(e) {
 	var self = this;
 	if(self.chartWorkspace != null){
@@ -653,6 +603,14 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 	//build bar
 	self.document.keyup(function(event) {
 		if(self.Legnd.verticalTextInput) {
+			
+			//shift not pressed zoom
+			var yAxArr = self.plot.getYAxes();
+			for(var i = 0; i < yAxArr.length; i++){
+				yAxArr[i].options.zoomRange = [0,0];
+			}
+			self.plot.getXAxes()[0].options.zoomRange = null;	
+			
 			return false;
 		}
 				

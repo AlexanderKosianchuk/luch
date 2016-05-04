@@ -718,8 +718,7 @@
 	"arrivalAirport": "Аэропорт посадки",
 	"bruType":"Тип регистратора", 
 	"performer":"Обработал",
-	"aditionalInfo": "Доп. инф.",
-	"searchBroughtNoResult": "Поиск не дал результата"
+	"aditionalInfo": "Доп. инф."
 }
 
 

@@ -60,6 +60,8 @@ if ($M->IsAppLoggedIn())
 				$toTime = $M->data['toTime'] / 1000;
 				$prms = $M->data['prms'];
 				
+				$step = $M->GetTableStep($flightId);
+								
 				$globalRawParamArr = $M->GetTableRawData($flightId, $prms, $fromTime, $toTime);
 				$totalRecords = count($globalRawParamArr[1]); // 0 is time and may be lager than data
 				
@@ -73,15 +75,14 @@ if ($M->IsAppLoggedIn())
 				for($i = 0; $i < count($prms); $i++)
 				{
 					$paramInfo = $M->GetParamInfo($flightId, $prms[$i]);
-					$figPrRow .= $prms[$i] . ", " . $paramInfo['name'] . ";";
+					$figPrRow .= $prms[$i] . ", " . iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
 				}
-				
-
 				
 				$figPrRow = substr($figPrRow, 0, -1);
 				$figPrRow .= PHP_EOL;
 				fwrite ($exportedFileDesc , $figPrRow);
 
+				$curStep = 0;
 				for($i = 0; $i < $totalRecords; $i++)
 				{
 					$figPrRow = "";
@@ -92,9 +93,18 @@ if ($M->IsAppLoggedIn())
 			 			
  			 		$figPrRow = substr($figPrRow, 0, -1);
  			 		$figPrRow .= PHP_EOL;
- 				 	fwrite ($exportedFileDesc , $figPrRow);
+
+ 			 		if($curStep == 0) {
+ 				 		fwrite ($exportedFileDesc , $figPrRow);
+ 			 		} 
+ 			 		
+ 			 		$curStep++;
+ 			 		
+ 			 		if($curStep >= $step) {
+ 			 			$curStep = 0;
+ 			 		}
 				}
-				//fputcsv($exportedFileDesc, $globalRawParamArr);
+
 				fclose($exportedFileDesc);
 				
 				$href = 'http';
@@ -116,45 +126,6 @@ if ($M->IsAppLoggedIn())
 				$answ["data"] = $href;
 				
 				echo json_encode($answ);
-				
-// 				header("Content-type: text/csv");
-// 				header("Content-Disposition: attachment; filename=file.csv");
-// 				header("Pragma: no-cache");
-// 				header("Expires: 0");
-				
-// 				flush();				
-// 				for($i = 0; $i < $totalRecords; $i++)
-// 				{
-// 				 		$figPrRow = "";
-// 				 		//array_push($figPrRow, $globalRawParamArr[0][$i][0]);//time
-// 				 		for($j = 0; $j < count($globalRawParamArr); $j++)
-// 			 			{
-// 				 			$figPrRow .= $globalRawParamArr[$j][$i] . ",";
-// 			 			}
-			 			
-// 			 			$figPrRow = substr($figPrRow, 0, -1);
-// 			 			$figPrRow .= PHP_EOL;
-// 				 		echo $figPrRow;
-// 				 		flush();
-// 				}
-				
-				/*header('Cache-control: private');
-				header('Content-Type: application/octet-stream');
-				header('Content-Length: '.filesize($local_file));
-				header('Content-Disposition: filename='.$download_file);
-				
-				flush();
-				$file = fopen($local_file, "r");
-				while(!feof($file))
-				{
-					// send the current file part to the browser
-					print fread($file, round($download_rate * 1024));
-					// flush the content to the browser
-					flush();
-					// sleep one second
-					sleep(1);
-				}
-				fclose($file);*/
 			}
 			else
 			{

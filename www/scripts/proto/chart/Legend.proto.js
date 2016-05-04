@@ -403,8 +403,8 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 		"height": self.ph.height() - 30,
 		"position": 'absolute',
 		"text-align": "center",
-		"writing-mode": "vertical-lr",
-		"text-orientation": "sideways-left",
+		"writing-mode": "vertical-rl",
+		"text-orientation": "sideways-right",
 		"color": '#555'})
 	.append($("<input/>")
 		.addClass('verticalText')
@@ -424,6 +424,10 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 			var val = target.val();
 			target.parent().html(val);
 			self.verticalTextInput = false;
+			
+			e = $.Event('keyup');
+			e.keyCode = 16; // shift
+			$(document).trigger(e);
 		});
 	 
 	 return text;
@@ -496,7 +500,7 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
-				"left": excCoordX - 18,
+				"left": excCoordX - 22,
 				"height": this.ph.height() - 30
 			})
 			.fadeIn(200);				

@@ -25,6 +25,7 @@ require_once(@SITE_ROOT_DIR."/model/User.php");
 require_once(@SITE_ROOT_DIR."/model/Airport.php");
 require_once(@SITE_ROOT_DIR."/model/Vocabulary.php");
 require_once(@SITE_ROOT_DIR."/model/SearchFlights.php");
+require_once(@SITE_ROOT_DIR."/model/UserOptions.php");
 
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
 define("UPLOADED_FILES_PATH", 
