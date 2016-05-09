@@ -22,6 +22,7 @@ if ($M->IsAppLoggedIn())
 				
 	$M->PutMessageBox();
 	$M->PutHelpDialog();
+	$M->PutOptionsDialog();
 	$M->PutExportLink();
 	 
 	$M->PutFooter();

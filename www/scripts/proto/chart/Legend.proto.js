@@ -45,12 +45,10 @@ function Legend(flightId, legendContainer, apParams, bpParams, associativeParams
 	this.paramInfo = new Array();
 	this.dfr = $.Deferred();
 	
-	this.visirTimeBox = $('<div id="visirTimeBox"></div>').css({
-		'background-color': "transparent",
-		'position': "absolute",
-		'font-size': '14px',
-		'top': '1px'
-	});
+	this.visirTimeBox = $('<div></div>')
+		.attr('id', 'visirTimeBox')
+		.addClass('VisirTimeBox');
+
 	this.ccCont.append(this.visirTimeBox);
 	
 	$("<div></div>")
@@ -277,11 +275,6 @@ Legend.prototype.AppendSectionBar = function(manualPosX, hasText){
 			this.textsContainersArr.length
 		);
 		this.barMainContainersArr.push(barMainContainer);
-		
-		//delete bar on mainLable click
-		barMainContainer[0].ondblclick = function(){
-			self.RemoveSectionBar(barMainContainer);	
-		};
 			
 		return {
 			line: line,
@@ -306,8 +299,8 @@ Legend.prototype.MoveLastVertical = function(xAxis, yAxArr, posx){
 //=============================================================
 //
 Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId, lineId, textId) {
-	 var self = this,
-	 barMainLabel = $('<div/>', {
+	 var self = this;
+	 var barMainLabel = $('<div></div>', {
 		'id': 'barMainLabel' + (self.barMainContainersArr.length + 1),
 		'class': 'BarMainLabel',
 		'data-time': time,
@@ -315,19 +308,14 @@ Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId
 		'data-endid': endId,
 		'data-lineid': lineId,
 		'data-textid': textId,
-		html: content})
-	.css({
-		"position": 'absolute',
-		"display": 'none',
-		"border": '1px solid #999',
-		"padding": '2px',
-		"top": '18px',
-		"border-radius": '3px',
-		"color": 'black',
-		"background-color" : 'white',
-		"font-size": '12px',
-		"opacity": '0.6' })
+		html: content
+	})
 	.appendTo(self.ccCont);
+	 
+	//delete bar on mainLable click
+	barMainLabel.dblclick(function(){
+		self.RemoveSectionBar(barMainLabel);	
+	});
 	
 	return barMainLabel;
 
@@ -338,26 +326,85 @@ Legend.prototype.CreateBarMainContainer = function(time, content, startId, endId
 //
 Legend.prototype.CreateBarContainer = function(id, refParam, time, value, content, yAxNum, color) {
 	var self = this;
-	
-	return $('<div></div>', {
+	var barLabel = $('<div></div>', {
 		'id': id,
 		'class': 'BarLabel',
 		'data-refParam': refParam,
 		'data-time': time,
 		'data-yAx': yAxNum,
 		'data-value': value,
-		html: content})
-	.css({
-		"position": 'absolute',
-		"display": 'none',
-		"border": '0px',
-		"padding": '2px',
-		"color": "#" + color,
-		"font-size": '14px',
-		"text-shadow": '1px 1px 0px grey, 0 0 7px white',
-		"background-color" : 'transpatant',
-		"opacity": '0.75'})
+		'data-hidden': 'false',
+		'data-draggeddeltax': '0',
+		'data-draggeddeltay': '0',
+		html: content
+		}).css({
+			"color": "#" + color
+		})
 	.appendTo(self.ccCont);
+
+	barLabel.dblclick(function(event){
+		barLabel.css('display', 'none');	
+		barLabel.data('hidden', 'true');	
+	});
+	
+	var isDragging = false;
+	var startCoordinate = null;
+	var deltaX = null;
+	var deltaY = null;
+	barLabel.mousedown(function(e) { 
+    	isDragging = true; 
+    	offsetCoordinate = {
+    			x: 0,
+     	        y: 0
+    	};
+    	prevCoordinate = {
+    			x: e.pageX,
+    			y: e.pageY
+    	};
+    })
+    .mouseup(function(e) { 
+    	if(isDragging) {
+    		isDragging = false; 
+    		
+    		var prevDraggedDeltaX = parseInt(barLabel.data('draggeddeltax'));
+    		var prevDraggedDeltaY = parseInt(barLabel.data('draggeddeltay'));
+    		
+        	barLabel.data('draggeddeltax', prevDraggedDeltaX+offsetCoordinate.x);
+        	barLabel.data('draggeddeltay', prevDraggedDeltaY+offsetCoordinate.y);  		
+    	} 
+    })
+    .mouseleave(function(e) { 
+    	if(isDragging) {
+    		isDragging = false; 
+    		
+    		var prevDraggedDeltaX = parseInt(barLabel.data('draggeddeltax'));
+    		var prevDraggedDeltaY = parseInt(barLabel.data('draggeddeltay'));
+    		
+        	barLabel.data('draggeddeltax', prevDraggedDeltaX+offsetCoordinate.x);
+        	barLabel.data('draggeddeltay', prevDraggedDeltaY+offsetCoordinate.y);  	  			
+    	}  	    	
+    })
+    .mousemove(function(e) {
+        if(isDragging) {
+        	deltaX = prevCoordinate.x - e.pageX;
+        	deltaY = prevCoordinate.y - e.pageY;
+        	
+        	offsetCoordinate.x += deltaX;
+        	offsetCoordinate.y += deltaY;
+
+        	barLabel.css({
+    	       left: barLabel.position().left - deltaX,
+    	       top: barLabel.position().top - deltaY
+    	    });
+             	
+        	prevCoordinate = {
+        			x: e.pageX,
+        			y: e.pageY
+        	};
+        }
+    });
+	
+	return barLabel;
 };
 //=============================================================
 
@@ -394,7 +441,7 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 	}
 
 	var text = $('<div></div>', {
-		id: 'text' + (self.textsContainersArr.length + 1),
+		'id': 'text' + (self.textsContainersArr.length + 1),
 		'data-time': time })
 	.css({
 		"top": '38px',
@@ -466,17 +513,24 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			yMin = yAxArr[yAxNum].min,
 			yMax = yAxArr[yAxNum].max,
 			excCoordX = xAxis.p2c(barTime),
-			excCoordY = yAxis.p2c(barValue);
-			
-		if(((barTime > xMin) && (barTime < xMax)) && 
-		   ((barValue > yMin) && (barValue < yMax))){
-			barCont.css({
-				top: excCoordY + 20,
-				left: excCoordX + 5, } ).
-			fadeIn(200);				
-		} else {
-			barCont.fadeOut(200);				
-		};
+			excCoordY = yAxis.p2c(barValue),
+		
+			deltaX = parseInt(barCont.data('draggeddeltax')),
+			deltaY = parseInt(barCont.data('draggeddeltay')),
+			hidden = barCont.data('hidden');
+
+		if(hidden !== 'true') {
+			if(((barTime > xMin) && (barTime < xMax)) && 
+			   ((barValue > yMin) && (barValue < yMax))){
+				barCont.css({
+					top: excCoordY - deltaY + 20,
+					left: excCoordX - deltaX + 5, 
+				})
+				.fadeIn(200);				
+			} else {
+				barCont.fadeOut(200);				
+			};
+		}
 	};	
 	
 	for(var i = 0; i < this.barMainContainersArr.length; i++){
@@ -492,7 +546,7 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			barCont.fadeOut(200);				
 		};
 	};	
-	
+
 	for(var i = 0; i < this.textsContainersArr.length; i++){
 		var barCont = this.textsContainersArr[i],
 			barTime = barCont.data('time'),
@@ -591,9 +645,9 @@ Legend.prototype.CreateHorizont = function(yAxNum) {
 	self.horizontsValueContainersArr.push(h);
 	
 	//delete bar on mainLable click
-	h[0].ondblclick = function(){
+	h.dblclick(function(){
 		self.RemoveHorizont(h);	
-	};
+	});
 };
 //=============================================================
 

@@ -1,10 +1,13 @@
 {
 "exit": "Выход",
+"options": "Настройки",
+
 "continueLabel": "Далее",
 "tplHasBeenAdded": "Шаблон добавлен. Для приминения изменений обновите страницу (Shift+F5)",
 "tplHasBeenDeleted": "Шаблон удален. Для приминения изменений обновите страницу (Shift+F5)",
 "tplHasBeenEdit": "Шаблон изменен. Для приминения изменений обновите страницу (Shift+F5)",
 "tplHasBeenSetAsDefault": "Шаблон по умолчанию установлен. Для приминения изменений обновите страницу (Shift+F5)",
+
 "colorpickerOk" : "Принять",
 "colorpickerCancel" : "Отменить",
 "colorpickerNone" : "Никакой",
@@ -24,6 +27,8 @@
 "errorFlightNotSelect":"Ошибка. Полет не выбран",
 "flightSelectedChooseSlice":"Полет выбран. Укажите срез.",
 
+"apply": "Принять",
+"cancelAction": "Отменить",
 "closeLabel": "Закрыть",
 
 "passwordsAreNotTheSame": "Парали не совпадают",
@@ -185,7 +190,10 @@
 	"helpTitle": "Краткая информация",
 	
 	"viewItem" : "Обзор",
-	
+	"options": "Настройки",
+	"printTableStep": "Шаг цифропечати",
+	"mainChartColor": "Заливка графика",
+		
 	"sliceCreation": "Создание среза",
 	"sliceName": "Название",
 	"sliceCode": "Код алгоритма",

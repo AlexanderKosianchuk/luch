@@ -79,6 +79,29 @@ if ($M->IsAppLoggedIn())
 			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
 			echo(json_encode($answ));
 		}
+	} else if($M->action == $M->userActions["updateUserOptions"]) {
+		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
+		{
+			$action = $M->action;
+			$form = [];
+			parse_str($M->data, $form);	
+
+			$M->UpdateUserOptions($form);
+
+			$answ = array(
+				'status' => 'ok'
+			);
+
+			echo json_encode($answ);
+		}
+		else
+		{
+	
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
 	} else if($M->action == $M->userActions["buildUserTable"]) {
 		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
 		{

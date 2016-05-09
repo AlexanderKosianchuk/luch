@@ -1,0 +1,276 @@
+.FlightUploadingInputs {
+	margin-top:10px;
+	width:200px;
+}
+
+.FlightUploadingInputsAditionalInfo {
+	margin-top:10px;
+	width:200px;
+}
+
+.UploadingProgressInfo {
+	width:300px; 
+	/*height:60px;*/
+	overflow: hidden;
+	background-color:#fff;
+	border: 2px solid #0072bc;
+	border-top: 0px;
+	position:absolute; 
+	display:none;
+	padding:15px;
+	padding-top:5px;
+	text-align:center;
+	z-index:2;
+}
+
+#sortableLeft, #sortableRight{ 
+	list-style-type: none; 
+	padding-left:0px !important;
+	margin:0px !important;
+	min-height:35px;
+}
+
+.ui-state-highlight { 
+	list-style-type: none; 
+	height: 7.5em;
+	margin-top:1px;
+	padding-left:0px !important;
+	width:calc(100% + 25px);
+}
+
+.NonSortableList{
+	margin:0px !important;
+	padding-left:0px !important;
+}
+
+.ErrorDuringDrop{
+	background-color: #EA0000 !important;
+}
+
+.TwoColumnsTable {
+	width:100%; 
+	padding:5px;
+}
+
+.TwoColumnsTableColumn{
+	vertical-align:top;
+	width:50%;
+}
+
+.FolderPathInTwoColumnContainer {
+	background: #dfdfdf;
+	height:30px;
+	line-height: 2em;
+	padding:2px;
+	padding-left:5px;
+	font-size:16px;
+	
+    list-style-type: none;
+    margin-top:1px;
+    
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+    
+    border-bottom:1px solid #c8c8c8;
+}
+
+.FolderInTwoColumnContainer {
+	height:45px;
+	line-height: 2.5em;
+	padding:2px;
+	padding-left:5px;
+	font-size:16px;
+	background-color:#FFD869; 
+		
+    list-style-type: none;
+    margin-top:1px;
+    
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+}
+
+.FlightInTwoColumnContainer {
+	padding:2px;
+	padding-left:5px;
+	font-size:16px;
+	color:#fff;
+	background-color:#439ADC; 
+	
+    list-style-type: none;
+    margin-top:1px;
+    
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+}
+
+.FlightInTwoColumnContainer p {
+	line-height: 0.1;
+}
+
+.GroupType {
+	position: absolute;
+	background-color: #F3F3F3;
+	font-size: 16px;
+	width:213px;
+	z-index:1;
+}
+
+.GroupType li{
+	border-bottom: 1px solid #979797;
+	padding: 7px;
+	margin: 1px;
+}
+
+.GroupType li:hover{
+	background-color: #BBB;
+}
+
+.UserMenuGroup {
+	position: absolute;
+	background-color: #F3F3F3;
+	font-size: 16px;
+	width:213px;
+	z-index:1;
+}
+
+.UserMenuGroup li{
+	border-bottom: 1px solid #979797;
+	padding: 7px;
+	margin: 1px;
+}
+
+.UserMenuGroup li:hover{
+	background-color: #BBB;
+}
+
+#fileMenu{
+	padding:2px;
+	font-size:16px;
+	margin-left:20px;
+}
+
+.FileMenuItems {
+	position: absolute;
+	background-color: #F3F3F3;
+	font-size: 16px;
+	width:213px;
+	z-index:1;
+}
+
+.FileMenuItems li{
+	border-bottom: 1px solid #979797;
+	padding: 7px;
+	margin: 1px;
+}
+
+.FileMenuItems li:hover{
+	background-color: #BBB;
+}
+
+.Tree {
+	width:255px;
+	float:left;
+	overflow-y:auto; 
+	overflow-x:scroll;
+}
+
+.TreeContent {
+	width:calc(100% - 290px); 
+	margin:0px 5px 0px 10px;
+	padding:0px 5px 5px 10px;
+	float:left; 
+	border-left:solid 1px #bbb;
+	/*height:100px; 
+	background-color:red;*/
+}
+
+.JstreeContentItemFolder {
+	height:25px;
+	line-height:25px;
+	padding:2px;
+	padding-left:5px;
+	font-size:16px;
+	background-color:#FFD869; 
+		
+    margin-top:1px;
+    
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+}
+
+.JstreeContentItemFlight {
+	height:25px;
+	line-height:25px;
+	
+	padding:2px;
+	padding-left:5px;
+	font-size:16px;
+	color:#fff;
+	background-color:#439ADC; 
+	
+    list-style-type: none;
+    margin-top:1px;
+    
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+}
+
+.JstreeContentItemFolder:hover, .JstreeContentItemFlight:hover {
+	background-color: #c0c0c0 !important;
+}
+
+.ItemsCheckJstreeContent {
+	vertical-align: text-bottom;
+}
+
+.FlightTableCheckboxCenter {
+	text-align:center;
+}
+
+table.dataTable thead th, 
+table.dataTable thead td {
+	border-bottom: 1px solid #c0c0c0;
+}
+
+table.dataTable tfoot th, 
+table.dataTable tfoot td {
+	border-top: 1px solid #c0c0c0;
+}
+
+#optionsDialog {
+	display: none;
+	max-width:100%;
+	min-width:75%;
+	height: 90%;
+	max-height:90%;
+}
+
+#optionsDialog .options-row {
+	width: 100%;
+	padding: 5px;
+}
+
+#optionsDialog .options-name {
+	float:left;
+	width: 35%;
+}
+
+#optionsDialog .options-value {
+	float:left;
+	width: 65%;
+	text-align: right;
+}
+
+#optionsDialog .options-clear {
+	clear: both;
+}

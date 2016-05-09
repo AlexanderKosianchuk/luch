@@ -75,7 +75,17 @@ if ($M->IsAppLoggedIn())
 				for($i = 0; $i < count($prms); $i++)
 				{
 					$paramInfo = $M->GetParamInfo($flightId, $prms[$i]);
-					$figPrRow .= $prms[$i] . ", " . iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
+					$figPrRow .= iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
+				}
+				
+				$figPrRow = substr($figPrRow, 0, -1);
+				$figPrRow .= PHP_EOL;
+				
+				$figPrRow .= "T;";
+				for($i = 0; $i < count($prms); $i++)
+				{
+					$paramInfo = $M->GetParamInfo($flightId, $prms[$i]);
+					$figPrRow .= $prms[$i] . ";";
 				}
 				
 				$figPrRow = substr($figPrRow, 0, -1);
@@ -198,7 +208,10 @@ if ($M->IsAppLoggedIn())
 				$flightId = $M->data['flightId'];
 				$paramCode = $M->data['paramBpCode'];	
 				
-				$paramData = $M->GetBpParamValue($flightId, $paramCode);
+				$paramData = [];
+				if(!empty($paramCode)) {
+					$paramData = $M->GetBpParamValue($flightId, $paramCode);
+				}
 	
 				echo json_encode($paramData);
 			}
@@ -374,7 +387,10 @@ if ($M->IsAppLoggedIn())
 				$flightId = $M->data['flightId'];
 				$paramCode = $M->data['paramCode'];
 					
-				$info = $M->GetParamInfo($flightId, $paramCode);
+				$info = [];
+				if(!empty($paramCode)) {
+					$info = $M->GetParamInfo($flightId, $paramCode);
+				}
 	
 				echo json_encode($info);
 			}

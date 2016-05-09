@@ -52,3 +52,35 @@
 	line-height: 45px;
 	padding-right: 8px;
 }
+
+.VisirTimeBox {
+	background-color: transparent;
+	position: absolute;
+	font-size: 14px;
+	top: 1px;
+}
+
+.BarLabel {
+	position: absolute;
+	display: none;
+	border: 0px;
+	padding: 2px;
+	z-index: 2;
+	font-size: 14px;
+	text-shadow: 1px 1px 0px grey, 0 0 7px white;
+    background-color: transparent;
+	opacity: 0.75;
+}
+
+.BarMainLabel {
+	position: absolute;
+	display: none;
+	border: 1px solid #999;
+	padding: 2px;
+	top: 18px;
+	border-radius: 3px;
+	color: black;
+	background-color: white;
+	font-size: 12px;
+	opacity: 0.6;
+}

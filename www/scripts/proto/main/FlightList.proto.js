@@ -1,9 +1,11 @@
 var FLIGHTS_VIEW_SRC = location.protocol + '//' + location.host + "/view/flights.php";
+var USER_SRC = location.protocol + '//' + location.host + "/view/user.php";
 	
 function FlightList(langStr, srvcStrObj, eventHandler) 
 { 	
 	this.langStr = langStr;
 	this.actions = srvcStrObj['flightsPage'];
+	this.userOptionsActions = srvcStrObj['userPage'];
 	
 	this.eventHandler = eventHandler;
 	this.flightListFactoryContainer = null;
@@ -67,6 +69,7 @@ FlightList.prototype.topMenuUserButtClick = function(){
 		userTopButt = $("#userTopButt")
 	
 	var fligthOptionsStr = '<ul id="userMenu" class="UserMenuGroup">' +
+			'<li id="userOptions">' + this.langStr.options + '</li>' +
 	    	'<li class="UserChangeLang" data-lang="ru">' + "Русский" + '</li>' +
 	    	'<li class="UserChangeLang" data-lang="en">' + "English" + '</li>' +
 	    	'<li class="UserChangeLang" data-lang="es">' + "Español" + '</li>' +
@@ -77,12 +80,16 @@ FlightList.prototype.topMenuUserButtClick = function(){
 	var menu = $("#userMenu").buttonset().menu().hide();
 	
 	userTopButt.click(function(e) {
-		menu.show().position({
+		menu.toggle().position({
 			 my: "right top",
              at: "right bottom",
              of: this
 		 });
 	 });
+	
+	$("#userOptions").on("click", function(e){
+		self.ShowOptions();
+	});
 	
 	$("#userExit").on("click", function(e){
 		self.eventHandler.trigger("userLogout");
@@ -299,6 +306,57 @@ FlightList.prototype.ShowFlightsListInitial = function() {
 			console.log(msg);
 		});
 	}
+};
+
+FlightList.prototype.ShowOptions = function() {
+	var self = this;
+	var form = $('#optionsForm');
+	
+	var optionsDialog = $("#optionsDialog").dialog({
+		resizable:false,
+		autoOpen: true,
+        height: 700,
+        width: '60%',
+        modal: true,
+		buttons: [
+			{
+			    text: self.langStr.apply,
+			    click: function() {
+			    	self.UpdateOptions();
+					optionsDialog.dialog("close");
+				}
+			},
+			{
+				text: self.langStr.cancelAction,
+				click: function() {
+					optionsDialog.dialog("close")
+				}
+			}
+		],
+		hide: { 
+			effect: "fadeOut",  
+			duration: 150 
+		},
+		show: { 
+			effect: "fadeIn", 
+			duration: 150
+		} 
+	});
+}
+
+FlightList.prototype.UpdateOptions = function() {
+	var self = this;
+	var msg = $('#optionsForm').serialize();
+	
+	return $.ajax({
+		type: "POST",
+		url: USER_SRC,
+		dataType: 'json',
+		data: {
+			action: self.userOptionsActions["updateUserOptions"],
+			data: msg
+		}
+	});
 };
 
 FlightList.prototype.ResizeFlightList = function(e) {

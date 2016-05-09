@@ -1,10 +1,13 @@
 {
 "exit": "Salida",
+"options": "Opciones",
+
 "continueLabel": "Además",
 "tplHasBeenAdded": "Plantilla añadió. (Shift+F5)",
 "tplHasBeenDeleted": "Plantilla eliminado. (Shift+F5)",
 "tplHasBeenEdit": "Plantilla cambió. (Shift+F5)",
 "tplHasBeenSetAsDefault": "La plantilla por defecto se establece. (Shift+F5)",
+
 "colorpickerOk" : "Adoptar",
 "colorpickerCancel" : "Cancelar",
 "colorpickerNone" : "No",
@@ -24,6 +27,8 @@
 "errorFlightNotSelect":"Error. Volar no está seleccionada",
 "flightSelectedChooseSlice":"Полет выбран. especificar срез.",
 
+"apply": "Aplicar",
+"cancelAction": "Cancelar",
 "closeLabel": "Cerca",
 
 "passwordsAreNotTheSame": "Las contraseñas no coinciden",
@@ -185,6 +190,9 @@
 	"helpTitle": "Una breve información",
 	
 	"viewItem" : "Visión",
+	"options": "Opciones",
+	"printTableStep": "Paso mesa de impresión",
+	"mainChartColor": "Color principal fondo de la carta",
 	
 	"sliceCreation": "Создание среза",
 	"sliceName": "Nombre",

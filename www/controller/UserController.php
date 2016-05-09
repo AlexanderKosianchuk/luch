@@ -811,4 +811,13 @@ class UserController
 		
 		return true;
 	}
+	
+	public function UpdateUserOptions($form) {
+		$userInfo = $this->GetUserInfo();
+		$userId = $userInfo['id'];
+		$O = new UserOptions();
+		$O->UpdateOptions($form, $userId);
+		unset($O);
+		return $form;
+	}
 }

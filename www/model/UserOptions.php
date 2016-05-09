@@ -2,17 +2,14 @@
 
 require_once(@SITE_ROOT_DIR ."/includes.php"); 
 
-//User privilege
-//------------
-
-/*
-viewFlight,shareFlight,addFlight,editFlight,delFlight,followFlight,tuneFlight,
-viewBruType,shareBruType,addBruType,editBruType,delBruType,
-optionsUsers,viewUsers,shareUsers,addUser,delUser,editUser
-*/
-
 class UserOptions
 {
+	
+	private static $defaultOptions = [
+			'printTableStep' => 1,
+			'mainChartColor' => 'fff'
+	];
+	
 	public function CreateUserOptionssTables()
 	{			
 		$query = "SHOW TABLES LIKE 'user_personal';";
@@ -40,6 +37,24 @@ class UserOptions
 		$c->Disconnect();
 		unset($c);
 	}
+	
+	public function GetOptions($userId)
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$result = $link->query("SELECT `name`,`value` FROM `user_settings` WHERE `user_id`=".$userId.";");
+	
+		$arr = [];
+		while($row = $result->fetch_array()) {
+			$arr[$row['name']] = $row['value'];
+		}
+	
+		$c->Disconnect();
+		unset($c);
+	
+		return $arr;
+	}
 
 	public function GetOptionValue($userId, $optionName)
 	{
@@ -51,6 +66,8 @@ class UserOptions
 		$value = null;
 		if($row = $result->fetch_array()) {
 			$value = $row['value'];
+		} else {
+			$value = self::$defaultOptions[$optionName];
 		}
 	
 		$c->Disconnect();
@@ -58,4 +75,39 @@ class UserOptions
 	
 		return $value;
 	}	
+	
+	public function UpdateOption($optionsKey, $optionsVal, $userId)
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+	
+		$query = "UPDATE `user_settings` SET `value` = '".$optionsVal."' WHERE `name` = '".$optionsKey."' AND `user_id` = ".$userId.";";
+		
+		$stmt = $link->prepare($query);
+		$stmt->execute();
+		$stmt->close();
+	
+		$c->Disconnect();
+		unset($c);
+		
+		return;
+	}
+	
+	public function UpdateOptions($options, $userId)
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+		
+		$oldOptions = $this->GetOptions($userId);
+		
+		foreach($options as $key => $val) {
+			if(isset($oldOptions[$key])) {
+				if($oldOptions[$key] != $val) {
+					$this->UpdateOption($key, $val, $userId);
+				}
+			}
+		}
+		
+		return;
+	}
 }

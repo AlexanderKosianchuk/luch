@@ -132,7 +132,7 @@ class ChartController
 		
 	public function PutHeader()
 	{
-		printf("</head><body>");
+		printf("</head><body data-isprintpage='true'>");
 	}
 	
 	public function EventHandler()
@@ -242,10 +242,18 @@ class ChartController
 	}
 	
 	public function PutWorkspace()
-	{
+	{		
+		$U = new User();
+		$userId = $U->GetUserIdByName($this->username);
+		unset($U);
+		
+		$O = new UserOptions();
+		$mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
+		unset($O);
+		
 		$workspace = "<div id='chartWorkspace' class='WorkSpace'>".
 						"<div id='graphContainer' class='GraphContainer'>" .
-						"<div id='placeholder'></div>" .
+						"<div id='placeholder' data-bgcolor='".$mainChartColor."'></div>" .
 						"<div id='legend'></div>" .
 							"</div>" .
 						"<div id='loadingBox' class='LoadingBox'>" .
@@ -303,56 +311,20 @@ class ChartController
 		{
 			$seriesCountDivider = 1;
 		}
+							
+		$Ch = new Channel();
+	
+		$paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName,
+			$code, PARAM_TYPE_AP);
 		
-		//if($paramType == PARAM_TYPE_AP)
-		//{						
-			$Ch = new Channel();
-		
-			$paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName,
-				$code, PARAM_TYPE_AP);
-			
-			$prefix = $paramInfo["prefix"];
-			$freq = $paramInfo["freq"];
-		
-			$syncParam = $Ch->GetFlightParamWithExactSection($apTableName,
-				$seriesCountDivider, $startFrame, $endFrame,
-				$code, $prefix, $freq, $framesCount);
-		
-			return $syncParam;	
-		//}
-		//else if($paramType == PARAM_TYPE_BP)
-		//{
-			/*$paramCodeArr = (array)explode("-",$_GET['paramBpCode']);
-				
-			$Bru = new Bru();
-			$bruInfo = $Bru->GetBruInfo($bruType);
-			$stepLength = $bruInfo['stepLength'];
-			$bpCycloTableName = $bruInfo['gradiBpTableName'];
-			$channelsAndMasks = $Bru->GetChannelsAndMasksByCode(
-				$bpCycloTableName, $paramCodeArr);
-			unset($Bru);
-				
-			$Ch = new Channel();
-			$paramValuesArr = array();
-			for($i = 0; $i < count($paramCodeArr); $i++)
-			{
-				$syncParam = $Ch->GetBinaryParam($bpTableName,
-					$startCopyTime, $stepLength, $startFrame, $endFrame,
-					$channelsAndMasks[0], $channelsAndMasks[1]);
-				
-				array_push($paramValuesArr, $syncParam);
-			}
-			unset($Ch);
-
-			if(count($paramCodeArr) > 1)
-			{
-				return $paramValuesArr;
-			}
-			else
-			{
-				return $syncParam;
-			}*/
-		//}
+		$prefix = $paramInfo["prefix"];
+		$freq = $paramInfo["freq"];
+	
+		$syncParam = $Ch->GetFlightParamWithExactSection($apTableName,
+			$seriesCountDivider, $startFrame, $endFrame,
+			$code, $prefix, $freq, $framesCount);
+	
+		return $syncParam;	
 	}
 	
 	public function GetBpParamValue($extFlightId, $extParamCode)
@@ -472,16 +444,18 @@ class ChartController
 		for($i = 0; $i < count($paramCodeArray); $i++)
 		{
 			$paramCode = $paramCodeArray[$i];
-			$paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-				
-			if($paramInfo["paramType"] == PARAM_TYPE_AP)
-			{
-				$infoArray[] = $paramInfo['name'].", ".
-				$paramInfo['dim'];
-			}
-			else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
-			{
-				$infoArray[] = $paramInfo['name'];
+			if(!empty($paramCode)) {
+				$paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+					
+				if($paramInfo["paramType"] == PARAM_TYPE_AP)
+				{
+					$infoArray[] = $paramInfo['name'].", ".
+					$paramInfo['dim'];
+				}
+				else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
+				{
+					$infoArray[] = $paramInfo['name'];
+				}
 			}
 		}
 		unset($Bru);
@@ -709,12 +683,11 @@ class ChartController
 		$U = new User();
 		$userId = $U->GetUserIdByName($this->username);
 		unset($U);
+
+		$O = new UserOptions();
+		$step = $O->GetOptionValue($userId, 'printTableStep');
+		unset($O);
 		
-
-		$UP = new UserOptions();
-		$step = $UP->GetOptionValue($userId, 'printTableStep');
-
-		unset($UP);
 		if($step === null) {
 			$step = 0;
 		} else {

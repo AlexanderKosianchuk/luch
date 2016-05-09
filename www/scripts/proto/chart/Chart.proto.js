@@ -17,12 +17,6 @@ function Chart(window, document, langStr, srvcStrObj, eventHandler)
 	this.chartWorkspace = null;
 	this.chartContent = null;
 	
-	/*this.mainContainer = $("div.MainContainer");
-	this.loadingBox = null;
-	this.chartWorkspace = null;
-	this.chartTopMenu = null;
-	this.chartContent = null;*/
-	
 	this.legend = null;
 	this.placeholder = null;
 	this.plot = null;
@@ -57,6 +51,8 @@ function Chart(window, document, langStr, srvcStrObj, eventHandler)
 
 	this.startFrameTime = null;
 	this.endFrameTime = null;
+	
+	this.isPrintPage = !!$('body').data('isprintpage');
 }
 
 Chart.prototype.FillFactoryContaider = function(factoryContainer) {
@@ -259,8 +255,9 @@ Chart.prototype.SetChartData = function(flightId, tplName,
 
 Chart.prototype.LoadFlotChart = function() {
 	//flot options
-	var self = this,
-		options	= {
+	var self = this;
+	var bg = self.isPrintPage ? "#fff" : "#"+self.placeholder.data('bgcolor');
+	var options	= {
 			xaxis: {
 				mode: "time",
 				timezone: "browser",	
@@ -270,7 +267,6 @@ Chart.prototype.LoadFlotChart = function() {
 			},
 			yaxis:{
 				ticks: 0,
-				/*tickLength: 10,*/
 				position : "left",
 				zoomRange: [0,0],			
 			},
@@ -288,7 +284,7 @@ Chart.prototype.LoadFlotChart = function() {
 				clickable: true,
 				tickColor: "rgba(220, 220, 220, 0.8)",
 				borderWidth: 1,
-				backgroundColor: "#fff",
+				backgroundColor: bg,
 				markingsLineWidth: 1,
 				markings: function (axes) {
 				    var markings = [];				    
@@ -308,9 +304,7 @@ Chart.prototype.LoadFlotChart = function() {
 			},  
 			lines: {
 				lineWidth: 1,
-			},
-			imageClassName: "canvas-image",
-			imageFormat: "png"
+			}
 		};
 	
 	self.Prm = new Param(self.flightId, 
@@ -603,13 +597,14 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 	//build bar
 	self.document.keyup(function(event) {
 		if(self.Legnd.verticalTextInput) {
-			
-			//shift not pressed zoom
+		
 			var yAxArr = self.plot.getYAxes();
 			for(var i = 0; i < yAxArr.length; i++){
 				yAxArr[i].options.zoomRange = [0,0];
 			}
 			self.plot.getXAxes()[0].options.zoomRange = null;	
+			
+			self.shiftPressed = false;
 			
 			return false;
 		}
@@ -793,7 +788,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 			if(self.shiftPressed) {
 				if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {
 					moveVerticalTimeout = false;
-					var movedPosX = self.Legnd.lastMovedPosX - 10000;
+					var movedPosX = self.Legnd.lastMovedPosX - 1000;
 					var values = self.Prm.GetValue(self.plotDataset, movedPosX);
 					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
 					self.Legnd.UpdateLegend(movedPosX, values, binaries);
@@ -801,7 +796,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
 					setTimeout(function() {
 						moveVerticalTimeout = true;
-					}, 500);
+					}, 200);
 				}
 			} else {
 				var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;// 0.5 percent
@@ -815,7 +810,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 			if(self.shiftPressed) {
 				if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {
 					moveVerticalTimeout = false;
-					var movedPosX = self.Legnd.lastMovedPosX + 10000;
+					var movedPosX = self.Legnd.lastMovedPosX + 1000;
 					var values = self.Prm.GetValue(self.plotDataset, movedPosX);
 					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
 					self.Legnd.UpdateLegend(movedPosX, values, binaries);
@@ -823,7 +818,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
 					setTimeout(function() {
 						moveVerticalTimeout = true;
-					}, 500);
+					}, 200);
 				}
 			} else {
 				var delta = (self.plotAxes.xaxis.max - self.plotAxes.xaxis.min) / 500;

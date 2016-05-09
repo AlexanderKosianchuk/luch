@@ -359,12 +359,17 @@ class User
 		$result = $link->query("SELECT `id` FROM `user_personal` WHERE `login`='".$requester."' LIMIT 1;");
 	
 		$row = $result->fetch_array();
-		$userId = $row['id'];
+		$userId = intval($row['id']);
 	
 		$c->Disconnect();
 		unset($c);
 	
 		return $userId;
+	}
+	
+	public function GetIdByUsername($username)
+	{
+		return $this->GetUserIdByName($username);
 	}
 	
 	public function GetUserNameById($extRequester)
@@ -384,13 +389,17 @@ class User
 		return $userLogin;
 	}
 	
-	public function GetUserInfo($extRequester)
+	public function GetUserInfo($userIdentity)
 	{
-		$requester = $extRequester;
+		$userId = $userIdentity;
+		if(is_string($userIdentity)) {
+			$userId = $this->GetIdByUsername($userIdentity);
+		}
+				
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 	
-		$result = $link->query("SELECT * FROM `user_personal` WHERE `id`='".$requester."' LIMIT 1;");
+		$result = $link->query("SELECT * FROM `user_personal` WHERE `id`='".$userId."' LIMIT 1;");
 		
 		$userInfo = array();
 		if($row = $result->fetch_array())
@@ -633,24 +642,6 @@ class User
 		unset($c);
 	
 		return $exist;
-	}
-			
-	public function GetIdByUsername($extUsername)
-	{
-		$username = $extUsername;
-	
-		$c = new DataBaseConnector();
-		$link = $c->Connect();
-		
-		$result = $link->query("SELECT `id` FROM `user_personal` WHERE `login`='".$username."' LIMIT 1;");
-		
-		$row = $result->fetch_array();
-		$userId = $row['id'];
-
-		$c->Disconnect();
-		unset($c);
-	
-		return $userId;
 	}
 	
 	public function GetUsersByAuthor($extAuthor)

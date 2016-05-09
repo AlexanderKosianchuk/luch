@@ -86,7 +86,8 @@
 	"createUser": "createUser",
 	"updateUserForm": "updateUserForm",
 	"updateUser": "updateUser",
-	"deleteUser": "deleteUser"
+	"deleteUser": "deleteUser",
+	"updateUserOptions": "updateUserOptions"
 },
 
 "viewOptionsPage": {

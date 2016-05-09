@@ -1,10 +1,13 @@
 {
 "exit": "Exit",
+"options": "Options",
+
 "continueLabel": "Next",
 "tplHasBeenAdded": "Template added. Demonstrate how changes to refresh the page (Shift + F5)",
 "tplHasBeenDeleted": "Template deleted. To demonstrate how the changes refresh the page (Shift + F5)",
 "tplHasBeenEdit": "Template changed. Demonstrate how changes to refresh the page (Shift + F5)",
 "tplHasBeenSetAsDefault": "The default template set. Demonstrate how changes to refresh the page (Shift + F5)",
+
 "colorpickerOk" : "Accept",
 "colorpickerCancel" : "Cancel",
 "colorpickerNone" : "No",
@@ -24,6 +27,8 @@
 "errorFlightNotSelect":"Error. Flight is not selected",
 "flightSelectedChooseSlice":"Полет выбран. Укажите срез.",
 
+"apply": "Apply",
+"cancelAction": "Cancel",
 "closeLabel": "Close",
 
 "passwordsAreNotTheSame": "Passwords are not the same",
@@ -185,6 +190,9 @@
 	"helpTitle": "ShortInformation",
 	
 	"viewItem" : "View",
+	"options": "Options",
+	"printTableStep": "Print table step",
+	"mainChartColor": "Main chart background color",
 	
 	"sliceCreation": "Создание среза",
 	"sliceName": "Name",
@@ -249,7 +257,7 @@
 	"searchItem": "Search",
 	
 	"viewItem" : "View",
-	
+		
 	"root" : "Root",
 	"noContent" : "No content",
 	"bort":"A/C",

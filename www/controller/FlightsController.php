@@ -1214,6 +1214,5 @@ class FlightsController
 		unset($U);
 	
 		return $actionsInfo;
-	}
-	
+	}	
 }

@@ -183,7 +183,8 @@ class IndexController
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsEvents.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/chart.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/pages/user.css' />
-				<link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlights.css' />
+				<link rel='stylesheet' type='text/css' href='stylesheets/pages/flight.css' />
+				<link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlight.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
 	}
 	
@@ -211,8 +212,8 @@ class IndexController
 				<p></p>
 				</div>", $this->lang->message);
 	}
-	
-public function PutHelpDialog()
+		
+	public function PutHelpDialog()
 	{
 		printf("<div id='helpDialog' title='%s'>
 				<p>
@@ -260,6 +261,39 @@ public function PutHelpDialog()
 				<p>
 				</p>
 				</div>", $this->lang->helpTitle);
+	}
+	
+	public function PutOptionsDialog()
+	{
+		$U = new User();
+		$O = new UserOptions();
+		$userInfo = $U->GetUserInfo($this->username);
+		$userId = $userInfo['id'];
+		$options = $O->GetOptions($userId);
+		unset($U);
+		unset($O);	
+	
+		$optionsStr = '';
+		foreach ($options as $key => $val) {
+			$input = sprintf('<input  class="options-value-input" name="%s" value="%s">',
+					$key, $val);
+			
+			$optionsStr .= sprintf('<div class="options-row">' .
+					'<div class="options-name">%s</div>' .
+					'<div class="options-value">%s</div>' .
+					'<div class="options-clear"></div>' .
+					'</div>',
+					(isset($this->lang->$key) ? $this->lang->$key : $key),
+					$input);
+		}
+	
+		printf("<div id='optionsDialog' title='%s'>
+				<p><form id='optionsForm'>
+					%s
+				</form></p>
+				</div>",
+				$this->lang->options,
+				$optionsStr);
 	}
 	
 	public function PutExportLink()

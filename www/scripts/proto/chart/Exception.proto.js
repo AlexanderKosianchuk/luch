@@ -520,7 +520,8 @@ Exception.prototype.PutBarMainContainer = function(id, lay, time, content, excCo
 		'data-startid': startId,
 		'data-endid': endId,
 		'data-lineid': lineId,
-		html: lay + "-" + content + "(" + excCode + ")"})
+		//html: lay + "-" + content + "(" + excCode + ")"})
+		html: content })
 	.css({
 		"position": 'absolute',
 		"display": 'none',
@@ -619,8 +620,8 @@ Exception.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
-				left: excCoordX + 7 } )//.
-			//fadeIn(200);				
+				left: excCoordX + 7 } ).
+			fadeIn(200);				
 		} else {
 			barCont.fadeOut(200);				
 		};
