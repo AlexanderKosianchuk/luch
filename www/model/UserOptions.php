@@ -12,7 +12,7 @@ class UserOptions
 	
 	public function CreateUserOptionssTables()
 	{			
-		$query = "SHOW TABLES LIKE 'user_personal';";
+		$query = "SHOW TABLES LIKE 'user_settings';";
 		$c = new DataBaseConnector();
 		$link = $c->Connect();
 		$result = $link->query($query);
@@ -36,6 +36,32 @@ class UserOptions
 		
 		$c->Disconnect();
 		unset($c);
+		
+		return;
+	}
+	
+	public function InsertOption($key, $val, $userId)
+	{
+		$query = "INSERT INTO `user_settings` (`user_id`, `name`, `value`)" .
+				"VALUES ('".$userId."', '".$key."', '".$val."');";
+					
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+		
+		$stmt = $link->prepare($query);
+		$stmt->execute();
+		$stmt->close();
+		
+		return;
+	}
+	
+	public function InsertDefaultOptions($userId)
+	{
+		foreach (self::$defaultOptions as $key => $val) {
+			$this->InsertOption($key, $val, $userId);
+		}
+		
+		return;
 	}
 	
 	public function GetOptions($userId)
@@ -52,6 +78,11 @@ class UserOptions
 	
 		$c->Disconnect();
 		unset($c);
+
+		if(count($arr) == 0) {
+			$this->InsertDefaultOptions($userId);
+			$arr = self::$defaultOptions;
+		}
 	
 		return $arr;
 	}
