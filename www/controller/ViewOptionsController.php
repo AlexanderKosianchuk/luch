@@ -552,6 +552,10 @@ class ViewOptionsController
 		return $paramList;
 	}
 	
+	private static $exceptionTypeOther = 'other';	
+	private static $exceptionTypes = [
+		'000', '001', '002', '003', 'other'	
+	];
 	public function ShowEventsList($extFlightId)
 	{
 		$flightId = $extFlightId;
@@ -571,6 +575,7 @@ class ViewOptionsController
 		unset($Bru);
 		
 		$eventsList = "";
+		$eventTypeCount = [];
 	
 		if($exTableName != "")
 		{
@@ -602,8 +607,10 @@ class ViewOptionsController
 
 			//if isset events
 			if(!(empty($excEventsList)))
-			{				
-				$eventsList .= sprintf ("<table align='center' class='ExeptionsTable NotSelectable'>
+			{
+				$accordion = [];
+				
+				$eventsListTable = sprintf ("<table align='center' class='ExeptionsTable NotSelectable'>
 						<tr class='ExeptionsTableHeader'><td class='ExeptionsCell'> %s </td>
 						<td class='ExeptionsCell'> %s </td>
 						<td class='ExeptionsCell'> %s </td>
@@ -622,6 +629,16 @@ class ViewOptionsController
 				$this->lang->aditionalInfo,
 				$this->lang->reliability,
 				$this->lang->comment);
+				
+				for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
+					$accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+							'<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+							'<div class="exceptions-accordion-content"> %s',
+							self::$exceptionTypes[$ii],
+							$this->lang->eventCodeMask, 
+							self::$exceptionTypes[$ii], 
+							$eventsListTable);
+				}
 
 				for($i = 0; $i < count($excEventsList); $i++)
 				{
@@ -647,9 +664,9 @@ class ViewOptionsController
 					}
 					
 					$excAditionalInfo = $event['excAditionalInfo'];
-					$excAditionalInfo = str_replace(";", ";</br>", $excAditionalInfo);
-
-					$eventsList .= sprintf ("<tr style='%s' class='ExceptionTableRow' 
+					$excAditionalInfo = str_replace(";", ";</br>", $excAditionalInfo);				
+					
+					$eventsListRow = sprintf ("<tr style='%s' class='ExceptionTableRow' 
 								data-refparam='%s' 
 								data-startframe='%s'
 								data-endframe='%s'><td class='ExeptionsCell'> %s </td>
@@ -678,9 +695,29 @@ class ViewOptionsController
 					$event['reliability'],
 					$event['id'],
 					$event['userComment']);
+					
+					$codePrefix = substr($event['code'], 0, 3);
+					if(in_array($codePrefix, self::$exceptionTypes)) {
+						$accordion[$codePrefix] .= $eventsListRow;
+						$eventTypeCount[$codePrefix] = true;
+					} else {
+						$accordion[self::$exceptionTypeOther] .= $eventsListRow;
+						$eventTypeCount[self::$exceptionTypeOther] = true;
+					}
 				}
 				
-				$eventsList .= sprintf ("</table>");
+				for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
+					$accordion[self::$exceptionTypes[$ii]] .= sprintf ("</table></div></div>");
+					
+					if(!isset($eventTypeCount[self::$exceptionTypes[$ii]]) ||
+						!$eventTypeCount[self::$exceptionTypes[$ii]]) {
+						unset($accordion[self::$exceptionTypes[$ii]]);
+					}
+				}
+				
+				$eventsList = $accordion[self::$exceptionTypes[0]];
+				$eventsList .= $accordion[self::$exceptionTypes[1]];
+				
 				unset($FEx);
 			}
 			else

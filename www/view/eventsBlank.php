@@ -12,12 +12,13 @@ if ($M->IsAppLoggedIn())
 		$U = new User();
 		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
 		{
-			if(isset($M->data['flightId']))
+			if(isset($M->data['flightId']) && isset($M->data['sections']))
 			{
 				$action = $M->action;					
 				$flightId = $M->data['flightId'];
+				$sections = explode(',', $M->data['sections']);
 				
-				$M->ConstructColorFlightEventsList($flightId);
+				$M->ConstructColorFlightEventsList($flightId, $sections);
 
 				$M->RegisterActionExecution($action, "executed");
 			}
@@ -46,12 +47,13 @@ if ($M->IsAppLoggedIn())
 		$U = new User();
 		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
 		{
-			if(isset($M->data['flightId']))
+			if(isset($M->data['flightId']) && isset($M->data['sections']))
 			{
 				$action = $M->action;					
 				$flightId = $M->data['flightId'];
+				$sections = explode(',', $M->data['sections']);
 				
-				$M->ConstructBlackFlightEventsList($flightId);
+				$M->ConstructBlackFlightEventsList($flightId, $sections);
 
 				$M->RegisterActionExecution($action, "executed");
 			}

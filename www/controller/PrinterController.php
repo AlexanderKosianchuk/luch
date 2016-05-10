@@ -67,7 +67,7 @@ class PrinterController {
 		unset($Usr);
 	}
 	
-	public function ConstructColorFlightEventsList($extFlightId) {
+	public function ConstructColorFlightEventsList($extFlightId, $sections = []) {
 		$flightId = $extFlightId;
 		$user = $this->username;
 		
@@ -293,7 +293,9 @@ class PrinterController {
 					$event = $excEventsList [$i];
 					$excInfo = $FEx->GetExcInfo ( $bruInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
 					
-					if ($event ['reliability']) {
+					$codePrefix = substr($event['code'], 0, 3);
+					if ($event ['reliability'] && in_array($codePrefix, $sections)) {
+						
 						if ($excInfo ['status'] == "C") {
 							$style = "background-color:LightCoral";
 						} else if ($excInfo ['status'] == "D") {
@@ -341,7 +343,7 @@ class PrinterController {
 		
 		$pdf->Output ( '', 'I' );
 	}
-	public function ConstructBlackFlightEventsList($extFlightId) {
+	public function ConstructBlackFlightEventsList($extFlightId, $sections = []) {
 		$flightId = $extFlightId;
 		$user = $this->username;
 		
@@ -544,7 +546,8 @@ class PrinterController {
 					$event = $excEventsList [$i];
 					$excInfo = $FEx->GetExcInfo ( $bruInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
 					
-					if ($event ['reliability']) {
+					$codePrefix = substr($event['code'], 0, 3);
+					if ($event ['reliability'] && in_array($codePrefix, $sections)) {
 						
 						$excAditionalInfo = $event ['excAditionalInfo'];
 						$excAditionalInfo = str_replace ( ";", ";<br>", $excAditionalInfo );

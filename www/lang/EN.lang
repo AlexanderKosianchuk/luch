@@ -356,6 +356,7 @@
 	"login":"Login",
 	"userName":"User Name",
     "pass":"Password",
+    "eventCodeMask": "Event code mask",
     "rememberMe":"Remember",
     "loginFailed": "Login Failed",
     "notAllowedByPrivilege" : "No privilege"

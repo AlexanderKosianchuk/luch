@@ -99,21 +99,36 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
 				eventsPrintAction = self.printerTasks['monochromePrintBlank'];
 			}
 			
-			$('<form></form>', {
-                method: 'POST',
-                action: '/view/eventsBlank.php',
-                target: '_blank'
-          	})
-          	.css('display', 'none')
-          	.append($('<input/>', {
-                name: 'data[flightId]',
-                value: flightId
-          	})).append($('<input/>', {
-                name: 'action',
-                value: eventsPrintAction
-          	})).appendTo(
-      			$('body')
-          	).submit();
+			var $accordionButtons = $(".exceptions-accordion-title[data-shown='true']");
+			if($accordionButtons.length > 0) {
+				var sections = [];
+				$.each($accordionButtons, function(index, item) {
+					sections.push($accordionButtons.eq(index).data('section'));
+				});
+				
+				sections.join(',');
+				
+				$('<form></form>', {
+	                method: 'POST',
+	                action: '/view/eventsBlank.php',
+	                target: '_blank'
+	          	})
+	          	.css('display', 'none')
+	          	.append($('<input/>', {
+	                name: 'data[flightId]',
+	                value: flightId
+	          	}))
+	          	.append($('<input/>', {
+	                name: 'data[sections]',
+	                value: sections
+	          	}))
+	          	.append($('<input/>', {
+	                name: 'action',
+	                value: eventsPrintAction
+	          	})).appendTo(
+	      			$('body')
+	          	).submit();
+			}
 			
 			return false;
 		});
@@ -239,6 +254,9 @@ FlightViewOptions.prototype.ShowEventsList = function() {
 						
 					self.ResizeFlightViewOptionsContainer();
 					
+					var $accordionButtons = $(".exceptions-accordion-title");
+					self.SupportAccordion($accordionButtons);
+					
 					var exceptionTableRow = $(".ExceptionTableRow");
 					self.SupportReliabilityUncheck.call(self, exceptionTableRow, flightId);
 					exceptionTableRow.on("click", function(e){
@@ -296,5 +314,15 @@ FlightViewOptions.prototype.SupportReliabilityUncheck = function(exceptionTableR
 			console.log(msg);
 		});
 	});
+};
+
+FlightViewOptions.prototype.SupportAccordion = function($accordionButtons) {
+	var self = this;
+	$accordionButtons.click(function(event) {
+		var target = $(event.currentTarget);
+		var dataShown = (target.attr('data-shown') === 'false') ? 'true' : 'false';
+		target.attr('data-shown', dataShown).next().slideToggle();
+	});
+	
 };
 

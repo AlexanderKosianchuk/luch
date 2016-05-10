@@ -356,6 +356,7 @@
 	"login":"Autorizar",
 	"userName":"Login",
     "pass":"Contraseña",
+    "eventCodeMask": "Máscara de código de evento",
     "rememberMe":"Recordar",
     "loginFailed": "Error de autorización",
     "notAllowedByPrivilege" : "Privilegios insuficientes"
