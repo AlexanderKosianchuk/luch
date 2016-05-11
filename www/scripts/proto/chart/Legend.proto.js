@@ -10,14 +10,15 @@
 //=============================================================
 
 function Legend(flightId, legendContainer, apParams, bpParams, associativeParamsArr,
-	plotAxes, plotDataset, placeholder, contentChartContainer, actions){
+	plotXaxis, plotYaxes, plotDataset, placeholder, contentChartContainer, actions){
 
 	this.flightId = flightId;
 	this.actions = actions;
 	this.dataset = plotDataset;
 	this.ph = placeholder;
 	this.ccCont = contentChartContainer;
-	this.axes = plotAxes;
+	this.xax = plotXaxis;
+	this.yaxs = plotYaxes;
 	this.pos = new Object();
 	this.apArr = apParams;
 	this.bpArr = bpParams;
@@ -83,7 +84,7 @@ Legend.prototype.UpdateLegend = function(posx, valuesArr,
 	this.updateLegendTimeout = null;
 	var legndLabls = this.legndCont.find(".legendLabel");
 	
-	if (posx < this.axes.xaxis.min || posx > this.axes.xaxis.max) {
+	if (posx < this.xax.min || posx > this.xax.max) {
 		return;
 	}
 	//update legend only for ap
@@ -194,7 +195,7 @@ Legend.prototype.ReceiveLegend = function(){
 //=============================================================
 //show visir time in div above it
 Legend.prototype.ShowVisirTime = function(){
-	if (this.pos.x > this.axes.xaxis.min && this.pos.x < this.axes.xaxis.max) {
+	if (this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
 		this.visirTimeBox.text(this.toHHMMSS(this.pos.x));
 		this.visirTimeBox.css({'left': this.pos.pageX});
 	}
@@ -204,7 +205,7 @@ Legend.prototype.ShowVisirTime = function(){
 //=============================================================
 //show lead param val in div above point
 Legend.prototype.ShowLeadParamVal = function(val, label){
-	if (this.pos.x > this.axes.xaxis.min && this.pos.x < this.axes.xaxis.max) {
+	if (this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
 		this.leadParamValBox.text(label + " = " + val);
 		this.leadParamValBox.css({
 			'left': this.pos.pageX,
@@ -223,7 +224,7 @@ Legend.prototype.AppendSectionBar = function(manualPosX, hasText){
 		posx = manualPosX;
 	}
 	this.lastMovedPosX = posx;
-	if (posx > this.axes.xaxis.min && posx < this.axes.xaxis.max) {
+	if (posx > this.xax.min && posx < this.xax.max) {
 		var startId = this.barContainersArr.length,
 			legndLabls = this.legndCont.find(".legendLabel"),
 			labelText = legndLabls.eq(0).text(),
@@ -289,10 +290,45 @@ Legend.prototype.AppendSectionBar = function(manualPosX, hasText){
 
 //=============================================================
 //
-Legend.prototype.MoveLastVertical = function(xAxis, yAxArr, posx){
-	this.RemoveSectionBar(this.barMainContainersArr[this.barMainContainersArr.length - 1]);		
-	this.AppendSectionBar(posx);
-	this.UpdateBarContainersPos(xAxis, yAxArr);
+Legend.prototype.MoveLastVertical = function(posx, values, binaries){
+	var mainBar = this.barMainContainersArr[this.barMainContainersArr.length - 1];	
+	var startId = mainBar.data('startid');
+	var endId = mainBar.data('endid');
+	var lineId = mainBar.data('lineid');
+	var textid = mainBar.data('textid');
+		
+	this.linesContainersArr[lineId - 1].data('time', posx);
+	this.textsContainersArr[textid - 1].data('time', posx);
+	
+	var jj = 0;
+	for(var i = startId; i < endId; i++)
+	{
+		if(jj < values.length) {
+			var bar = this.barContainersArr[i];
+			bar.data('value', values[jj]);
+			bar.data('time', posx);
+			bar.html(values[jj]);
+		} else if((jj >= values.length) && 
+				((jj - values.length) < binaries.length)) {
+			var bar = this.barContainersArr[i];
+			bar.data('value', binaries[jj - values.length]);
+			bar.data('time', posx);
+			bar.html(values[jj]);
+			
+			if(binaries[jj - values.length] == 1) {
+				bar.fadeIn(200);
+			} else {
+				bar.hide();
+			}
+		}
+		
+		jj++;
+	};	
+	mainBar.data('time', posx);
+	mainBar.html(this.toHHMMSS(posx));
+	this.lastMovedPosX = posx;
+	
+	this.UpdateBarContainersPos();
 };
 //=============================================================
 
@@ -442,22 +478,14 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 
 	var text = $('<div></div>', {
 		'id': 'text' + (self.textsContainersArr.length + 1),
+		'class': 'vertical-text-container',
 		'data-time': time })
-	.css({
-		"top": '38px',
-		"width": '30px',
-		"display": 'block',
-		"height": self.ph.height() - 30,
-		"position": 'absolute',
-		"text-align": "center",
-		"writing-mode": "vertical-rl",
-		"text-orientation": "sideways-right",
-		"color": '#555'})
+	.css({ "height": self.ph.height() - 30 })
 	.append($("<input/>")
 		.addClass('verticalText')
 		.css({
 			"text-align": "center",
-			"width": '30px',
+			"width": '24px',
 			"height": self.ph.height() - 40
 		})
 	)		
@@ -466,15 +494,15 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 	self.verticalTextInput = true;
 	$(".verticalText")
 		.focus()
-		.on('focusout', function(event) {
-			var target = $(this).eq(0);
-			var val = target.val();
-			target.parent().html(val);
-			self.verticalTextInput = false;
-			
-			e = $.Event('keyup');
-			e.keyCode = 16; // shift
-			$(document).trigger(e);
+		.on('click focusout keypress', function(event) {
+			 if((event.which === 13) || 
+					 (event.type === "click") || 
+					 (event.type === "focusout")){
+				var target = $(this).eq(0);
+				var val = target.val();
+				target.parent().html(val);
+				self.verticalTextInput = false;
+			 }
 		});
 	 
 	 return text;
@@ -484,10 +512,11 @@ Legend.prototype.CreateTextContainer = function(time, hasText) {
 //=============================================================
 //
 Legend.prototype.RemoveSectionBar = function(mainBar) {
-	var startId = mainBar.data('startid'),
-		endId = mainBar.data('endid'),
-		lineId = mainBar.data('lineid'),
-		textid = mainBar.data('textid');
+	var startId = mainBar.data('startid');
+	var endId = mainBar.data('endid');
+	var lineId = mainBar.data('lineid');
+	var textid = mainBar.data('textid');
+	
 	this.linesContainersArr[lineId - 1].remove();
 	this.textsContainersArr[textid - 1].remove();
 	for(var i = startId; i < endId; i++)
@@ -500,26 +529,26 @@ Legend.prototype.RemoveSectionBar = function(mainBar) {
 
 //=============================================================
 //updating bars on plotpan or plotzoom
-Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
-	var xMin = xAxis.min.toFixed(0), 
-		xMax = xAxis.max.toFixed(0);
+Legend.prototype.UpdateBarContainersPos = function(){
+	var xMin = this.xax.min.toFixed(0); 
+	var xMax = this.xax.max.toFixed(0);
 		
 	for(var i = 0; i < this.barContainersArr.length; i++){
-		var barCont = this.barContainersArr[i],
-			barTime = barCont.data('time'),
-			barValue = barCont.data('value'),
-			yAxNum = barCont.data('yax'),
-			yAxis = yAxArr[yAxNum],
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,
-			excCoordX = xAxis.p2c(barTime),
-			excCoordY = yAxis.p2c(barValue),
-		
-			deltaX = parseInt(barCont.data('draggeddeltax')),
-			deltaY = parseInt(barCont.data('draggeddeltay')),
-			hidden = barCont.data('hidden');
+		var barCont = this.barContainersArr[i];
+		var barTime = barCont.data('time');
+		var barValue = barCont.data('value');
+		var yAxNum = barCont.data('yax');
+		var yAxis = this.yaxs[yAxNum];
+		var yMin = this.yaxs[yAxNum].min;
+		var yMax = this.yaxs[yAxNum].max;
+		var excCoordX = this.xax.p2c(barTime);
+		var excCoordY = yAxis.p2c(barValue);
+				
+		var deltaX = parseInt(barCont.data('draggeddeltax'));
+		var deltaY = parseInt(barCont.data('draggeddeltay'));
+		var hidden = barCont.data('hidden');
 
-		if(hidden !== 'true') {
+		if((hidden !== 'true') && (barValue != 'false')) {
 			if(((barTime > xMin) && (barTime < xMax)) && 
 			   ((barValue > yMin) && (barValue < yMax))){
 				barCont.css({
@@ -531,12 +560,14 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 				barCont.fadeOut(200);				
 			};
 		}
+		
+		
 	};	
 	
 	for(var i = 0; i < this.barMainContainersArr.length; i++){
-		var barCont = this.barMainContainersArr[i],
-			barTime = barCont.data('time'),
-			excCoordX = xAxis.p2c(barTime);
+		var barCont = this.barMainContainersArr[i];
+		var barTime = barCont.data('time');
+		var excCoordX = this.xax.p2c(barTime);
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
@@ -548,13 +579,13 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	};	
 
 	for(var i = 0; i < this.textsContainersArr.length; i++){
-		var barCont = this.textsContainersArr[i],
-			barTime = barCont.data('time'),
-			excCoordX = xAxis.p2c(barTime);
-			
+		var barCont = this.textsContainersArr[i];
+		var barTime = barCont.data('time');
+		var excCoordX = this.xax.p2c(barTime);
+					
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
-				"left": excCoordX - 22,
+				"left": excCoordX + 5,
 				"height": this.ph.height() - 30
 			})
 			.fadeIn(200);				
@@ -564,9 +595,9 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	};
 	
 	for(var i = 0; i < this.linesContainersArr.length; i++){
-		var barCont = this.linesContainersArr[i],
-			barTime = barCont.data('time'),
-			excCoordX = xAxis.p2c(barTime);
+		var barCont = this.linesContainersArr[i];
+		var barTime = barCont.data('time');
+		var excCoordX = this.xax.p2c(barTime);
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
@@ -580,14 +611,14 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	};
 	
 	for(var i = 0; i < this.horizontsContainersArr.length; i++){
-		var phPos = this.ph.offset(),
-			horLine = this.horizontsContainersArr[i],
-			horLineVal = horLine.data('value'),
-			yAxNum = horLine.data('yax'),
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,			
-			yAxis = yAxArr[yAxNum],
-			excCoordY = yAxis.p2c(horLineVal) + phPos.top;
+		var phPos = this.ph.offset();
+		var horLine = this.horizontsContainersArr[i];
+		var horLineVal = horLine.data('value');
+		var yAxNum = horLine.data('yax');
+		var yMin = this.yaxs[yAxNum].min;
+		var yMax = this.yaxs[yAxNum].max;			
+		var yAxis = this.yaxs[yAxNum];
+		var excCoordY = yAxis.p2c(horLineVal) + phPos.top;
 			
 		if((horLineVal > yMin) && (horLineVal < yMax)){
 			horLine.css({
@@ -600,14 +631,14 @@ Legend.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	};	
 	
 	for(var i = 0; i < this.horizontsValueContainersArr.length; i++){
-		var phPos = this.ph.offset(),
-			horValueCont = this.horizontsValueContainersArr[i],
-			horValue = horValueCont.html(),
-			yAxNum = horValueCont.data('yax'),
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,			
-			yAxis = yAxArr[yAxNum],
-			excCoordY = yAxis.p2c(horValue) + phPos.top;
+		var phPos = this.ph.offset();
+		var horValueCont = this.horizontsValueContainersArr[i];
+		var horValue = horValueCont.html();
+		var yAxNum = horValueCont.data('yax');
+		var yMin = this.yaxs[yAxNum].min;
+		var yMax = this.yaxs[yAxNum].max;			
+		var yAxis = this.yaxs[yAxNum];
+		var excCoordY = yAxis.p2c(horValue) + phPos.top;
 			
 		if((horValue > yMin) && (horValue < yMax)){
 			horValueCont.css({
@@ -728,10 +759,10 @@ Legend.prototype.RemoveHorizont = function(horizont) {
 
 //=============================================================
 //
-Legend.prototype.ShowSeriesNames = function(xAxis, yAxArr) {
+Legend.prototype.ShowSeriesNames = function() {
 	var displayNamesState = this.displayNeed ? 'block' : 'none';
 	//if cursor in placeholder
-	if(this.pos.x > this.axes.xaxis.min && this.pos.x < this.axes.xaxis.max) {
+	if(this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
 	//if series name bar not build, and titles already received then do it 
 		if((!(this.seriesNamContainersArr.length > 0)) && 
 			(this.legendTitlesArr.length > 0)) {
@@ -770,11 +801,11 @@ Legend.prototype.ShowSeriesNames = function(xAxis, yAxArr) {
 				time = this.pos.x,
 				yAxNum = i,
 				value = labelText.substring(labelText.indexOf('=') + 2, labelText.length),
-				yAxis = yAxArr[yAxNum],
-				yMin = yAxArr[yAxNum].min,
-				yMax = yAxArr[yAxNum].max,
+				yAxis = this.yaxs[yAxNum],
+				yMin = this.yaxs[yAxNum].min,
+				yMax = this.yaxs[yAxNum].max,
 				excCoordY = yAxis.p2c(value),
-				excCoordX = xAxis.p2c(time);
+				excCoordX = this.xax.p2c(time);
 			if((value > yMin) && (value < yMax)){
 				seriesNamCont.css({
 					'display': displayNamesState,
@@ -792,10 +823,10 @@ Legend.prototype.ShowSeriesNames = function(xAxis, yAxArr) {
 				time = this.pos.x,
 				yAxNum = i,
 				value = 1; //always for bp
-				yAxis = yAxArr[yAxNum],
-				yMin = yAxArr[yAxNum].min,
-				yMax = yAxArr[yAxNum].max,
-				excCoordX = xAxis.p2c(time),
+				yAxis = this.yaxs[yAxNum],
+				yMin = this.yaxs[yAxNum].min,
+				yMax = this.yaxs[yAxNum].max,
+				excCoordX = this.xax.p2c(time),
 				excCoordY = yAxis.p2c(value);
 			if((value > yMin) && (value < yMax)){
 				seriesNamCont.css({
@@ -816,7 +847,7 @@ Legend.prototype.ShowSeriesNames = function(xAxis, yAxArr) {
 
 //=============================================================
 //
-Legend.prototype.ShowSeriesLabels = function(xAxis, yAxArr, paramValues) {
+Legend.prototype.ShowSeriesLabels = function(paramValues) {
 	var displayNamesState = this.showSeriesLabelsNeed ? 'block' : 'none';
 
 	//if series name bar not build, and titles already received then do it 
@@ -858,13 +889,13 @@ Legend.prototype.ShowSeriesLabels = function(xAxis, yAxArr, paramValues) {
 			time = this.seriesLabelsTime,
 			yAxNum = i,
 			value = this.seriesLabelsValues[i],
-			yAxis = yAxArr[yAxNum],
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,
-			xMin = this.axes.xaxis.min,
-			xMax = this.axes.xaxis.max,
+			yAxis = this.yaxs[yAxNum],
+			yMin = this.yaxs[yAxNum].min,
+			yMax = this.yaxs[yAxNum].max,
+			xMin = this.xax.min,
+			xMax = this.xax.max,
 			excCoordY = yAxis.p2c(value),
-			excCoordX = xAxis.p2c(time);
+			excCoordX = this.xax.p2c(time);
 		if((value > yMin) && (value < yMax) && 
 			(this.seriesLabelsTime > xMin) && (this.seriesLabelsTime < xMax)){
 			seriesNamCont.css({
@@ -883,12 +914,12 @@ Legend.prototype.ShowSeriesLabels = function(xAxis, yAxArr, paramValues) {
 			time = this.seriesLabelsTime,
 			yAxNum = i,
 			value = 1; //always for bp
-			yAxis = yAxArr[yAxNum],
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,
-			xMin = this.axes.xaxis.min,
-			xMax = this.axes.xaxis.max,
-			excCoordX = xAxis.p2c(time),
+			yAxis = this.yaxs[yAxNum],
+			yMin = this.yaxs[yAxNum].min,
+			yMax = this.yaxs[yAxNum].max,
+			xMin = this.xax.min,
+			xMax = this.xax.max,
+			excCoordX = this.xax.p2c(time),
 			excCoordY = yAxis.p2c(value);
 		if((value > yMin) && (value < yMax) && 
 			(this.seriesLabelsTime > xMin) && (this.seriesLabelsTime < xMax)){

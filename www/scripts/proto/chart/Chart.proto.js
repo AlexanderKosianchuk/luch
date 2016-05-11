@@ -324,7 +324,6 @@ Chart.prototype.LoadFlotChart = function() {
 				
 			self.AxesWrk = new AxesWorker(self.stepLength, self.startCopyTime, self.plotAxes, self.actions);
 			
-			
 			self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
 
 			self.Exc = new Exception(self.flightId, 
@@ -333,11 +332,13 @@ Chart.prototype.LoadFlotChart = function() {
 					self.plotDataset, self.plotAxes.xaxis, self.plotYaxArr, self.actions);
 
 			self.Exc.ReceiveExcepions();
-			self.Exc.UpdateExcSupportTools(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Exc.UpdateExcSupportTools();
 			
 			self.Legnd = new Legend(self.flightId, self.legend, 
 					self.apParams, self.bpParams, self.Prm.associativeParamsArr, 
-					self.plotAxes,self. plotDataset, self.placeholder, self.chartContent, self.actions);
+					self.plotAxes.xaxis, self.plotYaxArr, 
+					self. plotDataset, self.placeholder, 
+					self.chartContent, self.actions);
 			//receive legend titles
 			self.Legnd.ReceiveLegend();	
 			
@@ -463,7 +464,7 @@ Chart.prototype.SupportPlotEvents = function(e) {
 		} 
 				
 		if(self.Legnd.displayNeed){
-			self.Legnd.ShowSeriesNames(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesNames();
 		}
 		
 	});
@@ -474,29 +475,29 @@ Chart.prototype.SupportPlotEvents = function(e) {
 	self.placeholder.on("plotpan", function (event, currPlot) {
 		self.Legnd.legendTitlesNotSet = true;
 
-		self.Exc.UpdateExcSupportTools(self.plotAxes.xaxis, self.plotYaxArr);
-		self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+		self.Exc.UpdateExcSupportTools();
+		self.Legnd.UpdateBarContainersPos();
 					
 		if(self.Legnd.showSeriesLabelsNeed){
-			self.Legnd.ShowSeriesLabels(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesLabels();
 		}
 		
 		if(self.Legnd.showSeriesCodeLabelsNeed){
-			self.Legnd.ShowSeriesCodes(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesCodes();
 		}
 	});
 
 	self.placeholder.on("plotzoom", function (event, currPlot) {
 		self.Legnd.legendTitlesNotSet = true;
-		self.Exc.UpdateExcSupportTools(self.plotAxes.xaxis, self.plotYaxArr);
-		self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+		self.Exc.UpdateExcSupportTools();
+		self.Legnd.UpdateBarContainersPos();
 
 		if(self.Legnd.showSeriesLabelsNeed){
-			self.Legnd.ShowSeriesLabels(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesLabels();
 		}
 		
 		if(self.Legnd.showSeriesCodeLabelsNeed){
-			self.Legnd.ShowSeriesCodes(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesCodes();
 		}
 	});
 	
@@ -612,17 +613,17 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 		if (event.which == KEY_V) {
 			if(self.shiftPressed) {
 				self.Legnd.AppendSectionBar(self.Legnd.pos.x, true);
-				self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+				self.Legnd.UpdateBarContainersPos();
 			} else {
 				self.Legnd.AppendSectionBar();
-				self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+				self.Legnd.UpdateBarContainersPos();
 			}
 		}
 		//build bar whith names
 		if(event.which == KEY_N) {
 			if(!self.Legnd.crosshairLocked) {
 				self.Legnd.displayNeed = !self.Legnd.displayNeed;
-				self.Legnd.ShowSeriesNames(self.plotAxes.xaxis, self.plotYaxArr);
+				self.Legnd.ShowSeriesNames();
 			}
 		}
 		//put series labels
@@ -630,14 +631,14 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 			self.Legnd.showSeriesLabelsNeed = !self.Legnd.showSeriesLabelsNeed;
 			self.Legnd.seriesLabelsValues = self.Prm.GetValue(self.plotDataset, self.Legnd.pos.x);
 			self.Legnd.seriesLabelsTime = self.Legnd.pos.x;
-			self.Legnd.ShowSeriesLabels(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesLabels();
 		}
 		//put series labels
 		if(event.which == KEY_C) {
 			self.Legnd.showSeriesCodeLabelsNeed = !self.Legnd.showSeriesCodeLabelsNeed;
 			self.Legnd.seriesLabelsValues = self.Prm.GetValue(self.plotDataset, self.Legnd.pos.x);
 			self.Legnd.seriesCodeLabelsTime = self.Legnd.pos.x;
-			self.Legnd.ShowSeriesCodes(self.plotAxes.xaxis, self.plotYaxArr);
+			self.Legnd.ShowSeriesCodes();
 		}
 		//open table tab
 		/*if(event.which == KEY_T){
@@ -693,13 +694,13 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 			} else {
 				self.Legnd.vizirFreezePos = self.Legnd.pos;
 				self.Legnd.vLineColor = "rgba(170, 0, 0, 0.80)";
-				self.Legnd.vizirBarContainer =self. Legnd.AppendSectionBar();
+				self.Legnd.vizirBarContainer = self.Legnd.AppendSectionBar().barMainContainer;
 				self.Legnd.vLineColor = 'darkgrey';
-				self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
+				self.Legnd.UpdateBarContainersPos();
 				self.plot.lockCrosshair(1);
 				self.Legnd.crosshairLocked = !self.Legnd.crosshairLocked;
 				self.Legnd.displayNeed = false;
-				self.Legnd.ShowSeriesNames(self.plotAxes.xaxis, self.plotYaxArr);
+				self.Legnd.ShowSeriesNames();
 			}
 		}
 		
@@ -726,8 +727,8 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 					self.plotDataset = self.plot.getData();
 					self.Legnd.dataset = self.plotDataset;
 		            
-					self.Legnd.UpdateBarContainersPos(self.plotAxes.xaxis, self.plotYaxArr);
-					self.Exc.UpdateExcSupportTools(self.plotAxes.xaxis, self.plotYaxArr);
+					self.Legnd.UpdateBarContainersPos();
+					self.Exc.UpdateExcSupportTools();
 		            
 				},
 				function(status) {
@@ -793,7 +794,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
 					self.Legnd.UpdateLegend(movedPosX, values, binaries);
 					
-					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
+					self.Legnd.MoveLastVertical(movedPosX, values, binaries);
 					setTimeout(function() {
 						moveVerticalTimeout = true;
 					}, 200);
@@ -815,7 +816,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 					var binaries = self.Prm.GetBinaries(self.plotDataset, movedPosX);
 					self.Legnd.UpdateLegend(movedPosX, values, binaries);
 					
-					self.Legnd.MoveLastVertical(self.plotAxes.xaxis, self.plotYaxArr, movedPosX);
+					self.Legnd.MoveLastVertical(movedPosX, values, binaries);
 					setTimeout(function() {
 						moveVerticalTimeout = true;
 					}, 200);

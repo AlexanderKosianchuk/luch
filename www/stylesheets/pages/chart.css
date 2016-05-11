@@ -84,3 +84,15 @@
 	font-size: 12px;
 	opacity: 0.6;
 }
+
+.vertical-text-container {
+	top: 38px;
+	width: 0px;
+	display: block;
+	position: absolute;
+	text-align: center;
+	writing-mode: vertical-rl;
+	text-orientation: sideways-right;
+	color: #555;
+	z-index: 2;
+}

@@ -11,7 +11,7 @@
 function Exception(flightId, 
 		apParams, bpParams, refParamArr, 
 		associativeParamsArr, placeholder, contentChartContainer, 
-		data, xAxis, yAxesArr, actions){
+		data, xAxis, yAxes, actions){
 		
 	this.flightId = flightId;
 	this.apParams = apParams;
@@ -25,7 +25,7 @@ function Exception(flightId,
 	this.ccCont = contentChartContainer;
 	this.dataset = data;
 	this.xAxis = xAxis;
-	this.yAxesArr = yAxesArr;
+	this.yAxes = yAxes;
 	
 	this.actions = actions;
 		
@@ -195,24 +195,24 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
 		}
 		
 		if(visType.indexOf("A") > -1){
-			self.ShowHideExcSupportTools(sender, self.xAxis);
+			self.ShowHideExcSupportTools(sender);
 		}
 			
 		sender[0].onclick = function(){
-			self.ShowHideExcSupportTools(sender, self.xAxis);	
+			self.ShowHideExcSupportTools(sender);	
 		}
 };
 //=============================================================
 
 //=============================================================
 //
-Exception.prototype.ShowHideExcSupportTools = function(sender, xAxis) {
+Exception.prototype.ShowHideExcSupportTools = function(sender) {
 	this.ShowHideExcFullText(sender);
-	this.ShowHideExcRectangle(sender, xAxis);
-	this.ShowHideExcStartSection(sender, xAxis);
-	this.ShowHideExcEndSection(sender, xAxis);
+	this.ShowHideExcRectangle(sender);
+	this.ShowHideExcStartSection(sender);
+	this.ShowHideExcEndSection(sender);
 	
-	this.UpdateExcSupportTools(xAxis, this.yAxesArr);
+	this.UpdateExcSupportTools(this.xAxis, this.yAxesArr);
 	
 	var shown = sender.data('supporttoolsshown');
 	sender.data('supporttoolsshown', !shown);
@@ -221,18 +221,18 @@ Exception.prototype.ShowHideExcSupportTools = function(sender, xAxis) {
 
 //=============================================================
 //
-Exception.prototype.UpdateExcSupportTools = function(xAxis, yAxArr){
-	this.UpdateExcContainersPos(xAxis, yAxArr);
-	this.UpdateRectanglePos(xAxis);
-	this.UpdateBarContainersPos(xAxis, yAxArr);
+Exception.prototype.UpdateExcSupportTools = function(){
+	this.UpdateExcContainersPos();
+	this.UpdateRectanglePos(this.xAxis);
+	this.UpdateBarContainersPos();
 }
 //=============================================================
 
 //=============================================================
 //updating flight exceptions on plotpan or plotzoom
-Exception.prototype.UpdateExcContainersPos = function(xAxis, yAxArr){
-	var xMin = xAxis.min.toFixed(0) - 1, 
-		xMax = xAxis.max.toFixed(0);
+Exception.prototype.UpdateExcContainersPos = function(){
+	var xMin = this.xAxis.min.toFixed(0) - 1, 
+		xMax = this.xAxis.max.toFixed(0);
 		
 	for(var i = 0; i < this.excContainersArr.length; i++)
 	{
@@ -240,10 +240,10 @@ Exception.prototype.UpdateExcContainersPos = function(xAxis, yAxArr){
 			excTime = excCont.data('time'),
 			excValue = excCont.data('value'),
 			yAxNum = excCont.data('yax'),
-			yAxis = yAxArr[yAxNum],
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,
-			excCoordX = xAxis.p2c(excTime),
+			yAxis = this.yAxes[yAxNum],
+			yMin = this.yAxes[yAxNum].min,
+			yMax = this.yAxes[yAxNum].max,
+			excCoordX = this.xAxis.p2c(excTime),
 			excCoordY = yAxis.p2c(excValue);
 			
 		if(((excTime > xMin) && (excTime < xMax)) && 
@@ -282,7 +282,7 @@ Exception.prototype.ShowHideExcFullText = function(sender){
 
 //=============================================================
 //
-Exception.prototype.ShowHideExcRectangle = function(sender, xAxis){
+Exception.prototype.ShowHideExcRectangle = function(sender){
 	var excCont = sender,
 		excContId = excCont.data('id'),
 		excContSubscribers = excCont.data('subscribers');
@@ -297,7 +297,7 @@ Exception.prototype.ShowHideExcRectangle = function(sender, xAxis){
 				excEndTime = excCont.data('endtime'),
 				excColor = excCont.css("background-color");
 			
-			var r = this.PutRectangle(excContId, excStartTime, excEndTime, excColor, xAxis);
+			var r = this.PutRectangle(excContId, excStartTime, excEndTime, excColor);
 			this.excRectanglesArr.push(r);
 		}
 	}
@@ -306,12 +306,12 @@ Exception.prototype.ShowHideExcRectangle = function(sender, xAxis){
 
 //=============================================================
 //
-Exception.prototype.PutRectangle = function(id, startTime, endTime, color, xAxis){
+Exception.prototype.PutRectangle = function(id, startTime, endTime, color){
 	var self = this,
-		xMin = xAxis.min.toFixed(0) - 1, 
-		xMax = xAxis.max.toFixed(0),
-		rectangleLeft = xAxis.p2c(startTime),
-		rectangleRight = xAxis.p2c(endTime),
+		xMin = this.xAxis.min.toFixed(0) - 1, 
+		xMax = this.xAxis.max.toFixed(0),
+		rectangleLeft = this.xAxis.p2c(startTime),
+		rectangleRight = this.xAxis.p2c(endTime),
 		rectangleWidth = rectangleRight - rectangleLeft;
 	
 	return $('<svg></svg>', {
@@ -333,10 +333,10 @@ Exception.prototype.PutRectangle = function(id, startTime, endTime, color, xAxis
 
 //=============================================================
 //
-Exception.prototype.UpdateRectanglePos = function(xAxis){
+Exception.prototype.UpdateRectanglePos = function(){
 	var self = this,
-		xMin = xAxis.min.toFixed(0) - 1, 
-		xMax = xAxis.max.toFixed(0);
+		xMin = this.xAxis.min.toFixed(0) - 1, 
+		xMax = this.xAxis.max.toFixed(0);
 
 	for(var i = 0; i < this.excRectanglesArr.length; i++)
 	{
@@ -348,8 +348,8 @@ Exception.prototype.UpdateRectanglePos = function(xAxis){
 		//console.log("xMin " + xMin + " xMax " + xMax + " rectStCoord " + rectStartTime + " rectEnCoord " + rectEndTime);
 			
 		if(((rectStartTime >= xMin) && (rectStartTime <= xMax)) && ((rectEndTime >= xMin) && (rectEndTime <= xMax))){
-			var rectStCoord = xAxis.p2c(rectStartTime),
-				rectWidth = xAxis.p2c(rectEndTime) - xAxis.p2c(rectStartTime);
+			var rectStCoord = this.xAxis.p2c(rectStartTime),
+				rectWidth = this.xAxis.p2c(rectEndTime) - this.xAxis.p2c(rectStartTime);
 			
 			excRect.css({
 				left: 7 + rectStCoord,
@@ -357,8 +357,8 @@ Exception.prototype.UpdateRectanglePos = function(xAxis){
 				width: rectWidth 
 			}).fadeIn(200);
 		} else if(((rectStartTime <= xMin) && (rectStartTime <= xMax)) && ((rectEndTime >= xMin) && (rectEndTime <= xMax))){
-			var rectStCoord = xAxis.p2c(xMin),
-				rectWidth = xAxis.p2c(rectEndTime) - xAxis.p2c(xMin);
+			var rectStCoord = this.xAxis.p2c(xMin),
+				rectWidth = this.xAxis.p2c(rectEndTime) - this.xAxis.p2c(xMin);
 			
 			excRect.css({
 				left: 7 + rectStCoord,
@@ -366,8 +366,8 @@ Exception.prototype.UpdateRectanglePos = function(xAxis){
 				width: rectWidth 
 			}).fadeIn(200);
 		} else if(((rectStartTime >= xMin) && (rectStartTime <= xMax)) && ((rectEndTime >= xMin) && (rectEndTime >= xMax))){
-			var rectStCoord = xAxis.p2c(rectStartTime),
-				rectWidth = xAxis.p2c(xMax) - xAxis.p2c(rectStartTime);
+			var rectStCoord = this.xAxis.p2c(rectStartTime),
+				rectWidth = this.xAxis.p2c(xMax) - this.xAxis.p2c(rectStartTime);
 			
 			excRect.css({
 				left: 7 + rectStCoord,
@@ -375,8 +375,8 @@ Exception.prototype.UpdateRectanglePos = function(xAxis){
 				width: rectWidth 
 			}).fadeIn(200);
 		} else if(((rectStartTime <= xMin) && (rectStartTime <= xMax)) && ((rectEndTime >= xMin) && (rectEndTime >= xMax))){
-			var rectStCoord = xAxis.p2c(xMin),
-				rectWidth = xAxis.p2c(xMax) - xAxis.p2c(xMin);
+			var rectStCoord = this.xAxis.p2c(xMin),
+				rectWidth = this.xAxis.p2c(xMax) - this.xAxis.p2c(xMin);
 			
 			excRect.css({
 				left: 7 + rectStCoord,
@@ -392,7 +392,7 @@ Exception.prototype.UpdateRectanglePos = function(xAxis){
 
 //=============================================================
 //
-Exception.prototype.ShowHideExcStartSection = function(sender, xAxis){
+Exception.prototype.ShowHideExcStartSection = function(sender){
 	var self = this,
 		excCont = sender,
 		excContId = excCont.data('id'),
@@ -426,7 +426,7 @@ Exception.prototype.ShowHideExcStartSection = function(sender, xAxis){
 
 //=============================================================
 //
-Exception.prototype.ShowHideExcEndSection = function(sender, xAxis){
+Exception.prototype.ShowHideExcEndSection = function(sender){
 	var self = this,
 		excCont = sender,
 		excContId = excCont.data('id'),
@@ -586,19 +586,19 @@ Exception.prototype.CreateLineContainer = function(id, lay, time, color) {
 
 //=============================================================
 //updating bars on plotpan or plotzoom
-Exception.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
-	var xMin = xAxis.min.toFixed(0), 
-		xMax = xAxis.max.toFixed(0);
+Exception.prototype.UpdateBarContainersPos = function(){
+	var xMin = this.xAxis.min.toFixed(0), 
+		xMax = this.xAxis.max.toFixed(0);
 		
 	for(var i = 0; i < this.barContainersArr.length; i++){
 		var barCont = this.barContainersArr[i],
 			barTime = barCont.data('time'),
 			barValue = barCont.data('value'),
 			yAxNum = barCont.data('yax'),
-			yAxis = yAxArr[yAxNum],
-			yMin = yAxArr[yAxNum].min,
-			yMax = yAxArr[yAxNum].max,
-			excCoordX = xAxis.p2c(barTime),
+			yAxis = this.yAxes[yAxNum],
+			yMin = this.yAxes[yAxNum].min,
+			yMax = this.yAxes[yAxNum].max,
+			excCoordX = this.xAxis.p2c(barTime),
 			excCoordY = yAxis.p2c(barValue);
 			
 		if(((barTime > xMin) && (barTime < xMax)) && 
@@ -616,7 +616,7 @@ Exception.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	for(var i = 0; i < this.barMainContainersArr.length; i++){
 		var barCont = this.barMainContainersArr[i],
 			barTime = barCont.data('time'),
-			excCoordX = xAxis.p2c(barTime);
+			excCoordX = this.xAxis.p2c(barTime);
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
@@ -630,7 +630,7 @@ Exception.prototype.UpdateBarContainersPos = function(xAxis, yAxArr){
 	for(var i = 0; i < this.linesContainersArr.length; i++){
 		var barCont = this.linesContainersArr[i],
 			barTime = barCont.data('time'),
-			excCoordX = xAxis.p2c(barTime);
+			excCoordX = this.xAxis.p2c(barTime);
 			
 		if((barTime > xMin) && (barTime < xMax)){
 			barCont.css({
