@@ -357,6 +357,10 @@
 	"userName":"User Name",
     "pass":"Password",
     "eventCodeMask": "Event code mask",
+    "eventCodeMask000": "Technological posts",
+    "eventCodeMask001": "Piloting equipment control",
+    "eventCodeMask002": "Health control",
+    "eventCodeMask003": "Information messages",
     "rememberMe":"Remember",
     "loginFailed": "Login Failed",
     "notAllowedByPrivilege" : "No privilege"

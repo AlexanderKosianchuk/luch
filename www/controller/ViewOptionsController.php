@@ -631,13 +631,48 @@ class ViewOptionsController
 				$this->lang->comment);
 				
 				for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
-					$accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-							'<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-							'<div class="exceptions-accordion-content"> %s',
-							self::$exceptionTypes[$ii],
-							$this->lang->eventCodeMask, 
-							self::$exceptionTypes[$ii], 
-							$eventsListTable);
+				    if($ii == 0) {
+				        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+				                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+				                '<div class="exceptions-accordion-content"> %s',
+				                self::$exceptionTypes[$ii],
+				                $this->lang->eventCodeMask000,
+				                self::$exceptionTypes[$ii],
+				                $eventsListTable);
+				    } else if($ii == 1) {
+				        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+				                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+				                '<div class="exceptions-accordion-content"> %s',
+				                self::$exceptionTypes[$ii],
+				                $this->lang->eventCodeMask001,
+				                self::$exceptionTypes[$ii],
+				                 $eventsListTable);
+				
+				    } else if($ii == 2) {
+				        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+				                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+				                '<div class="exceptions-accordion-content"> %s',
+				                self::$exceptionTypes[$ii],
+				                $this->lang->eventCodeMask002,
+				                self::$exceptionTypes[$ii],
+				                $eventsListTable);
+				    } else if($ii == 3) {
+				        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+				                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+				                '<div class="exceptions-accordion-content"> %s',
+				                self::$exceptionTypes[$ii],
+				                $this->lang->eventCodeMask003,
+				                self::$exceptionTypes[$ii],
+				                $eventsListTable);
+				    } else {
+				        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
+				                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+				                '<div class="exceptions-accordion-content"> %s',
+				                self::$exceptionTypes[$ii],
+				                $this->lang->eventCodeMask,
+				                self::$exceptionTypes[$ii],
+				                $eventsListTable);
+				    }
 				}
 
 				for($i = 0; $i < count($excEventsList); $i++)
@@ -714,10 +749,12 @@ class ViewOptionsController
 						unset($accordion[self::$exceptionTypes[$ii]]);
 					}
 				}
-				
-				$eventsList = $accordion[self::$exceptionTypes[0]];
-				$eventsList .= $accordion[self::$exceptionTypes[1]];
-				
+						
+				$eventsList = '';
+				foreach ($accordion as $item) {
+					$eventsList .= $item;
+				}
+
 				unset($FEx);
 			}
 			else

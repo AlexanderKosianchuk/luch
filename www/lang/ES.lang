@@ -357,6 +357,10 @@
 	"userName":"Login",
     "pass":"Contraseña",
     "eventCodeMask": "Máscara de código de evento",
+    "eventCodeMask000": "Mensajes tecnológicos",
+    "eventCodeMask001": "Equipos de control de pilotaje",
+    "eventCodeMask002": "Control sanitario",
+    "eventCodeMask003": "Los mensajes de información",
     "rememberMe":"Recordar",
     "loginFailed": "Error de autorización",
     "notAllowedByPrivilege" : "Privilegios insuficientes"
