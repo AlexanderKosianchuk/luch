@@ -704,13 +704,14 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
 			}	
 		});
 
-		$("button.SliceFlightButt, button.SliceCyclicFlightButt").on("click", function(e) {
+		$(".SliceFlightButt, .SliceCyclicFlightButt").off("click");
+		$(".SliceFlightButt, .SliceCyclicFlightButt").on("click", function(e) {
 			e.preventDefault();
 			
 			//if all charts ploted
 			if(self.plotRequests == self.plotRequestsClosed){
 				
-				var el = $(e.target).parent(),
+				var el = $(e.currentTarget),
 					curIndex = el.data("index"),
 					fileName = el.data("file"),
 					bruType = el.data("brutype"),
