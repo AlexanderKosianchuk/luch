@@ -263,13 +263,14 @@ class UserController
 		$uId = $Usr->GetUserIdByName($this->username);
 		$authorInfo = $Usr->GetUserInfo($uId);
 		$role = $authorInfo['role'];
+		$authorPrivilege = explode(',', $authorInfo['privilege']);
 		
 		$form = sprintf("<div id='user-cru-modal'><form id='user-cru-form' enctype='multipart/form-data'>");
 
 		$privilegeOptions = "<tr><td>".$this->lang->userPrivilege."</td><td align='center'>";
 		$privilegeOptions .= "<select id='privilege' name='privilege[]' multiple size='10' style='width: 335px'>";
 		
-		foreach ($authorInfo['privilege'] as $val)
+		foreach ($authorPrivilege as $val)
 		{
 			$selected = '';
 			if(in_array($val, $privilege)) {
