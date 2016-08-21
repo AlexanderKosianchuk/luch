@@ -174,7 +174,7 @@ class IndexController
 	{
 		printf("<link href='stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/jquery-ui-1.10.3.custom.min.css' />
-				<link rel='stylesheet' type='text/css' href='stylesheets/jquery.fileupload.css' />
+				<link rel='stylesheet' type='text/css' href='stylesheets/chosen/chosen.min.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/jsTreeThemes/default/style.min.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/dataTables/jquery.dataTables.min.css' />
 				<link rel='stylesheet' type='text/css' href='stylesheets/jquery.colorpicker.css'/>
@@ -306,6 +306,8 @@ class IndexController
 		printf("<script type='text/javascript' src='scripts/include/jquery/jquery-2.1.1.min.js'></script>");
 		printf("<script type='text/javascript' src='scripts/include/jquery/jquery-ui-1.10.3.custom.min.js'></script>");
 		printf("<script type='text/javascript' src='scripts/include/jquery/jquery.mousewheel.min.js'></script>");
+		printf("<script type='text/javascript' src='scripts/include/chosen/chosen.proto.min.js'></script>");
+		printf("<script type='text/javascript' src='scripts/include/chosen/chosen.jquery.js'></script>");
 		
 		//The jQuery UI widget factory, can be omitted if jQuery UI is already included
 		printf("<script type='text/javascript' src='scripts/include/fileUploader/vendor/jquery.ui.widget.js'></script>");
@@ -317,7 +319,7 @@ class IndexController
 		//printf("<script type='text/javascript' src='scripts/include/jtable/jquery.jtable.min.js'></script>");
 		printf("<script type='text/javascript' src='scripts/include/dataTables/jquery.dataTables.min.js'></script>");
 		printf("<script type='text/javascript' src='scripts/include/dataTables/dataTables.fixedHeader.min.js'></script>");
-				
+
 		//colorpicker
 		printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.colorpicker.js'></script>
 			<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-parser.js'></script>

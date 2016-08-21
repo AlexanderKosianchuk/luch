@@ -198,12 +198,12 @@ class FlightsController
 		unset($Bru);
 	
 		$optionString = "";
-	
+
 		foreach($bruList as $bruInfo)
 		{
-			$optionString .="<option>".$bruInfo['bruType']."</option>";
+			$optionString .="<option data-id='".$bruInfo['id']."'>".$bruInfo['bruType']."</option>";
 		}
-	
+
 		$fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>
 			<div id='importConvertRadio'>
 				<input type='radio' id='%s' name='radio' checked='checked'><label for='%s'>%s</label>
@@ -215,13 +215,13 @@ class FlightsController
 			<input id='chooseFileBut' type='file' name='files[]' multiple>
 			</span>
 	
+			<div id='previewCheckBoxDiv' class='FlightUploadingInputs'><label><input checked='checked' id='previewCheckBox' type='checkbox'></input>%s</label></div>
+	
 			<div id='bruTypeSelectForUploadingDiv'>
 				<select id='bruTypeSelectForUploading' name='bruType' class='FlightUploadingInputs'>%s</select>
 			</div>
-	
-			<div id='previewCheckBoxDiv' class='FlightUploadingInputs'><label><input checked='checked' id='previewCheckBox' type='checkbox'></input>%s</label></div>
-	
-			<div id='progress' class='progress' style='margin-top:10px;'>
+				
+			<div id='progress' class='progress' style='padding-top:10px;'>
 					<div class='progress-bar progress-bar-success'></div>
    			</div>
 			<div id='files' class='files'></div>
@@ -234,12 +234,9 @@ class FlightsController
 				$this->flightActions['flightFileImport'],
 				$this->flightActions['flightFileImport'],
 				$this->lang->fileImport,
-	
 				$this->lang->chooseFile,
-	
-				$optionString,
-	
-				$this->lang->filePreview);
+				$this->lang->filePreview,
+				$optionString);
 	
 		return $fileUploadBlock;
 	}

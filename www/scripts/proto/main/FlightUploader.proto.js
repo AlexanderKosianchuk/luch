@@ -75,49 +75,81 @@ FlightUploader.prototype.ResizeFlightUploader = function(e) {
 
 FlightUploader.prototype.CaptureUploadingItems = function() { 	
 	var self = this;
+	var previewCheckBoxDiv = $("div#previewCheckBoxDiv");
+	var bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
+	var importInsteadConvert = false;
+	var dialogHeightDelta = 0;
 	
-	var fileUploadDialog = $('div#fileUploadDialog').dialog({
-		resizable:false,
-		autoOpen: false,
-		resize: "auto",
-		hide: { 
-			effect: "fadeOut",  
-			duration: 150 
-		},
-		show: { 
-			effect: "fadeIn", 
-			duration: 150
-		} 
-	});
-	
-	var previewCheckBoxDiv = $("div#previewCheckBoxDiv"),
-		bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv"),
-		importInsteadConvert = false;
+	if (!self.fileUploadDialog) {
+		self.fileUploadDialog = $('div#fileUploadDialog').dialog({
+			resizable: false,
+			autoOpen: false,
+			resize: false,
+			height: 260,
+			width: 280,
+			hide: { 
+				effect: "fadeOut",  
+				duration: 150 
+			},
+			show: { 
+				effect: "fadeIn", 
+				duration: 150
+			},
+		    open: function(event, ui) {
+		    	if (!self.bruTypeSelectForUploading) {
+		    		self.bruTypeSelectForUploading = $('#bruTypeSelectForUploading')
+			    		.on('chosen:showing_dropdown', function(ev) {
+			    			self.fileUploadDialog.height(
+			    					self.fileUploadDialog.height()
+			    					+ $('.chosen-drop').first().height());
+			    		})
+			    		.on('chosen:hiding_dropdown', function(ev) {
+			    			self.fileUploadDialog.height(
+			    					self.fileUploadDialog.height()
+			    					- $('.chosen-drop').first().height());
+			    		})
+			    		.chosen();
+		    	}
+		    	
+		    	dialogHeightDelta = 
+		    		previewCheckBoxDiv.height() + 
+		    		bruTypeSelectForUploadingDiv.height() +
+		    		20;
+		    }
+		}).css('overflow', 'hidden'); 
+	}
+		
 	//radiobuttons import/convert
 	$("div#importConvertRadio").buttonset().change(function(e){
 		var el = $(e.target);
 		if(el.attr("id") == self.flightFileActions["flightFileConvert"]){
-			previewCheckBoxDiv.slideToggle();
-			bruTypeSelectForUploadingDiv.slideToggle();
+			previewCheckBoxDiv.slideToggle(200);
+			bruTypeSelectForUploadingDiv.slideToggle(200);
 			importInsteadConvert = false;
+			
+			if (self.fileUploadDialog) {
+				self.fileUploadDialog.animate({
+				    height: "+=" + dialogHeightDelta
+				  }, 200);
+			}
 		} else if(el.attr("id") == self.flightFileActions["flightFileImport"]){
-			previewCheckBoxDiv.slideToggle();
-			bruTypeSelectForUploadingDiv.slideToggle();
+			previewCheckBoxDiv.slideToggle(200);
+			bruTypeSelectForUploadingDiv.slideToggle(200);
 			importInsteadConvert = true;
+			
+			if (self.fileUploadDialog) {
+				self.fileUploadDialog.animate({
+				    height: "-=" + dialogHeightDelta
+				  }, 200);
+			}
 		}
 	});
 
-	$("#uploadTopButt").one("click", function(e){
-		$('#progress .progress-bar').css(
-            'width',
-            0 + '%'
-        );
-		
-		var filesCount = 0;
-		
-		var url = "fileUploader/";
-		
-	    $('input#chooseFileBut').fileupload({
+	var filesCount = 0;
+	var url = "fileUploader/";
+	
+	if (!self.fileupload) {
+		self.fileupload = $('input#chooseFileBut').fileupload({
 	        url: url,
 	        dataType: 'json',
 	        done: function (e, data) {        	
@@ -155,7 +187,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	            
 	            if(progress >= 100) {
 	            	setTimeout(function(){
-		            	fileUploadDialog.dialog("close");
+		            	self.fileUploadDialog.dialog("close");
 	            	}, 300);
 	            } else {    
 		            $('#progress .progress-bar').css({
@@ -165,15 +197,23 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	        }
 	    }).prop('disabled', !$.support.fileInput)
 	        .parent().addClass($.support.fileInput ? undefined : 'disabled');
-    
-	    fileUploadDialog.dialog("option", {
+	}
+ 
+	$("#uploadTopButt").click(function(e){
+		$('#progress .progress-bar').css(
+	        'width',
+	        0 + '%'
+	    );
+			
+	    self.fileUploadDialog.dialog("option", {
 			position: { 
 				my: "left top", 
 				at: "left bottom", 
 				of: $("#uploadTopButt")
 			}
 		});
-	    fileUploadDialog.dialog("open");
+	    
+	    self.fileUploadDialog.dialog("open");
 	});
 };
 
