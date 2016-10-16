@@ -257,6 +257,7 @@ Chart.prototype.LoadFlotChart = function() {
 	//flot options
 	var self = this;
 	var bg = self.isPrintPage ? "#fff" : "#"+self.placeholder.data('bgcolor');
+	var lineWidth = "#"+self.placeholder.data('linewidth');
 	var options	= {
 			xaxis: {
 				mode: "time",
@@ -303,7 +304,7 @@ Chart.prototype.LoadFlotChart = function() {
 				noColumns: 1,
 			},  
 			lines: {
-				lineWidth: 1,
+				lineWidth: lineWidth,
 			}
 		};
 	

@@ -1,0 +1,3 @@
+Новый аттрибут в user_settings (пример для добавления для существующих пользователей)
+
+INSERT INTO `user_settings` (`user_id`, `name`, `value`, `dt_cr`, `dt_up`) VALUES ('1', 'lineWidth', '2', '2016-10-01 01:28:16', '2016-10-01 22:38:57');

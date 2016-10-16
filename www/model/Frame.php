@@ -258,6 +258,14 @@ class Frame
 
 					array_push($interview, $phisics);
 				}
+				else if($paramType == 42)// simple HEX
+				{
+					$apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
+					$apCode = dechex($apCode);
+					$phisics = $apCode * $paramCyclo['k'];
+
+					array_push($interview, $phisics);
+				}
 				else if($paramType == 5)//signed params with coef
 				{
 					$apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> ($paramCyclo['shift'] + 1);
@@ -277,6 +285,18 @@ class Frame
 					$rotatedStr = $tempStr2 . $tempStr1;
 
 					$apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
+					$phisics = $apCode * $paramCyclo['k'];
+
+					array_push($interview, $phisics);
+				}
+				else if($paramType == 62)//HEX rotation
+				{
+					$tempStr1 = substr ($codeValue, 0, 2);//because 2 hex  digits in byte
+					$tempStr2 = substr ($codeValue, 2, 2);
+					$rotatedStr = $tempStr2 . $tempStr1;
+
+					$apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
+					$apCode = dechex($apCode);
 					$phisics = $apCode * $paramCyclo['k'];
 
 					array_push($interview, $phisics);
@@ -1048,7 +1068,7 @@ array_push($interview, $phisics);
 							array_push($phisicsBinaryParamsFrame, $param);
 							}
 				}
-				else if($binParamType == 21)//rotation bytes in word and for TCAS (with Basis) (mask 7) 1,2,3 Bits
+				else if($binParamType == 21)//rotation bytes in word and for TCAS (with Basis) 
 				{
 					$tempStr1 = substr ($codeValue, 0, 2);
 					$tempStr2 = substr ($codeValue, 2, 2);
@@ -1108,7 +1128,7 @@ array_push($interview, $phisics);
 						array_push($phisicsBinaryParamsFrame, $param);
 					}
 				}
-				else if($binParamType == 121)//rotation bytes in word and for TCAS (with Basis) (mask 7) 1,2,3 Bits
+				else if($binParamType == 121)//rotation bytes any Bits and = Basis  (Frame = 0)
 				{
 					if(($apPhisicsByPrefixes['1'][0][2] == 0))
 					{
@@ -1142,7 +1162,7 @@ array_push($interview, $phisics);
 							}
 						}
 				}
-				else if($binParamType == 122)//rotation bytes in word and for TCAS (with Basis)  (mask 63)  4,5,6 Bits
+				else if($binParamType == 122)//rotation bytes in word and for TCAS (with Basis)  (mask 63)  4,5,6 Bits (Frame = 0)
 				{
 					if(($apPhisicsByPrefixes['1'][0][2] == 0))
 					{
@@ -1176,7 +1196,7 @@ array_push($interview, $phisics);
 							}
 						}
 				}
-				else if($binParamType == 123)//rotation bytes in word and for TCAS (with Basis)  (mask 511) 7,8,9 Bits
+				else if($binParamType == 123)//rotation bytes in word and for TCAS (with Basis)  (mask 511) 7,8,9 Bits (Frame = 0)
 				{
 					if(($apPhisicsByPrefixes['1'][0][2] == 0))
 					{
@@ -1210,7 +1230,7 @@ array_push($interview, $phisics);
 							}
 						}
 				}
-				else if($binParamType == 124)//rotation bytes in word and for TCAS (with Basis)  (mask 4095) 10,11,12 Bits
+				else if($binParamType == 124)//rotation bytes in word and for TCAS (with Basis)  (mask 4095) 10,11,12 Bits (Frame = 0)
 				{
 					if(($apPhisicsByPrefixes['1'][0][2] == 0))
 					{
@@ -1244,7 +1264,109 @@ array_push($interview, $phisics);
 							}
 						}
 				}
-				else if($binParamType == 27)
+				else if($binParamType == 125)//rotation bytes any Bits and = Basis  (Frame = 1)
+				{
+					if(($apPhisicsByPrefixes['1'][0][2] == 1))
+					{
+						$tempStr1 = substr ($codeValue, 0, 2);
+						$tempStr2 = substr ($codeValue, 2, 2);
+						$rotatedStr = $tempStr2 . $tempStr1;
+						$bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+						if($bpCode == $binParam['basis'])
+						{
+						$param = array("frameNum" => $frameNum,
+								"time" => ($startTime + ($frameNum * $stepLength) + 
+									($stepLength / $channelFreq * $chInd)) * 1000,
+								"code" => $binParam['code']);
+						array_push($phisicsBinaryParamsFrame, $param);
+						}
+						else 
+						{
+							$algHeap[$binParam['code']] = 0;
+						}
+					}
+					else 
+						{
+							if(isset($algHeap[$binParam['code']]) && 
+								($algHeap[$binParam['code']] == 1))
+							{
+							$param = array("frameNum" => $frameNum,
+									"time" => ($startTime + ($frameNum * $stepLength) +
+											($stepLength / $channelFreq * $chInd)) * 1000,
+									"code" => $binParam['code']);
+							array_push($phisicsBinaryParamsFrame, $param);
+							}
+						}
+				}
+				else if($binParamType == 126)//rotation bytes any Bits and = Basis  (Frame = 2)
+				{
+					if(($apPhisicsByPrefixes['1'][0][2] == 2))
+					{
+						$tempStr1 = substr ($codeValue, 0, 2);
+						$tempStr2 = substr ($codeValue, 2, 2);
+						$rotatedStr = $tempStr2 . $tempStr1;
+						$bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+						if($bpCode == $binParam['basis'])
+						{
+						$param = array("frameNum" => $frameNum,
+								"time" => ($startTime + ($frameNum * $stepLength) + 
+									($stepLength / $channelFreq * $chInd)) * 1000,
+								"code" => $binParam['code']);
+						array_push($phisicsBinaryParamsFrame, $param);
+						}
+						else 
+						{
+							$algHeap[$binParam['code']] = 0;
+						}
+					}
+					else 
+						{
+							if(isset($algHeap[$binParam['code']]) && 
+								($algHeap[$binParam['code']] == 1))
+							{
+							$param = array("frameNum" => $frameNum,
+									"time" => ($startTime + ($frameNum * $stepLength) +
+											($stepLength / $channelFreq * $chInd)) * 1000,
+									"code" => $binParam['code']);
+							array_push($phisicsBinaryParamsFrame, $param);
+							}
+						}
+				}
+				else if($binParamType == 127)//rotation bytes any Bits and = Basis  (Frame = 3)
+				{
+					if(($apPhisicsByPrefixes['1'][0][2] == 3))
+					{
+						$tempStr1 = substr ($codeValue, 0, 2);
+						$tempStr2 = substr ($codeValue, 2, 2);
+						$rotatedStr = $tempStr2 . $tempStr1;
+						$bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+						if($bpCode == $binParam['basis'])
+						{
+						$param = array("frameNum" => $frameNum,
+								"time" => ($startTime + ($frameNum * $stepLength) + 
+									($stepLength / $channelFreq * $chInd)) * 1000,
+								"code" => $binParam['code']);
+						array_push($phisicsBinaryParamsFrame, $param);
+						}
+						else 
+						{
+							$algHeap[$binParam['code']] = 0;
+						}
+					}
+					else 
+						{
+							if(isset($algHeap[$binParam['code']]) && 
+								($algHeap[$binParam['code']] == 1))
+							{
+							$param = array("frameNum" => $frameNum,
+									"time" => ($startTime + ($frameNum * $stepLength) +
+											($stepLength / $channelFreq * $chInd)) * 1000,
+									"code" => $binParam['code']);
+							array_push($phisicsBinaryParamsFrame, $param);
+							}
+						}
+				}
+				else if($binParamType == 27) // frame = 0
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 0))
 					{
@@ -1314,7 +1436,7 @@ array_push($interview, $phisics);
 						}
 					}					
 				}
-				else if($binParamType == 28)
+				else if($binParamType == 28)  // frame = 1
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 1))
 					{
@@ -1349,7 +1471,7 @@ array_push($interview, $phisics);
 						}
 					}					
 				}
-				else if($binParamType == 29)
+				else if($binParamType == 29)  // frame = 2
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 2))
 					{
@@ -1384,7 +1506,7 @@ array_push($interview, $phisics);
 						}
 					}					
 				}
-				else if($binParamType == 30)
+				else if($binParamType == 30)  // frame = 3
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 3))
 					{
@@ -1419,7 +1541,7 @@ array_push($interview, $phisics);
 						}
 					}					
 				}
-				else if($binParamType == 31)
+				else if($binParamType == 31)  // frame = 1 or frame = 3
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 1) || ($apPhisicsByPrefixes['1'][0][2] == 3))
 					{
@@ -1454,7 +1576,7 @@ array_push($interview, $phisics);
 						}
 					}					
 				} 
-				else if($binParamType == 32)
+				else if($binParamType == 32) // frame = 0 or frame = 2
 				{					
 					if(($apPhisicsByPrefixes['1'][0][2] == 0) || ($apPhisicsByPrefixes['1'][0][2] == 2))
 					{

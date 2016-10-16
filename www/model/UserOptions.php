@@ -7,7 +7,8 @@ class UserOptions
 	
 	private static $defaultOptions = [
 			'printTableStep' => 1,
-			'mainChartColor' => 'fff'
+			'mainChartColor' => 'fff',
+			'lineWidth' => 1,
 	];
 	
 	public function CreateUserOptionssTables()

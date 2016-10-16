@@ -249,11 +249,12 @@ class ChartController
 		
 		$O = new UserOptions();
 		$mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
+		$lineWidth = $O->GetOptionValue($userId, 'lineWidth');
 		unset($O);
 		
 		$workspace = "<div id='chartWorkspace' class='WorkSpace'>".
 						"<div id='graphContainer' class='GraphContainer'>" .
-						"<div id='placeholder' data-bgcolor='".$mainChartColor."'></div>" .
+						"<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
 						"<div id='legend'></div>" .
 							"</div>" .
 						"<div id='loadingBox' class='LoadingBox'>" .
