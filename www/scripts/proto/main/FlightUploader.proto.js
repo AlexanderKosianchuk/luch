@@ -79,6 +79,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 	var bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
 	var importInsteadConvert = false;
 	var dialogHeightDelta = 0;
+	var dialogInitialHeight = 0;
 	
 	if (!self.fileUploadDialog) {
 		self.fileUploadDialog = $('div#fileUploadDialog').dialog({
@@ -96,19 +97,32 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 				duration: 150
 			},
 		    open: function(event, ui) {
+		    	if (dialogInitialHeight === 0) {
+		    		dialogInitialHeight = self.fileUploadDialog.height();
+		    	}
+		    
 		    	if (!self.bruTypeSelectForUploading) {
 		    		self.bruTypeSelectForUploading = $('#bruTypeSelectForUploading')
-			    		.on('chosen:showing_dropdown', function(ev) {
-			    			self.fileUploadDialog.height(
-			    					self.fileUploadDialog.height()
-			    					+ $('.chosen-drop').first().height());
-			    		})
-			    		.on('chosen:hiding_dropdown', function(ev) {
-			    			self.fileUploadDialog.height(
-			    					self.fileUploadDialog.height()
-			    					- $('.chosen-drop').first().height());
+			    		.on('chosen:activate chosen:showing_dropdown chosen:hiding_dropdown', function(ev) {
+			    			if ($('.chosen-container').first().hasClass('chosen-with-drop')) {
+				    			self.fileUploadDialog.height(
+				    				dialogInitialHeight
+			    						+ $('.chosen-drop').first().height()
+				    			);
+			    			} else {
+			    				self.fileUploadDialog.height(dialogInitialHeight);
+			    			}
 			    		})
 			    		.chosen();
+
+		    		
+		    		$('.chosen-search input')
+		    			.on('keyup', function(ev) {
+			    			self.fileUploadDialog.height(
+			    				dialogInitialHeight
+		    						+ $('.chosen-drop').first().height()
+			    			);
+			    		})
 		    	}
 		    	
 		    	dialogHeightDelta = 

@@ -24,9 +24,10 @@ class FlightsController
 	public $flightActions;
 
 	public $action;
+	public $getAction;
 	public $data;
 
-	function __construct($post, $session)
+	function __construct($post, $session, $get = [])
 	{
 		$this->ulogin = new uLogin();
 		$this->ulogin->Autologin();
@@ -61,9 +62,9 @@ class FlightsController
 		{
 			$this->action = $post['action'];
 			$this->data = $post['data'];			
-		}
-		else
-		{
+		} else if(isset($get['action']) && ($get['action'] != '')) {
+			$this->getAction = $get['action'];
+		} else {
 			$msg = "Incorect input. Data: " . json_encode($post['data']) . 
 				" . Action: " . json_encode($post['action']) . 
 				" . Page: " . $this->curPage. ".";
@@ -168,6 +169,11 @@ class FlightsController
 					%s&nbsp;
 					</div>", $this->lang->bruTypesItem);
 		}*/
+		
+		$leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
+					<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>
+					<a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=results'>%s&nbsp;</a>
+					</div>", $this->lang->resultsItem);
 	
 		if(in_array($Usr->userPrivilegeArr[0], $this->privilege) ||
 				in_array($Usr->userPrivilegeArr[1], $this->privilege) ||
@@ -1212,4 +1218,59 @@ class FlightsController
 	
 		return $actionsInfo;
 	}	
+	
+	public function GetResults()
+	{
+		$c = new DataBaseConnector();
+		$link = $c->Connect();
+		$list = [];
+		
+		$query = "SELECT * FROM `results` WHERE 1;";
+		$result = $link->query($query);
+		
+		$firstRow = true;
+
+
+		while($row = $result->fetch_array())
+		{
+			if ($firstRow) {
+				$firstRow = false;
+				
+				$plainRow = [];
+				foreach ($row as $key => $val) {
+					if (gettype($key) === 'string') {
+						$plainRow[] = $key;
+					}
+				}
+				array_push($list, $plainRow);
+				
+				$plainRow = [];
+				foreach ($row as $key => $val) {
+					if (gettype($key) !== 'string') {
+						$plainRow[] = $val;
+					}
+				}
+				
+				array_push($list, $plainRow);
+			} else {
+				$plainRow = [];
+				foreach ($row as $key => $val) {
+					if (gettype($key) !== 'string') {
+						$plainRow[] = $val;
+					}
+				}
+				
+				array_push($list, $plainRow);
+			}
+		}
+		
+		
+	
+		$result->free();		
+		$c->Disconnect();
+		
+		unset($c);
+		
+		return $list;
+	}
 }

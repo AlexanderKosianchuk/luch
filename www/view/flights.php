@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
 
-$M = new FlightsController($_POST, $_SESSION);
+$M = new FlightsController($_POST, $_SESSION, $_GET);
 
 if ($M->IsAppLoggedIn())
 {
@@ -1094,6 +1094,43 @@ if ($M->IsAppLoggedIn())
 				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
 				echo(json_encode($answ));
 			}
+		}
+		else
+		{
+			$answ["status"] = "err";
+			$answ["error"] = $M->lang->notAllowedByPrivilege;
+			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
+			echo(json_encode($answ));
+		}
+	
+		unset($U);
+	}
+	else if($M->getAction == $M->flightActions["results"])
+	{
+		$U = new User();
+	
+		if(in_array($U::$PRIVILEGE_EDIT_FLIGHTS, $M->privilege))
+		{
+			header("Content-Type: text/comma-separated-values; charset=utf-8");
+			header("Content-Disposition: attachment; filename=results.csv");  //File name extension was wrong
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Cache-Control: private",false);
+			
+			$list = $M->GetResults();
+
+			$figPrRow = '';
+			foreach ($list as $fields) {
+				for($i = 0; $i < count($fields); $i++)
+				{
+					$figPrRow .= $fields[$i] . ";";
+				}
+				
+				$figPrRow = substr($figPrRow, 0, -1);
+				$figPrRow .= PHP_EOL;
+			}
+			
+			echo $figPrRow;
 		}
 		else
 		{
