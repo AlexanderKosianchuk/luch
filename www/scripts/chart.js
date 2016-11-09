@@ -70,13 +70,13 @@
 			"left": 0,
 			"width" : this.chartWorkspace.width(),
 			"height": this.chartWorkspace.height()
-		})
+		});
 		
-		if((this.chartContent != null) && 
-				(this.placeholder != null) && 
-				(this.legend != null) &&
-				(this.apParams != null) && 
-				(this.bpParams != null)){
+		if((this.chartContent !== null) && 
+				(this.placeholder !== null) && 
+				(this.legend !== null) &&
+				(this.apParams !== null) && 
+				(this.bpParams !== null)){
 			
 			this.placeholder.css({
 				"margin-top": '30px',
@@ -92,7 +92,7 @@
 			this.placeholder.css("width",  (this.chartContent.width() - (this.legend.width() + 30) + 
 				(this.apParams.length + this.bpParams.length) * 18) + "px");
 			
-			if((this.apParams.length == 1) && (this.bpParams.length == 0)){
+			if((this.apParams.length == 1) && (this.bpParams.length === 0)){
 				this.placeholder.css("margin-left",  "-7px");	
 			} else {
 				this.placeholder.css("margin-left",  "-" + 
