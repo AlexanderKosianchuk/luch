@@ -2,9 +2,9 @@
 
 define("SITE_ROOT_DIR", __DIR__);
 
-//ulogin
-require_once(@SITE_ROOT_DIR."/ulogin/config/all.inc.php");
-require_once(@SITE_ROOT_DIR."/ulogin/main.inc.php");
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 //service scr
 require_once(@SITE_ROOT_DIR."/model/Language.php");
@@ -27,8 +27,10 @@ require_once(@SITE_ROOT_DIR."/model/Vocabulary.php");
 require_once(@SITE_ROOT_DIR."/model/SearchFlights.php");
 require_once(@SITE_ROOT_DIR."/model/UserOptions.php");
 
+require_once(@SITE_ROOT_DIR."/controller/CController.php");
+
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
-define("UPLOADED_FILES_PATH", 
+define("UPLOADED_FILES_PATH",
     @$_SERVER['DOCUMENT_ROOT'] . UPLOADED_FILES_DIR);
 
 //error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);

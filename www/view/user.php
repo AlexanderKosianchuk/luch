@@ -1,474 +1,462 @@
-<?php 
+<?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
 
-$M = new UserController($_POST, $_SESSION);
+$c = new UserController($_POST, $_SESSION);
 
-if ($M->IsAppLoggedIn())
-{
-	$U = new User();
-	
-	if($M->action == $M->userActions["userLogout"])
-	{
-		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
-		{
-			if(isset($M->data['data']))
-			{
-				$action = $M->action;					
-				
-				unset($_SESSION['uid']);
-				unset($_SESSION['username']);
-				unset($_SESSION['loggedIn']);
-				
-				$M->Logout();
-	
-				$answ = array(
-						'status' => 'ok'
-				);
-	
-				echo json_encode($answ);
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["userChangeLanguage"]) {
-		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
-		{
-			if(isset($M->data['lang']))
-			{
-				$action = $M->action;
-				$lang = $M->data['lang'];					
-				
-				$M->ChangeLanguage($lang);
-	
-				$answ = array(
-						'status' => 'ok'
-				);
-	
-				echo json_encode($answ);
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["updateUserOptions"]) {
-		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
-		{
-			$action = $M->action;
-			$form = [];
-			parse_str($M->data, $form);	
+if ($c->_user && ($c->_user->username !== '')) {
+    if($c->action == $c->userActions["userLogout"]) {
+        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data['data']))
+            {
+                $action = $c->action;
 
-			$M->UpdateUserOptions($form);
+                $c->Logout();
 
-			$answ = array(
-				'status' => 'ok'
-			);
+                $answ = array(
+                        'status' => 'ok'
+                );
 
-			echo json_encode($answ);
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["buildUserTable"]) {
-		if(in_array($U::$PRIVILEGE_OPTIONS_USERS, $M->privilege))
-		{
-			if(isset($M->data['data']))
-			{
-				$action = $M->action;		
-				$table = $M->BuildUserTable();
-				$M->RegisterActionExecution($action, "executed", 0, 'getUserList', '', '');
-				
-				$answ = [
-					"status" => "ok",
-					"data" => $table,
-					"sortCol" => 2, // id
-					"sortType" => 'desc'
-				];
-	
-				echo json_encode($answ);
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["segmentTable"]) {
-		if(in_array($U::$PRIVILEGE_VIEW_USERS, $M->privilege))
-		{
-			if(isset($M->data['data']))
-			{
-				$aoData = $M->data['data'];
-				$sEcho = $aoData[sEcho]['value'];
-				$iDisplayStart = $aoData[iDisplayStart]['value'];
-				$iDisplayLength = $aoData[iDisplayLength]['value'];
-				$action = $M->action;
-	
-				$sortValue = count($aoData) - 3;
-				$sortColumnName = 'id';
-				$sortColumnNum = $aoData[$sortValue]['value'];
-				$sortColumnType = strtoupper($aoData[$sortValue + 1]['value']);
-	
-				switch ($sortColumnNum){
-					case(1):
-						{
-							$sortColumnName = 'login';
-							break;
-						}
-					case(2):
-						{
-							$sortColumnName = 'lang';
-							break;
-						}
-					case(3):
-						{
-							$sortColumnName = 'company';
-							break;
-						}
-				}
-	
-				$totalRecords = -1;
-				$aaData["sEcho"] = $sEcho;
-				$aaData["iTotalRecords"] = $totalRecords;
-				$aaData["iTotalDisplayRecords"] = $totalRecords;
-	
-				$M->RegisterActionExecution($action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
-	
-				$tableSegment = $M->BuildTableSegment($sortColumnName, $sortColumnType);
-				$aaData["aaData"] = $tableSegment;
-	
-				echo(json_encode($aaData));
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page user.php";
-						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-						echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["createUserForm"]) {	
-		if(in_array($U::$PRIVILEGE_ADD_USERS, $M->privilege))
-		{
-			$modal = $M->BuildCreateUserModal();
-			$action = $M->action;		
-			$M->RegisterActionExecution($action, "executed");
-			echo(json_encode($modal));
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["updateUserForm"]) {
-		if(in_array($U::$PRIVILEGE_EDIT_USERS, $M->privilege))
-		{
-			if(isset($M->data) && isset($M->data['userid']))
-			{
-				$userid = $M->data['userid'];
-				$modal = $M->BuildUpdateUserModal($userid);
-				$action = $M->action;
-				$M->RegisterActionExecution($action, "executed");
-				echo(json_encode($modal));
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page user.php";
-						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-						echo(json_encode($answ));
-						exit();
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	} else if($M->action == $M->userActions["createUser"]) {
-		if(in_array($U::$PRIVILEGE_ADD_USERS, $M->privilege))
-		{			
-			if(isset($M->data) && 
-					isset($_FILES['logo']) && 
-					isset($_FILES['logo']['tmp_name']))
-			{
-				$form = $_POST;
-				$file = $_FILES['logo']['tmp_name'];
-				$action = $M->action;
-				
-				$answ = [
-					'status' => 'ok'
-				];
-							
-				if(!isset($form['login'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseInputUserLogin
-					];
-				}
-				
-				if(!isset($form['company'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseInputUserCompany
-					];
-				}
-				
-				if(!isset($form['pwd']) || !isset($form['pwd2'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseInputPass
-					];
-				}
-				
-				if($form['pwd'] != $form['pwd2']) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->passwordRepeatingIncorrect
-					];
-				}	
-							
-				if(!isset($form['privilege'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseChoosePrivilege
-					];
-				}
-				
-				if(!isset($form['role'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseChooseRole
-					];
-				}
-				
-				if($answ['status'] == 'ok') {
-					$resMsg = $M->CreateUser($form, $file);
-					
-					if($resMsg != '') {
-						$answ = [
-								'status' => 'err',
-								'error' => $resMsg
-						];
-					}
-				}
-										
-				$M->RegisterActionExecution($action, "executed");
-				echo(json_encode($answ));
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-					json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-				exit();
-			}
-		}
-		else
-		{
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	} else if($M->action == $M->userActions["updateUser"]) {
-		if(in_array($U::$PRIVILEGE_ADD_USERS, $M->privilege))
-		{			
-			if(isset($M->data) && isset($_POST['useridtoupdate']))
-			{
-				$form = $_POST;
-				$userIdToUpdate = $form['useridtoupdate'];
-				$file = null;
-				if(isset($_FILES) && 
-						isset($_FILES['logo']) && 
-						isset($_FILES['logo']['tmp_name']))
-				{
-					$file = $_FILES['logo']['tmp_name'];
-				}
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
 
-				$action = $M->action;
-				
-				$answ = [
-					'status' => 'ok'
-				];
-											
-				if($form['pwd'] != $form['pwd2']) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->passwordRepeatingIncorrect
-					];
-				}	
-				
-				if(!isset($form['privilege'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseChoosePrivilege
-					];
-				}
-				
-				if(!isset($form['role'])) {
-					$answ = [
-						'status' => 'err',
-						'error' => $M->lang->pleaseChooseRole
-					];
-				}
-				
-				if($answ['status'] == 'ok') {
-					$resMsg = $M->UpdateUser($userIdToUpdate, $form, $file);
-					
-					if($resMsg != '') {
-						$answ = [
-								'status' => 'err',
-								'error' => $resMsg
-						];
-					}
-				}
-										
-				$M->RegisterActionExecution($action, "executed");
-				echo(json_encode($answ));
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-					json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-				exit();
-			}
-		}
-		else
-		{
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	} else if($M->action == $M->userActions["deleteUser"]) {
-		if(in_array($U::$PRIVILEGE_DEL_USERS, $M->privilege))
-		{			
-			if(isset($M->data) && isset($M->data['userIds']))
-			{
-				$userIds = $M->data['userIds'];
-				$action = $M->action;
-				
-				$answ = [
-					'status' => 'ok'
-				];
-				
-				if(!$M->DeleteUser($userIds)) {
-					$answ["status"] = "err";
-					$answ["error"] = $M->lang->errorDuringUserDeletion;
-				}
-				
-				$M->RegisterActionExecution($action, "executed");
-				echo(json_encode($answ));
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-					json_encode($_POST) . ". Page user.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-				exit();
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	} else {
-		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
-				" . Action: " . json_encode($_POST['action']) . 
-				" . Page: " . $M->curPage. ".";
-		$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-		error_log($msg);
-		echo($msg);
-		exit();
-	}
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["userChangeLanguage"]) {
+        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data['lang']))
+            {
+                $action = $c->action;
+                $lang = $c->data['lang'];
+
+                $c->ChangeLanguage($lang);
+
+                $answ = array(
+                        'status' => 'ok'
+                );
+
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["updateUserOptions"]) {
+        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        {
+            $action = $c->action;
+            $form = [];
+            parse_str($c->data, $form);
+
+            $c->UpdateUserOptions($form);
+
+            $answ = array(
+                'status' => 'ok'
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["buildUserTable"]) {
+        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data['data']))
+            {
+                $action = $c->action;
+                $table = $c->BuildUserTable();
+                $c->RegisterActionExecution($action, "executed", 0, 'getUserList', '', '');
+
+                $answ = [
+                    "status" => "ok",
+                    "data" => $table,
+                    "sortCol" => 2, // id
+                    "sortType" => 'desc'
+                ];
+
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["segmentTable"]) {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data['data']))
+            {
+                $aoData = $c->data['data'];
+                $sEcho = $aoData[sEcho]['value'];
+                $iDisplayStart = $aoData[iDisplayStart]['value'];
+                $iDisplayLength = $aoData[iDisplayLength]['value'];
+                $action = $c->action;
+
+                $sortValue = count($aoData) - 3;
+                $sortColumnName = 'id';
+                $sortColumnNum = $aoData[$sortValue]['value'];
+                $sortColumnType = strtoupper($aoData[$sortValue + 1]['value']);
+
+                switch ($sortColumnNum){
+                    case(1):
+                        {
+                            $sortColumnName = 'login';
+                            break;
+                        }
+                    case(2):
+                        {
+                            $sortColumnName = 'lang';
+                            break;
+                        }
+                    case(3):
+                        {
+                            $sortColumnName = 'company';
+                            break;
+                        }
+                }
+
+                $totalRecords = -1;
+                $aaData["sEcho"] = $sEcho;
+                $aaData["iTotalRecords"] = $totalRecords;
+                $aaData["iTotalDisplayRecords"] = $totalRecords;
+
+                $c->RegisterActionExecution($action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+
+                $tableSegment = $c->BuildTableSegment($sortColumnName, $sortColumnType);
+                $aaData["aaData"] = $tableSegment;
+
+                echo(json_encode($aaData));
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page user.php";
+                        $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                        echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["createUserForm"]) {
+        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        {
+            $modal = $c->BuildCreateUserModal();
+            $action = $c->action;
+            $c->RegisterActionExecution($action, "executed");
+            echo(json_encode($modal));
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["updateUserForm"]) {
+        if(in_array($c->_user::$PRIVILEGE_EDIT_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data) && isset($c->data['userid']))
+            {
+                $c->_userserid = $c->data['userid'];
+                $modal = $c->BuildUpdateUserModal($c->_userserid);
+                $action = $c->action;
+                $c->RegisterActionExecution($action, "executed");
+                echo(json_encode($modal));
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page user.php";
+                        $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                        echo(json_encode($answ));
+                        exit();
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    } else if($c->action == $c->userActions["createUser"]) {
+        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data) &&
+                    isset($_FILES['logo']) &&
+                    isset($_FILES['logo']['tmp_name']))
+            {
+                $form = $_POST;
+                $file = $_FILES['logo']['tmp_name'];
+                $action = $c->action;
+
+                $answ = [
+                    'status' => 'ok'
+                ];
+
+                if(!isset($form['login'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseInputUserLogin
+                    ];
+                }
+
+                if(!isset($form['company'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseInputUserCompany
+                    ];
+                }
+
+                if(!isset($form['pwd']) || !isset($form['pwd2'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseInputPass
+                    ];
+                }
+
+                if($form['pwd'] != $form['pwd2']) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->passwordRepeatingIncorrect
+                    ];
+                }
+
+                if(!isset($form['privilege'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseChoosePrivilege
+                    ];
+                }
+
+                if(!isset($form['role'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseChooseRole
+                    ];
+                }
+
+                if($answ['status'] == 'ok') {
+                    $resMsg = $c->CreateUser($form, $file);
+
+                    if($resMsg != '') {
+                        $answ = [
+                                'status' => 'err',
+                                'error' => $resMsg
+                        ];
+                    }
+                }
+
+                $c->RegisterActionExecution($action, "executed");
+                echo(json_encode($answ));
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+                exit();
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else if($c->action == $c->userActions["updateUser"]) {
+        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data) && isset($_POST['useridtoupdate']))
+            {
+                $form = $_POST;
+                $c->_userserIdToUpdate = $form['useridtoupdate'];
+                $file = null;
+                if(isset($_FILES) &&
+                        isset($_FILES['logo']) &&
+                        isset($_FILES['logo']['tmp_name']))
+                {
+                    $file = $_FILES['logo']['tmp_name'];
+                }
+
+                $action = $c->action;
+
+                $answ = [
+                    'status' => 'ok'
+                ];
+
+                if($form['pwd'] != $form['pwd2']) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->passwordRepeatingIncorrect
+                    ];
+                }
+
+                if(!isset($form['privilege'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseChoosePrivilege
+                    ];
+                }
+
+                if(!isset($form['role'])) {
+                    $answ = [
+                        'status' => 'err',
+                        'error' => $c->lang->pleaseChooseRole
+                    ];
+                }
+
+                if($answ['status'] == 'ok') {
+                    $resMsg = $c->UpdateUser($c->_userserIdToUpdate, $form, $file);
+
+                    if($resMsg != '') {
+                        $answ = [
+                                'status' => 'err',
+                                'error' => $resMsg
+                        ];
+                    }
+                }
+
+                $c->RegisterActionExecution($action, "executed");
+                echo(json_encode($answ));
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+                exit();
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else if($c->action == $c->userActions["deleteUser"]) {
+        if(in_array($c->_user::$PRIVILEGE_DEL_USERS, $c->_user->privilege))
+        {
+            if(isset($c->data) && isset($c->data['userIds']))
+            {
+                $c->_userserIds = $c->data['userIds'];
+                $action = $c->action;
+
+                $answ = [
+                    'status' => 'ok'
+                ];
+
+                if(!$c->DeleteUser($c->_userserIds)) {
+                    $answ["status"] = "err";
+                    $answ["error"] = $c->lang->errorDuringUserDeletion;
+                }
+
+                $c->RegisterActionExecution($action, "executed");
+                echo(json_encode($answ));
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+                exit();
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else {
+        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
+                " . Action: " . json_encode($_POST['action']) .
+                " . Page: " . $c->curPage. ".";
+        $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+        error_log($msg);
+        echo($msg);
+        exit();
+    }
 }
-else 
+else
 {
-	$msg = "Authorization error. Page: " . $M->currPage;
-	$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-	error_log($msg);
-	echo($msg);
-	exit();
+    $msg = "Authorization error. Page: " . $c->currPage;
+    $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+    error_log($msg);
+    echo($msg);
+    exit();
 }
-
-?>
-
-

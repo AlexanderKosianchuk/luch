@@ -1,62 +1,48 @@
-<?php 
+<?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 
-$M = new ChartController($_POST, $_SESSION, $_GET);
+$c = new ChartController($_POST, $_SESSION, $_GET);
 
-if ($M->IsAppLoggedIn())
-{	
-	if($M->action == $M->chartActions["putChartInNewWindow"]) //show form for uploading
-	{
-		$U = new User();
-		
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data) && ($M->data != null) && (is_array($M->data)))
-			{
-				$M->PutCharset();
-				$M->PutTitle();
-				$M->PutStyleSheets();
-				$M->PutHeader();
-				$M->PrintInfoFromRequest();
-				$M->PrintWorkspace();
-				$M->PutScripts();
-				$M->PutFooter();
-				
-			}
-			else 
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Request: ".
-					json_encode($_GET) . ". Page chart.php";
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			echo(json_encode($answ));
-		}
-		
-		unset($U);
-	}
-	else 
-	{
-		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
-				" . Action: " . json_encode($_POST['action']) . 
-				" . Page: " . $M->curPage. ".";
-		echo($msg);
-		error_log($msg);
-	}
+if ($c->_user && ($c->_user->username !== null)) {
+    if($c->action == $c->chartActions["putChartInNewWindow"]) {
+        if(in_array($this->_user::$PRIVILEGE_VIEW_FLIGHTS, $this->_user->privilege)) {
+            if(isset($c->data) && ($c->data != null) && (is_array($c->data))) {
+                $c->PutCharset();
+                $c->PutTitle();
+                $c->PutStyleSheets();
+                $c->PutHeader();
+                $c->PrintInfoFromRequest();
+                $c->PrintWorkspace();
+                $c->PutScripts();
+                $c->PutFooter();
+
+            } else {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Request: ".
+                    json_encode($_GET) . ". Page chart.php";
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            echo(json_encode($answ));
+        }
+    }
+    else
+    {
+        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
+                " . Action: " . json_encode($_POST['action']) .
+                " . Page: " . $c->curPage. ".";
+        echo($msg);
+        error_log($msg);
+    }
 }
-else 
+else
 {
-	echo("Authorization error. Page: " . $M->currPage);
-	error_log("Authorization error. Page: " . $M->currPage);
+    echo("Authorization error. Page: " . $c->currPage);
+    error_log("Authorization error. Page: " . $c->currPage);
 }
-
-?>
-
-

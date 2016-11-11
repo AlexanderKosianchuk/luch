@@ -1,161 +1,146 @@
-<?php 
+<?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/SearchFlightsController.php");
 
-$M = new SearchFlightController($_POST, $_SESSION);
+$c = new SearchFlightController($_POST, $_SESSION);
 
-if ($M->IsAppLoggedIn())
-{
-	if($M->action == $M->controllerActions["showSearchForm"])
-	{
-		$U = new User();
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data['data']))
-			{
-				$action = $M->action;					
-				$html = $M->ShowSearchForm();				
-				$M->RegisterActionExecution($action, "executed");
-	
-				$answ = array(
-						'status' => 'ok',
-						'data' => $html
+if ($c->_user && ($c->_user->username !== '')) {
+    if($c->action == $c->controllerActions["showSearchForm"]) {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['data']))
+            {
+                $action = $c->action;
+                $html = $c->ShowSearchForm();
+                $c->RegisterActionExecution($action, "executed");
 
-				);
-	
-				echo json_encode($answ);
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page search.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-				exit();
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	
-		unset($U);	
-	} else if($M->action == $M->controllerActions["getFilters"]) {
-		$U = new User();
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data['fdrId']))
-			{
-				$action = $M->action;
-				$fdrId = $M->data['fdrId'];
-				$html = $M->BuildSearchFlightAlgorithmesList($fdrId);
-				$M->RegisterActionExecution($action, "executed");
-	
-				$answ = array(
-						'status' => 'ok',
-						'data' => $html
-				);
-	
-				echo json_encode($answ);
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page search.php";
-						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-						echo(json_encode($answ));
-						exit();
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	
-		unset($U);
-	} else if($M->action == $M->controllerActions["applyFilter"]) {
-		$U = new User();
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data['algId']) &&
-					isset($M->data['form']))
-			{
-				$action = $M->action;
-				$algId = $M->data['algId'];
-				parse_str($M->data['form'], $form);
-				
-				$flightIds = $M->GetFlightsByCriteria($form);
-				$idsArr = $M->SearchByAlgorithm($algId, $flightIds);
-				$html = $M->BuildFlightList($idsArr);
-				$M->RegisterActionExecution($action, "executed");
-	
-				if(empty($html)) {
-					$html = $M->lang->searchBroughtNoResult;
-				}
-				
-				$answ = array(
-						'status' => 'ok',
-						'data' => $html
-				);
-	
-				echo json_encode($answ);
-				exit();
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page search.php";
-						$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-						echo(json_encode($answ));
-						exit();
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-			exit();
-		}
-	
-		unset($U);
-	} else {
-		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
-				" . Action: " . json_encode($_POST['action']) . 
-				" . Page: " . $M->curPage. ".";
-		$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-		error_log($msg);
-		echo($msg);
-		exit();
-	}
+                $answ = array(
+                        'status' => 'ok',
+                        'data' => $html
+
+                );
+
+                echo json_encode($answ);
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page search.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+                exit();
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else if($c->action == $c->controllerActions["getFilters"]) {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['fdrId']))
+            {
+                $action = $c->action;
+                $fdrId = $c->data['fdrId'];
+                $html = $c->BuildSearchFlightAlgorithmesList($fdrId);
+                $c->RegisterActionExecution($action, "executed");
+
+                $answ = array(
+                        'status' => 'ok',
+                        'data' => $html
+                );
+
+                echo json_encode($answ);
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page search.php";
+                        $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                        echo(json_encode($answ));
+                        exit();
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else if($c->action == $c->controllerActions["applyFilter"]) {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['algId']) &&
+                    isset($c->data['form']))
+            {
+                $action = $c->action;
+                $algId = $c->data['algId'];
+                parse_str($c->data['form'], $form);
+
+                $flightIds = $c->GetFlightsByCriteria($form);
+                $idsArr = $c->SearchByAlgorithm($algId, $flightIds);
+                $html = $c->BuildFlightList($idsArr);
+                $c->RegisterActionExecution($action, "executed");
+
+                if(empty($html)) {
+                    $html = $c->lang->searchBroughtNoResult;
+                }
+
+                $answ = array(
+                        'status' => 'ok',
+                        'data' => $html
+                );
+
+                echo json_encode($answ);
+                exit();
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page search.php";
+                        $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                        echo(json_encode($answ));
+                        exit();
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+            exit();
+        }
+    } else {
+        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
+                " . Action: " . json_encode($_POST['action']) .
+                " . Page: " . $c->curPage. ".";
+        $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+        error_log($msg);
+        echo($msg);
+        exit();
+    }
 }
-else 
+else
 {
-	$msg = "Authorization error. Page: " . $M->currPage;
-	$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-	error_log($msg);
-	echo($msg);
-	exit();
+    $msg = "Authorization error. Page: " . $c->currPage;
+    $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+    error_log($msg);
+    echo($msg);
+    exit();
 }
-
-?>
-
-

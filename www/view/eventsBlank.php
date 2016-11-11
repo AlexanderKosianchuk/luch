@@ -1,100 +1,88 @@
-<?php 
+<?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php"); 
+require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
 
-$M = new PrinterController($_POST, $_SESSION);
+$c = new PrinterController($_POST, $_SESSION);
 
-if ($M->IsAppLoggedIn())
-{
-	if($M->action == $M->printerActions["printBlank"])
-	{
-		$U = new User();
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data['flightId']) && isset($M->data['sections']))
-			{
-				$action = $M->action;					
-				$flightId = $M->data['flightId'];
-				$sections = explode(',', $M->data['sections']);
-				
-				$M->ConstructColorFlightEventsList($flightId, $sections);
+if ($c->_user && ($c->_user->username !== '')) {
+    if($c->action == $c->printerActions["printBlank"]) {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['flightId']) && isset($c->data['sections']))
+            {
+                $action = $c->action;
+                $flightId = $c->data['flightId'];
+                $sections = explode(',', $c->data['sections']);
 
-				$M->RegisterActionExecution($action, "executed");
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page bru.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	
-		unset($U);
-	}
-	else if($M->action == $M->printerActions["monochromePrintBlank"])
-	{
-		$U = new User();
-		if(in_array($U::$PRIVILEGE_VIEW_FLIGHTS, $M->privilege))
-		{
-			if(isset($M->data['flightId']) && isset($M->data['sections']))
-			{
-				$action = $M->action;					
-				$flightId = $M->data['flightId'];
-				$sections = explode(',', $M->data['sections']);
-				
-				$M->ConstructBlackFlightEventsList($flightId, $sections);
+                $c->ConstructColorFlightEventsList($flightId, $sections);
 
-				$M->RegisterActionExecution($action, "executed");
-			}
-			else
-			{
-				$answ["status"] = "err";
-				$answ["error"] = "Not all nessesary params sent. Post: ".
-						json_encode($_POST) . ". Page bru.php";
-				$M->RegisterActionReject($M->action, "rejected", 0, $answ["error"]);
-				echo(json_encode($answ));
-			}
-		}
-		else
-		{
-	
-			$answ["status"] = "err";
-			$answ["error"] = $M->lang->notAllowedByPrivilege;
-			$M->RegisterActionReject($M->action, "rejected", 0, 'notAllowedByPrivilege');
-			echo(json_encode($answ));
-		}
-	
-		unset($U);
-	}
-	else 
-	{
-		$msg = "Undefined action. Data: " . json_encode($_POST['data']) . 
-				" . Action: " . json_encode($_POST['action']) . 
-				" . Page: " . $M->curPage. ".";
-		$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-		error_log($msg);
-		echo($msg);
-	}
+                $c->RegisterActionExecution($action, "executed");
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page bru.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    }
+    else if($c->action == $c->printerActions["monochromePrintBlank"])
+    {
+        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['flightId']) && isset($c->data['sections']))
+            {
+                $action = $c->action;
+                $flightId = $c->data['flightId'];
+                $sections = explode(',', $c->data['sections']);
+
+                $c->ConstructBlackFlightEventsList($flightId, $sections);
+
+                $c->RegisterActionExecution($action, "executed");
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page bru.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    }
+    else
+    {
+        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
+                " . Action: " . json_encode($_POST['action']) .
+                " . Page: " . $c->curPage. ".";
+        $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+        error_log($msg);
+        echo($msg);
+    }
 }
-else 
+else
 {
-	$msg = "Authorization error. Page: " . $M->currPage;
-	$M->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
-	error_log($msg);
-	echo($msg);
+    $msg = "Authorization error. Page: " . $c->currPage;
+    $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
+    error_log($msg);
+    echo($msg);
 }
-
-?>
-
-

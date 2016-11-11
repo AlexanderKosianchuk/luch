@@ -5,7 +5,7 @@ require_once("includes.php");
 /**
  * Simple Cache class
  * API Documentation: https://github.com/cosenary/Simple-PHP-Cache
- * 
+ *
  * @author Christian Metz
  * @since 22.12.2011
  * @copyright Christian Metz - MetzWeb Networks
@@ -94,7 +94,7 @@ class Cache {
 
   /**
    * Retrieve cached data by its key
-   * 
+   *
    * @param string $key
    * @param boolean [optional] $timestamp
    * @return string
@@ -107,7 +107,7 @@ class Cache {
 
   /**
    * Retrieve all cached data
-   * 
+   *
    * @param boolean [optional] $meta
    * @return array
    */
@@ -128,7 +128,7 @@ class Cache {
 
   /**
    * Erase cached entry by its key
-   * 
+   *
    * @param string $key
    * @return object
    */
@@ -148,7 +148,7 @@ class Cache {
 
   /**
    * Erase all expired entries
-   * 
+   *
    * @return integer
    */
   public function eraseExpired() {
@@ -171,7 +171,7 @@ class Cache {
 
   /**
    * Erase all cached entries
-   * 
+   *
    * @return object
    */
   public function eraseAll() {
@@ -185,7 +185,7 @@ class Cache {
 
   /**
    * Load appointed cache
-   * 
+   *
    * @return mixed
    */
   private function _loadCache() {
@@ -199,7 +199,7 @@ class Cache {
 
   /**
    * Get the cache directory path
-   * 
+   *
    * @return string
    */
   public function getCacheDir() {
@@ -212,7 +212,7 @@ class Cache {
 
   /**
    * Get the filename hash
-   * 
+   *
    * @return string
    */
   private function _getHash($filename) {
@@ -220,8 +220,8 @@ class Cache {
   }
 
   /**
-   * Check whether a timestamp is still in the duration 
-   * 
+   * Check whether a timestamp is still in the duration
+   *
    * @param integer $timestamp
    * @param integer $expiration
    * @return boolean
@@ -237,7 +237,7 @@ class Cache {
 
   /**
    * Check if a writable cache directory exists and if not create a new one
-   * 
+   *
    * @return boolean
    */
   private function _checkCacheDir() {
@@ -253,7 +253,7 @@ class Cache {
 
   /**
    * Cache path Setter
-   * 
+   *
    * @param string $path
    * @return object
    */
@@ -264,7 +264,7 @@ class Cache {
 
   /**
    * Cache path Getter
-   * 
+   *
    * @return string
    */
   public function getCachePath() {
@@ -273,7 +273,7 @@ class Cache {
 
   /**
    * Cache name Setter
-   * 
+   *
    * @param string $name
    * @return object
    */
@@ -284,7 +284,7 @@ class Cache {
 
   /**
    * Cache name Getter
-   * 
+   *
    * @return void
    */
   public function getCache() {
@@ -293,7 +293,7 @@ class Cache {
 
   /**
    * Cache file extension Setter
-   * 
+   *
    * @param string $ext
    * @return object
    */
@@ -304,154 +304,11 @@ class Cache {
 
   /**
    * Cache file extension Getter
-   * 
+   *
    * @return string
    */
   public function getExtension() {
     return $this->_extension;
   }
-  
-/*public function CacheBp($extBpTableName, $extBpChannels){
-	$bpTableName = $extBpTableName;
-	$bpChannels = $extBpChannels;
-	$bpExcCacheTableName = $bpTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-	
-	//only uniq values
-	$distinctChannels = array_values(array_unique($bpChannels));
-	
-	//var_dump($bpChannels);
-	//var_dump($distinctChannels);
-
-	$query = "CREATE TABLE `".$bpExcCacheTableName."` 
-	SELECT * FROM `".$bpTableName ."` WHERE `channel` IN (";
-	
-	for($i = 0; $i < count($distinctChannels); $i++)
-	{
-		$query .= "'".$distinctChannels[$i]. "', ";
-	}
-	
-	$query = substr($query, 0, -2);
-	$query .= ");";
-	//var_dump($query);
-	$stmt = $link->prepare($query);
-	$stmt->execute();
-	
-	$c->Disconnect();
-	unset($c);
-	
-	return $bpExcCacheTableName;		
-}
-
-public function GetCacheBpTableName($extBpTableName){
-	$bpTableName = $extBpTableName;
-	$bpExcCacheTableName = $bpTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-
-	$query = "SELECT `table_name` FROM `information_schema`.`tables` 
-		WHERE `table_name` = '".$bpExcCacheTableName."' LIMIT 1;";
-	$bpExcCacheTableName = "";
-
-	$result = $link->query($query);
-	while ($row = $result->fetch_array()) 
-	{
-		$bpExcCacheTableName = $row['table_name'];		
-	}
-	
-	$c->Disconnect();
-	unset($c);
-	
-	return $bpExcCacheTableName;		
-}
-
-public function DropCacheBp($extBpTableName){
-	$bpTableName = $extBpTableName;
-	$bpExcCacheTableName = $bpTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-
-	$query = "DROP TABLE IF EXISTS `".$bpExcCacheTableName."`;";	
-	$stmt = $link->prepare($query);
-	$stmt->execute();
-	
-	$c->Disconnect();
-	unset($c);		
-}
-
-public function CacheAp($extApTableName, $extApChannels){
-	$apTableName = $extApTableName;
-	$apChannels = $extApChannels;
-	$apExcCacheTableName = $apTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-	
-	//var_dump($apChannels);
-	//var_dump($distinctChannels);
-	//only uniq values
-	$distinctChannels = array_values(array_unique($apChannels));
-
-	$query = "CREATE TABLE `".$apExcCacheTableName."` 
-	SELECT * FROM `".$apTableName ."` WHERE `channel` IN (";
-	
-	for($i = 0; $i < count($distinctChannels); $i++)
-	{
-		$query .= "'" . $distinctChannels[$i] . "', ";
-	}
-	
-	$query = substr($query, 0, -2);
-	$query .= ");";
-	var_dump($query);
-	$stmt = $link->prepare($query);
-	$stmt->execute();
-	
-	$c->Disconnect();
-	unset($c);
-	
-	return $apExcCacheTableName;		
-}
-
-public function GetCacheApTableName($extApTableName){
-	$apTableName = $extApTableName;
-	$apExcCacheTableName = $apTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-
-	$query = "SELECT `table_name` FROM `information_schema`.`tables` 
-		WHERE `table_name` = '".$apExcCacheTableName."' LIMIT 1;";
-	$apExcCacheTableName = "";
-
-	$result = $link->query($query);
-	while ($row = $result->fetch_array()) 
-	{
-		$apExcCacheTableName = $row['table_name'];		
-	}
-	
-	$c->Disconnect();
-	unset($c);
-	
-	return $apExcCacheTableName;		
-}
-
-public function DropCacheAp($extApTableName){
-	$apTableName = $extApTableName;
-	$apExcCacheTableName = $apTableName . "ExcC";
-	
-	$c = new DataBaseConnector();
-	$link = $c->Connect();
-
-	$query = "DROP TABLE IF EXISTS `".$apExcCacheTableName."`;";	
-	$stmt = $link->prepare($query);
-	$stmt->execute();
-	
-	$c->Disconnect();
-	unset($c);	
-}*/
 
 }

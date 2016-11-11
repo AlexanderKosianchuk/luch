@@ -1,44 +1,33 @@
-<?php 
+<?php
 
-require_once(@__DIR__."/includes.php"); 
+require_once(@__DIR__."/includes.php");
 require_once(@__DIR__."/controller/IndexController.php");
 
-// Start a secure session if none is running
-if (!sses_running())
-{
-	sses_start();
-}
+$c = new IndexController($_POST, $_SESSION);
 
-$M = new IndexController();
+if ($c->_user && ($c->_user->username !== null)) {
+    $c->PutCharset();
+    $c->PutTitle();
+    $c->PutStyleSheets();
 
-if ($M->IsAppLoggedIn())
-{
-	$M->PutCharset();
-	$M->PutTitle();
-	$M->PutStyleSheets();
-	
-	$M->PutHeader();
-	$M->EventHandler();
-				
-	$M->PutMessageBox();
-	$M->PutHelpDialog();
-	$M->PutOptionsDialog();
-	$M->PutExportLink();
-	 
-	$M->PutFooter();
-	$M->PutScripts();
-}
-else 
-{
-	$M->PutCharset();
-	$M->PutTitle();
-	$M->PutStyleSheets();
-	
-	$M->PutHeader();
-	
-	$M->ShowLoginForm();
-	
-	$M->PutFooter();
-}
+    $c->PutHeader();
+    $c->EventHandler();
 
-unset($M);
+    $c->PutMessageBox();
+    $c->PutHelpDialog();
+    $c->PutOptionsDialog();
+    $c->PutExportLink();
+
+    $c->PutFooter();
+    $c->PutScripts();
+} else {
+    $c->PutCharset();
+    $c->PutTitle();
+    $c->PutStyleSheets();
+
+    $c->PutHeader();
+
+    $c->ShowLoginForm();
+
+    $c->PutFooter();
+}
