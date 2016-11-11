@@ -23,7 +23,8 @@
 	"segmentTable": "segmentTable",
 	"getEventsList": "getEventsList",
 	"showFolderContent" : "showFolderContent",
-	"syncItemsHeaders": "syncItemsHeaders"
+	"syncItemsHeaders": "syncItemsHeaders",
+	"results": "results"
 },
 
 "printerPage": {

@@ -2,16 +2,6 @@
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 
-//================================================================
-//╔═══╦╗────╔╗─╔╗
-//║╔══╣║────║║╔╝╚╗
-//║╚══╣║╔╦══╣╚╩╗╔╬══╗
-//║╔══╣║╠╣╔╗║╔╗║║║══╣
-//║║──║╚╣║╚╝║║║║╚╬══║
-//╚╝──╚═╩╩═╗╠╝╚╩═╩══╝
-//───────╔═╝║
-//───────╚══╝
-//================================================================
 class FlightsController extends CController
 {
    public $curPage = 'flightsPage';
@@ -25,7 +15,6 @@ class FlightsController extends CController
        $this->flightActions = (array)$L->GetServiceStrs($this->curPage);
        unset($L);
 
-       //even if flight was selected if file send this variant will be processed
        if((isset($post['action']) && ($post['action'] != '')) &&
            (isset($post['data']) && ($post['data'] != '')))
        {

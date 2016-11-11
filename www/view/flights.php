@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
 
-$c = new FlightsController($_POST, $_SESSION);
+$c = new FlightsController($_POST, $_SESSION, $_GET);
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightGeneralElements"]) {
