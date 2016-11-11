@@ -1,0 +1,101 @@
+<?php
+
+class CController
+{
+    protected $curPage = null;
+
+    public $action;
+    public $data;
+
+    public $_user;
+    public $lang;
+    protected $userLang = 'en';
+
+    public function IsAppLoggedIn($post, $session)
+    {
+        $this->_user = $this->_user ?? new User();
+
+        $success = false;
+        if ($this->_user->tryAuth($post, $session)) {
+            if(isset($this->_user->username) && ($this->_user->username != '')) {
+                $usrInfo = $this->_user->GetUsersInfo($this->_user->username);
+                $this->userLang = $usrInfo['lang'];
+            }
+
+            $success = true;
+        }
+
+        $L = new Language();
+        $L->SetLanguageName($this->userLang);
+        $this->userLang = $L->GetLanguageName();
+        $this->lang = $L->GetLanguage($this->curPage);
+        unset($L);
+
+        return $success;
+    }
+
+    public function ShowLoginForm()
+    {
+        $loginMsg = $this->_user->loginMsg ?? '';
+        printf("<div align='center'><p class='Label'>%s</p>
+            <label style='color:darkred;'>%s</label></br></br>
+            <form action='index.php' method='POST'>
+            <table>
+                <tr><td>%s</td><td>
+                    <input type='text' name='user'>
+                </td></tr>
+                <tr><td>%s</td><td>
+                    <input type='password' name='pwd'>
+                </td></tr>
+                <tr><td>%s</td><td align='center'>
+                    <input type='checkbox' name='autologin' value='1'>
+                </td></tr>
+                <tr style='visibility:hidden;'><td>
+                    Nonce:
+                </td></tr>
+            </table>
+
+            <input class='Button' type='submit' value='%s'>
+        </form></div>", $this->lang->loginForm,
+        $loginMsg,
+        $this->lang->userName,
+        $this->lang->pass,
+        $this->lang->rememberMe,
+
+        $this->lang->login);
+    }
+
+    public function RegisterActionExecution($extAction, $extStatus,
+         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+   {
+      $action = $extAction;
+      $status = $extStatus;
+      $senderId = $extSenderId;
+      $senderName = $extSenderName;
+      $targetId = $extTargetId;
+      $targetName = $extTargetName;
+
+      $userId = $this->_user->userInfo['id'];
+      $this->_user->RegisterUserAction($action, $status, $userId,
+            $senderId, $senderName, $targetId, $targetName);
+      return;
+   }
+
+   public function RegisterActionReject($extAction, $extStatus,
+         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+   {
+      $action = $extAction;
+      $status = $extStatus;
+      $senderId = $extSenderId;
+      $senderName = $extSenderName;
+      $targetId = $extTargetId;
+      $targetName = $extTargetName;
+      $userInfo = $this->GetUserInfo();
+      $userId = $this->_user->userInfo['id'];
+
+      $this->_user->RegisterUserAction($action, $status, $userId,
+            $senderId, $senderName, $targetId, $targetName);
+
+      unset($U);
+   }
+}
