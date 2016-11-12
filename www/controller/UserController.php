@@ -711,7 +711,6 @@ class UserController extends CController
 
     public function DeleteUser($userIds)
     {
-        $username = $this->_user->username;
         $ulogin = new uLogin();
         $U = new User();
 

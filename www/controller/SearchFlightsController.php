@@ -32,19 +32,6 @@ class SearchFlightController extends CController
         }
     }
 
-    public function IsAppLoggedIn()
-    {
-        return isset($_SESSION['uid']) && isset($_SESSION['username']) && isset($_SESSION['loggedIn']) && ($_SESSION['loggedIn'] === true);
-    }
-
-    public function GetUserPrivilege()
-    {
-        $this->_user->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
-        $Usr = new User();
-        $this->privilege = $Usr->GetUserPrivilege($this->_user->username);
-        unset($Usr);
-    }
-
     public function ShowSearchForm()
     {
         $form = '';
@@ -262,44 +249,5 @@ class SearchFlightController extends CController
         unset($U);
 
         return $userInfo;
-    }
-
-    public function RegisterActionExecution($extAction, $extStatus,
-            $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-
-        $userInfo = $this->GetUserInfo();
-        $userId = $userInfo['id'];
-
-        $U = new User();
-        $U->RegisterUserAction($action, $status, $userId,
-                $senderId, $senderName, $targetId, $targetName);
-
-        unset($U);
-    }
-
-    public function RegisterActionReject($extAction, $extStatus,
-            $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-        $userInfo = $this->GetUserInfo();
-        $userId = $userInfo['id'];
-
-        $U = new User();
-        $U->RegisterUserAction($action, $status, $userId,
-                $senderId, $senderName, $targetId, $targetName);
-
-        unset($U);
     }
 }

@@ -34,19 +34,6 @@ class UploaderController extends CController
         }
     }
 
-    public function IsAppLoggedIn()
-    {
-        return isset($_SESSION['uid']) && isset($_SESSION['username']) && isset($_SESSION['loggedIn']) && ($_SESSION['loggedIn'] === true);
-    }
-
-    public function GetUserPrivilege()
-    {
-        $this->_user->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
-        $Usr = new User();
-        $this->privilege = $Usr->GetUserPrivilege($this->_user->username);
-        unset($Usr);
-    }
-
     public function ShowFlightParams($extIndex, $extBruType, $extFilePath)
     {
         $index = $extIndex;
@@ -202,7 +189,7 @@ class UploaderController extends CController
 
         $U = new User();
 
-        if(in_array($U::$PRIVILEGE_TUNE_FLIGHTS, $this->privilege))
+        if(in_array($this->_user::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege))
         {
             $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
                 "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
@@ -974,81 +961,6 @@ class UploaderController extends CController
         unset($Bru);
     }
 
-    /*public function ProccessComparingToEtalon()
-    {
-        if(isset($_POST['flightId']) && ($_POST['flightId'] != NULL))
-        {
-            $flightId = $_POST['flightId'];
-        }
-
-        if(isset($_POST['sliceId']) && ($_POST['sliceId'] != NULL))
-        {
-            $sliceId = $_POST['sliceId'];
-        }
-
-        if(isset($_POST['tempFileName']) && ($_POST['tempFileName'] != NULL))
-        {
-            $tempFile = $_POST['tempFileName'];
-        }
-
-        $tempFilePath = $_SERVER['DOCUMENT_ROOT'] . "/uploadedFiles/" . $tempFile;
-
-        $fp = fopen($tempFilePath, "w");
-        fwrite($fp, json_encode("proccess"));
-        fclose($fp);
-
-        $counstructorData = array("action" => SLICE_COMPARE,
-                "flightId" => $flightId,
-                "sliceId" => $sliceId);
-
-        //bad style to use View class in async scripts but it is very comfortable here
-        //do no populate
-        $SliceView = new SliceView($counstructorData);
-        $Sl = new Slice();
-        $sliceInfo = $Sl->GetSliceInfo($sliceId);
-        $sliceTypeInfo = $Sl->GetSliceTypeInfo($sliceInfo['code']);
-
-        //file can be accesed by ajax what can cause warning
-        error_reporting(E_ALL ^ E_WARNING);
-
-        if($sliceTypeInfo['children'] != '')
-        {
-            $childCodesArray = (array)explode(",", $sliceTypeInfo['children']);
-            $childCodesArray = array_filter($childCodesArray);
-            $childCodesArray = array_map('trim', $childCodesArray);
-
-            for($j = 0; $j < count($childCodesArray); $j++)
-            {
-                $sliceCode = $childCodesArray[$j];
-                $sliceTypeInfo = $Sl->GetSliceTypeInfo($sliceCode);
-
-                $fp = fopen($tempFilePath, "w");
-                fwrite($fp, json_encode($sliceCode));
-                fclose($fp);
-
-                $SliceView->CompareSliceToEtalon($flightId, $sliceInfo, $sliceTypeInfo, $sliceCode);
-            }
-        }
-        else
-        {
-            $sliceCode = $this->sliceInfo['code'];
-
-            $fp = fopen($tempFilePath, "w");
-            fwrite($fp, json_encode($sliceCode));
-            fclose($fp);
-
-            $SliceView->CompareSliceToEtalon($flightId, $sliceInfo, $sliceTypeInfo, $sliceCode);
-        }
-        unset($Sl);
-
-        error_reporting(E_ALL);
-
-        $fp = fopen($tempFilePath, "w");
-        fwrite($fp, json_encode("done"));
-        fclose($fp);
-        exit();
-    }*/
-
     public function DeleteFlight()
     {
         $Fl = new Flight();
@@ -1204,45 +1116,6 @@ class UploaderController extends CController
         } else {
             return false;
         }
-    }
-
-    public function RegisterActionExecution($extAction, $extStatus,
-        $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-
-        $userInfo = $this->GetUserInfo();
-        $userId = $userInfo['id'];
-
-        $U = new User();
-        $U->RegisterUserAction($action, $status, $userId,
-            $senderId, $senderName, $targetId, $targetName);
-
-        unset($U);
-    }
-
-    public function RegisterActionReject($extAction, $extStatus,
-        $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-        $userInfo = $this->GetUserInfo();
-        $userId = $userInfo['id'];
-
-        $U = new User();
-        $U->RegisterUserAction($action, $status, $userId,
-                $senderId, $senderName, $targetId, $targetName);
-
-        unset($U);
     }
 
     public function GetUserInfo()

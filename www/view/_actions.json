@@ -1,115 +1,115 @@
 {
 
-"flightsPage": {	
-	"flightGeneralElements": "generalElem",
-	"flightFileConvert": "convertFl",
-	"flightFileImport": "importFl",
-	"flightProccessExceptions": "procFl",
-	"flightExport": "exportFl",
-	"flightLastView": "flightLastView",
-	"flightTwoColumnsListByPathes": "flightsListByPathes",
-	"flightListTree": "flightListTree",
-	"flightListTable": "flightListTable",
-	"folderChangePath": "folderChangePath",
-	"flightShowFolder": "showFolder",
-	"folderCreateNew": "newFolder",
-	"folderRename": "renameFolder",
-	"flightGoUpper": "upperFolder",
-	"flightChangePath": "flightMove",
-	"itemDelete": "itemDelete",
-	"itemProcess": "itemProcess",
-	"itemExport": "itemExport",
-	"receiveTree" : "receiveTree",
-	"segmentTable": "segmentTable",
-	"getEventsList": "getEventsList",
-	"showFolderContent" : "showFolderContent",
-	"syncItemsHeaders": "syncItemsHeaders",
-	"results": "results"
+"flightsPage": {
+    "flightGeneralElements": "generalElem",
+    "flightFileConvert": "convertFl",
+    "flightFileImport": "importFl",
+    "flightProccessExceptions": "procFl",
+    "flightExport": "exportFl",
+    "flightLastView": "flightLastView",
+    "flightTwoColumnsListByPathes": "flightsListByPathes",
+    "flightListTree": "flightListTree",
+    "flightListTable": "flightListTable",
+    "folderChangePath": "folderChangePath",
+    "flightShowFolder": "showFolder",
+    "folderCreateNew": "newFolder",
+    "folderRename": "renameFolder",
+    "flightGoUpper": "upperFolder",
+    "flightChangePath": "flightMove",
+    "itemDelete": "itemDelete",
+    "itemProcess": "itemProcess",
+    "itemExport": "itemExport",
+    "receiveTree" : "receiveTree",
+    "segmentTable": "segmentTable",
+    "getEventsList": "getEventsList",
+    "showFolderContent" : "showFolderContent",
+    "syncItemsHeaders": "syncItemsHeaders",
+    "results": "results"
 },
 
 "printerPage": {
-	"printBlank": "printBlank",
-	"monochromePrintBlank": "monochromePrintBlank"
+    "printBlank": "printBlank",
+    "monochromePrintBlank": "monochromePrintBlank"
 },
 
 
 "uploaderPage": {
-	"flightCutFile": "cutFl",
-	"flightCyclicSliceFile": "cyclicSliceFl",
-	"flightDelete": "deleteFl",
-	"flightUploaderPreview": "preview",
-	"flightShowUploadingOptions": "uploadFl",
-	"flightEasyUpload": "easyUpload",
-	"itemImport": "itemImport",
-	"flightProcces": "prFl",
-	"flightProccesAndCheck": "prAndChFl",
-	"flightProccesCheckAndCompareToEtalon": "prChAndEtaFl"
+    "flightCutFile": "cutFl",
+    "flightCyclicSliceFile": "cyclicSliceFl",
+    "flightDelete": "deleteFl",
+    "flightUploaderPreview": "preview",
+    "flightShowUploadingOptions": "uploadFl",
+    "flightEasyUpload": "easyUpload",
+    "itemImport": "itemImport",
+    "flightProcces": "prFl",
+    "flightProccesAndCheck": "prAndChFl",
+    "flightProccesCheckAndCompareToEtalon": "prChAndEtaFl"
 },
 
 "chartPage": {
-	"putChartInNewWindow":"putChartInNewWindow",
-	"putChartContainer": "chartContainer",
-	"getApParamValue": "getApParamValue",
-	"getBpParamValue": "getBpParamValue",
-	"getParamColor": "getParamColor",
-	"getParamInfo": "getParamInfo",
-	"rcvLegend":"rcvLegend",
-	"getParamMinmax": "getMinmax",
- 	"setParamMinmax": "setMinmax",
- 	"getFlightExceptions" : "getExceptions",
- 	"figurePrint": "figurePrint"
+    "putChartInNewWindow":"putChartInNewWindow",
+    "putChartContainer": "chartContainer",
+    "getApParamValue": "getApParamValue",
+    "getBpParamValue": "getBpParamValue",
+    "getParamColor": "getParamColor",
+    "getParamInfo": "getParamInfo",
+    "rcvLegend":"rcvLegend",
+    "getParamMinmax": "getMinmax",
+     "setParamMinmax": "setMinmax",
+     "getFlightExceptions" : "getExceptions",
+     "figurePrint": "figurePrint"
 },
 
 "slicesPage": {
-	"etalonDoNotCompare": "etalonDoNotCompare"
+    "etalonDoNotCompare": "etalonDoNotCompare"
 },
 
 "bruTypesPage": {
-	"putBruTypeContainer": "bruTypeContainer",
-	"editingBruTypeGeneralInfo": "generalInfo",
-	"editingBruTypeTemplates": "tpls",
-	"editingBruTypeTemplatesReceiveParamsList": "paramsList",
-	"editingBruTypeTemplatesReceiveTplsList": "tplsList",
-	"editingBruTypeCyclo": "cyclo",
-	"editingBruTypeEvents": "events",
-	"createTpl": "createTpl",
-	"deleteTpl": "deleteTpl",
-	"defaultTpl": "defaultTpl",
-	"updateTpl": "updateTpl"
+    "putBruTypeContainer": "bruTypeContainer",
+    "editingBruTypeGeneralInfo": "generalInfo",
+    "editingBruTypeTemplates": "tpls",
+    "editingBruTypeTemplatesReceiveParamsList": "paramsList",
+    "editingBruTypeTemplatesReceiveTplsList": "tplsList",
+    "editingBruTypeCyclo": "cyclo",
+    "editingBruTypeEvents": "events",
+    "createTpl": "createTpl",
+    "deleteTpl": "deleteTpl",
+    "defaultTpl": "defaultTpl",
+    "updateTpl": "updateTpl"
 },
 
 "userPage": {
-	"userLogout": "userLogout",
-	"userChangeLanguage": "userChangeLanguage",
-	"buildUserTable": "buildUserTable",
-	"segmentTable": "segmentTable",
-	"createUserForm": "createUserForm",
-	"createUser": "createUser",
-	"updateUserForm": "updateUserForm",
-	"updateUser": "updateUser",
-	"deleteUser": "deleteUser",
-	"updateUserOptions": "updateUserOptions"
+    "userLogout": "userLogout",
+    "userChangeLanguage": "userChangeLanguage",
+    "buildUserTable": "buildUserTable",
+    "segmentTable": "segmentTable",
+    "createUserForm": "createUserForm",
+    "createUser": "createUser",
+    "updateUserForm": "updateUserForm",
+    "updateUser": "updateUser",
+    "deleteUser": "deleteUser",
+    "updateUserOptions": "updateUserOptions"
 },
 
 "viewOptionsPage": {
-	"putViewOptionsContainer": "viewOptionsContainer",
-	"getFlightDuration": "duration",
-	"getBruTypeId" : "getBruTypeId",
-	"getBruTemplates" : "getBruTemplates",
-	"getParamListGivenQuantity": "getParamListGivenQuantity",
-	"getSearchedParams": "getSearchedParams",
-	"getEventsList": "getEventsList",
-	"getParamCodesByTemplate": "getParamsByTpl",
-	"getDefaultTemplateParamCodes": "defaultTemplateParams",
-	"setEventReliability": "setEvRel",
-	"createTpl": "createTpl",
-	"changeParamColor": "changeParamColor"
+    "putViewOptionsContainer": "viewOptionsContainer",
+    "getFlightDuration": "duration",
+    "getBruTypeId" : "getBruTypeId",
+    "getBruTemplates" : "getBruTemplates",
+    "getParamListGivenQuantity": "getParamListGivenQuantity",
+    "getSearchedParams": "getSearchedParams",
+    "getEventsList": "getEventsList",
+    "getParamCodesByTemplate": "getParamsByTpl",
+    "getDefaultTemplateParamCodes": "defaultTemplateParams",
+    "setEventReliability": "setEvRel",
+    "createTpl": "createTpl",
+    "changeParamColor": "changeParamColor"
 },
 
 "searchFlightPage": {
-	"showSearchForm": "showSearchForm",
-	"getFilters": "getFilters",
-	"applyFilter": "applyFilter"
+    "showSearchForm": "showSearchForm",
+    "getFilters": "getFilters",
+    "applyFilter": "applyFilter"
 }
 
 }

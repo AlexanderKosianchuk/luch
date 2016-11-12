@@ -282,7 +282,6 @@ class User
     {
         $token = $session['token'] ?? null;
         $userId = null;
-        $authSuccess = false;
 
         if (isset($token)) {
              $userId = $this->getUserIdByToken($token);
@@ -314,7 +313,7 @@ class User
             $this->loginMsg = 'Fail to login. Check username and password and try again';
         }
 
-        return $authSuccess;
+        return $userId !== null;
     }
 
     private function getUserIdByToken($token)

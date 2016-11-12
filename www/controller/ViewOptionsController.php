@@ -131,7 +131,6 @@ class ViewOptionsController extends CController
     public function ShowTempltList($extFlightId)
     {
         $flightId = $extFlightId;
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -219,12 +218,11 @@ class ViewOptionsController extends CController
 
     private function BuildTplOptionList($extParamSetTemplateListTableName, $extBruType)
     {
-        $username = $this->username;
         $bruType = $extBruType;
         $paramSetTemplateListTableName = $extParamSetTemplateListTableName;
         $PSTempl = new PSTempl();
-        $PSTList = $PSTempl->GetPSTList($paramSetTemplateListTableName, $username);
-        $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $username);
+        $PSTList = $PSTempl->GetPSTList($paramSetTemplateListTableName, $this->_user->username);
+        $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
         unset($PSTempl);
 
         $optionsStr = "";
@@ -284,7 +282,6 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -344,7 +341,6 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -371,7 +367,6 @@ class ViewOptionsController extends CController
         $startIndex = $pageNum * $pageSize;
         $endIndex = $startIndex + $pageSize;
 
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -437,7 +432,6 @@ class ViewOptionsController extends CController
         $flightId = $extFlightId;
         $request = $extRequest;
 
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -505,7 +499,6 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $username = $this->username;
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -722,7 +715,6 @@ class ViewOptionsController extends CController
     public function GetDefaultTplParams($extFlightId)
     {
         $flightId = $extFlightId;
-        $username = $this->username;
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -736,7 +728,7 @@ class ViewOptionsController extends CController
         $cycloBpTableName = $bruInfo['gradiBpTableName'];
 
         $PSTempl = new PSTempl();
-        $params = $PSTempl->GetDefaultTemplateParams($paramSetTemplateListTableName, $username);
+        $params = $PSTempl->GetDefaultTemplateParams($paramSetTemplateListTableName, $this->_user->username);
         unset($PSTempl);
 
         $apParams = array();
@@ -764,7 +756,6 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
         $tplName = $extTplName;
-        $username = $this->username;
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -778,7 +769,7 @@ class ViewOptionsController extends CController
         $cycloBpTableName = $bruInfo['gradiBpTableName'];
 
         $PSTempl = new PSTempl();
-        $params = $PSTempl->GetPSTByName($paramSetTemplateListTableName, $tplName, $username);
+        $params = $PSTempl->GetPSTByName($paramSetTemplateListTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
         $apParams = array();
@@ -807,7 +798,6 @@ class ViewOptionsController extends CController
         $flightId = $extFlightId;
         $paramsToAdd = $extParamsToAdd;
         $tplName = $extTplName;
-        $username = $this->username;
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -833,7 +823,7 @@ class ViewOptionsController extends CController
             {
                 $apTableNameWithPrefix = $apTableName . "_" . $paramInfo['prefix'];
                 $paramMinMax = $Ch->GetParamMinMax($apTableNameWithPrefix,
-                $paramsToAdd[$i], $username);
+                $paramsToAdd[$i], $this->_user->username);
 
                 $paramsWithType[PARAM_TYPE_AP][] = array(
                     'code' => $paramsToAdd[$i],
@@ -849,8 +839,8 @@ class ViewOptionsController extends CController
         unset($Bru);
 
         $PSTempl = new PSTempl();
-        $PSTempl->DeleteTemplate($PSTTableName, $tplName, $username);
-        $PSTempl->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $username);
+        $PSTempl->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
+        $PSTempl->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
 
         unset($Ch);
         unset($PSTempl);

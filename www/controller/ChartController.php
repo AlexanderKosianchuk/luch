@@ -41,19 +41,6 @@ class ChartController extends CController
         }
     }
 
-    public function IsAppLoggedIn()
-    {
-        return isset($_SESSION['uid']) && isset($_SESSION['username']) && isset($_SESSION['loggedIn']) && ($_SESSION['loggedIn'] === true);
-    }
-
-    public function GetUserPrivilege()
-    {
-        $this->_user->username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
-        $Usr = new User();
-        $this->privilege = $Usr->GetUserPrivilege($this->_user->username);
-        unset($Usr);
-    }
-
     public function PutCharset()
     {
         printf("<!DOCTYPE html>
@@ -146,7 +133,6 @@ class ChartController extends CController
 
         foreach ($this->data as $key => $val)
         {
-            $username = $this->_user->username;
             if(($key == 'tplName') && isset($this->data['flightId']))
             {
                 $tplName = $val;
@@ -162,7 +148,7 @@ class ChartController extends CController
                 $apCycloTable = $bruInfo['gradiApTableName'];
                 $bpCycloTable = $bruInfo['gradiBpTableName'];
                 $Tpl = new PSTempl();
-                $params = $Tpl->GetPSTParams($PSTListTableName, $tplName, $username);
+                $params = $Tpl->GetPSTParams($PSTListTableName, $tplName, $this->_user->username);
                 unset($Tpl);
 
                 $apParams = array();

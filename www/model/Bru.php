@@ -878,7 +878,6 @@ class Bru
         $bruType = $extBruType;
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -888,7 +887,7 @@ class Bru
         $result->free();
 
         $apHeader = array();
-        $query = "SELECT * FROM `".$cycloApTableName."` GROUP BY `code`";
+        $query = "SELECT * FROM `".$cycloApTableName."` WHERE 1;";
         $result = $link->query($query);
 
         while($row = $result->fetch_array())
@@ -929,7 +928,7 @@ class Bru
         $result->free();
 
         $apHeader = array();
-        $query = "SELECT * FROM `".$cycloApTableName."` GROUP BY `code` ".
+        $query = "SELECT * FROM `".$cycloApTableName."` WHERE 1 ".
             "LIMIT " . $startIndex . ", " . ($endIndex - $startIndex) . ";";
         $result = $link->query($query);
 
@@ -1011,7 +1010,7 @@ class Bru
 
         $bpHeader = array();
 
-        $query = "SELECT * FROM `".$cycloBpTableName."` GROUP BY `code`";
+        $query = "SELECT * FROM `".$cycloBpTableName."` WHERE 1;";
         $result = $link->query($query);
 
         while($row = $result->fetch_array())
@@ -1054,7 +1053,7 @@ class Bru
 
         $bpHeader = array();
 
-        $query = "SELECT * FROM `".$cycloBpTableName."` GROUP BY `code` ".
+        $query = "SELECT * FROM `".$cycloBpTableName."` WHERE 1 ".
             "LIMIT " . $startIndex . ", " . ($endIndex - $startIndex) . ";";
 
         $result = $link->query($query);

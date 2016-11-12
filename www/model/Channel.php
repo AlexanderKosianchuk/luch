@@ -136,7 +136,6 @@ class Channel
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
                 ((`frameNum` < ".$startFrame.") AND
                 (`frameNum` % ".$divider." = 0))
-                GROUP BY frameNum
                 ORDER BY `time` ASC";
 
             $c = new DataBaseConnector();
@@ -153,7 +152,6 @@ class Channel
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
                 ((`frameNum` >= ".$startFrame.") AND
                 (`frameNum` <= ".$endFrame."))
-                GROUP BY frameNum
                 ORDER BY `time` ASC";
 
             $result = $link->query($query);
@@ -168,7 +166,6 @@ class Channel
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
                 ((`frameNum` > ".$endFrame.") AND
                 (`frameNum` % ".$divider." = 0))
-                GROUP BY frameNum
                 ORDER BY `time` ASC";
             $result = $link->query($query);
 
@@ -185,7 +182,6 @@ class Channel
         {
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
             (`frameNum` % ".$divider." = 0)
-            GROUP BY frameNum
             ORDER BY `time` ASC";
 
             $c = new DataBaseConnector();
@@ -375,7 +371,7 @@ class Channel
 
         $query = "SELECT `".$code."` FROM `".$tableName."` WHERE
             `frameNum` >= ".$startFrame." AND `frameNum` < ".$endFrame."
-            ORDER BY `frameNum`ASC";
+            ORDER BY `frameNum`ASC;";
 
         $result = $link->query($query);
 
@@ -413,7 +409,7 @@ class Channel
 
         $query = "SELECT `frameNum`, `time` FROM `".$tableName."` WHERE `code` = '" . $code . "' ".
             "AND `frameNum` >= ".$startFrame." AND `frameNum` < ".$endFrame. " ".
-            "ORDER BY `time` ASC";
+            "ORDER BY `time` ASC;";
 
         $result = $link->query($query);
 

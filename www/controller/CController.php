@@ -65,34 +65,19 @@ class CController
         $this->lang->login);
     }
 
-    public function RegisterActionExecution($extAction, $extStatus,
-         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+    public function RegisterActionExecution($action, $status,
+         $senderId = null, $senderName = null, $targetId = null, $targetName = null)
    {
-      $action = $extAction;
-      $status = $extStatus;
-      $senderId = $extSenderId;
-      $senderName = $extSenderName;
-      $targetId = $extTargetId;
-      $targetName = $extTargetName;
-
       $userId = $this->_user->userInfo['id'];
       $this->_user->RegisterUserAction($action, $status, $userId,
             $senderId, $senderName, $targetId, $targetName);
       return;
    }
 
-   public function RegisterActionReject($extAction, $extStatus,
-         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
+   public function RegisterActionReject($action, $status,
+         $senderId = null, $senderName = null, $targetId = null, $targetName = null)
    {
-      $action = $extAction;
-      $status = $extStatus;
-      $senderId = $extSenderId;
-      $senderName = $extSenderName;
-      $targetId = $extTargetId;
-      $targetName = $extTargetName;
-      $userInfo = $this->GetUserInfo();
       $userId = $this->_user->userInfo['id'];
-
       $this->_user->RegisterUserAction($action, $status, $userId,
             $senderId, $senderName, $targetId, $targetName);
 

@@ -172,12 +172,11 @@ class BruController extends CController
     }
 
     private function BuildTplOptionList($extParamSetTemplateListTableName, $extBruType) {
-        $username = $this->_user->username;
         $bruType = $extBruType;
         $paramSetTemplateListTableName = $extParamSetTemplateListTableName;
         $PSTempl = new PSTempl ();
-        $PSTList = $PSTempl->GetPSTList ( $paramSetTemplateListTableName, $username );
-        $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $username);
+        $PSTList = $PSTempl->GetPSTList ( $paramSetTemplateListTableName, $this->_user->username);
+        $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
         unset ( $PSTempl );
 
         $optionsStr = "";
@@ -273,7 +272,6 @@ class BruController extends CController
         $bruTypeId = $extBruTypeId;
         $tplName = $extTplName;
         $paramsToAdd = $extParams;
-        $username = $this->_user->username;
 
         $Bru = new Bru ();
         $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
@@ -302,7 +300,7 @@ class BruController extends CController
         unset ( $Bru );
 
         $PSTempl = new PSTempl ();
-        $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $username);
+        $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
 
         $apCount = count ( $paramsWithType [PARAM_TYPE_AP] );
 
@@ -321,7 +319,7 @@ class BruController extends CController
             $axisMax = $yMax + ($i * $curCorridor);
             $axisMin = $yMin - (($apCount - $i) * $curCorridor);
 
-            $PSTempl->AddParamToTemplateWithMinMax ( $PSTTableName, $tplName, $paramCode ['code'], $axisMin, $axisMax, $username);
+            $PSTempl->AddParamToTemplateWithMinMax ( $PSTTableName, $tplName, $paramCode ['code'], $axisMin, $axisMax, $this->_user->username);
         }
 
         if (isset ( $paramsWithType [PARAM_TYPE_BP] )) {
@@ -337,7 +335,7 @@ class BruController extends CController
                 $axisMax = 100 - ($curCorridor * $j);
                 $axisMin = 0 - ($curCorridor * $j);
 
-                $PSTempl->AddParamToTemplateWithMinMax ( $PSTTableName, $tplName, $paramsWithType [PARAM_TYPE_BP] [$j] ['code'], $axisMin, $axisMax, $username);
+                $PSTempl->AddParamToTemplateWithMinMax ( $PSTTableName, $tplName, $paramsWithType [PARAM_TYPE_BP] [$j] ['code'], $axisMin, $axisMax, $this->_user->username);
                 $j ++;
             }
         }
@@ -352,7 +350,6 @@ class BruController extends CController
     {
         $bruTypeId = $extBruTypeId;
         $tplName = $extTplName;
-        $username = $this->_user->username;
 
         $Bru = new Bru ();
         $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
@@ -360,7 +357,7 @@ class BruController extends CController
         unset ( $Bru );
 
         $PSTempl = new PSTempl ();
-        $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $username);
+        $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
         return "ok";
@@ -370,7 +367,6 @@ class BruController extends CController
     {
         $bruTypeId = $extBruTypeId;
         $tplName = $extTplName;
-        $username = $this->_user->username;
 
         $Bru = new Bru ();
         $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
@@ -378,7 +374,7 @@ class BruController extends CController
         unset ( $Bru );
 
         $PSTempl = new PSTempl ();
-        $PSTempl->SetDefaultTemplate($PSTTableName, $tplName, $username);
+        $PSTempl->SetDefaultTemplate($PSTTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
         return "ok";

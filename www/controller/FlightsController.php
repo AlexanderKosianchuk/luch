@@ -735,41 +735,6 @@ class FlightsController extends CController
       return $actionsInfo;
    }
 
-   public function RegisterActionExecution($extAction, $extStatus,
-         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-   {
-      $action = $extAction;
-      $status = $extStatus;
-      $senderId = $extSenderId;
-      $senderName = $extSenderName;
-      $targetId = $extTargetId;
-      $targetName = $extTargetName;
-
-      $userId = $this->_user->userInfo['id'];
-
-      $this->_user->RegisterUserAction($action, $status, $userId,
-         $senderId, $senderName, $targetId, $targetName);
-
-      unset($U);
-   }
-
-   public function RegisterActionReject($extAction, $extStatus,
-         $extSenderId = null, $extSenderName = null, $extTargetId = null, $extTargetName = null)
-   {
-      $action = $extAction;
-      $status = $extStatus;
-      $senderId = $extSenderId;
-      $senderName = $extSenderName;
-      $targetId = $extTargetId;
-      $targetName = $extTargetName;
-      $userId = $this->_user->userInfo['id'];
-
-      $this->_user->RegisterUserAction($action, $status, $userId,
-            $senderId, $senderName, $targetId, $targetName);
-
-      unset($U);
-   }
-
    public function BuildFlightsInTree($extFolder)
    {
       $shownFolderId = $extFolder;
