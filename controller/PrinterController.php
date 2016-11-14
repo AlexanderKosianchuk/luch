@@ -255,7 +255,8 @@ class PrinterController extends CController
                     $excInfo = $FEx->GetExcInfo ( $bruInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
 
                     $codePrefix = substr($event['code'], 0, 3);
-                    if ($event ['reliability'] && in_array($codePrefix, $sections)) {
+                    if ($event ['reliability'] && (in_array($codePrefix, $sections)
+                        || (!preg_match('/00[0-9]/', $codePrefix) && in_array('other', $sections)))) {
 
                         if ($excInfo ['status'] == "C") {
                             $style = "background-color:LightCoral";
@@ -508,7 +509,8 @@ class PrinterController extends CController
                     $excInfo = $FEx->GetExcInfo ( $bruInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
 
                     $codePrefix = substr($event['code'], 0, 3);
-                    if ($event ['reliability'] && in_array($codePrefix, $sections)) {
+                    if ($event ['reliability'] && (in_array($codePrefix, $sections)
+                        || (!preg_match('/00[0-9]/', $codePrefix) && in_array('other', $sections)))) {
 
                         $excAditionalInfo = $event ['excAditionalInfo'];
                         $excAditionalInfo = str_replace ( ";", ";<br>", $excAditionalInfo );
