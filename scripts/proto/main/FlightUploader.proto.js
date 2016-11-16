@@ -116,12 +116,16 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                         .chosen();
 
 
-                    $('.chosen-search input')
+                    $('.chosen-search input, .chosen-drop')
                         .on('keyup', function(ev) {
-                            self.fileUploadDialog.height(
-                                dialogInitialHeight
-                                    + $('.chosen-drop').first().height()
-                            );
+                            if ($('.chosen-container').hasClass('chosen-with-drop')) {
+                                self.fileUploadDialog.height(
+                                    dialogInitialHeight
+                                        + $('.chosen-drop').first().height()
+                                );
+                            } else {
+                                self.fileUploadDialog.height(dialogInitialHeight);
+                            }
                         })
                 }
 
@@ -255,12 +259,12 @@ FlightUploader.prototype.GetFlightParams = function(
     if(self.flightUploaderContent != null){
         //when file uploaded call fileProcessor to import it
         var pV = {
-                    action: self.flightUploaderActions["flightShowUploadingOptions"],
-                    data: {
-                        index: index,
-                        file: file,
-                        bruType: selectedBruType
-                    }
+                action: self.flightUploaderActions["flightShowUploadingOptions"],
+                data: {
+                    index: index,
+                    file: file,
+                    bruType: selectedBruType
+                }
             };
 
         if((index == 0) || (self.firstUploadedComplt == false)){

@@ -499,13 +499,9 @@ class FlightsController extends CController
       }
    }
 
-   public function DeleteFlight($extId)
+   public function DeleteFlight($id)
    {
-      if(is_int($extId))
-      {
-         $id = $extId;
-
-
+      if(is_int($id)) {
          $avaliableFlights = $this->_user->GetAvaliableFlights($this->_user->username);
          unset($U);
 
@@ -524,7 +520,7 @@ class FlightsController extends CController
 
             $this->_user = new User();
             $this->_user->UnsetFlightAvaliable($id);
-            unset($this->_user);
+
             $Fd = new Folder();
             $Fd->DeleteFlightFromFolders($id);
             unset($Fd);
