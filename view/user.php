@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
 
-$c = new UserController($_POST, $_SESSION);
+$c = new UserController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->userActions["userLogout"]) {

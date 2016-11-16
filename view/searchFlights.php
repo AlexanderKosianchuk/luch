@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/SearchFlightsController.php");
 
-$c = new SearchFlightController($_POST, $_SESSION);
+$c = new SearchFlightController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->controllerActions["showSearchForm"]) {

@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
 
-$c = new PrinterController($_POST, $_SESSION);
+$c = new PrinterController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->printerActions["printBlank"]) {

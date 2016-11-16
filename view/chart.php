@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 
-$c = new ChartController($_POST, $_SESSION);
+$c = new ChartController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->chartActions["putChartContainer"]) {
@@ -14,7 +14,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                 $workspace = $c->PutWorkspace();
 
                 $data = array(
-                        'workspace' => $workspace
+                    'workspace' => $workspace
                 );
 
                 $answ["status"] = "ok";

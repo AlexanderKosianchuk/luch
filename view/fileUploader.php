@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UploaderController.php");
 
-$c = new UploaderController($_POST, $_SESSION);
+$c = new UploaderController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightShowUploadingOptions"]) {

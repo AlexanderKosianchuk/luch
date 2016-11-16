@@ -3,7 +3,7 @@
 require_once(@__DIR__."/includes.php");
 require_once(@__DIR__."/controller/IndexController.php");
 
-$c = new IndexController($_POST, $_SESSION);
+$c = new IndexController($_POST, $_SESSION, $_COOKIE);
 
 if ($c->_user && ($c->_user->username !== null)) {
     $c->PutCharset();

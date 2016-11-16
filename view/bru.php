@@ -3,7 +3,7 @@ s<?php
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
 
-$c = new BruController($_POST, $_SESSION);
+$c = new BruController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->bruActions["putBruTypeContainer"]) {

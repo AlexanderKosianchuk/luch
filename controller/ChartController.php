@@ -8,37 +8,19 @@ class ChartController extends CController
     public $chartActions;
     private $title = 'Title';
 
-    function __construct($post, $session, $get = null)
+    function __construct()
     {
-        $this->IsAppLoggedIn($post, $session);
+        $this->IsAppLoggedIn();
+        $this->setAttributes();
+
+        $get = $_GET;
+        if ($get != null) {
+            $this->action = $this->chartActions["putChartInNewWindow"];
+        }
 
         $L = new Language();
         $this->chartActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
-
-        //even if flight was selected if file send this variant will be processed
-        if((isset($post['action']) && ($post['action'] != '')) &&
-            (isset($post['data']) && ($post['data'] != '')))
-        {
-            $this->action = $post['action'];
-            $this->data = $post['data'];
-        }
-        else if($get != null)
-        {
-            $this->action = $this->chartActions["putChartInNewWindow"];
-            //TODO implement get params sql injection protect
-            $this->data = $get;
-        }
-        else
-        {
-            echo("Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
-                " . Page: " . $this->curPage. ".");
-
-            error_log("Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
-                " . Page: " . $this->curPage. ".");
-        }
     }
 
     public function PutCharset()

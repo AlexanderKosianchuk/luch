@@ -7,28 +7,19 @@ class FlightsController extends CController
    public $curPage = 'flightsPage';
    public $flightActions;
 
-   function __construct($post, $session, $get = [])
+   function __construct()
    {
-       $this->IsAppLoggedIn($post, $session);
+       $this->IsAppLoggedIn();
+       $this->setAttributes();
+
+       $get = $_GET;
+       if(isset($get['action']) && ($get['action'] != '')) {
+           $this->getAction = $get['action'];
+       }
 
        $L = new Language();
        $this->flightActions = (array)$L->GetServiceStrs($this->curPage);
        unset($L);
-
-       if((isset($post['action']) && ($post['action'] != '')) &&
-           (isset($post['data']) && ($post['data'] != '')))
-       {
-           $this->action = $post['action'];
-           $this->data = $post['data'];
-       } else if(isset($get['action']) && ($get['action'] != '')) {
-           $this->getAction = $get['action'];
-       } else {
-           $msg = "Incorect input. Data: " . json_encode($post['data']) .
-               " . Action: " . json_encode($post['action']) .
-               " . Page: " . $this->curPage. ".";
-           echo($msg);
-           error_log($msg);
-       }
    }
 
    public function PutTopMenu()

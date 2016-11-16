@@ -11,12 +11,37 @@ class CController
     public $lang;
     protected $userLang = 'en';
 
-    public function IsAppLoggedIn($post, $session)
+    protected function setAttributes()
     {
+        $post = $_POST;
+        $get = $_GET;
+
+        if((isset($post['action']) && ($post['action'] != '')) &&
+            (isset($post['data']) && ($post['data'] != ''))
+        ) {
+            $this->action = $post['action'];
+            $this->data = $post['data'];
+        } else if ($get != null) {
+            $this->data = $get;
+        } else {
+            $msg = "Incorect input. Data: " . json_encode($post['data']) .
+                " . Action: " . json_encode($post['action']) .
+                " . Page: " . $this->curPage. ".";
+            echo($msg);
+            error_log($msg);
+        }
+    }
+
+    public function IsAppLoggedIn()
+    {
+        $post = $_POST;
+        $session = $_SESSION;
+        $cookie = $_COOKIE;
+
         $this->_user = $this->_user ?? new User();
 
         $success = false;
-        if ($this->_user->tryAuth($post, $session)) {
+        if ($this->_user->tryAuth($post, $session, $cookie)) {
             if(isset($this->_user->username) && ($this->_user->username != '')) {
                 $usrInfo = $this->_user->GetUsersInfo($this->_user->username);
                 $this->userLang = $usrInfo['lang'];

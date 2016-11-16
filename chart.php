@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 
-$c = new ChartController($_POST, $_SESSION, $_GET);
+$c = new ChartController($_POST, $_SESSION, $_GET, $_COOKIE);
 
 if ($c->_user && ($c->_user->username !== null)) {
     if($c->action == $c->chartActions["putChartInNewWindow"]) {

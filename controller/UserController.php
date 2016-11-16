@@ -7,29 +7,14 @@ class UserController extends CController
     public $curPage = 'userPage';
     public $userActions;
 
-    function __construct($post, $session)
+    function __construct()
     {
-        $this->IsAppLoggedIn($post, $session);
+        $this->IsAppLoggedIn();
+        $this->setAttributes();
 
         $L = new Language();
         $this->userActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
-
-        //even if flight was selected if file send this variant will be processed
-        if((isset($post['action']) && ($post['action'] != '')) &&
-            (isset($post['data']) && ($post['data'] != '')))
-        {
-            $this->action = $post['action'];
-            $this->data = $post['data'];
-        }
-        else
-        {
-            $msg = "Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
-                " . Page: " . $this->curPage. ".";
-            echo($msg);
-            error_log($msg);
-        }
     }
 
     public function PutTopMenu()

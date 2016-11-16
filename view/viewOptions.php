@@ -3,7 +3,7 @@
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ViewOptionsController.php");
 
-$c = new ViewOptionsController($_POST, $_SESSION);
+$c = new ViewOptionsController();
 
 if ($c->_user && ($c->_user->username !== '')) {
     if($c->action == $c->viewOptionsActions["putViewOptionsContainer"]) {

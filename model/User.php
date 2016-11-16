@@ -278,7 +278,7 @@ class User
         unset($c);
     }
 
-    public function tryAuth($post, $session)
+    public function tryAuth($post, $session, $cookie)
     {
         $token = $session['token'] ?? null;
         $userId = null;
@@ -287,14 +287,20 @@ class User
              $userId = $this->getUserIdByToken($token);
         }
 
+        $token = $cookie['token'] ?? null;
+        if (isset($token)) {
+             $userId = $this->getUserIdByToken($token);
+        }
+
         $username = $post['user'] ?? null;
         $pass = $post['pwd'] ?? null;
+        $autologin = $post['autologin'] ?? null;
 
         if (!$userId
             && isset($username)
             && isset($pass)
         ) {
-            $userId = $this->checkUserPass($username, $pass);
+            $userId = $this->checkUserPass($username, $pass, $autologin);
         }
 
         if ($userId) {
@@ -354,6 +360,8 @@ class User
         unset($_SESSION['username']);
         unset($_SESSION['token']);
 
+        setcookie('token', null, -1, '/');
+
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
@@ -370,7 +378,7 @@ class User
         return;
     }
 
-    private function checkUserPass($username, $pass)
+    private function checkUserPass($username, $pass, $autologin = false)
     {
         $c = new DataBaseConnector();
         $link = $c->Connect();
@@ -385,7 +393,7 @@ class User
         $userId = null;
         if(isset($row['id'])) {
             $userId = $row['id'];
-            $this->setToken($userId);
+            $this->setToken($userId, $autologin);
         }
 
         $c->Disconnect();
@@ -394,7 +402,7 @@ class User
         return $userId;
     }
 
-    private function setToken($userId)
+    private function setToken($userId, $autologin = false)
     {
         $token = uniqid();
         $query = "INSERT INTO `user_auth` (`id_user`, `token`, `exp`) VALUES (".$userId.", '".$token."', NOW()+INTERVAL 30 DAY);";
@@ -407,6 +415,10 @@ class User
         $stmt->close();
 
         $_SESSION['token'] = $token;
+
+        if ($autologin) {
+            setcookie('token', $token);
+        }
 
         return $token;
     }

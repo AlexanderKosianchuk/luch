@@ -7,32 +7,15 @@ class ViewOptionsController extends CController
     public $curPage = 'viewOptionsPage';
     public $viewOptionsActions;
 
-    function __construct($post, $session)
+    function __construct()
     {
-        $this->IsAppLoggedIn($post, $session);
+        $this->IsAppLoggedIn();
+        $this->setAttributes();
 
         $L = new Language();
         $this->lang = $L->GetLanguage($this->curPage);
         $this->viewOptionsActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
-
-        //even if flight was selected if file send this variant will be processed
-        if((isset($post['action']) && ($post['action'] != '')) &&
-            (isset($post['data']) && ($post['data'] != '')))
-        {
-            $this->action = $post['action'];
-            $this->data = $post['data'];
-        }
-        else
-        {
-            echo("Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
-                " . Page: " . $this->curPage. ".");
-
-            error_log("Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
-                " . Page: " . $this->curPage. ".");
-        }
     }
 
     public function PutTopMenu()

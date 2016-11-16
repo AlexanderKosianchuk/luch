@@ -1414,28 +1414,22 @@ class Bru
         $link = $c->Connect();
         $paramInfo = array();
 
-        if($paramType == "")
-        {
+        if($paramType == "") {
             $paramType = $this->GetParamType($paramCode, $cycloApTableName, $cycloBpTableName);
         }
 
+        $freq = 1;
 
-        if($paramType == PARAM_TYPE_AP)
-        {
+        if($paramType == PARAM_TYPE_AP) {
             $query = "SELECT * FROM `".$cycloApTableName."` WHERE `code` = '".$paramCode."' LIMIT 1;";
             $result = $link->query($query);
             $row = $result->fetch_array();
 
-            if(strpos($row['channel'], ",") != 0)
-            {
+            if(strpos($row['channel'], ",")) {
                 $freq = explode(",", $row['channel']);
                 $freq = array_map("trim", $freq);
                 $freq = array_filter($freq);
                 $freq = count($freq);
-            }
-            else
-            {
-                $freq = 1;
             }
 
             $paramInfo = array("id" => $row['id'],
@@ -1454,23 +1448,17 @@ class Bru
                 "shift" => $row['shift'],
                 "freq" => $freq,
                 "paramType" => PARAM_TYPE_AP);
-        }
-        else if($paramType == PARAM_TYPE_BP)
-        {
+        } else if($paramType == PARAM_TYPE_BP) {
             $query = "SELECT * FROM `".$cycloBpTableName."` WHERE `code` = '".$paramCode."' LIMIT 1;";
             $result = $link->query($query);
             $row = $result->fetch_array();
 
-            if(strpos(",", $row['channel']) !== 0)
-            {
+            if(strpos(",", $row['channel'])) {
+                var_dump($row['channel']);
                 $freq = explode(",", $row['channel']);
                 $freq = array_map("trim", $freq);
                 $freq = array_filter($freq);
                 $freq = count($freq);
-            }
-            else
-            {
-                $freq = 1;
             }
 
             $paramInfo = array("id" => $row['id'],
@@ -1488,7 +1476,6 @@ class Bru
 
         $c->Disconnect();
         unset($c);
-
         return $paramInfo;
     }
 

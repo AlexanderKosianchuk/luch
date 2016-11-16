@@ -7,9 +7,9 @@ class IndexController extends CController
     public $curPage = 'indexPage';
     public $flightActions;
 
-    function __construct($post, $session, $get = [])
+    function __construct()
     {
-        $this->IsAppLoggedIn($post, $session);
+        $this->IsAppLoggedIn();
     }
 
     public function PutCharset()
