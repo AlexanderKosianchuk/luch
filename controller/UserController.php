@@ -234,7 +234,7 @@ class UserController extends CController
         //==========================================
         //access to flights
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege)) {
+        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->_user->privilege)) {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 
             $Fl = new Flight();
@@ -276,7 +276,7 @@ class UserController extends CController
         //==========================================
         //access to brutypes
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->privilege))
+        if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->_user->privilege))
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
@@ -315,7 +315,7 @@ class UserController extends CController
         //==========================================
         //access to users
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->privilege))
+        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->_user->privilege))
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
 
@@ -440,7 +440,7 @@ class UserController extends CController
         //==========================================
         //access to flights
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->privilege)) {
+        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->_user->privilege)) {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 
             $Fl = new Flight();
@@ -489,7 +489,7 @@ class UserController extends CController
         //==========================================
         //access to brutypes
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->privilege))
+        if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->_user->privilege))
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
@@ -535,7 +535,7 @@ class UserController extends CController
         //==========================================
         //access to users
         //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->privilege))
+        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->_user->privilege))
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
 

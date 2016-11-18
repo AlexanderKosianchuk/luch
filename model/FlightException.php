@@ -571,15 +571,14 @@ class FlightException
     public function GetFlightEventsParamsList($extExcEventsTableName)
     {
         $excEventsTableName = $extExcEventsTableName;
-        $query = "SELECT DISTINCT `refParam` FROM `".$excEventsTableName."` ORDER BY `frameNum`;";
+        $query = "SELECT DISTINCT `refParam` FROM `".$excEventsTableName."` WHERE 1;";
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $result = $link->query($query);
 
         $excEventsCodesList = array();
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             array_push($excEventsCodesList, $row['refParam']);
         }
 

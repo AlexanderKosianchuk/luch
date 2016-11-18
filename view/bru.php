@@ -1,4 +1,4 @@
-s<?php
+<?php
 
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
@@ -17,14 +17,14 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $workspace = $c->PutWorkspace();
                 $c->RegisterActionExecution($action, "executed");
 
-                $answ = array(
-                        'status' => 'ok',
-                        'data' => array(
-                            'topMenu' => $topMenu,
-                            'leftMenu' => $leftMenu,
-                            'workspace' => $workspace,
-                        )
-                );
+                $answ = [
+                    'status' => 'ok',
+                    'data' => [
+                        'topMenu' => $topMenu,
+                        'leftMenu' => $leftMenu,
+                        'workspace' => $workspace,
+                    ]
+                ];
 
                 echo json_encode($answ);
             }

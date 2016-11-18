@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class BruController extends CController
 {
     public $curPage = 'bruTypesPage';
-    private $bruActions;
+    public $bruActions;
 
     function __construct()
     {
@@ -27,44 +27,15 @@ class BruController extends CController
     {
         $leftMenu = sprintf("<div id='leftMenuBruType' class='LeftMenu'>");
 
-        /*if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
-                in_array($Usr->bruTypesPrivilegeArr[1], $this->privilege) ||
-                in_array($Usr->bruTypesPrivilegeArr[2], $this->privilege) ||
-                in_array($Usr->bruTypesPrivilegeArr[3], $this->privilege) ||
-                in_array($Usr->bruTypesPrivilegeArr[4], $this->privilege))*/
-        if(false)
-        {
-            $leftMenu .= "<div id='editBruGeneralInfoLeftMenuRow' class='LeftMenuRowOptions '>" .
-                    "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/generalInfo.png'></img>" .
-                    " " . $this->lang->generalInfo .
-                    "</div>";
-        }
-
-        if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
-                in_array($Usr->bruTypesPrivilegeArr[3], $this->privilege))
+        if(in_array($this->_user->bruTypesPrivilegeArr[0], $this->_user->privilege) ||
+                in_array($this->_user->bruTypesPrivilegeArr[3], $this->_user->privilege))
         {
             $leftMenu .= "<div id='editBruTplsLeftMenuRow' class='LeftMenuRowOptions'>" .
                     "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>" .
                     " " . $this->lang->templates .
                     "</div>";
         }
-
-        if(false)
-        {
-            $leftMenu .= "<div id='editBruCycloLeftMenuRow' class='LeftMenuRowOptions'>" .
-                    "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/paramsList.png'></img>" .
-                    " " . $this->lang->cyclo .
-                    "</div>";
-        }
-
-        if(false)
-        {
-            $leftMenu .= "<div id='editBruEventsLeftMenuRow' class='LeftMenuRowOptions'>" .
-                    "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/events.png'></img>" .
-                    " " . $this->lang->events .
-                    "</div>";
-        }
-
+        
         $leftMenu .= sprintf("</div>");
 
         return $leftMenu;
