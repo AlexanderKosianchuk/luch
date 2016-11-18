@@ -27,7 +27,6 @@ class BruController extends CController
     {
         $leftMenu = sprintf("<div id='leftMenuBruType' class='LeftMenu'>");
 
-        $Usr = new User();
         /*if(in_array($Usr->bruTypesPrivilegeArr[0], $this->privilege) ||
                 in_array($Usr->bruTypesPrivilegeArr[1], $this->privilege) ||
                 in_array($Usr->bruTypesPrivilegeArr[2], $this->privilege) ||
@@ -79,25 +78,10 @@ class BruController extends CController
         return $workspace;
     }
 
-    public function GetUserInfo()
-    {
-        $U = new User();
-        $uId = $U->GetUserIdByName($this->_user->username);
-        $userInfo = $U->GetUserInfo($uId);
-        unset($U);
-
-        return $userInfo;
-    }
-
     public function GetTplsList($extBruTypeId)
     {
         $bruTypeId = $extBruTypeId;
         $tplsListWithControlButtns = '';
-
-        /*$U = new User();
-        $uId = $U->GetUserIdByName($this->_user->username);
-        $userInfo = $U->GetUserInfo($uId);
-        unset($U);*/
 
         $Bru = new Bru();
         $bruInfo = $Bru->GetBruInfoById($bruTypeId);

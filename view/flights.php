@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
 
 $c = new FlightsController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightGeneralElements"]) {
         if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
             if(isset($c->data['data'])) {

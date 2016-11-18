@@ -172,9 +172,7 @@ class ChartController extends CController
 
     public function PutWorkspace()
     {
-        $U = new User();
-        $userId = $U->GetUserIdByName($this->_user->username);
-        unset($U);
+        $userId = $this->_user->GetUserIdByName($this->_user->username);
 
         $O = new UserOptions();
         $mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
@@ -610,9 +608,7 @@ class ChartController extends CController
         $FDRinfo = $FDR->GetBruInfo($flightInfo['bruType']);
         unset($FDR);
 
-        $U = new User();
-        $userId = $U->GetUserIdByName($this->_user->username);
-        unset($U);
+        $userId = $this->_user->GetUserIdByName($this->_user->username);
 
         $O = new UserOptions();
         $step = $O->GetOptionValue($userId, 'printTableStep');

@@ -19,18 +19,20 @@ class FlightException
         $stmt = $link->prepare($query);
         $stmt->execute();
 
-        $query = "CREATE TABLE `".$flightExTableName."` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `frameNum` INT(11),
-                `startTime` BIGINT(20),
-                `endFrameNum` INT(11),
-                `endTime` BIGINT(20),
-                `refParam` VARCHAR(255),
-                `code` VARCHAR(255),
-                `excAditionalInfo` TEXT,
-                `falseAlarm` BOOL DEFAULT 0,
-                `userComment` TEXT NOT NULL DEFAULT '',
-                PRIMARY KEY (`id`)) " .
-                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+        $query = "CREATE TABLE `".$flightExTableName."` (`id` INT NOT NULL AUTO_INCREMENT, "
+                . " `frameNum` INT,"
+                . " `startTime` BIGINT,"
+                . " `endFrameNum` INT,"
+                . " `endTime` BIGINT,"
+                . " `refParam` VARCHAR(255),"
+                . " `code` VARCHAR(255),"
+                . " `excAditionalInfo` TEXT,"
+                . " `falseAlarm` BOOL DEFAULT 0,"
+                . " `userComment` TEXT,"
+                . " PRIMARY KEY (`id`))"
+                . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+        error_log($query);
         $stmt = $link->prepare($query);
         $stmt->execute();
 

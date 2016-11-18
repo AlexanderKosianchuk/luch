@@ -43,6 +43,6 @@ if ($c->_user && ($c->_user->username !== null)) {
 }
 else
 {
-    echo("Authorization error. Page: " . $c->currPage);
-    error_log("Authorization error. Page: " . $c->currPage);
+    echo("Authorization error. Page: " . $c->curPage);
+    error_log("Authorization error. Page: " . $c->curPage);
 }

@@ -1,4 +1,4 @@
-function FlightProccessingStatus(langStr) {     
+function FlightProccessingStatus(langStr) {
     this.uploadings = new Object();
     this.updateUploadsStatusNeed = false;
     this.indicator = null;
@@ -34,8 +34,6 @@ FlightProccessingStatus.prototype.SetUpload = function(fileName, bruType, status
 };
 
 FlightProccessingStatus.prototype.RemoveUpload = function(fileName) {
-    //delete this.uploadings[fileName];
-
     this.uploadings[fileName]['completeStatus'] = 1;
     this.SetIndicatorVal();
 };

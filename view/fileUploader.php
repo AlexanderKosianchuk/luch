@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UploaderController.php");
 
 $c = new UploaderController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightShowUploadingOptions"]) {
         if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
@@ -147,7 +147,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                     isset($c->data['flightAditionalInfo']))
             {
                 $bruType = $c->data['bruType'];
-                $c->_userploadedFile = $c->data['fileName'];
+                $uploadedFile = $c->data['fileName'];
 
                 $tempFileName = $c->data['tempFileName'];
                 $receivedFlightInfo = $c->data['flightInfo'];
@@ -203,13 +203,13 @@ if ($c->_user && ($c->_user->username !== '')) {
                     $departureAirport,
                     $arrivalAirport,
                     $aditionalInfoVars,
-                    $c->_userploadedFile,
+                    $uploadedFile,
                     $totalPersentage
                 );
 
                 $answ = array(
                         "status" => "ok",
-                        "data" => $c->_userploadedFile
+                        "data" => $uploadedFile
                 );
                 echo(json_encode($answ));
             }
@@ -241,7 +241,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                         isset($c->data['flightAditionalInfo']))
                 {
                     $bruType = $c->data['bruType'];
-                    $c->_userploadedFile = $c->data['fileName'];
+                    $uploadedFile = $c->data['fileName'];
 
                     $tempFileName = $c->data['tempFileName'];
                     $receivedFlightInfo = $c->data['flightInfo'];
@@ -297,7 +297,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                         $departureAirport,
                         $arrivalAirport,
                         $aditionalInfoVars,
-                        $c->_userploadedFile,
+                        $uploadedFile,
                         $totalPersentage
                     );
 
@@ -307,7 +307,7 @@ if ($c->_user && ($c->_user->username !== '')) {
 
                     $answ = array(
                             "status" => "ok",
-                            "data" => $c->_userploadedFile
+                            "data" => $uploadedFile
                     );
                     echo(json_encode($answ));
                 }
@@ -351,10 +351,10 @@ if ($c->_user && ($c->_user->username !== '')) {
                 {
                     $bruType = $c->data['bruType'];
                     $fileName = $c->data['fileName'];
-                    $c->_userploadedFile = UPLOADED_FILES_PATH . $fileName;
+                    $uploadedFile = UPLOADED_FILES_PATH . $fileName;
                     $tempFileName = $c->data['tempFileName'];
 
-                    $flightInfoFromHeader = $c->ReadHeader($bruType, $c->_userploadedFile);
+                    $flightInfoFromHeader = $c->ReadHeader($bruType, $uploadedFile);
 
                     $bort = "x";
                     if(isset($flightInfoFromHeader["bort"]))
@@ -404,7 +404,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                             $departureAirport,
                             $arrivalAirport,
                             $aditionalInfoVars,
-                            $c->_userploadedFile,
+                            $uploadedFile,
                             $totalPersentage
                     );
 
@@ -505,6 +505,6 @@ if ($c->_user && ($c->_user->username !== '')) {
 }
 else
 {
-    echo("Authorization error. Page: " . $c->currPage);
-    error_log("Authorization error. Page: " . $c->currPage);
+    echo("Authorization error. Page: " . $c->curPage);
+    error_log("Authorization error. Page: " . $c->curPage);
 }

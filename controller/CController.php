@@ -23,9 +23,13 @@ class CController
             $this->data = $post['data'];
         } else if ($get != null) {
             $this->data = $get;
+
+            if ($get['action']) {
+                $this->action = $get['action'];
+            }
         } else {
-            $msg = "Incorect input. Data: " . json_encode($post['data']) .
-                " . Action: " . json_encode($post['action']) .
+            $msg = "Incorect input. Data: " . json_encode($post['data'] ?? '') .
+                " . Action: " . json_encode($post['action'] ?? '') .
                 " . Page: " . $this->curPage. ".";
             echo($msg);
             error_log($msg);

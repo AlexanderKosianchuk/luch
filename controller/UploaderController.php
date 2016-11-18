@@ -170,8 +170,6 @@ class UploaderController extends CController
             }
         }
 
-        $U = new User();
-
         if(in_array($this->_user::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege))
         {
             $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
@@ -529,11 +527,9 @@ class UploaderController extends CController
         $newFileName = $filePath;
         $newFileAppendix = 'a';
 
-        do
-        {
+        do {
             $newFileAppendix++;
-        }
-        while(file_exists($newFileName . $newFileAppendix));
+        } while(file_exists($newFileName . $newFileAppendix));
         $newFileName = $newFileName . $newFileAppendix;
 
         $Bru = new Bru();
@@ -544,8 +540,7 @@ class UploaderController extends CController
         $handle = fopen($filePath, "r");
         $newHandle = fopen($newFileName, "w");
 
-        if($headerLength > 0)
-        {
+        if($headerLength > 0) {
             $fileHeader = fread($handle, $headerLength);
             fwrite($newHandle, $fileHeader);
         }
@@ -624,12 +619,9 @@ class UploaderController extends CController
         $copyCreationDate = $extCopyCreationDate;
         $totalPersentage = $extTotalPersentage;
 
-        if(strlen($copyCreationTime) > 5)
-        {
+        if(strlen($copyCreationTime) > 5) {
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime);
-        }
-        else
-        {
+        } else {
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime . ":00");
         }
 
@@ -850,15 +842,12 @@ class UploaderController extends CController
             unlink($fileNameBp);
         }
 
-        $Usr = new User();
-        $Usr->SetFlightAvaliable($this->_user->username, $flightId);
+        $this->_user->SetFlightAvaliable($this->_user->username, $flightId);
 
-
-        $userId = $Usr->GetUserIdByName($this->_user->username);
+        $userId = $this->_user->GetUserIdByName($this->_user->username);
         $Fd = new Folder();
         $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
         unset($Fd);
-        unset($Usr);
 
         unset($Fr);
 
@@ -900,8 +889,7 @@ class UploaderController extends CController
         $bpGradiTableName = $bruInfo["gradiBpTableName"];
         $stepLength = $bruInfo["stepLength"];
 
-        if ($excListTableName != "")
-        {
+        if ($excListTableName != "") {
             $bruInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
             $excListTableName = $bruInfo["excListTableName"];
             $apGradiTableName = $bruInfo["gradiApTableName"];
@@ -956,9 +944,7 @@ class UploaderController extends CController
 
         $Fl->DeleteFlight($this->flightId, $prefixArr);
 
-        $Usr = new User();
-        $Usr->UnsetFlightAvaliable($this->flightId);
-        unset($Usr);
+        $this->_user->UnsetFlightAvaliable($this->flightId);
 
         unset($Fl);
     }
@@ -977,12 +963,11 @@ class UploaderController extends CController
         $Bru = new Bru();
         $Fr = new Frame();
         $FlE = new FlightException();
-        $Usr = new User();
         $Fd = new Folder();
 
         $folderInfo = [];
 
-        $userId = $Usr->GetUserIdByName($this->_user->username);
+        $userId = $this->_user->GetUserIdByName($this->_user->username);
 
         if ($res === TRUE) {
             $i = 0;
@@ -1061,7 +1046,7 @@ class UploaderController extends CController
                     }
                 }
 
-                $Usr->SetFlightAvaliable($this->_user->username, $flightId);
+                $this->_user->SetFlightAvaliable($this->_user->username, $flightId);
 
                 if(count($headerFiles) > 1) {
                     if($needToCreateImportedFolder) {
@@ -1088,7 +1073,6 @@ class UploaderController extends CController
             unset($FlE);
             unset($Fr);
             unset($Fd);
-            unset($Usr);
             unset($Bru);
 
             if(count($headerFiles) <= 0) {
@@ -1099,15 +1083,5 @@ class UploaderController extends CController
         } else {
             return false;
         }
-    }
-
-    public function GetUserInfo()
-    {
-        $U = new User();
-        $uId = $U->GetUserIdByName($this->_user->username);
-        $userInfo = $U->GetUserInfo($uId);
-        unset($U);
-
-        return $userInfo;
     }
 }

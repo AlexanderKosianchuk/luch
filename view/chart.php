@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 
 $c = new ChartController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->chartActions["putChartContainer"]) {
         if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {

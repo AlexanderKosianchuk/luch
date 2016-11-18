@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
 
 $c = new PrinterController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->printerActions["printBlank"]) {
         if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -15,7 +15,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                 $flightId = $c->data['flightId'];
                 $sections = explode(',', $c->data['sections']);
 
-                $c->ConstructColorFlightEventsList($flightId, $sections);
+                $c->ConstructFlightEventsList($flightId, $sections, true);
 
                 $c->RegisterActionExecution($action, "executed");
             }
@@ -47,7 +47,7 @@ if ($c->_user && ($c->_user->username !== '')) {
                 $flightId = $c->data['flightId'];
                 $sections = explode(',', $c->data['sections']);
 
-                $c->ConstructBlackFlightEventsList($flightId, $sections);
+                $c->ConstructFlightEventsList($flightId, $sections, false);
 
                 $c->RegisterActionExecution($action, "executed");
             }
@@ -68,11 +68,9 @@ if ($c->_user && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    }
-    else
-    {
-        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
-                " . Action: " . json_encode($_POST['action']) .
+    } else {
+        $msg = "Undefined action. Data: " . json_encode($_POST['data'] ?? '') .
+                " . Action: " . json_encode($_POST['action'] ?? '') .
                 " . Page: " . $c->curPage. ".";
         $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
         error_log($msg);
@@ -81,7 +79,7 @@ if ($c->_user && ($c->_user->username !== '')) {
 }
 else
 {
-    $msg = "Authorization error. Page: " . $c->currPage;
+    $msg = "Authorization error. Page: " . $c->curPage;
     $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
     error_log($msg);
     echo($msg);

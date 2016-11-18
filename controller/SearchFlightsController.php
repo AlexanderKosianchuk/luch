@@ -23,9 +23,7 @@ class SearchFlightController extends CController
         $form .= sprintf("<div class='search-flight-filter'>");
         $form .= sprintf("<form id='search-form' enctype='multipart/form-data'>");
 
-        $Usr = new User();
-        $avalibleBruTypes = $Usr->GetAvaliableBruTypes($this->_user->username);
-        unset($Usr);
+        $avalibleBruTypes = $this->_user->GetAvaliableBruTypes($this->_user->username);
 
         $Bru = new Bru();
         $bruList = $Bru->GetBruList($avalibleBruTypes);
@@ -224,15 +222,5 @@ class SearchFlightController extends CController
         }
 
         return $form;
-    }
-
-    public function GetUserInfo()
-    {
-        $U = new User();
-        $uId = $U->GetUserIdByName($this->_user->username);
-        $userInfo = $U->GetUserInfo($uId);
-        unset($U);
-
-        return $userInfo;
     }
 }

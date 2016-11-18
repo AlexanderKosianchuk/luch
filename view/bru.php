@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
 
 $c = new BruController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->bruActions["putBruTypeContainer"]) {
         if(in_array($c->_user::$PRIVILEGE_VIEW_BRUTYPES, $c->_user->privilege))
         {
@@ -297,7 +297,7 @@ if ($c->_user && ($c->_user->username !== '')) {
 }
 else
 {
-    $msg = "Authorization error. Page: " . $c->currPage;
+    $msg = "Authorization error. Page: " . $c->curPage;
     $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
     error_log($msg);
     echo($msg);

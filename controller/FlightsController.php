@@ -518,7 +518,6 @@ class FlightsController extends CController
 
             $result = $Fl->DeleteFlight($id, $prefixApArr, $prefixBpArr);
 
-            $this->_user = new User();
             $this->_user->UnsetFlightAvaliable($id);
 
             $Fd = new Folder();

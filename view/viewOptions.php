@@ -5,7 +5,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ViewOptionsController.php"
 
 $c = new ViewOptionsController();
 
-if ($c->_user && ($c->_user->username !== '')) {
+if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->viewOptionsActions["putViewOptionsContainer"]) {
         if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -479,7 +479,7 @@ if ($c->_user && ($c->_user->username !== '')) {
 }
 else
 {
-    $msg = "Authorization error. Page: " . $c->currPage;
+    $msg = "Authorization error. Page: " . $c->curPage;
     echo($msg);
     error_log($msg);
 }

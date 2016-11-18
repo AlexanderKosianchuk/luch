@@ -96,8 +96,6 @@ class Channel
         `frameNum` = ".$frame."
         ORDER BY `time` ASC";
 
-        error_log($query);
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $result = $link->query($query);
