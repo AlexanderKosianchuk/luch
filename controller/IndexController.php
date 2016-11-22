@@ -133,7 +133,7 @@ class IndexController extends CController
                     $input);
         }
 
-        printf("<div id='optionsDialog' title='%s'>
+        printf("<div id='optionsDialog' class='options-dialog' title='%s'>
                 <p><form id='optionsForm'>
                     %s
                 </form></p>

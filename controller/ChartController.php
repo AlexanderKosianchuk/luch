@@ -13,11 +13,6 @@ class ChartController extends CController
         $this->IsAppLoggedIn();
         $this->setAttributes();
 
-        $get = $_GET;
-        if ($get != null) {
-            $this->action = $this->chartActions["putChartInNewWindow"];
-        }
-
         $L = new Language();
         $this->chartActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
@@ -159,9 +154,16 @@ class ChartController extends CController
 
     public function PrintWorkspace()
     {
+        $userId = $this->_user->GetUserIdByName($this->_user->username);
+
+        $O = new UserOptions();
+        $mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
+        $lineWidth = $O->GetOptionValue($userId, 'lineWidth');
+        unset($O);
+
         printf("<div id='chartWorkspace' class='WorkSpace'>".
                 "<div id='graphContainer' class='GraphContainer'>" .
-                "<div id='placeholder'></div>" .
+                "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
                 "<div id='legend'></div>" .
                 "</div>" .
                 "<div id='loadingBox' class='LoadingBox'>" .

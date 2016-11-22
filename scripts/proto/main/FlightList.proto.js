@@ -315,7 +315,6 @@ FlightList.prototype.ShowOptions = function() {
     var optionsDialog = $("#optionsDialog").dialog({
         resizable:false,
         autoOpen: true,
-        height: 700,
         width: '60%',
         modal: true,
         buttons: [

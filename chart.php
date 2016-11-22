@@ -34,8 +34,8 @@ if ($c->_user && ($c->_user->username !== null)) {
     }
     else
     {
-        $msg = "Undefined action. Data: " . json_encode($_POST['data']) .
-                " . Action: " . json_encode($_POST['action']) .
+        $msg = "Undefined action. Data: " . json_encode($c->data) .
+                " . Action: " . json_encode($c->action) .
                 " . Page: " . $c->curPage. ".";
         echo($msg);
         error_log($msg);
