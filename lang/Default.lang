@@ -39,16 +39,16 @@
     "userCreatedSuccesfully": "User created",
     "userCreationFailed": "User creation failed",
     "userAlreadyExist": "User already exist",
-    
+
     "flightList": "Flights list",
-    
+
     "flightFilesList": "Flight files for convertion",
 	"flightsConvertSelected": "Convert selected",
-    
+
     "flightUploadComplt": "Complete",
     "flightImportSuccess": "Flight import success. Refresh page",
     "flightImportFailed": "Flight import failed",
-	
+
 	"serverCommunicationError": 'serverCommunicationError',
 	"loadingMessage": 'loadingMessage',
 	"noDataAvailable": 'noDataAvailable',
@@ -60,7 +60,7 @@
 	"saving": 'saving',
 	"cancel": 'cancel',
 	"deleteText": 'deleteText',
-	"deleting": 'deleting',                                                                                               
+	"deleting": 'deleting',
 	"error": 'error',
 	"close": 'close',
 	"cannotLoadOptionsFor": 'cannotLoadOptionsFor {0}',
@@ -69,7 +69,7 @@
 	"deleteProggress": 'Deleting {0} from {1} rows...',
 	"pageSizeChangeLabel": 'pageSizeChangeLabel',
 	"gotoPageLabel": 'gotoPageLabel',
-	
+
 	"apTable": "apTable",
 	"gradiTable": "gradiTable",
 	"srcTable": "srcTable",
@@ -78,7 +78,7 @@
 	"gradiCode": "Code",
 	"gradiPh": "Phisics",
 	"srcVal": "Script",
-	
+
 	"paramCode": "paramCode",
 	"paramName": "paramName",
 	"dim": "dim",
@@ -91,7 +91,7 @@
 	"minVal": "minVal",
 	"maxVal": "maxVal",
 	"prefix": "prefix",
-    
+
     "indexPage": {
         "title": "Welcome",
         "search": "Search",
@@ -101,7 +101,7 @@
         "fileConvert": "Convert",
         "filePreview": "Preview",
         "chooseFile": "Choose file",
-        
+
 		"flightsItem": "Flight",
 		"slicesItem": "Slices",
 		"enginesItem": "Engines",
@@ -141,9 +141,9 @@
         "departureAirport": "Airport Departure",
         "arrivalAirport": "Airport Landing",
         "create": "Create",
-        
+
         "message": "Message",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -161,8 +161,8 @@
 	    "userExit": "Exit",
 		"notAllowedByPrivilege" : "Not enough privilege level to perform current action"
     },
-    
-    "flightsPage":{	
+
+    "flightsPage":{
 		"root" : "Root folder",
         "bort": "Bort",
         "voyage": "Flight",
@@ -227,7 +227,7 @@
         "reliability": "Reliab.",
         "comment": "Comment",
         "continue": "Next",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -247,7 +247,7 @@
 		"weightlndg": "Landing weight",
 		"capitan": "Capitan",
 		"route":"Route",
-        "duration" : "Duration", 
+        "duration" : "Duration",
         "centring": "Alignment",
         "firstOfficer": "First officer",
         "departureAirport": "Airport Departure",
@@ -256,7 +256,7 @@
         "uploadTime": "Uploading time and date",
         "execTime": "Executing time and date",
         "performer": "Performer",
-        "eventsList" : "Events list", 
+        "eventsList" : "Events list",
         "noEvents": "Events are missing",
         "start": "Start",
         "end": "The End",
@@ -268,7 +268,7 @@
         "aditionalInfo": "Additional Information",
         "reliability": "Reliab.",
         "comment": "Comment",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -309,7 +309,7 @@
         "toChart": "on chart",
         "toDiagnostic": "the diagnosis",
         "continueLabel": "Continue",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -323,7 +323,7 @@
         "bort": "Bort",
         "voyage": "Flight",
         "engines": "Engines",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -352,7 +352,7 @@
         "wheelToZoomX": "Rotating the mouse wheel - zooming along the time axis",
         "shiftAndWheelToZoomY": "Rotating the mouse wheel while holding the SHIFT - scaling axis values",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -365,7 +365,7 @@
         "voyage": "Flight",
         "flightDate": "date of flight",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -378,7 +378,7 @@
         "voyage": "Flight",
         "flightDate": "date of flight",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -386,13 +386,13 @@
         "loginFailed": "Login failed",
         "notAllowedByPrivilege" : "Not enough privilege level to perform current action"
     },
-    
+
     "modelPage": {
         "bort": "Bort",
         "voyage": "Flight",
         "flightDate": "date of flight",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -400,13 +400,13 @@
         "loginFailed": "Login failed",
         "notAllowedByPrivilege" : "Not enough privilege level to perform current action"
     },
-    
+
     "googleEarthPage": {
         "bort": "Bort",
         "voyage": "Flight",
         "flightDate": "date of flight",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -414,14 +414,14 @@
         "loginFailed": "Login failed",
         "notAllowedByPrivilege" : "Not enough privilege level to perform current action"
     },
-    
+
     "tablePage": {
         "bort": "Bort",
         "voyage": "Flight",
         "flightDate": "date of flight",
         "tpl": "Templates",
         "time": "Time",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -464,7 +464,7 @@
         "delChart": "Delete the schedule",
         "message": "Message",
         "continueLabel": "Continue",
-        "loginForm":"Login form",
+        "loginForm":"Welcome To Luch",
         "login":"Login",
         "userName":"User name",
         "pass":"password",
@@ -474,7 +474,7 @@
     },
 
 	"bruTypePage":{
-		"loginForm":"Login form",
+		"loginForm":"Welcome To Luch",
 		"userName":"Login",
 		"pass":"Password",
 		"rememberMe":"Remember me",
@@ -498,7 +498,7 @@
 	},
 
 	"userPage":{
-		"loginForm":"Login form",
+		"loginForm":"Welcome To Luch",
 		"rememberMe":"Remember me",
 		"login":"Login",
 		"company":"Organization",
