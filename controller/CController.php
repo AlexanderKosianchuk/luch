@@ -66,25 +66,23 @@ class CController
     public function ShowLoginForm()
     {
         $loginMsg = $this->_user->loginMsg ?? '';
-        printf("<div align='center'><p class='Label'>%s</p>
-            <label style='color:darkred;'>%s</label></br></br>
+        printf("<div align='center' class='login-form'><p class='login-form_header'>%s</p>
+            <img src='/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
+            <p><label class='login-form_label login-form_label--alert'>%s</label></p>
             <form action='index.php' method='POST'>
             <table>
-                <tr><td>%s</td><td>
-                    <input type='text' name='user'>
+                <tr><td><label class='login-form_label'>%s</label></td><td>
+                    <input type='text' name='user' class='login-form_input'>
                 </td></tr>
-                <tr><td>%s</td><td>
-                    <input type='password' name='pwd'>
+                <tr><td><label class='login-form_label'>%s</label></td><td>
+                    <input type='password' name='pwd' class='login-form_input'>
                 </td></tr>
-                <tr><td>%s</td><td align='center'>
-                    <input type='checkbox' name='autologin' value='1'>
-                </td></tr>
-                <tr style='visibility:hidden;'><td>
-                    Nonce:
+                <tr><td><label class='login-form_label'>%s</label></td><td align='center'>
+                    <input type='checkbox' name='autologin' value='1' class='login-form_checkbox'>
                 </td></tr>
             </table>
 
-            <input class='Button' type='submit' value='%s'>
+            <input class='login-form_button' type='submit' value='%s'>
         </form></div>", $this->lang->loginForm,
         $loginMsg,
         $this->lang->userName,

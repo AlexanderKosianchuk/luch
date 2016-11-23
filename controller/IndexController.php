@@ -41,6 +41,7 @@ class IndexController extends CController
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/user.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/flight.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlight.css' />
+                <link rel='stylesheet' type='text/css' href='stylesheets/pages/login.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
     }
 
