@@ -7,7 +7,7 @@ $c = new PrinterController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->printerActions["printBlank"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) && isset($c->data['sections']))
             {
@@ -39,7 +39,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->printerActions["monochromePrintBlank"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) && isset($c->data['sections']))
             {
@@ -69,8 +69,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else {
-        $msg = "Undefined action. Data: " . json_encode($_POST['data'] ?? '') .
-                " . Action: " . json_encode($_POST['action'] ?? '') .
+        $msg = "Undefined action. Data: " . json_encode(isset($_POST['data']) ? $_POST['data'] : '') .
+                " . Action: " . json_encode(isset($_POST['action']) ? $_POST['action'] : '') .
                 " . Page: " . $c->curPage. ".";
         $c->RegisterActionReject("undefinedAction", "rejected", 0, $msg);
         error_log($msg);

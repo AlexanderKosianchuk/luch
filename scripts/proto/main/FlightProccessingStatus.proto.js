@@ -213,7 +213,7 @@ FlightProccessingStatus.prototype.UpdateStatus = function() {
                         }
                     }).fail(function(){
                         el['completeStatus']--;
-                        if(el['completeStatus'] >= -3) {
+                        if(el['completeStatus'] >= -7) {
                             setTimeout(function(){ self.UpdateStatus(); }, 3000);
                         } else {
                             self.RemoveUpload(el['uploadingFile']);

@@ -7,7 +7,7 @@ $c = new FlightsController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightGeneralElements"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
             if(isset($c->data['data'])) {
                 $action = $c->action;
                 $topMenu = $c->PutTopMenu();
@@ -45,7 +45,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightLastView"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -173,7 +173,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightTwoColumnsListByPathes"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -235,7 +235,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightListTree"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -295,7 +295,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["receiveTree"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -373,7 +373,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightListTable"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -418,7 +418,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["segmentTable"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -513,7 +513,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["showFolderContent"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['folderId']))
             {
@@ -554,7 +554,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightShowFolder"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['position']) &&
                     isset($c->data['fullpath']))
@@ -604,7 +604,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightGoUpper"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['position']) &&
                     isset($c->data['fullpath']))
@@ -657,7 +657,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["folderCreateNew"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['folderName']) &&
                     isset($c->data['fullpath']))
@@ -696,7 +696,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightChangePath"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['sender']) &&
                     isset($c->data['target']))
@@ -740,7 +740,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["folderChangePath"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['sender']) &&
                     isset($c->data['target']))
@@ -784,7 +784,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["folderRename"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['folderId']) &&
                     isset($c->data['folderName']))
@@ -828,7 +828,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["itemDelete"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['type']) &&
                     isset($c->data['id']))
@@ -894,7 +894,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["itemProcess"])
     {
-        if(in_array($c->_user::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['id']))
             {
@@ -935,7 +935,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["itemExport"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightIds']) || isset($c->data['folderDest']))
             {
@@ -993,7 +993,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["syncItemsHeaders"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['ids']))
             {

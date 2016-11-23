@@ -7,7 +7,7 @@ $c = new ViewOptionsController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->viewOptionsActions["putViewOptionsContainer"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -42,7 +42,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getFlightDuration"]) //show form for uploading
     {
-        if(in_array($c->_user    ::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -76,7 +76,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getParamCodesByTemplate"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) && isset($c->data['tplName']))
             {
@@ -111,7 +111,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getDefaultTemplateParamCodes"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -145,7 +145,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getBruTypeId"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -177,7 +177,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getBruTemplates"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -209,7 +209,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getParamListGivenQuantity"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -300,7 +300,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getSearchedParams"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if((isset($c->data['flightId'])) && (isset($c->data['request'])))
             {
@@ -335,7 +335,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["getEventsList"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
@@ -367,7 +367,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["setEventReliability"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
             if((isset($c->data['flightId'])) &&
                 (isset($c->data['excId'])) &&
@@ -398,7 +398,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["createTpl"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                 isset($c->data['tplName']) &&
@@ -438,7 +438,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->viewOptionsActions["changeParamColor"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['paramCode']) &&

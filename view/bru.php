@@ -7,7 +7,7 @@ $c = new BruController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->bruActions["putBruTypeContainer"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -48,7 +48,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["editingBruTypeTemplatesReceiveTplsList"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']))
             {
@@ -86,7 +86,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["editingBruTypeTemplatesReceiveParamsList"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']))
             {
@@ -124,7 +124,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["createTpl"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']) &&
                         isset($c->data['name']) &&
@@ -165,7 +165,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["deleteTpl"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']) &&
                     isset($c->data['name']))
@@ -204,7 +204,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["defaultTpl"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']) &&
                     isset($c->data['name']))
@@ -243,7 +243,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->bruActions["updateTpl"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']) &&
                     isset($c->data['name']) &&

@@ -7,7 +7,7 @@ $c = new ChartController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->chartActions["putChartContainer"]) {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -39,7 +39,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["figurePrint"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['fromTime']) &&
@@ -145,7 +145,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getApParamValue"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['paramApCode']) &&
@@ -184,7 +184,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getBpParamValue"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                 isset($c->data['paramBpCode']))
@@ -216,7 +216,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["rcvLegend"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['paramCodes']))
@@ -245,7 +245,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getParamMinmax"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                 isset($c->data['paramCode']) &&
@@ -276,7 +276,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["setParamMinmax"])
     {
-        if(in_array($c->_user::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                 isset($c->data['paramCode']) &&
@@ -312,7 +312,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getParamColor"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['paramCode']))
@@ -342,7 +342,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getParamInfo"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['paramCode']))
@@ -375,7 +375,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->chartActions["getFlightExceptions"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) &&
                     isset($c->data['refParam']))

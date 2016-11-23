@@ -170,7 +170,7 @@ class UploaderController extends CController
             }
         }
 
-        if(in_array($this->_user::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege))
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege))
         {
             $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
                 "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>

@@ -280,21 +280,21 @@ class User
 
     public function tryAuth($post, $session, $cookie)
     {
-        $token = $session['token'] ?? null;
+        $token = isset($session['token']) ? $session['token'] : null;
         $userId = null;
 
         if (isset($token)) {
              $userId = $this->getUserIdByToken($token);
         }
 
-        $token = $cookie['token'] ?? null;
+        $token = isset($cookie['token']) ? $cookie['token'] : null;
         if (isset($token)) {
              $userId = $this->getUserIdByToken($token);
         }
 
-        $username = $post['user'] ?? null;
-        $pass = $post['pwd'] ?? null;
-        $autologin = $post['autologin'] ?? null;
+        $username = isset($post['user']) ? $post['user'] : null;
+        $pass = isset($post['pwd']) ? $post['pwd'] : null;
+        $autologin = isset($post['autologin']) ? $post['autologin'] : null;
 
         if (!$userId
             && isset($username)

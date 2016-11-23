@@ -7,7 +7,7 @@ $c = new UserController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->userActions["userLogout"]) {
-        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -39,7 +39,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["userChangeLanguage"]) {
-        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             if(isset($c->data['lang']))
             {
@@ -72,7 +72,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["updateUserOptions"]) {
-        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             $action = $c->action;
             $form = [];
@@ -95,7 +95,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["buildUserTable"]) {
-        if(in_array($c->_user::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -130,7 +130,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["segmentTable"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_USERS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -193,7 +193,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["createUserForm"]) {
-        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             $modal = $c->BuildCreateUserModal();
             $action = $c->action;
@@ -209,7 +209,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["updateUserForm"]) {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($c->data['userid']))
             {
@@ -238,7 +238,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["createUser"]) {
-        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             if(isset($c->data) &&
                     isset($_FILES['logo']) &&
@@ -328,7 +328,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             exit();
         }
     } else if($c->action == $c->userActions["updateUser"]) {
-        if(in_array($c->_user::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($_POST['useridtoupdate']))
             {
@@ -403,7 +403,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             exit();
         }
     } else if($c->action == $c->userActions["deleteUser"]) {
-        if(in_array($c->_user::$PRIVILEGE_DEL_USERS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_DEL_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($c->data['userIds']))
             {

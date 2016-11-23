@@ -7,7 +7,7 @@ $c = new UploaderController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->flightActions["flightShowUploadingOptions"]) {
-        if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['index']) &&
                     isset($c->data['bruType']) &&
@@ -38,7 +38,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightUploaderPreview"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['bruType']) &&
                     isset($c->data['file']))
@@ -65,7 +65,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightCutFile"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['bruType']) &&
                     isset($c->data['file']) &&
@@ -103,7 +103,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightCyclicSliceFile"])
     {
-        if(in_array($c->_user::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['bruType']) &&
                     isset($c->data['file']) &&
@@ -138,7 +138,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightProcces"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['bruType']) &&
                     isset($c->data['fileName']) &&
@@ -230,9 +230,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightProccesAndCheck"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
-            if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+            if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
             {
                 if(isset($c->data['bruType']) &&
                         isset($c->data['fileName']) &&
@@ -329,7 +329,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightProccesCheckAndCompareToEtalon"]) //show form for uploading
     {
-        if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
 
             $answ["status"] = "ok";
@@ -341,9 +341,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightEasyUpload"])
     {
-        if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
-            if(in_array($c->_user::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
+            if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
             {
                 if(isset($c->data['bruType']) &&
                         isset($c->data['fileName']) &&
@@ -436,7 +436,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["flightDelete"]) // delete
     {
-        if(in_array($c->_user::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
             $c->DeleteFlight();
 
@@ -450,7 +450,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     }
     else if($c->action == $c->flightActions["itemImport"])
     {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['file']))
             {

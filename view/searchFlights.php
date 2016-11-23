@@ -7,7 +7,7 @@ $c = new SearchFlightController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action == $c->controllerActions["showSearchForm"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
@@ -44,7 +44,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             exit();
         }
     } else if($c->action == $c->controllerActions["getFilters"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['fdrId']))
             {
@@ -81,7 +81,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             exit();
         }
     } else if($c->action == $c->controllerActions["applyFilter"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['algId']) &&
                     isset($c->data['form']))

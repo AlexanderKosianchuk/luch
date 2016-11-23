@@ -28,8 +28,8 @@ class CController
                 $this->action = $get['action'];
             }
         } else {
-            $msg = "Incorect input. Data: " . json_encode($post['data'] ?? '') .
-                " . Action: " . json_encode($post['action'] ?? '') .
+            $msg = "Incorect input. Data: " . json_encode(isset($post['data']) ? $post['data'] : '') .
+                " . Action: " . json_encode(isset($post['action']) ? $post['action'] : '') .
                 " . Page: " . $this->curPage. ".";
             echo($msg);
             error_log($msg);
@@ -42,7 +42,7 @@ class CController
         $session = $_SESSION;
         $cookie = $_COOKIE;
 
-        $this->_user = $this->_user ?? new User();
+        $this->_user = isset($this->_user) ? $this->_user : new User();
 
         $success = false;
         if ($this->_user->tryAuth($post, $session, $cookie)) {
@@ -65,7 +65,7 @@ class CController
 
     public function ShowLoginForm()
     {
-        $loginMsg = $this->_user->loginMsg ?? '';
+        $loginMsg = isset($this->_user->loginMsg) ? $this->_user->loginMsg : '';
         printf("<div align='center' class='login-form'><p class='login-form_header'>%s</p>
             <img src='/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
             <p><label class='login-form_label login-form_label--alert'>%s</label></p>

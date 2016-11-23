@@ -7,7 +7,7 @@ $c = new ChartController($_POST, $_SESSION, $_GET, $_COOKIE);
 
 if ($c->_user && ($c->_user->username !== null)) {
     if($c->action == $c->chartActions["putChartInNewWindow"]) {
-        if(in_array($c->_user::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
             if(isset($c->data) && ($c->data != null) && (is_array($c->data))) {
                 $c->PutCharset();
                 $c->PutTitle();
