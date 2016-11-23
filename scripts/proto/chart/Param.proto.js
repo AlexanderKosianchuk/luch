@@ -9,7 +9,7 @@
 
 function Param(flightId,
     startFrame, endFrame,
-    apParams, bpParams, actions){
+    apParams, bpParams, actions, isPrintPage){
 
     this.flightId = flightId;
     this.apCount = 0;
@@ -26,6 +26,8 @@ function Param(flightId,
     this.endFrame = endFrame;
 
     this.actions = actions;
+
+    this.isPrintPage = isPrintPage;
 
     if(this.apArr != null){
         this.apCount = this.apArr.length;
@@ -85,7 +87,8 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
                 paramApCode: paramCode,
                 totalSeriesCount: self.apCount,
                 startFrame: self.startFrame,
-                endFrame: self.endFrame
+                endFrame: self.endFrame,
+                isPrintPage: self.isPrintPage
             }
         };
 

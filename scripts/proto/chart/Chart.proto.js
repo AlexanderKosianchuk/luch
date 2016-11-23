@@ -3,10 +3,11 @@ var CHART_SRC = location.protocol + '//' + location.host + "/view/chart.php",
     PARAM_TYPE_AP = "ap",
     PARAM_TYPE_BP = "bp";
 
-function Chart(window, document, langStr, srvcStrObj, eventHandler)
+function Chart(window, document, langStr, srvcStrObj, eventHandler, isPrintPage)
 {
     this.langStr = langStr;
     this.actions = srvcStrObj["chartPage"];
+    this.isPrintPage = isPrintPage || false;
 
     this.window = window;
     this.document = document;
@@ -307,7 +308,7 @@ Chart.prototype.LoadFlotChart = function() {
 
     self.Prm = new Param(self.flightId,
             self.startFrame, self.endFrame,
-            self.apParams, self.bpParams, self.actions);
+            self.apParams, self.bpParams, self.actions, self.isPrintPage);
 
     var lineWidth = self.placeholder.data('linewidth');
 
@@ -681,11 +682,11 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 
         //exact param by curr startFrame and endFrame
         if(event.which == KEY_E){
-            var currXmin = self.plotAxes.xaxis.min,
-                currXmax = self.plotAxes.xaxis.max;
+            var currXmin = self.plotAxes.xaxis.min / 1000, // to unix timestamp
+                currXmax = self.plotAxes.xaxis.max / 1000;
 
-            self.Prm.startFrame = (currXmin - self.startCopyTime) / 1000 / self.stepLength;
-            self.Prm.endFrame = (currXmax - self.startCopyTime) / 1000 / self.stepLength;
+            self.Prm.startFrame = Math.round((currXmin - self.startCopyTime) / self.stepLength);
+            self.Prm.endFrame = Math.floor((currXmax - self.startCopyTime) / self.stepLength);
 
             self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
 

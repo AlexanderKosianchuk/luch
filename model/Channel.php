@@ -4,136 +4,50 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 
 class Channel
 {
-    private function GetFlightChannel($extTableName, $extCode, $extCodeTablePrefix,
-            $extStartFrame, $extEndFrame, $extDivider = 1)
-    {
-        $tableName = $extTableName;
-        $code = $extCode;
-        $prefix = $extCodeTablePrefix;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $divider = $extDivider;
+    public static $compressionTypes = [
+        'none' => 'none',
+        'aroundRange' => 'aroundRange',
+        'general' => 'general'
+    ];
 
-        if($divider == 1)
-        {
-            $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
-            ((`frameNum` >= ".$startFrame.") AND
-            (`frameNum` < ".$endFrame."))
-            ORDER BY `time` ASC";
-        }
-        else
-        {
-            $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
-            ((`frameNum` >= ".$startFrame.") AND
-            (`frameNum` < ".$endFrame.")) AND
-            (`frameNum` % ".$divider." = 0)
-            GROUP BY frameNum
-            ORDER BY `time` ASC";
-        }
+    public function GetChannel(
+        $tableName,
+        $code,
+        $prefix,
+        $startFrame,
+        $endFrame,
+        $seriesCount,
+        $totalFramesCount,
+        $compression
+    ) {
+        $pointPairList = [];
 
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-        $result = $link->query($query);
+        $divider = ceil($totalFramesCount * $seriesCount / POINT_MAX_COUNT);
 
-        $pointPairList = array();
-        while($row = $result->fetch_array())
-        {
-            $point = array($row['time'], $row[$code]);
-            $pointPairList[] = $point;
-        }
+        if(($compression === $this::$compressionTypes['none'])
+            || !in_array($compression, $this::$compressionTypes)
+        ) {
+            $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE 1 "
+                . "ORDER BY `time` ASC";
 
-        $result->free();
-        $c->Disconnect();
+            $c = new DataBaseConnector();
+            $link = $c->Connect();
+            $result = $link->query($query);
 
-        unset($c);
+            while($row = $result->fetch_array())
+            {
+                $point = array($row['time'], $row[$code]);
+                $pointPairList[] = $point;
+            }
 
-        return $pointPairList;
-    }
+            $result->free();
+            $c->Disconnect();
 
-    public function GetFlightParam($extApTableName,
-            $extSeriesCountDivider,    $extStartFrame, $extEndFrame,
-            $extCode, $extCodeTablePrefix, $extCodeFreq)
-    {
-        $apTableName = $extApTableName;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $seriesDivider = $extSeriesCountDivider;
-        $code = $extCode;
-        $prefix = $extCodeTablePrefix;
-        $codeFreq = $extCodeFreq;
-
-        $framesCount = $endFrame - $startFrame;
-        $pointCount = $framesCount * $codeFreq * $seriesDivider;
-
-        $pointPairList = array();
-
-        if($pointCount < POINT_MAX_COUNT)
-        {
-            $pointPairList = $this->GetFlightChannel($apTableName, $code, $prefix,
-                    $startFrame, $endFrame);
-        }
-        else
-        {
-            //modifying divider to perform compression
-            $divider = ceil($framesCount * $seriesDivider / POINT_MAX_COUNT);
-            $pointPairList = $this->GetFlightChannel($apTableName, $code, $prefix,
-                    $startFrame, $endFrame, $divider);
-        }
-        return $pointPairList;
-    }
-
-    public function GetFlightParamValue($extApTableName,
-            $extFrame, $extCode, $extCodeTablePrefix)
-    {
-        $apTableName = $extApTableName;
-        $frame = $extFrame;
-        $code = $extCode;
-        $prefix = $extCodeTablePrefix;
-
-        $pointPairList = array();
-
-        $query = "SELECT `time`, `".$code."` FROM `".$apTableName."_".$prefix."` WHERE
-        `frameNum` = ".$frame."
-        ORDER BY `time` ASC";
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-        $result = $link->query($query);
-
-        $row = $result->fetch_array();
-
-        $point = array($row['time'], $row[$code]);
-
-        $result->free();
-        $c->Disconnect();
-
-        unset($c);
-
-        return $point;
-    }
-
-    private function GetFlightChannelWithExactSection($extTableName, $extCode, $extCodeTablePrefix,
-            $extStartFrame, $extEndFrame, $extSeriesDivider, $extTotalFramesCount, $extDivider, $extBrute)
-    {
-        $tableName = $extTableName;
-        $code = $extCode;
-        $prefix = $extCodeTablePrefix;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $divider = $extDivider;
-        $seriesDivider = $extSeriesDivider;
-        $totalFramesCount = $extTotalFramesCount;
-        $brute = $extBrute;
-
-        $pointPairList = array();
-
-        if($brute == false)
-        {
-            $divider = ceil($totalFramesCount * $seriesDivider / POINT_MAX_COUNT);
-
+            unset($c);
+        } else if ($compression === $this::$compressionTypes['aroundRange']) {
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
                 ((`frameNum` < ".$startFrame.") AND
-                (`frameNum` % ".$divider." = 0))
+                ((`frameNum` % ".$divider.") = 0))
                 ORDER BY `time` ASC";
 
             $c = new DataBaseConnector();
@@ -163,7 +77,7 @@ class Channel
 
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
                 ((`frameNum` > ".$endFrame.") AND
-                (`frameNum` % ".$divider." = 0))
+                ((`frameNum` % ".$divider.") = 0))
                 ORDER BY `time` ASC";
             $result = $link->query($query);
 
@@ -175,12 +89,12 @@ class Channel
             $result->free();
             $c->Disconnect();
             unset($c);
-        }
-        else
-        {
-            $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE
-            (`frameNum` % ".$divider." = 0)
-            ORDER BY `time` ASC";
+        } if(($compression === $this::$compressionTypes['general'])
+            || !in_array($compression, $this::$compressionTypes)
+        ) {
+            $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE"
+                . " (`frameNum` % ".$divider." = 0)"
+                . " ORDER BY `time` ASC";
 
             $c = new DataBaseConnector();
             $link = $c->Connect();
@@ -198,43 +112,6 @@ class Channel
             unset($c);
         }
 
-        return $pointPairList;
-    }
-
-    public function GetFlightParamWithExactSection($extApTableName,
-            $extSeriesCountDivider,    $extStartFrame, $extEndFrame,
-            $extCode, $extCodeTablePrefix, $extCodeFreq)
-    {
-        $apTableName = $extApTableName;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $seriesDivider = $extSeriesCountDivider;
-        $code = $extCode;
-        $prefix = $extCodeTablePrefix;
-        $codeFreq = $extCodeFreq;
-        $totalFramesCount = $extEndFrame - $extStartFrame;
-
-        $framesCount = $endFrame - $startFrame;
-        $pointCount = $framesCount * $codeFreq * $seriesDivider;
-
-        $pointPairList = array();
-
-        //if not much points betweet start and end frames
-        //we should build this segment very exact
-        //else use general compression by divider
-        if($pointCount < POINT_MAX_COUNT)
-        {
-            $divider = ceil($framesCount * $seriesDivider / POINT_MAX_COUNT);
-            $pointPairList = $this->GetFlightChannelWithExactSection($apTableName, $code, $prefix,
-                    $startFrame, $endFrame, $seriesDivider, $totalFramesCount, $divider, false);
-        }
-        else
-        {
-            //modifying divider to perform compression
-            $divider = ceil($framesCount * $seriesDivider / POINT_MAX_COUNT);
-            $pointPairList = $this->GetFlightChannelWithExactSection($apTableName, $code, $prefix,
-                    $startFrame, $endFrame, $seriesDivider, $totalFramesCount, $divider, true);
-        }
         return $pointPairList;
     }
 
@@ -310,8 +187,6 @@ class Channel
                     $pointPairList[] = $point;
                     $previousTime = $currTime;
                 }
-
-
             }
 
             $result->free();
@@ -420,7 +295,6 @@ class Channel
         while($row = $result->fetch_array())
         {
             $position = ($row['frameNum'] - $startFrame) * $stepDivider;
-            //error_log($position);
             $normArr[$position] = 1;
             for($i = 1; $i < $stepDivider; $i++)
             {
@@ -476,7 +350,6 @@ class Channel
         $link = $c->Connect();
 
         $query = "SELECT MIN(`".$paramCode."`), MAX(`".$paramCode."`) FROM `".$apTableName."` WHERE 1;";
-        //error_log($query);
         $result = $link->query($query);
 
         $row = $result->fetch_array();

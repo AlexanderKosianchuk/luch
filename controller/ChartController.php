@@ -193,16 +193,10 @@ class ChartController extends CController
         return $workspace;
     }
 
-    public function GetApParamValue($extFlightId,
-        $extStartFrame, $extEndFrame, $extTotalSeriesCount,
-        $extParamCode)
+    public function GetApParamValue($flightId,
+        $startFrame, $endFrame, $seriesCount,
+        $code, $isPrintPage)
     {
-        $flightId = $extFlightId;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $seriesCountDivider = $extTotalSeriesCount;
-        $code = $extParamCode;
-
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -222,24 +216,20 @@ class ChartController extends CController
         $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
         unset($Frame);
 
-        if($startFrame == null)
-        {
+        if($startFrame == null) {
             $startFrame = 0;
         }
 
-        if($startFrame == null)
-        {
+        if($startFrame == null) {
             $endFrame = $framesCount;
         }
 
-        if($endFrame > $framesCount)
-        {
+        if($endFrame > $framesCount) {
             $endFrame = $framesCount;
         }
 
-        if($seriesCountDivider == null)
-        {
-            $seriesCountDivider = 1;
+        if($seriesCount == null) {
+            $seriesCount = 1;
         }
 
         $Ch = new Channel();
@@ -250,11 +240,33 @@ class ChartController extends CController
         $prefix = $paramInfo["prefix"];
         $freq = $paramInfo["freq"];
 
-        $syncParam = $Ch->GetFlightParamWithExactSection($apTableName,
-            $seriesCountDivider, $startFrame, $endFrame,
-            $code, $prefix, $freq, $framesCount);
+        $compression = Channel::$compressionTypes['none'];
+        if (!$isPrintPage && (($startFrame !== 0) || ($endFrame !== $framesCount))) {
+            $compression = Channel::$compressionTypes['aroundRange'];
+        } else if (!$isPrintPage && ($framesCount * $seriesCount > POINT_MAX_COUNT)) {
+            $compression = Channel::$compressionTypes['general'];
+        }
+
+        $syncParam = $Ch->GetChannel($apTableName,
+            $code,
+            $prefix,
+            $startFrame,
+            $endFrame,
+            $seriesCount,
+            $framesCount,
+            $compression
+        );
 
         return $syncParam;
+    }
+
+    public static function getBoolean($value)
+    {
+       if ($value === 'true') {
+          return true;
+       } else {
+          return false;
+       }
     }
 
     public function GetBpParamValue($extFlightId, $extParamCode)
@@ -590,6 +602,11 @@ class ChartController extends CController
         $fileGuid = uniqid();
 
         $exportedFileDir = $_SERVER['DOCUMENT_ROOT'] . "/fileUploader/files/exported/";
+
+        if (!file_exists($exportedFileDir)) {
+            mkdir($exportedFileDir, 0755);
+        }
+
         $exportedFileName = $flightInfo['bort'] . "_" .
                 date("Y-m-d", $flightInfo['startCopyTime'])  . "_" .
                 $flightInfo['voyage'] . "_" . $fileGuid  . "_" . $this->_user->username . ".csv";

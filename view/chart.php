@@ -153,16 +153,17 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     isset($c->data['startFrame']) &&
                     isset($c->data['endFrame']))
             {
+                $isPrintPage = ChartController::getBoolean($c->data['isPrintPage']);
 
                 $flightId = $c->data['flightId'];
                 $paramApCode = $c->data['paramApCode'];
-                $totalSeriesCount = $c->data['totalSeriesCount'];
-                $startFrame = $c->data['startFrame'];
-                $endFrame = $c->data['endFrame'];
+                $totalSeriesCount = intval($c->data['totalSeriesCount']);
+                $startFrame = intval($c->data['startFrame']);
+                $endFrame = intval($c->data['endFrame']);
 
                 $paramData = $c->GetApParamValue($flightId,
                     $startFrame, $endFrame, $totalSeriesCount,
-                    $paramApCode);
+                    $paramApCode, $isPrintPage);
 
                 echo json_encode($paramData);
             }

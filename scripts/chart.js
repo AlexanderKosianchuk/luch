@@ -13,7 +13,7 @@
         LA.GetServiceStrs().done(function(data){
             var srvcStrObj = data;
 
-            C = new Chart($window, $document, langStr, srvcStrObj, eventHandler);
+            C = new Chart($window, $document, langStr, srvcStrObj, eventHandler, true);
 
             var flightId = $("#flightId").text(),
                 tplName = $("#tplName").text(),
