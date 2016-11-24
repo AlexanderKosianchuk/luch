@@ -365,7 +365,8 @@
     "eventCodeMask003": "Los mensajes de información",
     "rememberMe":"Recordar",
     "loginFailed": "Error de autorización",
-    "notAllowedByPrivilege" : "Privilegios insuficientes"
+    "notAllowedByPrivilege" : "Privilegios insuficientes",
+    "search": "Búsqueda"
 },
 
 "printerPage":{

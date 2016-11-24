@@ -365,7 +365,8 @@
     "eventCodeMask003": "Информационные сообщения",
     "rememberMe":"Запомнить",
     "loginFailed": "Авторизация не удалась",
-    "notAllowedByPrivilege" : "Не достаточно привилегий для выполнения действия"
+    "notAllowedByPrivilege" : "Не достаточно привилегий для выполнения действия",
+    "search": "Поиск"
 },
 
 "printerPage":{

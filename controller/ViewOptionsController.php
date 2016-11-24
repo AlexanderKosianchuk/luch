@@ -27,7 +27,7 @@ class ViewOptionsController extends CController
     public function PutLeftMenu()
     {
         $leftMenu = "<div id='leftMenuOptionsView' class='LeftMenu'>";
-        $leftMenu .= "<input class='SearchBox' value=' Поиск' size='20' disabled></input>";
+        $leftMenu .= "<input class='SearchBox' value='".$this->lang->search."' disabled></input>";
         $leftMenu .= "<div id='templatesLeftMenuRow' class='LeftMenuRowOptions LeftMenuRowSelected'>" .
                 "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>" .
                 " " . $this->lang->flightViewOptionsTemplates .

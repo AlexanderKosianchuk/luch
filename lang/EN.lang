@@ -365,7 +365,8 @@
     "eventCodeMask003": "Information messages",
     "rememberMe":"Remember",
     "loginFailed": "Login Failed",
-    "notAllowedByPrivilege" : "No privilege"
+    "notAllowedByPrivilege" : "No privilege",
+    "search": "Search"
 },
 
 "printerPage":{
