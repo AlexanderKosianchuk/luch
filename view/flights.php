@@ -69,34 +69,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $flightsListByPath = "";
                     $viewAction = $lastViewType["action"];
-                    if($viewAction == $c->flightActions["flightTwoColumnsListByPathes"])
-                    {
-                        $targetId1 = $lastViewType['senderId'];
-                        $targetId2 = $lastViewType['targetId'];
-
-                        $Fd = new Folder();
-                        $folderInfo1 = $Fd->GetFolderInfo($targetId1);
-                        $folderInfo2 = $Fd->GetFolderInfo($targetId2);
-                        unset($Fd);
-
-                        if(empty($folderInfo1))
-                        {
-                            $targetId1 = 0;
-                        }
-
-                        if(empty($folderInfo2))
-                        {
-                            $targetId2 = 0;
-                        }
-
-                        $flightsListByPath = $c->BuildFlightListInTwoColumns($targetId1, $targetId2);
-                        $c->RegisterActionExecution($viewAction, "executed", $targetId1, 'leftColumnFolderShown', $targetId2, 'rightColumnFolderShown');
-
-                        $answ["status"] = "ok";
-                        $answ["type"] = $viewAction;
-                        $answ["data"] = $flightsListByPath;
-                    }
-                    else if($viewAction == $c->flightActions["flightListTree"])
+                    if($viewAction == $c->flightActions["flightListTree"])
                     {
                         $actionsInfo = $c->GetLastViewedFolder();
                         $targetId = 0;

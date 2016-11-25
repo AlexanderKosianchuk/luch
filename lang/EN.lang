@@ -55,7 +55,8 @@
 "exportItem" : "Export",
 "processItem" : "Process",
 "moveItem" : "Rename",
-"removeSelection" : "Cancel Selection",
+"removeSelection" : "Cancel selection",
+"selectAll" : "Select all",
 "syncFlightHeaders": "Sync Headers",
 
 "flightFilesList": "Flight files for convertion",

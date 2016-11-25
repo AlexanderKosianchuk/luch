@@ -183,7 +183,9 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                     if($("input#previewCheckBox:checked").length > 0) {
                         //show flight info and preview
 
-                        self.eventHandler.trigger("uploadWithPreview");
+                        if (filesCount === 0) {
+                            self.eventHandler.trigger("uploadWithPreview");
+                        }
 
                         $.each(data.result.files, function (index, file) {
                             $('<p/>').text(file.name).appendTo('#files');
@@ -318,16 +320,13 @@ FlightUploader.prototype.GetFlightParams = function(
             }).done(function(answ) {
                 if(answ["status"] == "ok") {
                     //if first uploaded, need to hide FlightView and show FlightUpload content
-                    //uppending answer
-                    //mainContainer.append(answ["data"]);
-
-                    mainContainerPjs.innerHTML = mainContainerPjs.innerHTML +
-                        answ["data"];
+                    var flightUploadingProfile = answ["data"];
+                    self.flightUploaderContent.append(flightUploadingProfile);
 
                     var parentContainer = $("div#fileFlightInfo" + index),
                         previewParamsRaw = parentContainer.data("previewparams"),
-                        flightInfoColunmWidth = containerWidth / 2.5,
-                        chartWidth = containerWidth - flightInfoColunmWidth - 30,
+                        flightInfoColunmWidth = 450,
+                        chartWidth = self.window - flightInfoColunmWidth - 30,
                         previewParams = Array();
 
                     if(previewParamsRaw.indexOf(";") > -1) {

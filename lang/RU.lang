@@ -56,6 +56,7 @@
 "processItem" : "Обработать",
 "moveItem" : "Переместить",
 "removeSelection" : "Отменить выделение",
+"selectAll" : "Выбрать все",
 "syncFlightHeaders": "Синхронизировать опознавательные данные",
 
 "flightFilesList": "Перечень файлов для конвертирования",

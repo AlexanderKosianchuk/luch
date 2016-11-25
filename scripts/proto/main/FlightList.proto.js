@@ -170,11 +170,8 @@ FlightList.prototype.ShowFlightViewOptions = function() {
                 '<button id="selectFligthOptionsMenu" class="Button view-options-button">' + this.langStr.initial + '</button>' +
             '</div>' +
             '<ul class="GroupType">' +
-                '<li id="inTwoColumns">' + this.langStr.inTwoColumns + '</li>' +
                 '<li id="treeView">' + this.langStr.treeView + '</li>' +
-                '<li id="tableView">' + this.langStr.tableView + '</li>' +
-                /*'<li id="byAditionalInfo" style="border:none;">' + this.langStr.byAditionalInfo +
-                    '<input id="byAditionalInfoInput" style="min-width:155px;" type="text"/></li>' +*/
+                '<li id="tableView" style="border:none">' + this.langStr.tableView + '</li>' +
             '</ul></td><td>' +
             '<button id="fileMenu" class="Button">' + this.langStr.fileMenu + '</button>'+
                 '<ul class="FileMenuItems">' +
@@ -183,9 +180,17 @@ FlightList.prototype.ShowFlightViewOptions = function() {
 
         self.flightListOptions.append(fligthOptionsStr);
 
-         $("button#fileMenu").button({ disabled: true });
-
          var buttonSelectFligthOptionsMenu = $("button#selectFligthOptionsMenu").button();
+         var fileMenu = $('ul.FileMenuItems');
+         var fileMenuButt = $("button#fileMenu").button();
+
+         self.fileMenuSupport(fileMenu,
+             fileMenuButt,
+             [],
+             [],
+             self
+         );
+
          buttonSelectFligthOptionsMenu.click(function(e) {
              var menu = $(this).parent().next().show().position({
                  my: "left top",
@@ -205,19 +210,8 @@ FlightList.prototype.ShowFlightViewOptions = function() {
              .hide()
              .menu();
 
-         $('#inTwoColumns').on("click", function(e) {
-             $("div#view").css("display", "none");
-             $("button#fileMenu").button({ disabled: true });
-
-             self.ShowFlightsByPath();
-             buttonSelectFligthOptionsMenu.button({
-                  label: self.langStr.inTwoColumns
-             });
-         });
-
          $('#treeView').on("click", function(e) {
              $("div#view").css("display", "none");
-             $("button#fileMenu").button({ disabled: true });
 
              self.ShowFlightsTree();
              buttonSelectFligthOptionsMenu.button({
@@ -227,7 +221,6 @@ FlightList.prototype.ShowFlightViewOptions = function() {
 
          $('#tableView').on("click", function(e) {
              $("div#view").css("display", "none");
-             $("button#fileMenu").button({ disabled: true });
 
              self.ShowFlightsTable();
              buttonSelectFligthOptionsMenu.button({
@@ -268,16 +261,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
             success: function(answ) {
                 if(answ['status'] == 'ok'){
                     var type = answ['type'];
-                    if(type == self.actions["flightTwoColumnsListByPathes"]){
-                        var flightList = answ['data'];
-                        self.flightListContent.append(flightList);
-                        $("button#selectFligthOptionsMenu").button({
-                              label: self.langStr.inTwoColumns
-                        });
-                        self.SupportNaviButt();
-                        self.MakeDragable();
-                        self.MakeClickable();
-                    } else if (type == self.actions["flightListTree"]){
+                    if (type == self.actions["flightListTree"]){
                         var flightList = answ['data'];
                         self.flightListContent.append(flightList);
                         $("button#selectFligthOptionsMenu").button({
@@ -376,543 +360,6 @@ FlightList.prototype.TriggerResize = function() {
 FlightList.prototype.TriggerUploading = function() {
     this.eventHandler.trigger("uploading");
 }
-
-/* ==================================================
- * TWO COLUMN VIEW
- * ================================================== */
-
-FlightList.prototype.ShowFlightsByPath = function() {
-    var self = this;
-
-    self.flightListContent.slideUp(function(e){
-        self.flightListContent.empty();
-        /*self.mainContainerOptions.slideUp(function(e){
-            self.mainContainerOptions.empty();
-            self.ShowFlightViewOptions();
-            self.mainContainerOptions.slideDown(function(e){*/
-
-                var pV = {
-                    action: self.actions["flightTwoColumnsListByPathes"],
-                    data: {
-                        data: 'data'
-                    }
-                };
-
-                $.ajax({
-                    type: "POST",
-                    data: pV,
-                    url: FLIGHTS_VIEW_SRC,
-                    dataType: 'json',
-                    async: true,
-                    success: function(answ) {
-                        if(answ['status'] == 'ok'){
-                            var flightList = answ['data'];
-                            self.flightListContent.append(flightList);
-                            self.flightListContent.slideDown();
-                            self.SupportNaviButt();
-                            self.MakeDragable();
-                            self.MakeClickable();
-                        } else {
-                            console.log(data['error']);
-                        }
-                    }
-                }).fail(function(msg){
-                    console.log(msg);
-                });
-            /*});
-        });*/
-    });
-};
-
-FlightList.prototype.MakeDragable = function() {
-    var self = this;
-    $(".FolderPathInTwoColumnContainer").css("width", self.flightListContent.width() / 2 - 25);
-    $(".FolderInTwoColumnContainer").css("width", self.flightListContent.width() / 2 - 25);
-
-    $('ul#sortableRight').sortable({
-        placeholder: "ui-state-highlight",
-        receive: function (event, ui) {
-            var target = $(this),
-                sender = ui.item,
-                senderPath = sender.data("folderpath"),
-                targetPath = target.data("curpath");
-
-            if(senderPath != targetPath){
-                if(sender.hasClass("FlightInTwoColumnContainer")){
-                    var senderId = sender.data("flightid");
-                    self.ActionChangePath("flight", senderId, targetPath);
-
-                    sender.fadeOut(function(e){
-                        sender.remove(); // remove original item
-                    });
-                } else if(sender.hasClass("FolderInTwoColumnContainer")){
-                    var folderdestination = sender.data("folderdestination");
-                    if(folderdestination != targetPath){
-                        self.ActionChangePath("folder", senderPath, targetPath);
-
-                        sender.fadeOut(function(e){
-                            sender.remove(); // remove original item
-                        });
-                    }
-                }
-            }
-        },
-        update: function(event, ui) {
-            var target = $(this),
-                sender = ui.item,
-                senderPath = sender.data("folderpath"),
-                targetPath = target.data("curpath");
-
-            if(sender.hasClass("FlightInTwoColumnContainer")){
-                //if dragging and destination same remove clone
-                if(senderPath == targetPath){
-                    sender.addClass("ErrorDuringDrop");
-                     sender.fadeOut(2000, function(e){
-                        sender.remove(); // remove original item
-                    });
-                }
-            } if(sender.hasClass("FolderInTwoColumnContainer")){
-                var folderdestination = sender.data("folderdestination");
-                //if dragging and destination same remove clone
-                if((folderdestination == targetPath) || (senderPath == targetPath)){
-                    sender.addClass("ErrorDuringDrop");
-                     sender.fadeOut(2000, function(e){
-                        sender.remove(); // remove original item
-                    });
-                }
-            }
-        }
-    });
-
-    $('ul#sortableLeft').sortable({
-        placeholder: "ui-state-highlight",
-        receive: function (event, ui) {
-            var target = $(this),
-                sender = ui.item,
-                senderPath = sender.data("folderpath"),
-                targetPath = target.data("curpath");
-
-            if(senderPath != targetPath){
-                if(sender.hasClass("FlightInTwoColumnContainer")){
-                    var senderId = sender.data("flightid");
-                    self.ActionChangePath("flight", senderId, targetPath);
-
-                    sender.fadeOut(function(e){
-                        sender.remove(); // remove original item
-                    });
-                } else if(sender.hasClass("FolderInTwoColumnContainer")){
-                    var folderdestination = sender.data("folderdestination");
-                    if(folderdestination != targetPath){
-                        self.ActionChangePath("folder", senderPath, targetPath);
-
-                        sender.fadeOut(function(e){
-                            sender.remove(); // remove original item
-                        });
-                    }
-                }
-            }
-        },
-        update: function(event, ui) {
-            var target = $(this),
-                sender = ui.item,
-                senderPath = sender.data("folderpath"),
-                targetPath = target.data("curpath");
-
-            if(sender.hasClass("FlightInTwoColumnContainer")){
-                //if dragging and destination same remove clone
-                if(senderPath == targetPath){
-                    sender.addClass("ErrorDuringDrop");
-                     sender.fadeOut(2000, function(e){
-                        sender.remove(); // remove original item
-                    });
-                }
-            } if(sender.hasClass("FolderInTwoColumnContainer")){
-                var folderdestination = sender.data("folderdestination");
-                //if dragging and destination same remove clone
-                if((folderdestination == targetPath) || (senderPath == targetPath)){
-                    sender.addClass("ErrorDuringDrop");
-                     sender.fadeOut(2000, function(e){
-                        sender.remove(); // remove original item
-                    });
-                }
-            }
-        }
-    });
-
-    $.each($("li#draggableRight"), function(index, val){
-        $(val).draggable({
-            connectToSortable: '#sortableLeft',
-            containment: "TwoColumnsTable",
-            helper: 'clone',
-            revert: 'invalid',
-            cursor: 'move'
-        });
-    });
-
-    $.each($("li#draggableLeft"), function(index, val){
-        $(val).draggable({
-            connectToSortable: '#sortableRight',
-            containment: "twoColumnsTable",
-            helper: 'clone',
-            revert: 'invalid',
-            cursor: 'move'
-        });
-    });
-
-    $.each($("li.FolderInTwoColumnContainer"), function(index, val){
-        $(val).droppable({
-            drop: function(ev, ui){
-                var target = $(this),
-                    sender = ui.draggable,
-                    senderPath = sender.data("folderpath"),
-                    //targetPath = target.data("folderpath");
-                    targetPath = target.data("folderdestination");
-
-                target.css({
-                    'border': 'none',
-                    'width': target.width() + 4,
-                    'height': target.height() - 4
-                });
-
-                if((senderPath != targetPath)) {
-                    sender.fadeOut(function(e){
-                        sender.remove(); // remove original item
-
-                        if(sender.hasClass("FlightInTwoColumnContainer")){
-                            var flightId = sender.data('flightid');
-                            self.ActionChangePath('flight', flightId, targetPath);
-                        } else if(sender.hasClass("FolderInTwoColumnContainer")){
-                            var folderId = sender.data('folderdestination');
-                            self.ActionChangePath('folder', folderId, targetPath);
-                        }
-                    });
-                } else {
-                    sender.addClass("ErrorDuringDrop", {
-                        duration: 1000,
-                        easing: "easeInQuint",
-                        complete: function(e){
-                            sender.removeClass("ErrorDuringDrop", 200, "easeOutQuint");
-                        }
-                    });
-                }
-
-            },
-            over: function( event, ui ) {
-                if(event.target != ui.draggable) {
-                    var $this = $(this);
-                    $this.css({
-                        'border': '2px solid #c8c8c8',
-                        'width': $this.width() - 4,
-                        'height': $this.height() - 4
-                    });
-                }
-            },
-            out: function( event, ui ) {
-                var $this = $(this);
-                $this.css({
-                    'border': 'none',
-                    'width': $this.width() + 4,
-                    'height': $this.height() + 4
-                });
-            }
-        });
-    });
-
-    $.each($("div#dropable"), function(index, val){
-        $(val).droppable({
-            drop: function(ev, ui){
-                var draggable = $(ui.draggable),
-                    target = $(ev.target),
-                    prevPosition = draggable.data("position");
-
-                //console.log(target.find(":first-child").data("curpath"));
-                //console.log(draggable.data("folderpath"));
-
-                draggable.css({
-                    'border': 'none'
-                });
-
-                draggable.removeAttr("data-position");
-                if(prevPosition == 'Right'){
-                    draggable.attr("data-position",'Left');
-                    draggable.attr("id",'draggableLeft');
-                    $.each($("li#draggableLeft"), function(index, val){
-                        $(val).draggable({
-                            connectToSortable: '#sortableRight',
-                            helper: 'clone',
-                            revert: 'invalid',
-                            cursor: 'move'
-                        });
-                    });
-                } else if(prevPosition == 'Left'){
-                    draggable.attr("data-position",'Right');
-                    draggable.attr("id",'draggableRight');
-                    $.each($("li#draggableRight"), function(index, val){
-                        $(val).draggable({
-                            connectToSortable: '#sortableLeft',
-                            helper: 'clone',
-                            revert: 'invalid',
-                            cursor: 'move'
-                        });
-                    });
-                }
-                self.MakeClickable();
-            }
-        })
-    });
-};
-
-FlightList.prototype.MakeClickable = function() {
-    var self = this;
-
-    $("li#draggableRight").on("dblclick", function(e){
-        var target = $(e.delegateTarget),
-            caller = $(e.target).prop("tagName");
-
-        if(caller != 'INPUT'){
-            if(target.hasClass("FolderInTwoColumnContainer")){
-                self.ActionShowFolder(target);
-            } else if(target.hasClass("FlightInTwoColumnContainer")){
-                self.ActionOnDblClick(target);
-            }
-        }
-    });
-    //});
-
-    //$.each($("li#draggableLeft"), function(index, val){
-    $("li#draggableLeft").on("dblclick", function(e){
-        var target = $(e.delegateTarget),
-            caller = $(e.target).prop("tagName");
-
-        if(caller != 'INPUT'){
-            if(target.hasClass("FolderInTwoColumnContainer")){
-                self.ActionShowFolder(target);
-            } else if(target.hasClass("FlightInTwoColumnContainer")){
-                self.ActionOnDblClick(target);
-            }
-        }
-    });
-    //});
-
-    $(".ItemsCheck").on("change", function(e){
-        var checked = $("input.ItemsCheck:checked"),
-            fileMenu = $('ul.FileMenuItems'),
-            fileMenuButt = $("button#fileMenu"),
-            inLeftColumn = 0,
-            inRightColumn = 0,
-            folders = new Array(),
-            flights = new Array();
-
-        $.each($(".ItemsCheck:checked"), function(i, el){
-            var el = $(el);
-            if(el.data('type') == 'flight'){
-                flights.push(el);
-            } else if(el.data('type') == 'folder') {
-                folders.push(el);
-            }
-
-            if(el.data('position') == 'Right'){
-                inRightColumn++;
-            } else if(el.data('position') == 'Left') {
-                inLeftColumn++;
-            }
-        });
-
-        $("div#view").css("display", "none");
-
-        if((flights.length == 1) && (folders.length == 0)){
-            fileMenu.empty();
-
-            $("div#view").css("display", "block");
-
-            if(((inRightColumn > 0) && (inLeftColumn == 0)) || ((inRightColumn == 0) && (inLeftColumn > 0))){
-                fileMenu.append('<li id="move">' + self.langStr.moveItem + '</li>');
-            }
-
-            /*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-
-        } else if((flights.length == 0) && (folders.length == 1)){
-            fileMenu.empty();
-            fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
-            fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
-
-            //if selected only in one column
-            if(((inRightColumn > 0) && (inLeftColumn == 0)) || ((inRightColumn == 0) && (inLeftColumn > 0))){
-                fileMenu.append('<li id="move">' + self.langStr.moveItem + '</li>');
-            }
-            /*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length > 1) && (folders.length == 0)){
-            fileMenu.empty();
-
-            if(((inRightColumn > 0) && (inLeftColumn == 0)) || ((inRightColumn == 0) && (inLeftColumn > 0))){
-                fileMenu.append('<li id="move">' + self.langStr.moveItem + '</li>');
-            }
-            /*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length == 0) && (folders.length > 1)){
-            fileMenu.empty();
-
-            if(((inRightColumn > 0) && (inLeftColumn == 0)) || ((inRightColumn == 0) && (inLeftColumn > 0))){
-                fileMenu.append('<li id="move">' + self.langStr.moveItem + '</li>');
-            }
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length >= 1) && (folders.length >= 1)){
-            fileMenu.empty();
-
-            if(((inRightColumn > 0) && (inLeftColumn == 0)) || ((inRightColumn == 0) && (inLeftColumn > 0))){
-                fileMenu.append('<li id="move">' + self.langStr.moveItem + '</li>');
-            }
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else {
-            fileMenu.empty();
-            fileMenuButt.button({ disabled: true });
-        }
-
-        $("li#removeSelection").on('click', function(e){
-
-            $.each($(".ItemsCheck:checked"), function(i, el){
-                var el = $(el).prop('checked', false);
-            });
-            fileMenuButt.button({ disabled: true });
-        });
-
-        $("li#delete").on('click', function(e){
-            var inputItemsCheck = $("input.ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'folder'){
-                    id = el.data('folderdestination');
-                } else if(type == 'flight'){
-                    id = el.data('flightid');
-                }
-                self.DeleteItem(type, id).done(function(answ) {
-                    if(answ['status'] == 'ok'){
-                        el.removeAttr("checked");
-                        var parent = el.parents("li");
-                        parent.fadeOut(200);
-                    } else {
-                        console.log(answ['data']['error']);
-                    }
-                });
-            });
-        });
-
-        $("li#process").on('click', function(e){
-            var inputItemsCheck = $("input.ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'flight'){
-                    id = el.data('flightid');
-                    self.ProcessItem(id).done(function(answ) {
-                        if(answ['status'] == 'ok'){
-                            el.removeAttr("checked");
-                            var parent = el.parents("li");
-                            parent.fadeOut(200);
-                        } else {
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-    });
-};
-
-//FlightList.prototype.ActionOnClick = function(sender) {
-//    var self = this;
-//    console.log("ActionOnClick");
-//};
 
 FlightList.prototype.ActionOnDblClick = function(sender) {
     var self = this;
@@ -1379,11 +826,6 @@ FlightList.prototype.ShowFlightsTree = function() {
 
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
-        /*self.mainContainerOptions.slideUp(function(e){
-            self.mainContainerOptions.empty();
-            self.ShowFlightViewOptions();
-            self.mainContainerOptions.slideDown(function(e){*/
-
                 var pV = {
                     action: self.actions["flightListTree"],
                     data: {
@@ -1438,7 +880,11 @@ FlightList.prototype.SupportJsTree = function() {
             if(answ['status'] == 'ok'){
                 var content = answ['data'];
                 contentPlace.append(content);
-                self.SupportContent();
+                self.SupportContent.call(self);
+
+                $(".ItemsCheck").on("change", function(e){
+                    self.SupportContent.call(self);
+                });
             } else {
                 console.log(answ)
             }
@@ -1453,7 +899,11 @@ FlightList.prototype.SupportJsTree = function() {
             if(answ['status'] == 'ok'){
                 var content = answ['data'];
                 contentPlace.append(content);
-                self.SupportContent();
+                self.SupportContent.call(self);
+
+                $(".ItemsCheck").on("change", function(e){
+                    self.SupportContent.call(self);
+                });
             } else {
                 console.log(answ)
             }
@@ -1483,7 +933,11 @@ FlightList.prototype.SupportJsTree = function() {
                     if(answ['status'] == 'ok'){
                         var content = answ['data'];
                         contentPlace.append(content);
-                        self.SupportContent();
+                        self.SupportContent.call(self);
+
+                        $(".ItemsCheck").on("change", function(e){
+                            self.SupportContent.call(self);
+                        });
                     } else {
                         console.log(answ)
                     }
@@ -1505,7 +959,11 @@ FlightList.prototype.SupportJsTree = function() {
                     if(answ['status'] == 'ok'){
                         var content = answ['data'];
                         contentPlace.append(content);
-                        self.SupportContent();
+                        self.SupportContent.call(self);
+
+                        $(".ItemsCheck").on("change", function(e){
+                            self.SupportContent.call(self);
+                        });
                     } else {
                         console.log(answ)
                     }
@@ -1532,7 +990,11 @@ FlightList.prototype.SupportJsTree = function() {
                         if(answ['status'] == 'ok'){
                             var content = answ['data'];
                             contentPlace.append(content);
-                            self.SupportContent();
+                            self.SupportContent.call(self);
+
+                            $(".ItemsCheck").on("change", function(e){
+                                self.SupportContent.call(self);
+                            });
                         } else {
                             console.log(answ)
                         }
@@ -1544,33 +1006,9 @@ FlightList.prototype.SupportJsTree = function() {
             }
         }
     }).on("export_node.jstree", function(e, data){
-
         console.log(e);
         console.log(data);
-
         console.log("export");
-        /*if(isNewParentInt){
-            var parentNode = $("li#" + newParent).find("a").find("i");
-
-            if(parentNode.hasClass('jstree-folder')){
-
-                self.ActionChangePath(type, id, newParent).done(function(e){
-                    self.ShowContent(newParent).done(function(answ){
-                        contentPlace.empty();
-                        if(answ['status'] == 'ok'){
-                            var content = answ['data'];
-                            contentPlace.append(content);
-                            self.SupportContent();
-                        } else {
-                            console.log(answ)
-                        }
-                    });
-                });
-            } else {
-                alert("Incorrect action");
-                treePrivate.jstree("refresh");
-            }
-        }*/
     }).jstree({
         "types" : {
             "folder" : {
@@ -1666,283 +1104,27 @@ FlightList.prototype.ShowContent = function(folderId) {
 }
 
 FlightList.prototype.SupportContent = function() {
-    var self = this;
-    $(".ItemsCheck").on("change", function(e){
+    var checked = $(".ItemsCheck:checked"),
+        fileMenu = $('ul.FileMenuItems'),
+        fileMenuButt = $("button#fileMenu"),
+        folders = new Array(),
+        flights = new Array();
 
-        var checked = $(".ItemsCheck:checked"),
-            fileMenu = $('ul.FileMenuItems'),
-            fileMenuButt = $("button#fileMenu"),
-            folders = new Array(),
-            flights = new Array();
-
-        $.each(checked, function(i, el){
-            var el = $(el);
-            if(el.data('type') == 'flight'){
-                flights.push(el);
-            } else if(el.data('type') == 'folder') {
-                folders.push(el);
-            }
-        });
-
-        $("div#view").css("display", "none");
-
-        if((flights.length == 1) && (folders.length == 0)){
-            fileMenu.empty();
-
-            $("div#view").css("display", "block");
-
-            /*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');*/
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-
-        } else if((flights.length == 0) && (folders.length == 1)){
-            fileMenu.empty();
-            fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
-            fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
-
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length > 1) && (folders.length == 0)){
-            fileMenu.empty();
-
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-            /*fileMenu.append('<li id="syncFlightHeaders">' + self.langStr.syncFlightHeaders + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length == 0) && (folders.length > 1)){
-            fileMenu.empty();
-
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length >= 1) && (folders.length >= 1)){
-            fileMenu.empty();
-
-            fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else {
-            fileMenu.empty();
-            fileMenuButt.button({ disabled: true });
+    $.each(checked, function(i, el){
+        var el = $(el);
+        if(el.data('type') == 'flight'){
+            flights.push(el);
+        } else if(el.data('type') == 'folder') {
+            folders.push(el);
         }
-
-        $("li#open").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked"),
-            folderId = inputItemsCheck.data('folderdestination'),
-            contentPlace = $("#jstreeContent");
-            self.ShowContent(folderId).done(function(answ){
-                contentPlace.empty();
-                if(answ['status'] == 'ok'){
-                    var content = answ['data'];
-                    contentPlace.append(content);
-                    self.SupportContent();
-                } else {
-                    console.log(answ)
-                }
-            });
-
-            fileMenuButt.button({ disabled: true });
-        });
-
-        $("li#rename").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked"),
-            id = inputItemsCheck.data("folderdestination"),
-            parent = inputItemsCheck.parent(),
-            row = parent.parent(),
-            parentText = parent.text();
-            parent.text("");
-
-            parent.append(inputItemsCheck);
-            parent.append("<input id='currentChangedNameFolder' size='50' value='"+parentText+"'/>");
-
-            row.off("click");
-            row.on("click", function(e){
-                var nodeName = $(e.target)[0].tagName;
-                if(nodeName == "DIV"){
-                    var currentChangedNameFolder = $("#currentChangedNameFolder").val();
-                    parent.text("");
-                    parent.append(inputItemsCheck);
-                    parent.append(currentChangedNameFolder);
-
-                    self.RenameFolder(id, currentChangedNameFolder).done(function(answ) {
-                        if(answ['status'] != 'ok'){
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-
-        $("li#removeSelection").on('click', function(e){
-
-            $.each($(".ItemsCheck:checked"), function(i, el){
-                var el = $(el).prop('checked', false);
-            });
-            fileMenuButt.button({ disabled: true });
-        });
-
-        $("li#syncFlightHeaders").on('click', function(e){
-            var idsArr = [];
-            $.each($(".ItemsCheck:checked"), function(i, el){
-                var el = $(el);
-                idsArr.push(el.data('flightid'));
-            });
-
-            self.SyncItemsHeaders(idsArr).done(function(answ) {
-                self.ShowFlightsTree();
-            });
-        });
-
-        $("li#delete").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'folder'){
-                    id = el.data('folderdestination');
-                } else if(type == 'flight'){
-                    id = el.data('flightid');
-                }
-                self.DeleteItem(type, id).done(function(answ) {
-                    if(answ['status'] == 'ok'){
-                        el.removeAttr("checked");
-                        var parent = el.parents(".JstreeContentItemFlight");
-                        parent.fadeOut(200);
-                    } else {
-                        console.log(answ['data']['error']);
-                    }
-                });
-            });
-        });
-
-        $("li#process").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'flight'){
-                    id = el.data('flightid');
-                    self.ProcessItem(id).done(function(answ) {
-                        if(answ['status'] == 'ok'){
-                            el.removeAttr("checked");
-                        } else {
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-
-        $("li#export").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked"),
-                flightIds = [],
-                folderDest = [];
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type');
-
-                if((type == 'flight')){
-                    flightIds.push(el.data('flightid'));
-                } else if (type == 'folder'){
-                    folderDest.push(el.data('folderdestination'));
-                }
-            });
-
-            self.ExportItem(flightIds, folderDest).done(function(answ) {
-                if(answ['status'] == 'ok'){
-                    $.each(inputItemsCheck, function(i, el){
-                        $(el).removeAttr("checked");
-                    });
-                } else {
-                    console.log(answ);
-                }
-            });
-        });
     });
+
+    this.fileMenuSupport(fileMenu,
+        fileMenuButt,
+        flights,
+        folders,
+        this
+    );
 }
 
 /* ==================================================
@@ -2024,7 +1206,11 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
                 "data": pV,
                 "success": fnCallback
             }).done(function(a){
-                self.SupportTableContent();
+                self.SupportContent.call(self);
+
+                $(".ItemsCheck").on("change", function(e){
+                    self.SupportContent.call(self);
+                });
             })
             .fail(function(a){
                 console.log(a);
@@ -2048,265 +1234,199 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
     });
 }
 
-FlightList.prototype.SupportTableContent = function() {
-    var self = this;
-    $(".ItemsCheck").on("change", function(e){
+FlightList.prototype.fileMenuSupport = function(
+    fileMenu,
+    fileMenuButt,
+    flights,
+    folders,
+    self
+) {
+    $('#view').hide();
+    if((flights.length == 1) && (folders.length == 0)){
+        fileMenu.empty();
+        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
+        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 
-        var checked = $(".ItemsCheck:checked"),
-            fileMenu = $('ul.FileMenuItems'),
-            fileMenuButt = $("button#fileMenu"),
-            folders = new Array(),
-            flights = new Array();
+        $('#view').show();
+    } else if((flights.length == 0) && (folders.length == 1)){
+        fileMenu.empty();
+        fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
+        fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
+        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
+        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+    } else if((flights.length > 1) && (folders.length == 0)){
+        fileMenu.empty();
+        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
+        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+    } else if((flights.length == 0) && (folders.length > 1)){
+        fileMenu.empty();
+        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
+        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+    } else if((flights.length >= 1) && (folders.length >= 1)){
+        fileMenu.empty();
+        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
+        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+    } else {
+        fileMenu.empty();
+        fileMenu.append('<li id="selectAll" style="border:none;">' + self.langStr.selectAll + '</li>');
+    }
 
-        $.each(checked, function(i, el){
-            var el = $(el);
-            if(el.data('type') == 'flight'){
-                flights.push(el);
-            } else if(el.data('type') == 'folder') {
-                folders.push(el);
-            }
-        });
+    fileMenuButt.button().click(function() {
+         var menu = $(this).next().show().position({
+             my: "left top",
+             at: "left bottom",
+             of: this
+         });
+         $(document).on("click",function(e) {
+             menu.hide();
+         });
+         return false;
+     }).next()
+         .buttonset()
+         .hide()
+         .menu();
 
-        $("div#view").css("display", "none");
+         $("li#open").off('click').on('click', function(e){
+             var inputItemsCheck = $(".ItemsCheck:checked"),
+             folderId = inputItemsCheck.data('folderdestination'),
+             contentPlace = $("#jstreeContent");
+             self.ShowContent(folderId).done(function(answ){
+                 contentPlace.empty();
+                 if(answ['status'] == 'ok'){
+                     var content = answ['data'];
+                     contentPlace.append(content);
+                     self.SupportContent.call(self);
 
-        if((flights.length == 1) && (folders.length == 0)){
-            fileMenu.empty();
+                     $(".ItemsCheck").on("change", function(e){
+                         self.SupportContent.call(self);
+                     });
+                 } else {
+                     console.log(answ)
+                 }
+             });
+         });
 
-            $("div#view").css("display", "block");
+         $("li#rename").off('click').on('click', function(e){
+             var inputItemsCheck = $(".ItemsCheck:checked"),
+             id = inputItemsCheck.data("folderdestination"),
+             parent = inputItemsCheck.parent(),
+             row = parent.parent(),
+             parentText = parent.text();
+             parent.text("");
 
-            /*fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');*/
-            /*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+             parent.append(inputItemsCheck);
+             parent.append("<input id='currentChangedNameFolder' size='50' value='"+parentText+"'/>");
 
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
+             row.off("click");
+             row.on("click", function(e){
+                 var nodeName = $(e.target)[0].tagName;
+                 if(nodeName == "DIV"){
+                     var currentChangedNameFolder = $("#currentChangedNameFolder").val();
+                     parent.text("");
+                     parent.append(inputItemsCheck);
+                     parent.append(currentChangedNameFolder);
+
+                     self.RenameFolder(id, currentChangedNameFolder).done(function(answ) {
+                         if(answ['status'] != 'ok'){
+                             console.log(answ['data']['error']);
+                         }
+                     });
+                 }
+             });
+         });
+
+         $("li#removeSelection").off('click').on('click', function(e){
+             $.each($("input.ItemsCheck:checked"), function(i, el){
+                 var el = $(el).prop('checked', false);
+             });
+         });
+
+         $("li#selectAll").off('click').on('click', function(e){
+             $.each($(".ItemsCheck"), function(i, el){
+                 var el = $(el).prop('checked', true);
+             });
+             self.SupportContent.call(self);
+         });
+
+         $("li#delete").off('click').on('click', function(e){
+             var inputItemsCheck = $("input.ItemsCheck:checked");
+             var deletedCount = 0;
+
+             $.each(inputItemsCheck, function(i, el){
+                 var el = $(el),
+                     type = el.data('type'),
+                     id = undefined;
+
+                 if(type == 'folder'){
+                     id = el.data('folderdestination');
+                 } else if(type == 'flight'){
+                     id = el.data('flightid');
+                 }
+                 self.DeleteItem(type, id).done(function(answ) {
+                     if(answ['status'] == 'ok'){
+                         el.removeAttr("checked");
+                         var parent = el.parents("tr") || el.parents(".JstreeContentItemFlight");
+                         parent.fadeOut(200).remove();
+                         deletedCount++;
+
+                         if (inputItemsCheck.length === deletedCount) {
+                             self.ShowFlightsTree();
+                         }
+                     } else {
+                         console.log(answ['data']['error']);
+                     }
                  });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
+             });
+         });
 
-        } else if((flights.length == 0) && (folders.length == 1)){
-            fileMenu.empty();
-            fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
-            fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
+         $("li#process").off('click').on('click', function(e){
+             var inputItemsCheck = $("input.ItemsCheck:checked");
 
-            /*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+             $.each(inputItemsCheck, function(i, el){
+                 var el = $(el),
+                     type = el.data('type'),
+                     id = undefined;
 
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length > 1) && (folders.length == 0)){
-            fileMenu.empty();
+                 if(type == 'flight'){
+                     id = el.data('flightid');
+                     self.ProcessItem(id).done(function(answ) {
+                         if(answ['status'] == 'ok'){
+                             el.removeAttr("checked");
+                             var parent = el.parents("li");
+                             parent.fadeOut(200);
+                         } else {
+                             console.log(answ['data']['error']);
+                         }
+                     });
+                 }
+             });
+         });
 
-            /*fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');*/
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+         $("li#export").off('click').on('click', function(e){
+             var inputItemsCheck = $("input.ItemsCheck:checked");
 
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length == 0) && (folders.length > 1)){
-            fileMenu.empty();
+             $.each(inputItemsCheck, function(i, el){
+                 var el = $(el),
+                     type = el.data('type'),
+                     id = undefined;
 
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else if((flights.length >= 1) && (folders.length >= 1)){
-            fileMenu.empty();
-
-            fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-            fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-
-            fileMenuButt.button({ disabled: false }).click(function() {
-                 var menu = $(this).next().show().position({
-                     my: "left top",
-                     at: "left bottom",
-                     of: this
-                 });
-                 $(document).on("click",function(e) {
-                     menu.hide();
-                 });
-                 return false;
-             }).next()
-                 .buttonset()
-                 .hide()
-                 .menu();
-        } else {
-            fileMenu.empty();
-            fileMenuButt.button({ disabled: true });
-        }
-
-        $("li#open").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked"),
-            folderId = inputItemsCheck.data('folderdestination'),
-            contentPlace = $("#jstreeContent");
-            self.ShowContent(folderId).done(function(answ){
-                contentPlace.empty();
-                if(answ['status'] == 'ok'){
-                    var content = answ['data'];
-                    contentPlace.append(content);
-                    self.SupportContent();
-                } else {
-                    console.log(answ)
-                }
-            });
-
-            fileMenuButt.button({ disabled: true });
-        });
-
-        $("li#rename").on('click', function(e){
-            var inputItemsCheck = $(".ItemsCheck:checked"),
-            id = inputItemsCheck.data("folderdestination"),
-            parent = inputItemsCheck.parent(),
-            row = parent.parent(),
-            parentText = parent.text();
-            parent.text("");
-
-            parent.append(inputItemsCheck);
-            parent.append("<input id='currentChangedNameFolder' size='50' value='"+parentText+"'/>");
-
-            row.off("click");
-            row.on("click", function(e){
-                var nodeName = $(e.target)[0].tagName;
-                if(nodeName == "DIV"){
-                    var currentChangedNameFolder = $("#currentChangedNameFolder").val();
-                    parent.text("");
-                    parent.append(inputItemsCheck);
-                    parent.append(currentChangedNameFolder);
-
-                    self.RenameFolder(id, currentChangedNameFolder).done(function(answ) {
-                        if(answ['status'] != 'ok'){
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-
-        $("li#removeSelection").on('click', function(e){
-
-            $.each($("input.ItemsCheck:checked"), function(i, el){
-                var el = $(el).prop('checked', false);
-            });
-            fileMenuButt.button({ disabled: true });
-        });
-
-        $("li#delete").on('click', function(e){
-            var inputItemsCheck = $("input.ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'folder'){
-                    id = el.data('folderdestination');
-                } else if(type == 'flight'){
-                    id = el.data('flightid');
-                }
-                self.DeleteItem(type, id).done(function(answ) {
-                    if(answ['status'] == 'ok'){
-                        el.removeAttr("checked");
-                        var parent = el.parents("tr");
-                        parent.fadeOut(200);
-                    } else {
-                        console.log(answ['data']['error']);
-                    }
-                });
-            });
-        });
-
-        $("li#process").on('click', function(e){
-            var inputItemsCheck = $("input.ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'flight'){
-                    id = el.data('flightid');
-                    self.ProcessItem(id).done(function(answ) {
-                        if(answ['status'] == 'ok'){
-                            el.removeAttr("checked");
-                            var parent = el.parents("li");
-                            parent.fadeOut(200);
-                        } else {
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-
-        $("li#export").on('click', function(e){
-            var inputItemsCheck = $("input.ItemsCheck:checked");
-
-            $.each(inputItemsCheck, function(i, el){
-                var el = $(el),
-                    type = el.data('type'),
-                    id = undefined;
-
-                if(type == 'flight'){
-                    id = el.data('flightid');
-                    self.ExportItem(id).done(function(answ) {
-                        if(answ['status'] == 'ok'){
-                            el.removeAttr("checked");
-                            var parent = el.parents("li");
-                            parent.fadeOut(200);
-                        } else {
-                            console.log(answ['data']['error']);
-                        }
-                    });
-                }
-            });
-        });
-    });
+                 if(type == 'flight'){
+                     id = el.data('flightid');
+                     self.ExportItem(id).done(function(answ) {
+                         if(answ['status'] == 'ok'){
+                             el.removeAttr("checked");
+                             var parent = el.parents("li");
+                             parent.fadeOut(200);
+                         } else {
+                             console.log(answ['data']['error']);
+                         }
+                     });
+                 }
+             });
+         });
 }

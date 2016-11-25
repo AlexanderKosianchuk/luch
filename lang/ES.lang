@@ -56,6 +56,7 @@
 "processItem" : "Editar",
 "moveItem" : "Movimiento",
 "removeSelection" : "Cancelar asignación",
+"selectAll" : "Seleccionar todo",
 "syncFlightHeaders": "Sincronizar los datos de identificación",
 
 "flightFilesList": "La lista de archivos para convertir",
