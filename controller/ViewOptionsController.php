@@ -635,7 +635,7 @@ class ViewOptionsController extends CController
                             <td class='ExeptionsCell' style='text-align:center;'>
                                 <input class='reliability' data-excid='%s' type='checkbox' %s></input>
                             </td>
-                            <td class='ExeptionsCell' id='userComment' data-excid='%s'> %s </td></tr>",
+                            <td class='ExeptionsCell events_user-comment' data-excid='%s'> %s </td></tr>",
                     $style,
                     $event['refParam'],
                     $event['frameNum'],
@@ -802,7 +802,8 @@ class ViewOptionsController extends CController
         for($i = 0; $i < count($paramsToAdd); $i++)
         {
             $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramsToAdd[$i]);
-            if($paramInfo['paramType'] == PARAM_TYPE_AP)
+
+            if(isset($paramInfo['paramType']) && ($paramInfo['paramType'] == PARAM_TYPE_AP))
             {
                 $apTableNameWithPrefix = $apTableName . "_" . $paramInfo['prefix'];
                 $paramMinMax = $Ch->GetParamMinMax($apTableNameWithPrefix,
@@ -813,7 +814,7 @@ class ViewOptionsController extends CController
                     'min' => $paramMinMax['min'],
                     'max' => $paramMinMax['max']);
             }
-            else if($paramInfo['paramType'] == PARAM_TYPE_BP)
+            else if(isset($paramInfo['paramType']) && ($paramInfo['paramType'] == PARAM_TYPE_BP))
             {
                 $paramsWithType[PARAM_TYPE_BP][] = array(
                 'code' => $paramsToAdd[$i]);
@@ -857,6 +858,19 @@ class ViewOptionsController extends CController
         }
 
         unset($Bru);
+    }
+
+    public function UpdateExceptionComment($flightId, $excId, $text)
+    {
+        $Fl = new Flight();
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        unset($Fl);
+        $excTableName = $flightInfo['exTableName'];
+
+        $FE = new FlightException();
+        $res = $FE->UpdateUserComment($excTableName, $excId, $text);
+        unset($FE);
+        return $res;
     }
 
     public function SetExcReliability($extFlightId, $extExcId, $extState)

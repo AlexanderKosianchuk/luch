@@ -1344,6 +1344,7 @@ FlightList.prototype.fileMenuSupport = function(
              $.each($("input.ItemsCheck:checked"), function(i, el){
                  var el = $(el).prop('checked', false);
              });
+             self.SupportContent.call(self);
          });
 
          $("li#selectAll").off('click').on('click', function(e){

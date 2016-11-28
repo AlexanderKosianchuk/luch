@@ -96,23 +96,6 @@ class Bru
             $bruInfo[$key] = $value;
         }
 
-        /*$bruInfo = array("id" => $row['id'],
-            "bruType" => $row['bruType'],
-            "gradiApTableName" => $row['gradiApTableName'],
-            "gradiBpTableName" => $row['gradiBpTableName'],
-            "excListTableName" => $row['excListTableName'],
-            "paramSetTemplateListTableName" =>
-                $row['paramSetTemplateListTableName'],
-            "stepLength" => $row['stepLength'], //seconds in 1 frame
-            "stepDivider" => $row['stepDivider'],
-            "frameLength" => $row['frameLength'],
-            "wordLength" => $row['wordLength'],
-            "headerLength" => $row['headerLength'],
-            "headerScr" => $row['headerScr'],
-            "frameSyncroCode" => $row['frameSyncroCode'],
-            "aditionalInfo" => $row['aditionalInfo']
-        );*/
-
         $result->free();
         $c->Disconnect();
 

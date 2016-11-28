@@ -323,5 +323,55 @@ FlightViewOptions.prototype.SupportAccordion = function($accordionButtons) {
         var dataShown = (target.attr('data-shown') === 'false') ? 'true' : 'false';
         target.attr('data-shown', dataShown).next().slideToggle();
     });
-
 };
+
+
+FlightViewOptions.prototype.SupportUserComment = function() {
+    var that = this;
+
+    function removeTextarea(event) {
+        if((event.target
+                && !$(event.target).hasClass('events_user-comment')
+                && !$(event.target).hasClass('events_user-comment-texarea')
+            )
+            || (event.which == 13)
+        ) {
+            $.each($('.events_user-comment-texarea'), function(key, value) {
+                var $el = $(value);
+                var text = $el.val();
+                var excId = $el.parents('.events_user-comment').first().data('excid');
+
+                $.post(FLIGHTS_VIEW_OPTIONS_SRC,
+                    {
+                        action: 'updateComment',
+                        data: {
+                            flightId: that.flightId,
+                            excId: excId,
+                            text: text
+                        }
+                    },
+                    function() {
+                    $el.parent().text(text);
+                    }
+                );
+            });
+            $(document).off('click', removeTextarea);
+            $(document).off('keypress', removeTextarea);
+        }
+    };
+
+    $('#flightOptionsContent').on('click', function(event) {
+        var $el = $(event.target);
+
+        if($el.hasClass('events_user-comment') && ($el.find('textarea').length === 0)) {
+            var text = $el.text();
+            var $textarea = $('<textarea></textarea>');
+            $textarea.addClass('events_user-comment-texarea');
+            $el.append($textarea);
+            $textarea.focus();
+
+            $(document).click(removeTextarea);
+            $(document).keypress(removeTextarea);
+        }
+    });
+}

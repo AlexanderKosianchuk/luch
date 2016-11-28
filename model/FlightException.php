@@ -643,12 +643,8 @@ class FlightException
 
     }
 
-    public function UpdateUserComment($extExcTableName, $extExcId, $extUserComment)
+    public function UpdateUserComment($excTableName, $excId, $userComment)
     {
-        $excTableName = $extExcTableName;
-        $excId = $extExcId;
-        $userComment = $extUserComment;
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
@@ -660,8 +656,5 @@ class FlightException
         $c->Disconnect();
 
         unset($c);
-
     }
 }
-
-?>

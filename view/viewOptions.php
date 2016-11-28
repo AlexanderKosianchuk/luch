@@ -467,6 +467,36 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $answ["error"] = $c->lang->notAllowedByPrivilege;
             echo(json_encode($answ));
         }
+    } else if($c->action == 'updateComment') {
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['flightId']) &&
+                    isset($c->data['excId']) &&
+                    isset($c->data['text']))
+            {
+                $flightId = $c->data['flightId'];
+                $excid = $c->data['excId'];
+                $text = $c->data['text'];
+
+                $c->UpdateExceptionComment($flightId, $excid, $text);
+                $answ["status"] = "ok";
+
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page fileUploader.php";
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            echo(json_encode($answ));
+        }
     }
     else
     {
