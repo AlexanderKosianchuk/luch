@@ -155,6 +155,7 @@
 "chartPrintInNewWindow" : "Calendario Impresión",
 "monochromeEventsPrint" : "Mono Impresión",
 "eventListSave" : "Formulario",
+"saveChartTpl": "Save tem-t",
 
 "dataTable": {
     "sLengthMenu": "Visualización _MENU_ registros por página",

@@ -1,98 +1,144 @@
 .LeadParamValBox{
-	background-color: #898989;
-	border-radius: 3px;
-	color: #fff;
-	opacity: 0.5;
-	position: absolute;
-	font-size: 14px;
-	padding: 2px;
-	z-index: 1;
-	display: none;
+    background-color: #898989;
+    border-radius: 3px;
+    color: #fff;
+    opacity: 0.5;
+    position: absolute;
+    font-size: 14px;
+    padding: 2px;
+    z-index: 1;
+    display: none;
 }
 
 .TopLeftBut {
-	display: inline-block;
-	height: 45px;
-	margin-left: 15px;
+    display: inline-block;
+    height: 45px;
+    margin-left: 15px;
 }
 
 .TopLeftBut:hover {
-	background-color: #004a7a;
+    background-color: #004a7a;
 }
 
-.TopLeftChartButt {	
-	position:absolute;
-	border:none;
-	top:0px;
-	left:20px;
-	
-	height:45px;
-	color:#fff;
-	font-size:24px;
+.TopLeftChartButt {
+    position:absolute;
+    border:none;
+    top:0px;
+    left:20px;
 
-	padding-left:40px;
-	background-repeat: no-repeat;
-	background-image:url(../basicImg/down.png);
-	cursor: pointer;
-	z-index:1;
-	
-    -moz-user-select: none; 
-    -khtml-user-select: none; 
-    -webkit-user-select: none; 
-    -o-user-select: none; 
+    height:45px;
+    color:#fff;
+    font-size:24px;
+
+    padding-left:40px;
+    background-repeat: no-repeat;
+    background-image:url(../basicImg/down.png);
+    cursor: pointer;
+    z-index:1;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
 }
 
-.TopLeftChartButt:hover
+.top-right-chart-btn {
+    position:absolute;
+    border:none;
+    top:0px;
+    right:20px;
+
+    height:45px;
+    color:#fff;
+    font-size:24px;
+
+    padding-left:40px;
+    background-repeat: no-repeat;
+    background-image:url(../basicImg/up.png);
+    cursor: pointer;
+    z-index:1;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+.top-right-chart-btn--span {
+    margin-top: 8px;
+    line-height: 45px;
+    padding-right: 8px;
+}
+
+.top-right-chart-btn--disabled {
+    background-color: #0072bc;
+    animation: bg-color 3s infinite;
+    -webkit-animation: bg-color 3s infinite;
+}
+
+@-webkit-keyframes bg-color {
+  0% { background-color: #0072bc; }
+  50% { background-color: #0f3046; }
+  100% { background-color: #0072bc; }
+}
+
+@keyframes bg-color {
+    0% { background-color: #0072bc; }
+    50% { background-color: #0f3046; }
+    100% { background-color: #0072bc; }
+}
+
+.TopLeftChartButt:hover, .top-right-chart-btn:not(.top-right-chart-btn--disabled):hover
 {
-	background-color:#004a7a;
+    background-color:#004a7a;
 }
 
-.TopLeftChartButtSpan {	
-	margin-top: 8px;
-	line-height: 45px;
-	padding-right: 8px;
+.TopLeftChartButtSpan {
+    margin-top: 8px;
+    line-height: 45px;
+    padding-right: 8px;
 }
 
 .VisirTimeBox {
-	background-color: transparent;
-	position: absolute;
-	font-size: 14px;
-	top: 1px;
+    background-color: transparent;
+    position: absolute;
+    font-size: 14px;
+    top: 1px;
 }
 
 .BarLabel {
-	position: absolute;
-	display: none;
-	border: 0px;
-	padding: 2px;
-	z-index: 2;
-	font-size: 14px;
-	text-shadow: 1px 1px 0px grey, 0 0 7px white;
+    position: absolute;
+    display: none;
+    border: 0px;
+    padding: 2px;
+    z-index: 2;
+    font-size: 14px;
+    text-shadow: 1px 1px 0px grey, 0 0 7px white;
     background-color: transparent;
-	opacity: 0.75;
+    opacity: 0.75;
 }
 
 .BarMainLabel {
-	position: absolute;
-	display: none;
-	border: 1px solid #999;
-	padding: 2px;
-	top: 18px;
-	border-radius: 3px;
-	color: black;
-	background-color: white;
-	font-size: 12px;
-	opacity: 0.6;
+    position: absolute;
+    display: none;
+    border: 1px solid #999;
+    padding: 2px;
+    top: 18px;
+    border-radius: 3px;
+    color: black;
+    background-color: white;
+    font-size: 12px;
+    opacity: 0.6;
 }
 
 .vertical-text-container {
-	top: 38px;
-	width: 0px;
-	display: block;
-	position: absolute;
-	text-align: center;
-	writing-mode: vertical-rl;
-	text-orientation: sideways-right;
-	color: #555;
-	z-index: 2;
+    top: 38px;
+    width: 0px;
+    display: block;
+    position: absolute;
+    text-align: center;
+    writing-mode: vertical-rl;
+    text-orientation: sideways-right;
+    color: #555;
+    z-index: 2;
 }

@@ -285,6 +285,40 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
+    else if($c->action == 'copyTemplate')
+    {
+        if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
+        {
+            if(isset($c->data['flightId']) &&
+                    isset($c->data['tplName']))
+            {
+                $flightId = $c->data['flightId'];
+                $tplName = $c->data['tplName'];
+
+                $action = $c->action;
+                $answ = $c->copyTemplate($flightId, $tplName);
+
+                $c->RegisterActionExecution($action, "executed");
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page bru.php";
+                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+    }
     else
     {
         $msg = "Undefined action. Data: " . json_encode($_POST['data']) .

@@ -134,6 +134,35 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
                     .addClass('TopLeftChartButtSpan')
                     .text(self.langStr.chartPrintInNewWindow)
             );
+
+        $("<label></label>")
+            .attr("id", 'save-tpl')
+            .addClass('top-right-chart-btn')
+            .appendTo(self.chartTopMenu)
+            .on("click", function(e) {
+                var $saveTpl = $('#save-tpl');
+
+                if (self.flightId
+                    && self.tplName
+                    && !$saveTpl.hasClass('top-right-chart-btn--disabled')
+                ) {
+                    $saveTpl.addClass('top-right-chart-btn--disabled');
+                    var data = [
+                        self.flightId,
+                        self.tplName,
+                        function() {
+                            setTimeout(function() {
+                                $saveTpl.removeClass('top-right-chart-btn--disabled');
+                            }, 2000);
+                        }
+                    ];
+                    self.eventHandler.trigger("saveChartTpl", data);
+                }
+            }).append(
+                $("<span><span>")
+                    .addClass('top-right-chart-btn--span')
+                    .text(self.langStr.saveChartTpl)
+            );
     }
 
     function PrintFile(flightId, fromTime, toTime, prms){

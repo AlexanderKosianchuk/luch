@@ -198,30 +198,35 @@ class PSTempl
         return $paramCodeList;
     }
 
-    public function GetPSTParams($extPSTListTableName, $extPSTName, $extUser)
+    public function getTemplate($tableName, $templateName, $user)
     {
-        $PSTListTableName = $extPSTListTableName;
-        $PSTName = $extPSTName;
-        $user = $extUser;
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ? AND `user` = ?);";
+        $query = "SELECT `id`, `name`, `paramCode`, `isDefault`, `minYaxis`, `maxYaxis`, `user` "
+            . "FROM `".$tableName."` WHERE (`name` = ? AND `user` = ?);";
         $stmt = $link->prepare($query);
-        $stmt->bind_param('ss', $PSTName, $user);
+        $stmt->bind_param('ss', $templateName, $user);
         $stmt->execute();
-        $stmt->bind_result($paramCode);
-        $paramCodeList = array();
+        $stmt->bind_result($id, $name, $paramCode, $isDefault, $minYaxis, $maxYaxis, $user);
+        $template = array();
         while ($stmt->fetch())
         {
-            array_push($paramCodeList, $paramCode);
+            array_push($template, [
+                'id' => $id,
+                'name' => $name,
+                'paramCode' => $paramCode,
+                'isDefault' => $isDefault,
+                'minYaxis' => $minYaxis,
+                'maxYaxis' => $maxYaxis,
+                'user' => $user
+            ]);
         }
 
         $c->Disconnect();
         unset($c);
 
-        return $paramCodeList;
+        return $template;
     }
 
     public function GetAllPSTParams($extPSTListTableName, $extUser)
@@ -476,6 +481,23 @@ class PSTempl
         return false;
     }
 
-}
+    public function createTemplate($templateName, $templateItems, $tableName, $username)
+    {
+        $this->DeleteTemplate($tableName, $templateName, $username);
 
-?>
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        foreach ($templateItems as $item) {
+            $query = "INSERT INTO `".$tableName."` "
+                . "(`name`, `paramCode`, `minYaxis`, `maxYaxis`, `user`) "
+                . "VALUES ('".$templateName."','".$item['paramCode']."', '".$item['minYaxis']."', '".$item['maxYaxis']."', '".$username."');";
+
+            $stmt = $link->prepare($query);
+            $stmt->execute();
+        }
+
+        $c->Disconnect();
+        unset($c);
+    }
+}

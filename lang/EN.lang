@@ -155,6 +155,7 @@
 "chartPrintInNewWindow" : "Print Chart",
 "monochromeEventsPrint" : "Mono print",
 "eventListSave" : "Report",
+"saveChartTpl": "Мista snið-ð",
 
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",

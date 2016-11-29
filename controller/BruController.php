@@ -35,7 +35,7 @@ class BruController extends CController
                     " " . $this->lang->templates .
                     "</div>";
         }
-        
+
         $leftMenu .= sprintf("</div>");
 
         return $leftMenu;
@@ -320,5 +320,37 @@ class BruController extends CController
         unset($PSTempl);
 
         return "ok";
+    }
+
+    public function copyTemplate($flightId, $oldName)
+    {
+        $Fl = new Flight();
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        unset($Fl);
+
+        $bruType = $flightInfo['bruType'];
+        $Bru = new Bru ();
+        $bruInfo = $Bru->GetBruInfo ($bruType);
+        $tableName = $bruInfo ['paramSetTemplateListTableName'];
+        unset ( $Bru );
+
+        $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
+        $username = $this->_user->username;
+        $PSTempl = new PSTempl();
+        $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
+        $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
+        unset($PSTempl);
+
+        return 'ok';
+    }
+
+    private function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

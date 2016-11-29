@@ -213,5 +213,9 @@ jQuery(function ($) {
                 C.FillFactoryContaider(showcase);
             }
         });
+
+        eventHandler.on("saveChartTpl", function (e, flightId, tplName, saveChartTplCb) {
+            B.copyTemplate(flightId, tplName).then(saveChartTplCb);
+        });
     });
 });

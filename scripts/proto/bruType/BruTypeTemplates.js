@@ -189,10 +189,9 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
                 '</label>');
 
             $("#here").on("click", function(e){
-
                 var data = [null, //flightId null to leave curr val
-                            flightViewOptionActions['getBruTemplates'],
-                            factoryWindow];
+                    flightViewOptionActions['getBruTemplates'],
+                    factoryWindow];
 
                 eventHandler.trigger("viewFlightOptions", data);
             });
@@ -415,5 +414,4 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
         ShowTopMenu();
         ShowTemplatesContent();
     };
-
-}
+};

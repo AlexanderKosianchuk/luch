@@ -155,6 +155,7 @@
 "chartPrintInNewWindow" : "График на печать",
 "monochromeEventsPrint" : "Ч/Б печать",
 "eventListSave" : "Бланк",
+"saveChartTpl": "Сохр. шаблон",
 
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",
