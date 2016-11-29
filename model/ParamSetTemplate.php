@@ -229,6 +229,28 @@ class PSTempl
         return $template;
     }
 
+    public function GetPSTParams($PSTListTableName, $PSTName, $user)
+    {
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ? AND `user` = ?);";
+        $stmt = $link->prepare($query);
+        $stmt->bind_param('ss', $PSTName, $user);
+        $stmt->execute();
+        $stmt->bind_result($paramCode);
+        $paramCodeList = array();
+        while ($stmt->fetch())
+        {
+            array_push($paramCodeList, $paramCode);
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $paramCodeList;
+    }
+
     public function GetAllPSTParams($extPSTListTableName, $extUser)
     {
         $PSTListTableName = $extPSTListTableName;
