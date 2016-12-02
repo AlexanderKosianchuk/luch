@@ -1005,6 +1005,74 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
+    else if($c->getAction === 'results')
+    {
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        {
+            header("Content-Type: text/comma-separated-values; charset=utf-8");
+            header("Content-Disposition: attachment; filename=results.csv");  //File name extension was wrong
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private", false);
+
+            $list = $c->GetResults();
+
+            $figPrRow = '';
+            foreach ($list as $fields) {
+                for($i = 0; $i < count($fields); $i++) {
+                    $figPrRow .= $fields[$i] . ";";
+                }
+
+                $figPrRow = substr($figPrRow, 0, -1);
+                $figPrRow .= PHP_EOL;
+            }
+
+            echo $figPrRow;
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+
+        unset($U);
+    }
+    else if($c->getAction === 'events')
+    {
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        {
+            header("Content-Type: text/comma-separated-values; charset=utf-8");
+            header("Content-Disposition: attachment; filename=events.csv");  //File name extension was wrong
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private", false);
+
+            $list = $c->GetEvents();
+
+            $figPrRow = '';
+            foreach ($list as $fields) {
+                for($i = 0; $i < count($fields); $i++) {
+                    $figPrRow .= $fields[$i] . ";";
+                }
+
+                $figPrRow = substr($figPrRow, 0, -1);
+                $figPrRow .= PHP_EOL;
+            }
+
+            echo $figPrRow;
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            echo(json_encode($answ));
+        }
+
+        unset($U);
+    }
     else
     {
         $msg = "Undefined action. Data: " . json_encode($_POST['data']) .

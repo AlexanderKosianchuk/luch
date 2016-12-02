@@ -619,13 +619,11 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
     //build bar
     self.document.keyup(function(event) {
         if(self.Legnd.verticalTextInput) {
-
             var yAxArr = self.plot.getYAxes();
             for(var i = 0; i < yAxArr.length; i++){
                 yAxArr[i].options.zoomRange = [0,0];
             }
             self.plot.getXAxes()[0].options.zoomRange = null;
-
             self.shiftPressed = false;
 
             return false;

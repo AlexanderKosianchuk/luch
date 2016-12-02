@@ -362,35 +362,6 @@ class FlightException
         $stmt->execute();
         $stmt->bind_result($frameNum, $startTime, $endTime, $code, $refParam, $aditionalInfo, $userComment);
 
-        /*while ($stmt->fetch())
-        {
-            $link3 = $c->Connect();
-            $query = "SELECT `text`, `comment`, `algText` FROM `".$excListTableName."` WHERE `code` = ?;";
-            $stmt3 = $link3->prepare($query);
-            $stmt3->bind_param('s', $code);
-            $stmt3->execute();
-            $stmt3->bind_result($excText, $excComment, $algText);
-            $stmt3->fetch();
-            $excComment = $this->UnicodeConv($excComment); //Because of cyrillic string
-            //var_dump($excComment);
-
-            $link2 = $c->Connect();
-            $query = "SELECT `time`, `".$refParam."` FROM `".$apTableName."` WHERE `frameNum` = ? LIMIT 1;";
-            $stmt2 = $link2->prepare($query);
-            $stmt2->bind_param('i', $frameNum);
-            $stmt2->execute();
-            $stmt2->bind_result($time, $value);
-            while ($stmt2->fetch())
-            {
-                $exc = array($time, $code, $value,
-                    $excText, $excComment, $algText);
-                $excList[] = $exc;
-            }
-            $stmt2->close();
-
-            $stmt3->close();
-        }*/
-
         while ($stmt->fetch())
         {
             $link3 = $c->Connect();

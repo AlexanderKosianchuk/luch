@@ -351,7 +351,7 @@ FlightViewOptions.prototype.SupportUserComment = function() {
                         }
                     },
                     function() {
-                    $el.parent().text(text);
+                        $el.parent().text(text);
                     }
                 );
             });

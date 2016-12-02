@@ -93,6 +93,16 @@ class FlightsController extends CController
                </div>", $this->lang->searchItem);
       }
 
+      $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
+          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>
+          <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=results'>%s&nbsp;</a>
+          </div>", $this->lang->resultsItem);
+
+      $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
+          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/events.png'></img>
+          <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=events'>%s&nbsp;</a>
+          </div>", $this->lang->eventsItem);
+
       if(in_array($this->_user->userPrivilegeArr[0], $this->_user->privilege) ||
             in_array($this->_user->userPrivilegeArr[1], $this->_user->privilege) ||
             in_array($this->_user->userPrivilegeArr[2], $this->_user->privilege) ||
@@ -734,7 +744,7 @@ class FlightsController extends CController
       $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
       unset($U);
       $Fl = new Flight();
-      $flights = $Fl->GetFlights($avaliableFlightIds, $orderColumn, $orderType);
+      $flights = $Fl->GetFlights($avaliableFlightIds);
       unset($Fl);
 
       $tableSegment = array();
@@ -915,5 +925,126 @@ class FlightsController extends CController
       unset($U);
 
       return $actionsInfo;
+   }
+
+   public function GetResults()
+   {
+       $c = new DataBaseConnector();
+       $link = $c->Connect();
+       $list = [];
+
+       $query = "SELECT * FROM `results` WHERE 1;";
+       $result = $link->query($query);
+
+       $firstRow = true;
+
+       if(!$result) {
+           $c->Disconnect();
+           unset($c);
+           return $list;
+       }
+
+       while($row = $result->fetch_array())
+       {
+           if ($firstRow) {
+               $firstRow = false;
+
+               $plainRow = [];
+               foreach ($row as $key => $val) {
+                   if (gettype($key) === 'string') {
+                       $plainRow[] = $key;
+                   }
+               }
+               array_push($list, $plainRow);
+
+               $plainRow = [];
+               foreach ($row as $key => $val) {
+                   if (gettype($key) !== 'string') {
+                       $plainRow[] = $val;
+                   }
+               }
+
+               array_push($list, $plainRow);
+           } else {
+               $plainRow = [];
+               foreach ($row as $key => $val) {
+                   if (gettype($key) !== 'string') {
+                       $plainRow[] = $val;
+                   }
+               }
+
+               array_push($list, $plainRow);
+           }
+       }
+
+       $result->free();
+       $c->Disconnect();
+
+       unset($c);
+
+       return $list;
+   }
+
+   public function GetEvents()
+   {
+       $list = [];
+       $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
+
+       $Fl = new Flight();
+       $flights = $Fl->GetFlights($avaliableFlightIds);
+       unset($Fl);
+
+       $firstRow = true;
+       $excTables = [];
+       $FEx = new FlightException();
+       foreach($flights as $flight)
+       {
+           $excTable = $flight['exTableName'];
+           $rows = $FEx->GetFlightEventsList($excTable);
+
+           foreach ($rows as $row) {
+               $falseAlarm = $row['falseAlarm'];
+
+               if($falseAlarm) {
+                   continue;
+               }
+
+               $row = array(
+                   "code" => $row['code'],
+                   "startTime" => date('Y-m-d H:i:s', ($row['startTime'] / 1000)),
+                   "endTime" => date('Y-m-d H:i:s', ($row['endTime'] / 1000)),
+                   "excAditionalInfo" => $row['excAditionalInfo'],
+                   "userComment" => $row['userComment']
+               );
+
+               if ($firstRow) {
+                   $firstRow = false;
+
+                   $plainRow = [];
+                   foreach ($row as $key => $val) {
+                       if (gettype($key) === 'string') {
+                           $plainRow[] = $key;
+                       }
+                   }
+                   array_push($list, $plainRow);
+               }
+
+               $plainRow = [];
+               foreach ($row as $key => $val) {
+                   if (isset($val)) {
+                       $val = str_replace([PHP_EOL, ',', ';'], ' ', $val);
+
+                       $plainRow[] = $val;
+                   } else {
+                       $plainRow[] = '';
+                   }
+               }
+
+               array_push($list, $plainRow);
+           }
+       }
+       unset($FEx);
+
+       return $list;
    }
 }
