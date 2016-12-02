@@ -510,10 +510,6 @@ Chart.prototype.SupportPlotEvents = function(e) {
         if(self.Legnd.showSeriesLabelsNeed){
             self.Legnd.ShowSeriesLabels();
         }
-
-        if(self.Legnd.showSeriesCodeLabelsNeed){
-            self.Legnd.ShowSeriesCodes();
-        }
     });
 
     self.placeholder.on("plotzoom", function (event, currPlot) {
@@ -523,10 +519,6 @@ Chart.prototype.SupportPlotEvents = function(e) {
 
         if(self.Legnd.showSeriesLabelsNeed){
             self.Legnd.ShowSeriesLabels();
-        }
-
-        if(self.Legnd.showSeriesCodeLabelsNeed){
-            self.Legnd.ShowSeriesCodes();
         }
     });
 
@@ -662,12 +654,9 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
             self.Legnd.seriesLabelsTime = self.Legnd.pos.x;
             self.Legnd.ShowSeriesLabels();
         }
-        //put series labels
+        //add chart comment
         if(event.which == KEY_C) {
-            self.Legnd.showSeriesCodeLabelsNeed = !self.Legnd.showSeriesCodeLabelsNeed;
-            self.Legnd.seriesLabelsValues = self.Prm.GetValue(self.plotDataset, self.Legnd.pos.x);
-            self.Legnd.seriesCodeLabelsTime = self.Legnd.pos.x;
-            self.Legnd.ShowSeriesCodes();
+            self.Legnd.addComment(self.Legnd.pos.x, self.Legnd.pos.y);
         }
         //distribute
         if(event.which == KEY_D){
@@ -736,7 +725,6 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
 
                     self.Legnd.UpdateBarContainersPos();
                     self.Exc.UpdateExcSupportTools();
-
                 },
                 function(status) {
                     console.log(status);

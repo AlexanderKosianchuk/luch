@@ -142,3 +142,25 @@
     color: #555;
     z-index: 2;
 }
+
+.horizontal-text-container {
+    top: 40px;
+    width: 100px;
+    display: block;
+    position: absolute;
+    text-align: center;
+    color: #333;
+    background-color: rgba(0,0,0,0);
+    z-index: 22;
+}
+
+.horizontal-text-container--is-active {
+    top: 40px;
+    width: 100px;
+    display: block;
+    position: absolute;
+    text-align: center;
+    color: #fff;
+    background-color: #888;
+    z-index: 22;
+}
