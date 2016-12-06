@@ -410,11 +410,8 @@ class ViewOptionsController extends CController
         return $paramList;
     }
 
-    public function ShowSearchedParams($extFlightId, $extRequest)
+    public function ShowSearchedParams($flightId, $request)
     {
-        $flightId = $extFlightId;
-        $request = $extRequest;
-
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -471,7 +468,10 @@ class ViewOptionsController extends CController
 
             $paramList .= sprintf("</div></div></br>");
 
-        return $paramList;
+        return [
+            'searchedParams' => $paramList,
+            'foundCount' => count($flightApHeaders) + count($flightBpHeaders)
+        ];
     }
 
     private static $exceptionTypeOther = 'other';

@@ -307,11 +307,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $flightId = $c->data['flightId'];
                 $request = $c->data['request'];
 
-                $searchedParams = $c->ShowSearchedParams($flightId, $request);
-
-                $data = array(
-                        'searchedParams' => $searchedParams
-                );
+                $data = $c->ShowSearchedParams($flightId, $request);
 
                 $answ["status"] = "ok";
                 $answ["data"] = $data;

@@ -936,13 +936,11 @@ class Bru
         return $apHeader;
     }
 
-    public function GetBruApHeadersByRequest($extBruType, $extRequest)
+    public function GetBruApHeadersByRequest($extBruType, $request)
     {
         $bruType = $extBruType;
-        $request = $extRequest;
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -952,8 +950,10 @@ class Bru
         $result->free();
 
         $apHeader = array();
-        $query = "SELECT * FROM `".$cycloApTableName."` ".
-                "WHERE `code` LIKE '%" . $request . "%' OR `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%' GROUP BY `code` ;";
+
+        $query = "SELECT * FROM `".$cycloApTableName."` "
+                . " WHERE `code` LIKE '%" . $request . "%' OR `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%';";
+
         $result = $link->query($query);
 
         while($row = $result->fetch_array())
@@ -1081,7 +1081,7 @@ class Bru
         $bpHeader = array();
 
         $query = "SELECT * FROM `".$cycloBpTableName."` ".
-                "WHERE `code` LIKE '%" . $request . "%' OR  `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%' GROUP BY `code` ;";
+                "WHERE `code` LIKE '%" . $request . "%' OR  `name` LIKE '%" . $request . "%' OR `channel` LIKE '%" . $request . "%';";
 
         $result = $link->query($query);
 

@@ -447,8 +447,6 @@ FlightViewOptions.prototype.SupportParamsChecking = function(){
 }
 
 FlightViewOptions.prototype.SupportColorPicker = function(){
-
-    console.log("1");
     var self = this;
 
     $.colorpicker.regional['current'] = {
@@ -461,7 +459,6 @@ FlightViewOptions.prototype.SupportColorPicker = function(){
         };
 
     $('input.colorpicker-popup').on("click", function(e){
-        console.log("2");
         var $this = $(this);
         if($this.data("colorpicker") == false) {
             $this.colorpicker({
@@ -514,14 +511,18 @@ FlightViewOptions.prototype.SupportSearch = function(){
             searchResult.empty();
 
             if(searchText != ''){
-                searchResult.css('visibility', 'visible');
                 ReceiveSearchResult(searchText, self.flightId)
                 .done(function(answ){
                     if(answ["status"] == "ok") {
-                        var data = answ["data"],
-                            searchRes = data['searchedParams'];
-                        searchResult.append(searchRes);
-                        SupportSearchedParamsChecking();
+                        var data = answ["data"];
+                        var foundCount = data['foundCount'];
+
+                        if (foundCount > 0) {
+                            searchResult.css('visibility', 'visible');
+                            var searchRes = data['searchedParams'];
+                            searchResult.append(searchRes);
+                            SupportSearchedParamsChecking();
+                        }
                     } else {
                         console.log(answ['error']);
                     }
