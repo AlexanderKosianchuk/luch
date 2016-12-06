@@ -57,6 +57,7 @@
 "moveItem" : "Movimiento",
 "removeSelection" : "Cancelar asignación",
 "selectAll" : "Seleccionar todo",
+"exportCoordinates" : "Export coordinates",
 "syncFlightHeaders": "Sincronizar los datos de identificación",
 
 "flightFilesList": "La lista de archivos para convertir",

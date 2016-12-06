@@ -57,6 +57,7 @@
 "moveItem" : "Переместить",
 "removeSelection" : "Отменить выделение",
 "selectAll" : "Выбрать все",
+"exportCoordinates" : "Выгрузить маршрут",
 "syncFlightHeaders": "Синхронизировать опознавательные данные",
 
 "flightFilesList": "Перечень файлов для конвертирования",

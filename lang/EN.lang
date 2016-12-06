@@ -57,6 +57,7 @@
 "moveItem" : "Rename",
 "removeSelection" : "Cancel selection",
 "selectAll" : "Select all",
+"exportCoordinates" : "Export coordinates",
 "syncFlightHeaders": "Sync Headers",
 
 "flightFilesList": "Flight files for convertion",

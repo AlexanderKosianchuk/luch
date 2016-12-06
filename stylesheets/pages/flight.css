@@ -279,3 +279,7 @@ table.dataTable tfoot td {
 #optionsDialog .options-clear {
     clear: both;
 }
+
+.export-coordinates-href {
+    text-decoration: none;
+}

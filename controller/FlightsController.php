@@ -1047,4 +1047,76 @@ class FlightsController extends CController
 
        return $list;
    }
+
+   public function GetCoordinates($flightId)
+   {
+       if(!is_int(intval($flightId))) {
+           throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
+       }
+
+       $Fl = new Flight();
+       $flight = $Fl->GetFlightInfo($flightId);
+       unset($Fl);
+
+       $bruType = $flight['bruType'];
+       $apTableName = $flight['apTableName'];
+       $bpTableName = $flight['bpTableName'];
+
+       $Bru = new Bru();
+       $bruInfo = $Bru->GetBruInfo($bruType);
+       unset($Bru);
+
+       $kmlScript = $bruInfo['kml_export_script'];
+       $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
+       $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
+
+       $c = new DataBaseConnector();
+       $link = $c->Connect();
+
+       $result = $link->query($kmlScript);
+
+       $info = [];
+       $averageLat = 0;
+       $averageLong = 0;
+
+       while($row = $result->fetch_array()) {
+           $lat = $row['LAT'];
+           $long = $row['LONG'];
+           $h = $row['H'];
+
+           $averageLat += $lat;
+           $averageLong += $long;
+           $averageLat /= 2;
+           $averageLong /= 2;
+
+           if ($h < 0) {
+               $h = 10.00;
+           }
+           $h = round($h, 2);
+           $info[] = [
+               $long,
+               $lat,
+               $h,
+           ];
+       }
+
+       $ii = 0;
+       while (($ii < count($info))
+           && ($info[$ii][0] < $averageLong * 0.05) // if less than 5% its startup rubbish
+           && ($info[$ii][1] < $averageLat * 0.05)) {
+           $ii++;
+       }
+
+       $cleanedInfo = [];
+       for($jj = $ii; $jj < count($info); $jj++) {
+           $cleanedInfo[] = $info[$jj];
+       }
+
+       $result->free();
+       $c->Disconnect();
+
+       unset($c);
+
+       return $cleanedInfo;
+   }
 }

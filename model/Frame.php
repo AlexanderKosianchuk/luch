@@ -214,10 +214,6 @@ class Frame
                 }
                 else if($paramType == 2)//calc param
                 {
-                    //$algHeap to store global temp values
-                    //$Ch = new Cache();
-                    //$algHeap = unserialize($Ch->retrieve('algHeap'));
-
                     $alg = $paramCyclo['alg'];
                     $alg = str_replace("[p]", "'" . $codeValue . "'", $alg);
                     $alg = str_replace("[k]", $paramCyclo['k'], $alg);
