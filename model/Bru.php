@@ -1354,45 +1354,8 @@ class Bru
         return $channelAndMask;
     }
 
-    /*public function GetChannelsByCode($extApGradiTableName, $extParamCode)
+    public function GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode, $paramType = "")
     {
-        $code = (array)$extParamCode;
-        $apGradiTableName = $extApGradiTableName;
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "SELECT `channel` FROM `".$apGradiTableName."` WHERE `code` IN (";
-
-        for($i = 0; $i < count($code); $i++)
-        {
-            $query .= "'".$code[$i]."', ";
-        }
-
-        $query  = substr($query , 0, -2);
-        $query .= ");";
-
-        $result = $link->query($query);
-        $channel = array();
-
-        while($row = $result->fetch_array())
-        {
-            $channel[] = $row['channel'];
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $channel;
-    }*/
-
-    public function GetParamInfoByCode($extCycloApTableName, $extCycloBpTableName, $extParamCode, $extParamType = "")
-    {
-        $cycloApTableName = $extCycloApTableName;
-        $cycloBpTableName = $extCycloBpTableName;
-        $paramType = $extParamType;
-        $paramCode = $extParamCode;
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $paramInfo = array();
@@ -1436,8 +1399,7 @@ class Bru
             $result = $link->query($query);
             $row = $result->fetch_array();
 
-            if(strpos(",", $row['channel'])) {
-                var_dump($row['channel']);
+            if(strpos($row['channel'], ',')) {
                 $freq = explode(",", $row['channel']);
                 $freq = array_map("trim", $freq);
                 $freq = array_filter($freq);

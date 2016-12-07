@@ -115,12 +115,8 @@ class Channel
         return $pointPairList;
     }
 
-    private function GetBinaryChannel($extTableName, $extCode, $extStepLength, $extFreq)
+    private function GetBinaryChannel($tableName, $code, $stepLength, $freq)
     {
-        $tableName = $extTableName;
-        $code = $extCode;
-        $stepLength = $extStepLength;
-        $freq = $extFreq;
         $stepMicroTime = $stepLength / $freq * 1000;
 
         $c = new DataBaseConnector();
@@ -200,17 +196,11 @@ class Channel
 
         unset($c);
 
-
         return $pointPairList;
     }
 
-    public function GetBinaryParam($extTableName, $extCode, $extStepLength, $extFreq)
+    public function GetBinaryParam($bpTableName, $code, $stepLength, $freq)
     {
-        $bpTableName = $extTableName;
-        $stepLength = $extStepLength;
-        $code = $extCode;
-        $freq = $extFreq;
-
         $pointPairList = array();
 
         $pointPairList = $this->GetBinaryChannel($bpTableName, $code, $stepLength, $freq);
@@ -218,13 +208,9 @@ class Channel
         $tempString = json_encode($pointPairList);
         //in bin params point equal to null we had put ["null","null"]
         $searchSubstr = '["null","null"]';
-        //$searchSubstr = 'null';
         $transmitStr = str_replace($searchSubstr, 'null', $tempString);
-        //var_dump($transmitStr);
-
 
         return json_decode($transmitStr);
-        //return $pointPairList;
     }
 
     public function GetNormalizedApParam($extApTableName,
@@ -318,7 +304,6 @@ class Channel
         $startCopyTime = $extStartCopyTime;
         $startFrame = $extStartFrame;
         $endFrame = $extEndFrame;
-        //date_default_timezone_set('Europe/Kiev');
         $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
 
         $normTime = array();

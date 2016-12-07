@@ -77,7 +77,6 @@ class Frame
         $channelFreq = $extChannelFreq;
         $frameNum = $extFrameNum;
         $cycloAp = $extCycloAp;
-        //$algHeap = $extAlgHeap;
 
         $phisicsFrame = array();
 
@@ -321,18 +320,6 @@ class Frame
                      $phisics = $apCode * $paramCyclo['k'];
 
                      array_push($interview, $phisics);
-
-//                    $tempStr1 = substr ($codeValue, 0, 2);
-//                    $tempStr2 = substr ($codeValue, 2, 2);
-//                    $rotatedStr = $tempStr2 . $tempStr1;
-//                    $apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-//                    if($apCode >= $paramCyclo['minus'])
-//                    {
-//                        $apCode -= $paramCyclo['minus'] * 2;
-//                    }
-//                    $phisics = $apCode * $paramCyclo['k'];
-//
-//                    array_push($interview, $phisics);
                 }
                 else if($paramType == 9)//signed params with coef with gradual rotation
                 {
@@ -358,32 +345,23 @@ class Frame
                     }
                     $phisics = $apCode * $paramCyclo['k'];
                     array_push($interview, $phisics);
-                }
-
-
-else if($paramType == 30)
-{
-    if($paramCyclo['SUB'] ==  0)
-    {
-                    $tempStr1 = substr ($codeValue, 0, 2);
-                    $tempStr2 = substr ($codeValue, 2, 2);
-                    $rotatedStr = $tempStr2 . $tempStr1;
-                    $apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-                    if($apCode >= $paramCyclo['minus'])
+                } else if($paramType == 30) {
+                    if($paramCyclo['SUB'] ==  0)
                     {
-                        $apCode -= $paramCyclo['minus'] * 2;
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
+                        if($apCode >= $paramCyclo['minus']) {
+                            $apCode -= $paramCyclo['minus'] * 2;
+                        }
+                        $phisics = $apCode * $paramCyclo['k'];
+
+                    } else {
+                        $phisics = 211;
                     }
-                    $phisics = $apCode * $paramCyclo['k'];
-
-    }
-    else
-    {
-                    $phisics = 211;
-    }
-array_push($interview, $phisics);
-}
-
-
+                    array_push($interview, $phisics);
+                }
                 else if($paramType == 21)// graduated with invertion
                 {
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];

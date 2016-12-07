@@ -1109,7 +1109,24 @@ class FlightsController extends CController
 
        $cleanedInfo = [];
        for($jj = $ii; $jj < count($info); $jj++) {
-           $cleanedInfo[] = $info[$jj];
+           $coord = $info[$jj];
+           if (($jj < (count($info) - 1))
+               && ($jj > $ii)
+               && (abs($coord[0] - $info[$jj - 1][0]) > 0.00005)
+               && (abs($coord[0] - $info[$jj + 1][0]) > 0.00005)
+           ) {
+               $coord[0] = ($info[$jj - 1][0] + $info[$jj + 1][0]) / 2;
+           }
+
+           if (($jj < (count($info) - 1))
+               && ($jj > $ii)
+               && (abs($coord[1] - $info[$jj - 1][1]) > 0.00005)
+               && (abs($coord[1] - $info[$jj + 1][1]) > 0.00005)
+           ) {
+               $coord[1] = ($info[$jj - 1][1] + $info[$jj + 1][1]) / 2;
+           }
+
+           $cleanedInfo[] = $coord;
        }
 
        $result->free();
