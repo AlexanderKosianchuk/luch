@@ -906,7 +906,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["itemExport"])
+    else if($c->action == 'itemExport')
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -914,9 +914,12 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             {
                 $flightIds = [];
                 $folderDest = [];
-                if(isset($c->data['flightIds']) &&
-                        is_array($c->data['flightIds'])) {
-                    $flightIds = array_merge($flightIds, $c->data['flightIds']);
+                if(isset($c->data['flightIds'])) {
+                    if(is_array($c->data['flightIds'])) {
+                        $flightIds = array_merge($flightIds, $c->data['flightIds']);
+                    } else {
+                        $flightIds[] = $c->data['flightIds'];
+                    }
                 }
 
                 $folderDest = [];

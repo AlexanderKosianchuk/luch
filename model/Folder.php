@@ -266,7 +266,6 @@ class Folder
         $query = "SELECT `folderId` FROM `flightsinfolders` WHERE `flightId`=".$flightId." " .
                 "AND `userId` = ".$userId." LIMIT 1;";
 
-        //error_log($query);
         $result = $link->query($query);
 
         if($row = $result->fetch_array())
@@ -299,7 +298,6 @@ class Folder
                 "AND `userId` = ".$userId.";";
         }
 
-        //error_log($query);
         $result = $link->query($query);
 
         $flightArr = array();

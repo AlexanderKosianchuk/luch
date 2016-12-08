@@ -1093,8 +1093,6 @@ class Slice
             "`XCode` = '".$XCode."' AND " .
             "`YCode` = '".$YCode."';";
 
-        //error_log($query);
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $result = $link->query($query);
@@ -1141,8 +1139,6 @@ class Slice
                 "`sliceCode` = '".$sliceCode."' AND " .
                 "`XCode` = '".$XCode."' AND " .
                 "`YCode` = '".$YCode."';";
-
-        //error_log(json_encode($query));
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
@@ -1191,7 +1187,7 @@ class Slice
         {
             $query = "SELECT DISTINCT `sliceCode` FROM `".$etaloneTableName."` WHERE `engineSerial` = '".$row['engineSerial']."' AND `sliceId` = '".$sliceId."';";
             $result2 = $link->query($query);
-            //error_log($query);
+
             while($row2 = $result2->fetch_array())
             {
                 $etalonRow[] = array("sliceCode" => $row2['sliceCode'], "engineSerial" => $row['engineSerial']);

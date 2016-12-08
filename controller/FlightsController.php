@@ -180,7 +180,6 @@ class FlightsController extends CController
       $userId = $this->_user->GetUserIdByName($this->_user->username);
       $role = $this->_user->userInfo['role'];
       $adminRole = User::isAdmin($role);
-      unset($U);
 
       $flightIdsArr = [];
 
@@ -214,7 +213,6 @@ class FlightsController extends CController
       $userId = $this->_user->userInfo['id'];
       $role = $this->_user->userInfo['role'];
       $adminRole = User::isAdmin($role);
-      unset($U);
       $subFoldersArr = [];
       $Fd = new Folder();
 
@@ -237,7 +235,6 @@ class FlightsController extends CController
       $path = $extPath;
 
       $userId = $this->_user->GetUserIdByName($this->_user->username);
-      unset($U);
 
       $Fd = new Folder();
       $result = $Fd->CreateFolder($name, $path, $userId);
@@ -251,9 +248,7 @@ class FlightsController extends CController
       $sender = $extSender;
       $target = $extTarget;
 
-
       $userId = $this->_user->GetUserIdByName($this->_user->username);
-      unset($U);
 
       $Fd = new Folder();
       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
@@ -269,7 +264,6 @@ class FlightsController extends CController
 
 
       $userId = $this->_user->GetUserIdByName($this->_user->username);
-      unset($U);
 
       $Fd = new Folder();
       $result = $Fd->ChangeFolderPath($sender, $target, $userId);
@@ -283,9 +277,7 @@ class FlightsController extends CController
       $folderId = $extFolderId;
       $folderName = $extFolderName;
 
-
       $userId = $this->_user->GetUserIdByName($this->_user->username);
-      unset($U);
 
       $Fd = new Folder();
       $result = $Fd->RenameFolder($folderId, $folderName, $userId);
@@ -300,9 +292,7 @@ class FlightsController extends CController
       {
          $id = $extId;
 
-
          $userId = intval($this->_user->GetUserIdByName($this->_user->username));
-         unset($U);
 
          $Fd = new Folder();
          $avaliableFolders = $Fd->GetAvaliableFolders($userId);
@@ -363,7 +353,6 @@ class FlightsController extends CController
    {
       if(is_int($id)) {
          $avaliableFlights = $this->_user->GetAvaliableFlights($this->_user->username);
-         unset($U);
 
          if(in_array($id, $avaliableFlights))
          {
@@ -451,9 +440,7 @@ class FlightsController extends CController
       {
          $flightId = $extId;
 
-
          $avaliableFlights = $this->_user->GetAvaliableFlights($this->_user->username);
-         unset($U);
 
          if(in_array($flightId, $avaliableFlights))
          {
@@ -536,10 +523,8 @@ class FlightsController extends CController
 
    public function GetUserInfo()
    {
-
       $uId = $this->_user->GetUserIdByName($this->_user->username);
       $this->_user->userInfo = $this->_user->GetUserInfo($uId);
-      unset($U);
 
       return $this->_user->userInfo;
    }
@@ -554,7 +539,6 @@ class FlightsController extends CController
 
       $userId = $this->_user->userInfo['id'];
       $lastView = $this->_user->GetLastActionFromRange($userId, $viewTypes);
-      unset($U);
 
       return $lastView;
    }
@@ -565,7 +549,6 @@ class FlightsController extends CController
 
       $userId = $this->_user->userInfo['id'];
       $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
-      unset($U);
 
       return $actionsInfo;
    }
@@ -576,7 +559,6 @@ class FlightsController extends CController
 
       $userId = $this->_user->userInfo['id'];
       $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
-      unset($U);
 
       return $actionsInfo;
    }
@@ -588,7 +570,6 @@ class FlightsController extends CController
       $flightColumn = "";
 
       $userId = $this->_user->userInfo['id'];
-      unset($U);
 
       $Fd = new Folder();
       $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
@@ -610,7 +591,6 @@ class FlightsController extends CController
       $userId = $this->_user->userInfo['id'];
       $role = $this->_user->userInfo['role'];
       $adminRole = User::isAdmin($role);
-      unset($U);
 
       $Fd = new Folder();
       if(User::isAdmin($role)) {
@@ -742,7 +722,6 @@ class FlightsController extends CController
       $orderType = $extOrderType;
 
       $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
-      unset($U);
       $Fl = new Flight();
       $flights = $Fl->GetFlights($avaliableFlightIds);
       unset($Fl);
@@ -780,8 +759,6 @@ class FlightsController extends CController
 
       $uId = $this->_user->userInfo['id'];
       $role = $this->_user->userInfo['role'];
-      $adminRole = User::isAdmin($role);
-      unset($U);
       $allFolders = [];
 
       if(User::isModerator($role)) {
@@ -797,7 +774,6 @@ class FlightsController extends CController
                $Fd->GetFlightsByFolder($folderId, $uId, $adminRole));
       }
       unset($Fd);
-      unset($U);
 
       $exportedFiles = array();
       $exportedFileName = '';
@@ -922,7 +898,6 @@ class FlightsController extends CController
 
       $userId = $this->_user->userInfo['id'];
       $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
-      unset($U);
 
       return $actionsInfo;
    }

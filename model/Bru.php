@@ -181,7 +181,6 @@ class Bru
         $query .= "; ";
 
         $result = $link->query($query);
-        //error_log($query);
 
         $cycloAp = array();
         while($row = $result->fetch_array())
@@ -235,7 +234,6 @@ class Bru
         $query = "SELECT * FROM `".$cycloApTableName."` WHERE `id`=".$paramId.";";
 
         $result = $link->query($query);
-        //error_log($query);
 
         $cycloAp = array();
         while($row = $result->fetch_array())
@@ -390,8 +388,6 @@ class Bru
         $query = substr($query, 0, -2);
         $query .= ");";
 
-        //error_log($query);
-
         $stmt = $link->prepare($query);
 
         $res = "OK";
@@ -495,7 +491,6 @@ class Bru
 
         $query = "SELECT `xy` FROM `".$cycloApTableName."` WHERE `id`=".$paramId.";";
         $result = $link->query($query);
-        //error_log($query);
 
         $cycloAp = array();
         if($row = $result->fetch_array())

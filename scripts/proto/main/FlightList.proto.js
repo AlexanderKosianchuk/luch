@@ -790,7 +790,7 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
     var self = this;
 
     var pV = {
-        action: self.actions["itemExport"],
+        action: "itemExport",
         data: {
             flightIds: flightIds,
             folderDest: folderDest
@@ -1246,6 +1246,8 @@ FlightList.prototype.fileMenuSupport = function(
         fileMenu.empty();
         fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
         fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
+        fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
+        fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');
         fileMenu.append('<li id="exportCoordinates">' + self.langStr.exportCoordinates + '</li>');
         fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
 
@@ -1413,7 +1415,6 @@ FlightList.prototype.fileMenuSupport = function(
 
          $("li#export").off('click').on('click', function(e){
              var inputItemsCheck = $("input.ItemsCheck:checked");
-
              $.each(inputItemsCheck, function(i, el){
                  var el = $(el),
                      type = el.data('type'),

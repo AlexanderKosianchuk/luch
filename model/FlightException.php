@@ -32,7 +32,6 @@ class FlightException
                 . " PRIMARY KEY (`id`))"
                 . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
-        error_log($query);
         $stmt = $link->prepare($query);
         $stmt->execute();
 
@@ -167,8 +166,6 @@ class FlightException
             $query = str_replace("[".$flightInfoKey."]", $flightInfoVal, $query);
         }
 
-        //error_log($query);
-
         $aditionalQueries = array();
 
         //check delimiter exist in string
@@ -212,17 +209,19 @@ class FlightException
                     if(isset($row['time']))
                     {
                         $resultArr[] = array(
-                                "frameNum" => $row['frameNum'],
-                                "time" => $row['time']);
+                            "frameNum" => $row['frameNum'],
+                            "time" => $row['time']);
                     }
                     else
                     {
                         $time = ($startCopyTime + $row['frameNum'] * $stepLength) * 1000; //1000 to convert in microsec
                         $resultArr[] = array(
-                                "frameNum" => $row['frameNum'],
-                                "time" => $time);
+                            "frameNum" => $row['frameNum'],
+                            "time" => $time);
                     }
                 }
+
+                $resultArr = array_unique($resultArr);
 
                 //reorganize arr to simplify inserting
                 $normalizedResultArr = array();
@@ -302,8 +301,6 @@ class FlightException
                         $excRefParamsList = array();
                         $row = $result->fetch_array();
 
-                        //error_log(json_encode($row));
-
                         $aditionalInfoStr .= $row[0] . "; ";
                         $c3->Disconnect();
                         unset($c3);
@@ -366,7 +363,6 @@ class FlightException
         {
             $link3 = $c->Connect();
             $query = "SELECT `status`, `text`, `comment`, `algText`, `visualization` FROM `".$excListTableName."` WHERE `code` = ?;";
-            //error_log($query);
             $stmt3 = $link3->prepare($query);
             $stmt3->bind_param('s', $code);
             $stmt3->execute();

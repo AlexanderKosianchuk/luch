@@ -320,8 +320,6 @@ class Engine
         $query = "DELETE FROM `engineDiscrep` WHERE `etalonId` = '".$etalonId."' AND
                 `engineSerial` = ".$engineSerial.";";
 
-        //error_log($query);
-
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $stmt = $link->prepare($query);
