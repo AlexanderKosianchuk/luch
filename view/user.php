@@ -6,36 +6,25 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
 $c = new UserController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->userActions["userLogout"]) {
-        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
+    if($c->action == 'userLogout') {
+        if(isset($c->data['data']))
         {
-            if(isset($c->data['data']))
-            {
-                $action = $c->action;
+            $action = $c->action;
 
-                $c->Logout();
+            $c->Logout();
 
-                $answ = array(
-                        'status' => 'ok'
-                );
+            $answ = array(
+                    'status' => 'ok'
+            );
 
-                echo json_encode($answ);
-            }
-            else
-            {
-                $answ["status"] = "err";
-                $answ["error"] = "Not all nessesary params sent. Post: ".
-                        json_encode($_POST) . ". Page user.php";
-                $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
-                echo(json_encode($answ));
-            }
+            echo json_encode($answ);
         }
         else
         {
-
             $answ["status"] = "err";
-            $answ["error"] = $c->lang->notAllowedByPrivilege;
-            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+            $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
     } else if($c->action == $c->userActions["userChangeLanguage"]) {
@@ -213,8 +202,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
         {
             if(isset($c->data) && isset($c->data['userid']))
             {
-                $c->_userserid = $c->data['userid'];
-                $modal = $c->BuildUpdateUserModal($c->_userserid);
+                $userid = intval($c->data['userid']);
+                $modal = $c->BuildUpdateUserModal($userid);
                 $action = $c->action;
                 $c->RegisterActionExecution($action, "executed");
                 echo(json_encode($modal));

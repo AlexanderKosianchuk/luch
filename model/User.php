@@ -603,13 +603,14 @@ class User
         }
     }
 
-    public function CreateUserPersonal($login, $privilege, $author, $company, $role, $logo)
+    public function CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $logo)
     {
         if(is_array($privilege)) {
             $privilege = implode(',', $privilege);
         }
 
         $query = "INSERT INTO `user_personal` (`login`,
+                `pass`,
                 `privilege`,
                 `author`,
                 `company`,
@@ -617,6 +618,7 @@ class User
                 `role`,
                 `logo`)
                 VALUES ('".$login."',
+                        '".md5($pwd)."',
                         '".$privilege."',
                         '".$author."',
                         '".$company."',
@@ -631,12 +633,9 @@ class User
         $link = $c->Connect();
 
         $execInfo['link'] = $link;
-        if($stmt = $link->prepare($query))
-        {
+        if($stmt = $link->prepare($query)) {
             $execInfo['status'] = 1;
-        }
-        else
-        {
+        } else {
             $execInfo['status'] = -1;
         }
 

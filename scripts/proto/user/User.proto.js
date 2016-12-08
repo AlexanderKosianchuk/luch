@@ -24,7 +24,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
 
     this.logout = function () {
         var pV = {
-            action : actions.userLogout,
+            action : 'userLogout',
             data : {
                 data : 'data'
             }

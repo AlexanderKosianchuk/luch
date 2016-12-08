@@ -34,9 +34,7 @@ class UserController extends CController
         $L->SetLanguageName($lang);
         unset($L);
 
-        $Usr = new User();
-        $Usr->SetUserLanguage($this->_user->username, $lang);
-        unset($Usr);
+        $this->_user->SetUserLanguage($this->_user->username, $lang);
 
         return 'ok';
     }
@@ -44,11 +42,7 @@ class UserController extends CController
     public function GetUserList()
     {
         $userInfo = $this->GetUserInfo();
-        $U = new User();
-
-        $avalibleUsers = $U->GetUsersList($userInfo['id']);
-
-        unset($U);
+        $avalibleUsers = $this->_user->GetUsersList($userInfo['id']);
 
         return $avalibleUsers;
     }
@@ -110,10 +104,8 @@ class UserController extends CController
 
     public function GetUserInfo()
     {
-        $U = new User();
-        $uId = $U->GetUserIdByName($this->_user->username);
-        $userInfo = $U->GetUserInfo($uId);
-        unset($U);
+        $uId = $this->_user->GetUserIdByName($this->_user->username);
+        $userInfo = $this->_user->GetUserInfo($uId);
 
         return $userInfo;
     }
@@ -161,11 +153,9 @@ class UserController extends CController
 
     public function BuildCreateUserModal()
     {
-        //$this->lang->userModal
-        $Usr = new User();
-        $privilege = $Usr->allPrivilegeArray;
-        $uId = $Usr->GetUserIdByName($this->_user->username);
-        $authorInfo = $Usr->GetUserInfo($uId);
+        $privilege = $this->_user->allPrivilegeArray;
+        $uId = $this->_user->GetUserIdByName($this->_user->username);
+        $authorInfo = $this->_user->GetUserInfo($uId);
         $role = $authorInfo['role'];
         $authorPrivilege = explode(',', $authorInfo['privilege']);
 
@@ -184,10 +174,10 @@ class UserController extends CController
         }
 
         $roleOptions = '';
-        if($Usr::isAdmin($role)) {
+        if(User::isAdmin($role)) {
             $roleOptions .= "<tr><td>".$this->lang->userRole."</td><td align='center'>";
             $roleOptions .= "<select name='role[]' size='3' style='width: 335px'>";
-            foreach ($Usr::$role as $val)
+            foreach (User::$role as $val)
             {
                 $roleOptions .= "<option selected='selected'>".$val."</option>";
             }
@@ -227,7 +217,6 @@ class UserController extends CController
                 $roleOptions,
                 $this->lang->userLogo);
 
-        $form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
         $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["createUser"]);
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 
@@ -238,7 +227,7 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 
             $Fl = new Flight();
-            $avaliableFlightIds = $Usr->GetAvaliableFlights($this->_user->username);
+            $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
             $avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
 
             if(count($avaliableFlights) > 0) {
@@ -281,7 +270,7 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
             $Bru = new Bru();
-            $avaliableIds = $Usr->GetAvaliableBruTypes($this->_user->username);
+            $avaliableIds = $this->_user->GetAvaliableBruTypes($this->_user->username);
             $avaliableBruTypes = $Bru->GetBruList($avaliableIds);
 
             if(count($avaliableBruTypes) > 0) {
@@ -319,9 +308,8 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
 
-            //$Usr = new User();
-            $avaliableIds = $Usr->GetAvaliableUsers($this->_user->username);
-            $avaliableUsers = $Usr->GetUsersListByAvaliableIds($avaliableIds);
+            $avaliableIds = $this->_user->GetAvaliableUsers($this->_user->username);
+            $avaliableUsers = $this->_user->GetUsersListByAvaliableIds($avaliableIds);
 
             if(count($avaliableUsers) > 0)
             {
@@ -350,19 +338,16 @@ class UserController extends CController
         }
 
         $form .= '</form></div>';
-        unset($Usr);
 
         return $form;
     }
 
     public function BuildUpdateUserModal($updatedUsersId)
     {
-        //$this->lang->userModal
-        $Usr = new User();
-        $privilege = $Usr->allPrivilegeArray;
-        $authorId = $Usr->GetUserIdByName($this->_user->username);
-        $authorInfo = $Usr->GetUserInfo($authorId);
-        $userInfo = $Usr->GetUserInfo($updatedUsersId);
+        $privilege = $this->_user->allPrivilegeArray;
+        $authorId = $this->_user->GetUserIdByName($this->_user->username);
+        $authorInfo = $this->_user->GetUserInfo($authorId);
+        $userInfo = $this->_user->GetUserInfo($updatedUsersId);
         $role = $userInfo['role'];
         $privilege = explode(",", $userInfo['privilege']);
 
@@ -383,10 +368,10 @@ class UserController extends CController
         $privilegeOptions .= "</select></td></tr>";
 
         $roleOptions = '';
-        if($Usr::isAdmin($role)) {
+        if(User::isAdmin($role)) {
             $roleOptions .= "<tr><td>".$this->lang->userRole."</td><td align='center'>";
             $roleOptions .= "<select name='role[]' size='3' style='width: 335px'>";
-            foreach ($Usr::$role as $val)
+            foreach (User::$role as $val)
             {
                 $selected = '';
                 if($val == $role) {
@@ -432,7 +417,6 @@ class UserController extends CController
                 $roleOptions,
                 $this->lang->userLogo);
 
-        $form .= sprintf("<input type='text' name='nonce' value='%s' style='visibility:hidden;'/>", ulNonce::Create('login'));
         $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["updateUser"]);
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
         $form .= sprintf("<input type='text' name='useridtoupdate' value='%s' style='visibility:hidden;'/>", $updatedUsersId);
@@ -444,9 +428,9 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 
             $Fl = new Flight();
-            $avaliableFlightIds = $Usr->GetAvaliableFlights($this->_user->username);
+            $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
             $avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
-            $attachedFlightIds = $Usr->GetAvaliableFlights($userInfo['login']);
+            $attachedFlightIds = $this->_user->GetAvaliableFlights($userInfo['login']);
 
             if(count($avaliableFlights) > 0) {
                 $headerLables = [
@@ -494,9 +478,9 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
             $Bru = new Bru();
-            $avaliableIds = $Usr->GetAvaliableBruTypes($this->_user->username);
+            $avaliableIds = $this->_user->GetAvaliableBruTypes($this->_user->username);
             $avaliableBruTypes = $Bru->GetBruList($avaliableIds);
-            $attachedFDRIds = $Usr->GetAvaliableBruTypes($userInfo['login']);
+            $attachedFDRIds = $this->_user->GetAvaliableBruTypes($userInfo['login']);
 
             if(count($avaliableBruTypes) > 0) {
                 $headerLables = [
@@ -539,10 +523,9 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
 
-            //$Usr = new User();
-            $avaliableIds = $Usr->GetAvaliableUsers($this->_user->username);
-            $avaliableUsers = $Usr->GetUsersListByAvaliableIds($avaliableIds);
-            $attachedUserIds = $Usr->GetAvaliableUsers($userInfo['login']);
+            $avaliableIds = $this->_user->GetAvaliableUsers($this->_user->username);
+            $avaliableUsers = $this->_user->GetUsersListByAvaliableIds($avaliableIds);
+            $attachedUserIds = $this->_user->GetAvaliableUsers($userInfo['login']);
 
             if(count($avaliableUsers) > 0)
             {
@@ -577,7 +560,6 @@ class UserController extends CController
         }
 
         $form .= '</form></div>';
-        unset($Usr);
 
         return $form;
     }
@@ -598,31 +580,24 @@ class UserController extends CController
         $permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
         $file = str_replace("\\", "/", $file);
 
-        $U = new User();
         $msg = '';
 
-        if (!$U->CheckUserPersonalExist($login)) {
-            $ulogin = new uLogin();
+        if (!$this->_user->CheckUserPersonalExist($login)) {
+            $this->_user->CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $file);
+            $createdUserId = $this->_user->GetIdByUsername($login);
+            $authorId = $this->_user->GetUserIdByName($this->_user->username);
+            $this->_user->SetUsersAvaliable($author, $createdUserId, $authorId);
 
-            if ($ulogin->CreateUser($login, $pwd)) {
-                $U->CreateUserPersonal($login, $privilege, $author, $company, $role, $file);
-                $createdUserId = $U->GetIdByUsername($login);
-                $authorId = $U->GetUserIdByName($this->_user->username);
-                $U->SetUsersAvaliable($author, $createdUserId, $authorId);
+            foreach($permittedFlights as $id) {
+                $this->_user->SetFlightAvaliable($author, $id, $createdUserId);
+            }
 
-                foreach($permittedFlights as $id) {
-                    $U->SetFlightAvaliable($author, $id, $createdUserId);
-                }
+            foreach($permittedBruTypes as $id) {
+                $this->_user->SetBruTypeAvaliable($author, $id, $createdUserId);
+            }
 
-                foreach($permittedBruTypes as $id) {
-                    $U->SetBruTypeAvaliable($author, $id, $createdUserId);
-                }
-
-                foreach($permittedUsers as $id) {
-                    $U->SetUsersAvaliable($author, $id, $createdUserId);
-                }
-            } else {
-                $msg = $this->lang->userAlreadyExistOrImpossible;
+            foreach($permittedUsers as $id) {
+                $this->_user->SetUsersAvaliable($author, $id, $createdUserId);
             }
         } else {
             $msg = $this->lang->userAlreadyExist;
@@ -634,27 +609,25 @@ class UserController extends CController
     public function UpdateUser($userIdToUpdate, $form, $file)
     {
         $avaliableForUpdate = false;
-        $U = new User();
         $author = $this->_user->username;
-        $authorId = $U->GetUserIdByName($author);
-        $authorInfo = $U->GetUserInfo($authorId);
-        $userInfo = $U->GetUserInfo($userIdToUpdate);
-        if($U::isAdmin($authorInfo['role'])) {
+        $authorId = $this->_user->GetUserIdByName($author);
+        $authorInfo = $this->_user->GetUserInfo($authorId);
+        $userInfo = $this->_user->GetUserInfo($userIdToUpdate);
+        if(User::isAdmin($authorInfo['role'])) {
             $avaliableForUpdate = true;
         } else {
-            $avaliableIds = $U->GetAvaliableUsers($author);
+            $avaliableIds = $this->_user->GetAvaliableUsers($author);
             if(in_array($userIdToUpdate, $avaliableIds)) {
                 $avaliableForUpdate = true;
             }
         }
 
+        $prsonalDataToUpdata = [];
+
         if(isset($form['pwd'])) {
-            $ulogin = new uLogin();
-            $uloginUid = $ulogin->Uid($userInfo['login']);
-            $ulogin->SetPassword($uloginUid, $form['pwd']);
+            $prsonalDataToUpdata['pass'] = md5($form['pwd']);
         }
 
-        $prsonalDataToUpdata = [];
         if(isset($form['company'])) {
             $prsonalDataToUpdata['company'] = $form['company'];
         }
@@ -671,24 +644,24 @@ class UserController extends CController
             $prsonalDataToUpdata['logo'] = str_replace("\\", "/", $file);
         }
 
-        $U->UpdateUserPersonal($userIdToUpdate, $prsonalDataToUpdata);
+        $this->_user->UpdateUserPersonal($userIdToUpdate, $prsonalDataToUpdata);
 
         $permittedFlights = isset($form['flightsAvaliable']) ? $form['flightsAvaliable'] : [];
         $permittedBruTypes = isset($form['FDRsAvaliable']) ? $form['FDRsAvaliable'] : [];
         $permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
 
         $msg = '';
-        $U->DeleteUserAvaliableData($userIdToUpdate);
+        $this->_user->DeleteUserAvaliableData($userIdToUpdate);
         foreach($permittedFlights as $id) {
-            $U->SetFlightAvaliable($author, $id, $userIdToUpdate);
+            $this->_user->SetFlightAvaliable($author, $id, $userIdToUpdate);
         }
 
         foreach($permittedBruTypes as $id) {
-            $U->SetBruTypeAvaliable($author, $id, $userIdToUpdate);
+            $this->_user->SetBruTypeAvaliable($author, $id, $userIdToUpdate);
         }
 
         foreach($permittedUsers as $id) {
-            $U->SetUsersAvaliable($author, $id, $userIdToUpdate);
+            $this->_user->SetUsersAvaliable($author, $id, $userIdToUpdate);
         }
 
         return $msg;
@@ -696,20 +669,14 @@ class UserController extends CController
 
     public function DeleteUser($userIds)
     {
-        $ulogin = new uLogin();
-        $U = new User();
-
         foreach ($userIds as $userDeleteId) {
             if(is_int(intval($userDeleteId))) {
-                $userInfo = $U->GetUserInfo($userDeleteId);
+                $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
                 $login = $userInfo['login'];
 
-                $uloginUid = $ulogin->Uid($login);
-                $ulogin->DeleteUser($uloginUid);
-
-                $U->DeleteUserPersonal($login);
-                $U->DeleteUserAvaliableData($userDeleteId);
-                $U->DeleteUserAvaliabilityForUsers($userDeleteId);
+                $this->_user->DeleteUserPersonal($login);
+                $this->_user->DeleteUserAvaliableData($userDeleteId);
+                $this->_user->DeleteUserAvaliabilityForUsers($userDeleteId);
             }
         }
 
