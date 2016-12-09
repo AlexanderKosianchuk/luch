@@ -52,6 +52,7 @@ function Chart(window, document, langStr, srvcStrObj, eventHandler, isPrintPage)
 
     this.startFrameTime = null;
     this.endFrameTime = null;
+    self.mouseInChat = false;
 
     this.isPrintPage = !!$('body').data('isprintpage');
 }
@@ -88,6 +89,14 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             self.loadingBox = $("div#loadingBox").css("top", self.window.height() / 2 - 40);
             self.legend = $('div#legend');
             self.placeholder = $('div#placeholder');
+
+            self.placeholder.on("mouseover", function(e){
+                self.mouseInChat = true;
+            });
+
+            self.placeholder.on("mouseout", function(e){
+                self.mouseInChat = false;
+            });
 
             self.ResizeChartContainer();
             self.document.scrollTop(factoryContainer.data("index") * self.window.height());
@@ -627,6 +636,10 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
             self.shiftPressed = false;
 
             return false;
+        }
+
+        if(!self.mouseInChat) {
+            return;
         }
 
         if (event.which == KEY_V) {
