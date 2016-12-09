@@ -136,39 +136,36 @@ class FlightsController extends CController
          $optionString .="<option data-id='".$bruInfo['id']."'>".$bruInfo['bruType']."</option>";
       }
 
-      $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>
-         <div id='importConvertRadio'>
-            <input type='radio' id='%s' name='radio' checked='checked'><label for='%s'>%s</label>
-               <input type='radio' id='%s' name='radio'><label for='%s'>%s</label>
-         </div>
-            <br>
-         <span class='btn btn-success fileinput-button'>
-         <i class='glyphicon'>%s</i>
-         <input id='chooseFileBut' type='file' name='files[]' multiple>
-         </span>
+      $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>", $this->lang->flightUpload);
 
-         <div id='previewCheckBoxDiv' class='FlightUploadingInputs'><label><input checked='checked' id='previewCheckBox' type='checkbox'></input>%s</label></div>
+      $fileUploadBlock .= sprintf("<div id='importConvertRadio'>
+            <input type='radio' id='convertFl' name='radio' checked='checked'><label for='convertFl'>%s</label>
+            <input type='radio' id='importFl' name='radio'><label for='importFl'>%s</label>
+         </div>", $this->lang->fileConvert, $this->lang->fileImport);
+      $fileUploadBlock .= "<br>";
 
-         <div id='bruTypeSelectForUploadingDiv'>
+      $fileUploadBlock .= sprintf("<div id='previewCheckBoxDiv' class='FlightUploadingInputs'>
+            <label>
+                <input checked='checked' id='previewCheckBox' type='checkbox'>
+                %s
+            </label>
+        </div>", $this->lang->filePreview);
+
+      $fileUploadBlock .= sprintf("<div id='bruTypeSelectForUploadingDiv'>
             <select id='bruTypeSelectForUploading' name='bruType' class='FlightUploadingInputs'>%s</select>
-         </div>
+         </div>", $optionString);
 
-         <div id='progress' class='progress' style='padding-top:10px;'>
+      $fileUploadBlock .= sprintf("<div id='progress' class='progress' style='padding-top:10px;'>
                <div class='progress-bar progress-bar-success'></div>
             </div>
-         <div id='files' class='files'></div>
-         <br></div>",
-            $this->lang->flightUpload,
+         <div id='files' class='files'></div>");
+      $fileUploadBlock .= "<br>";
 
-         $this->flightActions['flightFileConvert'],
-            $this->flightActions['flightFileConvert'],
-            $this->lang->fileConvert,
-            $this->flightActions['flightFileImport'],
-            $this->flightActions['flightFileImport'],
-            $this->lang->fileImport,
-            $this->lang->chooseFile,
-            $this->lang->filePreview,
-            $optionString);
+      $fileUploadBlock .= sprintf("<span class='btn btn-success fileinput-button'>
+             <input id='chooseFileBut' type='file' name='files[]' multiple>
+         </span>");
+
+      $fileUploadBlock .= sprintf("</div>");
 
       return $fileUploadBlock;
    }

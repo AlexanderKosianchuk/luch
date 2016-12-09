@@ -108,6 +108,8 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                                 self.fileUploadDialog.height(
                                     dialogInitialHeight
                                         + $('.chosen-drop').first().height()
+                                        - $('#chooseFileBut').height()
+                                        - 30
                                 );
                             } else {
                                 self.fileUploadDialog.height(dialogInitialHeight);
@@ -115,13 +117,14 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                         })
                         .chosen();
 
-
                     $('.chosen-search input, .chosen-drop')
                         .on('keyup', function(ev) {
                             if ($('.chosen-container').hasClass('chosen-with-drop')) {
                                 self.fileUploadDialog.height(
                                     dialogInitialHeight
                                         + $('.chosen-drop').first().height()
+                                        - $('#chooseFileBut').height()
+                                        - 30
                                 );
                             } else {
                                 self.fileUploadDialog.height(dialogInitialHeight);
