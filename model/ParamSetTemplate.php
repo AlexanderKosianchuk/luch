@@ -455,20 +455,16 @@ class PSTempl
             $curCorridor = 0;
 
             if(($i == 0) && ($yMax > 1)){
-                $yMax += $yMax * 0.1;//prevent first(top) param out chart boundary
+                $yMax += $yMax * 0.15;//prevent first(top) param out chart boundary
             }
 
-            if($yMax == $yMin)
-            {
+            if($yMax == $yMin) {
                 $yMax += 0.001; //if $yMax == $yMin parameter builds as straight line in bottom of chart
             }
 
-            if($yMax > 0)
-            {
+            if($yMax > 0) {
                 $curCorridor = (($yMax - $yMin) * 1.05);
-            }
-            else
-            {
+            } else {
                 $curCorridor = -(($yMin - $yMax) * 1.05);
             }
 
