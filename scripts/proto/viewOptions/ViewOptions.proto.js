@@ -67,7 +67,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
                 $("#templatesLeftMenuRow").addClass('LeftMenuRowSelected');
 
                 self.ShowFlightViewTemplates();
-            } else if(self.task == self.actions['getEventsList']){
+            } else if(self.task == 'getEventsList'){
                 $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
                 $("#eventsLeftMenuRow").addClass('LeftMenuRowSelected');
 

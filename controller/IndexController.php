@@ -123,24 +123,32 @@ class IndexController extends CController
         $optionsStr = '';
         foreach ($options as $key => $val) {
             $input = sprintf('<input  class="options-value-input" name="%s" value="%s">',
-                    $key, $val);
+                $key, $val);
 
             $optionsStr .= sprintf('<div class="options-row">' .
-                    '<div class="options-name">%s</div>' .
-                    '<div class="options-value">%s</div>' .
-                    '<div class="options-clear"></div>' .
-                    '</div>',
-                    (isset($this->lang->$key) ? $this->lang->$key : $key),
-                    $input);
+                '<div class="options-name">%s</div>' .
+                '<div class="options-value">%s</div>' .
+                '<div class="options-clear"></div>' .
+                '</div>',
+                (isset($this->lang->$key) ? $this->lang->$key : $key),
+                $input);
+        }
+
+        $version = '1.01';
+        if(defined('VERSION')) {
+            $version = VERSION;
         }
 
         printf("<div id='optionsDialog' class='options-dialog' title='%s'>
-                <p><form id='optionsForm'>
+                <form id='optionsForm'>
                     %s
-                </form></p>
+                </form>
+                <p class='options-dialog__version'>Version: %s</p>
                 </div>",
                 $this->lang->options,
-                $optionsStr);
+                $optionsStr,
+                $version
+        );
     }
 
     public function PutExportLink()

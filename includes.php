@@ -55,3 +55,5 @@ define("EVENTS_TPL_NAME", 'events');
 define("TPL_DEFAULT", 'default');
 
 define("FOLDER_START_ID", 1000000);
+
+define("VERSION", '6.6.12.02');

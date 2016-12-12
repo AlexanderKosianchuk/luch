@@ -230,10 +230,10 @@ FlightViewOptions.prototype.ShowEventsList = function() {
         self.flightOptionsContent = $("div#flightOptionsContent");
 
         var pV = {
-                action: self.actions["getEventsList"],
-                data: {
-                    flightId: flightId
-                }
+            action: "getEventsList",
+            data: {
+                flightId: flightId
+            }
         };
 
         $.ajax({
@@ -250,7 +250,7 @@ FlightViewOptions.prototype.ShowEventsList = function() {
                     var data = answ["data"],
                     flightOptionsContent =
                         document.getElementById(self.flightOptionsContent.attr('id'));
-                    flightOptionsContent.innerHTML = data['eventsList'];
+                    flightOptionsContent.innerHTML = data['eventsListHeader'] + data['eventsList'];
 
                     self.ResizeFlightViewOptionsContainer();
 

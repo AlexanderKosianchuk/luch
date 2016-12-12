@@ -329,17 +329,19 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getEventsList"]) //show form for uploading
+    else if($c->action == "getEventsList") //show form for uploading
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
                 $flightId = $c->data['flightId'];
+                $eventsListHeader = $c->GetEventsListHeader($flightId);
                 $eventsList = $c->ShowEventsList($flightId);
 
                 $data = array(
-                        'eventsList' => $eventsList
+                        'eventsList' => $eventsList,
+                        'eventsListHeader' => $eventsListHeader
                 );
                 $answ["status"] = "ok";
                 $answ["data"] = $data;

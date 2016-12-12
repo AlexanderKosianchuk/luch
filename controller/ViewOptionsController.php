@@ -474,6 +474,64 @@ class ViewOptionsController extends CController
         ];
     }
 
+    public function GetEventsListHeader($flightId)
+    {
+        $Fl = new Flight();
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $bruType = $flightInfo['bruType'];
+        unset($Fl);
+
+        $Bru = new Bru();
+        $bruInfo = $Bru->GetBruInfo($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        unset($Bru);
+
+        $bort = $flightInfo['bort'];
+        $voyage = $flightInfo['voyage'];
+        $copyDate = date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] );
+
+        $Fr = new Frame ();
+        $framesCount = $Fr->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
+        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $bruInfo ['stepLength'] );
+        unset ($Fr);
+
+        $str = '<h4 style="text-align:center;">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' .
+                $this->lang->bort . ' - ' . $flightInfo['bort'] . '; ' .
+                $this->lang->voyage . ' - ' . $flightInfo['voyage'] . '; ' .
+
+        $this->lang->route . ' : ' . $new_string = preg_replace ( '/[^a-zA-z0-9]/', '', $flightInfo['departureAirport'] ) . ' - ' .
+        preg_replace ( '/[^a-zA-z1-9]/', '', $flightInfo['arrivalAirport'] ) . '. <br>' .
+        $this->lang->flightDate . ' - ' . date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] ) . '; ' .
+        $this->lang->duration . ' - ' . $flightDuration . '. <br>';
+
+        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $bruInfo ['bruType'];
+
+        if (strpos ( $bruInfo ['aditionalInfo'], ";" ) >= 0) {
+            $counterNeedBrake = false;
+            $aditionalInfoArr = explode ( ";", $flightInfo['flightAditionalInfo'] );
+            foreach ( $aditionalInfoArr as $aditionalInfo ) {
+                if ($aditionalInfo != "") {
+                    $nameVal = explode ( ":", $aditionalInfo );
+
+                    if(count($nameVal) > 1){
+                        $name = $nameVal [0];
+                        $val = $nameVal [1];
+
+                        if ($counterNeedBrake) {
+                            $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
+                            $counterNeedBrake = ! $counterNeedBrake;
+                        } else {
+                            $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+                            $counterNeedBrake = ! $counterNeedBrake;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $str . "</h4>";
+    }
+
     private static $exceptionTypeOther = 'other';
     private static $exceptionTypes = [
         '000', '001', '002', '003', 'other'
@@ -511,12 +569,9 @@ class ViewOptionsController extends CController
                 $excEventsList[$i]['start'] = date("H:i:s", $excEventsList[$i]['startTime'] / 1000);
                 $reliability = "checked";
                 //converting false alarm to reliability
-                if($excEventsList[$i]['falseAlarm'] == 0)
-                {
+                if($excEventsList[$i]['falseAlarm'] == 0) {
                     $reliability = "checked";
-                }
-                else
-                {
+                } else {
                     $reliability = "";
                 }
                 $excEventsList[$i]['reliability'] = $reliability;
@@ -527,8 +582,7 @@ class ViewOptionsController extends CController
             unset($Frame);
 
             //if isset events
-            if(!(empty($excEventsList)))
-            {
+            if(!(empty($excEventsList))) {
                 $accordion = [];
 
                 $eventsListTable = sprintf ("<table align='center' class='ExeptionsTable NotSelectable'>

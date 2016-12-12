@@ -283,3 +283,8 @@ table.dataTable tfoot td {
 .export-coordinates-href {
     text-decoration: none;
 }
+
+.options-dialog__version {
+    padding: 0px 6px;
+    margin-bottom: -6px;
+}
