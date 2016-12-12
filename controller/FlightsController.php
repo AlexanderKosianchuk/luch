@@ -1074,31 +1074,33 @@ class FlightsController extends CController
 
        $ii = 0;
        while (($ii < count($info))
-           && ($info[$ii][0] < $averageLong * 0.05) // if less than 5% its startup rubbish
-           && ($info[$ii][1] < $averageLat * 0.05)) {
+           && (
+               ($info[$ii][0] < $averageLong * 0.05) // if less than 5% its startup rubbish
+               || ($info[$ii][1] < $averageLat * 0.05)
+               || ($info[$ii][0] < 0.1)
+               || ($info[$ii][1] < 0.1)
+              )
+       ) {
            $ii++;
        }
 
+       $sum1 = 0;
+       $sum5 = 0;
        $cleanedInfo = [];
        for($jj = $ii; $jj < count($info); $jj++) {
-           $coord = $info[$jj];
-           if (($jj < (count($info) - 1))
-               && ($jj > $ii)
-               && (abs($coord[0] - $info[$jj - 1][0]) > 0.00005)
-               && (abs($coord[0] - $info[$jj + 1][0]) > 0.00005)
-           ) {
-               $coord[0] = ($info[$jj - 1][0] + $info[$jj + 1][0]) / 2;
-           }
+           if ($jj > $ii + 5) {
+               $sum = $info[$jj][0] + $info[$jj][1];
+               $sum1 = $info[$jj - 1][0] + $info[$jj - 1][1];
+               $sum5 = $info[$jj - 5][0] + $info[$jj - 5][1];
 
-           if (($jj < (count($info) - 1))
-               && ($jj > $ii)
-               && (abs($coord[1] - $info[$jj - 1][1]) > 0.00005)
-               && (abs($coord[1] - $info[$jj + 1][1]) > 0.00005)
-           ) {
-               $coord[1] = ($info[$jj - 1][1] + $info[$jj + 1][1]) / 2;
+               if((abs($sum - $sum5) < 0.02)
+                  && (abs($sum - $sum1) < 0.005)
+              ) {
+                  $cleanedInfo[] = $info[$jj];
+              }
+           } else {
+               $cleanedInfo[] = $info[$jj];
            }
-
-           $cleanedInfo[] = $coord;
        }
 
        $result->free();
