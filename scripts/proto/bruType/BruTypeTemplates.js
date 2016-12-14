@@ -341,6 +341,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
                 .attr("size", "160")
                 .attr("multiple", false)
                 .addClass("BruTypeTplListSelect")
+                .addClass("is-scrollable")
                 .appendTo(bruTypeListContent);
 
             AddNewTemplateCtrls(bruTypeListContent);
@@ -348,6 +349,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
             $("<div></div>")
                 .attr("id", "bruTypeTplParamsListContainer")
                 .addClass("TemplatesParamsListContainer")
+                .addClass("is-scrollable")
                 .appendTo(bruTypeListContent);
 
             ReceiveTplsList()
@@ -368,26 +370,6 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
                         /*pure js to accelerate html appending*/
                             bruTypeTplParamsListContainer = document.getElementById('bruTypeTplParamsListContainer');
                         bruTypeTplParamsListContainer.innerHTML = data['bruTypeParams'];
-
-
-                        //self.ResizeFlightViewOptionsContainer();
-
-                        /*var tplComment = $("#tplComment");
-                        tplComment.append(" ");
-                        $.each($("#tplList option:selected"), function(index, item){
-                            var text = $(item).data('comment').replace(/\r?\n/g, '&#13;');
-                            tplComment.append(text);
-                        });
-
-                        $("#tplList").on("click", function(e){
-                            tplComment.empty();
-                            tplComment.append(" ");
-                            $.each($("#tplList option:selected"), function(index, item){
-                                var text = $(item).data('comment').replace(/\r?\n/g, '&#13;');
-                                tplComment.append(text);
-                            });
-                        });*/
-
                     } else {
                         console.log(answ["error"]);
                     }

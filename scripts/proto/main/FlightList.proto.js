@@ -242,7 +242,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
 
         self.ShowFlightViewOptions();
 
-        self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
+        self.flightListWorkspace.append("<div id='flightListContent' class='Content is-scrollable'></div>");
         self.flightListContent = $("div#flightListContent");
 
         var pV = {

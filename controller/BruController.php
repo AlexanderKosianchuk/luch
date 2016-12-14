@@ -167,7 +167,7 @@ class BruController extends CController
         $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
         unset($Bru);
 
-        $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer'>");
+        $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer is-scrollable'>");
         $paramList .= sprintf ("<div class='BruTypeTemplatesApList'>");
 
         for ($i = 0; $i < count($flightApHeaders); $i++)

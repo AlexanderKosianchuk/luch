@@ -297,7 +297,7 @@ FlightViewOptions.prototype.DefaultTplParamsReceive = function(flightId) {
 FlightViewOptions.prototype.ShowTempltList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);

@@ -574,7 +574,7 @@ class FlightsController extends CController
       unset($Fd);
 
       $flightColumn .= "<div class='FlightsListTileView'>" .
-            "<div id='jstree' class='Tree'></div>".
+            "<div id='jstree' class='Tree is-scrollable'></div>".
             "<div id='jstreeContent' class='TreeContent'></div>".
             "</div>";
 

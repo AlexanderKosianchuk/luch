@@ -9,6 +9,14 @@ body {
     overflow-x:hidden;
 }
 
+body::scrollbar { 
+    display: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
 .FactoryWindow {
     position:absolute;
     left:0px;

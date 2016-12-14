@@ -30,22 +30,26 @@ WindowFactory.prototype.SupportMoveMenu = function() {
         self.moveMenu.empty();
         self.moveMenu.css({
             "display" : "block",
-            "width" : "68px"
+            "width" : 34*4 + 'px'
         });
 
+        self.moveMenu.append("<div class='MoveMenuItem'><</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>1</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>2</div>");
+        self.moveMenu.append("<div class='MoveMenuItem'>></div>");
     }  else if((self.document.height() > self.window.height() * 2 + 50) &&
             (self.document.height() <= self.window.height() * 3)){
         self.moveMenu.empty();
         self.moveMenu.css({
             "display" : "block",
-            "width" : "102px"
+            "width" : 34 * 5 + 'px'
         });
 
+        self.moveMenu.append("<div class='MoveMenuItem'><</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>1</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>2</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>3</div>");
+        self.moveMenu.append("<div class='MoveMenuItem'>></div>");
     }
 
     self.moveMenu.on("click", '*', function(e){
@@ -56,6 +60,10 @@ WindowFactory.prototype.SupportMoveMenu = function() {
             self.window.scrollTop(self.window.height());
         } else if(contex.html() == "3"){
             self.window.scrollTop(self.window.height() * 2);
+        } else if(contex.html() == "&lt;"){
+            self.window.scrollTop(self.window.scrollTop() - self.window.height());
+        } else if(contex.html() == "&gt;"){
+            self.window.scrollTop(self.window.scrollTop() + self.window.height());
         }
     });
 };

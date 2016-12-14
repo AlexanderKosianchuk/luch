@@ -151,7 +151,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
                 if (answ["status"] == "ok") {
                     var userTable = answ['data'], sortCol = answ['sortCol'], sortType = answ['sortType'];
                     var append = function () {
-                        self.userListWorkspace.append("<div id='userListContent' class='Content user-content'></div>");
+                        self.userListWorkspace.append("<div id='userListContent' class='Content user-content is-scrollable'></div>");
                         userListContent = $('#userListContent');
 
                         userListContent

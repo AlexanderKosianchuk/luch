@@ -171,7 +171,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsListOptions = function() {
 FlightViewOptions.prototype.ShowParamList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
@@ -255,7 +255,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
                             .appendTo(paginationContainer$);
 
                         flightOptionsContent.innerHTML +=
-                            "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList'>" +
+                            "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList is-scrollable'>" +
                             data['bruTypeParams'] +
                             "</div>";
 

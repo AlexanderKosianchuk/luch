@@ -35,7 +35,9 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                             refparam = $(".ExceptionTableRow.ExeptionsTableRowSelected").data("refparam");
 
                             var params = new Array();
-                            params.push(refparam);
+                            if (refparam) {
+                                params.push(refparam);
+                            }
                             for(var i = 0; i < ap.length; i++){
                                 params.push(ap[i]);
                             }
@@ -44,28 +46,51 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                             }
                             params = params.getUnique();
 
-                            self.TplCreate(flightId, tplName, params).done(function(answ){
-                                if(answ["status"] == "ok") {
-                                    var apParams = answ['data']['ap'],
-                                        bpParams = answ['data']['bp'],
+                            if (params.length > 0) {
+                                self.TplCreate(flightId, tplName, params).done(function(answ){
+                                    if(answ["status"] == "ok") {
+                                        var apParams = answ['data']['ap'],
+                                            bpParams = answ['data']['bp'],
 
-                                        startCopyTime = self.rangeSlider.data("startcopytime"),
-                                        stepLength = self.rangeSlider.data("steplength"),
-                                        startFrame = self.rangeSlider.slider("values", 0) / stepLength,
-                                        endFrame = self.rangeSlider.slider("values", 1) / stepLength;
+                                            startCopyTime = self.rangeSlider.data("startcopytime"),
+                                            stepLength = self.rangeSlider.data("steplength"),
+                                            startFrame = self.rangeSlider.slider("values", 0) / stepLength,
+                                            endFrame = self.rangeSlider.slider("values", 1) / stepLength;
 
-                                    var data = [flightId, tplName,
-                                            stepLength, startCopyTime,
-                                            startFrame, endFrame,
-                                            apParams, bpParams];
+                                        var data = [flightId, tplName,
+                                                stepLength, startCopyTime,
+                                                startFrame, endFrame,
+                                                apParams, bpParams];
 
-                                    self.eventHandler.trigger("showChart", data);
+                                        self.eventHandler.trigger("showChart", data);
 
-                                } else {
-                                    console.log(answ["error"]);
-                                }
-                            });
+                                    } else {
+                                        console.log(answ["error"]);
+                                    }
+                                });
+                            } else {
+                                self.TplParamsReceive(flightId, 'events').done(function(answ) {
+                                    if(answ["status"] == "ok") {
+                                        var apParams = answ['data']['ap'],
+                                            bpParams = answ['data']['bp'],
 
+                                            startCopyTime = self.rangeSlider.data("startcopytime"),
+                                            stepLength = self.rangeSlider.data("steplength"),
+                                            startFrame = self.rangeSlider.slider("values", 0) / stepLength,
+                                            endFrame = self.rangeSlider.slider("values", 1) / stepLength;
+
+                                        var data = [flightId, tplName,
+                                                stepLength, startCopyTime,
+                                                startFrame, endFrame,
+                                                apParams, bpParams];
+
+                                        self.eventHandler.trigger("showChart", data);
+
+                                    } else {
+                                        console.log(answ["error"]);
+                                    }
+                                });
+                            }
                         } else {
                             console.log(answ["error"] );
                         }
@@ -223,7 +248,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
 FlightViewOptions.prototype.ShowEventsList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);

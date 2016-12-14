@@ -217,5 +217,42 @@ jQuery(function ($) {
         eventHandler.on("saveChartTpl", function (e, flightId, tplName, saveChartTplCb) {
             B.copyTemplate(flightId, tplName).then(saveChartTplCb);
         });
+
+        var allowScrollUp = false;
+        var allowScrollDown = false;
+
+        function updateScrollPermission(event) {
+            var $el = $(event.target);
+
+            allowScrollUp = false;
+            allowScrollDown = false;
+
+            if(($el.hasClass('is-scrollable') && $el.scrollTop() > 0)
+                || ($el.parents('.is-scrollable').length && $($el.parents('.is-scrollable').get(0)).scrollTop() > 0)
+            ) {
+                allowScrollUp = true;
+            }
+
+            if(($el.hasClass('is-scrollable') && ($el.scrollTop() < ($el.get(0).scrollHeight - $el.get(0).clientHeight)))
+                || $el.parents('.is-scrollable').length
+                    && ($($el.parents('.is-scrollable').get(0)).scrollTop()
+                        < ($el.parents('.is-scrollable').get(0).scrollHeight
+                            - $el.parents('.is-scrollable').get(0).clientHeight
+                        )
+                    )
+            ) {
+                allowScrollDown = true;
+            }
+        }
+
+        $(window).bind('mousewheel DOMMouseScroll', function(event){
+            updateScrollPermission(event);
+            if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+                if(!allowScrollUp) return false;
+            }
+            else {
+                if(!allowScrollDown) return false;
+            }
+        });
     });
 });
