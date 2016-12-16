@@ -314,11 +314,6 @@ Exception.prototype.PutRectangle = function(id, startTime, endTime, color){
         rectangleRight = this.xAxis.p2c(endTime),
         rectangleWidth = rectangleRight - rectangleLeft;
 
-    var isHexColor  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color);
-    if (isHexColor) {
-        color = hexToRGBA('#' + color, 0.5);
-    }
-
     return $('<svg></svg>', {
         id: 'svgRectangle' + id,
         class: 'SvgRectangle',
@@ -331,8 +326,7 @@ Exception.prototype.PutRectangle = function(id, startTime, endTime, color){
         "height": 4 + 'px',
         "position": 'absolute',
         "opacity": '0.5',
-        "background-color": color
-    })
+        "background-color": hexToRGBA(color, 0.5)})
     .appendTo(self.ccCont);
 };
 //=============================================================
@@ -519,11 +513,6 @@ Exception.prototype.PutSectionBar = function(senderId, lay, excCode, x, apValues
 //
 Exception.prototype.PutBarMainContainer = function(id, lay, time, content, excCode, startId, endId, lineId, color) {
     var self = this;
-    var isHexColor  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color);
-    if (isHexColor) {
-        color = hexToRGBA('#' + color, 0.5);
-    }
-
     return $('<div/>', {
         id: 'excMainSection' + lay + id,
         class: 'excMainSection',
@@ -541,7 +530,7 @@ Exception.prototype.PutBarMainContainer = function(id, lay, time, content, excCo
         "top": '17px',
         "border-radius": '3px',
         "color": '#111',
-        "background-color" : color,
+        "background-color" : hexToRGBA(color, 0.5),
         "font-size": '12px',
         "font-weight": "bold"})
     .appendTo(self.ccCont);
@@ -771,7 +760,13 @@ Exception.prototype.toHHMMSS = function(UNIX_timestamp){
 //=============================================================
 
 function hexToRGBA(s, opacity) {
-    var patt = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})$/;
-    var matches = patt.exec(s);
-    return "rgba("+parseInt(matches[1], 16)+","+parseInt(matches[2], 16)+","+parseInt(matches[3], 16)+","+opacity+");";
+    var isHexColor  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test('#' + s);
+    if (isHexColor) {
+        s = '#' + s;
+        var patt = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})$/;
+        var matches = patt.exec(s);
+        return "rgba("+parseInt(matches[1], 16)+","+parseInt(matches[2], 16)+","+parseInt(matches[3], 16)+","+opacity+");";
+    }
+
+    return s;
 }
