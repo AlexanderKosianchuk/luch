@@ -52,7 +52,8 @@ WindowFactory.prototype.SupportMoveMenu = function() {
         self.moveMenu.append("<div class='MoveMenuItem'>></div>");
     }
 
-    self.moveMenu.on("click", '*', function(e){
+    self.moveMenu.off("click");
+    self.moveMenu.on("click", '*', function(e) {
         var contex = $(e.target);
         if(contex.html() == "1"){
             self.window.scrollTop(0);

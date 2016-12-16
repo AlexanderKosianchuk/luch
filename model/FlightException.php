@@ -221,8 +221,6 @@ class FlightException
                     }
                 }
 
-                $resultArr = array_unique($resultArr);
-
                 //reorganize arr to simplify inserting
                 $normalizedResultArr = array();
                 if(count($resultArr) > 0)
