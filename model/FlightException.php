@@ -179,8 +179,8 @@ class FlightException
                 for($i = 1; $i < count($query); $i+=2)
                 {
                     $aditionalQueries[] = array(
-                            "aditionalInfoComment" => $query[$i],
-                            "aditionalInfoAlg" => $query[$i + 1]);
+                        "aditionalInfoComment" => $query[$i],
+                        "aditionalInfoAlg" => $query[$i + 1]);
                 }
             }
             //else no aditional info

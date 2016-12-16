@@ -1045,69 +1045,51 @@ class FlightsController extends CController
        $c = new DataBaseConnector();
        $link = $c->Connect();
 
-       $result = $link->query($kmlScript);
-
        $info = [];
        $averageLat = 0;
        $averageLong = 0;
 
-       while($row = $result->fetch_array()) {
-           $lat = $row['LAT'];
-           $long = $row['LONG'];
-           $h = $row['H'];
+       if (!$link->multi_query($kmlScript))
+       {
+           //err log
+           error_log("Impossible to execute multiquery: (" .
+               $kmlScript . ") " . $link->error);
+       }
 
-           $averageLat += $lat;
-           $averageLong += $long;
-           $averageLat /= 2;
-           $averageLong /= 2;
+       do
+       {
+           if ($res = $link->store_result())
+           {
+               while($row = $res->fetch_array())
+               {
+                   $lat = $row['LAT'];
+                   $long = $row['LONG'];
+                   $h = $row['H'];
 
-           if ($h < 0) {
-               $h = 10.00;
+                   $averageLat += $lat;
+                   $averageLong += $long;
+                   $averageLat /= 2;
+                   $averageLong /= 2;
+
+                   if ($h < 0) {
+                       $h = 10.00;
+                   }
+                   $h = round($h, 2);
+                   $info[] = [
+                       $long,
+                       $lat,
+                       $h,
+                   ];
+               }
+
+               $res->free();
            }
-           $h = round($h, 2);
-           $info[] = [
-               $long,
-               $lat,
-               $h,
-           ];
-       }
+       } while ($link->more_results() && $link->next_result());
 
-       $ii = 0;
-       while (($ii < count($info))
-           && (
-               ($info[$ii][0] < $averageLong * 0.05) // if less than 5% its startup rubbish
-               || ($info[$ii][1] < $averageLat * 0.05)
-               || ($info[$ii][0] < 0.1)
-               || ($info[$ii][1] < 0.1)
-              )
-       ) {
-           $ii++;
-       }
-
-       $sum1 = 0;
-       $sum5 = 0;
-       $cleanedInfo = [];
-       for($jj = $ii; $jj < count($info); $jj++) {
-           if ($jj > $ii + 5) {
-               $sum = $info[$jj][0] + $info[$jj][1];
-               $sum1 = $info[$jj - 1][0] + $info[$jj - 1][1];
-               $sum5 = $info[$jj - 5][0] + $info[$jj - 5][1];
-
-               if((abs($sum - $sum5) < 0.02)
-                  && (abs($sum - $sum1) < 0.005)
-              ) {
-                  $cleanedInfo[] = $info[$jj];
-              }
-           } else {
-               $cleanedInfo[] = $info[$jj];
-           }
-       }
-
-       $result->free();
        $c->Disconnect();
 
        unset($c);
 
-       return $cleanedInfo;
+       return $info;
    }
 }
