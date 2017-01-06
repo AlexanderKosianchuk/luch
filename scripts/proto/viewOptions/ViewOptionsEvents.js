@@ -248,7 +248,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
 FlightViewOptions.prototype.ShowEventsList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content content--no-scroll'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
@@ -275,7 +275,8 @@ FlightViewOptions.prototype.ShowEventsList = function() {
                     var data = answ["data"],
                     flightOptionsContent =
                         document.getElementById(self.flightOptionsContent.attr('id'));
-                    flightOptionsContent.innerHTML = data['eventsListHeader'] + data['eventsList'];
+                    flightOptionsContent.innerHTML = data['eventsListHeader']
+                        + '<div class="container__events-list is-scrollable">' + data['eventsList'] + '</div>';
 
                     self.ResizeFlightViewOptionsContainer();
 

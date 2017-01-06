@@ -60,13 +60,12 @@ class DataBaseConnector
         $exportedFileName['root'] = $root.$fileName.".csv";
         $exportedFileName['filename'] = $fileName.".csv";
 
-        $query = "SELECT * FROM `".$tableName."`
-            INTO OUTFILE '".$exportedFileName['root']."'
-            FIELDS TERMINATED BY ','
-            LINES TERMINATED BY ';';";
+        $query = "SELECT * FROM `".$tableName."`"
+            ." INTO OUTFILE '".$exportedFileName['root']."'"
+            ." FIELDS TERMINATED BY ','"
+            ." LINES TERMINATED BY ';';";
 
         $result = $link->query($query);
-
         $this->Disconnect();
 
         return $exportedFileName;

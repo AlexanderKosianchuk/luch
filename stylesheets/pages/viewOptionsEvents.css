@@ -33,3 +33,12 @@
     width: calc(100% - 4px);
     height: calc(100% - 4px);
 }
+
+.container__events-list {
+    overflow-y: auto;
+    height: 100%;
+}
+
+.content--no-scroll {
+    overflow: hidden !important;
+}

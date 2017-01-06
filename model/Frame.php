@@ -316,7 +316,7 @@ class Frame
                      if($apCode > 32768)
                      {
                          $apCode -= 65535;
-                    }
+                     }
                      $phisics = $apCode * $paramCyclo['k'];
 
                      array_push($interview, $phisics);
@@ -791,6 +791,21 @@ class Frame
                     $rotatedStr = $tempStr2 . $tempStr1;
                     $bpCode = hexdec($rotatedStr);
                     if($bpCode >= $binParam['mask'])
+                    {
+                        $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                        array_push($phisicsBinaryParamsFrame, $param);
+                    }
+                }
+                else if($binParamType == 42)//rotation bytes in word and < MASK
+                {
+                    $tempStr1 = substr ($codeValue, 0, 2);
+                    $tempStr2 = substr ($codeValue, 2, 2);
+                    $rotatedStr = $tempStr2 . $tempStr1;
+                    $bpCode = hexdec($rotatedStr);
+                    if($bpCode < $binParam['mask'])
                     {
                         $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
