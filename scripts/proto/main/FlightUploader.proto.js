@@ -745,7 +745,20 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
             });
         }
 
-        self.eventHandler.trigger("removeShowcase", self.flightUploaderFactoryContainer);
+        var counter = 0;
+
+        self.eventHandler.trigger("removeShowcase", [
+            self.flightUploaderFactoryContainer,
+            function() {
+                var interval = setInterval(function() {
+                    if (counter < 200) {
+                        self.window.scrollTop(0);
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 10);
+            }
+        ]);
     });
 
     ///

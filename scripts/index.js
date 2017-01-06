@@ -79,9 +79,13 @@ jQuery(function ($) {
             FU.FillFactoryContaider(showcase);
         });
 
-        eventHandler.on("removeShowcase", function (e, data) {
+        eventHandler.on("removeShowcase", function (e, data, callback) {
             var flightUploaderFactoryContainer = data;
             W.RemoveShowcase(flightUploaderFactoryContainer);
+
+            if ($.isFunction(callback)) {
+                callback();
+            }
         });
 
         ///=======================================================
