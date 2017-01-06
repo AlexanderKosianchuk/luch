@@ -52,7 +52,7 @@ function Chart(window, document, langStr, srvcStrObj, eventHandler, isPrintPage)
 
     this.startFrameTime = null;
     this.endFrameTime = null;
-    self.mouseInChat = false;
+    this.mouseInChat = false;
 
     this.isPrintPage = !!$('body').data('isprintpage');
 }
@@ -102,9 +102,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             self.document.scrollTop(factoryContainer.data("index") * self.window.height());
 
             self.LoadFlotChart();
-        } else {
-            console.log(answ["error"]);
-        }
+        } else {self
     });
 
     function PutTopMenu(self){

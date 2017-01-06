@@ -40,6 +40,14 @@
                 C.legend = $('div#legend');
                 C.placeholder = $('div#placeholder');
 
+                C.placeholder.on("mouseover", function(e){
+                    C.mouseInChat = true;
+                });
+
+                C.placeholder.on("mouseout", function(e){
+                    C.mouseInChat = false;
+                });
+
                 setInitialChartSize.apply(C);
                 C.LoadFlotChart();
 
