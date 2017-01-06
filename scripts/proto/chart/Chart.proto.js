@@ -102,7 +102,9 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             self.document.scrollTop(factoryContainer.data("index") * self.window.height());
 
             self.LoadFlotChart();
-        } else {self
+        } else {
+            console.log(answ["error"]);
+        }
     });
 
     function PutTopMenu(self){
