@@ -34,3 +34,9 @@ phpunit.phar
 
 #uploads
 /fileUploader/files/*
+
+#server
+.bash_history
+.config
+.gitconfig
+.viminfo
