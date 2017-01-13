@@ -706,6 +706,7 @@ class UploaderController extends CController
 
         //file can be accesed by ajax while try to open what can cause warning
         error_reporting(E_ALL ^ E_WARNING);
+        set_time_limit (0);
 
         $algHeap = array();
         if($frameSyncroCode != '')
@@ -904,6 +905,7 @@ class UploaderController extends CController
 
             //file can be accesed by ajax what can cause warning
             error_reporting(E_ALL ^ E_WARNING);
+            set_time_limit (0);
 
             //perform proc be cached table
             for($i = 0; $i < count($exList); $i++)

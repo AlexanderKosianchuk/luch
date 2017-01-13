@@ -11,6 +11,10 @@
  */
 
 error_reporting(E_ALL | E_STRICT);
+set_time_limit (0);
+ini_set('post_max_size', '128M');
+ini_set('upload_max_filesize', '128M');
+
 require('UploadHandler.php');
 $upload_handler = new UploadHandler();
 

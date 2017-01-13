@@ -1,10 +1,9 @@
 <?php
 
+
 define("SITE_ROOT_DIR", __DIR__);
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+$CONFIG = json_decode(file_get_contents(@SITE_ROOT_DIR."/config/main.json"));
 
 //service scr
 require_once(@SITE_ROOT_DIR."/model/Language.php");
@@ -32,6 +31,11 @@ require_once(@SITE_ROOT_DIR."/controller/CController.php");
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
 define("UPLOADED_FILES_PATH",
     @$_SERVER['DOCUMENT_ROOT'] . UPLOADED_FILES_DIR);
+
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 //error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 error_reporting(E_ALL);

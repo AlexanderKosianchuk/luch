@@ -475,6 +475,7 @@ class FlightsController extends CController
 
                //file can be accesed by ajax what can cause warning
                error_reporting(E_ALL ^ E_WARNING);
+               set_time_limit (0);
 
                //perform proc be cached table
                for($i = 0; $i < count($exList); $i++)
@@ -776,6 +777,7 @@ class FlightsController extends CController
       $exportedFiles = array();
       $exportedFileName = '';
       error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
+      set_time_limit (0);
       $Fl = new Flight();
       $C = new DataBaseConnector();
       $Bru = new Bru();

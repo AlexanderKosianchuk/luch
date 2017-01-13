@@ -1,6 +1,6 @@
 <?php
 
-define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "../view/_actions.info");
+define("ACTIONS_FILE", $_SERVER['DOCUMENT_ROOT'] . "../config/_actions.info");
 
 class Actions
 {

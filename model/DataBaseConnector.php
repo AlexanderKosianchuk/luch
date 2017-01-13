@@ -3,34 +3,42 @@
 
 class DataBaseConnector
 {
-
     private $host = 'localhost';
-    private $user = 'dbUserdb5';
-    private $pass = '124578dbUser';
     private $type = 'mysqli';
-    private $dbName = 'db5';
+    private $user = '';
+    private $pass = '';
+    private $dbName = '';
 
     private $link;
+
+    protected $glob;
+
+    public function __construct() {
+        global $CONFIG;
+
+        if (!isset($CONFIG)) {
+            throw new Exception("Configurations is not set", 1);
+        }
+
+        $this->host = $CONFIG->db->host;
+        $this->type = $CONFIG->db->type;
+        $this->user = $CONFIG->db->user;
+        $this->pass = $CONFIG->db->pass;
+        $this->dbName = $CONFIG->db->dbName;
+    }
 
     // Connection function
     public function Connect()
     {
-        /*$this->link = new MySQLi($this->host, $this->user, $this->pass);
-        $this->link->select_db($this->dbName);
-        $this->link->set_charset("utf8");*/
-
         $this->link = mysqli_init();
         mysqli_options($this->link, MYSQLI_OPT_LOCAL_INFILE, true);
         mysqli_real_connect($this->link, $this->host, $this->user, $this->pass, $this->dbName);
         $this->link->select_db($this->dbName);
         $this->link->set_charset("utf8");
 
-        if (mysqli_connect_errno())
-        {
+        if (mysqli_connect_errno()) {
             return mysqli_connect_error();
-        }
-        else
-        {
+        } else {
             return $this->link;
         }
     }
