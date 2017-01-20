@@ -710,7 +710,7 @@
     "sliceIsEtalon" : "Эталон",
     "openAccessForEngines": "Предоставить доступ к двигателям",
     "engineSerial": "Серийный номер двигателя",
-    "openAccessForBruTypes": "Предоставить доступ к типам рагистраторов",
+    "openAccessForBruTypes": "Предоставить доступ к типам регистраторов",
     "bruTypesName": "Тип регистратора",
     "bruTypesStepLenth": "Длительность кадра (в секундах)",
     "bruTypesFrameLength": "Размер кадра (в байтах)",
