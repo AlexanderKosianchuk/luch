@@ -266,13 +266,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["receiveTree"])
+    else if($c->action == "receiveTree")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
-                $action = $c->flightActions["receiveTree"];
+                $action = "receiveTree";
 
                 $folderid = 0;
                 $folderName = $c->lang->root;

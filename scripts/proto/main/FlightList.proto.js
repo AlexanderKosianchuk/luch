@@ -1025,7 +1025,7 @@ FlightList.prototype.SupportJsTree = function() {
                 "dataType" : "json", // needed only if you do not supply JSON headers
                 "data" : function (node) {
                     var pV = {
-                        action : self.actions["receiveTree"],
+                        action : "receiveTree",
                         data : {
                             data : 'data'
                         }
