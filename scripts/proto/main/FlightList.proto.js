@@ -379,9 +379,9 @@ FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
     };
 
     if(senderType == 'flight'){
-        pV.action = self.actions["flightChangePath"];
+        pV.action = "flightChangePath";
     } else if(senderType == 'folder'){
-        pV.action = self.actions["folderChangePath"];
+        pV.action = "folderChangePath";
     }
 
     return $.ajax({
@@ -1086,7 +1086,7 @@ FlightList.prototype.SupportJsTree = function() {
 FlightList.prototype.ShowContent = function(folderId) {
     var self = this,
         pV = {
-            action : self.actions["showFolderContent"],
+            action : "showFolderContent",
             data : {
                 folderId: folderId
             }

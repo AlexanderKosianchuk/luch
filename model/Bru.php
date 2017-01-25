@@ -59,7 +59,6 @@ class Bru
 
             $c = new DataBaseConnector();
             $link = $c->Connect();
-            //var_dump($mySqliConnection);
 
             $query = "SELECT * FROM `brutypes` WHERE `id` IN (".$inString.") ORDER BY `id`;";
             $result = $link->query($query);
@@ -155,7 +154,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -206,7 +204,7 @@ class Bru
             $gradiParam['xy'] = json_decode($gradiParam['xy'], true);
             array_push($cycloAp, $gradiParam);
         }
-        //var_dump($cycloAp);
+
         $result->free();
         $c->Disconnect();
 
@@ -222,7 +220,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -259,7 +256,7 @@ class Bru
             $gradiParam['xy'] = json_decode($gradiParam['xy'], true);
             array_push($cycloAp, $gradiParam);
         }
-        //var_dump($cycloAp);
+
         $result->free();
         $c->Disconnect();
 
@@ -445,7 +442,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -464,7 +460,7 @@ class Bru
         {
             $rowsCount = $row['COUNT(*)'];
         }
-        //var_dump($cycloAp);
+
         $result->free();
         $c->Disconnect();
 
@@ -480,7 +476,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -513,7 +508,6 @@ class Bru
             $cycloApAssoc[] = $row;
         }
 
-        //var_dump($cycloAp);
         $result->free();
         $c->Disconnect();
 
@@ -896,7 +890,6 @@ class Bru
         $endIndex = $extEndIndex;
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -977,7 +970,6 @@ class Bru
         $bruType = $extBruType;
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -1020,7 +1012,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -1064,7 +1055,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -1198,7 +1188,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
@@ -1240,7 +1229,6 @@ class Bru
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
-        //var_dump($mySqliConnection);
 
         $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);

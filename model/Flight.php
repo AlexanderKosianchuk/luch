@@ -129,6 +129,28 @@ class Flight
         return $listFlights;
     }
 
+    public function GetAllFlightIds()
+    {
+        $listFlights = [];
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "SELECT `id` FROM `flights` WHERE 1;";
+        $mySqliSelectFlightsResult = $link->query($query);
+
+        while($row = $mySqliSelectFlightsResult->fetch_array())
+        {
+            array_push($listFlights, $row['id']);
+        }
+        $mySqliSelectFlightsResult->free();
+        $c->Disconnect();
+
+        unset($c);
+
+        return $listFlights;
+    }
+
     public function GetFlightsByAuthor($extAuthor)
     {
         $author = $extAuthor;
@@ -221,21 +243,14 @@ class Flight
         return $flightsListInfo;
     }
 
-    public function InsertNewFlight($extBort, $extVoyage,
-            $extStartCopyTime,
-            $extBruType, $extPerformer,
-            $extDepartureAirport, $extArrivalAirport,
-            $extFile, $extAditionalInfo)
+    public function InsertNewFlight($bort, $voyage,
+            $startCopyTime,
+            $bruType, $performer,
+            $departureAirport, $arrivalAirport,
+            $uploadedFile, $extAditionalInfo, $userId)
     {
-        $bort = $extBort;
-        $voyage = $extVoyage;
-        $startCopyTime = $extStartCopyTime;
+
         $uploadingCopyTime = time();
-        $bruType = $extBruType;
-        $performer = $extPerformer;
-        $departureAirport = $extDepartureAirport;
-        $arrivalAirport = $extArrivalAirport;
-        $uploadedFile = $extFile;
         $aditionalInfo = "";
         if(($extAditionalInfo !== null) &&
             ($extAditionalInfo !== false))  {
@@ -263,7 +278,8 @@ class Flight
                 `fileName`,
                 `apTableName`,
                 `bpTableName`,
-                `exTableName`)
+                `exTableName`,
+                `id_user`)
                 VALUES ('".$bort."',
                         '".$voyage."',
                         ".$startCopyTime.",
@@ -276,24 +292,10 @@ class Flight
                         '".$uploadedFile."',
                         '".$tableNameAp."',
                         '".$tableNameBp."',
-                        '".$exTableName."');";
+                        '".$exTableName."',
+                        '".$userId."');";
 
         $stmt = $link->prepare($query);
-        /*$stmt->bind_param("ssiissssssssss", (string)$bort,
-                (string)$voyage,
-                intval ($startCopyTime),
-                intval ($uploadingCopyTime),
-                (string)$performer,
-                (string)$bruType,
-                (string)$departureAirport,
-                (string)$arrivalAirport,
-                (string)$engines,
-                (string)$aditionalInfo,
-                (string)$uploadedFile,
-                (string)$tableNameAp,
-                (string)$tableNameBp,
-                (string)$exTableName);*/
-
         $stmt->execute();
         $stmt->close();
 
@@ -326,8 +328,7 @@ class Flight
             array_push($apTables, $tableNameAp."_".$prefix);
             $query = "CREATE TABLE `".$tableNameAp."_".$prefix."` (`frameNum` MEDIUMINT, `time` BIGINT";
 
-            for($i = 0; $i < count($prefixCyclo); $i++)
-            {
+            for($i = 0; $i < count($prefixCyclo); $i++) {
                 $query .= ", `".$prefixCyclo[$i]["code"]."` FLOAT(7,2)";
             }
 
@@ -357,8 +358,7 @@ class Flight
     {
         $flightId = $extFlightId;
         $flightInfo = $extFlightInfo;
-        foreach($flightInfo as $key => $value)
-        {
+        foreach($flightInfo as $key => $value) {
             $c = new DataBaseConnector();
             $link = $c->Connect();
 

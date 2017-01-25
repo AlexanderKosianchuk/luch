@@ -39,24 +39,24 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt = "<div id='fileFlightInfo".$index."' class='MainContainerContentRows' " .
-                "data-filename='" . $filePath . "' " .
-                "data-brutype='" . $bruType . "' " .
-                "data-index='" . $index . "' " .
-                "data-previewparams='" . $previewParams . "' " .
-                "align='left'>" .
-                "<a style='margin-left:5px; font-weight:bold;'>" .
-                    $this->lang->enterFlightDetails . " - " . $fileName . "</a>" .
-                "</br>" .
-                 //left column for flight info - right for preview
-                "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
+            "data-filename='" . $filePath . "' " .
+            "data-brutype='" . $bruType . "' " .
+            "data-index='" . $index . "' " .
+            "data-previewparams='" . $previewParams . "' " .
+            "align='left'>" .
+            "<a style='margin-left:5px; font-weight:bold;'>" .
+                $this->lang->enterFlightDetails . " - " . $fileName . "</a>" .
+            "</br>" .
+             //left column for flight info - right for preview
+            "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
 
-                "<table border='0' style='margin-bottom:15px;'>" .
-                "<tr>" .
-                "<td>" . $this->lang->bruType . "</td>";
+            "<table border='0' style='margin-bottom:15px;'>" .
+            "<tr>" .
+            "<td>" . $this->lang->bruType . "</td>";
 
         $flightParamsSrt .= "<td><input id='bruType' name='bruType' class='FlightUploadingInputs' value='" . $bruType .
-                "' readonly /></td>" .
-                "</tr><tr>";
+            "' readonly /></td>" .
+            "</tr><tr>";
 
         $bortFromHeader = "";
         if(isset($flightInfoFromHeader["bort"]))
@@ -65,10 +65,9 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->bortNum . "</td>" .
-                "<td><input id='bort' name='bort' type='text' class='FlightUploadingInputs' ".
-                "value='" . $bortFromHeader . "'/></td>" .
-                "</tr>";
-
+            "<td><input id='bort' name='bort' type='text' class='FlightUploadingInputs' ".
+            "value='" . $bortFromHeader . "'/></td>" .
+            "</tr>";
 
         $voyageFromHeader = "";
         if(isset($flightInfoFromHeader["voyage"]))
@@ -77,9 +76,9 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->voyage . "</td>" .
-                "<td><input id='voyage' name='voyage' type='text' class='FlightUploadingInputs' ".
-                "value='" . $voyageFromHeader . "'/></td>" .
-                "</tr>";
+            "<td><input id='voyage' name='voyage' type='text' class='FlightUploadingInputs' ".
+            "value='" . $voyageFromHeader . "'/></td>" .
+            "</tr>";
 
         $departureAirportFromHeader = "";
         if(isset($flightInfoFromHeader["departureAirport"]))
@@ -641,7 +640,7 @@ class UploaderController extends CController
                 $startCopyTime,
                 $bruType, $performer,
                 $departureAirport, $arrivalAirport,
-                $uploadedFile, $aditionalInfo);
+                $uploadedFile, $aditionalInfo, $this->_user->userInfo['id']);
 
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $tableNameAp = $flightInfo['apTableName'];
@@ -843,13 +842,20 @@ class UploaderController extends CController
             unlink($fileNameBp);
         }
 
-        $this->_user->SetFlightAvaliable($this->_user->username, $flightId);
+        $userId = intval($this->_user->userInfo['id']);
+        $observerIds = $this->_user->GetObservers($userId);
 
-        $userId = $this->_user->GetUserIdByName($this->_user->username);
+        if (!in_array($userId, $observerIds)) {
+            $observerIds[] = $userId;
+        }
+
+        $this->_user->SetFlightAvaliableForRange($flightId, $observerIds);
+
         $Fd = new Folder();
-        $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
+        foreach ($observerIds as $id) {
+            $Fd->PutFlightInFolder($flightId, 0, $id); //we put currently uploaded file in root
+        }
         unset($Fd);
-
         unset($Fr);
 
         unlink($tempFilePath);
@@ -936,19 +942,11 @@ class UploaderController extends CController
 
     public function DeleteFlight()
     {
-        $Fl = new Flight();
-        $flightInfo = $Fl->GetFlightInfo($this->flightId);
-        $bruType = $flightInfo["bruType"];
+         $FC = new FlightComponent();
+         $result = $FC->DeleteFlight($this->flightId, intval($this->_user->userInfo['id']));
+         unset($FC);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $prefixArr = $Bru->GetBruApGradiPrefixes($bruType);
-
-        $Fl->DeleteFlight($this->flightId, $prefixArr);
-
-        $this->_user->UnsetFlightAvaliable($this->flightId);
-
-        unset($Fl);
+         return $result;
     }
 
     public function ImportFlight($importedFileName)
@@ -996,7 +994,7 @@ class UploaderController extends CController
                     $flightInfoImported['startCopyTime'],
                     $flightInfoImported['bruType'], $flightInfoImported['performer'],
                     $flightInfoImported['departureAirport'], $flightInfoImported['arrivalAirport'],
-                    $importedFileName, $flightInfoImported['flightAditionalInfo']);
+                    $importedFileName, $flightInfoImported['flightAditionalInfo'], $this->_user->userInfo['id']);
 
                 $flightInfo = $Fl->GetFlightInfo($flightId);
 

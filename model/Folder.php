@@ -4,6 +4,8 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 
 class Folder
 {
+    const ROOT_FOLDER_ID = 0;
+
     public function CreateFolderTable()
     {
         $query = "SHOW TABLES LIKE 'folders';";
@@ -30,7 +32,7 @@ class Folder
         $result = $link->query($query);
         if(!$result->fetch_array())
         {
-            $query = "CREATE TABLE `flightsinfolders` (`id` BIGINT NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE `flight_to_folder` (`id` BIGINT NOT NULL AUTO_INCREMENT,
                 `flightId` INT(11),
                 `folderId` INT(11) DEFAULT 0,
                 `userId` INT(11),
@@ -94,12 +96,8 @@ class Folder
         return $res;
     }
 
-    public function ChangeFolderPath($extSenderId, $extDestinationId, $extUserId)
+    public function ChangeFolderPath($folderId, $newPath, $userId)
     {
-        $folderId = $extSenderId;
-        $newPath = $extDestinationId;
-        $userId = $extUserId;
-
         $result = array();
         $query = "UPDATE `folders` SET `path` = '" . $newPath . "' ".
                 "WHERE `id` = '" . $folderId . "';";
@@ -145,7 +143,7 @@ class Folder
         $userId = $extUserId;
 
         $result = array();
-        $query = "INSERT INTO `flightsinfolders` (`flightId`, `folderId`, `userId`) " .
+        $query = "INSERT INTO `flight_to_folder` (`flightId`, `folderId`, `userId`) " .
                 "VALUES (".$flightId.", ".$folderId.", ".$userId.");";
         $result['query'] = $query;
 
@@ -160,14 +158,28 @@ class Folder
         return $result;
     }
 
-    public function ChangeFlightFolder($extFlightId, $extFolderId, $extUserId)
+    public function ChangeFlightFolder($flightId, $folderId, $userId)
     {
-        $flightId = $extFlightId;
-        $folderId = $extFolderId;
-        $userId = $extUserId;
+        $result = [];
+        $query = "UPDATE `flight_to_folder` SET `folderId` = '" . $folderId . "' ".
+                "WHERE `flightId` = '" . $flightId . "' AND  `userId` = '" . $userId . "';";
+        $result['query'] = $query;
 
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+        $stmt = $link->prepare($query);
+        $result['status'] = $stmt->execute();
+        $stmt->close();
+        $c->Disconnect();
+        unset($c);
+
+        return $result;
+    }
+
+    public function DeleteFlightFromFolders($flightId)
+    {
         $result = array();
-        $query = "UPDATE `flightsinfolders` SET `folderId` = '" . $folderId . "' ".
+        $query = "DELETE FROM `flight_to_folder` " .
                 "WHERE `flightId` = '" . $flightId . "';";
         $result['query'] = $query;
 
@@ -182,13 +194,20 @@ class Folder
         return $result;
     }
 
-    public function DeleteFlightFromFolders($extFlightId)
+    public function DeleteFlightFromFolderForUser($flightId, $userId)
     {
-        $flightId = $extFlightId;
+        if(!is_int($flightId)) {
+            throw new Exception("Incorrect flight id passed", 1);
+        }
+
+        if(!is_int($userId)) {
+            throw new Exception("Incorrect user id passed", 1);
+        }
 
         $result = array();
-        $query = "DELETE FROM `flightsinfolders` " .
-                "WHERE `flightId` = '" . $flightId . "';";
+        $query = "DELETE FROM `flight_to_folder` "
+                . "WHERE `flightId` = '" . $flightId . "' "
+                . "AND  `userId` = '" . $userId . "';";
         $result['query'] = $query;
 
         $c = new DataBaseConnector();
@@ -207,7 +226,7 @@ class Folder
         $folderId = $extFolderId;
 
         $result = array();
-        $query = "DELETE FROM `flightsinfolders` " .
+        $query = "DELETE FROM `flight_to_folder` " .
                 "WHERE `folderId` = '" . $folderId . "';";
         $result['query'] = $query;
 
@@ -263,7 +282,7 @@ class Folder
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $query = "SELECT `folderId` FROM `flightsinfolders` WHERE `flightId`=".$flightId." " .
+        $query = "SELECT `folderId` FROM `flight_to_folder` WHERE `flightId`=".$flightId." " .
                 "AND `userId` = ".$userId." LIMIT 1;";
 
         $result = $link->query($query);
@@ -280,23 +299,13 @@ class Folder
         return $folderInfo;
     }
 
-    public function GetFlightsByFolder($extFolderId, $extUserId, $adminRole = false)
+    public function GetFlightsByFolder($folderId, $userId, $role = false)
     {
-        $folderId = $extFolderId;
-        $userId = $extUserId;
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        if($adminRole) {
-            $query = "SELECT `flightId` FROM `flightsinfolders` WHERE `folderId`='".$folderId."';";
-        } else if(is_array($userId)) {
-            $uIds = implode("','", $userId);
-            $query = "SELECT `flightId` FROM `flightsinfolders` WHERE `folderId`='".$folderId."' " .
-                "AND `userId` IN ('".$uIds."');";
-        } else {
-            $query = "SELECT `flightId` FROM `flightsinfolders` WHERE `folderId`='".$folderId."' " .
-                "AND `userId` = ".$userId.";";
-        }
+        $query = "SELECT `flightId` FROM `flight_to_folder` WHERE `folderId`='".$folderId."' " .
+            "AND `userId` = ".$userId.";";
 
         $result = $link->query($query);
 
@@ -312,23 +321,39 @@ class Folder
         return $flightArr;
     }
 
-    public function GetSubfoldersByFolder($extFolderId, $extUserId, $adminRole = false)
+    public function GetAllFlightsInFolders($userId)
+    {
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "SELECT `flightId`, `folderId` FROM `flight_to_folder` WHERE `userId`='".$userId."';";
+
+        $result = $link->query($query);
+
+        $flightArr = array();
+        while($row = $result->fetch_array())
+        {
+            $flightArr[] = [
+                'flightId' => $row['flightId'],
+                'folderId' => $row['folderId'],
+            ];
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $flightArr;
+    }
+
+    public function GetSubfoldersByFolder($extFolderId, $extUserId)
     {
         $id = $extFolderId;
         $userId = $extUserId;
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        if($adminRole) {
-            $query = "SELECT * FROM `folders` WHERE `path` = ".$id.";";
-        } else if(is_array($userId)) {
-            $userIds = implode("','", $userId);
-            $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
-                "AND `userId` IN ('".$userId."'));";
-        } else {
-            $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
-                "AND (`userId` = '".$userId."'));";;
-        }
+        $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
+            "AND (`userId` = '".$userId."'));";;
 
         $result = $link->query($query);
         $subfolders = array();
@@ -342,7 +367,6 @@ class Folder
         }
         $c->Disconnect();
         unset($c);
-
         return $subfolders;
     }
 
@@ -406,21 +430,13 @@ class Folder
         return $avaliable;
     }
 
-    public function GetAvaliableContent($extFolderId, $uId, $adminRole = false)
+    public function GetAvaliableContent($folderId, $uId, $role = false)
     {
-        $folderId = $extFolderId;
         $c = new DataBaseConnector();
         $link = $c->Connect();
         $link2 = $c->Connect();
 
-        if($adminRole) {
-            $query = "SELECT * FROM `folders` WHERE 1;";
-        } else if(is_array($uId)) {
-            $uIds = implode("','", $uId);
-            $query = "SELECT * FROM `folders` WHERE `userId` IN ('".$uIds."');";
-        } else {
-            $query = "SELECT * FROM `folders` WHERE `userId` = '".$uId."';";
-        }
+        $query = "SELECT * FROM `folders` WHERE `userId` = '".$uId."';";
 
         $result = $link->query($query);
         $avaliable = array();
@@ -448,12 +464,12 @@ class Folder
             }
         }
 
-        $flightsInFolder = $this->GetFlightsByFolder($folderId, $uId, $adminRole);
+        $flightsInFolders = $this->GetAllFlightsInFolders($uId);
 
-        foreach ($flightsInFolder as $flightId)
+        foreach ($flightsInFolders as $item)
         {
             $query = "SELECT `id`, `bort`, `voyage`, `startCopyTime`, `bruType`, `departureAirport`, `arrivalAirport` ".
-                "FROM `flights` WHERE `id` = '".$flightId."';";
+                "FROM `flights` WHERE `id` = '".$item['flightId']."';";
 
             $result2 = $link2->query($query);
             $name = '';
@@ -464,7 +480,41 @@ class Folder
                     ", " . $row2['bruType']  . ", " . $row2['departureAirport']  . "-" . $row2['arrivalAirport'] ;
 
                 $avaliable[] = array(
-                        'id' => $row2['id'],
+                    'id' => $row2['id'],
+                    'text' => $name,
+                    'type' => 'flight',
+                    'parent' => $item['folderId']
+                );
+            }
+        }
+        $c->Disconnect();
+        unset($c);
+
+        return $avaliable;
+    }
+
+    public function FormFakeContent($folderId, $flights)
+    {
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $avaliable = [];
+
+        foreach ($flights as $flightId)
+        {
+            $query = "SELECT `id`, `bort`, `voyage`, `startCopyTime`, `bruType`, `departureAirport`, `arrivalAirport` ".
+                "FROM `flights` WHERE `id` = '".$flightId."';";
+
+            $result = $link->query($query);
+            $name = '';
+
+            if($row = $result->fetch_array())
+            {
+                $name = $row['bort'] . ", " .  $row['voyage']  . ", " . date('d/m/y H:i', $row['startCopyTime'])  .
+                    ", " . $row['bruType']  . ", " . $row['departureAirport']  . "-" . $row['arrivalAirport'] ;
+
+                $avaliable[] = array(
+                        'id' => $row['id'],
                         'text' => $name,
                         'type' => 'flight',
                         'parent' => $folderId
@@ -526,7 +576,3 @@ class Folder
     }
 
 }
-
-
-
-?>

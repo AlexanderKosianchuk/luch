@@ -47,7 +47,6 @@ class User
         return false;
     }
 
-    public static $AVALIABILITY_FLIGHTS = 'flight';
     public static $AVALIABILITY_FDR_TYPES = 'brutype';
     public static $AVALIABILITY_USERS = 'user';
 
@@ -558,18 +557,9 @@ class User
         $result = $link->query("SELECT * FROM `user_personal` WHERE
                 `login` = '".$username."';");
 
-        if($row = $result->fetch_array())
-        {
-            foreach ($row as $key => $value)
-            {
+        if ($row = $result->fetch_array()) {
+            foreach ($row as $key => $value) {
                 $userInfo[$key] = $value;
-
-                /*array("id"=>$row['id'],
-                    "login"=>$row['login'],
-                    "company"=>$row['company'],
-                    "privilege"=>$row['privilege'],
-                    "options"=>$row['options'],
-                    "author"=>$row['author']);*/
             }
         }
 
@@ -769,7 +759,6 @@ class User
 
         $userInfo = $this->GetUserInfo($userId);
         $role = $userInfo['role'];
-
         $avaliableItems = [];
 
         $c = new DataBaseConnector();
@@ -799,9 +788,27 @@ class User
         return $avaliableItems;
     }
 
-    public function GetAvaliableFlights($username)
+    public function GetAvaliableFlights($userId)
     {
-        return $this->GetAvaliable($username, $this::$AVALIABILITY_FLIGHTS);
+        if(!is_int($userId)) {
+            throw new Exception("Incorrect user id passed", 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $result = $link->query("SELECT `id_flight` FROM `flight_to_user` ".
+                "WHERE `id_user`='".$userId."';");
+
+        $avaliableItems = [];
+        while(($result !== null) && ($row = $result->fetch_array())) {
+            $avaliableItems[] = $row['id_flight'];
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $avaliableItems;
     }
 
     public function GetAvaliableUsers($username)
@@ -838,9 +845,34 @@ class User
         unset($c);
     }
 
-    public function SetFlightAvaliable($allowedBy, $flightId, $userIdentity = null)
+    public function SetFlightAvaliable($flightId, $userId)
     {
-        $this->SetAvaliable($allowedBy, $flightId, $this::$AVALIABILITY_FLIGHTS, $userIdentity);
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "INSERT INTO `flight_to_user` (`id_flight`, `id_user`) "
+            . "VALUES ('".$flightId."', '".$userId."');";
+
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+
+    }
+
+    public function SetFlightAvaliableForRange($flightId, $userIds)
+    {
+        if(!is_array($userIds)) {
+            return false;
+        }
+
+        foreach ($userIds as $id) {
+            $this->SetFlightAvaliable($flightId, $id);
+        }
+
+        return true;
     }
 
     public function SetBruTypeAvaliable($allowedBy, $FDRid, $userIdentity = null)
@@ -883,14 +915,43 @@ class User
         unset($c);
     }
 
-    public function UnsetFlightAvaliableForUser($userIdentity, $flightId)
+    public function UnsetFlightAvaliableForUser($userId, $flightId)
     {
-        $this->UnsetAvaliable($userIdentity, $flightId, $this::$AVALIABILITY_FLIGHTS);
+        if(!is_int($flightId)) {
+            throw new Exception("Incorrect flight id passed", 1);
+        }
+
+        if(!is_int($userId)) {
+            throw new Exception("Incorrect user id passed", 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "DELETE FROM `flight_to_user` WHERE `id_user` = '".$userId."' AND "
+            . "`id_flight`='".$flightId."';";
+
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
     }
 
     public function UnsetFlightAvaliable($flightId)
     {
-        $this->UnsetAvaliable(null, $flightId, $this::$AVALIABILITY_FLIGHTS);
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "DELETE FROM `flight_to_user` WHERE `id_flight`='".$flightId."';";
+
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
     }
 
     public function UnsetBruTypesAvaliableForUser($userIdentity, $FDRid)
@@ -915,10 +976,8 @@ class User
 
     /** ------------------------ **/
 
-    public function GetUserIdsByAuthor($extUsername)
+    public function GetUserIdsByAuthor($username)
     {
-        $username = $extUsername;
-
         $avaliableUserIds = array();
 
         $c = new DataBaseConnector();
@@ -987,11 +1046,58 @@ class User
         unset($c);
     }
 
-    public function GetLastAction($extUserId, $extAction)
+    public function GetObservers($userId)
     {
-        $userId = $extUserId;
-        $action= $extAction;
+        $observerIds = [];
 
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $userInfo = $this->GetUserInfo(intval($userId));
+        $authorId = $userInfo['id_user'];
+
+        /* in case current user is admin role it will not have id_user (authorId) */
+        if (isset($authorId)) {
+            $authorId = intval($authorId);
+            $authorInfo = $this->GetUserInfo($authorId);
+            if (self::isModerator($authorInfo['role'])) {
+                $observerIds[] = $authorId;
+            }
+        }
+
+        $admins = $this->GetUsersByRole(self::$role['admin']);
+        $observerIds = array_merge($observerIds, $admins);
+
+        $observerIds = array_unique($observerIds);
+
+        $c->Disconnect();
+        unset($c);
+
+        return $observerIds;
+    }
+
+    public function GetUsersByRole($role)
+    {
+        $userIds = [];
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $result = $link->query("SELECT `id` FROM `user_personal` ".
+            "WHERE `role`='".$role."';");
+
+        while($row = $result->fetch_array()) {
+            $userIds[] = intval($row['id']);
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $userIds;
+    }
+
+    public function GetLastAction($userId, $action)
+    {
         $c = new DataBaseConnector();
         $link = $c->Connect();
 

@@ -484,14 +484,14 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["showFolderContent"])
+    else if($c->action == "showFolderContent")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['folderId']))
             {
-                $folderid = $c->data['folderId'];
-                $action = $c->flightActions["showFolderContent"];
+                $folderid = intval($c->data['folderId']);
+                $action = "showFolderContent";
 
                 $result = $c->BuildSelectedFolderContent($folderid);
 
@@ -667,7 +667,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightChangePath"])
+    else if($c->action == "flightChangePath")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -711,7 +711,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["folderChangePath"]) //show form for uploading
+    else if($c->action == "folderChangePath") //show form for uploading
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -1008,7 +1008,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->getAction === 'results')
+    else if($c->action === 'results')
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {

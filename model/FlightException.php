@@ -123,15 +123,12 @@ class FlightException
                 }
 
                 //if no matches found
-                if($paramsCount == $j)
-                {
-                    //var_dump($currList[$i]);
+                if($paramsCount == $j) {
                     array_push($excRefParamsList, $currList[$i]);
                 }
 
             }
         }
-        //var_dump($excRefParamsList);
         $result->free();
         $c->Disconnect();
 
@@ -502,8 +499,6 @@ class FlightException
     {
         $excEventsTableName = $extExcEventsTableName;
         $query = "SELECT DISTINCT * FROM `".$excEventsTableName."` ORDER BY `frameNum`;";
-
-        //var_dump($excEventsTableName);
 
         $c = new DataBaseConnector();
         $link = $c->Connect();

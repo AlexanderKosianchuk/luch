@@ -171,30 +171,16 @@ class FlightsController extends CController
       return $fileUploadBlock;
    }
 
-   private function GetFlightsByPath($extFolderId)
+   private function GetFlightsByPath($folderId)
    {
-      $folderId = $extFolderId;
-      $avalIds = $this->_user->GetAvaliableFlights($this->_user->username);
       $userId = $this->_user->GetUserIdByName($this->_user->username);
-      $role = $this->_user->userInfo['role'];
-      $adminRole = User::isAdmin($role);
-
-      $flightIdsArr = [];
 
       $Fl = new Flight();
       $Fd = new Folder();
-      if(User::isAdmin($role)) {
-         $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId, $adminRole);
-      } else if(User::isModerator($role)) {
-         $userIds = $this->_user->GetUserIdsByAuthor($this->_user->username);
-         $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userIds);
-      } else {
-         $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId);
-      }
+      $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId);
 
       $flightsInfoArr = [];
-      foreach ($flightIdsArr as $id)
-      {
+      foreach ($flightIdsArr as $id) {
          $flightsInfoArr[] = $Fl->GetFlightInfo($id);
       }
 
@@ -204,24 +190,14 @@ class FlightsController extends CController
       return $flightsInfoArr;
    }
 
-   private function GetFoldersByPath($extFolderId)
+   private function GetFoldersByPath($folderId)
    {
-      $folderId = $extFolderId;
-
       $userId = $this->_user->userInfo['id'];
-      $role = $this->_user->userInfo['role'];
-      $adminRole = User::isAdmin($role);
       $subFoldersArr = [];
       $Fd = new Folder();
 
-      if(User::isAdmin($role)) {
-         $subFoldersArr = $Fd->GetSubfoldersByFolder($folderId, $userId, $adminRole);
-      } else if(User::isModerator($role)) {
-         $userIds = $this->_user->GetUserIdsByAuthor($this->_user->username);
-         $flightIdsArr = $Fd->GetSubfoldersByFolder($folderId, $userIds);
-      } else {
-         $flightIdsArr = $Fd->GetSubfoldersByFolder($folderId, $userId);
-      }
+      $subFoldersArr = $Fd->GetSubfoldersByFolder($folderId, $userId);
+
       unset($Fd);
 
       return $subFoldersArr;
@@ -241,12 +217,9 @@ class FlightsController extends CController
       return $result;
    }
 
-   public function ChangeFlightPath($extSender, $extTarget)
+   public function ChangeFlightPath($sender, $target)
    {
-      $sender = $extSender;
-      $target = $extTarget;
-
-      $userId = $this->_user->GetUserIdByName($this->_user->username);
+      $userId = intval($this->_user->userInfo['id']);
 
       $Fd = new Folder();
       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
@@ -255,13 +228,9 @@ class FlightsController extends CController
       return $result;
    }
 
-   public function ChangeFolderPath($extSender, $extTarget)
+   public function ChangeFolderPath($sender, $target)
    {
-      $sender = $extSender;
-      $target = $extTarget;
-
-
-      $userId = $this->_user->GetUserIdByName($this->_user->username);
+      $userId = intval($this->_user->userInfo['id']);
 
       $Fd = new Folder();
       $result = $Fd->ChangeFolderPath($sender, $target, $userId);
@@ -347,46 +316,13 @@ class FlightsController extends CController
       }
    }
 
-   public function DeleteFlight($id)
+   public function DeleteFlight($flightId)
    {
-      if(is_int($id)) {
-         $avaliableFlights = $this->_user->GetAvaliableFlights($this->_user->username);
+       $FC = new FlightComponent();
+       $result = $FC->DeleteFlight($flightId, intval($this->_user->userInfo['id']));
+       unset($FC);
 
-         if(in_array($id, $avaliableFlights))
-         {
-            $Fl = new Flight();
-            $flightInfo = $Fl->GetFlightInfo($id);
-            $bruType = $flightInfo["bruType"];
-
-            $Bru = new Bru();
-            $bruInfo = $Bru->GetBruInfo($bruType);
-            $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
-            $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
-
-            $result = $Fl->DeleteFlight($id, $prefixApArr, $prefixBpArr);
-
-            $this->_user->UnsetFlightAvaliable($id);
-
-            $Fd = new Folder();
-            $Fd->DeleteFlightFromFolders($id);
-            unset($Fd);
-
-            return $result;
-         }
-         else
-         {
-            error_log("Not avaliable for current user. DeleteFlight id - " . $id . ". " .
-                  "Username - " . $this->_user->username . ". Page FlightsController.php");
-            $result['status'] = false;
-            return $result['status'];
-         }
-      }
-      else
-      {
-         error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsController.php");
-         $result['status'] = false;
-         return $result['status'];
-      }
+       return $result;
    }
 
    public function SyncFlightsHeaders($extIds)
@@ -554,7 +490,7 @@ class FlightsController extends CController
 
    public function GetLastViewedFolder()
    {
-      $viewType = $this->flightActions["showFolderContent"];
+      $viewType = "showFolderContent";
 
       $userId = $this->_user->userInfo['id'];
       $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
@@ -583,29 +519,16 @@ class FlightsController extends CController
       return $flightColumn;
    }
 
-   public function PrepareTree($extFolder)
+   public function PrepareTree($shownFolderId)
    {
-      $shownFolderId = $extFolder;
-
       $userId = $this->_user->userInfo['id'];
-      $role = $this->_user->userInfo['role'];
-      $adminRole = User::isAdmin($role);
 
       $Fd = new Folder();
-      if(User::isAdmin($role)) {
-         $content = $Fd->GetAvaliableContent($shownFolderId, $userId, $adminRole);
-      } else if(User::isModerator($role)) {
-         $userIds = $this->_user->GetUserIdsByAuthor($this->_user->username);
-         $content = $Fd->GetAvaliableContent($shownFolderId, $userIds);
-      } else {
-         $content = $Fd->GetAvaliableContent($shownFolderId, $userId);
-      }
-
+      $content = $Fd->GetAvaliableContent($shownFolderId, $userId);
       unset($Fd);
 
       $relatedNodes = false;
-      if(count($content) > 0)
-      {
+      if(count($content) > 0) {
          $relatedNodes = $this->makeRecursive($content);
       }
 
@@ -624,6 +547,7 @@ class FlightsController extends CController
       $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
       $shownFolder = $shownFolderInfo['name'];
       unset($Fd);
+
       foreach($subFolders as $key => $val)
       {
          $input = '<input class="ItemsCheck" type="checkbox" data-type="folder" data-folderpath="'.$shownFolderId.'" data-folderdestination="'.$val['id'].'">';
