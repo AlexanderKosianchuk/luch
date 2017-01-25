@@ -69,16 +69,16 @@ class PrinterController extends CController
             $img = file_get_contents($imageFile);
 
             $pdf->SetHeaderData('$'.$img,
-                /*PDF_HEADER_LOGO_WIDTH*/ "20",
-                /*HEADER_TITLE*/ $headerStr,
-                /*HEADER_STRING*/ "",
+                "20", /*PDF_HEADER_LOGO_WIDTH*/
+                $headerStr, /*HEADER_TITLE*/
+                "", /*HEADER_STRING*/
                 [0, 10, 50],
                 [0, 10, 50]
             );
         } else {
             // set default header data
-            $pdf->SetHeaderData("", "", $headerStr, "",
-                [0, 10, 50 ], [0, 10, 50]
+            $pdf->SetHeaderData("", 0, $headerStr, "",
+                [0, 10, 50], [0, 10, 50]
             );
         }
 
