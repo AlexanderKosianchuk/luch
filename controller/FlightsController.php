@@ -368,16 +368,9 @@ class FlightsController extends CController
       return true;
    }
 
-   public function ProcessFlight($extId)
-   {
-      if(is_int($extId))
-      {
-         $flightId = $extId;
-
-         $avaliableFlights = $this->_user->GetAvaliableFlights($this->_user->username);
-
-         if(in_array($flightId, $avaliableFlights))
-         {
+    public function ProcessFlight($flightId)
+    {
+        if (is_int($flightId)) {
             $Fl = new Flight();
             $flightInfo = $Fl->GetFlightInfo($flightId);
             $apTableName = $flightInfo["apTableName"];
@@ -430,23 +423,13 @@ class FlightsController extends CController
                error_reporting(E_ALL);
 
 //                unlink($tempFilePath);
-            }
-            else
-            {
+            } else {
 //                unlink($tempFilePath);
             }
 
             unset($Bru);
             $result = true;
             return $result;
-         }
-         else
-         {
-            error_log("Not avaliable for current user. ProcessFlight id - " . $id . ". " .
-                  "Username - " . $this->_user->username . ". Page FlightsController.php");
-            $result['status'] = false;
-            return $result['status'];
-         }
       }
       else
       {
@@ -639,15 +622,10 @@ class FlightsController extends CController
       return $table;
    }
 
-   public function BuildTableSegment($extOrderColumn, $extOrderType)
+   public function BuildTableSegment($orderColumn, $orderType)
    {
-      $orderColumn = $extOrderColumn;
-      $orderType = $extOrderType;
-
-      $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
-      $Fl = new Flight();
-      $flights = $Fl->GetFlights($avaliableFlightIds);
-      unset($Fl);
+      $userId = intval($this->_user->userInfo['id']);
+      $flights = $Fl->GetAllFlightsInFolders($userId);
 
       $tableSegment = array();
 
@@ -887,11 +865,8 @@ class FlightsController extends CController
    public function GetEvents()
    {
        $list = [];
-       $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
-
-       $Fl = new Flight();
-       $flights = $Fl->GetFlights($avaliableFlightIds);
-       unset($Fl);
+       $userId = intval($this->_user->userInfo['id']);
+       $flights = $Fl->GetAllFlightsInFolders($userId);
 
        $firstRow = true;
        $excTables = [];

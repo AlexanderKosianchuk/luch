@@ -788,29 +788,6 @@ class User
         return $avaliableItems;
     }
 
-    public function GetAvaliableFlights($userId)
-    {
-        if(!is_int($userId)) {
-            throw new Exception("Incorrect user id passed", 1);
-        }
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $result = $link->query("SELECT `id_flight` FROM `flight_to_user` ".
-                "WHERE `id_user`='".$userId."';");
-
-        $avaliableItems = [];
-        while(($result !== null) && ($row = $result->fetch_array())) {
-            $avaliableItems[] = $row['id_flight'];
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $avaliableItems;
-    }
-
     public function GetAvaliableUsers($username)
     {
         return $this->GetAvaliable($username, $this::$AVALIABILITY_USERS);
@@ -845,36 +822,6 @@ class User
         unset($c);
     }
 
-    public function SetFlightAvaliable($flightId, $userId)
-    {
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "INSERT INTO `flight_to_user` (`id_flight`, `id_user`) "
-            . "VALUES ('".$flightId."', '".$userId."');";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-
-    }
-
-    public function SetFlightAvaliableForRange($flightId, $userIds)
-    {
-        if(!is_array($userIds)) {
-            return false;
-        }
-
-        foreach ($userIds as $id) {
-            $this->SetFlightAvaliable($flightId, $id);
-        }
-
-        return true;
-    }
-
     public function SetBruTypeAvaliable($allowedBy, $FDRid, $userIdentity = null)
     {
         $this->SetAvaliable($allowedBy, $FDRid, $this::$AVALIABILITY_FDR_TYPES, $userIdentity);
@@ -906,45 +853,6 @@ class User
             $query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'    AND
                 `targetId` = '".$itemId."' AND `type`='".$type."';";
         }
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-    }
-
-    public function UnsetFlightAvaliableForUser($userId, $flightId)
-    {
-        if(!is_int($flightId)) {
-            throw new Exception("Incorrect flight id passed", 1);
-        }
-
-        if(!is_int($userId)) {
-            throw new Exception("Incorrect user id passed", 1);
-        }
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `flight_to_user` WHERE `id_user` = '".$userId."' AND "
-            . "`id_flight`='".$flightId."';";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-    }
-
-    public function UnsetFlightAvaliable($flightId)
-    {
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `flight_to_user` WHERE `id_flight`='".$flightId."';";
 
         $stmt = $link->prepare($query);
         $stmt->execute();

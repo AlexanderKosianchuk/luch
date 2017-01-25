@@ -15,34 +15,27 @@ class FlightComponent
         }
 
         $U = new User();
-        $avaliableFlights = $U->GetAvaliableFlights($userId);
+        $userInfo = $U->GetUserInfo($userId);
+        $role = $userInfo['role'];
+        if (User::isAdmin($role)) {
+            $Fl = new Flight();
+            $flightInfo = $Fl->GetFlightInfo($flightId);
+            $bruType = $flightInfo["bruType"];
 
-        if (in_array($flightId, $avaliableFlights)) {
-            $userInfo = $U->GetUserInfo($userId);
-            $role = $userInfo['role'];
-            if (User::isAdmin($role)) {
-                $Fl = new Flight();
-                $flightInfo = $Fl->GetFlightInfo($flightId);
-                $bruType = $flightInfo["bruType"];
+            $Bru = new Bru();
+            $bruInfo = $Bru->GetBruInfo($bruType);
+            $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
+            $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
 
-                $Bru = new Bru();
-                $bruInfo = $Bru->GetBruInfo($bruType);
-                $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
-                $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
+            $Fl->DeleteFlight($flightId, $prefixApArr, $prefixBpArr);
 
-                $Fl->DeleteFlight($flightId, $prefixApArr, $prefixBpArr);
-                $U->UnsetFlightAvaliable($flightId);
-
-                $Fd = new Folder();
-                $Fd->DeleteFlightFromFolders($flightId);
-                unset($Fd);
-            } else {
-                $U->UnsetFlightAvaliableForUser($flightId, $userId);
-
-                $Fd = new Folder();
-                $Fd->DeleteFlightFromFolderForUser($flightId, $userId);
-                unset($Fd);
-            }
+            $Fd = new Folder();
+            $Fd->DeleteFlightFromFolders($flightId);
+            unset($Fd);
+        } else {
+            $Fd = new Folder();
+            $Fd->DeleteFlightFromFolderForUser($flightId, $userId);
+            unset($Fd);
         }
 
         unset($U);

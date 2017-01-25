@@ -227,7 +227,8 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
 
             $Fl = new Flight();
-            $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
+            $userId = intval($this->_user->userInfo['id']);
+            $avaliableFlightIds = $Fl->GetAllFlightsInFolders($userId);
             $avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
 
             if(count($avaliableFlights) > 0) {
@@ -422,55 +423,6 @@ class UserController extends CController
         $form .= sprintf("<input type='text' name='useridtoupdate' value='%s' style='visibility:hidden;'/>", $updatedUsersId);
 
         //==========================================
-        //access to flights
-        //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->_user->privilege)) {
-            $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
-
-            $Fl = new Flight();
-            $avaliableFlightIds = $this->_user->GetAvaliableFlights($this->_user->username);
-            $avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
-            $attachedFlightIds = $this->_user->GetAvaliableFlights($userInfo['login']);
-
-            if(count($avaliableFlights) > 0) {
-                $headerLables = [
-                    $this->lang->bortNum,
-                    $this->lang->voyage,
-                    $this->lang->flightDate,
-                    $this->lang->bruTypeName,
-                    $this->lang->author,
-                    $this->lang->departureAirport,
-                    $this->lang->arrivalAirport,
-                    $this->lang->access
-                ];
-
-                $rowsInfoKeys = [
-                    'id',
-                    'bort',
-                    'voyage',
-                    'flightDate',
-                    'bruType',
-                    'performer',
-                    'departureAirport',
-                    'arrivalAirport'
-                ];
-
-                $form .= $this->printTableAvaliability(
-                    $headerLables,
-                    $avaliableFlights,
-                    $rowsInfoKeys,
-                    'flights',
-                    $attachedFlightIds
-                );
-            } else {
-                $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
-                        $this->lang->noDataToOpenAccess);
-            }
-            $form .= sprintf("</div>");
-            unset($Fl);
-        }
-
-        //==========================================
         //access to brutypes
         //==========================================
         if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->_user->privilege))
@@ -588,10 +540,6 @@ class UserController extends CController
             $authorId = $this->_user->GetUserIdByName($this->_user->username);
             $this->_user->SetUsersAvaliable($author, $createdUserId, $authorId);
 
-            foreach($permittedFlights as $id) {
-                $this->_user->SetFlightAvaliable($author, $id, $createdUserId);
-            }
-
             foreach($permittedBruTypes as $id) {
                 $this->_user->SetBruTypeAvaliable($author, $id, $createdUserId);
             }
@@ -652,9 +600,6 @@ class UserController extends CController
 
         $msg = '';
         $this->_user->DeleteUserAvaliableData($userIdToUpdate);
-        foreach($permittedFlights as $id) {
-            $this->_user->SetFlightAvaliable($author, $id, $userIdToUpdate);
-        }
 
         foreach($permittedBruTypes as $id) {
             $this->_user->SetBruTypeAvaliable($author, $id, $userIdToUpdate);

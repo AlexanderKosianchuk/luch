@@ -849,8 +849,6 @@ class UploaderController extends CController
             $observerIds[] = $userId;
         }
 
-        $this->_user->SetFlightAvaliableForRange($flightId, $observerIds);
-
         $Fd = new Folder();
         foreach ($observerIds as $id) {
             $Fd->PutFlightInFolder($flightId, 0, $id); //we put currently uploaded file in root
@@ -1045,8 +1043,6 @@ class UploaderController extends CController
                         unlink($copiedFilesDir.$exTables);
                     }
                 }
-
-                $this->_user->SetFlightAvaliable($this->_user->username, $flightId);
 
                 if(count($headerFiles) > 1) {
                     if($needToCreateImportedFolder) {
