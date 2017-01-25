@@ -389,7 +389,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["segmentTable"])
+    else if($c->action == "segmentTable")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -399,7 +399,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $sEcho = $aoData[sEcho]['value'];
                 $iDisplayStart = $aoData[iDisplayStart]['value'];
                 $iDisplayLength = $aoData[iDisplayLength]['value'];
-                $action = $c->flightActions["segmentTable"];
 
                 $sortValue = count($aoData) - 3;
                 $sortColumnName = 'id';
@@ -459,7 +458,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $aaData["iTotalRecords"] = $totalRecords;
                 $aaData["iTotalDisplayRecords"] = $totalRecords;
 
-                $c->RegisterActionExecution($action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+                $c->RegisterActionExecution($c->action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
 
                 $tableSegment = $c->BuildTableSegment($sortColumnName, $sortColumnType);
                 $aaData["aaData"] = $tableSegment;

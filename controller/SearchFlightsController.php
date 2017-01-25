@@ -23,7 +23,7 @@ class SearchFlightController extends CController
         $form .= sprintf("<div class='search-flight-filter'>");
         $form .= sprintf("<form id='search-form' enctype='multipart/form-data'>");
 
-        $avalibleBruTypes = $this->_user->GetAvaliableBruTypes($this->_user->username);
+        $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
 
         $Bru = new Bru();
         $bruList = $Bru->GetBruList($avalibleBruTypes);

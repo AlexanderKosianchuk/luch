@@ -92,17 +92,17 @@ class Flight
         return $flightInfo;
     }
 
-    public function GetFlights($extAvaliableFlightIds, $extOrderName = 'id', $extOrderType = 'ASC')
+    public function GetFlights($extAvailableFlightIds, $extOrderName = 'id', $extOrderType = 'ASC')
     {
-        $avaliableFlightIds = $extAvaliableFlightIds;
+        $availableFlightIds = $extAvailableFlightIds;
         $orderName = $extOrderName;
         $orderType = $extOrderType;
 
         $listFlights = array();
-        if(count($avaliableFlightIds) > 0)
+        if(count($availableFlightIds) > 0)
         {
             $inString = "";
-            foreach($avaliableFlightIds as $id)
+            foreach($availableFlightIds as $id)
             {
                 $inString .= "'" . $id ."',";
             }
@@ -175,16 +175,16 @@ class Flight
         return $list;
     }
 
-    public function GetFlightsByFolder($extFolder, $extAvaliableFlightIds)
+    public function GetFlightsByFolder($extFolder, $extAvailableFlightIds)
     {
         $folder = $extFolder;
-        $avaliableFlightIds = $extAvaliableFlightIds;
+        $availableFlightIds = $extAvailableFlightIds;
 
         $listFlights = array();
-        if(count($avaliableFlightIds) > 0)
+        if(count($availableFlightIds) > 0)
         {
             $inString = "";
-            foreach($avaliableFlightIds as $id)
+            foreach($availableFlightIds as $id)
             {
                 $inString .= "'" . $id ."',";
             }
@@ -214,11 +214,11 @@ class Flight
         return $listFlights;
     }
 
-    public function PrepareFlightsList($extAvaliableFlightIds)
+    public function PrepareFlightsList($extAvailableFlightIds)
     {
-        $avaliableFlightIds = $extAvaliableFlightIds;
+        $availableFlightIds = $extAvailableFlightIds;
 
-        $listFlights = (array)$this->GetFlights($avaliableFlightIds);
+        $listFlights = (array)$this->GetFlights($availableFlightIds);
         $i = 0;
         $flightsListInfo = array();
 

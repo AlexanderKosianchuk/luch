@@ -249,15 +249,15 @@ class Slice
         return $sliceInfo;
     }
 
-    public function GetSliceList($extAvaliableSlicesIds)
+    public function GetSliceList($extAvailableSlicesIds)
     {
-        $avaliableSlicesIds = $extAvaliableSlicesIds;
+        $availableSlicesIds = $extAvailableSlicesIds;
 
         $sliceList = array();
-        if(count($avaliableSlicesIds) > 0)
+        if(count($availableSlicesIds) > 0)
         {
             $inString = "";
-            foreach($avaliableSlicesIds as $id)
+            foreach($availableSlicesIds as $id)
             {
                 $inString .= "'" . $id ."',";
             }

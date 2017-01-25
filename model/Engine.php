@@ -130,15 +130,15 @@ class Engine
         return $engineSerialArr;
     }
 
-    public function SelectEnginesSerialsByEtalonsList($extAvaliableEnginesIds)
+    public function SelectEnginesSerialsByEtalonsList($extAvailableEnginesIds)
     {
-        $avaliableEnginesIds = $extAvaliableEnginesIds;
+        $availableEnginesIds = $extAvailableEnginesIds;
 
         $engineSerialsByEtalonsArr = array();
-        if(count($avaliableEnginesIds) > 0)
+        if(count($availableEnginesIds) > 0)
         {
             $inString = "";
-            foreach($avaliableEnginesIds as $id)
+            foreach($availableEnginesIds as $id)
             {
                 $inString .= "'" . $id ."',";
             }

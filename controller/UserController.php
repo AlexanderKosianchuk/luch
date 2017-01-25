@@ -41,10 +41,11 @@ class UserController extends CController
 
     public function GetUserList()
     {
-        $userInfo = $this->GetUserInfo();
-        $avalibleUsers = $this->_user->GetUsersList($userInfo['id']);
+        $userId = intval($this->_user->userInfo['id']);
+        $userRole = $this->_user->userInfo['role'];
+        $availableUsers = $this->_user->GetAvailableUsersList($userId, $userRole);
 
-        return $avalibleUsers;
+        return $availableUsers;
     }
 
     public function BuildUserTable()
@@ -110,10 +111,10 @@ class UserController extends CController
         return $userInfo;
     }
 
-    private function printTableAvaliability($cellNames, $avaliableRows, $rowKeys, $dataKey, $avaliable = []) {
+    private function printTableAvaliability($cellNames, $availableRows, $rowKeys, $dataKey, $available = []) {
         $form = '';
         //if more than 30 rows make table scrollable
-        if(count($avaliableRows) > 30)
+        if(count($availableRows) > 30)
         {
             $form .= sprintf("<div class='items-avaliability-table-wrap'>");
         }
@@ -126,25 +127,25 @@ class UserController extends CController
         $form .= sprintf("<td class='items-avaliability-table-cell' width='50px'>%s</td>", $cellNames[count($cellNames) - 1]);
         $form .= sprintf("</tr>");
 
-        foreach ($avaliableRows as $rowInfo) {
+        foreach ($availableRows as $rowInfo) {
             $form .= sprintf("<tr class='table-stripe'>");
             for($ii = 1; $ii < count($rowKeys); $ii++) {
                 $form .= sprintf("<td class='items-avaliability-table-cell'>%s</td>", $rowInfo[$rowKeys[$ii]]);
             }
 
             $checked = '';
-            if(in_array($rowInfo[$rowKeys[0]], $avaliable)) {
+            if(in_array($rowInfo[$rowKeys[0]], $available)) {
                 $checked = " checked='checked' ";
             }
 
             $form .= sprintf("<td class='items-avaliability-table-cell' align='center'>
-                            <input name='".$dataKey."Avaliable[]' value='%s' type='checkbox' ".$checked."/>
+                            <input name='".$dataKey."Available[]' value='%s' type='checkbox' ".$checked."/>
                         </td>", $rowInfo[$rowKeys[0]]); // always id should be
             $form .= sprintf("</tr>");
         }
         $form .= sprintf("</table>");
 
-        if(count($avaliableRows) > 30) {
+        if(count($availableRows) > 30) {
             $form .= sprintf("</div>");
         }
 
@@ -221,49 +222,6 @@ class UserController extends CController
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 
         //==========================================
-        //access to flights
-        //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_FLIGHTS, $this->_user->privilege)) {
-            $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForFlights);
-
-            $Fl = new Flight();
-            $userId = intval($this->_user->userInfo['id']);
-            $avaliableFlightIds = $Fl->GetAllFlightsInFolders($userId);
-            $avaliableFlights = $Fl->PrepareFlightsList($avaliableFlightIds);
-
-            if(count($avaliableFlights) > 0) {
-                $headerLables = [
-                    $this->lang->bortNum,
-                    $this->lang->voyage,
-                    $this->lang->flightDate,
-                    $this->lang->bruTypeName,
-                    $this->lang->author,
-                    $this->lang->departureAirport,
-                    $this->lang->arrivalAirport,
-                    $this->lang->access
-                ];
-
-                $rowsInfoKeys = [
-                    'id',
-                    'bort',
-                    'voyage',
-                    'flightDate',
-                    'bruType',
-                    'performer',
-                    'departureAirport',
-                    'arrivalAirport'
-                ];
-
-                $form .= $this->printTableAvaliability($headerLables, $avaliableFlights, $rowsInfoKeys, 'flights');
-            } else {
-                $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
-                        $this->lang->noDataToOpenAccess);
-            }
-            $form .= sprintf("</div>");
-            unset($Fl);
-        }
-
-        //==========================================
         //access to brutypes
         //==========================================
         if(in_array(User::$PRIVILEGE_SHARE_BRUTYPES, $this->_user->privilege))
@@ -271,10 +229,10 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
             $Bru = new Bru();
-            $avaliableIds = $this->_user->GetAvaliableBruTypes($this->_user->username);
-            $avaliableBruTypes = $Bru->GetBruList($avaliableIds);
+            $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
+            $availableBruTypes = $Bru->GetBruList($availableIds);
 
-            if(count($avaliableBruTypes) > 0) {
+            if(count($availableBruTypes) > 0) {
                 $headerLables = [
                     $this->lang->bruTypesName,
                     $this->lang->bruTypesStepLenth,
@@ -293,49 +251,13 @@ class UserController extends CController
                     'author'
                 ];
 
-                $form .= $this->printTableAvaliability($headerLables, $avaliableBruTypes, $rowsInfoKeys, 'FDRs');
+                $form .= $this->printTableAvaliability($headerLables, $availableBruTypes, $rowsInfoKeys, 'FDRs');
             } else {
                 $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
                         $this->lang->noDataToOpenAccess);
             }
             $form .= sprintf("</div>");
             unset($Bru);
-        }
-
-        //==========================================
-        //access to users
-        //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->_user->privilege))
-        {
-            $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
-
-            $avaliableIds = $this->_user->GetAvaliableUsers($this->_user->username);
-            $avaliableUsers = $this->_user->GetUsersListByAvaliableIds($avaliableIds);
-
-            if(count($avaliableUsers) > 0)
-            {
-                $headerLables = [
-                    $this->lang->userLogin,
-                    $this->lang->userCompany,
-                    $this->lang->userAuthor,
-                    $this->lang->access
-                ];
-
-                $rowsInfoKeys = [
-                        'id',
-                        'login',
-                        'company',
-                        'author',
-                ];
-
-                $form .= $this->printTableAvaliability($headerLables, $avaliableUsers, $rowsInfoKeys, 'users');
-            }
-            else
-            {
-                $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
-                        $this->lang->noDataToOpenAccess);
-            }
-            $form .= sprintf("</div>");
         }
 
         $form .= '</form></div>';
@@ -430,11 +352,11 @@ class UserController extends CController
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
             $Bru = new Bru();
-            $avaliableIds = $this->_user->GetAvaliableBruTypes($this->_user->username);
-            $avaliableBruTypes = $Bru->GetBruList($avaliableIds);
-            $attachedFDRIds = $this->_user->GetAvaliableBruTypes($userInfo['login']);
+            $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
+            $availableBruTypes = $Bru->GetBruList($availableIds);
+            $attachedFDRIds = $this->_user->GetAvailableBruTypes($userInfo['login']);
 
-            if(count($avaliableBruTypes) > 0) {
+            if(count($availableBruTypes) > 0) {
                 $headerLables = [
                     $this->lang->bruTypesName,
                     $this->lang->bruTypesStepLenth,
@@ -455,7 +377,7 @@ class UserController extends CController
 
                 $form .= $this->printTableAvaliability(
                     $headerLables,
-                    $avaliableBruTypes,
+                    $availableBruTypes,
                     $rowsInfoKeys,
                     'FDRs',
                     $attachedFDRIds
@@ -466,49 +388,6 @@ class UserController extends CController
             }
             $form .= sprintf("</div>");
             unset($Bru);
-        }
-
-        //==========================================
-        //access to users
-        //==========================================
-        if(in_array(User::$PRIVILEGE_SHARE_USERS, $this->_user->privilege))
-        {
-            $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForUsers);
-
-            $avaliableIds = $this->_user->GetAvaliableUsers($this->_user->username);
-            $avaliableUsers = $this->_user->GetUsersListByAvaliableIds($avaliableIds);
-            $attachedUserIds = $this->_user->GetAvaliableUsers($userInfo['login']);
-
-            if(count($avaliableUsers) > 0)
-            {
-                $headerLables = [
-                    $this->lang->userLogin,
-                    $this->lang->userCompany,
-                    $this->lang->userAuthor,
-                    $this->lang->access
-                ];
-
-                $rowsInfoKeys = [
-                    'id',
-                    'login',
-                    'company',
-                    'author',
-                ];
-
-                $form .= $this->printTableAvaliability(
-                    $headerLables,
-                    $avaliableUsers,
-                    $rowsInfoKeys,
-                    'users',
-                    $attachedUserIds
-                );
-            }
-            else
-            {
-                $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",
-                        $this->lang->noDataToOpenAccess);
-            }
-            $form .= sprintf("</div>");
         }
 
         $form .= '</form></div>';
@@ -527,9 +406,9 @@ class UserController extends CController
             $role = $role[count($role) - 1];
         }
         $author = $this->_user->username;
-        $permittedFlights = isset($form['flightsAvaliable']) ? $form['flightsAvaliable'] : [];
-        $permittedBruTypes = isset($form['FDRsAvaliable']) ? $form['FDRsAvaliable'] : [];
-        $permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
+        $permittedFlights = isset($form['flightsAvailable']) ? $form['flightsAvailable'] : [];
+        $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
+        $permittedUsers = isset($form['usersAvailable']) ? $form['usersAvailable'] : [];
         $file = str_replace("\\", "/", $file);
 
         $msg = '';
@@ -538,14 +417,9 @@ class UserController extends CController
             $this->_user->CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $file);
             $createdUserId = $this->_user->GetIdByUsername($login);
             $authorId = $this->_user->GetUserIdByName($this->_user->username);
-            $this->_user->SetUsersAvaliable($author, $createdUserId, $authorId);
 
             foreach($permittedBruTypes as $id) {
-                $this->_user->SetBruTypeAvaliable($author, $id, $createdUserId);
-            }
-
-            foreach($permittedUsers as $id) {
-                $this->_user->SetUsersAvaliable($author, $id, $createdUserId);
+                $this->_user->SetFDRavailable($createdUserId, $id);
             }
         } else {
             $msg = $this->lang->userAlreadyExist;
@@ -556,57 +430,52 @@ class UserController extends CController
 
     public function UpdateUser($userIdToUpdate, $form, $file)
     {
-        $avaliableForUpdate = false;
+        $availableForUpdate = false;
         $author = $this->_user->username;
         $authorId = $this->_user->GetUserIdByName($author);
         $authorInfo = $this->_user->GetUserInfo($authorId);
         $userInfo = $this->_user->GetUserInfo($userIdToUpdate);
-        if(User::isAdmin($authorInfo['role'])) {
-            $avaliableForUpdate = true;
-        } else {
-            $avaliableIds = $this->_user->GetAvaliableUsers($author);
-            if(in_array($userIdToUpdate, $avaliableIds)) {
-                $avaliableForUpdate = true;
-            }
+
+        $userId = intval($this->_user->userInfo['id']);
+        $userRole = $this->_user->userInfo['role'];
+        $availableUsers = $this->_user->GetAvailableUsersList($userId, $userRole);
+
+        if(in_array($userIdToUpdate, $availableUsers)) {
+            $availableForUpdate = true;
         }
 
-        $prsonalDataToUpdata = [];
+        $personalData = [];
 
         if(isset($form['pwd'])) {
-            $prsonalDataToUpdata['pass'] = md5($form['pwd']);
+            $personalData['pass'] = md5($form['pwd']);
         }
 
         if(isset($form['company'])) {
-            $prsonalDataToUpdata['company'] = $form['company'];
+            $personalData['company'] = $form['company'];
         }
 
         if(isset($form['privilege'])) {
-            $prsonalDataToUpdata['privilege'] = implode(",", $form['privilege']);
+            $personalData['privilege'] = implode(",", $form['privilege']);
         }
 
         if(isset($form['role'])) {
-            $prsonalDataToUpdata['role'] = $form['role'];
+            $personalData['role'] = $form['role'];
         }
 
         if($file !== null) {
-            $prsonalDataToUpdata['logo'] = str_replace("\\", "/", $file);
+            $personalData['logo'] = str_replace("\\", "/", $file);
         }
 
-        $this->_user->UpdateUserPersonal($userIdToUpdate, $prsonalDataToUpdata);
+        $this->_user->UpdateUserPersonal($userIdToUpdate, $personalData);
 
-        $permittedFlights = isset($form['flightsAvaliable']) ? $form['flightsAvaliable'] : [];
-        $permittedBruTypes = isset($form['FDRsAvaliable']) ? $form['FDRsAvaliable'] : [];
-        $permittedUsers = isset($form['usersAvaliable']) ? $form['usersAvaliable'] : [];
+        $permittedFlights = isset($form['flightsAvailable']) ? $form['flightsAvailable'] : [];
+        $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
+        $permittedUsers = isset($form['usersAvailable']) ? $form['usersAvailable'] : [];
 
         $msg = '';
-        $this->_user->DeleteUserAvaliableData($userIdToUpdate);
 
         foreach($permittedBruTypes as $id) {
-            $this->_user->SetBruTypeAvaliable($author, $id, $userIdToUpdate);
-        }
-
-        foreach($permittedUsers as $id) {
-            $this->_user->SetUsersAvaliable($author, $id, $userIdToUpdate);
+            $this->_user->SetFDRavailable($userIdToUpdate, $id);
         }
 
         return $msg;
@@ -620,8 +489,9 @@ class UserController extends CController
                 $login = $userInfo['login'];
 
                 $this->_user->DeleteUserPersonal($login);
-                $this->_user->DeleteUserAvaliableData($userDeleteId);
-                $this->_user->DeleteUserAvaliabilityForUsers($userDeleteId);
+                $this->_user->UnsetFDRavailable($userDeleteId);
+
+                /* TODO it is also necessary to clean up flight data and folders*/
             }
         }
 

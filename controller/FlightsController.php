@@ -124,7 +124,7 @@ class FlightsController extends CController
 
    public function FileUploadBlock()
    {
-      $avalibleBruTypes = $this->_user->GetAvaliableBruTypes($this->_user->username);
+      $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
 
       $Bru = new Bru();
       $bruList = $Bru->GetBruList($avalibleBruTypes);
@@ -262,10 +262,10 @@ class FlightsController extends CController
          $userId = intval($this->_user->GetUserIdByName($this->_user->username));
 
          $Fd = new Folder();
-         $avaliableFolders = $Fd->GetAvaliableFolders($userId);
+         $availableFolders = $Fd->GetAvailableFolders($userId);
          $result = array();
 
-         if(in_array($id, $avaliableFolders))
+         if(in_array($id, $availableFolders))
          {
             $nodeTree = $this->PrepareTree(0); // here PrepareTree argument is not important
             $children = $nodeTree[0]['children'];
@@ -284,7 +284,7 @@ class FlightsController extends CController
                   $this->DeleteFlight($id);
                }
 
-               if(in_array($id, $avaliableFolders))
+               if(in_array($id, $availableFolders))
                {
                   $folderInfo = $Fd->GetFolderInfo($id);
                   if(!empty($folderInfo))
@@ -300,7 +300,7 @@ class FlightsController extends CController
          else
          {
             unset($Fd);
-            $dat = "Not avaliable for current user. DeleteFolder id - " . $id . ". " .
+            $dat = "Not available for current user. DeleteFolder id - " . $id . ". " .
                "Username - " . $this->_user->username . ". Page FlightsController.php";
             error_log($dat);
             $result['status'] = false;
@@ -507,7 +507,7 @@ class FlightsController extends CController
       $userId = $this->_user->userInfo['id'];
 
       $Fd = new Folder();
-      $content = $Fd->GetAvaliableContent($shownFolderId, $userId);
+      $content = $Fd->GetAvailableContent($shownFolderId, $userId);
       unset($Fd);
 
       $relatedNodes = false;
@@ -796,7 +796,7 @@ class FlightsController extends CController
 
    public function GetLastSortTableType()
    {
-      $viewType = $this->flightActions["segmentTable"];
+      $viewType = "segmentTable";
 
       $userId = $this->_user->userInfo['id'];
       $actionsInfo = $this->_user->GetLastAction($userId, $viewType);

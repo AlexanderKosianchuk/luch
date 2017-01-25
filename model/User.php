@@ -47,9 +47,6 @@ class User
         return false;
     }
 
-    public static $AVALIABILITY_FDR_TYPES = 'brutype';
-    public static $AVALIABILITY_USERS = 'user';
-
     public static $PRIVILEGE_VIEW_FLIGHTS = 'viewFlight';
     public static $PRIVILEGE_SHARE_FLIGHTS = 'shareFlight';
     public static $PRIVILEGE_ADD_FLIGHTS = 'addFlight';
@@ -214,11 +211,11 @@ class User
             }
         }
 
-        $query = "SHOW TABLES LIKE 'user_avaliability';";
+        $query = "SHOW TABLES LIKE 'fdr_to_user';";
         $result = $link->query($query);
         if(!$result->fetch_array())
         {
-            $query = "CREATE TABLE `user_avaliability` (`id` BIGINT NOT NULL AUTO_INCREMENT,
+            $query = "CREATE TABLE `fdr_to_user` (`id` BIGINT NOT NULL AUTO_INCREMENT,
                 `type` VARCHAR(100),
                 `userId` INT(11),
                 `targetId` INT(11),
@@ -509,46 +506,6 @@ class User
         return $answer;
     }
 
-    public function GetUsersList($userId)
-    {
-        $userName = $this->GetUserNameById($userId);
-        $avalibleUsers = $this->GetAvaliableUsers($userName);
-        return $this->GetUsersListByAvaliableIds($avalibleUsers);
-    }
-
-    public function GetUsersListByAvaliableIds($extAvaliableUsersIds)
-    {
-        $avaliableUsersIds = $extAvaliableUsersIds;
-
-        $userInfoArr = array();
-        if(count($avaliableUsersIds) > 0)
-        {
-            $inString = "";
-            foreach($avaliableUsersIds as $id)
-            {
-                $inString .= "'" . $id ."',";
-            }
-
-            $inString = substr($inString, 0, -1);
-
-            $c = new DataBaseConnector();
-            $link = $c->Connect();
-
-            $result = $link->query("SELECT * FROM `user_personal` WHERE
-                    `id` IN (".$inString.") ORDER BY `id`;");
-
-            while($row = $result->fetch_array())
-            {
-                $userInfoArr[] = $row;
-            }
-
-            $c->Disconnect();
-            unset($c);
-        }
-
-        return $userInfoArr;
-    }
-
     public function GetUsersInfo($username)
     {
         $c = new DataBaseConnector();
@@ -679,9 +636,6 @@ class User
 
         $stmt->close();
 
-        $userId = $this->GetUserIdByName($login);
-        $this->DeleteUserAvaliableData($userId);
-
         return $msg;
     }
 
@@ -705,21 +659,22 @@ class User
         return $exist;
     }
 
-    public function GetUsersByAuthor($extAuthor)
+    public function GetUsersByAuthor($authorId)
     {
-        $author = $extAuthor;
+        if (!is_int($authorId)) {
+            throw new Exception("Incorrect authorId passed. Integer is required. Passed: "
+                . json_encode($authorId), 1);
+        }
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $query = "SELECT `id` FROM `user_options` WHERE `author` = '".$author."';";
-        $mySqliResult = $link->query($query);//, MYSQLI_USE_RESULT);
+        $query = "SELECT `id` FROM `user_options` WHERE `id_user` = '".$authorId."';";
+        $mySqliResult = $link->query($query);
 
-        $list = array();
-        while($row = $mySqliResult->fetch_array())
-        {
-            $item = $this->GetUserPrivilege($this->GetUserNameById($row['id']));
-            array_push($list, $item);
+        $list = [];
+        while($row = $mySqliResult->fetch_array()) {
+            $list[] = $row['id'];
         }
         $mySqliResult->free();
         $c->Disconnect();
@@ -729,129 +684,114 @@ class User
         return $list;
     }
 
-    public function UpdateUsersBecauseAuthorDeleting($extAuthor)
-    {
-        $author = $extAuthor;
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "UPDATE `user_personal` SET `author` = 'admin' WHERE `author` = '".$author."';";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-    }
-
     /** ------------------------
      *  GET AVALIABLE
      */
 
-    public function GetAvaliable($userIdentity, $type)
+    public function GetAvailableBruTypes($userIdentity)
     {
         $userId = $userIdentity;
         if(is_string($userIdentity)) {
             $userId = $this->GetIdByUsername($userIdentity);
         }
 
-        $userInfo = $this->GetUserInfo($userId);
-        $role = $userInfo['role'];
-        $avaliableItems = [];
+        $availableItems = [];
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $result = null;
-        if(self::isAdmin($role)) {
-            $result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-                    "WHERE `type`='".$type."';");
-        } else if(self::isModerator($role)) {
-            $userIds = $this->GetUserIdsByAuthor($username);
-            $userIds = implode("','", $userIds);
-            $result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-                    "WHERE `userId` IN('".$userIds."' AND `type`='".$type."';");
+        $result = $link->query("SELECT `id_fdr` FROM `fdr_to_user` ".
+                "WHERE `id_user`='".$userId."';");
+
+        while (($result !== null) && ($row = $result->fetch_array())) {
+            $availableItems[] = $row['id_fdr'];
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $availableItems;
+    }
+
+    public function GetAvailableUsers($userId, $role = null)
+    {
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Integer is required. Passed: "
+                . json_encode($userId) , 1);
+        }
+
+        if(empty($role)) {
+            $userInfo = $this->GetUserInfo($userId);
+            $role = $userInfo['role'];
+        }
+
+        $availableUsers = [];
+        if (self::isAdmin($role)) {
+            $availableUsers = $this->GetUsersByRole([self::$role['moderator'], self::$role['user']]);
+        } else if (self::isModerator($role)) {
+            $availableUsers = $this->GetUsersByAuthor($userId);
+        }
+
+        return $availableUsers;
+    }
+
+    public function GetAvailableUsersList($userId, $role = null)
+    {
+        $availableUserIds = $this->GetAvailableUsers($userId, $role);
+        $users = [];
+
+        foreach ($availableUserIds as $id) {
+            $users[] = $this->GetUserInfo($id);
+        }
+
+        return $users;
+    }
+
+    public function SetFDRavailable($userId, $FDRid)
+    {
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Integer is required. Passed: "
+                . json_encode($userId) , 1);
+        }
+
+        if (!is_int($FDRid)) {
+            throw new Exception("Incorrect FDRid passed. Integer is required. Passed: "
+                . json_encode($FDRid) , 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "INSERT INTO `fdr_to_user` (`id_fdr`, `id_user`)
+                VALUES ('".$FDRid."', '".$userId."');";
+
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+    }
+
+    public function UnsetFDRavailable($userId = null, $FDRid = null)
+    {
+        /* Cant be both empty*/
+        if (!is_int($userId) && !is_int($FDRid)) {
+            throw new Exception("Incorrect userId passed. Integer is required. Passed: "
+                . json_encode($userId) , 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        if (is_int($userId) && !is_int($FDRid)) {
+            /* maybe user deleting so remove */
+            $query = "DELETE FROM `fdr_to_user` WHERE `id_user` = '".$userId."';";
+        } else if (!is_int($userId) && is_int($FDRid)) {
+            $query = "DELETE FROM `fdr_to_user` WHERE `id_fdr` = '".$FDRid."';";
         } else {
-            $result = $link->query("SELECT `targetId` FROM `user_avaliability` ".
-                    "WHERE `userId`='".$userId."' AND `type`='".$type."';");
-        }
-
-        while(($result !== null) && ($row = $result->fetch_array())) {
-            $avaliableItems[] = $row['targetId'];
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $avaliableItems;
-    }
-
-    public function GetAvaliableUsers($username)
-    {
-        return $this->GetAvaliable($username, $this::$AVALIABILITY_USERS);
-    }
-
-    public function GetAvaliableBruTypes($username)
-    {
-        return $this->GetAvaliable($username, $this::$AVALIABILITY_FDR_TYPES);
-    }
-
-    /** ------------------------
-     *  SET AVALIABLE
-     */
-
-    public function SetAvaliable($allowedBy, $id, $type, $userId = null)
-    {
-        if($userId === null) { //user allowed by him self (upload flight for ex)
-            $userId = $this->GetIdByUsername($allowedBy);
-        }
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "INSERT INTO `user_avaliability` (`type`, `userId`, `targetId`, `allowedBy`)
-                VALUES ('".$type."', '".$userId."', '".$id."', '".$allowedBy."');";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-    }
-
-    public function SetBruTypeAvaliable($allowedBy, $FDRid, $userIdentity = null)
-    {
-        $this->SetAvaliable($allowedBy, $FDRid, $this::$AVALIABILITY_FDR_TYPES, $userIdentity);
-    }
-
-    public function SetUsersAvaliable($allowedBy, $userId, $userIdentity = null)
-    {
-        $this->SetAvaliable($allowedBy, $userId, $this::$AVALIABILITY_USERS, $userIdentity);
-    }
-
-    /** ------------------------
-     *  UNSET AVALIABLE
-     */
-
-    public function UnsetAvaliable($userIdentity, $itemId, $type)
-    {
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `user_avaliability` WHERE `targetId` = '".$itemId."' AND " .
-                "`type`='".$type."';";
-
-        if($userIdentity !== null) {
-            $userId = $userIdentity;
-            if(is_string($userIdentity)) {
-                $userId = $this->GetIdByUsername($userIdentity);
-            }
-
-            $query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."'    AND
-                `targetId` = '".$itemId."' AND `type`='".$type."';";
+            $query = "DELETE FROM `fdr_to_user` WHERE `id_user` = '".$userId."' "
+                . "AND `id_fdr` = '".$FDRid."';";
         }
 
         $stmt = $link->prepare($query);
@@ -860,33 +800,13 @@ class User
 
         $c->Disconnect();
         unset($c);
-    }
-
-    public function UnsetBruTypesAvaliableForUser($userIdentity, $FDRid)
-    {
-        $this->UnsetAvaliable($userIdentity, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
-    }
-
-    public function UnsetBruTypesAvaliable($FDRid)
-    {
-        $this->UnsetAvaliable(null, $FDRid, $this::$AVALIABILITY_FDR_TYPES);
-    }
-
-    public function UnsetUsersAvaliableForUser($userIdentity, $userId)
-    {
-        $this->UnsetAvaliable($userIdentity, $userId, $this::$AVALIABILITY_USERS);
-    }
-
-    public function UnsetUsersAvaliable($userId)
-    {
-        $this->UnsetAvaliable(null, $userId, $this::$AVALIABILITY_USERS);
     }
 
     /** ------------------------ **/
 
     public function GetUserIdsByAuthor($username)
     {
-        $avaliableUserIds = array();
+        $availableUserIds = array();
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
@@ -896,46 +816,13 @@ class User
 
         while($row = $result->fetch_array())
         {
-            $avaliableUserIds[] = $row['id'];
+            $availableUserIds[] = $row['id'];
         }
 
         $c->Disconnect();
         unset($c);
 
         return $avaliabeUsers;
-    }
-
-    public function DeleteUserAvaliableData($extUserId)
-    {
-        $userId = $extUserId;
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `user_avaliability` WHERE `userId` = '".$userId."';";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-    }
-
-    public function DeleteUserAvaliabilityForUsers($userId)
-    {
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `user_avaliability` WHERE " .
-                "`targetId` = '".$userId."' AND `type`='".$this::$AVALIABILITY_USERS."';";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
     }
 
     public function SetUserLanguage($login, $lang)
@@ -991,8 +878,22 @@ class User
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $result = $link->query("SELECT `id` FROM `user_personal` ".
-            "WHERE `role`='".$role."';");
+        $query = '';
+        if (is_array($role)) {
+            $query = "SELECT `id` FROM `user_personal` WHERE ";
+
+            for($ii = 0; $ii < count($role); $ii++) {
+                $query .= ($ii === 0)
+                    ? "`role`='".$role[$ii]."' "
+                    : "OR `role`='".$role[$ii]."' ";
+            }
+            $query .= ";";
+        } else if (is_string($role)) {
+            $query = "SELECT `id` FROM `user_personal` "
+                . "WHERE `role`='".$role."';";
+        }
+
+        $result = $link->query($query);
 
         while($row = $result->fetch_array()) {
             $userIds[] = intval($row['id']);

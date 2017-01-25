@@ -1193,7 +1193,7 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
         "sAjaxSource": FLIGHTS_VIEW_SRC,
         "fnServerData": function ( sSource, aoData, fnCallback) {
             var pV = {
-                action: self.actions["segmentTable"],
+                action: "segmentTable",
                 data: {
                     data: aoData
                 }

@@ -42,15 +42,15 @@ class Bru
         unset($c);
     }
 
-    public function GetBruList($extAvaliableBruTypesIds)
+    public function GetBruList($extAvailableBruTypesIds)
     {
-        $avaliableBruTypesIds = $extAvaliableBruTypesIds;
+        $availableBruTypesIds = $extAvailableBruTypesIds;
 
         $bruList = array();
-        if(count($avaliableBruTypesIds) > 0)
+        if(count($availableBruTypesIds) > 0)
         {
             $inString = "";
-            foreach($avaliableBruTypesIds as $id)
+            foreach($availableBruTypesIds as $id)
             {
                 $inString .= "'" . $id ."',";
             }

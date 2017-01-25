@@ -17,7 +17,6 @@
     "itemDelete": "itemDelete",
     "itemProcess": "itemProcess",
     "itemExport": "itemExport",
-    "segmentTable": "segmentTable",
     "getEventsList": "getEventsList",
     "syncItemsHeaders": "syncItemsHeaders",
     "results": "results"
@@ -77,8 +76,6 @@
 "userPage": {
     "userLogout": "userLogout",
     "userChangeLanguage": "userChangeLanguage",
-    "buildUserTable": "buildUserTable",
-    "segmentTable": "segmentTable",
     "createUserForm": "createUserForm",
     "createUser": "createUser",
     "updateUserForm": "updateUserForm",

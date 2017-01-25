@@ -83,14 +83,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["buildUserTable"]) {
+    } else if($c->action == "buildUserTable") {
         if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
-                $action = $c->action;
                 $table = $c->BuildUserTable();
-                $c->RegisterActionExecution($action, "executed", 0, 'getUserList', '', '');
+                $c->RegisterActionExecution($c->action, "executed", 0, 'getUserList', '', '');
 
                 $answ = [
                     "status" => "ok",
@@ -118,7 +117,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["segmentTable"]) {
+    } else if($c->action == "segmentTable") {
         if(in_array(User::$PRIVILEGE_VIEW_USERS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
@@ -127,7 +126,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $sEcho = $aoData[sEcho]['value'];
                 $iDisplayStart = $aoData[iDisplayStart]['value'];
                 $iDisplayLength = $aoData[iDisplayLength]['value'];
-                $action = $c->action;
 
                 $sortValue = count($aoData) - 3;
                 $sortColumnName = 'id';
@@ -157,7 +155,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $aaData["iTotalRecords"] = $totalRecords;
                 $aaData["iTotalDisplayRecords"] = $totalRecords;
 
-                $c->RegisterActionExecution($action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+                $c->RegisterActionExecution($c->action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
 
                 $tableSegment = $c->BuildTableSegment($sortColumnName, $sortColumnType);
                 $aaData["aaData"] = $tableSegment;
@@ -424,7 +422,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
         }
         else
         {
-
             $answ["status"] = "err";
             $answ["error"] = $c->lang->notAllowedByPrivilege;
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');

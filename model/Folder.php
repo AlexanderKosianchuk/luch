@@ -403,7 +403,7 @@ class Folder
         return $subfolders;
     }
 
-    public function GetAvaliableFolders($extUserId, $adminRole = false)
+    public function GetAvailableFolders($extUserId, $adminRole = false)
     {
         $userId = $extUserId;
         $c = new DataBaseConnector();
@@ -419,18 +419,18 @@ class Folder
         }
 
         $result = $link->query($query);
-        $avaliable = array();
+        $available = array();
         while($row = $result->fetch_array())
         {
-            $avaliable[] = $row['id'];
+            $available[] = $row['id'];
         }
         $c->Disconnect();
         unset($c);
 
-        return $avaliable;
+        return $available;
     }
 
-    public function GetAvaliableContent($folderId, $uId, $role = false)
+    public function GetAvailableContent($folderId, $uId, $role = false)
     {
         $c = new DataBaseConnector();
         $link = $c->Connect();
@@ -439,12 +439,12 @@ class Folder
         $query = "SELECT * FROM `folders` WHERE `userId` = '".$uId."';";
 
         $result = $link->query($query);
-        $avaliable = array();
+        $available = array();
         while($row = $result->fetch_array())
         {
             if($folderId == $row['id'])
             {
-                $avaliable[] = array(
+                $available[] = array(
                         'id' => $row['id'],
                         'text' => $row['name'],
                         'type' => 'folder',
@@ -455,7 +455,7 @@ class Folder
                         )
                 );
             } else {
-                $avaliable[] = array(
+                $available[] = array(
                         'id' => $row['id'],
                         'text' => $row['name'],
                         'type' => 'folder',
@@ -479,7 +479,7 @@ class Folder
                 $name = $row2['bort'] . ", " .  $row2['voyage']  . ", " . date('d/m/y H:i', $row2['startCopyTime'])  .
                     ", " . $row2['bruType']  . ", " . $row2['departureAirport']  . "-" . $row2['arrivalAirport'] ;
 
-                $avaliable[] = array(
+                $available[] = array(
                     'id' => $row2['id'],
                     'text' => $name,
                     'type' => 'flight',
@@ -490,7 +490,7 @@ class Folder
         $c->Disconnect();
         unset($c);
 
-        return $avaliable;
+        return $available;
     }
 
     public function FormFakeContent($folderId, $flights)
@@ -498,7 +498,7 @@ class Folder
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $avaliable = [];
+        $available = [];
 
         foreach ($flights as $flightId)
         {
@@ -513,7 +513,7 @@ class Folder
                 $name = $row['bort'] . ", " .  $row['voyage']  . ", " . date('d/m/y H:i', $row['startCopyTime'])  .
                     ", " . $row['bruType']  . ", " . $row['departureAirport']  . "-" . $row['arrivalAirport'] ;
 
-                $avaliable[] = array(
+                $available[] = array(
                         'id' => $row['id'],
                         'text' => $name,
                         'type' => 'flight',
@@ -524,7 +524,7 @@ class Folder
         $c->Disconnect();
         unset($c);
 
-        return $avaliable;
+        return $available;
     }
 
     public function DeleteFolder($extFolderId, $extUserId)

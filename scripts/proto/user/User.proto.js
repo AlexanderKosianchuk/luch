@@ -134,7 +134,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
             });
         } else {
             var pV = {
-                action : actions["buildUserTable"],
+                action : "buildUserTable",
                 data : {
                     data : 'data'
                 }
@@ -188,12 +188,6 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
 
     this.NoUserCheckedViewOptionsState = function () {
         this.UserViewOptionsInitialState();
-
-        /*
-         * $('button#userOpitonsListButton') $('button#userOpitonsCreateButton')
-         * $('button#userOpitonsEditButton') $('button#userOpitonsDeleteButton')
-         * $('button#userOpitonsSaveButton') $('button#userOpitonsCancelButton')
-         */
 
         $('button#userOpitonsCreateButton').button({
             disabled : false
@@ -316,7 +310,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
             "sAjaxSource" : USER_SRC,
             "fnServerData" : function (sSource, aoData, fnCallback) {
                 var pV = {
-                    action : actions["segmentTable"],
+                    action : "segmentTable",
                     data : {
                         data : aoData
                     }
