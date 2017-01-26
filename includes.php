@@ -1,7 +1,6 @@
 <?php
 
 define("SITE_ROOT_DIR", __DIR__);
-
 $CONFIG = json_decode(file_get_contents(@SITE_ROOT_DIR."/config/main.json"));
 
 //service scr

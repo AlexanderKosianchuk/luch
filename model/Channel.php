@@ -295,25 +295,20 @@ class Channel
         return $normArr;
     }
 
-    public function NormalizeTime($extStepDivider, $extStepLength,
-            $extTotalFrameNum, $extStartCopyTime, $extStartFrame, $extEndFrame)
+    public function NormalizeTime($stepDivider, $stepLength,
+            $totalFrameNum, $startCopyTime, $startFrame, $endFrame)
     {
-        $stepLength = $extStepLength;
-        $stepDivider = $extStepDivider;
-        $totalFrameNum = $extTotalFrameNum;
-        $startCopyTime = $extStartCopyTime;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
         $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
 
         $normTime = array();
+        $microTimeIterations = ($stepDivider / $stepLength);
         for($i = $startFrame; $i < $endFrame; $i++)
         {
             $microTime = 0;
             $dateInterval = $i * $stepLength;
             $currTime = $startCopyTime + $dateInterval;
             array_push($normTime, date("H:i:s", $currTime). "." . $microTime);
-            for($j = 1; $j < $stepDivider; $j++)
+            for($j = 1; $j < $microTimeIterations; $j++)
             {
                 $microTime = $j * $stepMicroTime;
                 $dateInterval = $i * $stepLength;

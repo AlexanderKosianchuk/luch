@@ -67,6 +67,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $paramInfo = $c->GetParamInfo($flightId, $prms[$i]);
                     $figPrRow .= iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
+                    //$figPrRow .= $paramInfo['name'] . '('.$paramInfo['dim'].')' . ";";
                 }
 
                 $figPrRow = substr($figPrRow, 0, -1);
