@@ -122,24 +122,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
 
 FlightViewOptions.prototype.ResizeFlightViewOptionsContainer = function(e) {
     var self = this;
-
-
-    /*if((self.flightOptionsWorkspace != null) &&
-            (self.flightOptionsLeftMenu != null) &&
-            (self.flightOptionsTopMenu != null) &&
-            (self.flightOptionsContent != null)){
-
-        self.flightOptionsContent.css({
-            "left": 0,
-            "top" : 0,
-            "width" : self.window.width() - self.flightOptionsLeftMenu.width() - 20,
-            "height": self.flightOptionsWorkspace.height() -
-                self.flightOptionsTopMenu.height() - 10
-        });
-    }*/
-
     self.eventHandler.trigger("resizeShowcase");
-
     return false;
 }
 

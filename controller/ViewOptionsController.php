@@ -495,7 +495,7 @@ class ViewOptionsController extends CController
         $flightDuration = $Fr->FrameCountToDuration ($framesCount, $bruInfo ['stepLength'] );
         unset ($Fr);
 
-        $str = '<h4 style="text-align:center;">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' .
+        $str = '<h4 class="container__events-header" style="text-align:center;">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' .
                 $this->lang->bort . ' - ' . $flightInfo['bort'] . '; ' .
                 $this->lang->voyage . ' - ' . $flightInfo['voyage'] . '; ' .
 

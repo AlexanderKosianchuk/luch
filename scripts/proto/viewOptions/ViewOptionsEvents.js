@@ -285,6 +285,12 @@ FlightViewOptions.prototype.ShowEventsList = function() {
 
                     var exceptionTableRow = $(".ExceptionTableRow");
                     self.SupportReliabilityUncheck.call(self, exceptionTableRow, flightId);
+
+                    $('.container__events-list').height(
+                        $('#flightOptionsContent').height()
+                        - $('.container__events-header').eq(0).outerHeight(true)
+                    );
+
                     exceptionTableRow.on("click", function(e){
                         var row = $(this);
 
