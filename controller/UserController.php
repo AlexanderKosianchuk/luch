@@ -5,16 +5,11 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class UserController extends CController
 {
     public $curPage = 'userPage';
-    public $userActions;
 
     function __construct()
     {
         $this->IsAppLoggedIn();
         $this->setAttributes();
-
-        $L = new Language();
-        $this->userActions = (array)$L->GetServiceStrs($this->curPage);
-        unset($L);
     }
 
     public function PutTopMenu()

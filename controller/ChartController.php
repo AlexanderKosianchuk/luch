@@ -5,7 +5,6 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class ChartController extends CController
 {
     public $curPage = 'chartPage';
-    public $chartActions;
     private $title = 'Title';
 
     function __construct()
@@ -14,7 +13,6 @@ class ChartController extends CController
         $this->setAttributes();
 
         $L = new Language();
-        $this->chartActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
     }
 

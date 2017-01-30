@@ -6,14 +6,13 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
 $c = new FlightsController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->flightActions["flightGeneralElements"]) {
+    if($c->action === "flightGeneralElements") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege)) {
             if(isset($c->data['data'])) {
-                $action = $c->action;
                 $topMenu = $c->PutTopMenu();
                 $leftMenu = $c->PutLeftMenu();
                 $fileUploadBlock = $c->FileUploadBlock();
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -43,7 +42,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightLastView"])
+    else if($c->action === "flightLastView")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -56,7 +55,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                         $targetId = 0;
                         $targetName = 'root';
-                        $viewAction = $c->flightActions["flightListTree"];
+                        $viewAction = "flightListTree";
                         $flightsListTileView = $c->BuildFlightsInTree($targetId);
                         $c->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
 
@@ -69,7 +68,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $flightsListByPath = "";
                     $viewAction = $lastViewType["action"];
-                    if($viewAction == $c->flightActions["flightListTree"])
+                    if($viewAction === "flightListTree")
                     {
                         $actionsInfo = $c->GetLastViewedFolder();
                         $targetId = 0;
@@ -104,9 +103,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                         $answ["data"] = $flightsListTileView;
 
                     }
-                    else if($viewAction == $c->flightActions["flightListTable"])
+                    else if($viewAction === "flightListTable")
                     {
-                        $action = $c->flightActions["flightListTable"];
+                        $action = "flightListTable";
 
                         $table = $c->BuildTable();
                         $c->RegisterActionExecution($action, "executed", 0, 'tableView', '', '');
@@ -144,21 +143,20 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightTwoColumnsListByPathes"])
+    else if($c->action === "flightTwoColumnsListByPathes")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
                 $lastViewType = $c->GetLastViewType();
-                $action = $c->flightActions["flightTwoColumnsListByPathes"];
 
                 if($lastViewType == null)
                 {
                     $targetId1 = 0; // root path
                     $targetId2 = 0;
                     $flightsListByPath = $c->BuildFlightListInTwoColumns($targetId1, $targetId2);
-                    $c->RegisterActionExecution($action, "executed", $targetId1, 'leftColumnFolderShown', $targetId2, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $targetId1, 'leftColumnFolderShown', $targetId2, 'rightColumnFolderShown');
                 }
                 else
                 {
@@ -181,7 +179,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     }
 
                     $flightsListByPath = $c->BuildFlightListInTwoColumns($targetId1, $targetId2);
-                    $c->RegisterActionExecution($action, "executed", $targetId1, 'leftColumnFolderShown', $targetId2, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $targetId1, 'leftColumnFolderShown', $targetId2, 'rightColumnFolderShown');
                 }
 
                 $answ["status"] = "ok";
@@ -206,14 +204,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightListTree"])
+    else if($c->action === "flightListTree")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
                 $flightsListTile = "";
-                $action = $c->flightActions["flightListTree"];
 
                 $actionsInfo = $c->GetLastViewedFolder();
                 $targetId = 0;
@@ -221,7 +218,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $targetName = 'root';
                     $flightsListTileView = $c->BuildFlightsInTree($targetId);
-                    $c->RegisterActionExecution($action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+                    $c->RegisterActionExecution($c->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
                 }
                 else
                 {
@@ -239,7 +236,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     }
 
                     $flightsListTileView = $c->BuildFlightsInTree($targetId);
-                    $c->RegisterActionExecution($action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+                    $c->RegisterActionExecution($c->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
                 }
 
                 $answ["status"] = "ok";
@@ -266,7 +263,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == "receiveTree")
+    else if($c->action === "receiveTree")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -344,16 +341,14 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightListTable"])
+    else if($c->action === "flightListTable")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
-                $action = $c->flightActions["flightListTable"];
-
                 $table = $c->BuildTable();
-                $c->RegisterActionExecution($action, "executed", 0, 'tableView', '', '');
+                $c->RegisterActionExecution($c->action, "executed", 0, 'tableView', '', '');
 
                 $actionsInfo = $c->GetLastSortTableType();
 
@@ -490,14 +485,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             if(isset($c->data['folderId']))
             {
                 $folderid = intval($c->data['folderId']);
-                $action = "showFolderContent";
 
                 $result = $c->BuildSelectedFolderContent($folderid);
 
                 $folderContent = $result['content'];
                 $targetId = $folderid;
                 $targetName = $result['folderName'];
-                $c->RegisterActionExecution($action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+                $c->RegisterActionExecution($c->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
 
                 $answ = array(
                     'status' => 'ok',
@@ -524,7 +518,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightShowFolder"])
+    else if($c->action === "flightShowFolder")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -535,20 +529,19 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $fullpath = $c->data['fullpath'];
 
                 $flightsListByPath = "";
-                $action = $c->flightActions["flightTwoColumnsListByPathes"];
 
                 $actionsInfo = $c->GetLastFlightTwoColumnsListPathes();
                 if($position == 'Left')
                 {
                     $targetId = $actionsInfo['targetId'];
                     $flightsListByPath = $c->BuildFlightColumnFromTwoColumns($fullpath, $position);
-                    $c->RegisterActionExecution($action, "executed", $fullpath, 'leftColumnFolderShown', $targetId, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $fullpath, 'leftColumnFolderShown', $targetId, 'rightColumnFolderShown');
                 }
                 else if ($position == 'Right')
                 {
                     $senderId = $actionsInfo['senderId'];
                     $flightsListByPath = $c->BuildFlightColumnFromTwoColumns($fullpath, $position);
-                    $c->RegisterActionExecution($action, "executed", $senderId, 'leftColumnFolderShown', $fullpath, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $senderId, 'leftColumnFolderShown', $fullpath, 'rightColumnFolderShown');
                 }
 
                 $answ["status"] = "ok";
@@ -574,7 +567,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["flightGoUpper"]) //show form for uploading
+    else if($c->action === "flightGoUpper")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -585,7 +578,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $fullpath = $c->data['fullpath'];
 
                 $flightsListByPath = "";
-                $action = $c->flightActions["flightTwoColumnsListByPathes"];
 
                 $Fd = new Folder();
                 $folderInfo = $Fd->GetFolderInfo($fullpath);
@@ -596,13 +588,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $targetId = $actionsInfo['targetId'];
                     $flightsListByPath = $c->BuildFlightColumnFromTwoColumns($fullpath, $position);
-                    $c->RegisterActionExecution($action, "executed", $fullpath, 'leftColumnFolderShown', $targetId, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $fullpath, 'leftColumnFolderShown', $targetId, 'rightColumnFolderShown');
                 }
                 else if ($position == 'Right')
                 {
                     $senderId = $actionsInfo['senderId'];
                     $flightsListByPath = $c->BuildFlightColumnFromTwoColumns($fullpath, $position);
-                    $c->RegisterActionExecution($action, "executed", $senderId, 'leftColumnFolderShown', $fullpath, 'rightColumnFolderShown');
+                    $c->RegisterActionExecution($c->action, "executed", $senderId, 'leftColumnFolderShown', $fullpath, 'rightColumnFolderShown');
                 }
 
                 $answ["status"] = "ok";
@@ -627,7 +619,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["folderCreateNew"]) //show form for uploading
+    else if($c->action === "folderCreateNew")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -638,8 +630,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $fullpath = $c->data['fullpath'];
 
                 $res = $c->CreateNewFolder($folderName, $fullpath);
-                $action = $c->action;
-                $c->RegisterActionExecution($action, "executed", 0, 'folderCreation', $fullpath, $folderName);
+                $c->RegisterActionExecution($c->action, "executed", 0, 'folderCreation', $fullpath, $folderName);
 
                 $answ["status"] = "ok";
                 $folderId = $res['folderId'];
@@ -666,7 +657,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == "flightChangePath")
+    else if($c->action === "flightChangePath")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -676,9 +667,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $sender = $c->data['sender'];
                 $target = $c->data['target'];
 
-                $action = $c->action;
                 $result = $c->ChangeFlightPath($sender, $target);
-                $c->RegisterActionExecution($action, "executed", $sender, 'flightId', $target, "newPath");
+                $c->RegisterActionExecution($c->action, "executed", $sender, 'flightId', $target, "newPath");
 
                 $answ = array();
                 if($result)
@@ -710,7 +700,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == "folderChangePath") //show form for uploading
+    else if($c->action === "folderChangePath")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -720,9 +710,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $sender = $c->data['sender'];
                 $target = $c->data['target'];
 
-                $action = $c->action;
                 $result = $c->ChangeFolderPath($sender, $target);
-                $c->RegisterActionExecution($action, "executed", $sender, 'folderId', $target, "newPath");
+                $c->RegisterActionExecution($c->action, "executed", $sender, 'folderId', $target, "newPath");
 
                 $answ = array();
                 if($result)
@@ -754,7 +743,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["folderRename"]) //show form for uploading
+    else if($c->action === "folderRename")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -764,9 +753,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $folderId = $c->data['folderId'];
                 $folderName = $c->data['folderName'];
 
-                $action = $c->action;
                 $result = $c->RenameFolder($folderId, $folderName);
-                $c->RegisterActionExecution($action, "executed", $folderId, 'folderId', $folderName, "newName");
+                $c->RegisterActionExecution($c->action, "executed", $folderId, 'folderId', $folderName, "newName");
 
                 $answ = array();
                 if($result)
@@ -798,7 +786,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["itemDelete"]) //show form for uploading
+    else if($c->action === "itemDelete")
     {
         if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
@@ -816,8 +804,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     if($result)
                     {
                         $answ['status'] = 'ok';
-                        $action = $c->action;
-                        $c->RegisterActionExecution($action, "executed", $id, "itemId", $type, 'typeDeletedItem');
+                        $c->RegisterActionExecution($c->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
                     }
                     else
                     {
@@ -835,8 +822,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     if($result)
                     {
                         $answ['status'] = 'ok';
-                        $action = $c->action;
-                        $c->RegisterActionExecution($action, "executed", $id, "itemId", $type, 'typeDeletedItem');
+                        $c->RegisterActionExecution($c->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
                     }
                     else
                     {
@@ -864,7 +850,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             }
         }
     }
-    else if($c->action == $c->flightActions["itemProcess"])
+    else if($c->action === "itemProcess")
     {
         if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
@@ -877,8 +863,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 if($result)
                 {
                     $answ['status'] = 'ok';
-                    $action = $c->action;
-                    $c->RegisterActionExecution($action, "executed", $id, "itemId");
+                    $c->RegisterActionExecution($c->action, "executed", $id, "itemId");
                 }
                 else
                 {
@@ -937,8 +922,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                         'zipUrl' => $zipUrl
                     ];
 
-                    $action = $c->action;
-                    $c->RegisterActionExecution($action, "executed", json_encode(array_merge($flightIds, $flightIds)), "itemId");
+                    $c->RegisterActionExecution($c->action, "executed", json_encode(array_merge($flightIds, $flightIds)), "itemId");
                 }
                 else
                 {
@@ -966,7 +950,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->flightActions["syncItemsHeaders"])
+    else if($c->action === "syncItemsHeaders")
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
@@ -979,8 +963,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 if($result)
                 {
                     $answ['status'] = 'ok';
-                    $action = $c->action;
-                    $c->RegisterActionExecution($action, "executed", implode(",", $ids), "itemsId");
+                    $c->RegisterActionExecution($c->action, "executed", implode(",", $ids), "itemsId");
                 }
                 else
                 {

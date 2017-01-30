@@ -1,11 +1,8 @@
 var BRU_SRC = location.protocol + '//' + location.host + "/view/bru.php";
 
-function BruType(window, document, langStr, srvcStrObj, eventHandler)
+function BruType(window, document, langStr, eventHandler)
 {
     var langStr = langStr,
-        srvcStrObj = srvcStrObj,
-        actions = srvcStrObj["bruTypesPage"],
-        flightViewOptionActions = srvcStrObj["viewOptionsPage"];
 
     window = window;
     document = document;
@@ -37,7 +34,7 @@ function BruType(window, document, langStr, srvcStrObj, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(GeneralInfo == null){
-                    GeneralInfo = new BruTypeGeneralInfo(langStr, srvcStrObj, eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new BruTypeGeneralInfo(langStr, eventHandler, that.bruTypeListFactoryContainer);
                 };
 
                 GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -50,7 +47,7 @@ function BruType(window, document, langStr, srvcStrObj, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(Templates == null){
-                    Templates = new BruTypeTemplates(langStr, srvcStrObj, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new BruTypeTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                 };
 
                 Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -94,7 +91,7 @@ function BruType(window, document, langStr, srvcStrObj, eventHandler)
         self.bruTypeListFactoryContainer = factoryContainer;
 
         var pV = {
-                action: actions["putBruTypeContainer"],
+                action: "putBruTypeContainer",
                 data: {
                     data: 'data'
                 }
@@ -132,23 +129,23 @@ function BruType(window, document, langStr, srvcStrObj, eventHandler)
                         bruTypeListWorkspace.empty();
                     }
 
-                    GeneralInfo = new BruTypeGeneralInfo(langStr, srvcStrObj, that.eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new BruTypeGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
-                } else if(task == actions['editingBruTypeGeneralInfo']){
+                } else if(task == 'editingBruTypeGeneralInfo'){
                     $("#editBruGeneralInfoLeftMenuRow").addClass("LeftMenuRowSelected");
 
                     if(bruTypeListWorkspace.html() != ''){
                         bruTypeListWorkspace.empty();
                     }
 
-                    var GeneralInfo = new BruTypeGeneralInfo(langStr, srvcStrObj, that.eventHandler, that.bruTypeListFactoryContainer);
+                    var GeneralInfo = new BruTypeGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
-                } else if(task == actions['editingBruTypeTemplates']){
+                } else if(task == 'editingBruTypeTemplates'){
                     $("#editBruTplsLeftMenuRow").addClass("LeftMenuRowSelected");
 
-                    Templates = new BruTypeTemplates(langStr, srvcStrObj, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new BruTypeTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
                 }
 

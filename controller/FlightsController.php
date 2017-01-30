@@ -5,7 +5,6 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class FlightsController extends CController
 {
    public $curPage = 'flightsPage';
-   public $flightActions;
 
    function __construct()
    {
@@ -16,10 +15,6 @@ class FlightsController extends CController
        if(isset($get['action']) && ($get['action'] != '')) {
            $this->getAction = $get['action'];
        }
-
-       $L = new Language();
-       $this->flightActions = (array)$L->GetServiceStrs($this->curPage);
-       unset($L);
    }
 
    public function PutTopMenu()
@@ -449,11 +444,10 @@ class FlightsController extends CController
 
    public function GetLastViewType()
    {
-      $viewTypes = array(
-         $this->flightActions["flightTwoColumnsListByPathes"],
-         $this->flightActions["flightListTree"],
-         $this->flightActions["flightListTable"]
-      );
+      $viewTypes = [
+         "flightListTree",
+         "flightListTable"
+     ];
 
       $userId = $this->_user->userInfo['id'];
       $lastView = $this->_user->GetLastActionFromRange($userId, $viewTypes);
@@ -518,10 +512,8 @@ class FlightsController extends CController
       return $relatedNodes;
    }
 
-   public function BuildSelectedFolderContent($extFolder)
+   public function BuildSelectedFolderContent($shownFolderId)
    {
-      $shownFolderId = $extFolder;
-
       $flightColumn = "";
 
       $Fd = new Folder();
@@ -537,13 +529,19 @@ class FlightsController extends CController
          $flightColumn .= "<div class='JstreeContentItemFolder'><label>" . $input . " " . $val['name']."</label></div>";
       }
 
+      $Fc = new FlightComments();
       foreach($flightsInPath as $key => $val)
       {
+         $flightComment = $Fc->getComment(intval($val['id']));
          $name = $val['bort'] . ", " .  $val['voyage']  . ", " . date('d/m/y H:i', $val['startCopyTime'])  .
          ", " . $val['bruType']  . ", " . $val['departureAirport']  . "-" . $val['arrivalAirport'] ;
 
+         $isAnalyzed = 'is-analyzed';
+         if (!isset($flightComment['id'])) {
+             $isAnalyzed = '';
+         }
          $input = '<input class="ItemsCheck" type="checkbox" data-type="flight" data-folderpath="'.$shownFolderId.'" data-flightid="'.$val['id'].'">';
-         $flightColumn .= "<div class='JstreeContentItemFlight'><label>" . $input . " " . $name . "</label></div>";
+         $flightColumn .= "<div class='JstreeContentItemFlight ".$isAnalyzed."'><label>" . $input . " " . $name . "</label></div>";
       }
 
       if((count($flightsInPath) == 0) && (count($subFolders) == 0))
@@ -625,19 +623,23 @@ class FlightsController extends CController
    public function BuildTableSegment($orderColumn, $orderType)
    {
       $userId = intval($this->_user->userInfo['id']);
-      $flights = $Fl->GetAllFlightsInFolders($userId);
+
+      $Fd = new Folder();
+      $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
+      unset($Fd);
 
       $tableSegment = array();
 
-      foreach($flights as $flight)
+      $Fl = new Flight();
+      foreach($flightsInFolders as $flightInFolder)
       {
-         $execution = "-";
-         if($flight['exTableName'] != '')
-         {
+          $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
+          $execution = "-";
+          if($flight['exTableName'] != '') {
             $execution = "+";
-         }
+          }
 
-         $tableSegment[] = array(
+          $tableSegment[] = array(
             "<input class='ItemsCheck' data-type='flight' data-flightid='".$flight['id']."' type='checkbox'/>",
             $flight['bort'],
             $flight['voyage'],
@@ -650,6 +652,8 @@ class FlightsController extends CController
             $execution
          );
       }
+
+      unset($Fl);
 
       return $tableSegment;
    }
@@ -866,13 +870,16 @@ class FlightsController extends CController
    {
        $list = [];
        $userId = intval($this->_user->userInfo['id']);
-       $flights = $Fl->GetAllFlightsInFolders($userId);
+       $Fd = new Folder();
+       $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
+       unset($Fd);
 
        $firstRow = true;
        $excTables = [];
        $FEx = new FlightException();
-       foreach($flights as $flight)
+       foreach($flightsInFolders as $flightInFolder)
        {
+           $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
            $excTable = $flight['exTableName'];
            $rows = $FEx->GetFlightEventsList($excTable);
 

@@ -3,11 +3,10 @@
 
 var SEARCH_FLIGHT_SRC = location.protocol + '//' + location.host + "/view/searchFlights.php";
 
-function SearchFlight($window, document, langStr, srvcStrObj, eventHandler) {
+function SearchFlight($window, document, langStr, eventHandler) {
     'use strict';
 
-    var actions = srvcStrObj.searchFlightPage,
-        userId = null,
+    var userId = null,
         searchFlightsWorkspace,
         searchFlightsFormContent = null;
 
@@ -68,7 +67,7 @@ function SearchFlight($window, document, langStr, srvcStrObj, eventHandler) {
         var self = this;
 
         var pV = {
-            action : actions.showSearchForm,
+            action : 'showSearchForm',
             data : {
                 data : 'data'
             }
@@ -127,7 +126,7 @@ function SearchFlight($window, document, langStr, srvcStrObj, eventHandler) {
         if($(".search-form-alg-item:checked").length > 0) {
             var algId = $(".search-form-alg-item:checked").eq(0).val();
             var pV = {
-                    action : actions["applyFilter"],
+                    action : "applyFilter",
                     data : {
                         algId : algId,
                         form: $("#search-form").serialize()
@@ -173,7 +172,7 @@ function SearchFlight($window, document, langStr, srvcStrObj, eventHandler) {
             $("#search-form-flights").empty();
             var fdrId = $("#fdrForFilter option:selected").val();
             var pV = {
-                action : actions["getFilters"],
+                action : "getFilters",
                 data : {
                     fdrId : fdrId
                 }

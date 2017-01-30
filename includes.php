@@ -9,14 +9,12 @@ require_once(@SITE_ROOT_DIR."/model/Language.php");
 //component
 require_once(@SITE_ROOT_DIR."/component/FlightComponent.php");
 
-//controller
 require_once(@SITE_ROOT_DIR."/model/DataBaseConnector.php");
 require_once(@SITE_ROOT_DIR."/model/Flight.php");
 require_once(@SITE_ROOT_DIR."/model/Folder.php");
 require_once(@SITE_ROOT_DIR."/model/Bru.php");
 require_once(@SITE_ROOT_DIR."/model/Frame.php");
 require_once(@SITE_ROOT_DIR."/model/Channel.php");
-
 require_once(@SITE_ROOT_DIR."/model/FlightException.php");
 require_once(@SITE_ROOT_DIR."/model/ParamSetTemplate.php");
 require_once(@SITE_ROOT_DIR."/model/Slice.php");
@@ -26,6 +24,7 @@ require_once(@SITE_ROOT_DIR."/model/Airport.php");
 require_once(@SITE_ROOT_DIR."/model/Vocabulary.php");
 require_once(@SITE_ROOT_DIR."/model/SearchFlights.php");
 require_once(@SITE_ROOT_DIR."/model/UserOptions.php");
+require_once(@SITE_ROOT_DIR."/model/FlightComments.php");
 
 require_once(@SITE_ROOT_DIR."/controller/CController.php");
 

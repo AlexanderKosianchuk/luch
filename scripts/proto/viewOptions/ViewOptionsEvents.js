@@ -192,7 +192,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
 
 
         var pV = {
-                action: self.actions["getFlightDuration"],
+                action: "getFlightDuration",
                 data: {
                     flightId: flightId
                 }
@@ -308,6 +308,19 @@ FlightViewOptions.prototype.ShowEventsList = function() {
 
                         self.rangeSlider.slider('option', { values: [from, to] });
                     });
+
+                    $('#comments__btn').on("click", function(e) {
+                        $.post(
+                            FLIGHTS_VIEW_OPTIONS_SRC,
+                            {
+                                action: 'saveFlightComment',
+                                data: $('#events-header__comments').serialize()
+                            },
+                            function(answ) {
+                                $('#comments__btn').addClass('is-analyzed');
+                            }
+                        )
+                    });
                 } else {
                     console.log(answ["error"]);
                 }
@@ -328,7 +341,7 @@ FlightViewOptions.prototype.SupportReliabilityUncheck = function(exceptionTableR
             state = this$.prop('checked');
 
         var pV = {
-                action : self.actions["setEventReliability"],
+                action : "setEventReliability",
                 data: {
                     flightId: flightId,
                     excId: excId,
@@ -395,7 +408,10 @@ FlightViewOptions.prototype.SupportUserComment = function() {
     $('#flightOptionsContent').on('click', function(event) {
         var $el = $(event.target);
 
-        if($el.hasClass('events_user-comment') && ($el.find('textarea').length === 0)) {
+        if($el.hasClass('events_user-comment')
+            && ($el.attr('disabled') !== 'disabled')
+            && ($el.find('textarea').length === 0)
+        ) {
             var text = $el.text();
             var $textarea = $('<textarea></textarea>');
             $textarea.addClass('events_user-comment-texarea');

@@ -5,7 +5,6 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class ViewOptionsController extends CController
 {
     public $curPage = 'viewOptionsPage';
-    public $viewOptionsActions;
 
     function __construct()
     {
@@ -14,7 +13,6 @@ class ViewOptionsController extends CController
 
         $L = new Language();
         $this->lang = $L->GetLanguage($this->curPage);
-        $this->viewOptionsActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
     }
 
@@ -476,6 +474,11 @@ class ViewOptionsController extends CController
 
     public function GetEventsListHeader($flightId)
     {
+        if (!is_int($flightId)) {
+            throw new Exception("Incorrect flightId passed. Int expected. Passed: "
+                . json_encode($flightId), 1);
+        }
+
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
@@ -529,7 +532,134 @@ class ViewOptionsController extends CController
             }
         }
 
+        $Fc = new FlightComments();
+        $flightComment = $Fc->getComment($flightId);
+        unset($Fc);
+
+        $role = $this->_user->userInfo['role'];
+        $isDisabled = " disabled='disabled' ";
+        if (User::isAdmin($role) || User::isModerator($role)) {
+            $isDisabled = '';
+        }
+
+        $commanderAdmitted = ($flightComment['commander-admitted'] ? "checked='checked'" : "") . $isDisabled;
+        $aircraftAllowed = ($flightComment['aircraft-allowed'] ? "checked='checked'" : "") . $isDisabled;
+        $generalAdmission = ($flightComment['general-admission'] ? "checked='checked'" : "") . $isDisabled;
+
+        $str .= "<form id='events-header__comments' name='events-header-comments'>"
+
+        . "<div class='comments_coll-7'>"
+        . "<label class='comments__text-label'>".$this->lang->flightComment."</label>";
+
+        if (User::isAdmin($role) || User::isModerator($role)) {
+            $str .= "<textarea name='comments-text' class='comments__text'>".$flightComment['comment']."</textarea>";
+        } else {
+            if (empty($flightComment['comment'])) {
+                $str .= "<p class='comments__text'>".$this->lang->emptyFlightComment."</p>";
+            } else {
+                $str .= "<p class='comments__text'>".$flightComment['comment']."</p>";
+            }
+        }
+
+        $str .= "</div>"
+
+        . "<div class='comments_coll-3'>"
+
+        . "<label class='comments__checkbox-general-label'>".$this->lang->allowance."</label>"
+
+        . "<label class='comments__checkbox-label'/>"
+        . "<input class='comments__checkbox' name='commander-admitted' type='checkbox' "
+        . $commanderAdmitted . " "
+        . "value='1'/>"
+        . $this->lang->commanderAdmitted
+        . "</label>"
+
+        . "<label class='comments__checkbox-label'/>"
+        . "<input class='comments__checkbox' name='aircraft-allowed' type='checkbox' "
+        . $aircraftAllowed . " "
+        . "value='1'/>"
+        . $this->lang->aircraftAllowed
+        . "</label>"
+
+        . "<label class='comments__checkbox-label'/>"
+        . "<input class='comments__checkbox' name='general-admission' type='checkbox' "
+        . $generalAdmission . " "
+        . "value='1'/>"
+        . $this->lang->generalAdmission
+        . "</label>"
+
+        . "</div>"
+
+        . "<div class='comments_coll-2'>"
+
+        . "<label class='comments__btn-label'>".$this->lang->analyzed."</label>";
+
+        if (User::isAdmin($role) || User::isModerator($role)) {
+            $isAnalyzedButtnClass = "";
+            if (isset($flightComment['id'])) {
+                $isAnalyzedButtnClass = 'is-analyzed';
+            }
+            $str .= "<button id='comments__btn' type='button' class='".$isAnalyzedButtnClass."'>"
+            . "<img class='comments__btn-img' src='stylesheets/basicImg/checked.png' alt='Checked'>"
+            . "</button>";
+        } else {
+            if (isset($flightComment['id_user'])) {
+                $analyzedBy = $this->_user->GetUserNameById(intval($flightComment['id_user']));
+                $str .= "<p>".$analyzedBy."</p>"
+                    . "<p>".date($flightComment['dt'])."</p>";
+            } else {
+                $str .= "<p>".'-'."</p>";
+            }
+        }
+
+        $str .= "</div>"
+
+        . "<input name='flight-id' type='hidden' value='".$flightInfo['id']."'/>"
+        . "</form>";
+
         return $str . "</h4>";
+    }
+
+    public function UpdateFlightComment($flightId, $flightCommentData)
+    {
+        if (!is_int($flightId)) {
+            throw new Exception("Incorrect flightId passed. Int expected. Passed: "
+                . json_encode($flightId), 1);
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+
+        $comment = '';
+        if (isset($flightCommentData['comments-text'])) {
+            $comment = $flightCommentData['comments-text'];
+        }
+
+        $commanderAdmitted = 0;
+        if (isset($flightCommentData['commander-admitted'])) {
+            $commanderAdmitted = intval($flightCommentData['commander-admitted']);
+        }
+
+        $aircraftAllowed = 0;
+        if (isset($flightCommentData['aircraft-allowed'])) {
+            $aircraftAllowed = intval($flightCommentData['aircraft-allowed']);
+        }
+
+        $generalAdmission = 0;
+        if (isset($flightCommentData['general-admission'])) {
+            $generalAdmission = intval($flightCommentData['general-admission']);
+        }
+
+        $Fc = new FlightComments();
+        $comment = $Fc->putComment($flightId,
+            $userId,
+            $comment,
+            $commanderAdmitted,
+            $aircraftAllowed,
+            $generalAdmission
+        );
+        unset($Fc);
+
+        return true;
     }
 
     private static $exceptionTypeOther = 'other';
@@ -580,6 +710,12 @@ class ViewOptionsController extends CController
                     $excEventsList[$i]['endTime'] - $excEventsList[$i]['startTime']);
             }
             unset($Frame);
+
+            $role = $this->_user->userInfo['role'];
+            $isDisabled = " disabled='disabled' ";
+            if (User::isAdmin($role) || User::isModerator($role)) {
+                $isDisabled = '';
+            }
 
             //if isset events
             if(!(empty($excEventsList))) {
@@ -687,9 +823,9 @@ class ViewOptionsController extends CController
                             <td class='ExeptionsCell'> %s </td>
                             <td class='ExeptionsCell'> %s </td>
                             <td class='ExeptionsCell' style='text-align:center;'>
-                                <input class='reliability' data-excid='%s' type='checkbox' %s></input>
+                                <input class='reliability' data-excid='%s' type='checkbox' %s %s></input>
                             </td>
-                            <td class='ExeptionsCell events_user-comment' data-excid='%s'> %s </td></tr>",
+                            <td class='ExeptionsCell events_user-comment' data-excid='%s' %s> %s </td></tr>",
                     $style,
                     $event['refParam'],
                     $event['frameNum'],
@@ -703,7 +839,9 @@ class ViewOptionsController extends CController
                     $excAditionalInfo,
                     $event['id'],
                     $event['reliability'],
+                    $isDisabled,
                     $event['id'],
+                    $isDisabled,
                     $event['userComment']);
 
                     $codePrefix = substr($event['code'], 0, 3);

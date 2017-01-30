@@ -96,7 +96,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
 
         $("#here").on("click", function(e){
             var pV = {
-                    action: self.actions["getBruTypeId"],
+                    action: "getBruTypeId",
                     data: {
                         flightId: self.flightId
                     }
@@ -115,7 +115,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
 
                     var bruTypeId = answ["data"]['bruTypeId'],
                         data = [bruTypeId,
-                                self.bruTypeTasks['editingBruTypeTemplates'],
+                                'editingBruTypeTemplates',
                                 self.flightOptionsFactoryContainer];
 
                     self.eventHandler.trigger("showBruTypeEditingForm", data);
@@ -150,7 +150,7 @@ FlightViewOptions.prototype.ShowFlightViewTempltListOptions = function() {
         self.flightOptionsOptions = $("div#flightOptionsOptions");
 
         var pV = {
-                action: self.actions["getFlightDuration"],
+                action: "getFlightDuration",
                 data: {
                     flightId: flightId
                 }
@@ -232,7 +232,7 @@ FlightViewOptions.prototype.TplCreate = function(flightId, tplName, params) {
     var self = this;
 
     var pV = {
-            action: self.actions["createTpl"],
+            action: "createTpl",
             data: {
                 flightId: flightId,
                 tplName: tplName,
@@ -255,7 +255,7 @@ FlightViewOptions.prototype.TplParamsReceive = function(flightId, tplName) {
     var self = this;
 
     var pV = {
-            action: self.actions["getParamCodesByTemplate"],
+            action: "getParamCodesByTemplate",
             data: {
                 flightId: flightId,
                 tplName: tplName
@@ -277,7 +277,7 @@ FlightViewOptions.prototype.DefaultTplParamsReceive = function(flightId) {
     var self = this;
 
     var pV = {
-            action: self.actions["getDefaultTemplateParamCodes"],
+            action: "getDefaultTemplateParamCodes",
             data: {
                 flightId: flightId
             }
@@ -304,7 +304,7 @@ FlightViewOptions.prototype.ShowTempltList = function() {
         self.flightOptionsContent = $("div#flightOptionsContent");
 
         var pV = {
-                action: self.actions["getBruTemplates"],
+                action: "getBruTemplates",
                 data: {
                     flightId: flightId
                 }

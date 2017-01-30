@@ -1,7 +1,7 @@
 var SERVICE_STRS = location.protocol + '//' + location.host + "/config/" + "_actions.json",
 
     LANG_FILES_PATH = location.protocol + '//' + location.host + "/lang/",
-    LANG_FILE_DEFAULT =  location.protocol + '//' + location.host + "/lang/" + "Default.lang";
+    LANG_FILE_DEFAULT =  location.protocol + '//' + location.host + "/lang/" + "EN.lang";
 
 function Language(selectedLang) {
     this.selectedLang = selectedLang;
@@ -29,15 +29,5 @@ Language.prototype.GetLanguage = function() {
         }).fail(function() {
             console.log("Cant get lang object.");
         });
-    });
-};
-
-Language.prototype.GetServiceStrs = function() {
-    return $.ajax({
-        url: SERVICE_STRS,
-        dataType: 'json',
-        async: true,
-    }).fail(function() {
-        console.log("Cant get service strs object.");
     });
 };

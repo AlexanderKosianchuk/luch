@@ -10,56 +10,52 @@
 
     LA.GetLanguage().done(function(data){
         var langStr = data;
-        LA.GetServiceStrs().done(function(data){
-            var srvcStrObj = data;
+        C = new Chart($window, $document, langStr, eventHandler, true);
 
-            C = new Chart($window, $document, langStr, srvcStrObj, eventHandler, true);
+        var flightId = $("#flightId").text(),
+            tplName = $("#tplName").text(),
+            stepLength = $("#stepLength").text(),
+            startCopyTime = $("#startCopyTime").text(),
+            startFrame = $("#startFrame").text(),
+            endFrame = $("#endFrame").text(),
+            apParams = $("#apParams").text().split(","),
+            bpParams = $("#bpParams").text().split(",");
 
-            var flightId = $("#flightId").text(),
-                tplName = $("#tplName").text(),
-                stepLength = $("#stepLength").text(),
-                startCopyTime = $("#startCopyTime").text(),
-                startFrame = $("#startFrame").text(),
-                endFrame = $("#endFrame").text(),
-                apParams = $("#apParams").text().split(","),
-                bpParams = $("#bpParams").text().split(",");
+        var showcase = $window;
 
-            var showcase = $window;
+        if(C != null) {
+            C.SetChartData(flightId, tplName,
+                    stepLength, startCopyTime, startFrame, endFrame,
+                    apParams, bpParams);
 
-            if(C != null) {
-                C.SetChartData(flightId, tplName,
-                        stepLength, startCopyTime, startFrame, endFrame,
-                        apParams, bpParams);
+            C.chartFactoryContainer = showcase;
 
-                C.chartFactoryContainer = showcase;
+            C.chartWorkspace = $('div#chartWorkspace');
+            C.chartContent = $('div#graphContainer');
 
-                C.chartWorkspace = $('div#chartWorkspace');
-                C.chartContent = $('div#graphContainer');
+            C.loadingBox = $("div#loadingBox").css("top", $window.height() / 2 - 40);
+            C.legend = $('div#legend');
+            C.placeholder = $('div#placeholder');
 
-                C.loadingBox = $("div#loadingBox").css("top", $window.height() / 2 - 40);
-                C.legend = $('div#legend');
-                C.placeholder = $('div#placeholder');
+            C.placeholder.on("mouseover", function(e){
+                C.mouseInChat = true;
+            });
 
-                C.placeholder.on("mouseover", function(e){
-                    C.mouseInChat = true;
-                });
+            C.placeholder.on("mouseout", function(e){
+                C.mouseInChat = false;
+            });
 
-                C.placeholder.on("mouseout", function(e){
-                    C.mouseInChat = false;
-                });
+            setInitialChartSize.apply(C);
+            C.LoadFlotChart();
 
-                setInitialChartSize.apply(C);
-                C.LoadFlotChart();
-
-                C.chartWorkspace.resizable().resize(function(){
-                    var interval = setInterval(function(){
-                        ResizeChart.apply(C);
-                        C.plot.pan(0);
-                        clearInterval(interval);
-                    }, 1000);
-                });
-            }
-        });
+            C.chartWorkspace.resizable().resize(function(){
+                var interval = setInterval(function(){
+                    ResizeChart.apply(C);
+                    C.plot.pan(0);
+                    clearInterval(interval);
+                }, 1000);
+            });
+        }
     });
 
     function setInitialChartSize(){

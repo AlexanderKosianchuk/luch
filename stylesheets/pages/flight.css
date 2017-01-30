@@ -230,8 +230,16 @@ select.FlightUploadingInputs {
     -o-user-select: none;
 }
 
-.JstreeContentItemFolder:hover, .JstreeContentItemFlight:hover {
+.JstreeContentItemFlight.is-analyzed {
+    background-color: #394c5a;
+}
+
+.JstreeContentItemFolder:hover, .JstreeContentItemFlight:not(.is-analyzed):hover {
     background-color: #c0c0c0 !important;
+}
+
+.JstreeContentItemFlight.is-analyzed:hover {
+    background-color: #26343e;
 }
 
 .ItemsCheckJstreeContent {

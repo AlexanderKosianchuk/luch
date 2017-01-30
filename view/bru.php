@@ -6,16 +6,15 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
 $c = new BruController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->bruActions["putBruTypeContainer"]) {
+    if($c->action === "putBruTypeContainer") {
         if(in_array(User::$PRIVILEGE_VIEW_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
-                $action = $c->action;
                 $topMenu = $c->PutTopMenu();
                 $leftMenu = $c->PutLeftMenu();
                 $workspace = $c->PutWorkspace();
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = [
                     'status' => 'ok',
@@ -46,16 +45,15 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["editingBruTypeTemplatesReceiveTplsList"])
+    else if($c->action === "editingBruTypeTemplatesReceiveTplsList")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']))
             {
                 $bruTypeId = $c->data['bruTypeId'];
-                $action = $c->action;
                 $tplsList = $c->GetTplsList($bruTypeId);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -84,16 +82,15 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["editingBruTypeTemplatesReceiveParamsList"])
+    else if($c->action === "editingBruTypeTemplatesReceiveParamsList")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
             if(isset($c->data['bruTypeId']))
             {
                 $bruTypeId = $c->data['bruTypeId'];
-                $action = $c->action;
                 $paramsList = $c->ShowParamList($bruTypeId);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -122,7 +119,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["createTpl"])
+    else if($c->action === "createTpl")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
@@ -134,9 +131,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $name = $c->data['name'];
                 $params = $c->data['params'];
 
-                $action = $c->action;
                 $c->CreateTemplate($bruTypeId, $name, $params);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -163,7 +159,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["deleteTpl"])
+    else if($c->action === "deleteTpl")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
@@ -173,9 +169,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $bruTypeId = $c->data['bruTypeId'];
                 $name = $c->data['name'];
 
-                $action = $c->action;
                 $c->DeleteTemplate($bruTypeId, $name);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -202,7 +197,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["defaultTpl"])
+    else if($c->action === "defaultTpl")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
@@ -212,9 +207,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $bruTypeId = $c->data['bruTypeId'];
                 $name = $c->data['name'];
 
-                $action = $c->action;
                 $c->SetDefaultTemplate($bruTypeId, $name);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -241,7 +235,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->bruActions["updateTpl"])
+    else if($c->action === "updateTpl")
     {
         if(in_array(User::$PRIVILEGE_EDIT_BRUTYPES, $c->_user->privilege))
         {
@@ -255,10 +249,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $tplOldName = $c->data['tplOldName'];
                 $params = $c->data['params'];
 
-                $action = $c->action;
                 $c->DeleteTemplate($bruTypeId, $tplOldName);
                 $c->CreateTemplate($bruTypeId, $name, $params);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -295,10 +288,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $flightId = $c->data['flightId'];
                 $tplName = $c->data['tplName'];
 
-                $action = $c->action;
                 $answ = $c->copyTemplate($flightId, $tplName);
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
                 echo json_encode($answ);
             }
             else

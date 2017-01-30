@@ -5,7 +5,6 @@ require_once(@"includes.php");
 class IndexController extends CController
 {
     public $curPage = 'indexPage';
-    public $flightActions;
 
     function __construct()
     {

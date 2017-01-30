@@ -5,16 +5,11 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class SearchFlightController extends CController
 {
     public $curPage = 'searchFlightPage';
-    public $controllerActions;
 
     function __construct()
     {
         $this->IsAppLoggedIn();
         $this->setAttributes();
-
-        $L = new Language();
-        $this->controllerActions = (array)$L->GetServiceStrs($this->curPage);
-        unset($L);
     }
 
     public function ShowSearchForm()

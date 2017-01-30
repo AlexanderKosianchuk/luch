@@ -6,18 +6,17 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
 $c = new PrinterController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->printerActions["printBlank"]) {
+    if($c->action === "printBlank") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) && isset($c->data['sections']))
             {
-                $action = $c->action;
                 $flightId = $c->data['flightId'];
                 $sections = explode(',', $c->data['sections']);
 
                 $c->ConstructFlightEventsList($flightId, $sections, true);
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
             }
             else
             {
@@ -37,19 +36,18 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->printerActions["monochromePrintBlank"])
+    else if($c->action === "monochromePrintBlank")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']) && isset($c->data['sections']))
             {
-                $action = $c->action;
                 $flightId = $c->data['flightId'];
                 $sections = explode(',', $c->data['sections']);
 
                 $c->ConstructFlightEventsList($flightId, $sections, false);
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
             }
             else
             {

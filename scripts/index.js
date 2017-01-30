@@ -23,20 +23,17 @@ jQuery(function ($) {
 
         LA.GetLanguage().done(function (data) {
             var langStr = data;
-            LA.GetServiceStrs().done(function (data) {
-                var srvcStrObj = data,
-                    wsp = W.NewShowcase();
-                FL = new FlightList(langStr, srvcStrObj, eventHandler);
-                FU = new FlightUploader($window, $document, langStr, srvcStrObj, eventHandler);
-                FP = new FlightProccessingStatus(langStr);
-                FO = new FlightViewOptions($window, $document, langStr, srvcStrObj, eventHandler);
-                B = new BruType($window, $document, langStr, srvcStrObj, eventHandler);
-                C = new Chart($window, $document, langStr, srvcStrObj, eventHandler);
-                U = new User($window, $document, langStr, srvcStrObj, eventHandler);
-                SF = new SearchFlight($window, $document, langStr, srvcStrObj, eventHandler);
+            var wsp = W.NewShowcase();
+            FL = new FlightList(langStr, eventHandler);
+            FU = new FlightUploader($window, $document, langStr, eventHandler);
+            FP = new FlightProccessingStatus(langStr);
+            FO = new FlightViewOptions($window, $document, langStr, eventHandler);
+            B = new BruType($window, $document, langStr, eventHandler);
+            C = new Chart($window, $document, langStr, eventHandler);
+            U = new User($window, $document, langStr, eventHandler);
+            SF = new SearchFlight($window, $document, langStr, eventHandler);
 
-                FL.FillFactoryContaider(wsp);
-            });
+            FL.FillFactoryContaider(wsp);
         });
 
         $window.resize(function (e) {

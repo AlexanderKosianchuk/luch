@@ -1,11 +1,9 @@
 var FLIGHTS_VIEW_SRC = location.protocol + '//' + location.host + "/view/flights.php";
 var USER_SRC = location.protocol + '//' + location.host + "/view/user.php";
 
-function FlightList(langStr, srvcStrObj, eventHandler)
+function FlightList(langStr, eventHandler)
 {
     this.langStr = langStr;
-    this.actions = srvcStrObj['flightsPage'];
-    this.userOptionsActions = srvcStrObj['userPage'];
 
     this.eventHandler = eventHandler;
     this.flightListFactoryContainer = null;
@@ -21,7 +19,7 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
     self.flightListFactoryContainer = factoryContainer;
 
     var pV = {
-            action: self.actions["flightGeneralElements"],
+            action: "flightGeneralElements",
             data: {
                 data: 'data'
             }
@@ -246,7 +244,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
         self.flightListContent = $("div#flightListContent");
 
         var pV = {
-            action: self.actions["flightLastView"],
+            action: "flightLastView",
             data: {
                 data: 'data'
             }
@@ -261,7 +259,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
             success: function(answ) {
                 if(answ['status'] == 'ok'){
                     var type = answ['type'];
-                    if (type == self.actions["flightListTree"]){
+                    if (type == "flightListTree"){
                         var flightList = answ['data'];
                         self.flightListContent.append(flightList);
                         $("button#selectFligthOptionsMenu").button({
@@ -269,7 +267,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
                         });
                         self.SupportJsTree();
                         self.ResizeFlightList();
-                    } else if (type == self.actions["flightListTable"]){
+                    } else if (type == "flightListTable"){
                         var flightList = answ['data'],
                             sortCol = answ['sortCol'],
                             sortType = answ['sortType'];
@@ -336,7 +334,7 @@ FlightList.prototype.UpdateOptions = function() {
         url: USER_SRC,
         dataType: 'json',
         data: {
-            action: self.userOptionsActions["updateUserOptions"],
+            action: "updateUserOptions",
             data: msg
         }
     });
@@ -401,7 +399,7 @@ FlightList.prototype.ActionShowFolder = function(sender) {
         fullpath = sender.data("folderdestination");
 
     var pV = {
-            action: self.actions["flightShowFolder"],
+            action: "flightShowFolder",
             data: {
                 position: position,
                 fullpath: fullpath
@@ -483,7 +481,7 @@ FlightList.prototype.UpdateColumn = function(position, path) {
     var self = this;
 
     var pV = {
-        action: self.actions["flightShowFolder"],
+        action: "flightShowFolder",
         data: {
             position: position,
             fullpath: path
@@ -519,7 +517,7 @@ FlightList.prototype.GoUpper = function(position, path) {
     var self = this;
 
     var pV = {
-        action: self.actions["flightGoUpper"],
+        action: "flightGoUpper",
         data: {
             position: position,
             fullpath: path
@@ -682,7 +680,7 @@ FlightList.prototype.CreateNewFolder = function(folderName, folderPath) {
         folderdestination = 0;
 
     var pV = {
-        action: self.actions["folderCreateNew"],
+        action: "folderCreateNew",
         data: {
             folderName: folderName,
             fullpath: folderPath
@@ -704,7 +702,7 @@ FlightList.prototype.RenameFolder = function(folderId, folderName) {
     var self = this;
 
     var pV = {
-        action: self.actions["folderRename"],
+        action: "folderRename",
         data: {
             folderId: folderId,
             folderName: folderName
@@ -726,7 +724,7 @@ FlightList.prototype.DeleteItem = function(type, id) {
     var self = this;
 
     var pV = {
-        action: self.actions["itemDelete"],
+        action: "itemDelete",
         data: {
             type: type,
             id: id
@@ -748,7 +746,7 @@ FlightList.prototype.SyncItemsHeaders = function(idArr) {
     var self = this;
 
     var pV = {
-        action: self.actions["syncItemsHeaders"],
+        action: "syncItemsHeaders",
         data: {
             ids: idArr
         }
@@ -769,7 +767,7 @@ FlightList.prototype.ProcessItem = function(id) {
     var self = this;
 
     var pV = {
-        action: self.actions["itemProcess"],
+        action: "itemProcess",
         data: {
             id: id
         }
@@ -827,7 +825,7 @@ FlightList.prototype.ShowFlightsTree = function() {
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
                 var pV = {
-                    action: self.actions["flightListTree"],
+                    action: "flightListTree",
                     data: {
                         data: 'data'
                     }
@@ -1137,7 +1135,7 @@ FlightList.prototype.ShowFlightsTable = function() {
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
                 var pV = {
-                    action: self.actions["flightListTable"],
+                    action: "flightListTable",
                     data: {
                         data: 'data'
                     }

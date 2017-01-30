@@ -6,7 +6,6 @@ function FlightProccessingStatus(langStr) {
     this.langStr = langStr;
 }
 
-
 FlightProccessingStatus.prototype.SupportUploadingStatus = function() {
     var self = this;
     self.indicator = $("#currentUploadingTopButt");

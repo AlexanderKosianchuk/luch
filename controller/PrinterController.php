@@ -6,16 +6,11 @@ require_once ("../tcpdf/config/tcpdf_config.php");
 class PrinterController extends CController
 {
     public $curPage = 'printerPage';
-    public $printerActions;
 
     function __construct()
     {
         $this->IsAppLoggedIn();
         $this->setAttributes();
-
-        $L = new Language();
-        $this->printerActions = ( array ) $L->GetServiceStrs ( $this->curPage );
-        unset($L);
     }
 
     public function ConstructFlightEventsList($extFlightId, $sections = [], $colored = false)

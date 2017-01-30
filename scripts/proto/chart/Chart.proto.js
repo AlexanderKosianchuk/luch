@@ -3,10 +3,9 @@ var CHART_SRC = location.protocol + '//' + location.host + "/view/chart.php",
     PARAM_TYPE_AP = "ap",
     PARAM_TYPE_BP = "bp";
 
-function Chart(window, document, langStr, srvcStrObj, eventHandler, isPrintPage)
+function Chart(window, document, langStr, eventHandler, isPrintPage)
 {
     this.langStr = langStr;
-    this.actions = srvcStrObj["chartPage"];
     this.isPrintPage = isPrintPage || false;
 
     this.window = window;
@@ -62,7 +61,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
     this.chartFactoryContainer = factoryContainer;
 
     var pV = {
-            action: self.actions["putChartContainer"],
+            action: "putChartContainer",
             data: {
                 data: 'data'
             }
@@ -176,7 +175,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
 
     function PrintFile(flightId, fromTime, toTime, prms){
         var pV = {
-                action: self.actions["figurePrint"],
+                action: "figurePrint",
                 data: {
                     flightId: flightId,
                     fromTime: fromTime,
@@ -346,7 +345,7 @@ Chart.prototype.LoadFlotChart = function() {
 
     self.Prm = new Param(self.flightId,
             self.startFrame, self.endFrame,
-            self.apParams, self.bpParams, self.actions, self.isPrintPage);
+            self.apParams, self.bpParams, self.isPrintPage);
 
     var lineWidth = self.placeholder.data('linewidth');
 
@@ -360,14 +359,14 @@ Chart.prototype.LoadFlotChart = function() {
             self.plotAxes = self.plot.getAxes();
             self.plotDataset = self.plot.getData();
 
-            self.AxesWrk = new AxesWorker(self.stepLength, self.startCopyTime, self.plotAxes, self.actions);
+            self.AxesWrk = new AxesWorker(self.stepLength, self.startCopyTime, self.plotAxes);
 
             self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
 
             self.Exc = new Exception(self.flightId,
                     self.apParams, self.bpParams, self.Prm.refParamArr,
                     self.Prm.associativeParamsArr, self.placeholder, self.chartContent,
-                    self.plotDataset, self.plotAxes.xaxis, self.plotYaxArr, self.actions);
+                    self.plotDataset, self.plotAxes.xaxis, self.plotYaxArr);
 
             self.Exc.ReceiveExcepions();
             self.Exc.UpdateExcSupportTools();
@@ -376,7 +375,7 @@ Chart.prototype.LoadFlotChart = function() {
                     self.apParams, self.bpParams, self.Prm.associativeParamsArr,
                     self.plotAxes.xaxis, self.plotYaxArr,
                     self. plotDataset, self.placeholder,
-                    self.chartContent, self.actions);
+                    self.chartContent);
             //receive legend titles
             self.Legnd.ReceiveLegend();
 

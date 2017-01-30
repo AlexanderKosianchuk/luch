@@ -6,7 +6,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ViewOptionsController.php"
 $c = new ViewOptionsController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->viewOptionsActions["putViewOptionsContainer"]) {
+    if($c->action === "putViewOptionsContainer") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
@@ -40,7 +40,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getFlightDuration"]) //show form for uploading
+    else if($c->action === "getFlightDuration")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -74,7 +74,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getParamCodesByTemplate"]) //show form for uploading
+    else if($c->action === "getParamCodesByTemplate")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -109,7 +109,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getDefaultTemplateParamCodes"]) //show form for uploading
+    else if($c->action === "getDefaultTemplateParamCodes")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -143,7 +143,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getBruTypeId"]) //show form for uploading
+    else if($c->action === "getBruTypeId")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -175,7 +175,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getBruTemplates"]) //show form for uploading
+    else if($c->action === "getBruTemplates")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -207,7 +207,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getParamListGivenQuantity"])
+    else if($c->action === "getParamListGivenQuantity")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -298,7 +298,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["getSearchedParams"])
+    else if($c->action === "getSearchedParams")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -329,13 +329,13 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == "getEventsList") //show form for uploading
+    else if($c->action === "getEventsList")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['flightId']))
             {
-                $flightId = $c->data['flightId'];
+                $flightId = intval($c->data['flightId']);
                 $eventsListHeader = $c->GetEventsListHeader($flightId);
                 $eventsList = $c->ShowEventsList($flightId);
 
@@ -363,7 +363,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["setEventReliability"]) //show form for uploading
+    else if($c->action === "setEventReliability")
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
@@ -394,7 +394,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["createTpl"])
+    else if($c->action === "createTpl")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -434,7 +434,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->viewOptionsActions["changeParamColor"])
+    else if($c->action == "changeParamColor")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -478,6 +478,42 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
 
                 $c->UpdateExceptionComment($flightId, $excid, $text);
                 $answ["status"] = "ok";
+
+                echo json_encode($answ);
+            }
+            else
+            {
+                $answ["status"] = "err";
+                $answ["error"] = "Not all nessesary params sent. Post: ".
+                        json_encode($_POST) . ". Page fileUploader.php";
+                echo(json_encode($answ));
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = $c->lang->notAllowedByPrivilege;
+            echo(json_encode($answ));
+        }
+    } else if($c->action == 'saveFlightComment') {
+        if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
+        {
+            $params = [];
+            parse_str($c->data, $params);
+
+            if(isset($params['flight-id'])) {
+                $flightId = intval($params['flight-id']);
+
+                $Fd = new Folder();
+                $folder = $Fd->GetFlightFolder($flightId, $c->_user->userInfo['id']);
+                unset($Fd);
+
+                $answ = [];
+                $answ["status"] = "not allowed";
+                if (!empty($folder)) {
+                    $c->UpdateFlightComment($flightId, $params);
+                    $answ["status"] = "ok";
+                }
 
                 echo json_encode($answ);
             }

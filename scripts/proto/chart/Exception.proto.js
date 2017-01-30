@@ -11,7 +11,7 @@
 function Exception(flightId,
         apParams, bpParams, refParamArr,
         associativeParamsArr, placeholder, contentChartContainer,
-        data, xAxis, yAxes, actions){
+        data, xAxis, yAxes){
 
     this.flightId = flightId;
     this.apParams = apParams;
@@ -26,8 +26,6 @@ function Exception(flightId,
     this.dataset = data;
     this.xAxis = xAxis;
     this.yAxes = yAxes;
-
-    this.actions = actions;
 
     this.excRectanglesArr = new Array();
     this.barContainersArr = new Array();
@@ -45,7 +43,7 @@ Exception.prototype.ReceiveExcepions = function(){
     for(var i = 0; i < this.paramCount; i++){
         var refParam = this.refParamArr[i],
             pV = {
-                action: self.actions['getFlightExceptions'],
+                action: 'getFlightExceptions',
                 data:{
                     flightId: self.flightId,
                     refParam: refParam

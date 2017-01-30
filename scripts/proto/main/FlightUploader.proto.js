@@ -1,6 +1,6 @@
 var FILE_PROCCESSOR_SRC = location.protocol + '//' + location.host + "/view/fileUploader.php";
 
-function FlightUploader(window, document, langStr, srvcStrObj, eventHandler)
+function FlightUploader(window, document, langStr, eventHandler)
 {
     this.langStr = langStr;
     this.firstUploadedComplt = false;
@@ -23,10 +23,6 @@ function FlightUploader(window, document, langStr, srvcStrObj, eventHandler)
     this.flightUploaderTopMenu = null;
     this.flightUploaderOptions = null;
     this.flightUploaderContent = null;
-
-    this.flightUploaderActions = srvcStrObj['uploaderPage'];
-    this.sliceActions = srvcStrObj['slicesPage'];
-    this.flightFileActions = srvcStrObj['flightsPage'];
 }
 
 FlightUploader.prototype.FillFactoryContaider = function(factoryContainer) {
@@ -56,16 +52,18 @@ FlightUploader.prototype.ResizeFlightUploader = function(e) {
     var self = this;
 
     if((self.flightUploaderOptions != null) &&
-            (self.flightUploaderFactoryContainer != null)){
+            (self.flightUploaderFactoryContainer != null)
+    ){
         self.flightUploaderOptions.css({
             'width': self.flightUploaderFactoryContainer.width(),
             'height': '50px'
         });
     }
 
-    if((self.flightUploaderTopMenu != null) &&
-            (self.flightUploaderOptions != null) &&
-            (self.flightUploaderFactoryContainer != null)){
+    if((self.flightUploaderTopMenu != null)
+        && (self.flightUploaderOptions != null)
+        && (self.flightUploaderFactoryContainer != null)
+    ){
         self.flightUploaderContent.css({
             'width': self.flightUploaderFactoryContainer.width() - 10,
             "height": self.window.height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35, //35 because padding and margin
@@ -143,7 +141,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
     //radiobuttons import/convert
     $("div#importConvertRadio").buttonset().change(function(e){
         var el = $(e.target);
-        if(el.attr("id") == self.flightFileActions["flightFileConvert"]){
+        if(el.attr("id") == "flightFileConvert"){
             previewCheckBoxDiv.slideToggle(200);
             bruTypeSelectForUploadingDiv.slideToggle(200);
             importInsteadConvert = false;
@@ -153,7 +151,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                     height: "+=" + dialogHeightDelta
                   }, 200);
             }
-        } else if(el.attr("id") == self.flightFileActions["flightFileImport"]){
+        } else if(el.attr("id") == "flightFileImport"){
             previewCheckBoxDiv.slideToggle(200);
             bruTypeSelectForUploadingDiv.slideToggle(200);
             importInsteadConvert = true;
@@ -264,7 +262,7 @@ FlightUploader.prototype.GetFlightParams = function(
     if(self.flightUploaderContent != null){
         //when file uploaded call fileProcessor to import it
         var pV = {
-                action: self.flightUploaderActions["flightShowUploadingOptions"],
+                action: "flightShowUploadingOptions",
                 data: {
                     index: index,
                     file: file,
@@ -371,7 +369,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
 
     //when file uploaded call fileProcessor to import it
     var pV = {
-        action: self.flightUploaderActions["flightShowUploadingOptions"],
+        action: "flightShowUploadingOptions",
         data: {
             index: index,
             file: file,
@@ -512,7 +510,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
             plotDataset = Object(),
 
             pV = {
-                action: self.flightUploaderActions["flightUploaderPreview"],
+                action: "flightUploaderPreview",
                 data: {
                     file: fileName,
                     bruType: bruType,
@@ -711,14 +709,14 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                         flightAditionalInfo = 0;
                     }
 
-                    var flightConvertionAction = self.flightUploaderActions["flightProcces"],
+                    var flightConvertionAction = "flightProcces",
                         tempFileName = guid() + "_tempStatus.json",
                         performProc = $el.find("input#execProc").prop('checked'),
                         etalonIdToCompare =
                             $el.find("select.FlightUploadingInputs :selected").data("sliceid");
 
                     if(performProc == true){
-                        flightConvertionAction = self.flightUploaderActions["flightProccesAndCheck"];
+                        flightConvertionAction = "flightProccesAndCheck";
                     }
 
                     var pV = {
@@ -789,7 +787,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     fileName = el.data("file"),
                     bruType = el.data("brutype"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
-                    action = self.flightUploaderActions["flightCutFile"];
+                    action = "flightCutFile";
 
                 if((self.plotSelectedFromRangeStack[curIndex] != undefined) &&
                         (self.plotSelectedToRangeStack[curIndex] != undefined)){
@@ -797,9 +795,9 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     $("input#ignoreDueUploading" + curIndex).prop('checked', true);
 
                     if(el.hasClass('SliceFlightButt')){
-                        action = self.flightUploaderActions["flightCutFile"];
+                        action = "flightCutFile";
                     } else if(el.hasClass('SliceCyclicFlightButt')){
-                        action = self.flightUploaderActions["flightCyclicSliceFile"];
+                        action = "flightCyclicSliceFile";
                     }
 
                     var pV = {
@@ -866,7 +864,7 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     fileName = el.data("file"),
                     bruType = el.data("brutype"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
-                    action = self.flightUploaderActions["flightCutFile"];
+                    action = "flightCutFile";
 
                 if((self.plotSelectedFromRangeStack[curIndex] != undefined) &&
                         (self.plotSelectedToRangeStack[curIndex] != undefined)){
@@ -874,9 +872,9 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     $("input#ignoreDueUploading" + curIndex).prop('checked', true);
 
                     if(el.hasClass('SliceFlightButt')){
-                        action = self.flightUploaderActions["flightCutFile"];
+                        action = "flightCutFile";
                     } else if(el.hasClass('SliceCyclicFlightButt')){
-                        action = self.flightUploaderActions["flightCyclicSliceFile"];
+                        action = "flightCyclicSliceFile";
                     }
 
                     var pV = {
@@ -955,7 +953,7 @@ FlightUploader.prototype.EasyUploading = function(
         fileName
 ) {
 
-    var flightConvertionAction = this.flightUploaderActions["flightEasyUpload"],
+    var flightConvertionAction = "flightEasyUpload",
         tempFileName = guid() + "_tempStatus.json";
 
     var pV = {
@@ -978,7 +976,7 @@ FlightUploader.prototype.Import = function(
 ) {
     var self = this,
     pV = {
-        'action': self.flightUploaderActions["itemImport"],
+        'action': "itemImport",
         'data': {
             'file': file
         }

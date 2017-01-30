@@ -10,10 +10,9 @@
 //=============================================================
 
 function Legend(flightId, legendContainer, apParams, bpParams, associativeParamsArr,
-    plotXaxis, plotYaxes, plotDataset, placeholder, contentChartContainer, actions){
+    plotXaxis, plotYaxes, plotDataset, placeholder, contentChartContainer){
 
     this.flightId = flightId;
-    this.actions = actions;
     this.dataset = plotDataset;
     this.ph = placeholder;
     this.ccCont = contentChartContainer;
@@ -159,7 +158,7 @@ Legend.prototype.ReceiveLegend = function(){
     if(this.legendTitlesNotReceived) {
         var paramCodes = self.apArr.concat(self.bpArr),
         pV = {
-            action: self.actions["rcvLegend"],
+            action: "rcvLegend",
             data:{
                 flightId: self.flightId,
                 paramCodes: paramCodes

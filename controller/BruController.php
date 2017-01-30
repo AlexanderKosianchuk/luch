@@ -5,7 +5,6 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class BruController extends CController
 {
     public $curPage = 'bruTypesPage';
-    public $bruActions;
 
     function __construct()
     {
@@ -13,7 +12,6 @@ class BruController extends CController
         $this->setAttributes();
 
         $L = new Language();
-        $this->bruActions = (array)$L->GetServiceStrs($this->curPage);
         unset($L);
     }
 

@@ -275,10 +275,8 @@ class Folder
         return $folderInfo;
     }
 
-    public function GetFlightFolder($extFlightId, $extUserId)
+    public function GetFlightFolder($flightId, $userId)
     {
-        $flightId = $extFlightId;
-        $userId = $extUserId;
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
@@ -287,6 +285,7 @@ class Folder
 
         $result = $link->query($query);
 
+        $folderInfo = [];
         if($row = $result->fetch_array())
         {
             $folderId = $row['folderId'];

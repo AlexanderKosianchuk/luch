@@ -370,7 +370,14 @@
     "rememberMe":"Remember",
     "loginFailed": "Login Failed",
     "notAllowedByPrivilege" : "No privilege",
-    "search": "Search"
+    "search": "Search",
+    "flightComment": "Comment",
+    "allowance": "Allowance",
+    "commanderAdmitted": "aerobatic",
+    "aircraftAllowed": "technical",
+    "generalAdmission": "general",
+    "analyzed": "Analyzed",
+    "emptyFlightComment": "Absent"
 },
 
 "printerPage":{

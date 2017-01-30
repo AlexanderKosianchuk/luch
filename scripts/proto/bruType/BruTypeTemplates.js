@@ -1,11 +1,8 @@
 ///==================================================
 //TEMPLATES
 ///==================================================
-function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryContainer) {
-    var langStr = langStr,
-        actions = srvcStrObj["bruTypesPage"],
-        flightViewOptionActions = srvcStrObj["viewOptionsPage"],
-        eventHandler = eventHandler;
+function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
+    var langStr = langStr
 
     var bruTypeId = null;
 
@@ -65,7 +62,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
                 });
 
                 var pV = {
-                        action: actions["updateTpl"],
+                        action: "updateTpl",
                         data: {
                             bruTypeId: bruTypeId,
                             tplOldName: tplOldName$,
@@ -102,7 +99,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
         $("button#deleteBruTypeTplBut").on("click", function(e){
             var tplName$ = $("#bruTypeTplList option:selected").attr("name").trim(),
                 pV = {
-                        action: actions["deleteTpl"],
+                        action: "deleteTpl",
                         data: {
                             bruTypeId: bruTypeId,
                             name: tplName$
@@ -138,7 +135,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
         $("button#defaultBruTypeTplBut").on("click", function(e){
             var tplName$ = $("#bruTypeTplList option:selected").attr("name").trim(),
             pV = {
-                    action: actions["defaultTpl"],
+                    action: "defaultTpl",
                     data: {
                         bruTypeId: bruTypeId,
                         name: tplName$
@@ -190,7 +187,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
 
             $("#here").on("click", function(e){
                 var data = [null, //flightId null to leave curr val
-                    flightViewOptionActions['getBruTemplates'],
+                    'getBruTemplates',
                     factoryWindow];
 
                 eventHandler.trigger("viewFlightOptions", data);
@@ -257,7 +254,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
 
     CreateTpl = function(tplName, params){
         var pV = {
-                action: actions["createTpl"],
+                action: "createTpl",
                 data: {
                     bruTypeId: bruTypeId,
                     name: tplName,
@@ -278,7 +275,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
 
     ReceiveTplsList = function(){
         var pV = {
-                action: actions["editingBruTypeTemplatesReceiveTplsList"],
+                action: "editingBruTypeTemplatesReceiveTplsList",
                 data: {
                     bruTypeId: bruTypeId
                 }
@@ -312,7 +309,7 @@ function BruTypeTemplates(langStr, srvcStrObj, eventHandler, bruTypeListFactoryC
 
     ReceiveParamsList = function(){
         var pV = {
-                action: actions["editingBruTypeTemplatesReceiveParamsList"],
+                action: "editingBruTypeTemplatesReceiveParamsList",
                 data: {
                     bruTypeId: bruTypeId
                 }

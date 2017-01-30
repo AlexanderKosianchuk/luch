@@ -3,11 +3,10 @@
 
 var USER_SRC = location.protocol + '//' + location.host + "/view/user.php";
 
-function User($window, document, langStr, srvcStrObj, eventHandler) {
+function User($window, document, langStr, eventHandler) {
     'use strict';
 
-    var actions = srvcStrObj.userPage,
-        userId = null,
+    var userId = null,
         userListWorkspace = null,
         userListContainer = null,
         userListContent = null,
@@ -46,7 +45,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
 
     this.changeLanguage = function (lang) {
         var pV = {
-            action : actions.userChangeLanguage,
+            action : 'userChangeLanguage',
             data : {
                 lang : lang
             }
@@ -406,11 +405,11 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
     };
 
     this.ShowCreateUserForm = function () {
-        return this.ShowUserForm(actions['createUserForm'], {"data": 'dummy'});
+        return this.ShowUserForm('createUserForm', {"data": 'dummy'});
     };
 
     this.ShowUpdateUserForm = function ($id) {
-        return this.ShowUserForm(actions['updateUserForm'], {"userid": $id});
+        return this.ShowUserForm('updateUserForm', {"userid": $id});
     }
 
     this.UserSave = function () {
@@ -445,7 +444,7 @@ function User($window, document, langStr, srvcStrObj, eventHandler) {
             "dataType" : 'json',
             "type" : "POST",
             "data" : {
-                'action' : actions["deleteUser"],
+                'action' : "deleteUser",
                 'data' : {
                     'userIds' : userIds
                 }

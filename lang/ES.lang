@@ -370,7 +370,14 @@
     "rememberMe":"Recordar",
     "loginFailed": "Error de autorización",
     "notAllowedByPrivilege" : "Privilegios insuficientes",
-    "search": "Búsqueda"
+    "search": "Búsqueda",
+    "flightComment": "Comment",
+    "allowance": "Allowance",
+    "commanderAdmitted": "aerobatic",
+    "aircraftAllowed": "technical",
+    "generalAdmission": "general",
+    "analyzed": "Analyzed",
+    "emptyFlightComment": "Absent"
 },
 
 "printerPage":{

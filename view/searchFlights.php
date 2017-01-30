@@ -6,14 +6,13 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/SearchFlightsController.ph
 $c = new SearchFlightController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->controllerActions["showSearchForm"]) {
+    if($c->action === "showSearchForm") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
             {
-                $action = $c->action;
                 $html = $c->ShowSearchForm();
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -43,15 +42,14 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
             exit();
         }
-    } else if($c->action == $c->controllerActions["getFilters"]) {
+    } else if($c->action === "getFilters") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['fdrId']))
             {
-                $action = $c->action;
                 $fdrId = $c->data['fdrId'];
                 $html = $c->BuildSearchFlightAlgorithmesList($fdrId);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 $answ = array(
                         'status' => 'ok',
@@ -80,20 +78,19 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
             exit();
         }
-    } else if($c->action == $c->controllerActions["applyFilter"]) {
+    } else if($c->action === "applyFilter") {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['algId']) &&
                     isset($c->data['form']))
             {
-                $action = $c->action;
                 $algId = $c->data['algId'];
                 parse_str($c->data['form'], $form);
 
                 $flightIds = $c->GetFlightsByCriteria($form);
                 $idsArr = $c->SearchByAlgorithm($algId, $flightIds);
                 $html = $c->BuildFlightList($idsArr);
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
 
                 if(empty($html)) {
                     $html = $c->lang->searchBroughtNoResult;

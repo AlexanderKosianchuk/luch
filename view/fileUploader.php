@@ -6,7 +6,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UploaderController.php");
 $c = new UploaderController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->flightActions["flightShowUploadingOptions"]) {
+    if($c->action === "flightShowUploadingOptions") {
         if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['index']) &&
@@ -36,7 +36,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightUploaderPreview"]) //show form for uploading
+    else if($c->action === "flightUploaderPreview")
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
@@ -63,7 +63,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightCutFile"]) //show form for uploading
+    else if($c->action === "flightCutFile")
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
@@ -101,7 +101,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightCyclicSliceFile"])
+    else if($c->action === "flightCyclicSliceFile")
     {
         if(in_array(User::$PRIVILEGE_EDIT_FLIGHTS, $c->_user->privilege))
         {
@@ -136,7 +136,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightProcces"]) //show form for uploading
+    else if($c->action === "flightProcces")
     {
         if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
@@ -228,7 +228,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightProccesAndCheck"]) //show form for uploading
+    else if($c->action === "flightProccesAndCheck")
     {
         if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
@@ -327,7 +327,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             }
         }
     }
-    else if($c->action == $c->flightActions["flightProccesCheckAndCompareToEtalon"]) //show form for uploading
+    else if($c->action === "flightProccesCheckAndCompareToEtalon")
     {
         if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
@@ -339,7 +339,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["flightEasyUpload"])
+    else if($c->action === "flightEasyUpload")
     {
         if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
         {
@@ -434,7 +434,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             }
         }
     }
-    else if($c->action == $c->flightActions["flightDelete"]) // delete
+    else if($c->action === "flightDelete")
     {
         if(in_array(User::$PRIVILEGE_DEL_FLIGHTS, $c->_user->privilege))
         {
@@ -448,7 +448,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
-    else if($c->action == $c->flightActions["itemImport"])
+    else if($c->action === "itemImport")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -478,33 +478,24 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             else
             {
                 $answ["status"] = "err";
-                $answ['data']['error'] = "Not all nessesary params sent. Post: ".
-                        json_encode($_POST) . ". Page fileUploader.php";
-                $c->RegisterActionReject($c->action, "rejected", 0, $answ['data']['error']);
+                $answ["error"] = $c->lang->notAllowedByPrivilege;
+                $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
                 echo(json_encode($answ));
             }
         }
         else
         {
-            $answ["status"] = "err";
-            $answ["error"] = $c->lang->notAllowedByPrivilege;
-            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
-            echo(json_encode($answ));
+                echo("Undefined action. Data: " . json_encode($_POST['data']) .
+                    " . Action: " . json_encode($_POST['action']) .
+                    " . Page: " . $c->curPage. ".");
+                error_log("Undefined action. Data: " . json_encode($_POST['data']) .
+                    " . Action: " . json_encode($_POST['action']) .
+                    " . Page: " . $c->curPage. ".");
         }
     }
     else
     {
-            echo("Undefined action. Data: " . json_encode($_POST['data']) .
-                " . Action: " . json_encode($_POST['action']) .
-                " . Page: " . $c->curPage. ".");
-
-            error_log("Undefined action. Data: " . json_encode($_POST['data']) .
-                " . Action: " . json_encode($_POST['action']) .
-                " . Page: " . $c->curPage. ".");
+        echo("Authorization error. Page: " . $c->curPage);
+        error_log("Authorization error. Page: " . $c->curPage);
     }
-}
-else
-{
-    echo("Authorization error. Page: " . $c->curPage);
-    error_log("Authorization error. Page: " . $c->curPage);
 }

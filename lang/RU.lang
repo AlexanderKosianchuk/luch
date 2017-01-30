@@ -370,7 +370,14 @@
     "rememberMe":"Запомнить",
     "loginFailed": "Авторизация не удалась",
     "notAllowedByPrivilege" : "Не достаточно привилегий для выполнения действия",
-    "search": "Поиск"
+    "search": "Поиск",
+    "flightComment": "Комментарий",
+    "allowance": "Допуски",
+    "commanderAdmitted": "командир допущен",
+    "aircraftAllowed": "ВС допущено",
+    "generalAdmission": "общий",
+    "analyzed": "Проанализировано",
+    "emptyFlightComment": "Отсутствует"
 },
 
 "printerPage":{

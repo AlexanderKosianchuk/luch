@@ -5,16 +5,11 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 class UploaderController extends CController
 {
     public $curPage = 'uploaderPage';
-    public $flightActions;
 
     function __construct()
     {
         $this->IsAppLoggedIn();
         $this->setAttributes();
-
-        $L = new Language();
-        $this->flightActions = (array)$L->GetServiceStrs($this->curPage);
-        unset($L);
     }
 
     public function ShowFlightParams($extIndex, $extBruType, $extFilePath)

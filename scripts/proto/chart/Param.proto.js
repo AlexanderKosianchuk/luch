@@ -9,7 +9,7 @@
 
 function Param(flightId,
     startFrame, endFrame,
-    apParams, bpParams, actions, isPrintPage){
+    apParams, bpParams, isPrintPage){
 
     this.flightId = flightId;
     this.apCount = 0;
@@ -24,8 +24,6 @@ function Param(flightId,
 
     this.startFrame = startFrame;
     this.endFrame = endFrame;
-
-    this.actions = actions;
 
     this.isPrintPage = isPrintPage;
 
@@ -81,7 +79,7 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
         apDataArray = Array();
 
         pV = {
-            action: self.actions['getApParamValue'],
+            action: 'getApParamValue',
             data:{
                 flightId: self.flightId,
                 paramApCode: paramCode,
@@ -101,7 +99,7 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
     }).done(function(receivedParamPoints){
         apDataArray = receivedParamPoints;
         var pV = {
-                action: self.actions['getParamInfo'],
+                action: 'getParamInfo',
                 data: {
                     flightId: self.flightId,
                     paramCode: paramCode
@@ -151,7 +149,7 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
         bpDataArray = Array(),
         color = String(),
         pV = {
-            action: self.actions['getBpParamValue'],
+            action: 'getBpParamValue',
             data:{
                 flightId: self.flightId,
                 paramBpCode: paramCode
@@ -168,7 +166,7 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
         bpDataArray = receivedParamPoints;
 
         var pV = {
-                action: self.actions['getParamInfo'],
+                action: 'getParamInfo',
                 data: {
                     flightId: self.flightId,
                     paramCode: paramCode

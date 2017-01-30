@@ -1,11 +1,8 @@
 var FLIGHTS_VIEW_OPTIONS_SRC = location.protocol + '//' + location.host + "/view/viewOptions.php";
 
-function FlightViewOptions(window, document, langStr, srvcStrObj, eventHandler)
+function FlightViewOptions(window, document, langStr, eventHandler)
 {
     this.langStr = langStr;
-    this.actions = srvcStrObj["viewOptionsPage"];
-    this.bruTypeTasks = srvcStrObj["bruTypesPage"];
-    this.printerTasks = srvcStrObj["printerPage"];
 
     this.flightId = null;
     this.task = null;
@@ -29,7 +26,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
     this.flightOptionsFactoryContainer = factoryContainer;
 
     var pV = {
-            action: self.actions["putViewOptionsContainer"],
+            action: "putViewOptionsContainer",
             data: {
                 data: 'data'
             }
@@ -62,17 +59,17 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
 
             if(self.task == null){
                 self.ShowFlightViewTemplates();
-            } else if(self.task == self.actions['getBruTemplates']){
+            } else if(self.task === 'getBruTemplates'){
                 $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
                 $("#templatesLeftMenuRow").addClass('LeftMenuRowSelected');
 
                 self.ShowFlightViewTemplates();
-            } else if(self.task == 'getEventsList'){
+            } else if(self.task === 'getEventsList'){
                 $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
                 $("#eventsLeftMenuRow").addClass('LeftMenuRowSelected');
 
                 self.ShowFlightViewEvents();
-            } else if(self.task == self.actions['getParamList']){
+            } else if(self.task === 'getParamList'){
                 $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
                 $("#paramsListLeftMenuRow").addClass('LeftMenuRowSelected');
 

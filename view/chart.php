@@ -6,7 +6,7 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
 $c = new ChartController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == $c->chartActions["putChartContainer"]) {
+    if($c->action === "putChartContainer") {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
             if(isset($c->data['data']))
@@ -37,7 +37,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["figurePrint"])
+    else if($c->action === "figurePrint")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -144,7 +144,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getApParamValue"])
+    else if($c->action === "getApParamValue")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -183,7 +183,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getBpParamValue"])
+    else if($c->action === "getBpParamValue")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -215,7 +215,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["rcvLegend"])
+    else if($c->action === "rcvLegend")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -244,7 +244,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getParamMinmax"])
+    else if($c->action === "getParamMinmax")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -275,7 +275,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["setParamMinmax"])
+    else if($c->action === "setParamMinmax")
     {
         if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $c->_user->privilege))
         {
@@ -311,7 +311,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getParamColor"])
+    else if($c->action === "getParamColor")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -341,7 +341,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getParamInfo"])
+    else if($c->action === "getParamInfo")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {
@@ -374,7 +374,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
         }
     }
-    else if($c->action == $c->chartActions["getFlightExceptions"])
+    else if($c->action === "getFlightExceptions")
     {
         if(in_array(User::$PRIVILEGE_VIEW_FLIGHTS, $c->_user->privilege))
         {

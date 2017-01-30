@@ -8,8 +8,7 @@
 //=============================================================
 
 
-function AxesWorker(extStepLength, extStartCopyTime, plotAxes, actions){
-    this.actions = actions;
+function AxesWorker(extStepLength, extStartCopyTime, plotAxes){
     this.stepLength = extStepLength;
     this.startCopyTime = extStartCopyTime;
     this.axes = plotAxes;
@@ -120,7 +119,7 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
     for(var i = 0; i < paramsArr.length; i++)
     {
         var pV = {
-            action: self.actions["getParamMinmax"],
+            action: "getParamMinmax",
             data:{
                 flightId: flightId,
                 paramCode: paramsArr[i],
@@ -160,7 +159,7 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
         for(var i = 0; i < paramsArr.length; i++)
         {
             var pV = {
-                action: self.actions["setParamMinmax"],
+                action: "setParamMinmax",
                 data:{
                     flightId: flightId,
                     paramCode: paramsArr[i],

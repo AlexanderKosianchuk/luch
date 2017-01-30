@@ -440,9 +440,8 @@ class User
         return $this->GetUserIdByName($username);
     }
 
-    public function GetUserNameById($extRequester)
+    public function GetUserNameById($requester)
     {
-        $requester = $extRequester;
         $c = new DataBaseConnector();
         $link = $c->Connect();
 

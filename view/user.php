@@ -6,11 +6,9 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
 $c = new UserController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
-    if($c->action == 'userLogout') {
+    if($c->action === 'userLogout') {
         if(isset($c->data['data']))
         {
-            $action = $c->action;
-
             $c->Logout();
 
             $answ = array(
@@ -27,12 +25,11 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["userChangeLanguage"]) {
+    } else if($c->action === "userChangeLanguage") {
         if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
             if(isset($c->data['lang']))
             {
-                $action = $c->action;
                 $lang = $c->data['lang'];
 
                 $c->ChangeLanguage($lang);
@@ -60,10 +57,9 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["updateUserOptions"]) {
+    } else if($c->action === "updateUserOptions") {
         if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {
-            $action = $c->action;
             $form = [];
             parse_str($c->data, $form);
 
@@ -179,12 +175,11 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["createUserForm"]) {
+    } else if($c->action === "createUserForm") {
         if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             $modal = $c->BuildCreateUserModal();
-            $action = $c->action;
-            $c->RegisterActionExecution($action, "executed");
+            $c->RegisterActionExecution($c->action, "executed");
             echo(json_encode($modal));
         }
         else
@@ -195,15 +190,14 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["updateUserForm"]) {
+    } else if($c->action === "updateUserForm") {
         if(in_array(User::$PRIVILEGE_EDIT_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($c->data['userid']))
             {
                 $userid = intval($c->data['userid']);
                 $modal = $c->BuildUpdateUserModal($userid);
-                $action = $c->action;
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
                 echo(json_encode($modal));
             }
             else
@@ -224,7 +218,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action == $c->userActions["createUser"]) {
+    } else if($c->action === "createUser") {
         if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             if(isset($c->data) &&
@@ -233,7 +227,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             {
                 $form = $_POST;
                 $file = $_FILES['logo']['tmp_name'];
-                $action = $c->action;
 
                 $answ = [
                     'status' => 'ok'
@@ -292,7 +285,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     }
                 }
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
                 echo(json_encode($answ));
                 exit();
             }
@@ -314,7 +307,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
             exit();
         }
-    } else if($c->action == $c->userActions["updateUser"]) {
+    } else if($c->action === "updateUser") {
         if(in_array(User::$PRIVILEGE_ADD_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($_POST['useridtoupdate']))
@@ -328,8 +321,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 {
                     $file = $_FILES['logo']['tmp_name'];
                 }
-
-                $action = $c->action;
 
                 $answ = [
                     'status' => 'ok'
@@ -367,7 +358,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     }
                 }
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
                 echo(json_encode($answ));
                 exit();
             }
@@ -389,13 +380,12 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             echo(json_encode($answ));
             exit();
         }
-    } else if($c->action == $c->userActions["deleteUser"]) {
+    } else if($c->action === "deleteUser") {
         if(in_array(User::$PRIVILEGE_DEL_USERS, $c->_user->privilege))
         {
             if(isset($c->data) && isset($c->data['userIds']))
             {
                 $c->_userserIds = $c->data['userIds'];
-                $action = $c->action;
 
                 $answ = [
                     'status' => 'ok'
@@ -406,7 +396,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     $answ["error"] = $c->lang->errorDuringUserDeletion;
                 }
 
-                $c->RegisterActionExecution($action, "executed");
+                $c->RegisterActionExecution($c->action, "executed");
                 echo(json_encode($answ));
                 exit();
             }
