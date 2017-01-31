@@ -485,7 +485,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             if(isset($c->data['folderId']))
             {
                 $folderid = intval($c->data['folderId']);
-
                 $result = $c->BuildSelectedFolderContent($folderid);
 
                 $folderContent = $result['content'];
