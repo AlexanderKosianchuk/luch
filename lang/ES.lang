@@ -377,6 +377,7 @@
     "aircraftAllowed": "technical",
     "generalAdmission": "general",
     "analyzed": "Analyzed",
+    "toAnalyze": "To analyze",
     "emptyFlightComment": "Absent"
 },
 

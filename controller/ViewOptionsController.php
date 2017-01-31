@@ -592,15 +592,26 @@ class ViewOptionsController extends CController
 
         . "<div class='comments_coll-2'>"
 
-        . "<label class='comments__btn-label'>".$this->lang->analyzed."</label>";
+        . "<div class='comments_row'>"
+        . "<label class='comments__btn-label'>";
 
+        if (isset($flightComment['id'])) {
+            $str .= $this->lang->analyzed;
+        } else {
+            $str .= $this->lang->toAnalyze;
+        }
+
+        $str .= "</label>"
+        . "</div>"
+
+        . "<div class='comments_row'>";
         if (User::isAdmin($role) || User::isModerator($role)) {
             $isAnalyzedButtnClass = "";
             if (isset($flightComment['id'])) {
                 $isAnalyzedButtnClass = 'is-analyzed';
             }
             $str .= "<button id='comments__btn' type='button' class='".$isAnalyzedButtnClass."'>"
-            . "<img class='comments__btn-img' src='stylesheets/basicImg/checked.png' alt='Checked'>"
+            . "<img class='comments__btn-img'>"
             . "</button>";
         } else {
             if (isset($flightComment['id_user'])) {
@@ -611,6 +622,7 @@ class ViewOptionsController extends CController
                 $str .= "<p>".'-'."</p>";
             }
         }
+        $str .= "</div>";
 
         $str .= "</div>"
 

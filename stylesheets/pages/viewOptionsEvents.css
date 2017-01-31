@@ -90,8 +90,8 @@
 }
 
 #comments__btn {
-    margin-top: 10px;
-    min-height: 50px;
+    padding: 0px;
+    margin: 10px auto;
     color: #333;
     background-color: #708090;
     border: 1px solid #adadad;
@@ -114,10 +114,24 @@
 
 #comments__btn.is-analyzed {
     color: #333;
-    background-color: #518251;
+    background-color: #68ad68;
     border-color: #555;
 }
 
 .comments__btn-img {
+    min-height: 50px;
+    width: 55px;
+    display: block;
     vertical-align: middle;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('/stylesheets/basicImg/analyze.png');
+}
+
+.is-analyzed  .comments__btn-img {
+    background-image: url('/stylesheets/basicImg/checked.png');
+}
+
+.comments_row {
+    width: 100%;
 }

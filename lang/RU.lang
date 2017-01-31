@@ -377,6 +377,7 @@
     "aircraftAllowed": "ВС допущено",
     "generalAdmission": "общий",
     "analyzed": "Проанализировано",
+    "toAnalyze": "Завершение анализа",
     "emptyFlightComment": "Отсутствует"
 },
 

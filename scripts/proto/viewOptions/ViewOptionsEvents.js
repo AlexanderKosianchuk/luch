@@ -117,11 +117,11 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
 
         printEventBlank$.on("click", function(e){
             var monochromeEventsPrint = $("#monochromeEventsPrint"),
-                eventsPrintAction = self.printerTasks['printBlank'];
+                eventsPrintAction = 'printBlank';
 
             if((monochromeEventsPrint.length > 0) &&
                     (monochromeEventsPrint.prop("checked") == true)){
-                eventsPrintAction = self.printerTasks['monochromePrintBlank'];
+                eventsPrintAction = 'monochromePrintBlank';
             }
 
             var $accordionButtons = $(".exceptions-accordion-title[data-shown='true']");
@@ -318,6 +318,7 @@ FlightViewOptions.prototype.ShowEventsList = function() {
                             },
                             function(answ) {
                                 $('#comments__btn').addClass('is-analyzed');
+                                location.reload(true);
                             }
                         )
                     });
