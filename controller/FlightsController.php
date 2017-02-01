@@ -98,7 +98,8 @@ class FlightsController extends CController
           <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=events'>%s&nbsp;</a>
           </div>", $this->lang->eventsItem);
 
-      if(($this->_user->userInfo['role'] != User::$role['user'])
+      $role = $this->_user->userInfo['role'];
+      if(User::isAdmin($role) || User::isModerator($role)
             && (in_array($this->_user->userPrivilegeArr[0], $this->_user->privilege) ||
             in_array($this->_user->userPrivilegeArr[1], $this->_user->privilege) ||
             in_array($this->_user->userPrivilegeArr[2], $this->_user->privilege) ||

@@ -20,7 +20,8 @@ class User
     public static $role = [
         'admin' => 'admin',
         'moderator' => 'moderator',
-        'user' => 'user'
+        'user' => 'user',
+        'local' => 'local'
     ];
 
     public static function isAdmin($userRole) {
@@ -41,6 +42,14 @@ class User
 
     public static function isUser($userRole) {
         if($userRole == self::$role['user']) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function isLocal($userRole) {
+        if($userRole == self::$role['local']) {
             return true;
         }
 

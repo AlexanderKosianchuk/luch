@@ -532,9 +532,23 @@ class ViewOptionsController extends CController
             }
         }
 
+        $role = $this->_user->userInfo['role'];
+        if (!User::isLocal($role)) {
+            $str .= $this->GetFlightComment($flightId);
+        }
+
+        return $str . "</h4>";
+    }
+
+    public function GetFlightComment($flightId)
+    {
         $Fc = new FlightComments();
         $flightComment = $Fc->getComment($flightId);
         unset($Fc);
+
+        $Fl = new Flight();
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        unset($Fl);
 
         $role = $this->_user->userInfo['role'];
         $isDisabled = " disabled='disabled' ";
@@ -546,7 +560,7 @@ class ViewOptionsController extends CController
         $aircraftAllowed = ($flightComment['aircraft-allowed'] ? "checked='checked'" : "") . $isDisabled;
         $generalAdmission = ($flightComment['general-admission'] ? "checked='checked'" : "") . $isDisabled;
 
-        $str .= "<form id='events-header__comments' name='events-header-comments'>"
+        $str = "<form id='events-header__comments' name='events-header-comments'>"
 
         . "<div class='comments_coll-7'>"
         . "<label class='comments__text-label'>".$this->lang->flightComment."</label>";
@@ -629,7 +643,7 @@ class ViewOptionsController extends CController
         . "<input name='flight-id' type='hidden' value='".$flightInfo['id']."'/>"
         . "</form>";
 
-        return $str . "</h4>";
+        return $str;
     }
 
     public function UpdateFlightComment($flightId, $flightCommentData)
