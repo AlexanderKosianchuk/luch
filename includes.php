@@ -8,6 +8,7 @@ require_once(@SITE_ROOT_DIR."/model/Language.php");
 
 //component
 require_once(@SITE_ROOT_DIR."/component/FlightComponent.php");
+require_once(@SITE_ROOT_DIR."/component/OSdetectionComponent.php");
 
 require_once(@SITE_ROOT_DIR."/model/DataBaseConnector.php");
 require_once(@SITE_ROOT_DIR."/model/Flight.php");

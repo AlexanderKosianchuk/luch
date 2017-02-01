@@ -63,11 +63,15 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $exportedFileDesc = fopen($exportedFilePath, "w");
 
                 $figPrRow = "time;";
-                for($i = 0; $i < count($prms); $i++)
-                {
+                for($i = 0; $i < count($prms); $i++) {
                     $paramInfo = $c->GetParamInfo($flightId, $prms[$i]);
-                    $figPrRow .= iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
-                    //$figPrRow .= $paramInfo['name'] . '('.$paramInfo['dim'].')' . ";";
+                    if (($c->_user->userInfo['lang'] === 'ru')
+                        && OSdetectionComponent::isWindows()
+                    ) {
+                        $figPrRow .= iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
+                    } else {
+                        $figPrRow .= $paramInfo['name'] . ";";
+                    }
                 }
 
                 $figPrRow = substr($figPrRow, 0, -1);
