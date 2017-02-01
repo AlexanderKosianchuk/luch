@@ -76,8 +76,6 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
                 self.ShowFlightViewParamsList();
             }
 
-            self.SupportUserComment();
-
             self.ResizeFlightViewOptionsContainer();
             self.document.scrollTop(factoryContainer.data("index") * self.window.height());
 
@@ -105,6 +103,7 @@ FlightViewOptions.prototype.ShowFlightViewEvents = function() {
     this.ShowTopMenuEventsListButtons();
     this.ShowFlightViewEventsListOptions();
     this.ShowEventsList();
+    this.SupportUserComment();
 }
 
 FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
