@@ -65,16 +65,24 @@ class DataBaseConnector
         $link = $this->Connect();
 
         $exportedFileName['dir'] = $root;
+        $exportedFileName['tmp'] = '/tmp/'.$fileName.".csv";
         $exportedFileName['root'] = $root.$fileName.".csv";
         $exportedFileName['filename'] = $fileName.".csv";
 
         $query = "SELECT * FROM `".$tableName."`"
-            ." INTO OUTFILE '".$exportedFileName['root']."'"
+            ." INTO OUTFILE '".$exportedFileName['tmp']."'"
             ." FIELDS TERMINATED BY ','"
             ." LINES TERMINATED BY ';';";
 
         $result = $link->query($query);
         $this->Disconnect();
+
+        if (file_exists($exportedFileName['tmp'])) {
+            try {
+                $status = copy($exportedFileName['tmp'], $exportedFileName['root']);
+                unlink($exportedFileName['tmp']);
+            } catch(Exception $e) { }
+        }
 
         return $exportedFileName;
     }

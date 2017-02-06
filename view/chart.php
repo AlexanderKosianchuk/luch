@@ -65,12 +65,15 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $figPrRow = "time;";
                 for($i = 0; $i < count($prms); $i++) {
                     $paramInfo = $c->GetParamInfo($flightId, $prms[$i]);
+
+                    $paramName = str_replace(["\n","\r\n","\r", ";", PHP_EOL], '', $paramInfo['name']);
+
                     if (($c->_user->userInfo['lang'] === 'ru')
                         && OSdetectionComponent::isWindows()
                     ) {
-                        $figPrRow .= iconv('utf-8', 'windows-1251', $paramInfo['name']) . ";";
+                        $figPrRow .= iconv('utf-8', 'windows-1251', $paramName) . ";";
                     } else {
-                        $figPrRow .= $paramInfo['name'] . ";";
+                        $figPrRow .= $paramName . ";";
                     }
                 }
 
