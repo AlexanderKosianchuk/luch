@@ -213,16 +213,11 @@ class Channel
         return json_decode($transmitStr);
     }
 
-    public function GetNormalizedApParam($extApTableName,
-            $extStepDivider, $extCode, $extFreq, $extPefix,
-            $extStartFrame, $extEndFrame)
+    public function GetNormalizedApParam($apTableName,
+            $stepDivider, $code, $steps, $extPefix,
+            $startFrame, $endFrame)
     {
-        $tableName = $extApTableName . "_" . $extPefix;
-        $stepDivider = $extStepDivider;
-        $code = $extCode;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $steps = $extFreq;
+        $tableName = $apTableName . "_" . $extPefix;
         $duplication = $stepDivider / $steps;
 
         $c = new DataBaseConnector();
@@ -300,30 +295,17 @@ class Channel
     {
         $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
 
-        $normTime = array();
-        $microTimeIterations = ($stepDivider / $stepLength);
-        for($i = $startFrame; $i < $endFrame; $i++)
-        {
-            $microTime = 0;
-            $dateInterval = $i * $stepLength;
-            $currTime = $startCopyTime + $dateInterval;
-            array_push($normTime, date("H:i:s", $currTime). "." . $microTime);
-            for($j = 1; $j < $microTimeIterations; $j++)
-            {
-                $microTime = $j * $stepMicroTime;
-                $dateInterval = $i * $stepLength;
-                $currTime = $startCopyTime + $dateInterval;
-                array_push($normTime, date("H:i:s", $currTime) . "." . $microTime);
-            }
+        $normTime = [];
+        $currTime = $startCopyTime * 1000;
+        for($i = $startFrame; $i < ($endFrame * $stepDivider); $i++) {
+            array_push($normTime, date("H:i:s", $currTime / 1000). "." . substr($currTime, -3));
+            $currTime += $stepMicroTime;
         }
         return $normTime;
     }
 
-    public function GetParamMinMax($extApTableName, $extParamCode)
+    public function GetParamMinMax($apTableName, $paramCode)
     {
-        $apTableName = $extApTableName;
-        $paramCode = $extParamCode;
-
         $minMax = array();
 
         $c = new DataBaseConnector();
