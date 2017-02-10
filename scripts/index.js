@@ -3,6 +3,8 @@
 /*global Language, WindowFactory, FlightList, FlightUploader, FlightProccessingStatus*/
 /*global FlightViewOptions, BruType, Chart, User, SearchFlight*/
 
+var ENTRY_URL = location.protocol + '//' + location.host + "/entry.php";
+
 jQuery(function ($) {
     'use strict';
     $(document).ready(function () {
@@ -19,7 +21,8 @@ jQuery(function ($) {
             C = null,
             U = null,
             FL = null,
-            SF = null;
+            SF = null,
+            CLB = null;
 
         LA.GetLanguage().done(function (data) {
             var langStr = data;
@@ -32,6 +35,7 @@ jQuery(function ($) {
             C = new Chart($window, $document, langStr, eventHandler);
             U = new User($window, $document, langStr, eventHandler);
             SF = new SearchFlight($window, $document, langStr, eventHandler);
+            CLB = new Calibration($window, $document, langStr, eventHandler);
 
             FL.FillFactoryContaider(wsp);
         });
@@ -88,20 +92,6 @@ jQuery(function ($) {
         ///=======================================================
         //FlightList
         ///
-
-        eventHandler.on("flightSearchFormShow", function (e, showcase) {
-            if (showcase === null) {
-                W.RemoveShowcases(1);
-                showcase = W.NewShowcase();
-            } else {
-                W.ClearShowcase(showcase);
-            }
-
-            if ((FP !== null) && (FL !== null)) {
-                FL.ShowFlightsListInitial(showcase);
-                FP.SupportUploadingStatus();
-            }
-        });
 
         eventHandler.on("startProccessing", function (e, data) {
             var bruType = data['bruType'],
@@ -196,6 +186,17 @@ jQuery(function ($) {
             }
 
             SF.FillFactoryContaider(showcase);
+        });
+
+        eventHandler.on("calibrationFormShow", function (e, showcase) {
+            if (showcase === null) {
+                W.RemoveShowcases(1);
+                showcase = W.NewShowcase();
+            } else {
+                W.ClearShowcase(showcase);
+            }
+
+            CLB.FillFactoryContaider(showcase);
         });
 
         eventHandler.on("showChart", function (e,

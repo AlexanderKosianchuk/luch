@@ -136,12 +136,21 @@ FlightList.prototype.leftMenuClick = function(e){
             $("div#view").css("display", "none");
             self.eventHandler.trigger("flightSearchFormShow", [self.flightListWorkspace]);
         }
-    }  else if(target.attr('id') == "bruTypesLeftMenuRow"){
+    }  else if(target.attr('id') == "fdrLeftMenuRow"){
         if(!target.hasClass('LeftMenuRowSelected')){
             $("#leftMenuFlightList .LeftMenuRowSelected")
                 .removeClass('LeftMenuRowSelected', {duration:500});
             $("div#view").css("display", "none");
             target.addClass('LeftMenuRowSelected', {duration:500});
+        }
+    } else if(target.attr('id') == "calibrationLeftMenuRow"){
+        if(!target.hasClass('LeftMenuRowSelected')){
+            $("#leftMenuFlightList .LeftMenuRowSelected")
+                .removeClass('LeftMenuRowSelected', {duration:500});
+            $("div#view").css("display", "none");
+            target.addClass('LeftMenuRowSelected', {duration:500});
+
+            self.eventHandler.trigger("calibrationFormShow", [self.flightListWorkspace]);
         }
     } else if(target.attr('id') == "usersLeftMenuRow"){
         if(!target.hasClass('LeftMenuRowSelected')){

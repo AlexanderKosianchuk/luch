@@ -152,6 +152,21 @@
 "searchFlights": "Поиск по полетам",
 "searchFlightsApplyAlg": "Найти",
 
+"calibration": "Градуировки",
+"calibrationForFDR": "Тип регистратора",
+"calibrationCreate": "Создать",
+"calibrationCreationForm": "Форма создатания градуировки",
+"calibrationFor": "для",
+"calibrationName": "Название",
+"calibrationParamName": "Название",
+"calibrationParamCode": "Код",
+"calibrationParamChannels": "Каналы",
+"calibrationValueAdd": "Добавить",
+"calibrationSave": "Сохранить",
+"calibrationUpdate": "Обновить",
+"calibrationList": "К списку",
+"calibrationsUnexist": "Градуировки отсутствуют",
+
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",
 "monochromeEventsPrint" : "Ч/Б печать",
@@ -257,6 +272,7 @@
     "upload": "Загрузить",
     "flightsItem": "Полеты",
     "bruTypesItem": "Регистраторы",
+    "calibrationItem": "Градуировки",
     "usersItem": "Пользователи",
     "resultsItem": "Результаты",
     "eventsItem": "События",
@@ -747,7 +763,9 @@
     "bruType":"Тип регистратора",
     "performer":"Обработал",
     "aditionalInfo": "Доп. инф."
-}
+},
 
+"calibrationPage":{
+}
 
 }

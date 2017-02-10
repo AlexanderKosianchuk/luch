@@ -4,6 +4,10 @@ require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
 
 class Bru
 {
+    private $table = 'brutypes';
+    private $apPrefix = '_ap';
+    private $bpPrefix = '_bp';
+
     public function CreateBruTypeTable()
     {
         $query = "SHOW TABLES LIKE 'brutypes';";
@@ -42,10 +46,13 @@ class Bru
         unset($c);
     }
 
-    public function GetBruList($extAvailableBruTypesIds)
+    public function GetFDRList($availableBruTypesIds)
     {
-        $availableBruTypesIds = $extAvailableBruTypesIds;
+        return $this->GetBruList($availableBruTypesIds);
+    }
 
+    public function GetBruList($availableBruTypesIds)
+    {
         $bruList = array();
         if(count($availableBruTypesIds) > 0)
         {
@@ -78,10 +85,42 @@ class Bru
         return $bruList;
     }
 
-    public function GetBruInfo($extBruType)
+    public function getFDRinfo($fdrId)
     {
-        $bruType = $extBruType;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
 
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $q = "SELECT * "
+            ." FROM `".$this->table."`"
+            ." WHERE `id` = ? LIMIT 1;";
+
+        $stmt = $link->prepare($q);
+        $stmt->bind_param("i", $fdrId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $FDRinfo = [];
+        if($row = $result->fetch_array()) {
+            foreach ($row as $key => $value) {
+                $FDRinfo[$key] = $value;
+            }
+        }
+
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+
+        return $FDRinfo;
+    }
+
+    public function GetBruInfo($bruType)
+    {
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
@@ -145,6 +184,50 @@ class Bru
         return $bruInfo;
     }
 
+    public function getFDRapCyclo($fdrId, $startIndex = 0, $pageSize = 50, $sorting = 'ASC')
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $FDRinfo = $this->getFDRinfo($fdrId);
+        $apTable = $FDRinfo['code'].$this->apPrefix;
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $q = "SELECT * "
+            ." FROM `".$apTable."`"
+            ." WHERE 1"
+            ." ORDER BY `id` " . $sorting;
+
+        if ($startIndex !== null) {
+            $q .= " LIMIT ? , ?";
+        }
+        $q .= ";";
+
+        $stmt = $link->prepare($q);
+        if ($startIndex !== null) {
+            $stmt->bind_param("ii", $startIndex, $pageSize);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $cyclo = [];
+        while($row = $result->fetch_array()) {
+            $cyclo[] = $row;
+        }
+
+        $result->free();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+        return $cyclo;
+    }
+
     public function GetBruApCyclo($extBruType, $extJtStartIndex, $extJtPageSize, $extJtSorting)
     {
         $bruType = $extBruType;
@@ -201,7 +284,9 @@ class Bru
                 "k" => $row['k'],
                 "xy" => $row['xy'],
                 "alg" => $row['alg']);
-            $gradiParam['xy'] = json_decode($gradiParam['xy'], true);
+            if ($row['xy'] !== null) {
+                $gradiParam['xy'] = json_decode($gradiParam['xy'], true);
+            }
             array_push($cycloAp, $gradiParam);
         }
 
@@ -806,44 +891,6 @@ class Bru
 
         return $channelFreq;
     }
-
-    /*public function GetBruBpGradi($extBruType)
-    {
-        $bruType = $extBruType;
-
-        $c = new DataBaseConnector();
-        $link = $c->Connect();
-
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
-        $result = $link->query($query);
-        $row = $result->fetch_array();
-
-        $cycloBpTableName = $row['gradiBpTableName'];
-        $result->free();
-
-        $query = "SELECT * FROM `".$cycloBpTableName."` ORDER BY `channel` ASC;";
-        $result = $link->query($query);
-
-        $cycloBp = array();
-        while($row = $result->fetch_array())
-        {
-            $gradiParam = array("id" => $row['id'],
-                "channel" => $row['channel'],
-                "code" => $row['code'],
-                "name" => $row['name'],
-                "type" => $row['type'],
-                "mask" => $row['mask'],
-                "basis" => $row['basis'],
-                "color" => $row['color']);
-            array_push($cycloBp, $gradiParam);
-        }
-        $result->free();
-        $c->Disconnect();
-
-        unset($c);
-
-        return $cycloBp;
-    }*/
 
     public function GetBruApHeaders($extBruType)
     {
@@ -1533,9 +1580,42 @@ class Bru
         unset($c);
     }
 
+    public function checkCalibrationParamsExist($fdrId)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $cyclo = $this->getFDRapCyclo($fdrId, null);
+
+        for ($ii=0; $ii < count($cyclo); $ii++) {
+            if ($cyclo[$ii]['xy'] != '') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getCalibratedParams ($fdrId)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $cyclo = $this->getFDRapCyclo($fdrId, null);
+
+        $calibratedParams = [];
+        for ($ii=0; $ii < count($cyclo); $ii++) {
+            if ($cyclo[$ii]['xy'] != null) {
+                $cyclo[$ii]['xy'] = json_decode($cyclo[$ii]['xy'], true);
+                $calibratedParams[] = $cyclo[$ii];
+            }
+        }
+
+        return $calibratedParams;
+    }
 
 }
-
-
-
-?>

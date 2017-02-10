@@ -1,0 +1,13 @@
+CREATE TABLE `flight_comments` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`comment` text NOT NULL,
+`commander-admitted` tinyint(1) NOT NULL,
+`aircraft-allowed` tinyint(1) NOT NULL,
+`general-admission` tinyint(1) NOT NULL,
+`id_flight` int(11) NOT NULL,
+`id_user` int(11) NOT NULL,
+`dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (`id`),
+KEY `id_flight` (`id_flight`),
+KEY `id_user` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

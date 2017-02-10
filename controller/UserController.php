@@ -349,7 +349,7 @@ class UserController extends CController
             $Bru = new Bru();
             $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
             $availableBruTypes = $Bru->GetBruList($availableIds);
-            $attachedFDRIds = $this->_user->GetAvailableBruTypes($userInfo['login']);
+            $attachedfdrIds = $this->_user->GetAvailableBruTypes($userInfo['login']);
 
             if(count($availableBruTypes) > 0) {
                 $headerLables = [
@@ -375,7 +375,7 @@ class UserController extends CController
                     $availableBruTypes,
                     $rowsInfoKeys,
                     'FDRs',
-                    $attachedFDRIds
+                    $attachedfdrIds
                 );
             } else {
                 $form .= sprintf("<div align='center'><p class='SmallLabel' style='color:darkred;'>%s</p></br>",

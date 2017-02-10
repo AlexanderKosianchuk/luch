@@ -152,6 +152,21 @@
 "searchFlights": "Search by Flight",
 "searchFlightsApplyAlg": "Search",
 
+"calibration": "Calibration",
+"calibrationForFDR": "FDR",
+"calibrationCreate": "Create",
+"calibrationCreationForm": "Calibration Creation Form",
+"calibrationFor": "for",
+"calibrationName": "Name",
+"calibrationParamName": "Name",
+"calibrationParamCode": "Code",
+"calibrationParamChannels": "Channels",
+"calibrationValueAdd": "Add",
+"calibrationSave": "Save",
+"calibrationUpdate": "Update",
+"calibrationList": "To List",
+"calibrationsUnexist": "No calibrations",
+
 "chartPrintTable" : "Digital Table Excel",
 "chartPrintInNewWindow" : "Print Chart",
 "monochromeEventsPrint" : "Mono print",
@@ -257,6 +272,7 @@
     "upload": "Upload",
     "flightsItem": "Flights",
     "bruTypesItem": "FDR",
+    "calibrationItem": "Calibration",
     "usersItem": "Users",
     "resultsItem": "Results",
     "eventsItem": "Events",
@@ -747,7 +763,9 @@
     "bruType":"FDR Type",
     "performer":"Operator",
     "aditionalInfo": "Aditional Info"
-}
+},
 
+"calibrationPage":{
+}
 
 }

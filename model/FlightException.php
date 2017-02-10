@@ -157,6 +157,7 @@ class FlightException
 
         $query = str_replace("[ap]", $apTableName, $query);
         $query = str_replace("[bp]", $bpTableName, $query);
+        $query = str_replace("[ex]", $flightExTableName, $query);
 
         foreach ($flightInfo as $flightInfoKey => $flightInfoVal)
         {

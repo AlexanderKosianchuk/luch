@@ -41,6 +41,7 @@ class IndexController extends CController
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/flight.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlight.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/pages/login.css' />
+                <link rel='stylesheet' type='text/css' href='stylesheets/pages/calibration.css' />
                 <link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
     }
 
@@ -223,6 +224,9 @@ class IndexController extends CController
 
         //searchFlight
         printf("<script type='text/javascript' src='scripts/proto/searchFlight/SearchFlight.proto.js'></script>");
+
+        //calibration
+        printf("<script type='text/javascript' src='scripts/proto/calibration/Calibration.proto.js'></script>");
 
         //viewOptions
         printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptions.proto.js'></script>");

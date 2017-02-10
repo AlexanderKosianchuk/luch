@@ -152,6 +152,21 @@
 "searchFlights": "Búsqueda de vuelos",
 "searchFlightsApplyAlg": "Encontrar",
 
+"calibration": "Calibration",
+"calibrationForFDR": "FDR",
+"calibrationCreate": "Create",
+"calibrationCreationForm": "Calibration Creation Form",
+"calibrationFor": "for",
+"calibrationName": "Name",
+"calibrationParamName": "Name",
+"calibrationParamCode": "Code",
+"calibrationParamChannels": "Channels",
+"calibrationValueAdd": "Add",
+"calibrationSave": "Save",
+"calibrationUpdate": "Update",
+"calibrationList": "To List",
+"calibrationsUnexist": "No calibrations",
+
 "chartPrintTable" : "Pantalla Excel",
 "chartPrintInNewWindow" : "Calendario Impresión",
 "monochromeEventsPrint" : "Mono Impresión",
@@ -257,6 +272,7 @@
     "upload": "Descargar",
     "flightsItem": "Vuelo",
     "bruTypesItem": "Registradores",
+    "calibrationItem": "Calibration",
     "usersItem": "Usuarios",
     "resultsItem": "Results",
     "eventsItem": "Events",
@@ -747,7 +763,9 @@
     "bruType":"Tipo de registro",
     "performer":"Procesada",
     "aditionalInfo": "Extras. inf."
-}
+},
 
+"calibrationPage":{
+}
 
 }

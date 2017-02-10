@@ -88,8 +88,6 @@ class User
         $this->SetFlightPrivilegeArr();
         $this->SetBruTypesPrivilegeArr();
         $this->SetUserPrivilegeArr();
-
-        //$this->CreateUsersTables();
     }
 
     private function SetAllPrivilegeArr()
@@ -703,6 +701,13 @@ class User
             $userId = $this->GetIdByUsername($userIdentity);
         }
 
+        $availableItems = $this->getAvailableFDRs($userId);
+
+        return $availableItems;
+    }
+
+    public function getAvailableFDRs($userId)
+    {
         $availableItems = [];
 
         $c = new DataBaseConnector();
@@ -755,23 +760,23 @@ class User
         return $users;
     }
 
-    public function SetFDRavailable($userId, $FDRid)
+    public function SetFDRavailable($userId, $fdrId)
     {
         if (!is_int($userId)) {
             throw new Exception("Incorrect userId passed. Integer is required. Passed: "
                 . json_encode($userId) , 1);
         }
 
-        if (!is_int($FDRid)) {
-            throw new Exception("Incorrect FDRid passed. Integer is required. Passed: "
-                . json_encode($FDRid) , 1);
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId) , 1);
         }
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
         $query = "INSERT INTO `fdr_to_user` (`id_fdr`, `id_user`)
-                VALUES ('".$FDRid."', '".$userId."');";
+                VALUES ('".$fdrId."', '".$userId."');";
 
         $stmt = $link->prepare($query);
         $stmt->execute();
@@ -781,10 +786,10 @@ class User
         unset($c);
     }
 
-    public function UnsetFDRavailable($userId = null, $FDRid = null)
+    public function UnsetFDRavailable($userId = null, $fdrId = null)
     {
         /* Cant be both empty*/
-        if (!is_int($userId) && !is_int($FDRid)) {
+        if (!is_int($userId) && !is_int($fdrId)) {
             throw new Exception("Incorrect userId passed. Integer is required. Passed: "
                 . json_encode($userId) , 1);
         }
@@ -792,14 +797,14 @@ class User
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        if (is_int($userId) && !is_int($FDRid)) {
+        if (is_int($userId) && !is_int($fdrId)) {
             /* maybe user deleting so remove */
             $query = "DELETE FROM `fdr_to_user` WHERE `id_user` = '".$userId."';";
-        } else if (!is_int($userId) && is_int($FDRid)) {
-            $query = "DELETE FROM `fdr_to_user` WHERE `id_fdr` = '".$FDRid."';";
+        } else if (!is_int($userId) && is_int($fdrId)) {
+            $query = "DELETE FROM `fdr_to_user` WHERE `id_fdr` = '".$fdrId."';";
         } else {
             $query = "DELETE FROM `fdr_to_user` WHERE `id_user` = '".$userId."' "
-                . "AND `id_fdr` = '".$FDRid."';";
+                . "AND `id_fdr` = '".$fdrId."';";
         }
 
         $stmt = $link->prepare($query);

@@ -1,0 +1,14 @@
+DELETE FROM `user_avaliability`
+WHERE `type` != 'brutype';
+
+RENAME TABLE `user_avaliability` TO `fdr_to_user`;
+
+ALTER TABLE `fdr_to_user` DROP `type`;
+
+ALTER TABLE `fdr_to_user` RENAME COLUMN `userId` TO `id_user`;
+
+ALTER TABLE `fdr_to_user` RENAME COLUMN `targetId` TO `id_fdr`;
+
+UPDATE `fdr_to_user` SET `allowedBy`='2017-01-01 00:00:00' WHERE 1
+
+ALTER TABLE `fdr_to_user` CHANGE `allowedBy` `dt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;

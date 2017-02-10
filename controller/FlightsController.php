@@ -67,45 +67,33 @@ class FlightsController extends CController
        $leftMenu = sprintf("<div id='leftMenuFlightList' class='LeftMenu'>");
        $leftMenu .= sprintf("<input class='SearchBox' value='' size='24' style='visibility: hidden;'></input>");
 
-       if(in_array($this->_user->flightPrivilegeArr[0], $this->_user->privilege) ||
-            in_array($this->_user->flightPrivilegeArr[1], $this->_user->privilege) ||
-            in_array($this->_user->flightPrivilegeArr[2], $this->_user->privilege) ||
-            in_array($this->_user->flightPrivilegeArr[3], $this->_user->privilege) ||
-            in_array($this->_user->flightPrivilegeArr[4], $this->_user->privilege) ||
-            in_array($this->_user->flightPrivilegeArr[5], $this->_user->privilege))
-      {
-         $leftMenu .= sprintf("<div id='flightLeftMenuRow' class='LeftMenuRow LeftMenuRowSelected' data-selected='true'>
-               <img class='LeftMenuRowIcon' src='stylesheets/basicImg/flight.png'></img>
-               %s&nbsp;
-               </div>", $this->lang->flightsItem);
-      }
+     $leftMenu .= sprintf("<div id='flightLeftMenuRow' class='LeftMenuRow LeftMenuRowSelected' data-selected='true'>
+           <img class='LeftMenuRowIcon' src='stylesheets/basicImg/flight.png'></img>
+           %s&nbsp;
+           </div>", $this->lang->flightsItem);
 
-      if(in_array($this->_user->flightPrivilegeArr[0], $this->_user->privilege))
-      {
-         $leftMenu .= sprintf("<div id='searchLeftMenuRow' class='LeftMenuRow'>
-               <img class='LeftMenuRowIcon' src='stylesheets/basicImg/search.png'></img>
-               %s&nbsp;
-               </div>", $this->lang->searchItem);
-      }
+     $leftMenu .= sprintf("<div id='searchLeftMenuRow' class='LeftMenuRow'>
+           <img class='LeftMenuRowIcon' src='stylesheets/basicImg/search.png'></img>
+           %s&nbsp;
+           </div>", $this->lang->searchItem);
 
       $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
-          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>
+          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/gear.png'></img>
           <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=results'>%s&nbsp;</a>
           </div>", $this->lang->resultsItem);
 
-      $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
-          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/events.png'></img>
-          <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=events'>%s&nbsp;</a>
-          </div>", $this->lang->eventsItem);
+      $leftMenu .= sprintf("<div id='fdrLeftMenuRow' class='LeftMenuRow'>
+         <img class='LeftMenuRowIcon' src='stylesheets/basicImg/fdr.png'></img>
+         %s&nbsp;
+         </div>", $this->lang->bruTypesItem);
+
+      $leftMenu .= sprintf("<div id='calibrationLeftMenuRow' class='LeftMenuRow'>
+        <img class='LeftMenuRowIcon' src='stylesheets/basicImg/compass.png'></img>
+        %s&nbsp;
+        </div>", $this->lang->calibrationItem);
 
       $role = $this->_user->userInfo['role'];
-      if(User::isAdmin($role) || User::isModerator($role)
-            && (in_array($this->_user->userPrivilegeArr[0], $this->_user->privilege) ||
-            in_array($this->_user->userPrivilegeArr[1], $this->_user->privilege) ||
-            in_array($this->_user->userPrivilegeArr[2], $this->_user->privilege) ||
-            in_array($this->_user->userPrivilegeArr[3], $this->_user->privilege) ||
-            in_array($this->_user->userPrivilegeArr[4], $this->_user->privilege))
-      ) {
+      if(User::isAdmin($role) || User::isModerator($role)) {
          $leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
                <img class='LeftMenuRowIcon' src='stylesheets/basicImg/user.png'></img>
                %s&nbsp;

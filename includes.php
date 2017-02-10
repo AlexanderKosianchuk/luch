@@ -26,13 +26,13 @@ require_once(@SITE_ROOT_DIR."/model/Vocabulary.php");
 require_once(@SITE_ROOT_DIR."/model/SearchFlights.php");
 require_once(@SITE_ROOT_DIR."/model/UserOptions.php");
 require_once(@SITE_ROOT_DIR."/model/FlightComments.php");
+require_once(@SITE_ROOT_DIR."/model/Calibration.php");
 
 require_once(@SITE_ROOT_DIR."/controller/CController.php");
 
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
 define("UPLOADED_FILES_PATH",
     @$_SERVER['DOCUMENT_ROOT'] . UPLOADED_FILES_DIR);
-
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();

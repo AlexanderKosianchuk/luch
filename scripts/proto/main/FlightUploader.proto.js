@@ -36,7 +36,7 @@ FlightUploader.prototype.FillFactoryContaider = function(factoryContainer) {
                 "</label>" +
             "</div>");
     this.flightUploaderFactoryContainer.append("<div id='flightUploaderOptions' class='OptionsMenuFullWidth' style='margin-top:5px;'></div>");
-    this.flightUploaderFactoryContainer.append("<div id='flightUploaderContent' class='ContentFullWidth' style='margin-top:5px;'></div>");
+    this.flightUploaderFactoryContainer.append("<div id='flightUploaderContent' class='ContentFullWidth is-scrollable' style='margin-top:5px;'></div>");
 
     this.flightUploaderTopMenu = $("#flightUploaderTopMenu");
     this.flightUploaderOptions = $("#flightUploaderOptions");
