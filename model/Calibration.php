@@ -32,8 +32,8 @@ class Calibration
         $result = $stmt->get_result();
 
         $calibrations = [];
-        if($row = $result->fetch_array()) {
-            $calibrations = $row;
+        while ($row = $result->fetch_array()) {
+            $calibrations[] = $row;
         }
 
         $result->free();
@@ -43,7 +43,7 @@ class Calibration
         return $calibrations;
     }
 
-    public function getCalibrationsById ($id, $userId)
+    public function getCalibrationById ($id, $userId)
     {
         if (!is_int($id)) {
             throw new Exception("Incorrect calibration id passed. Int expected. Passed: "
@@ -159,6 +159,34 @@ class Calibration
         return $calibrationId;
     }
 
+    public function updateCalibrationTime ($calibrationId, $userId)
+    {
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "UPDATE `".$this->table."` "
+                ." SET `dt_updated` = NOW();";
+
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+
+        return true;
+    }
+
     public function setCalibrationParam ($tableName, $calibrationId, $paramId, $xy)
     {
         if (!is_string($tableName)) {
@@ -239,6 +267,35 @@ class Calibration
         return true;
     }
 
+    public function deleteCalibration ($calibrationId, $userId)
+    {
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "DELETE FROM `".$this->table."` "
+            ."WHERE `id` = ? AND `id_user` = ?;";
+
+        $stmt = $link->prepare($query);
+        $stmt->bind_param("ii", $calibrationId, $userId);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+
+        return true;
+    }
+
     public function createTable ($fdrCode)
     {
         if (!is_string($fdrCode)) {
@@ -270,6 +327,16 @@ class Calibration
         }
 
         return $dynamicCalibrationTable;
+    }
+
+    public function getTableName ($fdrCode)
+    {
+        if (!is_string($fdrCode)) {
+            throw new Exception("Incorrect fdrCode passed. String expected. Passed: "
+                . json_encode($fdrCode), 1);
+        }
+
+        return $fdrCode . $this->prefix;
     }
 
     public function checkTableExist ($tableName)
@@ -341,18 +408,24 @@ class Calibration
 
         if(empty($calibrationInfo)) {
             $id = $this->setCalibration($calibrationsName, $fdrId, $userId);
-            $calibrationInfo = $this->getCalibrationsById ($id, $userId);
+            $calibrationInfo = $this->getCalibrationById ($id, $userId);
         }
 
         $calibrationId = $calibrationInfo['id'];
         $this->deleteCalibrationParams ($tableName, $calibrationId);
 
         foreach ($calibrations as $calibration) {
-            $this->setCalibrationParam ($tableName,
-                $calibrationId,
-                intval($calibration['paramId']),
-                json_encode($calibration['points'])
-            );
+            if(isset($calibration['paramId'])
+                && is_int(intval($calibration['paramId']))
+                && isset($calibration['points'])
+                && is_array($calibration['points'])
+            ) {
+                $this->setCalibrationParam ($tableName,
+                    $calibrationId,
+                    intval($calibration['paramId']),
+                    json_encode($calibration['points'])
+                );
+            }
         }
 
         return true;

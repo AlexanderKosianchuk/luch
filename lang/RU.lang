@@ -166,6 +166,11 @@
 "calibrationUpdate": "Обновить",
 "calibrationList": "К списку",
 "calibrationsUnexist": "Градуировки отсутствуют",
+"calibrationDateCreation": "Дата создания",
+"calibrationDateLastEdit": "Дата последенего редактирования",
+"calibrationControls": "Управление",
+"calibrationEdit": "Редактировать",
+"calibrationDelete": "Удалить",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",

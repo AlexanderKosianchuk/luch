@@ -72,4 +72,44 @@ class CalibrationController extends CController
         echo true;
     }
 
+    public function deleteCalibration($data)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+        $calibrationId = intval($data['calibrationId']);
+
+        $calibration = new Calibration();
+        $calibrationInfo = $calibration->getCalibrationById ($calibrationId, $userId);
+
+        if (empty($calibrationInfo)) {
+            header('HTTP/1.0 404 Not Found');
+            echo 'Calibration unexist.';
+            exit;
+        }
+
+        $fdrId = intval($calibrationInfo['id_fdr']);
+        $calibrationId = intval($calibrationInfo['id']);
+
+        $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
+
+        if (!$isAvaliable) {
+            header('HTTP/1.0 403 Forbidden');
+            echo 'Trying to remove calibration for FDR that is not avaliable for current user.';
+            exit;
+        }
+
+        $calibration->deleteCalibration ($calibrationId, $userId);
+
+        $fdr = new Bru();
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $fdrCode = $fdrInfo['code'];
+        unset($fdr);
+
+        $calibrationDynamicTable = $calibration->getTableName($fdrCode);
+
+        if($calibration->checkTableExist ($calibrationDynamicTable)) {
+            $calibration->deleteCalibrationParams ($calibrationDynamicTable, $calibrationId);
+        }
+
+        echo true;
+    }
 }

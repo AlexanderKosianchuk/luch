@@ -40,14 +40,19 @@
     clear:both;
 }
 
-.calibration-param-row {
+.calibration-param-row,
+.edit-calibration-row {
     width: 100%;
     clear:both;
     text-align: left;
+}
+
+.calibration-param-row {
     border: 1px solid #ddd;
 }
 
-.calibration-param-header {
+.calibration-param-header,
+.edit-calibration-header {
     min-height: 45px;
     overflow: hidden;
 }
@@ -57,13 +62,19 @@
     overflow: hidden;
 }
 
-.calibration-param-cell {
+.calibration-param-cell,
+.edit-calibration-cell {
     float: left;
     vertical-align: middle;
     padding: 4px 0px;
 }
 
-.calibration-param-header.fill {
+.edit-calibration-cell.center {
+    text-align: center;
+}
+
+.calibration-param-header.fill,
+.edit-calibration-row.fill {
     background-color: #f6f6f6;
 }
 
@@ -75,7 +86,8 @@
     background-color: #fafafa;
 }
 
-.calibration-param-cell.col-12 {
+.calibration-param-cell.col-12,
+.edit-calibration-cell.col-12 {
     width: 100%;
     overflow: hidden;
 }
@@ -90,22 +102,26 @@
     overflow: hidden;
 }
 
-.calibration-param-cell.col-3 {
+.calibration-param-cell.col-3,
+.edit-calibration-cell.col-3 {
     width: 25%;
     overflow: hidden;
 }
 
-.calibration-param-cell.col-2 {
+.calibration-param-cell.col-2,
+.edit-calibration-cell.col-2 {
     width: 16%;
     overflow: hidden;
 }
 
-.calibration-param-cell.col-1 {
+.calibration-param-cell.col-1,
+.edit-calibration-cell.col-1 {
     width: 8%;
     overflow: hidden;
 }
 
-.calibration-param-cell.bold {
+.calibration-param-cell.bold,
+.edit-calibration-cell.bold {
     font-weight: bold;
 }
 
@@ -113,7 +129,8 @@
     border-right: 1px solid #eee;
 }
 
-.calibration-param-cell.top-border {
+.calibration-param-cell.top-border,
+.edit-calibration-row.top-border {
     border-top: 1px solid #eee;
 }
 
@@ -155,8 +172,17 @@
 
 .calibration_button__small {
     width: 100%;
+    max-width: 22px;
+    min-height: 22px;
     padding: 0px 2px;
-    vertical-align: top;
+    margin: 0px 2px;
+    line-height: 22px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.calibration_button .icon {
+    margin: 2px 3px;
 }
 
 .calibration_button:hover {

@@ -166,6 +166,11 @@
 "calibrationUpdate": "Update",
 "calibrationList": "To List",
 "calibrationsUnexist": "No calibrations",
+"calibrationDateCreation": "Creation Date",
+"calibrationDateLastEdit": "Last Edit",
+"calibrationControls": "Controls",
+"calibrationEdit": "Edit",
+"calibrationDelete": "Delete",
 
 "chartPrintTable" : "Digital Table Excel",
 "chartPrintInNewWindow" : "Print Chart",
