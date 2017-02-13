@@ -85,7 +85,7 @@ class Bru
         return $bruList;
     }
 
-    public function getFDRinfo($fdrId)
+    public function getFdrInfo($fdrId)
     {
         if (!is_int($fdrId)) {
             throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
@@ -104,10 +104,10 @@ class Bru
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $FDRinfo = [];
+        $fdrInfo = [];
         if($row = $result->fetch_array()) {
             foreach ($row as $key => $value) {
-                $FDRinfo[$key] = $value;
+                $fdrInfo[$key] = $value;
             }
         }
 
@@ -116,7 +116,7 @@ class Bru
         $c->Disconnect();
         unset($c);
 
-        return $FDRinfo;
+        return $fdrInfo;
     }
 
     public function GetBruInfo($bruType)
@@ -191,8 +191,8 @@ class Bru
                 . json_encode($fdrId), 1);
         }
 
-        $FDRinfo = $this->getFDRinfo($fdrId);
-        $apTable = $FDRinfo['code'].$this->apPrefix;
+        $fdrInfo = $this->getFdrInfo($fdrId);
+        $apTable = $fdrInfo['code'].$this->apPrefix;
 
         $c = new DataBaseConnector();
         $link = $c->Connect();

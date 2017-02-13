@@ -726,6 +726,42 @@ class User
         return $availableItems;
     }
 
+    public function checkFdrAvailable($fdrId, $userId)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        $isAvaliable = false;
+
+        $q = "SELECT `id_fdr` FROM `fdr_to_user` "
+            ."WHERE `id_fdr` = ? AND `id_user` = ?;";
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $stmt = $link->prepare($q);
+        $stmt->bind_param("ii", $fdrId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_array()) {
+            $isAvaliable = true;
+        }
+
+        $result->free();
+        $c->Disconnect();
+        unset($c);
+
+        return $isAvaliable;
+    }
+
     public function GetAvailableUsers($userId, $role = null)
     {
         if (!is_int($userId)) {

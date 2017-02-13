@@ -117,7 +117,7 @@ function Calibration($window, document, langStr, eventHandler) {
         return $.ajax({
             type : "POST",
             data : {
-                action : 'calibration/getAvaliableFDRs',
+                action : 'calibration/getAvaliableFdrs',
                 data : {
                     dummy : 'data'
                 }
@@ -156,7 +156,7 @@ function Calibration($window, document, langStr, eventHandler) {
     {
         var fdr;
         for (var ii = 0; ii < avaliableFDRs.length; ii++) {
-            if(avaliableFDRs[ii]['id'] === id) {
+            if(avaliableFDRs[ii]['id'] === parseInt(id)) {
                 fdr = avaliableFDRs[ii]
                 break;
             }
@@ -209,7 +209,9 @@ function Calibration($window, document, langStr, eventHandler) {
 
         $.each($('.calibration-param-row'), function(index, item) {
             // for async execution
-            setTimeout(function() { that.buildChart($(item)); }, 10);
+            setTimeout(function() { that.buildChart($(item)); },
+                Math.floor(Math.random() * (20 - 5)) + 5
+            );
         });
 
         $('#calibration-name')
@@ -243,7 +245,14 @@ function Calibration($window, document, langStr, eventHandler) {
                             );
                         }
 
-                        data = data.sort(that.compareSecondColumn);
+                        var sortedData = data.sort(that.compareSecondColumn);
+                        data = {};
+                        for (var ii = 0; ii < sortedData.length; ii++) {
+                            data[ii] = {
+                                x: sortedData[ii][0],
+                                y: sortedData[ii][1]
+                            };
+                        }
 
                         calibrations.push({
                             paramId: paramId,
@@ -257,8 +266,10 @@ function Calibration($window, document, langStr, eventHandler) {
                             that.getAvaliableFDRs()
                                 .done(function(avaliableFDRs) {
                                     that.buildCalibrationOptions(avaliableFDRs);
+                                    var $fdrCalibrationSelect = $('#fdr-calibration');
+                                    var selectedFDR = that.getFDRbyId(avaliableFDRs, fdrId);
+                                    that.calibrationList(selectedFDR);
                                 });
-                            that.calibrationList(fdrId);
                         });
                 }
             });
@@ -318,12 +329,23 @@ function Calibration($window, document, langStr, eventHandler) {
         if (fdr['calibrations'].length === 0) {
             return '<div>'
                 + langStr.calibrationsUnexist
-                + fdr['id']
                 + '</div>';
         }
 
+        var calibrations = fdr['calibrations'];
+        var rows = '';
+
+        for (var ii = 0; ii < calibrations.length; ii++) {
+            rows += this.renderCalibrationRow(calibrations[ii]);
+        }
+
         return '<div>'
+            + rows
             + '</div>';
+    }
+
+    this.renderCalibrationRow = function(calibration) {
+        return '<div>' + calibration['id'] + '</div>'
     }
 
     this.renderCalibrationCreationForm = function(fdr) {
