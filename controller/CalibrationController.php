@@ -11,12 +11,12 @@ class CalibrationController extends CController
         $userId = intval($this->_user->userInfo['id']);
         $avaliablefdrIds = $this->_user->getAvailableFDRs($userId);
 
-        $FDR = new Bru();
-        $fdrInfoList = $FDR->GetFDRList($avaliablefdrIds);
+        $fdr = new Bru();
+        $fdrInfoList = $fdr->GetFDRList($avaliablefdrIds);
 
         $fdrsWithCalibration = [];
         foreach ($fdrInfoList as $fdrInfo) {
-            $calibrationParamsExist = $FDR->checkCalibrationParamsExist(intval($fdrInfo['id']));
+            $calibrationParamsExist = $fdr->checkCalibrationParamsExist(intval($fdrInfo['id']));
 
             if ($calibrationParamsExist) {
                 $fdrsWithCalibration[] = $fdrInfo;
@@ -26,8 +26,29 @@ class CalibrationController extends CController
         $fdrsAndCalibrations = [];
         $calibration = new Calibration();
         foreach ($fdrsWithCalibration as $fdrInfo) {
-            $fdrCalibrations = $calibration->getCalibrations(intval($fdrInfo['id']), $userId);
-            $calibratedParams = $FDR->getCalibratedParams(intval($fdrInfo['id']));
+            $fdrId = intval($fdrInfo['id']);
+            $fdrCode = $fdrInfo['code'];
+            $calibrationDynamicTable = $calibration->getTableName($fdrCode);
+            $fdrCalibrations = $calibration->getCalibrations($fdrId, $userId);
+            $calibratedParams = $fdr->getCalibratedParams($fdrId);
+
+            foreach ($fdrCalibrations as &$fdrCalibration) {
+                $calibrationCalibratedParams = [];
+                $calibrationId = intval($fdrCalibration['id']);
+
+                $params = [];
+                foreach ($calibratedParams as $param) {
+                    $paramId = $param['id'];
+                    $paramCalibration = $calibration->getCalibrationParam ($calibrationDynamicTable, $calibrationId, $paramId);
+                    $paramInfo = $fdr->GetParamInfoById($fdr->getApTableName($fdrId), $paramId);
+                    $calibrationCalibratedParams[] = array_merge(
+                        $paramInfo, $paramCalibration
+                    );
+                }
+
+                $fdrCalibration['calibratedParams'] = $calibrationCalibratedParams;
+            }
+
             $fdrsAndCalibrations[] = [
                 'id' => intval($fdrInfo['id']),
                 'name' => $fdrInfo['bruType'],
@@ -46,6 +67,13 @@ class CalibrationController extends CController
         $calibrationsName = $data['name'];
         $calibrations = $data['calibrations'];
 
+        $calibrationId = null;
+        if (isset($data['calibrationId'])
+            && is_int(intval($data['calibrationId']))
+        ) {
+            $calibrationId = intval($data['calibrationId']);
+        }
+
         $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
 
         if (!$isAvaliable) {
@@ -61,12 +89,23 @@ class CalibrationController extends CController
 
         $calibration = new Calibration();
         $calibrationDynamicTable = $calibration->createTable($fdrCode);
-        $calibration->createCalibration($calibrationDynamicTable,
-          $fdrId,
-          $userId,
-          $calibrationsName,
-          $calibrations
-        );
+
+        if ($calibrationId === null) {
+            $calibration->createCalibration($calibrationDynamicTable,
+                $fdrId,
+                $userId,
+                $calibrationsName,
+                $calibrations
+            );
+        } else {
+            $calibration->updateCalibration($calibrationDynamicTable,
+                $calibrationId,
+                $userId,
+                $calibrationsName,
+                $calibrations
+            );
+        }
+
         unset($calibration);
 
         echo true;

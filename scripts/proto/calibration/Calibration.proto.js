@@ -70,14 +70,14 @@ function Calibration($window, document, langStr, eventHandler) {
         $fdrCalibrationSelect
             .off('change')
             .change(function(event, params) {
-                var selectedFDR = that.getFDRbyId(avaliableFDRs, params.selected);
+                var selectedFDR = that.getById(avaliableFDRs, params.selected);
                 that.calibrationList(selectedFDR);
             });
 
         $createCalibrationBtn
             .off('click')
             .click(function(event) {
-                var selectedFDR = that.getFDRbyId(avaliableFDRs, $fdrCalibrationSelect.val());
+                var selectedFDR = that.getById(avaliableFDRs, $fdrCalibrationSelect.val());
                 that.calibrationEditForm(selectedFDR);
                 $(this).prop('disabled', true);
             });
@@ -85,12 +85,12 @@ function Calibration($window, document, langStr, eventHandler) {
         $listCalibrationBtn
             .off('click')
             .click(function(event) {
-                var selectedFDR = that.getFDRbyId(avaliableFDRs, $fdrCalibrationSelect.val());
+                var selectedFDR = that.getById(avaliableFDRs, $fdrCalibrationSelect.val());
                 that.calibrationList(selectedFDR);
                 $createCalibrationBtn.prop('disabled', false);
             });
 
-        return that.getFDRbyId(avaliableFDRs, $fdrCalibrationSelect.val());
+        return that.getById(avaliableFDRs, $fdrCalibrationSelect.val());
     };
 
     this.calibrationList = function(selectedFDR)
@@ -151,7 +151,7 @@ function Calibration($window, document, langStr, eventHandler) {
         });
     }
 
-    this.postCalibration = function(fdrId, name, calibrations)
+    this.postCalibration = function(fdrId, name, calibrations, calibrationId = null)
     {
         return $.ajax({
             type : "POST",
@@ -159,6 +159,7 @@ function Calibration($window, document, langStr, eventHandler) {
                 action : 'calibration/saveCalibration',
                 data : {
                     fdrId: fdrId,
+                    calibrationId: calibrationId,
                     name: name,
                     calibrations: calibrations
                 }
@@ -173,17 +174,17 @@ function Calibration($window, document, langStr, eventHandler) {
     }
 
 
-    this.getFDRbyId = function(avaliableFDRs, id)
+    this.getById = function(array, id)
     {
-        var fdr;
-        for (var ii = 0; ii < avaliableFDRs.length; ii++) {
-            if(avaliableFDRs[ii]['id'] === parseInt(id)) {
-                fdr = avaliableFDRs[ii]
+        var result;
+        for (var ii = 0; ii < array.length; ii++) {
+            if(array[ii]['id'] === parseInt(id)) {
+                result = array[ii]
                 break;
             }
         }
 
-        return fdr;
+        return result;
     }
 
     this.bindEventsCalibrationEditForm = function() {
@@ -231,7 +232,7 @@ function Calibration($window, document, langStr, eventHandler) {
         $.each($('.calibration-param-row'), function(index, item) {
             // for async execution
             setTimeout(function() { that.buildChart($(item)); },
-                Math.floor(Math.random() * (20 - 5)) + 5
+                Math.floor(Math.random() * (1500 - 100)) + 100
             );
         });
 
@@ -248,6 +249,7 @@ function Calibration($window, document, langStr, eventHandler) {
         $('#calibration-save')
             .off('click')
             .click(function () {
+                var calibrationId = $(this).data('calibration-id') || null;
                 var name = $('#calibration-name').val().trim();
                 if (name !== '') {
                     var calibrations = [];
@@ -282,13 +284,13 @@ function Calibration($window, document, langStr, eventHandler) {
                     });
 
                     var $fdrCalibrationSelect = $('#fdr-calibration');
-                    var fdrId = parseInt($('#calibration-creation-form').data('fdr-id'));
-                    that.postCalibration(fdrId, name, calibrations)
+                    var fdrId = parseInt($('#calibration-edit-form').data('fdr-id'));
+                    that.postCalibration(fdrId, name, calibrations, calibrationId)
                         .done(function() {
                             that.getAvaliableFDRs()
                                 .done(function(avaliableFDRs) {
                                     that.buildCalibrationOptions(avaliableFDRs, fdrId);
-                                    var selectedFDR = that.getFDRbyId(avaliableFDRs, fdrId);
+                                    var selectedFDR = that.getById(avaliableFDRs, fdrId);
                                     that.calibrationList(selectedFDR);
                                 });
                         });
@@ -301,8 +303,16 @@ function Calibration($window, document, langStr, eventHandler) {
         $('.js-calibration-edit')
             .off('click')
             .click(function() {
-                calibrationId
-                $(this).closest('.calibration-row-item').remove();
+                var $this = $(this);
+                var calibrationId = $this.data('calibration-id');
+                var $fdrCalibrationSelect = $('#fdr-calibration');
+                var fdrId = parseInt($fdrCalibrationSelect.val());
+
+                that.getAvaliableFDRs()
+                    .done(function(avaliableFDRs) {
+                        var selectedFDR = that.getById(avaliableFDRs, fdrId);
+                        that.calibrationEditForm(selectedFDR, calibrationId)
+                    });
             });
 
         $('.js-calibration-delete')
@@ -320,7 +330,7 @@ function Calibration($window, document, langStr, eventHandler) {
                         that.getAvaliableFDRs()
                             .done(function(avaliableFDRs) {
                                 that.buildCalibrationOptions(avaliableFDRs, fdrId);
-                                var selectedFDR = that.getFDRbyId(avaliableFDRs, fdrId);
+                                var selectedFDR = that.getById(avaliableFDRs, fdrId);
                                 that.calibrationList(selectedFDR);
                             });
                     });
@@ -452,9 +462,20 @@ function Calibration($window, document, langStr, eventHandler) {
     }
 
     this.renderCalibrationEditForm = function(fdr, calibrationId = null) {
-        var paramsTable = this.renderCalibrationParam(fdr['calibratedParams']);
+        var paramsTable = '';
+        var calibrationName = '';
 
-        return '<div id="calibration-creation-form" data-fdr-id="'+fdr['id']+'">'
+        if(calibrationId === null) {
+            calibrationId = '';
+            paramsTable = this.renderCalibrationParam(fdr['calibratedParams']);
+        } else {
+            var calibration = this.getById(fdr['calibrations'], calibrationId);
+            calibrationName = calibration['name'];
+            paramsTable = this.renderCalibrationParam(calibration['calibratedParams'], calibrationId);
+        }
+
+        return '<div id="calibration-edit-form" '
+                +'data-fdr-id="'+fdr['id']+'">'
             + '<div class="row">'
                 + '<h3>'+langStr.calibrationCreationForm+'</h3>'
             + '</div>'
@@ -464,21 +485,23 @@ function Calibration($window, document, langStr, eventHandler) {
             + '<div class="row calibration-name">'
                 + '<label class="calibration-form_label">'
                 + langStr.calibrationName + " "
-                + '<input id="calibration-name" value="" class="calibration-form_input" />'
+                + '<input id="calibration-name" value="'+calibrationName+'" class="calibration-form_input" />'
                 + "</label>"
             + '</div>'
             + '<div class="row">'
             + paramsTable
             + '</div>'
             + '<div class="row">'
-                + '<button id="calibration-save" class="calibration_button calibration_button__wide" disabled>'
+                + '<button id="calibration-save" '
+                + ' class="calibration_button calibration_button__wide"'
+                + ' data-calibration-id="'+calibrationId+'" disabled>'
                 + langStr.calibrationSave
                 + '</button>'
             + '</div>'
             + '</div>';
     }
 
-    this.renderCalibrationParam = function(params) {
+    this.renderCalibrationParam = function(params, calibrationId = null) {
         var paramsTable = '';
         for (var ii = 0; ii < params.length; ii++) {
             paramsTable += '<div class="calibration-param-row" data-param-id="'+params[ii].id+'">';

@@ -174,10 +174,45 @@ class Calibration
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $query = "UPDATE `".$this->table."` "
-                ." SET `dt_updated` = NOW();";
+        $query = "UPDATE `".$this->table."` SET `dt_updated` = NOW() "
+            . " WHERE `id` = ?;";
 
         $stmt = $link->prepare($query);
+        $stmt->bind_param("i", $calibrationId);
+        $stmt->execute();
+        $stmt->close();
+
+        $c->Disconnect();
+        unset($c);
+
+        return true;
+    }
+
+    public function updateCalibrationName ($calibrationId, $calibrationsName, $userId)
+    {
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        if (!is_string($calibrationsName)) {
+            throw new Exception("Incorrect calibrationsName passed. String expected. Passed: "
+                . json_encode($calibrationsName), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "UPDATE `".$this->table."` SET `name` = ? "
+            . " WHERE `id` = ?;";
+
+        $stmt = $link->prepare($query);
+        $stmt->bind_param("si", $calibrationsName, $calibrationId);
         $stmt->execute();
         $stmt->close();
 
@@ -230,6 +265,57 @@ class Calibration
         unset($c);
 
         return true;
+    }
+
+    public function getCalibrationParam ($tableName, $calibrationId, $paramId)
+    {
+        if (!is_string($tableName)) {
+            throw new Exception("Incorrect tableName passed. String expected. Passed: "
+                . json_encode($tableName), 1);
+        }
+
+        $isExist = $this->checkTableExist ($tableName);
+
+        if (!$isExist) {
+            throw new Exception("Dynamic calibration table is not exist.", 1);
+        }
+
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        if (!is_int($paramId)) {
+            throw new Exception("Incorrect paramId passed. Int expected. Passed: "
+                . json_encode($paramId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "SELECT `id_param`, `id_calibration`, `xy`"
+            ." FROM `".$tableName."`"
+            ." WHERE `id_calibration` = ? AND `id_param` = ? LIMIT 1;";
+
+        $stmt = $link->prepare($query);
+        $stmt->bind_param("ii", $calibrationId, $paramId);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $calibrationParam = [];
+        if($row = $result->fetch_array()) {
+            $calibrationParam = $row;
+
+            if (isset($row['xy'])) {
+                $calibrationParam['xy'] = json_decode($row['xy']);
+            }
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $calibrationParam;
     }
 
     public function deleteCalibrationParams ($tableName, $calibrationId)
@@ -427,6 +513,71 @@ class Calibration
                 );
             }
         }
+
+        return true;
+    }
+
+    public function updateCalibration($tableName,
+      $calibrationId,
+      $userId,
+      $calibrationsName,
+      $calibrations
+    ) {
+        if (!is_string($tableName)) {
+            throw new Exception("Incorrect tableName passed. String expected. Passed: "
+                . json_encode($tableName), 1);
+        }
+
+        $isExist = $this->checkTableExist ($tableName);
+
+        if (!$isExist) {
+            throw new Exception("Dynamic calibration table is not exist.", 1);
+        }
+
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        if (!is_string($calibrationsName)) {
+            throw new Exception("Incorrect calibrationsName passed. String expected. Passed: "
+                . json_encode($calibrationsName), 1);
+        }
+
+        if (!is_array($calibrations)) {
+            throw new Exception("Incorrect calibrations passed. String expected. Passed: "
+                . json_encode($calibrations), 1);
+        }
+
+        $calibrationInfo = $this->getCalibrationById ($calibrationId, $userId);
+
+        if(empty($calibrationInfo)) {
+            throw new Exception("Updating calibration is not exist.", 1);
+        }
+
+        $this->deleteCalibrationParams ($tableName, $calibrationId);
+
+        foreach ($calibrations as $calibration) {
+            if(isset($calibration['paramId'])
+                && is_int(intval($calibration['paramId']))
+                && isset($calibration['points'])
+                && is_array($calibration['points'])
+            ) {
+                $this->setCalibrationParam ($tableName,
+                    $calibrationId,
+                    intval($calibration['paramId']),
+                    json_encode($calibration['points'])
+                );
+            }
+        }
+
+        $this->updateCalibrationTime ($calibrationId, $userId);
+        $this->updateCalibrationName ($calibrationId, $calibrationsName, $userId);
 
         return true;
     }

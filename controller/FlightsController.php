@@ -82,10 +82,10 @@ class FlightsController extends CController
           <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=results'>%s&nbsp;</a>
           </div>", $this->lang->resultsItem);
 
-      $leftMenu .= sprintf("<div id='fdrLeftMenuRow' class='LeftMenuRow'>
+      /*$leftMenu .= sprintf("<div id='fdrLeftMenuRow' class='LeftMenuRow'>
          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/fdr.png'></img>
          %s&nbsp;
-         </div>", $this->lang->bruTypesItem);
+         </div>", $this->lang->bruTypesItem);*/
 
       $leftMenu .= sprintf("<div id='calibrationLeftMenuRow' class='LeftMenuRow'>
         <img class='LeftMenuRowIcon' src='stylesheets/basicImg/compass.png'></img>

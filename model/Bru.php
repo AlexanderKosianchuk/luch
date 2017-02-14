@@ -46,6 +46,30 @@ class Bru
         unset($c);
     }
 
+    public function getApTableName($fdrId)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $fdrInfo = $this->getFdrInfo($fdrId);
+
+        return $fdrInfo['code'].$this->apPrefix;
+    }
+
+    public function getBpTableName($fdrId)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $fdrInfo = $this->getFdrInfo($fdrId);
+
+        return $fdrInfo['code'].$this->bpPrefix;
+    }
+
     public function GetFDRList($availableBruTypesIds)
     {
         return $this->GetBruList($availableBruTypesIds);
@@ -1300,12 +1324,10 @@ class Bru
 
         return $codesArray;
     }
-    public function GetParamType($extParamCode,
-        $extCycloApTableName, $extCycloBpTableName)
+
+    public function GetParamType($paramCode,
+        $cycloApTableName, $cycloBpTableName)
     {
-        $paramCode = $extParamCode;
-        $cycloApTableName = $extCycloApTableName;
-        $cycloBpTableName = $extCycloBpTableName;
         $paramType = "null";
 
         $c = new DataBaseConnector();
@@ -1315,15 +1337,13 @@ class Bru
         $stmt->bind_param('s', $paramCode);
         $stmt->execute();
         $stmt->bind_result($id);
-        while ($stmt->fetch())
-        {
+        while ($stmt->fetch()) {
             $paramType = PARAM_TYPE_AP;
         }
         $stmt->close();
 
         //if param not in Ap look in gradiBpTable
-        if($paramType != PARAM_TYPE_AP)
-        {
+        if($paramType != PARAM_TYPE_AP) {
             $query = "SELECT `id` FROM `".$cycloBpTableName."` WHERE (`code` = ?);";
             $stmt = $link->prepare($query);
             $stmt->bind_param('s', $paramCode);
@@ -1447,6 +1467,27 @@ class Bru
                 "basis" => $row['basis'],
                 "color" => $row['color'],
                 "paramType" => PARAM_TYPE_BP);
+        }
+
+        $c->Disconnect();
+        unset($c);
+        return $paramInfo;
+    }
+
+    public function GetParamInfoById($tableName, $paramId)
+    {
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+        $paramInfo = array();
+
+        $query = "SELECT * FROM `".$tableName."` WHERE `id` = ? LIMIT 1;";
+
+        $stmt = $link->prepare($query);
+        $stmt->bind_param("i", $paramId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_array()) {
+            $paramInfo = $row;
         }
 
         $c->Disconnect();
