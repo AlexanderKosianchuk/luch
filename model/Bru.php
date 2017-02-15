@@ -70,9 +70,9 @@ class Bru
         return $fdrInfo['code'].$this->bpPrefix;
     }
 
-    public function GetFDRList($availableBruTypesIds)
+    public function getFdrList($availableIds)
     {
-        return $this->GetBruList($availableBruTypesIds);
+        return $this->GetBruList($availableIds);
     }
 
     public function GetBruList($availableBruTypesIds)

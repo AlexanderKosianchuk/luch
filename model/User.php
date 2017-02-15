@@ -701,20 +701,30 @@ class User
             $userId = $this->GetIdByUsername($userIdentity);
         }
 
-        $availableItems = $this->getAvailableFDRs($userId);
+        $availableItems = $this->getAvailableFdrs($userId);
 
         return $availableItems;
     }
 
-    public function getAvailableFDRs($userId)
+    public function getAvailableFdrs($userId)
     {
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+        
         $availableItems = [];
 
         $c = new DataBaseConnector();
         $link = $c->Connect();
 
-        $result = $link->query("SELECT `id_fdr` FROM `fdr_to_user` ".
-                "WHERE `id_user`='".$userId."';");
+        $q = "SELECT `id_fdr` FROM `fdr_to_user`"
+                ." WHERE `id_user`=?;";
+
+        $stmt = $link->prepare($q);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         while (($result !== null) && ($row = $result->fetch_array())) {
             $availableItems[] = $row['id_fdr'];

@@ -17,22 +17,26 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $bruType = $c->data['bruType'];
                 $filePath = UPLOADED_FILES_PATH . $c->data['file'];
 
-                $flightParamsSrt = $c->ShowFlightParams($index, $bruType, $filePath);
+                $calibrationId = null;
+                if(isset($c->data['calibrationId'])
+                    && !empty($c->data['calibrationId'])
+                    && is_int(intval($c->data['calibrationId']))
+                ) {
+                    $calibrationId = intval($c->data['calibrationId']);
+                }
+
+                $flightParamsSrt = $c->ShowFlightParams($index, $bruType, $filePath, $calibrationId);
 
                 $answ["status"] = "ok";
                 $answ["data"] = $flightParamsSrt;
                 echo(json_encode($answ));
-            }
-            else
-            {
+            } else {
                 $answ["status"] = "err";
                 $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page fileUploader.php";
                 echo(json_encode($answ));
             }
-        }
-        else
-        {
+        } else {
             echo($c->lang->notAllowedByPrivilege);
         }
     }
@@ -155,31 +159,32 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                 $flightInfo = array();
                 $flightAditionalInfo = array();
 
+                $calibrationId = null;
+                if(isset($c->data['calibrationId'])
+                    && !empty($c->data['calibrationId'])
+                    && is_int(intval($c->data['calibrationId']))
+                ) {
+                    $calibrationId = intval($c->data['calibrationId']);
+                }
+
                 //in such way it was passed in js because of imposible to do it by usual asoc arr
-                for($i = 0; $i < count($receivedFlightInfo); $i+=2)
-                {
-                    if((string)$receivedFlightInfo[$i + 1] != '')
-                    {
+                for($i = 0; $i < count($receivedFlightInfo); $i+=2) {
+                    if((string)$receivedFlightInfo[$i + 1] != '') {
                         $flightInfo[(string)$receivedFlightInfo[$i]] =
                             (string)$receivedFlightInfo[$i + 1];
-                    }
-                    else
-                    {
+                    } else {
                         $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
                     }
                 }
 
                 $aditionalInfoVars = '';
-                if($receivedFlightAditionalInfo != '0')
-                {
-                    for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2)
-                    {
+                if($receivedFlightAditionalInfo != '0') {
+                    for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
                         $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
                             (string)$receivedFlightAditionalInfo[$i + 1];
                     }
 
-                    foreach($flightAditionalInfo as $key => $val)
-                    {
+                    foreach($flightAditionalInfo as $key => $val) {
                         $aditionalInfoVars .= $key . ":" . $val . ";";
                     }
                 }
@@ -204,7 +209,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     $arrivalAirport,
                     $aditionalInfoVars,
                     $uploadedFile,
-                    $totalPersentage
+                    $totalPersentage,
+                    $calibrationId
                 );
 
                 $answ = array(
@@ -249,31 +255,32 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     $flightInfo = array();
                     $flightAditionalInfo = array();
 
+                    $calibrationId = null;
+                    if(isset($c->data['calibrationId'])
+                        && !empty($c->data['calibrationId'])
+                        && is_int(intval($c->data['calibrationId']))
+                    ) {
+                        $calibrationId = intval($c->data['calibrationId']);
+                    }
+
                     //in such way it was passed in js because of imposible to do it by usual aasoc arr
-                    for($i = 0; $i < count($receivedFlightInfo); $i+=2)
-                    {
-                        if((string)$receivedFlightInfo[$i + 1] != '')
-                        {
+                    for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
+                        if ((string)$receivedFlightInfo[$i + 1] != '') {
                             $flightInfo[(string)$receivedFlightInfo[$i]] =
                                 (string)$receivedFlightInfo[$i + 1];
-                        }
-                        else
-                        {
+                        } else {
                             $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
                         }
                     }
 
                     $aditionalInfoVars = '';
-                    if($receivedFlightAditionalInfo != 0)
-                    {
-                        for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2)
-                        {
+                    if($receivedFlightAditionalInfo != 0) {
+                        for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
                             $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
                                 (string)$receivedFlightAditionalInfo[$i + 1];
                         }
 
-                        foreach($flightAditionalInfo as $key => $val)
-                        {
+                        foreach($flightAditionalInfo as $key => $val) {
                             $aditionalInfoVars .= $key . ":" . $val . ";";
                         }
                     }
@@ -298,7 +305,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                         $arrivalAirport,
                         $aditionalInfoVars,
                         $uploadedFile,
-                        $totalPersentage
+                        $totalPersentage,
+                        $calibrationId
                     );
 
                     $c->ProccesFlightException($flightId,
@@ -346,9 +354,17 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             if(in_array(User::$PRIVILEGE_ADD_FLIGHTS, $c->_user->privilege))
             {
                 if(isset($c->data['bruType']) &&
-                        isset($c->data['fileName']) &&
-                        isset($c->data['tempFileName']))
+                    isset($c->data['fileName']) &&
+                    isset($c->data['tempFileName']))
                 {
+                    $calibrationId = null;
+                    if(isset($c->data['calibrationId'])
+                        && !empty($c->data['calibrationId'])
+                        && is_int(intval($c->data['calibrationId']))
+                    ) {
+                        $calibrationId = intval($c->data['calibrationId']);
+                    }
+
                     $bruType = $c->data['bruType'];
                     $fileName = $c->data['fileName'];
                     $uploadedFile = UPLOADED_FILES_PATH . $fileName;
@@ -357,33 +373,28 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                     $flightInfoFromHeader = $c->ReadHeader($bruType, $uploadedFile);
 
                     $bort = "x";
-                    if(isset($flightInfoFromHeader["bort"]))
-                    {
+                    if(isset($flightInfoFromHeader["bort"])) {
                         $bort = $flightInfoFromHeader["bort"];
                     }
 
                     $voyage = "x";
-                    if(isset($flightInfoFromHeader["voyage"]))
-                    {
+                    if(isset($flightInfoFromHeader["voyage"])) {
                         $voyage = $flightInfoFromHeader["voyage"];
                     }
 
                     $departureAirport = "x";
-                    if(isset($flightInfoFromHeader["departureAirport"]))
-                    {
+                    if(isset($flightInfoFromHeader["departureAirport"])) {
                         $departureAirport = $flightInfoFromHeader["departureAirport"];
                     }
 
                     $arrivalAirport = "x";
-                    if(isset($flightInfoFromHeader["arrivalAirport"]))
-                    {
+                    if(isset($flightInfoFromHeader["arrivalAirport"])) {
                         $arrivalAirport = $flightInfoFromHeader["arrivalAirport"];
                     }
 
                     $copyCreationTime = "00:00:00";
                     $copyCreationDate = "2000-01-01";
-                    if(isset($flightInfoFromHeader['startCopyTime']))
-                    {
+                    if(isset($flightInfoFromHeader['startCopyTime'])) {
                         $startCopyTime = strtotime($flightInfoFromHeader['startCopyTime']);
                         $copyCreationTime = date('H:i:s', $startCopyTime);
                         $copyCreationDate = date('Y-m-d', $startCopyTime);
@@ -405,7 +416,8 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
                             $arrivalAirport,
                             $aditionalInfoVars,
                             $uploadedFile,
-                            $totalPersentage
+                            $totalPersentage,
+                            $calibrationId
                     );
 
                     $c->ProccesFlightException($flightId,

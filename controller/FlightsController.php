@@ -106,54 +106,70 @@ class FlightsController extends CController
    }
 
 
-   public function FileUploadBlock()
-   {
-      $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
+    public function FileUploadBlock()
+    {
+        $userId = intval($this->_user->userInfo['id']);
+        $avalibleFdrIds = $this->_user->getAvailableFdrs($userId);
 
-      $Bru = new Bru();
-      $bruList = $Bru->GetBruList($avalibleBruTypes);
-      unset($Bru);
+        $fdr = new Bru;
+        $fdrList = $fdr->getFdrList($avalibleFdrIds);
+        unset($fdr);
 
-      $optionString = "";
+        $calibration = new Calibration;
+        $fdrCalibrations = $calibration->getCalibrationsForFdrs($avalibleFdrIds, $userId);
 
-      foreach($bruList as $bruInfo)
-      {
-         $optionString .="<option data-id='".$bruInfo['id']."'>".$bruInfo['bruType']."</option>";
-      }
+        $calibrationSelects = "";
+        foreach ($fdrCalibrations as $fdrId => $calibrations) {
+            $calibrationSelects .= "<select class='fdr-calibration' data-fdr-id='".$fdrId."'>";
+            foreach ($calibrations as $item) {
+                $calibrationSelects .= "<option value='".$item['id']."'>".$item['name']."</option>";
+            }
+            $calibrationSelects .= "</select>";
+        }
 
-      $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>", $this->lang->flightUpload);
+        $optionString = "";
 
-      $fileUploadBlock .= sprintf("<div id='importConvertRadio'>
+        foreach($fdrList as $frdInfo) {
+            $optionString .="<option data-id='".$frdInfo['id']."' value='".$frdInfo['id']."'>".$frdInfo['bruType']."</option>";
+        }
+
+        $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>", $this->lang->flightUpload);
+
+        $fileUploadBlock .= sprintf("<div id='importConvertRadio'>
             <input type='radio' id='convertFl' name='radio' checked='checked'><label for='convertFl'>%s</label>
             <input type='radio' id='importFl' name='radio'><label for='importFl'>%s</label>
          </div>", $this->lang->fileConvert, $this->lang->fileImport);
-      $fileUploadBlock .= "<br>";
+        $fileUploadBlock .= "<br>";
 
-      $fileUploadBlock .= sprintf("<div id='previewCheckBoxDiv' class='FlightUploadingInputs'>
+        $fileUploadBlock .= sprintf("<div id='previewCheckBoxDiv' class='FlightUploadingInputs'>
             <label>
                 <input checked='checked' id='previewCheckBox' type='checkbox'>
                 %s
             </label>
         </div>", $this->lang->filePreview);
 
-      $fileUploadBlock .= sprintf("<div id='bruTypeSelectForUploadingDiv'>
+        $fileUploadBlock .= sprintf("<div id='bruTypeSelectForUploadingDiv'>
             <select id='bruTypeSelectForUploading' name='bruType' class='FlightUploadingInputs'>%s</select>
          </div>", $optionString);
 
-      $fileUploadBlock .= sprintf("<div id='progress' class='progress' style='padding-top:10px;'>
+        $fileUploadBlock .= "<div class='calibrations-for-ubloading'>";
+        $fileUploadBlock .= $calibrationSelects;
+        $fileUploadBlock .= "</div>";
+
+        $fileUploadBlock .= sprintf("<div id='progress' class='progress'>
                <div class='progress-bar progress-bar-success'></div>
             </div>
          <div id='files' class='files'></div>");
-      $fileUploadBlock .= "<br>";
+        $fileUploadBlock .= "<br>";
 
-      $fileUploadBlock .= sprintf("<span class='btn btn-success fileinput-button'>
+        $fileUploadBlock .= sprintf("<span class='btn btn-success fileinput-button choose-file-btn'>
              <input id='chooseFileBut' type='file' name='files[]' multiple>
          </span>");
 
-      $fileUploadBlock .= sprintf("</div>");
+        $fileUploadBlock .= sprintf("</div>");
 
-      return $fileUploadBlock;
-   }
+        return $fileUploadBlock;
+    }
 
    private function GetFlightsByPath($folderId)
    {
@@ -442,16 +458,6 @@ class FlightsController extends CController
       $lastView = $this->_user->GetLastActionFromRange($userId, $viewTypes);
 
       return $lastView;
-   }
-
-   public function GetLastFlightTwoColumnsListPathes()
-   {
-      $viewType = $this->flightActions["flightTwoColumnsListByPathes"];
-
-      $userId = $this->_user->userInfo['id'];
-      $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
-
-      return $actionsInfo;
    }
 
    public function GetLastViewedFolder()

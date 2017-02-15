@@ -43,6 +43,51 @@ class Calibration
         return $calibrations;
     }
 
+    public function getCalibrationsForFdrs ($fdrIds, $userId)
+    {
+        if (!is_array($fdrIds)) {
+            throw new Exception("Incorrect fdrIds passed. Array expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId passed. Int expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $fdrIdsChecked = [];
+        foreach ($fdrIds as $id) {
+            if (is_int($id)) {
+                $fdrIdsChecked[] = $id;
+            }
+        }
+
+        $fdrIdsChecked = implode(',', $fdrIdsChecked);
+
+        $q = "SELECT `id`, `name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`"
+            ." FROM `".$this->table."`"
+            ." WHERE `id_fdr` IN (".$fdrIdsChecked.") AND `id_user` = ?;";
+
+        $stmt = $link->prepare($q);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $calibrations = [];
+        while ($row = $result->fetch_array()) {
+            $calibrations[$row['id_fdr']][] = $row;
+        }
+
+        $result->free();
+        $c->Disconnect();
+        unset($c);
+
+        return $calibrations;
+    }
+
     public function getCalibrationById ($id, $userId)
     {
         if (!is_int($id)) {
@@ -309,6 +354,52 @@ class Calibration
 
             if (isset($row['xy'])) {
                 $calibrationParam['xy'] = json_decode($row['xy']);
+            }
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $calibrationParam;
+    }
+
+    public function getCalibrationParams ($tableName, $calibrationId)
+    {
+        if (!is_string($tableName)) {
+            throw new Exception("Incorrect tableName passed. String expected. Passed: "
+                . json_encode($tableName), 1);
+        }
+
+        $isExist = $this->checkTableExist ($tableName);
+
+        if (!$isExist) {
+            throw new Exception("Dynamic calibration table is not exist.", 1);
+        }
+
+        if (!is_int($calibrationId)) {
+            throw new Exception("Incorrect calibrationId passed. Int expected. Passed: "
+                . json_encode($calibrationId), 1);
+        }
+
+        $c = new DataBaseConnector();
+        $link = $c->Connect();
+
+        $query = "SELECT `id_param`, `id_calibration`, `xy`"
+            ." FROM `".$tableName."`"
+            ." WHERE `id_calibration` = ?;";
+
+        $stmt = $link->prepare($query);
+        $stmt->bind_param("i", $calibrationId);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $calibrationParam = [];
+        if ($row = $result->fetch_array()) {
+            $calibrationParam[$row['id_param']] = $row;
+
+            if (isset($row['xy'])) {
+                $calibrationParam[$row['id_param']]['xy'] = json_decode($row['xy'], true);
             }
         }
 

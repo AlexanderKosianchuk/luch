@@ -292,3 +292,25 @@ table.dataTable tfoot td {
     padding: 0px 6px;
     margin-bottom: -6px;
 }
+
+.fdr-calibration {
+    display: none;
+}
+
+.calibrations-for-ubloading select {
+    border-radius: 4px;
+    margin: 4px 0px 0px;
+    background: transparent;
+    height: 28px;
+    padding: 5px;
+    border: 1px solid #bbb;
+    font-size: 13px;
+    line-height: 1;
+    -webkit-appearance: none;
+    min-width: 200px;
+    width: 100%;
+}
+
+.choose-file-btn input {
+    margin-top: -15px;
+}

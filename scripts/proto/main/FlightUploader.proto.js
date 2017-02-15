@@ -127,7 +127,14 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                             } else {
                                 self.fileUploadDialog.height(dialogInitialHeight);
                             }
-                        })
+                        });
+
+                    $('#bruTypeSelectForUploading').change(function () {
+                        var $this = $(this);
+                        var fdrId = $this.val();
+                        $('.calibrations-for-ubloading select').hide();
+                        $('.calibrations-for-ubloading select[data-fdr-id="'+fdrId+'"]').show();
+                    });
                 }
 
                 dialogHeightDelta =
@@ -172,7 +179,13 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
             url: url,
             dataType: 'json',
             done: function (e, data) {
-                var selectedBruType = $('select#bruTypeSelectForUploading').find(":selected").text();
+                var fdrName = $("#bruTypeSelectForUploading option:selected" ).text();
+                var $calibration = $('.calibrations-for-ubloading select:visible');
+                var calibrationId = null;
+
+                if ($calibration.length > 0) {
+                    calibrationId = $calibration.val();
+                }
 
                 if(importInsteadConvert) {
                     $.each(data.result.files, function (index, file) {
@@ -190,14 +203,14 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
 
                         $.each(data.result.files, function (index, file) {
                             $('<p/>').text(file.name).appendTo('#files');
-                            self.GetFlightParams(filesCount, file.name, selectedBruType);
+                            self.GetFlightParams(filesCount, file.name, fdrName, calibrationId);
                             filesCount++;
                         });
                     } else {
                         //else background uploading
                         $.each(data.result.files, function (index, file) {
                             $('<p/>').text(file.name).appendTo('#files');
-                            self.EasyUploading(selectedBruType, file.name);
+                            self.EasyUploading(fdrName, file.name, calibrationId);
                             filesCount++;
                         });
                     }
@@ -249,15 +262,13 @@ FlightUploader.prototype.ShowFlightUploadingOptions = function()
 }
 
 FlightUploader.prototype.GetFlightParams = function(
-        extIndex,
-        extFile,
-        extSelectedBruType
+        index,
+        file,
+        fdrName,
+        calibrationId = null
 ) {
 
-    var self = this,
-        index = extIndex,
-        file = extFile,
-        selectedBruType = extSelectedBruType;
+    var self = this;
 
     if(self.flightUploaderContent != null){
         //when file uploaded call fileProcessor to import it
@@ -266,7 +277,8 @@ FlightUploader.prototype.GetFlightParams = function(
                 data: {
                     index: index,
                     file: file,
-                    bruType: selectedBruType
+                    bruType: fdrName,
+                    calibrationId: calibrationId
                 }
             };
 
@@ -300,7 +312,7 @@ FlightUploader.prototype.GetFlightParams = function(
                             previewParams,
                             index,
                             file,
-                            selectedBruType,
+                            fdrName,
                             chartWidth);
 
                     self.SliceFlightButtInitialSupport(parentContainer, previewParams);
@@ -673,10 +685,11 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                 var $el = $(el),
                     fileName = $el.data("filename"),
                     bruType = $el.data("brutype"),
+                    calibrationId = $el.data("calibration-id"),
                     index = $el.data("index"),
                     ignoreDueUploading = $el.find("#ignoreDueUploading" + index),
-                    flightInfo = new Array(),
-                    flightAditionalInfo = new Array(),
+                    flightInfo = [],
+                    flightAditionalInfo = [],
                     flightInfoCells = $el.find("input.FlightUploadingInputs"),
                     flightAditionalInfoCells = $el.find("input.FlightUploadingInputsAditionalInfo");
 
@@ -723,6 +736,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                             'action': flightConvertionAction,
                             'data': {
                                 'bruType': bruType,
+                                'calibrationId': calibrationId,
                                 'fileName': fileName,
                                 'tempFileName': tempFileName,
                                 'flightInfo': flightInfo,
@@ -950,20 +964,20 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
 ///
 FlightUploader.prototype.EasyUploading = function(
         bruType,
-        fileName
+        fileName,
+        calibrationId
 ) {
 
-    var flightConvertionAction = "flightEasyUpload",
-        tempFileName = guid() + "_tempStatus.json";
-
+    var tempFileName = guid() + "_tempStatus.json";
     var pV = {
-            'action': flightConvertionAction,
-            'data': {
-                'bruType': bruType,
-                'fileName': fileName,
-                'tempFileName': tempFileName,
-            }
-        };
+        'action': 'flightEasyUpload',
+        'data': {
+            'bruType': bruType,
+            'fileName': fileName,
+            'tempFileName': tempFileName,
+            'calibrationId': calibrationId
+        }
+    };
 
     this.InitiateFlightProccessing(pV);
 }

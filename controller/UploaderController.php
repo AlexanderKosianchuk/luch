@@ -12,12 +12,8 @@ class UploaderController extends CController
         $this->setAttributes();
     }
 
-    public function ShowFlightParams($extIndex, $extBruType, $extFilePath)
+    public function ShowFlightParams($index, $bruType, $filePath, $calibrationId = null)
     {
-        $index = $extIndex;
-        $bruType = $extBruType;
-        $filePath = $extFilePath;
-
         $fileName = basename($filePath);
 
         $Bru = new Bru();
@@ -28,8 +24,7 @@ class UploaderController extends CController
         $flightInfoFromHeader = $this->ReadHeader($bruType, $filePath);
 
         $fileInfoColumnWidth = '100%';
-        if($previewParams != '')
-        {
+        if($previewParams != '') {
             $fileInfoColumnWidth = 450;
         }
 
@@ -38,6 +33,7 @@ class UploaderController extends CController
             "data-brutype='" . $bruType . "' " .
             "data-index='" . $index . "' " .
             "data-previewparams='" . $previewParams . "' " .
+            "data-calibration-id='" . $calibrationId . "' " .
             "align='left'>" .
             "<a style='margin-left:5px; font-weight:bold;'>" .
                 $this->lang->enterFlightDetails . " - " . $fileName . "</a>" .
@@ -590,28 +586,22 @@ class UploaderController extends CController
         }
     }
 
-    public function ProccessFlightData($extTempFileName,
-            $extBort,
-            $extVoyage,
-            $extCopyCreationTime,
-            $extCopyCreationDate,
-            $extBruType,
-            $extPerformer,
-            $extDepartureAirport,
-            $extArrivalAirport,
-            $extAditionalInfo,
-            $extUploadedFile,
-            $extTotalPersentage
+    public function ProccessFlightData($tempFile,
+            $bort,
+            $voyage,
+            $copyCreationTime,
+            $copyCreationDate,
+            $bruType,
+            $performer,
+            $departureAirport,
+            $arrivalAirport,
+            $aditionalInfo,
+            $uploadedFile,
+            $totalPersentage,
+            $calibrationId = null
         )
     {
-
-        $tempFile = $extTempFileName;
         $tempFilePath = UPLOADED_FILES_PATH . "proccessStatus/" . $tempFile;
-        $bort = $extBort;
-        $voyage = $extVoyage;
-        $copyCreationTime = $extCopyCreationTime;
-        $copyCreationDate = $extCopyCreationDate;
-        $totalPersentage = $extTotalPersentage;
 
         if(strlen($copyCreationTime) > 5) {
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime);
@@ -619,23 +609,18 @@ class UploaderController extends CController
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime . ":00");
         }
 
-        $bruType = $extBruType;
-        $performer = $extPerformer;
-        if($performer == null){
+        if ($performer == null) {
             $performer = $this->_user->username;
         }
 
-        $departureAirport = $extDepartureAirport;
-        $arrivalAirport = $extArrivalAirport;
-        $uploadedFile = $extUploadedFile;
-        $aditionalInfo = $extAditionalInfo;
+        $userId = intval($this->_user->userInfo['id']);
 
         $Fl = new Flight();
         $flightId = $Fl->InsertNewFlight($bort, $voyage,
                 $startCopyTime,
                 $bruType, $performer,
                 $departureAirport, $arrivalAirport,
-                $uploadedFile, $aditionalInfo, $this->_user->userInfo['id']);
+                $uploadedFile, $aditionalInfo, $userId);
 
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $tableNameAp = $flightInfo['apTableName'];
@@ -645,14 +630,32 @@ class UploaderController extends CController
 
         $Bru = new Bru();
         $bruInfo = $Bru->GetBruInfo($bruType);
+        $fdrCode = $bruInfo['code'];
         $frameLength = $bruInfo['frameLength'];
         $stepLength = $bruInfo['stepLength'];
         $wordLength = $bruInfo['wordLength'];
         $headerLength = $bruInfo['headerLength'];
         $headerScr = $bruInfo['headerScr'];
         $frameSyncroCode = $bruInfo['frameSyncroCode'];
-        //$cycloAp = $Bru->GetBruApGradi($bruType);
         $cycloApByPrefixes = $Bru->GetBruApCycloPrefixOrganized($bruType);
+
+        if ($calibrationId !== null) {
+            $calibration = new Calibration;
+            $fdrCalibration = $calibration->getCalibrationById($calibrationId, $userId);
+            $dynamicCalibrationTableName = $calibration->getTableName($fdrCode);
+            $calibratedParams = $calibration->getCalibrationParams($dynamicCalibrationTableName, $calibrationId);
+
+            foreach ($cycloApByPrefixes as $prefix => &$params) {
+                foreach ($params as &$param) {
+                    $paramId = $param['id'];
+
+                    if(isset($calibratedParams[$paramId])) {
+                        $param['xy'] = $calibratedParams[$paramId]['xy'];
+                    }
+                }
+            }
+        }
+
         $prefixFreqArr = $Bru->GetBruApCycloPrefixFreq($bruType);
 
         $cycloBpByPrefixes = $Bru->GetBruBpCycloPrefixOrganized($bruType);

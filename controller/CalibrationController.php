@@ -9,10 +9,10 @@ class CalibrationController extends CController
     public function getAvaliableFdrs($data)
     {
         $userId = intval($this->_user->userInfo['id']);
-        $avaliablefdrIds = $this->_user->getAvailableFDRs($userId);
+        $avaliablefdrIds = $this->_user->getAvailableFdrs($userId);
 
         $fdr = new Bru();
-        $fdrInfoList = $fdr->GetFDRList($avaliablefdrIds);
+        $fdrInfoList = $fdr->getFdrList($avaliablefdrIds);
 
         $fdrsWithCalibration = [];
         foreach ($fdrInfoList as $fdrInfo) {
@@ -69,6 +69,7 @@ class CalibrationController extends CController
 
         $calibrationId = null;
         if (isset($data['calibrationId'])
+            && !empty($data['calibrationId'])
             && is_int(intval($data['calibrationId']))
         ) {
             $calibrationId = intval($data['calibrationId']);
