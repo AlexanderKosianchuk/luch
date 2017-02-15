@@ -171,6 +171,7 @@
 "calibrationControls": "Controls",
 "calibrationEdit": "Edit",
 "calibrationDelete": "Delete",
+"calibrationInputName": "Please input name to save",
 
 "chartPrintTable" : "Digital Table Excel",
 "chartPrintInNewWindow" : "Print Chart",

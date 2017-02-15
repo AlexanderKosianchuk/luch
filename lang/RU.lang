@@ -171,6 +171,7 @@
 "calibrationControls": "Управление",
 "calibrationEdit": "Редактировать",
 "calibrationDelete": "Удалить",
+"calibrationInputName": "Введите название калибровки для сохранения",
 
 "chartPrintTable" : "Экран в Excel",
 "chartPrintInNewWindow" : "График на печать",

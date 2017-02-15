@@ -464,9 +464,13 @@ function Calibration($window, document, langStr, eventHandler) {
     this.renderCalibrationEditForm = function(fdr, calibrationId = null) {
         var paramsTable = '';
         var calibrationName = '';
+        var disabled = '';
+        var title = '';
 
         if(calibrationId === null) {
             calibrationId = '';
+            disabled = 'disabled';
+            title = 'title="'+langStr.calibrationInputName+'"';
             paramsTable = this.renderCalibrationParam(fdr['calibratedParams']);
         } else {
             var calibration = this.getById(fdr['calibrations'], calibrationId);
@@ -494,7 +498,9 @@ function Calibration($window, document, langStr, eventHandler) {
             + '<div class="row">'
                 + '<button id="calibration-save" '
                 + ' class="calibration_button calibration_button__wide"'
-                + ' data-calibration-id="'+calibrationId+'" disabled>'
+                + ' data-calibration-id="'+calibrationId+'" '
+                + disabled + ' '
+                + title + ' >'
                 + langStr.calibrationSave
                 + '</button>'
             + '</div>'
