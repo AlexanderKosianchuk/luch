@@ -115,22 +115,34 @@ class FlightsController extends CController
         $fdrList = $fdr->getFdrList($avalibleFdrIds);
         unset($fdr);
 
+        $optionString = "";
+        $firstFdrId = null;
+        $first = true;
+        foreach($fdrList as $frdInfo) {
+            if ($first) {
+                $firstFdrId = intval($frdInfo['id']);
+                $first = false;
+            }
+            $optionString .="<option data-id='".$frdInfo['id']."' value='".$frdInfo['id']."'>"
+                .$frdInfo['bruType']
+            ."</option>";
+        }
+
         $calibration = new Calibration;
         $fdrCalibrations = $calibration->getCalibrationsForFdrs($avalibleFdrIds, $userId);
 
         $calibrationSelects = "";
         foreach ($fdrCalibrations as $fdrId => $calibrations) {
-            $calibrationSelects .= "<select class='fdr-calibration' data-fdr-id='".$fdrId."'>";
+            $style = '';
+            if ($firstFdrId === $fdrId) {
+                $style = 'style="display:block;"';
+            }
+
+            $calibrationSelects .= "<select class='fdr-calibration' ".$style." data-fdr-id='".$fdrId."'>";
             foreach ($calibrations as $item) {
                 $calibrationSelects .= "<option value='".$item['id']."'>".$item['name']."</option>";
             }
             $calibrationSelects .= "</select>";
-        }
-
-        $optionString = "";
-
-        foreach($fdrList as $frdInfo) {
-            $optionString .="<option data-id='".$frdInfo['id']."' value='".$frdInfo['id']."'>".$frdInfo['bruType']."</option>";
         }
 
         $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>", $this->lang->flightUpload);
@@ -749,29 +761,23 @@ class FlightsController extends CController
       unset($Bru);
 
       $zip = new ZipArchive;
-      if ($zip->open($exportedFileRoot . '.zip', ZipArchive::CREATE) === TRUE)
-      {
-         for($i = 0; $i < count($exportedFiles); $i++)
-         {
+      if ($zip->open($exportedFileRoot . '.zip', ZipArchive::CREATE) === TRUE) {
+         for($i = 0; $i < count($exportedFiles); $i++) {
             $zip->addFile($exportedFiles[$i]['root'], $exportedFiles[$i]['filename']);
          }
          $zip->close();
-      }
-      else
-      {
+      } else {
          error_log('Failed zipping flight. Page asyncFileProcessor.php"');
       }
 
-      for($i = 0; $i < count($exportedFiles); $i++)
-      {
+      for($i = 0; $i < count($exportedFiles); $i++) {
          if(file_exists($exportedFiles[$i]['root'])) {
             unlink($exportedFiles[$i]['root']);
          }
       }
 
       $zipURL = 'http';
-      if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on"))
-      {
+      if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on")) {
          $zipURL .= "s";
       }
       $zipURL .= "://";

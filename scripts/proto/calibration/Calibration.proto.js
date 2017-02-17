@@ -216,13 +216,14 @@ function Calibration($window, document, langStr, eventHandler) {
             });
 
         $('.add-calibration-item')
-            .off('keyup')
-            .keyup(function() {
+            .off('click')
+            .click(function() {
                 var sibling = $(this).closest('.add-calibration-item-row')
                     .siblings('.calibration-table')
                     .children('.calibration-row-item')
                     .last();
-                var newSibling = sibling.clone().toggleClass('fill-3')
+                var newSibling = sibling.clone().toggleClass('fill-3');
+                newSibling.find('input').val('');
                 newSibling.insertAfter(sibling);
 
                 removeCalibrationRowButtonBinding();

@@ -968,8 +968,7 @@ class UploaderController extends CController
         if ($res === TRUE) {
             $i = 0;
             $headerFiles = [];
-            do
-            {
+            do {
                 $fileName = $zip->getNameIndex($i);
                 if((strpos($fileName, "header") !== false)) {
                     $headerFiles[] = $fileName;

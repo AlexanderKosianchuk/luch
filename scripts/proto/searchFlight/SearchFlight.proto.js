@@ -1,6 +1,8 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
+var SEARCH_FLIGHT_SRC = location.protocol + '//' + location.host + "/view/searchFlights.php";
+
 function SearchFlight($window, document, langStr, eventHandler) {
     'use strict';
 

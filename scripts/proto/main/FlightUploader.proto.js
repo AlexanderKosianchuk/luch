@@ -75,6 +75,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
     var self = this;
     var previewCheckBoxDiv = $("div#previewCheckBoxDiv");
     var bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
+    var $calibrations = $('.calibrations-for-ubloading');
     var importInsteadConvert = false;
     var dialogHeightDelta = 0;
     var dialogInitialHeight = 0;
@@ -84,7 +85,6 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
             resizable: false,
             autoOpen: false,
             resize: false,
-            height: 260,
             width: 280,
             hide: {
                 effect: "fadeOut",
@@ -132,14 +132,15 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                     $('#bruTypeSelectForUploading').change(function () {
                         var $this = $(this);
                         var fdrId = $this.val();
-                        $('.calibrations-for-ubloading select').hide();
-                        $('.calibrations-for-ubloading select[data-fdr-id="'+fdrId+'"]').show();
+                        $calibrations.find('select').hide();
+                        $calibrations.find('select[data-fdr-id="'+fdrId+'"]').show();
                     });
                 }
 
                 dialogHeightDelta =
                     previewCheckBoxDiv.height() +
                     bruTypeSelectForUploadingDiv.height() +
+                    $calibrations.height() +
                     20;
             }
         }).css('overflow', 'hidden');
@@ -148,9 +149,10 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
     //radiobuttons import/convert
     $("div#importConvertRadio").buttonset().change(function(e){
         var el = $(e.target);
-        if(el.attr("id") == "flightFileConvert"){
+        if(el.attr("id") == "convertFl"){
             previewCheckBoxDiv.slideToggle(200);
             bruTypeSelectForUploadingDiv.slideToggle(200);
+            $calibrations.slideToggle(200);
             importInsteadConvert = false;
 
             if (self.fileUploadDialog) {
@@ -158,9 +160,10 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
                     height: "+=" + dialogHeightDelta
                   }, 200);
             }
-        } else if(el.attr("id") == "flightFileImport"){
+        } else if(el.attr("id") == "importFl"){
             previewCheckBoxDiv.slideToggle(200);
             bruTypeSelectForUploadingDiv.slideToggle(200);
+            $calibrations.slideToggle(200);
             importInsteadConvert = true;
 
             if (self.fileUploadDialog) {
@@ -239,7 +242,14 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
             0 + '%'
         );
 
+        var dialogHeight = 165;
+        var $importConvert = $("#importConvertRadio :radio:checked").attr('id');
+        if($importConvert === "convertFl"){
+            dialogHeight = 260;
+        }
+
         self.fileUploadDialog.dialog("option", {
+            height: dialogHeight,
             position: {
                 my: "left top",
                 at: "left bottom",

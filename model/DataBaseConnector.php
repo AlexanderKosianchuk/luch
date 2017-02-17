@@ -69,6 +69,8 @@ class DataBaseConnector
         $exportedFileName['root'] = $root.$fileName.".csv";
         $exportedFileName['filename'] = $fileName.".csv";
 
+        /*GRANT FILE ON *.* TO 'dbUser'@'localhost'*/
+
         $query = "SELECT * FROM `".$tableName."`"
             ." INTO OUTFILE '".$exportedFileName['tmp']."'"
             ." FIELDS TERMINATED BY ','"
