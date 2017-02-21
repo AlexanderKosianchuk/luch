@@ -1,0 +1,36 @@
+CREATE TABLE `event` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL,
+  `status` varchar(3) NOT NULL,
+  `text` varchar(255) NOT NULL,
+  `ref_param` varchar(255) NOT NULL,
+  `min_length` mediumint(12) NOT NULL,
+  `alg` text NOT NULL,
+  `comment` text NOT NULL,
+  `alg_text` varchar(255) NOT NULL,
+  `visualization` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `event_to_fdr` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `id_event` INT NOT NULL ,
+  `id_fdr` INT NOT NULL ,
+  `id_user` INT NOT NULL ,
+  `dt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  PRIMARY KEY (`id`),
+  INDEX (`id_event`),
+  INDEX (`id_fdr`),
+  INDEX (`id_user`)
+) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE `event_notice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_event` INT NOT NULL,
+  `text` varchar(255) NOT NULL,
+  `header_text` varchar(255) NOT NULL,
+  `min_length` mediumint(12) NOT NULL,
+  `alg` text NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX (`id_event`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

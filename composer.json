@@ -1,0 +1,20 @@
+{
+    "name": "AT/luch",
+    "description": "Flight data processor.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AlexanderKosianchuk",
+            "email": "dedanaan00@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "doctrine/orm": "2.4.*",
+        "symfony/yaml": "2.*"
+    },
+    "autoload": {
+        "psr-0": {"": "src/"}
+    }
+}
