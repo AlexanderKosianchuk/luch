@@ -163,6 +163,9 @@ class IndexController extends CController
         printf("<script type='text/javascript' src='scripts/include/jquery/jquery-2.1.1.min.js'></script>");
         printf("<script type='text/javascript' src='scripts/include/jquery/jquery-ui-1.10.3.custom.min.js'></script>");
         printf("<script type='text/javascript' src='scripts/include/jquery/jquery.mousewheel.min.js'></script>");
+
+        printf("<script type='text/javascript' src='scripts/include/lodash.min.js'></script>");
+
         printf("<script type='text/javascript' src='scripts/include/chosen/chosen.proto.min.js'></script>");
         printf("<script type='text/javascript' src='scripts/include/chosen/chosen.jquery.js'></script>");
 

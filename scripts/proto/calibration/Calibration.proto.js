@@ -1,8 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-var CALIBRATION_SRC = location.protocol + '//' + location.host + "/controller/CalibrationController.php";
-
 function Calibration($window, document, langStr, eventHandler) {
     'use strict';
 

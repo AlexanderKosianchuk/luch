@@ -12,12 +12,14 @@ use Model\FlightException;
 use Model\DataBaseConnector;
 
 use Exception;
+use ZipArchive;
 
 use Component\FlightComponent;
 
 class FlightsController extends CController
 {
    public $curPage = 'flightsPage';
+   public $action = '';
 
    function __construct()
    {
@@ -350,51 +352,10 @@ class FlightsController extends CController
        return $result;
    }
 
-   public function SyncFlightsHeaders($extIds)
-   {
-      $idsArr = $extIds;
-      $info = array();
-
-      $Fl = new Flight;
-      foreach ($idsArr as $flightId)
-   {
-         $flightInfo = $Fl->GetFlightInfo($flightId);
-         $bruType = $flightInfo["bruType"];
-
-      if($bruType == 'BUR-92A_An-148(158)')
-         {
-            $info['voyage'] = $flightInfo['voyage'];
-            $info['departureAirport'] = $flightInfo['departureAirport'];
-            $info['arrivalAirport'] = $flightInfo['arrivalAirport'];
-//            $info['capitan'] = $flightInfo['capitan'];
-//            $info['weightto'] = $flightInfo['weightto'];
-//            $info['weightlndg'] = $flightInfo['weightlndg'];
-         }
-//      else if($bruType == 'ER_BSTO_An-148(158)')
-//         {
-//            $info['voyage'] = $flightInfo['voyage'];
-//            $info['departureAirport'] = $flightInfo['departureAirport'];
-//            $info['arrivalAirport'] = $flightInfo['arrivalAirport'];
-//         }
-//         else if($bruType == 'RPP_Fly_An-148(158)')
-//         {
-//            $info['voyage'] = $flightInfo['voyage'];
-//            $info['departureAirport'] = $flightInfo['departureAirport'];
-//            $info['arrivalAirport'] = $flightInfo['arrivalAirport'];
-//         }
-   }
-
-      foreach ($idsArr as $flightId) {
-         $Fl->UpdateFlightInfo($flightId, $info);
-      }
-
-      unset($Fl);
-
-      return true;
-   }
-
-    public function ProcessFlight($flightId)
+    public function ProcessFlight($data)
     {
+        $flightId = intval($data['id']);
+
         if (is_int($flightId)) {
             $Fl = new Flight;
             $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -405,8 +366,8 @@ class FlightsController extends CController
             $tableGuid = substr($apTableName, 0, 14);
             unset($Fl);
 
-            $Bru = new Fdr;
-            $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+            $fdr = new Fdr;
+            $fdrInfo = $fdr->GetBruInfo($flightInfo["bruType"]);
             $excListTableName = $fdrInfo["excListTableName"];
             $apGradiTableName = $fdrInfo["gradiApTableName"];
             $bpGradiTableName = $fdrInfo["gradiBpTableName"];
@@ -414,7 +375,7 @@ class FlightsController extends CController
 
             if ($excListTableName != "")
             {
-               $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+               $fdrInfo = $fdr->GetBruInfo($flightInfo["bruType"]);
                $excListTableName = $fdrInfo["excListTableName"];
                $apGradiTableName = $fdrInfo["gradiApTableName"];
                $bpGradiTableName = $fdrInfo["gradiBpTableName"];
@@ -434,10 +395,6 @@ class FlightsController extends CController
                //perform proc be cached table
                for($i = 0; $i < count($exList); $i++)
                {
-//                   $fp = fopen($tempFilePath, "w");
-//                   fwrite($fp, json_encode($exList[$i]["code"]));
-//                         fclose($fp);
-
                   $curExList = $exList[$i];
                   $FEx->PerformProcessingByExceptions($curExList,
                         $flightInfo, $flightExTableName,
@@ -446,30 +403,14 @@ class FlightsController extends CController
                }
 
                error_reporting(E_ALL);
-
-//                unlink($tempFilePath);
-            } else {
-//                unlink($tempFilePath);
             }
 
-            unset($Bru);
-            $result = true;
-            return $result;
+            unset($fdr);
+            echo 'ok';
+      } else {
+         $msg = "Incorrect input data. ProcessFlight id - " . json_encode($flightId) . ". Page FlightsController.php";
+         throw new Exception($msg, 1);
       }
-      else
-      {
-         error_log("Incorrect input data. DeleteFlight id - " . json_encode($extId) . ". Page FlightsController.php");
-         $result['status'] = false;
-         return $result['status'];
-      }
-   }
-
-   public function GetUserInfo()
-   {
-      $uId = $this->_user->GetUserIdByName($this->_user->username);
-      $this->_user->userInfo = $this->_user->GetUserInfo($uId);
-
-      return $this->_user->userInfo;
    }
 
    public function GetLastViewType()
@@ -825,7 +766,7 @@ class FlightsController extends CController
    public function GetResults()
    {
        $c = new DataBaseConnector;
-       $link = $c->Connect();
+       $link = $this->Connect();
        $list = [];
 
        $query = "SELECT * FROM `results` WHERE 1;";
@@ -834,7 +775,7 @@ class FlightsController extends CController
        $firstRow = true;
 
        if(!$result) {
-           $c->Disconnect();
+           $this->Disconnect();
            unset($c);
            return $list;
        }
@@ -873,7 +814,7 @@ class FlightsController extends CController
        }
 
        $result->free();
-       $c->Disconnect();
+       $this->Disconnect();
 
        unset($c);
 
@@ -966,7 +907,7 @@ class FlightsController extends CController
        $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
 
        $c = new DataBaseConnector;
-       $link = $c->Connect();
+       $link = $this->Connect();
 
        $info = [];
        $averageLat = 0;
@@ -1009,10 +950,565 @@ class FlightsController extends CController
            }
        } while ($link->more_results() && $link->next_result());
 
-       $c->Disconnect();
+       $this->Disconnect();
 
        unset($c);
 
        return $info;
    }
+
+
+   /*
+   * ==========================================
+   * REAL ACTIONS
+   * ==========================================
+   */
+   public function flightGeneralElements($data)
+   {
+       $topMenu = $this->PutTopMenu();
+       $leftMenu = $this->PutLeftMenu();
+       $fileUploadBlock = $this->FileUploadBlock();
+
+       $answ = array(
+               'status' => 'ok',
+               'data' => array(
+                   'topMenu' => $topMenu,
+                   'leftMenu' => $leftMenu,
+                   'fileUploadBlock' => $fileUploadBlock
+               )
+       );
+
+       echo json_encode($answ);
+   }
+
+   public function getLastView($data)
+   {
+       $lastViewType = $this->GetLastViewType();
+       $answ = array();
+
+       if ($lastViewType == null) {
+               $targetId = 0;
+               $targetName = 'root';
+               $viewAction = "flightListTree";
+               $flightsListTileView = $this->BuildFlightsInTree($targetId);
+               $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
+
+               $answ["status"] = "ok";
+               $answ["type"] = $viewAction;
+               $answ["lastViewedFolder"] = $targetId;
+               $answ["data"] = $flightsListTileView;
+       } else {
+           $flightsListByPath = "";
+           $viewAction = $lastViewType["action"];
+           if($viewAction === "flightListTree") {
+               $actionsInfo = $this->GetLastViewedFolder();
+               $targetId = 0;
+               if($actionsInfo == null) {
+                   $targetName = 'root';
+                   $flightsListTileView = $this->BuildFlightsInTree($targetId);
+                   $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
+               } else {
+                   $targetId = $actionsInfo['targetId'];
+                   $targetName = $actionsInfo['targetName'];
+
+                   $Fd = new Folder();
+                   $folderInfo = $Fd->GetFolderInfo($targetId);
+                   unset($Fd);
+
+                   if(empty($folderInfo))
+                   {
+                       $targetId = 0;
+                       $targetName = 'root';
+                   }
+
+                   $flightsListTileView = $this->BuildFlightsInTree($targetId);
+                   $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
+               }
+
+               $answ["status"] = "ok";
+               $answ["type"] = $viewAction;
+               $answ["lastViewedFolder"] = $targetId;
+               $answ["data"] = $flightsListTileView;
+
+           } else if($viewAction === "flightListTable") {
+               $action = "flightListTable";
+
+               $table = $this->BuildTable();
+               $this->RegisterActionExecution($action, "executed", 0, 'tableView', '', '');
+               $actionsInfo = $this->GetLastSortTableType();
+
+               if (empty($actionsInfo)) {
+                   $actionsInfo['senderId'] = 3; // colunm 3 - start copy time
+                   $actionsInfo['targetName'] = 'desc';
+               }
+
+               $answ["status"] = "ok";
+               $answ["type"] = $viewAction;
+               $answ["data"] = $table;
+               $answ["sortCol"] = $actionsInfo['senderId'];
+               $answ["sortType"] = $actionsInfo['targetName'];
+           }
+       }
+
+       echo json_encode($answ);
+   }
+
+   public function flightListTree()
+   {
+       $flightsListTile = "";
+
+       $actionsInfo = $this->GetLastViewedFolder();
+       $targetId = 0;
+
+       if ($actionsInfo == null) {
+           $targetName = 'root';
+           $flightsListTileView = $this->BuildFlightsInTree($targetId);
+           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+       } else {
+           $targetId = $actionsInfo['targetId'];
+           $targetName = $actionsInfo['targetName'];
+
+           $Fd = new Folder();
+           $folderInfo = $Fd->GetFolderInfo($targetId);
+           unset($Fd);
+
+           if (empty($folderInfo)) {
+               $targetId = 0;
+               $targetName = 'root';
+           }
+
+           $flightsListTileView = $this->BuildFlightsInTree($targetId);
+           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+       }
+
+       $answ["status"] = "ok";
+       $answ["lastViewedFolder"] = $targetId;
+       $answ["data"] = $flightsListTileView;
+
+       echo json_encode($answ);
+   }
+
+   public function receiveTree($data)
+   {
+       if(isset($data['data']))
+       {
+           $folderid = 0;
+           $folderName = $this->lang->root;
+
+           $relatedNodes = "";
+           $actionsInfo = $this->GetLastViewedFolder();
+
+           if($actionsInfo == null)
+           {
+               $targetId = $folderid;
+               $targetName = 'root';
+               $relatedNodes = $this->PrepareTree($targetId);
+               $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+           }
+           else
+           {
+               $targetId = $actionsInfo['targetId'];
+               $targetName = $actionsInfo['targetName'];
+
+               $Fd = new Folder();
+               $folderInfo = $Fd->GetFolderInfo($targetId);
+               unset($Fd);
+
+               if(empty($folderInfo))
+               {
+                   $targetId = 0;
+                   $targetName = 'root';
+               }
+
+               $relatedNodes = $this->PrepareTree($targetId);
+               $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+           }
+
+           $tree[] = array(
+                   "id" => (string)$folderid,
+                   "text" => $folderName,
+                   'type' => 'folder',
+                   'state' =>  array(
+                           "opened" => true
+                   ),
+                   'children' => $relatedNodes
+           );
+
+           if(($actionsInfo == null) || ($actionsInfo['targetId'] == 0))
+           {
+               $tree[0]["state"] =  array(
+                       "opened" => true,
+                       "selected" => true
+               );
+           }
+
+           echo json_encode($tree);
+       }
+       else
+       {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function flightListTable($data)
+   {
+       if(isset($data['data']))
+       {
+           $table = $this->BuildTable();
+           $this->RegisterActionExecution($this->action, "executed", 0, 'tableView', '', '');
+
+           $actionsInfo = $this->GetLastSortTableType();
+
+           if(empty($actionsInfo)){
+               $actionsInfo['senderId'] = 3; // colunm 3 - start copy time
+               $actionsInfo['targetName'] = 'desc';
+           }
+
+           $answ = array(
+               'status' => 'ok',
+               'data' => $table,
+               'sortCol' => $actionsInfo['senderId'],
+               'sortType' => $actionsInfo['targetName']
+           );
+
+           echo json_encode($answ);
+       }
+       else
+       {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function segmentTable($data)
+   {
+       if(isset($data['data']))
+       {
+           $aoData = $this->data['data'];
+           $sEcho = $aoData[sEcho]['value'];
+           $iDisplayStart = $aoData[iDisplayStart]['value'];
+           $iDisplayLength = $aoData[iDisplayLength]['value'];
+
+           $sortValue = count($aoData) - 3;
+           $sortColumnName = 'id';
+           $sortColumnNum = $aoData[$sortValue]['value'];
+           $sortColumnType = strtoupper($aoData[$sortValue + 1]['value']);
+
+           switch ($sortColumnNum){
+               case(1):
+               {
+                   $sortColumnName = 'bort';
+                   break;
+               }
+               case(2):
+               {
+                   $sortColumnName = 'voyage';
+                   break;
+               }
+               case(3):
+               {
+                   $sortColumnName = 'startCopyTime';
+                   break;
+               }
+               case(4):
+               {
+                   $sortColumnName = 'uploadingCopyTime';
+                   break;
+               }
+               case(5):
+               {
+                   $sortColumnName = 'bruType';
+                   break;
+               }
+               case(6):
+               {
+                   $sortColumnName = 'arrivalAirport';
+                   break;
+               }
+               case(7):
+               {
+                   $sortColumnName = 'departureAirport';
+                   break;
+               }
+               case(8):
+               {
+                   $sortColumnName = 'performer';
+                   break;
+               }
+               case(9):
+               {
+                   $sortColumnName = 'exTableName';
+                   break;
+               }
+           }
+
+           $totalRecords = -1;
+           $aaData["sEcho"] = $sEcho;
+           $aaData["iTotalRecords"] = $totalRecords;
+           $aaData["iTotalDisplayRecords"] = $totalRecords;
+
+           $this->RegisterActionExecution($this->action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+
+           $tableSegment = $this->BuildTableSegment($sortColumnName, $sortColumnType);
+           $aaData["aaData"] = $tableSegment;
+
+           echo(json_encode($aaData));
+       }
+       else
+       {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function showFolderContent($data)
+   {
+       if(isset($data['folderId']))
+       {
+           $folderid = intval($this->data['folderId']);
+           $result = $this->BuildSelectedFolderContent($folderid);
+
+           $folderContent = $result['content'];
+           $targetId = $folderid;
+           $targetName = $result['folderName'];
+           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
+
+           $answ = array(
+               'status' => 'ok',
+               'data' => $folderContent
+           );
+
+           echo json_encode($answ);
+       }
+       else
+       {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function folderCreateNew($data)
+   {
+       if(isset($data['folderName'])
+           && isset($data['fullpath']))
+       {
+           $folderName = $data['folderName'];
+           $fullpath = $data['fullpath'];
+
+           $res = $this->CreateNewFolder($folderName, $fullpath);
+           $this->RegisterActionExecution($this->action, "executed", 0, 'folderCreation', $fullpath, $folderName);
+
+           $answ["status"] = "ok";
+           $folderId = $res['folderId'];
+
+           $answ["data"] = $res;
+           $answ["data"]['folderId'] = $folderId;
+
+           echo json_encode($answ);
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function flightChangePath($data)
+   {
+       if(isset($data['sender'])
+           && isset($data['target'])
+       ) {
+           $sender = $data['sender'];
+           $target = $data['target'];
+
+           $result = $this->ChangeFlightPath($sender, $target);
+           $this->RegisterActionExecution($this->action, "executed", $sender, 'flightId', $target, "newPath");
+
+           $answ = array();
+           if($result) {
+               $answ['status'] = 'ok';
+           } else {
+               $answ['status'] = 'err';
+               $answ['error'] = 'Error during flight change path.';
+               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           }
+           echo json_encode($answ);
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function folderChangePath($data)
+   {
+       if(isset($data['sender'])
+           && isset($data['target'])
+       ) {
+           $sender = $data['sender'];
+           $target = $data['target'];
+
+           $result = $this->ChangeFolderPath($sender, $target);
+           $this->RegisterActionExecution($this->action, "executed", $sender, 'folderId', $target, "newPath");
+
+           $answ = array();
+           if($result) {
+               $answ['status'] = 'ok';
+           } else {
+               $answ['status'] = 'err';
+               $answ['error'] = 'Error during folder change path.';
+               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           }
+           echo json_encode($answ);
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function folderRename($data)
+   {
+       if(isset($data['folderId'])
+           && isset($data['folderName'])
+       ) {
+           $folderId = $data['folderId'];
+           $folderName = $data['folderName'];
+
+           $result = $this->RenameFolder($folderId, $folderName);
+           $this->RegisterActionExecution($this->action, "executed", $folderId, 'folderId', $folderName, "newName");
+
+           $answ = array();
+           if($result) {
+               $answ['status'] = 'ok';
+           } else {
+               $answ['status'] = 'err';
+               $answ['error'] = 'Error during folder rename.';
+               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           }
+           echo json_encode($answ);
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function itemDelete($data)
+   {
+       if(isset($data['type'])
+           && isset($data['id'])
+       ) {
+           $type = $data['type'];
+           $id = intval($data['id']);
+
+           if($type == 'folder')
+           {
+               $result = $this->DeleteFolderWithAllChildren($id);
+
+               $answ = array();
+               if($result)
+               {
+                   $answ['status'] = 'ok';
+                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
+               }
+               else
+               {
+                   $answ['status'] = 'err';
+                   $answ['data']['error'] = 'Error during folder deleting.';
+                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+               }
+               echo json_encode($answ);
+           } else if($type == 'flight') {
+               $result = $this->DeleteFlight($id);
+
+               $answ = array();
+               if($result) {
+                   $answ['status'] = 'ok';
+                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
+               } else {
+                   $answ['status'] = 'err';
+                   $answ['data']['error'] = 'Error during flight deleting.';
+                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+               }
+               echo json_encode($answ);
+           } else {
+               $answ["status"] = "err";
+               $answ["error"] = "Incorect type. Post: ".
+                       json_encode($_POST) . ". Page flights.php";
+               echo(json_encode($answ));
+           }
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+   }
+
+   public function itemExport($data)
+   {
+       if(isset($data['flightIds']) || isset($data['folderDest'])) {
+           $flightIds = [];
+           $folderDest = [];
+           if(isset($data['flightIds'])) {
+               if(is_array($data['flightIds'])) {
+                   $flightIds = array_merge($flightIds, $data['flightIds']);
+               } else {
+                   $flightIds[] = $data['flightIds'];
+               }
+           }
+
+           $folderDest = [];
+           if(isset($data['folderDest']) &&
+               is_array($data['folderDest'])) {
+                   $folderDest = array_merge($folderDest, $data['folderDest']);
+           }
+
+           $zipUrl = $this->ExportFlightsAndFolders($flightIds, $folderDest);
+
+           $answ = array();
+           if ($zipUrl) {
+               $answ = [
+                   'status' => 'ok',
+                   'zipUrl' => $zipUrl
+               ];
+
+               $this->RegisterActionExecution($this->action, "executed", json_encode(array_merge($flightIds, $flightIds)), "itemId");
+           } else {
+               $answ = [
+                   'status' => 'empty',
+                   'info' => 'No flights to export'
+               ];
+           }
+           echo json_encode($answ);
+       } else {
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page flights.php";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+       }
+    }
 }

@@ -17,7 +17,7 @@ CREATE TABLE `event_to_fdr` (
   `id_event` INT NOT NULL ,
   `id_fdr` INT NOT NULL ,
   `id_user` INT NOT NULL ,
-  `dt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `param_substitution`  varchar(255) NULL,
   PRIMARY KEY (`id`),
   INDEX (`id_event`),
   INDEX (`id_fdr`),
@@ -28,8 +28,6 @@ CREATE TABLE `event_values` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_event` INT NOT NULL,
   `text` varchar(255) NOT NULL,
-  `header_text` varchar(255) NOT NULL,
-  `min_length` mediumint(12) NOT NULL,
   `alg` text NOT NULL,
   PRIMARY KEY (`id`),
   INDEX (`id_event`)

@@ -1,6 +1,3 @@
-var FLIGHTS_VIEW_SRC = location.protocol + '//' + location.host + "/view/flights.php";
-var USER_SRC = location.protocol + '//' + location.host + "/view/user.php";
-
 function FlightList(langStr, eventHandler)
 {
     this.langStr = langStr;
@@ -19,7 +16,7 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
     self.flightListFactoryContainer = factoryContainer;
 
     var pV = {
-            action: "flightGeneralElements",
+            action: "flights/flightGeneralElements",
             data: {
                 data: 'data'
             }
@@ -29,7 +26,7 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);
@@ -253,7 +250,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
         self.flightListContent = $("div#flightListContent");
 
         var pV = {
-            action: "flightLastView",
+            action: "flights/getLastView",
             data: {
                 data: 'data'
             }
@@ -262,7 +259,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
         $.ajax({
             type: "POST",
             data: pV,
-            url: FLIGHTS_VIEW_SRC,
+            url: ENTRY_URL,
             dataType: 'json',
             async: true,
             success: function(answ) {
@@ -340,10 +337,10 @@ FlightList.prototype.UpdateOptions = function() {
 
     return $.ajax({
         type: "POST",
-        url: USER_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         data: {
-            action: "updateUserOptions",
+            action: "user/updateUserOptions",
             data: msg
         }
     });
@@ -386,15 +383,15 @@ FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
     };
 
     if(senderType == 'flight'){
-        pV.action = "flightChangePath";
+        pV.action = "flights/flightChangePath";
     } else if(senderType == 'folder'){
-        pV.action = "folderChangePath";
+        pV.action = "flights/folderChangePath";
     }
 
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).fail(function(msg){
@@ -402,294 +399,12 @@ FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
     });
 };
 
-FlightList.prototype.ActionShowFolder = function(sender) {
-    var self = this,
-        position = sender.data("position"),
-        fullpath = sender.data("folderdestination");
-
-    var pV = {
-            action: "flightShowFolder",
-            data: {
-                position: position,
-                fullpath: fullpath
-            }
-        };
-
-    $.ajax({
-        type: "POST",
-        data: pV,
-        url: FLIGHTS_VIEW_SRC,
-        dataType: 'json',
-        async: true,
-        success: function(answ) {
-            if(answ['status'] == 'ok'){
-                var flightList = answ['data'],
-                    column = $("td#filesContainer" + position);
-
-                column.empty();
-                column.append(flightList);
-                self.SupportNaviButt();
-                self.MakeDragable();
-                self.MakeClickable();
-            } else {
-                console.log(data['error']);
-            }
-        }
-    }).fail(function(msg){
-        console.log(msg);
-    });
-};
-
-FlightList.prototype.SupportNaviButt = function() {
-    var self = this;
-
-    $("img#upperFromPath").on("click", function(e){
-        var el = $(e.target),
-            position = el.parent().data("position"),
-            path = el.parent().data("path");
-            self.GoUpper(position, path);
-    }).on('mouseover', function(e){
-        $(e.target).addClass('ui-state-focus');
-    }).on('mouseleave', function(e){
-        $(e.target).removeClass('ui-state-focus');
-    });
-
-    $("img#toRootFromPath").on("click", function(e){
-        var position = $(e.target).parent().data("position");
-        self.UpdateColumn(position, 0);
-    }).on('mouseover', function(e){
-        $(e.target).addClass('ui-state-focus');
-    }).on('mouseleave', function(e){
-        $(e.target).removeClass('ui-state-focus');
-    });
-
-    $("img#refreshFolder").on("click", function(e){
-        var target = $(e.target).parent(),
-            position = target.data("position"),
-            path = target.data("path");
-        self.UpdateColumn(position, path);
-    }).on('mouseover', function(e){
-        $(e.target).addClass('ui-state-focus');
-    }).on('mouseleave', function(e){
-        $(e.target).removeClass('ui-state-focus');
-    });
-
-    $("img#newFolderInPath").on("click", function(e){
-        var target = $(e.target).parent(),
-            position = target.data("position"),
-            path = target.data("path");
-        self.ShowNewFolder(position, path);
-    }).on('mouseover', function(e){
-        $(e.target).addClass('ui-state-focus');
-    }).on('mouseleave', function(e){
-        $(e.target).removeClass('ui-state-focus');
-    });
-};
-
-FlightList.prototype.UpdateColumn = function(position, path) {
-    var self = this;
-
-    var pV = {
-        action: "flightShowFolder",
-        data: {
-            position: position,
-            fullpath: path
-        }
-    };
-
-    $.ajax({
-        type: "POST",
-        data: pV,
-        url: FLIGHTS_VIEW_SRC,
-        dataType: 'json',
-        async: true,
-        success: function(answ) {
-            if(answ['status'] == 'ok'){
-                    var flightList = answ['data'],
-                        column = $("td#filesContainer" + position);
-
-                    column.empty();
-                    column.append(flightList);
-                    self.SupportNaviButt();
-                    self.MakeDragable();
-                    self.MakeClickable();
-                } else {
-                    console.log(data['error']);
-                }
-            }
-        }).fail(function(msg){
-            console.log(msg);
-        });
-}
-
-FlightList.prototype.GoUpper = function(position, path) {
-    var self = this;
-
-    var pV = {
-        action: "flightGoUpper",
-        data: {
-            position: position,
-            fullpath: path
-        }
-    };
-
-    $.ajax({
-        type: "POST",
-        data: pV,
-        url: FLIGHTS_VIEW_SRC,
-        dataType: 'json',
-        async: true,
-        success: function(answ) {
-                if(answ['status'] == 'ok'){
-                    var flightList = answ['data'],
-                        column = $("td#filesContainer" + position);
-
-                    column.empty();
-                    column.append(flightList);
-                    self.SupportNaviButt();
-                    self.MakeDragable();
-                    self.MakeClickable();
-                } else {
-                    console.log(data['error']);
-                }
-            }
-        }).fail(function(msg){
-            console.log(msg);
-        });
-}
-
-FlightList.prototype.ShowNewFolder = function(position, path) {
-    var self = this,
-        folderContainer = $("td#filesContainer" + position + " .NonSortableList"),
-        elWidth = $(".FolderPathInTwoColumnContainer").width(),
-        folderpath = folderContainer.data("folderpath"),
-        recentlyCreatedFolder = $("#recentlyCreatedFolder"),
-        foldersNamesArr = new Array();
-
-    $.each($("td#filesContainer" + position + " .NonSortableList .FolderInTwoColumnContainer"), function(i, el){
-        var el = $(el);
-        foldersNamesArr.push(el.text());
-    });
-
-    //check if exist $("input#recentlyCreatedFolder")
-    if($.inArray(recentlyCreatedFolder.val(), foldersNamesArr) > -1){
-        recentlyCreatedFolder.css({
-            "background-color": "#FFD3D3"
-        });
-    } else {
-        recentlyCreatedFolder.parent().empty().append(recentlyCreatedFolder.val());
-        var recentlyCreatedFolderName = self.langStr['newFolder'];
-
-        //append counter in brackets (1), (2) ...
-        var i = 1;
-        while($.inArray(recentlyCreatedFolderName, foldersNamesArr) > -1){
-            if(recentlyCreatedFolderName.indexOf("(" + i + ")") != -1){
-                recentlyCreatedFolderName = recentlyCreatedFolderName.replace("(" + i + ")","(" + (i + 1) + ")");
-                i++;
-            } else {
-                recentlyCreatedFolderName += " (" + i + ")";
-            }
-        }
-
-        var folderEl = "<li id='draggable" + position + "' class='FolderInTwoColumnContainer' style='width:"+elWidth+"px;'" +
-                "data-position='" + position + "' " +
-                "data-folderpath='" + folderpath + "'>" +
-            "<table><tr><td style='width:100%;'>" +
-            "<input id='recentlyCreatedFolder' type='text' " +
-                "style='width:" + (elWidth - 60) + "px;' " +
-                "value='" + recentlyCreatedFolderName + "'/>" +
-            "</td><td style='width:15px; vertical-align:top;'>" +
-            "<input class='ItemsCheck' type='checkbox' " +
-                "data-type='folder' " +
-                "data-position='" + position + "' " +
-                "data-folderpath='" + folderpath + "'/>" +
-            "</td><tr></table>" + "</li>";
-        folderContainer.append(folderEl);
-
-        recentlyCreatedFolder = $("#recentlyCreatedFolder");
-    }
-
-    recentlyCreatedFolder.focus();
-    recentlyCreatedFolder.on("focusout", function(e){
-        var el = $(e.target),
-            text = el.val(),
-            folderRow = el.closest('li'),
-            folderpath = folderRow.data("folderpath"),
-            position = folderRow.data("position"),
-            folderContainer = $("td#filesContainer" + position + " .NonSortableList"),
-            folderContainerAnotherColumn = new Object(),
-            positionAnotherColumn = '',
-            foldersNamesArr = new Array();
-
-        $.each($("td#filesContainer" + position + " .NonSortableList .FolderInTwoColumnContainer"), function(i, existEl){
-            var existEl = $(existEl);
-            foldersNamesArr.push(existEl.text());
-        });
-
-        if($.inArray(text, foldersNamesArr) == -1){
-            self.CreateNewFolder(text, folderpath).done(function(answ) {
-                var folderdestination = "";
-
-                if(answ['status'] == 'ok'){
-                    folderdestination = answ['data']['folderId'];
-                    self.MakeDragable();
-                    self.MakeClickable();
-
-                    folderRow.data("folderdestination", folderdestination);
-                    folderRow.find(".ItemsCheck").data("folderdestination", folderdestination);
-
-                    el.parent().empty().append(text);
-
-                    if(position == 'Right') {
-                        positionAnotherColumn = 'Left',
-                        folderContainerAnotherColumn = $("td#filesContainer" + folderContainerAnotherColumn + " .NonSortableList");
-                    } else if(position == 'Left') {
-                        positionAnotherColumn = 'Right',
-                        folderContainerAnotherColumn = $("td#filesContainer" + positionAnotherColumn + " .NonSortableList");
-                    }
-
-                    //if same path in left and right shown, append to another also
-                    if(folderContainer.data("path") == folderContainerAnotherColumn.data("path")) {
-                        var folderEl = "<li id='draggable" + positionAnotherColumn + "' class='FolderInTwoColumnContainer' " +
-                            "data-position='" + positionAnotherColumn + "' " +
-                            "data-folderpath='" + folderpath + "' " +
-                            "data-folderdestination='" + folderdestination + "'>" +
-                        "<table><tr><td style='width:100%;'>" + recentlyCreatedFolderName +
-                        "</td><td style='width:15px; vertical-align:top;'>" +
-                        "<input class='ItemsCheck' type='checkbox' data-type='folder' "+
-                            "data-position='" + position + "' " +
-                            "data-folderpath='" + folderpath + "' " +
-                            "data-folderdestination='" + folderdestination + "'/>" +
-                        "</td><tr></table>" + "</li>";
-                        folderContainerAnotherColumn.append(folderEl);
-                    }
-                } else {
-                    console.log(data['error']);
-                }
-            });
-        }
-    });
-
-    recentlyCreatedFolder.on("input", function(e){
-        var el = $(e.target);
-        el.css({
-            "background-color": "#fff"
-        });
-
-        if($.inArray(el.val(), foldersNamesArr) > -1){
-            el.css({
-                "background-color": "#FFD3D3"
-            });
-        }
-    });
-}
-
 FlightList.prototype.CreateNewFolder = function(folderName, folderPath) {
     var self = this,
         folderdestination = 0;
 
     var pV = {
-        action: "folderCreateNew",
+        action: "flights/folderCreateNew",
         data: {
             folderName: folderName,
             fullpath: folderPath
@@ -699,7 +414,7 @@ FlightList.prototype.CreateNewFolder = function(folderName, folderPath) {
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).fail(function(msg){
@@ -711,7 +426,7 @@ FlightList.prototype.RenameFolder = function(folderId, folderName) {
     var self = this;
 
     var pV = {
-        action: "folderRename",
+        action: "flights/folderRename",
         data: {
             folderId: folderId,
             folderName: folderName
@@ -721,7 +436,7 @@ FlightList.prototype.RenameFolder = function(folderId, folderName) {
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).fail(function(msg){
@@ -733,7 +448,7 @@ FlightList.prototype.DeleteItem = function(type, id) {
     var self = this;
 
     var pV = {
-        action: "itemDelete",
+        action: "flights/itemDelete",
         data: {
             type: type,
             id: id
@@ -743,28 +458,7 @@ FlightList.prototype.DeleteItem = function(type, id) {
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
-        dataType: 'json',
-        async: true
-    }).fail(function(msg){
-        console.log(msg);
-    });
-}
-
-FlightList.prototype.SyncItemsHeaders = function(idArr) {
-    var self = this;
-
-    var pV = {
-        action: "syncItemsHeaders",
-        data: {
-            ids: idArr
-        }
-    };
-
-    return $.ajax({
-        type: "POST",
-        data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).fail(function(msg){
@@ -776,7 +470,7 @@ FlightList.prototype.ProcessItem = function(id) {
     var self = this;
 
     var pV = {
-        action: "itemProcess",
+        action: "flights/processFlight",
         data: {
             id: id
         }
@@ -785,7 +479,7 @@ FlightList.prototype.ProcessItem = function(id) {
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).fail(function(msg){
@@ -797,7 +491,7 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
     var self = this;
 
     var pV = {
-        action: "itemExport",
+        action: "flights/itemExport",
         data: {
             flightIds: flightIds,
             folderDest: folderDest
@@ -807,7 +501,7 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
     return $.ajax({
         type: "POST",
         data: pV,
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         dataType: 'json',
         async: true
     }).done(function(msg){
@@ -834,7 +528,7 @@ FlightList.prototype.ShowFlightsTree = function() {
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
                 var pV = {
-                    action: "flightListTree",
+                    action: "flights/flightListTree",
                     data: {
                         data: 'data'
                     }
@@ -843,7 +537,7 @@ FlightList.prototype.ShowFlightsTree = function() {
                 $.ajax({
                     type: "POST",
                     data: pV,
-                    url: FLIGHTS_VIEW_SRC,
+                    url: ENTRY_URL,
                     dataType: 'json',
                     async: true,
                     success: function(answ) {
@@ -1027,12 +721,12 @@ FlightList.prototype.SupportJsTree = function() {
         },
         'core' : {
             'data' : {
-                "url" : FLIGHTS_VIEW_SRC,
+                "url" : ENTRY_URL,
                 "type": "POST",
                 "dataType" : "json", // needed only if you do not supply JSON headers
                 "data" : function (node) {
                     var pV = {
-                        action : "receiveTree",
+                        action : "flights/receiveTree",
                         data : {
                             data : 'data'
                         }
@@ -1093,14 +787,14 @@ FlightList.prototype.SupportJsTree = function() {
 FlightList.prototype.ShowContent = function(folderId) {
     var self = this,
         pV = {
-            action : "showFolderContent",
+            action : "flights/showFolderContent",
             data : {
                 folderId: folderId
             }
         };
 
     return $.ajax({
-        url: FLIGHTS_VIEW_SRC,
+        url: ENTRY_URL,
         type: "POST",
         data: pV,
         dataType: "json",
@@ -1144,7 +838,7 @@ FlightList.prototype.ShowFlightsTable = function() {
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
                 var pV = {
-                    action: "flightListTable",
+                    action: "flights/flightListTable",
                     data: {
                         data: 'data'
                     }
@@ -1153,7 +847,7 @@ FlightList.prototype.ShowFlightsTable = function() {
                 $.ajax({
                     type: "POST",
                     data: pV,
-                    url: FLIGHTS_VIEW_SRC,
+                    url: ENTRY_URL,
                     dataType: 'json',
                     async: true,
                     success: function(answ) {
@@ -1197,10 +891,10 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
         "bServerSide": true,
         "aLengthMenu": false,
         "bPaginate": false,
-        "sAjaxSource": FLIGHTS_VIEW_SRC,
+        "sAjaxSource": ENTRY_URL,
         "fnServerData": function ( sSource, aoData, fnCallback) {
             var pV = {
-                action: "segmentTable",
+                action: "flights/segmentTable",
                 data: {
                     data: aoData
                 }

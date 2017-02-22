@@ -498,13 +498,26 @@ class UserController extends CController
         return true;
     }
 
-    public function UpdateUserOptions($form)
+    /*
+    * ==========================================
+    * REAL ACTIONS
+    * ==========================================
+    */
+    public function updateUserOptions($data)
     {
+        $form = [];
+        parse_str($data, $form);
+
         $userInfo = $this->GetUserInfo();
         $userId = $userInfo['id'];
         $O = new UserOptions;
         $O->UpdateOptions($form, $userId);
         unset($O);
-        return $form;
+
+        $answ = array(
+            'status' => 'ok'
+        );
+
+        echo json_encode($answ);
     }
 }

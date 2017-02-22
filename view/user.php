@@ -59,28 +59,6 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
             echo(json_encode($answ));
         }
-    } else if($c->action === "updateUserOptions") {
-        if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
-        {
-            $form = [];
-            parse_str($c->data, $form);
-
-            $c->UpdateUserOptions($form);
-
-            $answ = array(
-                'status' => 'ok'
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
-
-            $answ["status"] = "err";
-            $answ["error"] = $c->lang->notAllowedByPrivilege;
-            $c->RegisterActionReject($c->action, "rejected", 0, 'notAllowedByPrivilege');
-            echo(json_encode($answ));
-        }
     } else if($c->action == "buildUserTable") {
         if(in_array(User::$PRIVILEGE_OPTIONS_USERS, $c->_user->privilege))
         {

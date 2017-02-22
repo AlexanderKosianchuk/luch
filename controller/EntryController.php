@@ -26,6 +26,7 @@ class EntryController extends CController
 
                 $controller = 'Controller\\' . $controller;
                 $C = new $controller;
+                $C->action = $this->action;
 
                 if (method_exists ($C, $method)) {
                     $C->IsAppLoggedIn();
