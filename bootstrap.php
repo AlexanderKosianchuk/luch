@@ -35,6 +35,3 @@ $EM = EntityManager::create(
 );
 
 $EM->getConfiguration()->addEntityNamespace('Entity', 'Entity');
-
-$product = $EM->find("Entity:Folder", 1000000);
-var_dump($product);
