@@ -1,4 +1,4 @@
-CREATE TABLE `event` (
+CREATE TABLE `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(255) NOT NULL,
   `status` varchar(3) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `event_to_fdr` (
   INDEX (`id_user`)
 ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci;
 
-CREATE TABLE `event_notice` (
+CREATE TABLE `event_values` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_event` INT NOT NULL,
   `text` varchar(255) NOT NULL,

@@ -1,6 +1,6 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class Channel
 {
@@ -30,7 +30,7 @@ class Channel
             $query = "SELECT `time`, `".$code."` FROM `".$tableName."_".$prefix."` WHERE 1 "
                 . "ORDER BY `time` ASC";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $result = $link->query($query);
 
@@ -50,7 +50,7 @@ class Channel
                 ((`frameNum` % ".$divider.") = 0))
                 ORDER BY `time` ASC";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $result = $link->query($query);
 
@@ -96,7 +96,7 @@ class Channel
                 . " (`frameNum` % ".$divider." = 0)"
                 . " ORDER BY `time` ASC";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $result = $link->query($query);
 
@@ -119,7 +119,7 @@ class Channel
     {
         $stepMicroTime = $stepLength / $freq * 1000;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `frameNum`, `time` FROM `".$tableName."` WHERE " .
@@ -220,7 +220,7 @@ class Channel
         $tableName = $apTableName . "_" . $extPefix;
         $duplication = $stepDivider / $steps;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `".$code."` FROM `".$tableName."` WHERE
@@ -258,7 +258,7 @@ class Channel
         $duplication = $stepDivider / $steps;
         $totalRows = ($endFrame - $startFrame) * $stepDivider;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `frameNum`, `time` FROM `".$tableName."` WHERE `code` = '" . $code . "' ".
@@ -308,7 +308,7 @@ class Channel
     {
         $minMax = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT MIN(`".$paramCode."`), MAX(`".$paramCode."`) FROM `".$apTableName."` WHERE 1;";

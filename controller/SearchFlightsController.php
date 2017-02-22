@@ -1,6 +1,11 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\Fdr;
+use Model\SearchFlights;
+use Model\Flight;
+use Model\DataBaseConnector;
 
 class SearchFlightController extends CController
 {
@@ -20,20 +25,20 @@ class SearchFlightController extends CController
 
         $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
 
-        $Bru = new Bru();
+        $Bru = new Fdr;
         $bruList = $Bru->GetBruList($avalibleBruTypes);
         unset($Bru);
 
         $optionString = "";
 
         $selectedFdr = '';
-        foreach($bruList as $bruInfo)
+        foreach($bruList as $fdrInfo)
         {
             if($selectedFdr == '') {
-                $selectedFdr = $bruInfo['id'];
-                $optionString .="<option selected='selected' value='".$bruInfo['id']."'>".$bruInfo['bruType']."</option>";
+                $selectedFdr = $fdrInfo['id'];
+                $optionString .="<option selected='selected' value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
             } else {
-                $optionString .="<option value='".$bruInfo['id']."'>".$bruInfo['bruType']."</option>";
+                $optionString .="<option value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
             }
         }
 
@@ -77,7 +82,7 @@ class SearchFlightController extends CController
 
     public function BuildSearchFlightAlgorithmesList($fdrId)
     {
-        $SF = new SearchFlights();
+        $SF = new SearchFlights;
         $alg = $SF->GetSearchAlgorithmes($fdrId);
 
         $form = '';
@@ -96,9 +101,9 @@ class SearchFlightController extends CController
     {
         $filterParams = [];
         if(isset($filterData['fdr']) && !empty($filterData['fdr'])) {
-            $FDR = new Bru();
+            $FDR = new Fdr;
             $FDRinfo = $FDR->GetBruInfoById($filterData['fdr']);
-            $filterParams['bruType'] = $FDRinfo['bruType'];
+            $filterParams['bruType'] = $fdrInfo['name'];
         }
 
         if(isset($filterData['bort']) && !empty($filterData['bort'])) {
@@ -137,7 +142,7 @@ class SearchFlightController extends CController
             $filterParams['to'] = strtotime($filterData['flightDateTo']);
         }
 
-        $F = new Flight();
+        $F = new Flight;
         $flights = $F->GetFlightsByFilter($filterParams);
         unset($F);
 
@@ -147,11 +152,11 @@ class SearchFlightController extends CController
     public function SearchByAlgorithm($algId, $flightsArr)
     {
         $foundFlights = [];
-        $SF = new SearchFlights();
+        $SF = new SearchFlights;
         $searchAlg = $SF->GetSearchAlgorithById($algId);
         unset($SF);
 
-        $F = new Flight();
+        $F = new Flight;
 
         if($searchAlg) {
             foreach ($flightsArr as $flightid) {
@@ -169,7 +174,7 @@ class SearchFlightController extends CController
                     $query = str_replace("[".$flightInfoKey."]", $flightInfoVal, $query);
                 }
 
-                $c = new DataBaseConnector();
+                $c = new DataBaseConnector;
                 $link = $c->Connect();
 
                 if (!$link->multi_query($query))

@@ -1,6 +1,8 @@
 <?php
 
-require_once(@"includes.php");
+namespace Controller;
+
+use Model\UserOptions;
 
 class IndexController extends CController
 {
@@ -176,30 +178,29 @@ class IndexController extends CController
         printf("<script type='text/javascript' src='scripts/include/dataTables/dataTables.fixedHeader.min.js'></script>");
 
         //colorpicker
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.colorpicker.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-parser.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-crayola.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-memory.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-pantone.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-ral-classic.js'></script>
-            <script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-percentage-parser.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.colorpicker.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-parser.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-crayola.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-memory.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-ral-classic.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-percentage-parser.js'></script>");
 
         //flot
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.time.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.colorhelpers.min.js'></script>-->
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.canvas.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.categories.min.js'></script>-->
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.crosshair.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.errorbars.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.navigate.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.resize.min.js'></script>-->
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.selection.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.symbol.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.threshold.min.js'></script>-->
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.min.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.time.min.js'></script>");
+        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.colorhelpers.min.js'></script>-->");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.canvas.min.js'></script>");
+        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.categories.min.js'></script>-->");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.crosshair.min.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.errorbars.min.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.navigate.min.js'></script>");
+        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.resize.min.js'></script>-->");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.selection.min.js'></script>");
+        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.symbol.min.js'></script>");
+        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.threshold.min.js'></script>-->");
 
-            <!--[if lte IE 8]><script type='text/javascript' src='scripts/include/flot/excanvas.min.js'></script><![endif]-->
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.axislabels.js'></script>-->");
+        //printf("<!--[if lte IE 8]><script type='text/javascript' src='scripts/include/flot/excanvas.min.js'></script><![endif]-->");
+        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.axislabels.js'></script>-->");
         //The basic File Upload plugin
         printf("<script type='text/javascript' src='scripts/include/fileUploader/jquery.fileupload.js'></script>");
         //manual scripts
@@ -233,7 +234,6 @@ class IndexController extends CController
         printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsTpls.js'></script>");
         printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsEvents.js'></script>");
         printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsParams.js'></script>");
-
 
         //chart scripts
         printf("<script type='text/javascript' src='scripts/proto/chart/Chart.proto.js'></script>");

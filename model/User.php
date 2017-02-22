@@ -1,6 +1,8 @@
 <?php
 
-require_once(@SITE_ROOT_DIR ."/includes.php");
+namespace Model;
+
+use Exception;
 
 //User privilege
 //------------
@@ -196,7 +198,7 @@ class User
     public function CreateUsersTables()
     {
         $query = "SHOW TABLES LIKE 'user_personal';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -327,7 +329,7 @@ class User
 
     private function getUserIdByToken($token)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `id_user` FROM `user_auth` WHERE `token`='".$token."' "
@@ -365,7 +367,7 @@ class User
 
         setcookie('token', null, -1, '/');
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "DELETE FROM `user_auth` WHERE `id_user`=".$userId.";";
@@ -383,7 +385,7 @@ class User
 
     private function checkUserPass($username, $pass, $autologin = false)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id` FROM `user_personal` WHERE `login`='".$username."' "
@@ -410,7 +412,7 @@ class User
         $token = uniqid();
         $query = "INSERT INTO `user_auth` (`id_user`, `token`, `exp`) VALUES (".$userId.", '".$token."', NOW()+INTERVAL 30 DAY);";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $stmt = $link->prepare($query);
@@ -428,7 +430,7 @@ class User
 
     public function GetUserIdByName($requester)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `id` FROM `user_personal` WHERE `login`='".$requester."' LIMIT 1;");
@@ -449,7 +451,7 @@ class User
 
     public function GetUserNameById($requester)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `login` FROM `user_personal` WHERE `id`='".$requester."' LIMIT 1;");
@@ -470,7 +472,7 @@ class User
             $userId = $this->GetIdByUsername($userIdentity);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT * FROM `user_personal` WHERE `id`='".$userId."' LIMIT 1;");
@@ -494,7 +496,7 @@ class User
     {
         $userId = $extUserId;
         $actionName = $extActionName;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `*` FROM `user_activity` WHERE `userId`='".$userId."' AND `acton` = '".$actionName."' ORDER BY `id` ASC LIMIT 1;");
@@ -514,7 +516,7 @@ class User
 
     public function GetUsersInfo($username)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT * FROM `user_personal` WHERE
@@ -537,7 +539,7 @@ class User
         $username = $extUsername;
 
         if($username != '') {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
             $result = $link->query("SELECT `privilege` FROM `user_personal` WHERE `login`='".$username."' LIMIT 1;");
@@ -562,27 +564,22 @@ class User
             $privilege = implode(',', $privilege);
         }
 
-        $query = "INSERT INTO `user_personal` (`login`,
-                `pass`,
-                `privilege`,
-                `author`,
-                `company`,
-                `lang`,
-                `role`,
-                `logo`)
-                VALUES ('".$login."',
-                        '".md5($pwd)."',
-                        '".$privilege."',
-                        '".$author."',
-                        '".$company."',
-                        'en',
-                        '".$role."',
-                        LOAD_FILE('".$logo."'));";
+        $query = "INSERT INTO `user_personal` ("
+        ."`login`,`pass`,`privilege`,`company`,`lang`,`role`,`logo`,`id_user`"
+        .") VALUES ("
+            ."'".$login."',"
+            ."'".md5($pwd)."',"
+            ."'".$privilege."',"
+            ."'".$company."',"
+            ."'en',"
+            ."'".$role."',"
+            ."LOAD_FILE('".$logo."'),"
+            ."NULL);";
 
         $execInfo['query'] = $query;
         $execInfo['status'] = 0;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $execInfo['link'] = $link;
@@ -615,7 +612,7 @@ class User
         $set = substr($set, 0, -2);
         $query = "UPDATE `user_personal` SET ".$set." WHERE `id` = '".$uId."';";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $stmt = $link->prepare($query);
@@ -633,7 +630,7 @@ class User
 
         $query = "DELETE FROM `user_personal` WHERE `login` = '".$login."';";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $stmt = $link->prepare($query);
@@ -649,7 +646,7 @@ class User
     {
         $query = "SELECT `login` FROM `user_personal` WHERE `login` = '".$login."';";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $exist = false;
@@ -672,7 +669,7 @@ class User
                 . json_encode($authorId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id` FROM `user_options` WHERE `id_user` = '".$authorId."';";
@@ -712,10 +709,10 @@ class User
             throw new Exception("Incorrect userId passed. Int expected. Passed: "
                 . json_encode($userId), 1);
         }
-        
+
         $availableItems = [];
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT `id_fdr` FROM `fdr_to_user`"
@@ -753,7 +750,7 @@ class User
         $q = "SELECT `id_fdr` FROM `fdr_to_user` "
             ."WHERE `id_fdr` = ? AND `id_user` = ?;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $stmt = $link->prepare($q);
@@ -818,7 +815,7 @@ class User
                 . json_encode($fdrId) , 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO `fdr_to_user` (`id_fdr`, `id_user`)
@@ -840,7 +837,7 @@ class User
                 . json_encode($userId) , 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         if (is_int($userId) && !is_int($fdrId)) {
@@ -867,7 +864,7 @@ class User
     {
         $availableUserIds = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `id` FROM `user_personal` ".
@@ -886,7 +883,7 @@ class User
 
     public function SetUserLanguage($login, $lang)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `user_personal` SET `lang` = '".$lang."'
@@ -904,7 +901,7 @@ class User
     {
         $observerIds = [];
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $userInfo = $this->GetUserInfo(intval($userId));
@@ -934,7 +931,7 @@ class User
     {
         $userIds = [];
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = '';
@@ -966,7 +963,7 @@ class User
 
     public function GetLastAction($userId, $action)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT * FROM `user_activity` WHERE `action` = '".$action."' AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
@@ -994,7 +991,7 @@ class User
         $userId = $extUserId;
         $actionsRange = implode("','", $extActionsRange);
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT * FROM `user_activity` WHERE `action` IN ('".$actionsRange."') AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
@@ -1028,7 +1025,7 @@ class User
         $targetId = $extTargetId;
         $targetName = $extTargetName;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO `user_activity` (`action`,`status`, `userId`, `senderId`, `senderName`, `targetId`, `targetName`)

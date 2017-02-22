@@ -1,8 +1,14 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
 
-class BruController extends CController
+use Model\Language;
+use Model\PSTempl;
+use Model\Channel;
+use Model\Fdr;
+use Model\Flight;
+
+class FdrController extends CController
 {
     public $curPage = 'bruTypesPage';
 
@@ -52,18 +58,18 @@ class BruController extends CController
         $bruTypeId = $extBruTypeId;
         $tplsListWithControlButtns = '';
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfoById($bruTypeId);
-        $bruType = $bruInfo['bruType'];
-        $paramSetTemplateListTableName = $bruInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
-        $stepLength = $bruInfo['stepLength'];
-        //$this->info = array_merge($this->info, $flightInfo, $bruInfo);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfoById($bruTypeId);
+        $bruType = $fdrInfo['name'];
+        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $stepLength = $fdrInfo['stepLength'];
+
         $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
         unset($Bru);
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         //if no template table - create it
         $PSTTableName = $paramSetTemplateListTableName;
         if($PSTTableName == "")
@@ -92,7 +98,7 @@ class BruController extends CController
             }
             $params = substr($params, 0, -2);
 
-            $Bru = new Bru();
+            $Bru = new Fdr;
             $paramNamesStr = $Bru->GetParamNames($bruType, $paramsToAdd);
 
             $tplsListWithControlButtns .= "<option id='tplOption' " .
@@ -114,14 +120,14 @@ class BruController extends CController
     private function BuildTplOptionList($extParamSetTemplateListTableName, $extBruType) {
         $bruType = $extBruType;
         $paramSetTemplateListTableName = $extParamSetTemplateListTableName;
-        $PSTempl = new PSTempl ();
+        $PSTempl = new PSTempl;
         $PSTList = $PSTempl->GetPSTList ( $paramSetTemplateListTableName, $this->_user->username);
         $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
         unset ( $PSTempl );
 
         $optionsStr = "";
 
-        $Bru = new Bru ();
+        $Bru = new Fdr;
         for($i = 0; $i < count ( $PSTList ); $i ++) {
             $PSTRow = $PSTList [$i];
             $paramsArr = $PSTRow [1];
@@ -158,9 +164,9 @@ class BruController extends CController
     {
         $bruTypeId = $extBruTypeId;
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfoById($bruTypeId);
-        $bruType = $bruInfo['bruType'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfoById($bruTypeId);
+        $bruType = $fdrInfo['name'];
         $flightApHeaders = $Bru->GetBruApHeaders($bruType);
         $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
         unset($Bru);
@@ -213,14 +219,14 @@ class BruController extends CController
         $tplName = $extTplName;
         $paramsToAdd = $extParams;
 
-        $Bru = new Bru ();
-        $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
-        $gradiApTableName = $bruInfo ['gradiApTableName'];
-        $gradiBpTableName = $bruInfo ['gradiBpTableName'];
-        $PSTTableName = $bruInfo ['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $gradiApTableName = $fdrInfo ['gradiApTableName'];
+        $gradiBpTableName = $fdrInfo ['gradiBpTableName'];
+        $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
 
         $paramsWithType = array ();
-        $Ch = new Channel ();
+        $Ch = new Channel;
 
         for($i = 0; $i < count ( $paramsToAdd ); $i ++) {
             $paramInfo = $Bru->GetParamInfoByCode ( $gradiApTableName, $gradiBpTableName, $paramsToAdd [$i] );
@@ -239,7 +245,7 @@ class BruController extends CController
         }
         unset ( $Bru );
 
-        $PSTempl = new PSTempl ();
+        $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
 
         $apCount = count ( $paramsWithType [PARAM_TYPE_AP] );
@@ -291,12 +297,12 @@ class BruController extends CController
         $bruTypeId = $extBruTypeId;
         $tplName = $extTplName;
 
-        $Bru = new Bru ();
-        $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
-        $PSTTableName = $bruInfo ['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
         unset ( $Bru );
 
-        $PSTempl = new PSTempl ();
+        $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
@@ -308,12 +314,12 @@ class BruController extends CController
         $bruTypeId = $extBruTypeId;
         $tplName = $extTplName;
 
-        $Bru = new Bru ();
-        $bruInfo = $Bru->GetBruInfoById ($bruTypeId);
-        $PSTTableName = $bruInfo ['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
         unset ( $Bru );
 
-        $PSTempl = new PSTempl ();
+        $PSTempl = new PSTempl;
         $PSTempl->SetDefaultTemplate($PSTTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
@@ -322,19 +328,19 @@ class BruController extends CController
 
     public function copyTemplate($flightId, $oldName)
     {
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
 
         $bruType = $flightInfo['bruType'];
-        $Bru = new Bru ();
-        $bruInfo = $Bru->GetBruInfo ($bruType);
-        $tableName = $bruInfo ['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo ($bruType);
+        $tableName = $fdrInfo ['paramSetTemplateListTableName'];
         unset ( $Bru );
 
         $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
         $username = $this->_user->username;
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
         $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
         unset($PSTempl);

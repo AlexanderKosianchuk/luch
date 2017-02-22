@@ -1,6 +1,18 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\Language;
+use Model\Flight;
+use Model\Fdr;
+use Model\Frame;
+use Model\PSTempl;
+use Model\FlightException;
+use Model\FlightComments;
+use Model\Channel;
+use Model\User;
+
+use Exception;
 
 class ViewOptionsController extends CController
 {
@@ -11,7 +23,7 @@ class ViewOptionsController extends CController
         $this->IsAppLoggedIn();
         $this->setAttributes();
 
-        $L = new Language();
+        $L = new Language;
         $this->lang = $L->GetLanguage($this->curPage);
         unset($L);
     }
@@ -58,7 +70,7 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
@@ -70,12 +82,12 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
+        $Bru = new Fdr;
         $bruTypeInfo = $Bru->GetBruInfo($bruType);
         $bruTypeId = $bruTypeInfo['id'];
         unset($Fl);
@@ -85,19 +97,19 @@ class ViewOptionsController extends CController
 
     public function GetFlightTiming($flightId)
     {
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $stepLength = $bruInfo['stepLength'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $stepLength = $fdrInfo['stepLength'];
 
         $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
         unset($Bru);
 
-        $Frame = new Frame();
+        $Frame = new Frame;
         $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
         unset($Frame);
 
@@ -112,7 +124,7 @@ class ViewOptionsController extends CController
     public function ShowTempltList($extFlightId)
     {
         $flightId = $extFlightId;
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         $apTableName = $flightInfo['apTableName'];
@@ -120,21 +132,21 @@ class ViewOptionsController extends CController
         $exTableName = $flightInfo['exTableName'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $paramSetTemplateListTableName = $bruInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
-        $stepLength = $bruInfo['stepLength'];
-        //$this->info = array_merge($this->info, $flightInfo, $bruInfo);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $stepLength = $fdrInfo['stepLength'];
+        //$this->info = array_merge($this->info, $flightInfo, $fdrInfo);
         $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
         unset($Bru);
 
-        $Frame = new Frame();
+        $Frame = new Frame;
         $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
         unset($Frame);
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         //if no template table - create it
         $PSTTableName = $paramSetTemplateListTableName;
         if($PSTTableName == "")
@@ -150,7 +162,7 @@ class ViewOptionsController extends CController
         $excEventsParamsList = array();
         if($exTableName != "")
         {
-            $FEx = new FlightException();
+            $FEx = new FlightException;
             $excEventsList = $FEx->GetFlightEventsParamsList($exTableName);
             unset($FEx);
         }
@@ -174,7 +186,7 @@ class ViewOptionsController extends CController
             }
             $params = substr($params, 0, -2);
 
-            $Bru = new Bru();
+            $Bru = new Fdr;
             $paramNamesStr = $Bru->GetParamNames($bruType, $paramsToAdd);
 
             $flightTplsStr .= "<option id='tplOption' " .
@@ -201,14 +213,14 @@ class ViewOptionsController extends CController
     {
         $bruType = $extBruType;
         $paramSetTemplateListTableName = $extParamSetTemplateListTableName;
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $PSTList = $PSTempl->GetPSTList($paramSetTemplateListTableName, $this->_user->username);
         $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
         unset($PSTempl);
 
         $optionsStr = "";
 
-        $Bru = new Bru();
+        $Bru = new Fdr;
         for($i = 0; $i < count($PSTList); $i++)
         {
             $PSTRow = $PSTList[$i];
@@ -263,13 +275,13 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders = $Bru->GetBruApHeaders($bruType);
         $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
         unset($Bru);
@@ -322,13 +334,13 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders = $Bru->GetBruApHeaders($bruType);
         $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
         unset($Bru);
@@ -348,13 +360,13 @@ class ViewOptionsController extends CController
         $startIndex = $pageNum * $pageSize;
         $endIndex = $startIndex + $pageSize;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders = $Bru->GetBruApHeadersWithPaging($bruType, $startIndex, $endIndex);
         $flightBpHeaders = $Bru->GetBruBpHeadersWithPaging($bruType, $startIndex, $endIndex);
         unset($Bru);
@@ -410,13 +422,13 @@ class ViewOptionsController extends CController
 
     public function ShowSearchedParams($flightId, $request)
     {
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders = $Bru->GetBruApHeadersByRequest($bruType, $request);
         $flightBpHeaders = $Bru->GetBruBpHeadersByRequest($bruType, $request);
         unset($Bru);
@@ -479,13 +491,13 @@ class ViewOptionsController extends CController
                 . json_encode($flightId), 1);
         }
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
         unset($Bru);
 
@@ -493,12 +505,12 @@ class ViewOptionsController extends CController
         $voyage = $flightInfo['voyage'];
         $copyDate = date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] );
 
-        $Fr = new Frame ();
+        $Fr = new Frame;
         $framesCount = $Fr->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
-        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $bruInfo ['stepLength'] );
+        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $fdrInfo ['stepLength'] );
         unset ($Fr);
 
-        $str = '<h4 class="container__events-header" style="text-align:center;">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' .
+        $str = '<h4 class="container__events-header" style="text-align:center;">' . $this->lang->bruType . ' - ' . $fdrInfo['name'] . '. <br>' .
                 $this->lang->bort . ' - ' . $flightInfo['bort'] . '; ' .
                 $this->lang->voyage . ' - ' . $flightInfo['voyage'] . '; ' .
 
@@ -507,9 +519,9 @@ class ViewOptionsController extends CController
         $this->lang->flightDate . ' - ' . date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] ) . '; ' .
         $this->lang->duration . ' - ' . $flightDuration . '. <br>';
 
-        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $bruInfo ['bruType'];
+        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $fdrInfo['name'];
 
-        if (strpos ( $bruInfo ['aditionalInfo'], ";" ) >= 0) {
+        if (strpos ( $fdrInfo ['aditionalInfo'], ";" ) >= 0) {
             $counterNeedBrake = false;
             $aditionalInfoArr = explode ( ";", $flightInfo['flightAditionalInfo'] );
             foreach ( $aditionalInfoArr as $aditionalInfo ) {
@@ -542,11 +554,11 @@ class ViewOptionsController extends CController
 
     public function GetFlightComment($flightId)
     {
-        $Fc = new FlightComments();
+        $Fc = new FlightComments;
         $flightComment = $Fc->getComment($flightId);
         unset($Fc);
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
 
@@ -675,7 +687,7 @@ class ViewOptionsController extends CController
             $generalAdmission = intval($flightCommentData['general-admission']);
         }
 
-        $Fc = new FlightComments();
+        $Fc = new FlightComments;
         $comment = $Fc->putComment($flightId,
             $userId,
             $comment,
@@ -696,17 +708,17 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         $exTableName = $flightInfo['exTableName'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders = $Bru->GetBruApHeaders($bruType);
         $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
-        $excListTableName = $bruInfo['excListTableName'];
+        $excListTableName = $fdrInfo['excListTableName'];
         unset($Bru);
 
         $eventsList = "";
@@ -714,10 +726,10 @@ class ViewOptionsController extends CController
 
         if($exTableName != "")
         {
-            $FEx = new FlightException();
+            $FEx = new FlightException;
             $excEventsList = $FEx->GetFlightEventsList($exTableName);
 
-            $Frame = new Frame();
+            $Frame = new Frame;
             //change frame num to time
             for($i = 0; $i < count($excEventsList); $i++)
             {
@@ -917,18 +929,18 @@ class ViewOptionsController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $paramSetTemplateListTableName = $bruInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $params = $PSTempl->GetDefaultTemplateParams($paramSetTemplateListTableName, $this->_user->username);
         unset($PSTempl);
 
@@ -958,18 +970,18 @@ class ViewOptionsController extends CController
         $flightId = $extFlightId;
         $tplName = $extTplName;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $paramSetTemplateListTableName = $bruInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $params = $PSTempl->GetPSTByName($paramSetTemplateListTableName, $tplName, $this->_user->username);
         unset($PSTempl);
 
@@ -1000,7 +1012,7 @@ class ViewOptionsController extends CController
         $paramsToAdd = $extParamsToAdd;
         $tplName = $extTplName;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
 
@@ -1008,14 +1020,14 @@ class ViewOptionsController extends CController
         $bpTableName = $flightInfo['bpTableName'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($flightInfo['bruType']);
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
-        $PSTTableName = $bruInfo['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
 
         $paramsWithType = array();
-        $Ch = new Channel();
+        $Ch = new Channel;
 
         for($i = 0; $i < count($paramsToAdd); $i++)
         {
@@ -1040,7 +1052,7 @@ class ViewOptionsController extends CController
         }
         unset($Bru);
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
         $PSTempl->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
 
@@ -1054,15 +1066,15 @@ class ViewOptionsController extends CController
         $paramCode = $extParamCode;
         $color = $extParamColor;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
         $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
 
@@ -1080,12 +1092,12 @@ class ViewOptionsController extends CController
 
     public function UpdateExceptionComment($flightId, $excId, $text)
     {
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
         $excTableName = $flightInfo['exTableName'];
 
-        $FE = new FlightException();
+        $FE = new FlightException;
         $res = $FE->UpdateUserComment($excTableName, $excId, $text);
         unset($FE);
         return $res;
@@ -1097,7 +1109,7 @@ class ViewOptionsController extends CController
         $excId = $extExcId;
         $state = $extState;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
         $excTableName = $flightInfo['exTableName'];
@@ -1115,7 +1127,7 @@ class ViewOptionsController extends CController
             $state = 0;
         }
 
-        $FE = new FlightException();
+        $FE = new FlightException;
         $res = $FE->UpdateFalseAlarmState($excTableName, $excId, $state);
         unset($FE);
         return $res;

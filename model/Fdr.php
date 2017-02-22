@@ -1,23 +1,25 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
-class Bru
+use Exception;
+
+class Fdr
 {
-    private $table = 'brutypes';
+    private $table = 'fdrs';
     private $apPrefix = '_ap';
     private $bpPrefix = '_bp';
 
     public function CreateBruTypeTable()
     {
-        $query = "SHOW TABLES LIKE 'brutypes';";
-        $c = new DataBaseConnector();
+        $query = "SHOW TABLES LIKE '".$this->table."';";
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
         {
-            $query = "CREATE TABLE `brutypes` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `bruType` VARCHAR(255),
+            $query = "CREATE TABLE `".$this->table."` (`id` BIGINT NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255),
                 `gradiApTableName` VARCHAR(255),
                 `gradiBpTableName` VARCHAR(255),
                 `excListTableName` VARCHAR(255),
@@ -88,16 +90,16 @@ class Bru
 
             $inString = substr($inString, 0, -1);
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
-            $query = "SELECT * FROM `brutypes` WHERE `id` IN (".$inString.") ORDER BY `id`;";
+            $query = "SELECT * FROM `".$this->table."` WHERE `id` IN (".$inString.") ORDER BY `id`;";
             $result = $link->query($query);
 
             while($row = $result->fetch_array())
             {
-                $bruInfo = $this->GetBruInfo($row['bruType']);
-                array_push($bruList, $bruInfo);
+                $fdrInfo = $this->GetBruInfo($row['name']);
+                array_push($bruList, $fdrInfo);
             }
 
             $result->free();
@@ -116,7 +118,7 @@ class Bru
                 . json_encode($fdrId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT * "
@@ -145,17 +147,17 @@ class Bru
 
     public function GetBruInfo($bruType)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT * FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT * FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
-        $bruInfo = array();
+        $fdrInfo = array();
         foreach ($row as $key => $value)
         {
-            $bruInfo[$key] = $value;
+            $fdrInfo[$key] = $value;
         }
 
         $result->free();
@@ -163,49 +165,32 @@ class Bru
 
         unset($c);
 
-        return $bruInfo;
+        return $fdrInfo;
     }
 
     public function GetBruInfoById($extBruTypeId)
     {
         $bruTypeId = $extBruTypeId;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT * FROM `brutypes` WHERE `id` = '".$bruTypeId."' LIMIT 1;";
+        $query = "SELECT * FROM `".$this->table."` WHERE `id` = '".$bruTypeId."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
-        $bruInfo = array();
+        $fdrInfo = array();
         foreach ($row as $key => $value)
         {
-            $bruInfo[$key] = $value;
+            $fdrInfo[$key] = $value;
         }
-
-        /*$bruInfo = array("id" => $row['id'],
-         "bruType" => $row['bruType'],
-                "gradiApTableName" => $row['gradiApTableName'],
-                "gradiBpTableName" => $row['gradiBpTableName'],
-                "excListTableName" => $row['excListTableName'],
-                "paramSetTemplateListTableName" =>
-                $row['paramSetTemplateListTableName'],
-                "stepLength" => $row['stepLength'], //seconds in 1 frame
-                "stepDivider" => $row['stepDivider'],
-                "frameLength" => $row['frameLength'],
-                "wordLength" => $row['wordLength'],
-                "headerLength" => $row['headerLength'],
-                "headerScr" => $row['headerScr'],
-                "frameSyncroCode" => $row['frameSyncroCode'],
-                "aditionalInfo" => $row['aditionalInfo']
-        );*/
 
         $result->free();
         $c->Disconnect();
 
         unset($c);
 
-        return $bruInfo;
+        return $fdrInfo;
     }
 
     public function getFDRapCyclo($fdrId, $startIndex = 0, $pageSize = 50, $sorting = 'ASC')
@@ -218,7 +203,7 @@ class Bru
         $fdrInfo = $this->getFdrInfo($fdrId);
         $apTable = $fdrInfo['code'].$this->apPrefix;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT * "
@@ -259,10 +244,10 @@ class Bru
         $jtPageSize = $extJtPageSize;
         $jtSorting = $extJtSorting;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -327,10 +312,10 @@ class Bru
         $bruType = $extBruType;
         $paramId = $extParamId;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -381,10 +366,10 @@ class Bru
         $paramAttr = $extParamAttr;
         $paramAttrVal = $extParamAttrVal;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -418,10 +403,10 @@ class Bru
         $paramId = $extParamId;
         $paramData = $extParamData;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -463,10 +448,10 @@ class Bru
         $bruType = $extBruType;
         $paramData = $extParamData;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -516,10 +501,10 @@ class Bru
         $bruType = $extBruType;
         $paramId = $extParamId;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -549,10 +534,10 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -583,10 +568,10 @@ class Bru
         $bruType = $extBruType;
         $paramId = $extParamId;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -631,10 +616,10 @@ class Bru
         $paramId = $extParamId;
         $paramData = $extParamData;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -665,9 +650,9 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -726,8 +711,8 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $c = new DataBaseConnector;
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -767,8 +752,8 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $c = new DataBaseConnector;
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -796,8 +781,8 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $c = new DataBaseConnector;
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -825,9 +810,9 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
 
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -879,8 +864,8 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $c = new DataBaseConnector;
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -919,10 +904,10 @@ class Bru
     public function GetBruApHeaders($extBruType)
     {
         $bruType = $extBruType;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -959,10 +944,10 @@ class Bru
         $bruType = $extBruType;
         $startIndex = $extStartIndex;
         $endIndex = $extEndIndex;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -998,10 +983,10 @@ class Bru
     public function GetBruApHeadersByRequest($extBruType, $request)
     {
         $bruType = $extBruType;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1039,10 +1024,10 @@ class Bru
     public function GetBruBpHeaders($extBruType)
     {
         $bruType = $extBruType;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1081,10 +1066,10 @@ class Bru
         $startIndex = $extStartIndex;
         $endIndex = $extEndIndex;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1124,10 +1109,10 @@ class Bru
         $bruType = $extBruType;
         $request = $extRequest;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1257,10 +1242,10 @@ class Bru
         $bruType = $extBruType;
         $codes = $extCodes;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1298,10 +1283,10 @@ class Bru
     {
         $bruType = $extBruType;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1330,7 +1315,7 @@ class Bru
     {
         $paramType = "null";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $query = "SELECT `id` FROM `".$cycloApTableName."` WHERE (`code` = ?);";
         $stmt = $link->prepare($query);
@@ -1370,7 +1355,7 @@ class Bru
         $code = (array)$extParamCode;
         $bpGradiTableName = $extBpGradiTableName;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `channel`, `mask` FROM `".$bpGradiTableName.
@@ -1406,7 +1391,7 @@ class Bru
 
     public function GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode, $paramType = "")
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $paramInfo = array();
 
@@ -1476,7 +1461,7 @@ class Bru
 
     public function GetParamInfoById($tableName, $paramId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $paramInfo = array();
 
@@ -1502,11 +1487,11 @@ class Bru
         $paramCodeArrImploded = implode("','", $paramCodeArr);
         $paramCodeArrImploded = "'" . $paramCodeArrImploded . "'";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $paramInfo = array();
 
-        $query = "SELECT `gradiApTableName`, `gradiBpTableName` FROM `brutypes` WHERE `bruType` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName`, `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1548,7 +1533,7 @@ class Bru
 
         $query = "UPDATE `".$paramTable."` SET `color` = '".$color."' WHERE `code` = '".$paramCode."';";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
 
@@ -1568,7 +1553,7 @@ class Bru
 
         $query = "SELECT `color` FROM `".$paramTable."` WHERE `code` = '".$paramCode."' LIMIT 1;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -1584,10 +1569,10 @@ class Bru
     {
         $author = $extAuthor;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `id` FROM `brutypes` WHERE `author` = '".$author."';";
+        $query = "SELECT `id` FROM `".$this->table."` WHERE `author` = '".$author."';";
         $mySqliResult = $link->query($query);//, MYSQLI_USE_RESULT);
 
         $list = array();
@@ -1608,10 +1593,10 @@ class Bru
     {
         $author = $extAuthor;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "DELETE FROM `brutypes` WHERE `author` = '".$author."';";
+        $query = "DELETE FROM `".$this->table."` WHERE `author` = '".$author."';";
 
         $stmt = $link->prepare($query);
         $stmt->execute();

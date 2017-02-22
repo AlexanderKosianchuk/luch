@@ -1,5 +1,7 @@
 <?php
 
+namespace Model;
+
 define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/lang/");
 define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/lang/EN.lang");
 

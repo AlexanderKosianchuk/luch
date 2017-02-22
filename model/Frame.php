@@ -1,6 +1,6 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class Frame
 {
@@ -2101,7 +2101,7 @@ class Frame
 
         if($link == null)
         {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
         }
 
@@ -2142,7 +2142,7 @@ class Frame
 
         if($link == null)
         {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
         }
 
@@ -2192,7 +2192,7 @@ class Frame
         $tableName = $extTableName;
         $file = $extFileName;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$tableName."` FIELDS TERMINATED BY ',' LINES TERMINATED BY ';';";
@@ -2208,7 +2208,7 @@ class Frame
         $apTableName = $extApTableName;
         $prefix = $extPrefix;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT MAX(`frameNum`) FROM `".$apTableName."_". $prefix ."` LIMIT 1;";
@@ -2235,7 +2235,7 @@ class Frame
         $flightInfo = $this->GetFlightInfo($flightId);
         $apTableName = $flightInfo['apTableName'];
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `channel`, `value` FROM `".$apTableName."` WHERE `frameNum` = ".$frameNum." ORDER BY `channel` ASC;";
@@ -2312,7 +2312,7 @@ class Frame
         $APheaders = $extAPheaders;
         $tableName = uniqid().time()."tmp";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
 
         $query = "CREATE TABLE ".$tableName." (id MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY, T VARCHAR(255), ";
         for($i = 0; $i < count($APheaders); $i++)
@@ -2396,7 +2396,7 @@ class Frame
         $stepDivider = $extStepDivider;
         $currFrameTime = date_format($extCurrFrameTime, "H:i:s");
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO ".$tableName." ( T, ";
@@ -2441,7 +2441,7 @@ class Frame
         $tableName = $extTableName;
         $id = $extId;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT * FROM ".$tableName." WHERE id = ".$id.";";
@@ -2502,9 +2502,9 @@ class Frame
         $flightInfo = $d->GetFlightInfo($flightId);
         $startCopyTime = $flightInfo['startCopyTime'];
         $bruType = $flightInfo['bruType'];
-        $bruInfo = $d->GetBRUinfo($bruType);
-        $stepLength = $bruInfo['stepLength'];
-        $stepDivider = $bruInfo['stepDivider'];
+        $fdrInfo = $d->GetBRUinfo($bruType);
+        $stepLength = $fdrInfo['stepLength'];
+        $stepDivider = $fdrInfo['stepDivider'];
         $codesArray = $d->GetCodesArray($bruType);
 
         $frame = $d->GetFlightFrame($flightId, $currFrameId, $codesArray);

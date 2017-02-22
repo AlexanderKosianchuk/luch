@@ -1,7 +1,8 @@
 <?php
 
-require_once(@__DIR__."/includes.php");
-require_once(@__DIR__."/controller/IndexController.php");
+require_once "bootstrap.php";
+
+use Controller\IndexController;
 
 $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 
@@ -18,8 +19,8 @@ if ($c->_user && ($c->_user->username !== null)) {
     $c->PutOptionsDialog();
     $c->PutExportLink();
 
-    $c->PutFooter();
     $c->PutScripts();
+    $c->PutFooter();
 } else {
     $c->PutCharset();
     $c->PutTitle();

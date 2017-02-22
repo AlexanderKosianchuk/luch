@@ -1,7 +1,10 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ChartController.php");
+require_once "../bootstrap.php";
+
+use Model\User;
+use Controller\ChartController;
+use Component\OSdetectionComponent;
 
 $c = new ChartController();
 

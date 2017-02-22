@@ -1,7 +1,11 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/FlightsController.php");
+require_once "../bootstrap.php";
+
+use Model\User;
+use Model\Folder;
+
+use Controller\FlightsController;
 
 $c = new FlightsController();
 

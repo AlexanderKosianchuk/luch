@@ -1,5 +1,13 @@
 <?php
-require_once (@$_SERVER ['DOCUMENT_ROOT'] . "/includes.php");
+
+namespace Controller;
+
+use Model\Flight;
+use Model\Fdr;
+use Model\Frame;
+use Model\FlightException;
+use Model\User;
+
 require_once ("../tcpdf/tcpdf.php");
 require_once ("../tcpdf/config/tcpdf_config.php");
 
@@ -18,25 +26,25 @@ class PrinterController extends CController
         $flightId = $extFlightId;
         $user = $this->_user->username;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $flightApHeaders= $Bru->GetBruApHeaders($bruType);
         $flightBpHeaders = $Bru->GetBruBpHeaders($bruType);
 
         $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
         unset($Bru);
 
-        $Frame = new Frame();
+        $Frame = new Frame;
         $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
         unset($Frame);
 
         // create new PDF document
-        $pdf = new TCPDF ( 'L', 'mm', 'A4', true, 'UTF-8', false );
+        $pdf = new \TCPDF ( 'L', 'mm', 'A4', true, 'UTF-8', false );
 
         // set document information
         $pdf->SetCreator ( $user );
@@ -49,8 +57,8 @@ class PrinterController extends CController
         $voyage = $flightInfo['voyage'];
         $copyDate = date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] );
 
-        $Fr = new Frame ();
-        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $bruInfo ['stepLength'] );
+        $Fr = new Frame;
+        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $fdrInfo ['stepLength'] );
         unset ($Fr);
 
         $usrInfo = $this->_user->userInfo;
@@ -143,7 +151,7 @@ class PrinterController extends CController
 
         // Pasport info
         $strStyle = "text-align:center;";
-        $str = '<p style="' . $strStyle . '">' . $this->lang->bruType . ' - ' . $bruInfo ['bruType'] . '. <br>' .
+        $str = '<p style="' . $strStyle . '">' . $this->lang->bruType . ' - ' . $fdrInfo['name'] . '. <br>' .
                 $this->lang->bort . ' - ' . $flightInfo['bort'] . '; ' .
                 $this->lang->voyage . ' - ' . $flightInfo['voyage'] . '; ' .
 
@@ -152,9 +160,9 @@ class PrinterController extends CController
         $this->lang->flightDate . ' - ' . date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] ) . '; ' .
         $this->lang->duration . ' - ' . $flightDuration . '. <br>';
 
-        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $bruInfo ['bruType'];
+        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $fdrInfo['name'];
 
-        if (strpos ( $bruInfo ['aditionalInfo'], ";" ) >= 0) {
+        if (strpos ( $fdrInfo ['aditionalInfo'], ";" ) >= 0) {
             $counterNeedBrake = false;
             $aditionalInfoArr = explode ( ";", $flightInfo['flightAditionalInfo'] );
             foreach ( $aditionalInfoArr as $aditionalInfo ) {
@@ -182,10 +190,10 @@ class PrinterController extends CController
         $pdf->writeHTML ( $str, true, false, false, false, '' );
 
         if ($flightInfo ['exTableName'] != "") {
-            $FEx = new FlightException ();
+            $FEx = new FlightException;
             $excEventsList = $FEx->GetFlightEventsList ( $flightInfo ['exTableName'] );
 
-            $Frame = new Frame ();
+            $Frame = new Frame;
             // change frame num to time
             for($i = 0; $i < count ( $excEventsList ); $i ++) {
                 $event = $excEventsList [$i];
@@ -214,7 +222,7 @@ class PrinterController extends CController
 
                 for($i = 0; $i < count ( $excEventsList ); $i ++) {
                     $event = $excEventsList [$i];
-                    $excInfo = $FEx->GetExcInfo ( $bruInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
+                    $excInfo = $FEx->GetExcInfo ( $fdrInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
 
                     $codePrefix = substr($event['code'], 0, 3);
                     if ($event ['reliability'] && (in_array($codePrefix, $sections)
@@ -269,7 +277,7 @@ class PrinterController extends CController
     }
 
     public function GetUserInfo() {
-        $U = new User ();
+        $U = new User;
         $uId = $U->GetUserIdByName ( $this->_user->username );
         $userInfo = $U->GetUserInfo ( $uId );
         unset ( $U );

@@ -1,6 +1,8 @@
 <?php
 
-require_once(@"includes.php");
+namespace Controller;
+
+use Exception;
 
 class EntryController extends CController
 {
@@ -22,6 +24,7 @@ class EntryController extends CController
             if (file_exists(@SITE_ROOT_DIR."/controller/".$controller.'.php')) {
                 require_once(@SITE_ROOT_DIR."/controller/".$controller.'.php');
 
+                $controller = 'Controller\\' . $controller;
                 $C = new $controller;
 
                 if (method_exists ($C, $method)) {

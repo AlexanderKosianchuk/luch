@@ -1,14 +1,13 @@
 <?php
 
-require_once(@SITE_ROOT_DIR ."/includes.php");
-
+namespace Model;
 
 class SearchFlights
-{    
+{
     public function SearchFlightsTables()
     {
         $query = "SHOW TABLES LIKE 'search_flights_queries';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -34,7 +33,7 @@ class SearchFlights
 
     public function GetSearchAlgorithmes($fdrId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT * FROM `search_flights_queries` WHERE `fdr`=".$fdrId.";");
@@ -58,7 +57,7 @@ class SearchFlights
 
     public function GetSearchAlgorithById($id)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT * FROM `search_flights_queries` WHERE `id`=".$id.";");

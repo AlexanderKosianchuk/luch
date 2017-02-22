@@ -1,6 +1,5 @@
 <?php
 
-require_once(@__DIR__."/includes.php");
-require_once(@__DIR__."/controller/EntryController.php");
+require_once "bootstrap.php";
 
-new EntryController($_POST, $_SESSION, $_COOKIE);
+new \Controller\EntryController($_POST, $_SESSION, $_COOKIE);

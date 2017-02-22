@@ -1,6 +1,19 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\User;
+use Model\Fdr;
+use Model\Calibration;
+use Model\Folder;
+use Model\Flight;
+use Model\FlightComments;
+use Model\FlightException;
+use Model\DataBaseConnector;
+
+use Exception;
+
+use Component\FlightComponent;
 
 class FlightsController extends CController
 {
@@ -111,20 +124,20 @@ class FlightsController extends CController
         $userId = intval($this->_user->userInfo['id']);
         $avalibleFdrIds = $this->_user->getAvailableFdrs($userId);
 
-        $fdr = new Bru;
+        $fdr = new Fdr;
         $fdrList = $fdr->getFdrList($avalibleFdrIds);
         unset($fdr);
 
         $optionString = "";
         $firstFdrId = null;
         $first = true;
-        foreach($fdrList as $frdInfo) {
+        foreach($fdrList as $fdrInfo) {
             if ($first) {
-                $firstFdrId = intval($frdInfo['id']);
+                $firstFdrId = intval($fdrInfo['id']);
                 $first = false;
             }
-            $optionString .="<option data-id='".$frdInfo['id']."' value='".$frdInfo['id']."'>"
-                .$frdInfo['bruType']
+            $optionString .="<option data-id='".$fdrInfo['id']."' value='".$fdrInfo['id']."'>"
+                .$fdrInfo['name']
             ."</option>";
         }
 
@@ -187,8 +200,8 @@ class FlightsController extends CController
    {
       $userId = $this->_user->GetUserIdByName($this->_user->username);
 
-      $Fl = new Flight();
-      $Fd = new Folder();
+      $Fl = new Flight;
+      $Fd = new Folder;
       $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId);
 
       $flightsInfoArr = [];
@@ -206,7 +219,7 @@ class FlightsController extends CController
    {
       $userId = $this->_user->userInfo['id'];
       $subFoldersArr = [];
-      $Fd = new Folder();
+      $Fd = new Folder;
 
       $subFoldersArr = $Fd->GetSubfoldersByFolder($folderId, $userId);
 
@@ -222,7 +235,7 @@ class FlightsController extends CController
 
       $userId = $this->_user->GetUserIdByName($this->_user->username);
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $result = $Fd->CreateFolder($name, $path, $userId);
       unset($Fd);
 
@@ -233,7 +246,7 @@ class FlightsController extends CController
    {
       $userId = intval($this->_user->userInfo['id']);
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
       unset($Fd);
 
@@ -244,7 +257,7 @@ class FlightsController extends CController
    {
       $userId = intval($this->_user->userInfo['id']);
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $result = $Fd->ChangeFolderPath($sender, $target, $userId);
       unset($Fd);
 
@@ -258,7 +271,7 @@ class FlightsController extends CController
 
       $userId = $this->_user->GetUserIdByName($this->_user->username);
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $result = $Fd->RenameFolder($folderId, $folderName, $userId);
       unset($Fd);
 
@@ -273,7 +286,7 @@ class FlightsController extends CController
 
          $userId = intval($this->_user->GetUserIdByName($this->_user->username));
 
-         $Fd = new Folder();
+         $Fd = new Folder;
          $availableFolders = $Fd->GetAvailableFolders($userId);
          $result = array();
 
@@ -286,7 +299,7 @@ class FlightsController extends CController
             );
             $this->recursiveCollectChildren($children, $id, $matches);
 
-            $Fl = new Flight();
+            $Fl = new Flight;
             foreach ($matches as $id)
             {
                $id = intval($id);
@@ -330,7 +343,7 @@ class FlightsController extends CController
 
    public function DeleteFlight($flightId)
    {
-       $FC = new FlightComponent();
+       $FC = new FlightComponent;
        $result = $FC->DeleteFlight($flightId, intval($this->_user->userInfo['id']));
        unset($FC);
 
@@ -342,7 +355,7 @@ class FlightsController extends CController
       $idsArr = $extIds;
       $info = array();
 
-      $Fl = new Flight();
+      $Fl = new Flight;
       foreach ($idsArr as $flightId)
    {
          $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -383,7 +396,7 @@ class FlightsController extends CController
     public function ProcessFlight($flightId)
     {
         if (is_int($flightId)) {
-            $Fl = new Flight();
+            $Fl = new Flight;
             $flightInfo = $Fl->GetFlightInfo($flightId);
             $apTableName = $flightInfo["apTableName"];
             $bpTableName = $flightInfo["bpTableName"];
@@ -392,21 +405,21 @@ class FlightsController extends CController
             $tableGuid = substr($apTableName, 0, 14);
             unset($Fl);
 
-            $Bru = new Bru();
-            $bruInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
-            $excListTableName = $bruInfo["excListTableName"];
-            $apGradiTableName = $bruInfo["gradiApTableName"];
-            $bpGradiTableName = $bruInfo["gradiBpTableName"];
-            $stepLength = $bruInfo["stepLength"];
+            $Bru = new Fdr;
+            $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+            $excListTableName = $fdrInfo["excListTableName"];
+            $apGradiTableName = $fdrInfo["gradiApTableName"];
+            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+            $stepLength = $fdrInfo["stepLength"];
 
             if ($excListTableName != "")
             {
-               $bruInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
-               $excListTableName = $bruInfo["excListTableName"];
-               $apGradiTableName = $bruInfo["gradiApTableName"];
-               $bpGradiTableName = $bruInfo["gradiBpTableName"];
+               $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+               $excListTableName = $fdrInfo["excListTableName"];
+               $apGradiTableName = $fdrInfo["gradiApTableName"];
+               $bpGradiTableName = $fdrInfo["gradiBpTableName"];
 
-               $FEx = new FlightException();
+               $FEx = new FlightException;
                $FEx->DropFlightExceptionTable($excEventsTableName);
                $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
                //Get exc refParam list
@@ -490,7 +503,7 @@ class FlightsController extends CController
 
       $userId = $this->_user->userInfo['id'];
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
       $shownFolder = $shownFolderInfo['name'];
       unset($Fd);
@@ -507,7 +520,7 @@ class FlightsController extends CController
    {
       $userId = $this->_user->userInfo['id'];
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $content = $Fd->GetAvailableContent($shownFolderId, $userId);
       unset($Fd);
 
@@ -523,7 +536,7 @@ class FlightsController extends CController
    {
       $flightColumn = "";
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $flightsInPath = $this->GetFlightsByPath($shownFolderId);
       $subFolders = (array)$this->GetFoldersByPath($shownFolderId);
       $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
@@ -536,7 +549,7 @@ class FlightsController extends CController
          $flightColumn .= "<div class='JstreeContentItemFolder'><label>" . $input . " " . $val['name']."</label></div>";
       }
 
-      $Fc = new FlightComments();
+      $Fc = new FlightComments;
       foreach($flightsInPath as $key => $val)
       {
          $flightComment = $Fc->getComment(intval($val['id']));
@@ -631,13 +644,13 @@ class FlightsController extends CController
    {
       $userId = intval($this->_user->userInfo['id']);
 
-      $Fd = new Folder();
+      $Fd = new Folder;
       $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
       unset($Fd);
 
       $tableSegment = array();
 
-      $Fl = new Flight();
+      $Fl = new Flight;
       foreach($flightsInFolders as $flightInFolder)
       {
           $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
@@ -667,7 +680,7 @@ class FlightsController extends CController
 
    public function ExportFlightsAndFolders($flightIds, $folderDest)
    {
-      $Fd = new Folder();
+      $Fd = new Folder;
 
       $uId = $this->_user->userInfo['id'];
       $role = $this->_user->userInfo['role'];
@@ -691,9 +704,9 @@ class FlightsController extends CController
       $exportedFileName = '';
       error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
       set_time_limit (0);
-      $Fl = new Flight();
-      $C = new DataBaseConnector();
-      $Bru = new Bru();
+      $Fl = new Flight;
+      $C = new DataBaseConnector;
+      $Bru = new Fdr;
 
       foreach ($flightIds as $flightId) {
 
@@ -811,7 +824,7 @@ class FlightsController extends CController
 
    public function GetResults()
    {
-       $c = new DataBaseConnector();
+       $c = new DataBaseConnector;
        $link = $c->Connect();
        $list = [];
 
@@ -871,13 +884,13 @@ class FlightsController extends CController
    {
        $list = [];
        $userId = intval($this->_user->userInfo['id']);
-       $Fd = new Folder();
+       $Fd = new Folder;
        $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
        unset($Fd);
 
        $firstRow = true;
        $excTables = [];
-       $FEx = new FlightException();
+       $FEx = new FlightException;
        foreach($flightsInFolders as $flightInFolder)
        {
            $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
@@ -936,7 +949,7 @@ class FlightsController extends CController
            throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
        }
 
-       $Fl = new Flight();
+       $Fl = new Flight;
        $flight = $Fl->GetFlightInfo($flightId);
        unset($Fl);
 
@@ -944,15 +957,15 @@ class FlightsController extends CController
        $apTableName = $flight['apTableName'];
        $bpTableName = $flight['bpTableName'];
 
-       $Bru = new Bru();
-       $bruInfo = $Bru->GetBruInfo($bruType);
+       $Bru = new Fdr;
+       $fdrInfo = $Bru->GetBruInfo($bruType);
        unset($Bru);
 
-       $kmlScript = $bruInfo['kml_export_script'];
+       $kmlScript = $fdrInfo['kml_export_script'];
        $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
        $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
 
-       $c = new DataBaseConnector();
+       $c = new DataBaseConnector;
        $link = $c->Connect();
 
        $info = [];

@@ -1,6 +1,6 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class FlightException
 {
@@ -12,7 +12,7 @@ class FlightException
         $flightTablesGuid = $extFlightTablesGuid;
         $flightExTableName = $flightTablesGuid . "_ex";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `flights` SET exTableName = '".$flightExTableName."' WHERE id='".$flightId."';";
@@ -50,7 +50,7 @@ class FlightException
         $stmt = true;
         if(($flightExTableName != null) && ($flightExTableName != ''))
         {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
             $query = "DROP TABLE IF EXISTS `".$flightExTableName."`;";
@@ -72,7 +72,7 @@ class FlightException
 
         $query = "SELECT * FROM `".$exListTableName."`;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
 
@@ -103,7 +103,7 @@ class FlightException
 
         $query = "SELECT DISTINCT `refParam` FROM `".$exListTableName."`;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
 
@@ -148,8 +148,8 @@ class FlightException
         $stepLength = $extStepLength;
 
         $eventsList = array();
-        $c = new DataBaseConnector();
-        $c2 = new DataBaseConnector();
+        $c = new DataBaseConnector;
+        $c2 = new DataBaseConnector;
         $link = $c->Connect();
         $link2 = $c2->Connect();
 
@@ -290,7 +290,7 @@ class FlightException
                         $query = str_replace("[startTime]", $normalizedResultArr[$j]['startTime'], $query);
                         $query = str_replace("[endTime]", $normalizedResultArr[$j]['endTime'], $query);
 
-                        $c3 = new DataBaseConnector();
+                        $c3 = new DataBaseConnector;
                         $link = $c3->Connect();
                         $result = $link->query($query);
 
@@ -344,7 +344,7 @@ class FlightException
         $refParam = $extRefParam;
         $excList = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `frameNum`, `startTime`, `endTime`, `code`, `refParam`, `excAditionalInfo`, `userComment` ".
@@ -427,7 +427,7 @@ class FlightException
 
         $excList = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `frameNum`, `code`, `startTime`, `endTime`, `excAditionalInfo`, `userComment` ".
@@ -501,7 +501,7 @@ class FlightException
         $excEventsTableName = $extExcEventsTableName;
         $query = "SELECT DISTINCT * FROM `".$excEventsTableName."` ORDER BY `frameNum`;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
 
@@ -534,7 +534,7 @@ class FlightException
         $excEventsTableName = $extExcEventsTableName;
         $query = "SELECT DISTINCT `refParam` FROM `".$excEventsTableName."` WHERE 1;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
 
@@ -557,7 +557,7 @@ class FlightException
         $excTableName = $extExcTableName;
         $code = $extCode;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $excInfo = array();
 
@@ -589,7 +589,7 @@ class FlightException
         $excId = $extExcId;
         $falseAlarmState = $extFalseAlarmState;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$excTableName."` SET `falseAlarm` = '".$falseAlarmState."' WHERE id='".$excId."';";
@@ -606,7 +606,7 @@ class FlightException
 
     public function UpdateUserComment($excTableName, $excId, $userComment)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$excTableName."` SET `userComment` = '".$userComment."' WHERE id='".$excId."';";

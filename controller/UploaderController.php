@@ -1,6 +1,17 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\Fdr;
+use Model\User;
+use Model\Airport;
+use Model\Frame;
+use Model\Flight;
+use Model\Calibration;
+use Model\Folder;
+use Model\FlightException;
+
+use Component\FlightComponent;
 
 class UploaderController extends CController
 {
@@ -16,9 +27,9 @@ class UploaderController extends CController
     {
         $fileName = basename($filePath);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $previewParams = $bruInfo['previewParams'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $previewParams = $fdrInfo['previewParams'];
         unset($Bru);
 
         $flightInfoFromHeader = $this->ReadHeader($bruType, $filePath);
@@ -114,16 +125,16 @@ class UploaderController extends CController
                 $this->_user->username . "'/></td>" .
                 "</tr>";
 
-        if($bruInfo['aditionalInfo'] != '')
+        if($fdrInfo['aditionalInfo'] != '')
         {
-            if (strpos($bruInfo['aditionalInfo'], ";") !== 0)
+            if (strpos($fdrInfo['aditionalInfo'], ";") !== 0)
             {
-                $aditionalInfo = explode(";", $bruInfo['aditionalInfo']);
+                $aditionalInfo = explode(";", $fdrInfo['aditionalInfo']);
                 $aditionalInfo  = array_map('trim', $aditionalInfo);
             }
             else
             {
-                $aditionalInfo = (array)trim($bruInfo['aditionalInfo']);
+                $aditionalInfo = (array)trim($fdrInfo['aditionalInfo']);
             }
 
             for($i = 0; $i < count($aditionalInfo); $i++)
@@ -218,20 +229,21 @@ class UploaderController extends CController
         $bruType = $extBruType;
         $file = $extFilePath;
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $frameLength = $bruInfo['frameLength'];
-        $stepLength = $bruInfo['stepLength'];
-        $wordLength = $bruInfo['wordLength'];
-        $headerLength = $bruInfo['headerLength'];
-        $headerScr = $bruInfo['headerScr'];
-        $frameSyncroCode = $bruInfo['frameSyncroCode'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $frameLength = $fdrInfo['frameLength'];
+        $stepLength = $fdrInfo['stepLength'];
+        $wordLength = $fdrInfo['wordLength'];
+        $headerLength = $fdrInfo['headerLength'];
+        $headerScr = $fdrInfo['headerScr'];
+        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
         unset($Bru);
 
         $flightInfo['bruType'] = $bruType;
 
         if(($headerScr != '') || ($headerScr != null))
         {
+            $headerScr = str_replace('Frame', '\Model\Frame', $headerScr);
             eval($headerScr);
 
             unset($Fl);
@@ -244,7 +256,7 @@ class UploaderController extends CController
                 $flightInfo['copyCreationDate'] = date('Y-m-d', $startCopyTime);
             }
 
-            $airport = new Airport();
+            $airport = new Airport;
             if(isset($flightInfo['takeOffLat']) && isset($flightInfo['takeOffLong']))
             {
                 $lat = $flightInfo['takeOffLat'];
@@ -281,18 +293,15 @@ class UploaderController extends CController
 
         $aditionalInfo = array();
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $aditionalInfoArr = explode(";", $bruInfo["aditionalInfo"]);
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $aditionalInfoArr = explode(";", $fdrInfo["aditionalInfo"]);
 
         foreach($aditionalInfoArr as $key => $val)
         {
-            if(isset($headerInfo[$val]))
-            {
+            if(isset($headerInfo[$val])) {
                 $aditionalInfo[$val] = $headerInfo[$val];
-            }
-            else
-            {
+            } else {
                 $aditionalInfo[$val] = "x";
             }
         }
@@ -315,16 +324,16 @@ class UploaderController extends CController
 
         $flightInfo['bruType'] = $bruType;
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $frameLength = $bruInfo['frameLength'];
-        $stepLength = $bruInfo['stepLength'];
-        $wordLength = $bruInfo['wordLength'];
-        $headerLength = $bruInfo['headerLength'];
-        $headerScr = $bruInfo['headerScr'];
-        $frameSyncroCode = $bruInfo['frameSyncroCode'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $frameLength = $fdrInfo['frameLength'];
+        $stepLength = $fdrInfo['stepLength'];
+        $wordLength = $fdrInfo['wordLength'];
+        $headerLength = $fdrInfo['headerLength'];
+        $headerScr = $fdrInfo['headerScr'];
+        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
 
-        $previewParams = $bruInfo['previewParams'];
+        $previewParams = $fdrInfo['previewParams'];
         $cycloAp = $Bru->GetBruApCyclo($bruType, -1, -1, -1);
 
         $previewParams = explode(";", $previewParams);
@@ -350,13 +359,13 @@ class UploaderController extends CController
         $prefixFreqArr = $Bru->GetBruApCycloPrefixFreq($bruType);
         unset($Bru);
 
-        $Fr = new Frame();
+        $Fr = new Frame;
         $fileDesc = $Fr->OpenFile($file);
         $fileSize = $Fr->GetFileSize($file);
-        unset($Fr);
 
         if(($headerScr != '') || ($headerScr != null))
         {
+            $headerScr = str_replace('Frame', '\Model\Frame', $headerScr);
             eval ($headerScr);
         }
 
@@ -366,7 +375,7 @@ class UploaderController extends CController
             $startCopyTime = $flightInfo['startCopyTime'] * 1000;
         }*/
 
-        $Fr = new Frame();
+        $Fr = new Frame;
         $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $headerLength, $file);
 
         $fileDesc = $Fr->OpenFile($file);
@@ -447,10 +456,10 @@ class UploaderController extends CController
         while(file_exists($newFileName . $newFileAppendix));
         $newFileName = $newFileName . $newFileAppendix;
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $headerLength = $bruInfo['headerLength'];
-        $frameLength = $bruInfo['frameLength'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $headerLength = $fdrInfo['headerLength'];
+        $frameLength = $fdrInfo['frameLength'];
 
         $handle = fopen($filePath, "r");
         $newHandle = fopen($newFileName, "w");
@@ -522,10 +531,10 @@ class UploaderController extends CController
         } while(file_exists($newFileName . $newFileAppendix));
         $newFileName = $newFileName . $newFileAppendix;
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $headerLength = $bruInfo['headerLength'];
-        $frameLength = $bruInfo['frameLength'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $headerLength = $fdrInfo['headerLength'];
+        $frameLength = $fdrInfo['frameLength'];
 
         $handle = fopen($filePath, "r");
         $newHandle = fopen($newFileName, "w");
@@ -615,7 +624,7 @@ class UploaderController extends CController
 
         $userId = intval($this->_user->userInfo['id']);
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightId = $Fl->InsertNewFlight($bort, $voyage,
                 $startCopyTime,
                 $bruType, $performer,
@@ -628,15 +637,15 @@ class UploaderController extends CController
         $flightId = $flightInfo['id'];
         $fileName = $flightInfo['fileName'];
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $fdrCode = $bruInfo['code'];
-        $frameLength = $bruInfo['frameLength'];
-        $stepLength = $bruInfo['stepLength'];
-        $wordLength = $bruInfo['wordLength'];
-        $headerLength = $bruInfo['headerLength'];
-        $headerScr = $bruInfo['headerScr'];
-        $frameSyncroCode = $bruInfo['frameSyncroCode'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdrCode = $fdrInfo['code'];
+        $frameLength = $fdrInfo['frameLength'];
+        $stepLength = $fdrInfo['stepLength'];
+        $wordLength = $fdrInfo['wordLength'];
+        $headerLength = $fdrInfo['headerLength'];
+        $headerScr = $fdrInfo['headerScr'];
+        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
         $cycloApByPrefixes = $Bru->GetBruApCycloPrefixOrganized($bruType);
 
         if ($calibrationId !== null) {
@@ -664,7 +673,7 @@ class UploaderController extends CController
         $apTables = $Fl->CreateFlightParamTables($flightId, $cycloApByPrefixes, $cycloBpByPrefixes);
         unset($Fl);
 
-        $Fr = new Frame();
+        $Fr = new Frame;
         $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $headerLength, $fileName);
 
         $fileDesc = $Fr->OpenFile($fileName);
@@ -847,7 +856,7 @@ class UploaderController extends CController
             $observerIds[] = $userId;
         }
 
-        $Fd = new Folder();
+        $Fd = new Folder;
         foreach ($observerIds as $id) {
             $Fd->PutFlightInFolder($flightId, 0, $id); //we put currently uploaded file in root
         }
@@ -876,7 +885,7 @@ class UploaderController extends CController
         fwrite($fp, json_encode($tmpStatus));
         fclose($fp);
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $apTableName = $flightInfo["apTableName"];
         $bpTableName = $flightInfo["bpTableName"];
@@ -885,20 +894,20 @@ class UploaderController extends CController
         $tableGuid = substr($apTableName, 0, 14);
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
-        $excListTableName = $bruInfo["excListTableName"];
-        $apGradiTableName = $bruInfo["gradiApTableName"];
-        $bpGradiTableName = $bruInfo["gradiBpTableName"];
-        $stepLength = $bruInfo["stepLength"];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+        $excListTableName = $fdrInfo["excListTableName"];
+        $apGradiTableName = $fdrInfo["gradiApTableName"];
+        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+        $stepLength = $fdrInfo["stepLength"];
 
         if ($excListTableName != "") {
-            $bruInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
-            $excListTableName = $bruInfo["excListTableName"];
-            $apGradiTableName = $bruInfo["gradiApTableName"];
-            $bpGradiTableName = $bruInfo["gradiBpTableName"];
+            $fdrInfo = $Bru->GetBruInfo($flightInfo["bruType"]);
+            $excListTableName = $fdrInfo["excListTableName"];
+            $apGradiTableName = $fdrInfo["gradiApTableName"];
+            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
 
-            $FEx = new FlightException();
+            $FEx = new FlightException;
             $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
             //Get exc refParam list
             $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
@@ -938,7 +947,7 @@ class UploaderController extends CController
 
     public function DeleteFlight()
     {
-         $FC = new FlightComponent();
+         $FC = new FlightComponent;
          $result = $FC->DeleteFlight($this->flightId, intval($this->_user->userInfo['id']));
          unset($FC);
 
@@ -955,11 +964,11 @@ class UploaderController extends CController
         $importFolderName = sprintf("Imported_%s", date('Y-m-d'));
         $needToCreateImportedFolder = true;
 
-        $Fl = new Flight();
-        $Bru = new Bru();
-        $Fr = new Frame();
-        $FlE = new FlightException();
-        $Fd = new Folder();
+        $Fl = new Flight;
+        $Bru = new Fdr;
+        $Fr = new Frame;
+        $FlE = new FlightException;
+        $Fd = new Folder;
 
         $folderInfo = [];
 
@@ -996,7 +1005,7 @@ class UploaderController extends CController
                 $tableNameAp = $flightInfo['apTableName'];
                 $tableNameBp = $flightInfo['bpTableName'];
 
-                $bruInfo = $Bru->GetBruInfo($bruType);
+                $fdrInfo = $Bru->GetBruInfo($bruType);
                 $apPrefixes = $Bru->GetBruApCycloPrefixes($bruType);
                 $bpPrefixes = $Bru->GetBruBpCycloPrefixes($bruType);
 

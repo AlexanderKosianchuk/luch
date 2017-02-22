@@ -1,5 +1,10 @@
 <?php
 
+namespace Controller;
+
+use Model\User;
+use Model\Language;
+
 class CController
 {
     protected $curPage = null;

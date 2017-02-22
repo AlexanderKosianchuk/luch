@@ -1,6 +1,6 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class PSTempl
 {
@@ -9,7 +9,7 @@ class PSTempl
         $PSTTableName = $extPSTTableName;
 
         $query = "SHOW TABLES LIKE '".$PSTTableName."';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -37,10 +37,10 @@ class PSTempl
         $bruType = $extBruType;
         $PSTTableName = $extPSTTableName;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "UPDATE `brutypes`
+        $query = "UPDATE `fdrs`
             SET paramSetTemplateListTableName = '".
             $PSTTableName."' WHERE bruType='".$bruType."';";
         $stmt = $link->prepare($query);
@@ -57,7 +57,7 @@ class PSTempl
         $user = $extUser;
         $PSTList = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $link2 = $c->Connect();
 
@@ -92,7 +92,7 @@ class PSTempl
         $user = $extUser;
         $PSTList = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT DISTINCT `name` FROM `".$PSTListTableName."` WHERE `isDefault` = 1 " .
@@ -118,7 +118,7 @@ class PSTempl
         $paramName = $extParamName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `name`, `paramCode`
@@ -149,7 +149,7 @@ class PSTempl
         $axisMax = $extAxisMax;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `name`, `paramCode`
@@ -178,7 +178,7 @@ class PSTempl
         $PSTName = $extPSTName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ? AND `user` = ?);";
@@ -200,7 +200,7 @@ class PSTempl
 
     public function getTemplate($tableName, $templateName, $user)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id`, `name`, `paramCode`, `isDefault`, `minYaxis`, `maxYaxis`, `user` "
@@ -231,7 +231,7 @@ class PSTempl
 
     public function GetPSTParams($PSTListTableName, $PSTName, $user)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ? AND `user` = ?);";
@@ -256,7 +256,7 @@ class PSTempl
         $PSTListTableName = $extPSTListTableName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT DISTINCT `paramCode` FROM `".
@@ -282,7 +282,7 @@ class PSTempl
         $tplName = $extTemplateName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "DELETE FROM `".$PSTListTableName."` WHERE `name` = '".$tplName."' AND `user` = '".$user."';";
@@ -297,7 +297,7 @@ class PSTempl
         $tplName = $extTemplateName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$PSTListTableName."` SET `isDefault` = '0' WHERE `user` = '".$user."';";
@@ -322,7 +322,7 @@ class PSTempl
         $PSTListTableName = $extPSTListTableName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE `isDefault` = '1' ".
@@ -345,7 +345,7 @@ class PSTempl
         $PSTListTableName = $extPSTListTableName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT DISTINCT (`name`) FROM `".$PSTListTableName."` WHERE `isDefault` = '1' AND `user` = '".$user."';";
@@ -367,7 +367,7 @@ class PSTempl
         $PSTListTableName = $extPSTListTableName;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT DISTINCT (`name`) FROM `".$PSTListTableName."` WHERE `name` = 'last' AND `user` = '".$user."';";
@@ -394,7 +394,7 @@ class PSTempl
         $max = $extMax;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$PSTListTableName."`SET `minYaxis` = '".$min."', `maxYaxis` = '".$max."'
@@ -415,7 +415,7 @@ class PSTempl
         $paramCode = $extParamCode;
         $user = $extUser;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `minYaxis`, `maxYaxis` FROM `".$PSTListTableName."` " .
@@ -503,7 +503,7 @@ class PSTempl
     {
         $this->DeleteTemplate($tableName, $templateName, $username);
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         foreach ($templateItems as $item) {

@@ -1,6 +1,15 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\Flight;
+use Model\Fdr;
+use Model\Language;
+use Model\PSTempl;
+use Model\UserOptions;
+use Model\Frame;
+use Model\Channel;
+use Model\FlightException;
 
 class ChartController extends CController
 {
@@ -27,7 +36,7 @@ class ChartController extends CController
 
     public function PutTitle()
     {
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($this->data['flightId']);
         unset($Fl);
 
@@ -117,11 +126,11 @@ class ChartController extends CController
                 $flightInfo = $Fl->GetFlightInfo($flightId);
                 unset($Fl);
                 $bruType = $flightInfo['bruType'];
-                $Bru = new Bru();
-                $bruInfo = $Bru->GetBruInfo($bruType);
-                $PSTListTableName = $bruInfo['paramSetTemplateListTableName'];
-                $apCycloTable = $bruInfo['gradiApTableName'];
-                $bpCycloTable = $bruInfo['gradiBpTableName'];
+                $Bru = new Fdr;
+                $fdrInfo = $Bru->GetBruInfo($bruType);
+                $PSTListTableName = $fdrInfo['paramSetTemplateListTableName'];
+                $apCycloTable = $fdrInfo['gradiApTableName'];
+                $bpCycloTable = $fdrInfo['gradiBpTableName'];
                 $Tpl = new PSTempl();
                 $params = $Tpl->GetPSTParams($PSTListTableName, $tplName, $this->_user->username);
                 unset($Tpl);
@@ -203,12 +212,12 @@ class ChartController extends CController
         $startCopyTime = $flightInfo['startCopyTime'];
         unset($Fl);
 
-        $Bru = new Bru();
+        $Bru = new Fdr;
         $bruType = $flightInfo['bruType'];
-        $bruInfo = $Bru->GetBruInfo($bruType);
+        $fdrInfo = $Bru->GetBruInfo($bruType);
         $prefixArr = $Bru->GetBruApCycloPrefixes($flightInfo['bruType']);
-        $cycloApTableName = $bruInfo["gradiApTableName"];
-        $cycloBpTableName = $bruInfo["gradiBpTableName"];
+        $cycloApTableName = $fdrInfo["gradiApTableName"];
+        $cycloBpTableName = $fdrInfo["gradiBpTableName"];
 
         $Frame = new Frame();
         $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
@@ -279,12 +288,12 @@ class ChartController extends CController
         $bpTableName = $flightInfo['bpTableName'];
         unset($Fl);
 
-        $Bru = new Bru();
+        $Bru = new Fdr;
         $bruType = $flightInfo['bruType'];
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $cycloApTableName = $bruInfo["gradiApTableName"];
-        $cycloBpTableName = $bruInfo["gradiBpTableName"];
-        $stepLength = $bruInfo["stepLength"];
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $cycloApTableName = $fdrInfo["gradiApTableName"];
+        $cycloBpTableName = $fdrInfo["gradiBpTableName"];
+        $stepLength = $fdrInfo["stepLength"];
 
         $Ch = new Channel();
         $paramValuesArr = array();
@@ -310,10 +319,10 @@ class ChartController extends CController
         unset($Fl);
 
         $bruType = $flightInfo['bruType'];
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $gradiApTableName = $bruInfo['gradiApTableName'];
-        $gradiBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $gradiApTableName = $fdrInfo['gradiApTableName'];
+        $gradiBpTableName = $fdrInfo['gradiBpTableName'];
 
         $paramInfo = $Bru->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
 
@@ -343,10 +352,10 @@ class ChartController extends CController
         unset($Fl);
 
         $bruType = $flightInfo['bruType'];
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $gradiApTableName = $bruInfo['gradiApTableName'];
-        $gradiBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $gradiApTableName = $fdrInfo['gradiApTableName'];
+        $gradiBpTableName = $fdrInfo['gradiBpTableName'];
 
         $paramInfo = $Bru->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
 
@@ -371,15 +380,15 @@ class ChartController extends CController
         $flightId = $extFlightId;
         $paramCodeArray = $extCodes;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
 
         $bruType = $flightInfo['bruType'];
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
         for($i = 0; $i < count($paramCodeArray); $i++)
         {
@@ -410,17 +419,17 @@ class ChartController extends CController
         $tplName = $extTplName;
         $user = $this->_user->username;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($flightInfo['bruType']);
-        $PSTTableName = $bruInfo['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
         unset($Bru);
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $minMax = $PSTempl->GetParamMinMax($PSTTableName, $tplName,
                 $paramCode, $user);
         unset($PSTempl);
@@ -444,17 +453,17 @@ class ChartController extends CController
         $max = $extMax;
         $user = $this->_user->username;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($flightInfo['bruType']);
-        $PSTTableName = $bruInfo['paramSetTemplateListTableName'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
         unset($Bru);
 
-        $PSTempl = new PSTempl();
+        $PSTempl = new PSTempl;
         $PSTempl->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
         unset($PSTempl);
 
@@ -466,7 +475,7 @@ class ChartController extends CController
         $flightId = $extFlightId;
         $refParam = $extRefParam;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
 
@@ -478,12 +487,12 @@ class ChartController extends CController
             $startCopyTime = $flightInfo['startCopyTime'];
             $apTableName = $flightInfo['apTableName'];
 
-            $Bru = new Bru();
-            $bruInfo = $Bru->GetBruInfo($bruType);
-            $stepLength = $bruInfo['stepLength'];
-            $cycloApTableName = $bruInfo['gradiApTableName'];
-            $cycloBpTableName = $bruInfo['gradiBpTableName'];
-            $excListTableName = $bruInfo['excListTableName'];
+            $Bru = new Fdr;
+            $fdrInfo = $Bru->GetBruInfo($bruType);
+            $stepLength = $fdrInfo['stepLength'];
+            $cycloApTableName = $fdrInfo['gradiApTableName'];
+            $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+            $excListTableName = $fdrInfo['excListTableName'];
             $paramType = $Bru->GetParamType($refParam,
                     $cycloApTableName,$cycloBpTableName);
             $excList = array();
@@ -495,14 +504,14 @@ class ChartController extends CController
                 $prefix = $paramInfo["prefix"];
                 $apTableName = $apTableName . "_" . $prefix;
 
-                $FEx = new FlightException();
+                $FEx = new FlightException;
                 $excList = (array)$FEx->GetExcApByCode($excTableName,
                         $refParam, $apTableName, $excListTableName);
                 unset($FEx);
             }
             else if($paramType == PARAM_TYPE_BP)
             {
-                $FEx = new FlightException();
+                $FEx = new FlightException;
                 $excList = (array)$FEx->GetExcBpByCode($excTableName, $refParam,
                         $stepLength, $startCopyTime, $excListTableName);
                 unset($FEx);
@@ -532,13 +541,13 @@ class ChartController extends CController
         $startCopyTime = $flightInfo['startCopyTime'];
         unset($Fl);
 
-        $Bru = new Bru();
-        $bruInfo = $Bru->GetBruInfo($bruType);
-        $stepLength = $bruInfo['stepLength'];
-        $stepDivider = $bruInfo['stepDivider'];
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $stepLength = $fdrInfo['stepLength'];
+        $stepDivider = $fdrInfo['stepDivider'];
         $startCopyTime = $flightInfo['startCopyTime'];
-        $cycloApTableName = $bruInfo['gradiApTableName'];
-        $cycloBpTableName = $bruInfo['gradiBpTableName'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
         if($fromTime < $startCopyTime)
         {
@@ -593,7 +602,7 @@ class ChartController extends CController
     {
         $flightId = $extFlightId;
 
-        $Fl = new Flight();
+        $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         unset($Fl);
 
@@ -617,24 +626,24 @@ class ChartController extends CController
 
     public function GetTableStep($flightId)
     {
-        $F = new Flight();
+        $F = new Flight;
         $flightInfo = $F->GetFlightInfo($flightId);
         unset($F);
 
-        $FDR = new Bru();
-        $FDRinfo = $FDR->GetBruInfo($flightInfo['bruType']);
-        unset($FDR);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->GetBruInfo($flightInfo['bruType']);
+        unset($fdr);
 
         $userId = $this->_user->GetUserIdByName($this->_user->username);
 
-        $O = new UserOptions();
+        $O = new UserOptions;
         $step = $O->GetOptionValue($userId, 'printTableStep');
         unset($O);
 
         if($step === null) {
             $step = 0;
         } else {
-            $step = $step * $FDRinfo['stepDivider'];
+            $step = $step * $fdrInfo['stepDivider'];
         }
 
         return $step;

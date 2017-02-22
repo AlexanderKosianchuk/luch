@@ -1,7 +1,9 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/PrinterController.php");
+require_once "../bootstrap.php";
+
+use Model\User;
+use Controller\PrinterController;
 
 $c = new PrinterController();
 

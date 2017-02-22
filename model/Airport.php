@@ -1,6 +1,6 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class Airport
 {
@@ -9,7 +9,7 @@ class Airport
         $lat = $extLat;
         $long = $extLong;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `ICAO`,`name` FROM `airports` where

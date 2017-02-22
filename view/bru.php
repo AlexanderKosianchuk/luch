@@ -1,9 +1,11 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/BruController.php");
+require_once "../bootstrap.php";
 
-$c = new BruController();
+use Model\User;
+use Controller\FdrController;
+
+$c = new FdrController();
 
 if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
     if($c->action === "putBruTypeContainer") {

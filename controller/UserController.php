@@ -1,6 +1,11 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\User;
+use Model\Language;
+use Model\Fdr;
+use Model\UserOptions;
 
 class UserController extends CController
 {
@@ -25,7 +30,7 @@ class UserController extends CController
 
     public function ChangeLanguage($lang)
     {
-        $L = new Language();
+        $L = new Language;
         $L->SetLanguageName($lang);
         unset($L);
 
@@ -213,7 +218,7 @@ class UserController extends CController
                 $roleOptions,
                 $this->lang->userLogo);
 
-        $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["createUser"]);
+        $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", "createUser");
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 
         //==========================================
@@ -223,7 +228,7 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
-            $Bru = new Bru();
+            $Bru = new Fdr;
             $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
             $availableBruTypes = $Bru->GetBruList($availableIds);
 
@@ -239,7 +244,7 @@ class UserController extends CController
 
                 $rowsInfoKeys = [
                     'id',
-                    'bruType',
+                    'name',
                     'stepLength',
                     'frameLength',
                     'wordLength',
@@ -346,7 +351,7 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
-            $Bru = new Bru();
+            $Bru = new Fdr;
             $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
             $availableBruTypes = $Bru->GetBruList($availableIds);
             $attachedfdrIds = $this->_user->GetAvailableBruTypes($userInfo['login']);
@@ -363,7 +368,7 @@ class UserController extends CController
 
                 $rowsInfoKeys = [
                     'id',
-                    'bruType',
+                    'name',
                     'stepLength',
                     'frameLength',
                     'wordLength',
@@ -497,7 +502,7 @@ class UserController extends CController
     {
         $userInfo = $this->GetUserInfo();
         $userId = $userInfo['id'];
-        $O = new UserOptions();
+        $O = new UserOptions;
         $O->UpdateOptions($form, $userId);
         unset($O);
         return $form;

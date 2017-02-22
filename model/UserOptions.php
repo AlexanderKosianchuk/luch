@@ -1,6 +1,6 @@
 <?php
 
-require_once(@SITE_ROOT_DIR ."/includes.php");
+namespace Model;
 
 class UserOptions
 {
@@ -14,7 +14,7 @@ class UserOptions
     public function CreateUserOptionssTables()
     {
         $query = "SHOW TABLES LIKE 'user_settings';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -46,7 +46,7 @@ class UserOptions
         $query = "INSERT INTO `user_settings` (`user_id`, `name`, `value`)" .
                 "VALUES ('".$userId."', '".$key."', '".$val."');";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $stmt = $link->prepare($query);
@@ -67,7 +67,7 @@ class UserOptions
 
     public function GetOptions($userId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `name`,`value` FROM `user_settings` WHERE `user_id`=".$userId.";");
@@ -90,7 +90,7 @@ class UserOptions
 
     public function GetOptionValue($userId, $optionName)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $result = $link->query("SELECT `value` FROM `user_settings` WHERE `user_id`=".$userId." AND `name`='".$optionName."' LIMIT 1;");
@@ -110,7 +110,7 @@ class UserOptions
 
     public function UpdateOption($optionsKey, $optionsVal, $userId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `user_settings` SET `value` = '".$optionsVal."' WHERE `name` = '".$optionsKey."' AND `user_id` = ".$userId.";";
@@ -127,7 +127,7 @@ class UserOptions
 
     public function UpdateOptions($options, $userId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $oldOptions = $this->GetOptions($userId);

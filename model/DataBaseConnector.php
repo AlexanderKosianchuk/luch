@@ -1,6 +1,10 @@
 <?php
 //UPDATE `bur4-1-07-01_bp` SET `color` = LEFT(MD5(UUID()), 6)
 
+namespace Model;
+
+use Exception;
+
 class DataBaseConnector
 {
     private $host = 'localhost';
@@ -20,11 +24,11 @@ class DataBaseConnector
             throw new Exception("Configurations is not set", 1);
         }
 
-        $this->host = $CONFIG->db->host;
-        $this->type = $CONFIG->db->type;
-        $this->user = $CONFIG->db->user;
-        $this->pass = $CONFIG->db->pass;
-        $this->dbName = $CONFIG->db->dbName;
+        $this->host = $CONFIG['db']['host'];
+        $this->type = $CONFIG['db']['type'];
+        $this->user = $CONFIG['db']['user'];
+        $this->pass = $CONFIG['db']['pass'];
+        $this->dbName = $CONFIG['db']['dbName'];
     }
 
     // Connection function

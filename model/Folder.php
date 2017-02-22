@@ -1,6 +1,8 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
+
+use Exception;
 
 class Folder
 {
@@ -9,7 +11,7 @@ class Folder
     public function CreateFolderTable()
     {
         $query = "SHOW TABLES LIKE 'folders';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -59,7 +61,7 @@ class Folder
         $id = $this->GetMaxFolderId();
 
         $res = array();
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         if($id == 0)
@@ -103,7 +105,7 @@ class Folder
                 "WHERE `id` = '" . $folderId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -125,7 +127,7 @@ class Folder
                 "WHERE `id` = '" . $folderId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -147,7 +149,7 @@ class Folder
                 "VALUES (".$flightId.", ".$folderId.", ".$userId.");";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -165,7 +167,7 @@ class Folder
                 "WHERE `flightId` = '" . $flightId . "' AND  `userId` = '" . $userId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -183,7 +185,7 @@ class Folder
                 "WHERE `flightId` = '" . $flightId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -210,7 +212,7 @@ class Folder
                 . "AND  `userId` = '" . $userId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -230,7 +232,7 @@ class Folder
                 "WHERE `folderId` = '" . $folderId . "';";
         $result['query'] = $query;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
         $result['status'] = $stmt->execute();
@@ -244,7 +246,7 @@ class Folder
     public function GetFolderInfo($extId)
     {
         $id = $extId;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $folderInfo = array();
 
@@ -277,7 +279,7 @@ class Folder
 
     public function GetFlightFolder($flightId, $userId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `folderId` FROM `flight_to_folder` WHERE `flightId`=".$flightId." " .
@@ -300,7 +302,7 @@ class Folder
 
     public function GetFlightsByFolder($folderId, $userId, $role = false)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `flightId` FROM `flight_to_folder` WHERE `folderId`='".$folderId."' " .
@@ -322,7 +324,7 @@ class Folder
 
     public function GetAllFlightsInFolders($userId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `flightId`, `folderId` FROM `flight_to_folder` WHERE `userId`='".$userId."';";
@@ -348,7 +350,7 @@ class Folder
     {
         $id = $extFolderId;
         $userId = $extUserId;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
@@ -373,7 +375,7 @@ class Folder
     {
         $id = $extFolderId;
         $userId = $extUserId;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         if($adminRole) {
@@ -405,7 +407,7 @@ class Folder
     public function GetAvailableFolders($extUserId, $adminRole = false)
     {
         $userId = $extUserId;
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         if($adminRole) {
@@ -431,7 +433,7 @@ class Folder
 
     public function GetAvailableContent($folderId, $uId, $role = false)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $link2 = $c->Connect();
 
@@ -494,7 +496,7 @@ class Folder
 
     public function FormFakeContent($folderId, $flights)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $available = [];
@@ -536,7 +538,7 @@ class Folder
             $query = "DELETE FROM `folders` WHERE (`id` = '".$folderId."') " .
                 "AND (`userId` = '".$userId."');";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $stmt = $link->prepare($query);
             $result['status'] = $stmt->execute();
@@ -559,7 +561,7 @@ class Folder
 
     public function GetMaxFolderId()
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT MAX(`id`) FROM `folders` WHERE 1;";

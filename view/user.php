@@ -1,7 +1,9 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/UserController.php");
+require_once "../bootstrap.php";
+
+use Controller\UserController;
+use Model\User;
 
 $c = new UserController();
 

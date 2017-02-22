@@ -2,7 +2,7 @@ ALTER TABLE `brutypes` ADD `code` VARCHAR(255) NOT NULL AFTER `bruType`;
 
 UPDATE `brutypes` SET `code`=REPLACE(`gradiApTableName`, '_ap', '') WHERE 1;
 
-CREATE TABLE `calibration` ( `id` INT NOT NULL AUTO_INCREMENT ,
+CREATE TABLE `calibrations` ( `id` INT NOT NULL AUTO_INCREMENT ,
  `name` VARCHAR(255) NOT NULL ,
  `id_fdr` INT NOT NULL ,
  `id_user` INT NOT NULL ,

@@ -1,13 +1,13 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
 
 class Flight
 {
     public function CreateFlightTable()
     {
         $query = "SHOW TABLES LIKE 'flights';";
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         if(!$result->fetch_array())
@@ -40,7 +40,7 @@ class Flight
 
     public function GetFlightInfo($extFlightId)
     {
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $flightId = $extFlightId;
@@ -109,7 +109,7 @@ class Flight
 
             $inString = substr($inString, 0, -1);
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
             $query = "SELECT * FROM `flights` WHERE `id` IN (".$inString.") ORDER BY `".$orderName."` ".$orderType.";";
@@ -133,7 +133,7 @@ class Flight
     {
         $listFlights = [];
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id` FROM `flights` WHERE 1;";
@@ -155,7 +155,7 @@ class Flight
     {
         $author = $extAuthor;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id` FROM `flights` WHERE `author` = '".$author."';";
@@ -195,7 +195,7 @@ class Flight
                     "AND `folder` = " .$folder. " " .
                     "ORDER BY `id`;";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
             $mySqliSelectFlightsResult = $link->query($query);//, MYSQLI_USE_RESULT);
@@ -263,7 +263,7 @@ class Flight
         $exTableName = '';
         $paramsTables = array("tableNameAp" => $tableNameAp, "tableNameBp" => $tableNameBp);
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO `flights` (`bort`,
@@ -321,7 +321,7 @@ class Flight
         $tableNameBp = $flightInfo["bpTableName"];
         $apTables = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         foreach($cycloAp as $prefix => $prefixCyclo)
         {
@@ -359,7 +359,7 @@ class Flight
         $flightId = $extFlightId;
         $flightInfo = $extFlightInfo;
         foreach($flightInfo as $key => $value) {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
 
             $query = "UPDATE `flights` SET `".
@@ -393,7 +393,7 @@ class Flight
                 (`voyage` = '".$voyage."')
                 LIMIT 1;";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $result = $link->query($query);
             $row = $result->fetch_array();
@@ -414,7 +414,7 @@ class Flight
                             (`bpTableName` = '".$tableNameBp."')
                             LIMIT 1;";
 
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $result = $link->query($query);
             $row = $result->fetch_array();
@@ -444,7 +444,7 @@ class Flight
         $query = substr($query, 0, -4);
         $query .= ";";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
 
@@ -475,7 +475,7 @@ class Flight
         $result['status'] = array();
         $result['query'] = array();
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "DELETE FROM `flights` WHERE id=".$flightId.";";
@@ -536,7 +536,7 @@ class Flight
     {
         $tableName = $extTableName;
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
 
         $query = "DROP TABLE `". $tableName ."`;";
 
@@ -554,7 +554,7 @@ class Flight
     {
         $query = "SELECT MAX(`id`) FROM `flights` WHERE 1;";
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
         $result = $link->query($query);
         $maxId = 1;

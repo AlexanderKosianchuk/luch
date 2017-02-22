@@ -1,6 +1,8 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
+
+use Exception;
 
 class FlightComments
 {
@@ -13,7 +15,7 @@ class FlightComments
                 . json_encode($flightId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT `id`, `comment`, `commander-admitted`, `aircraft-allowed`, `general-admission`, `id_user`, `dt` "
@@ -89,7 +91,7 @@ class FlightComments
                 . json_encode($generalAdmission), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "INSERT INTO `".$this->table."` "
@@ -149,7 +151,7 @@ class FlightComments
                 . json_encode($generalAdmission), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "UPDATE `".$this->table."` "

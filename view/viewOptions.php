@@ -1,7 +1,10 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/controller/ViewOptionsController.php");
+require_once "../bootstrap.php";
+
+use Model\User;
+use Model\Folder;
+use Controller\ViewOptionsController;
 
 $c = new ViewOptionsController();
 
@@ -504,7 +507,7 @@ if ($c->_user && isset($c->_user->username) && ($c->_user->username !== '')) {
             if(isset($params['flight-id'])) {
                 $flightId = intval($params['flight-id']);
 
-                $Fd = new Folder();
+                $Fd = new Folder;
                 $folder = $Fd->GetFlightFolder($flightId, $c->_user->userInfo['id']);
                 unset($Fd);
 

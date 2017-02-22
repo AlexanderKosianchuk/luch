@@ -1,6 +1,13 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Component;
+
+use Model\User;
+use Model\Flight;
+use Model\Fdr;
+use Model\Folder;
+
+use Exception;
 
 class FlightComponent
 {
@@ -14,26 +21,26 @@ class FlightComponent
             throw new Exception("Incorrect user id passed", 1);
         }
 
-        $U = new User();
+        $U = new User;
         $userInfo = $U->GetUserInfo($userId);
         $role = $userInfo['role'];
         if (User::isAdmin($role)) {
-            $Fl = new Flight();
+            $Fl = new Flight;
             $flightInfo = $Fl->GetFlightInfo($flightId);
             $bruType = $flightInfo["bruType"];
 
-            $Bru = new Bru();
-            $bruInfo = $Bru->GetBruInfo($bruType);
+            $Bru = new Fdr;
+            $fdrInfo = $Bru->GetBruInfo($bruType);
             $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
             $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
 
             $Fl->DeleteFlight($flightId, $prefixApArr, $prefixBpArr);
 
-            $Fd = new Folder();
+            $Fd = new Folder;
             $Fd->DeleteFlightFromFolders($flightId);
             unset($Fd);
         } else {
-            $Fd = new Folder();
+            $Fd = new Folder;
             $Fd->DeleteFlightFromFolderForUser($flightId, $userId);
             unset($Fd);
         }

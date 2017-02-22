@@ -1,6 +1,9 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Controller;
+
+use Model\Fdr;
+use Model\Calibration;
 
 class CalibrationController extends CController
 {
@@ -11,7 +14,7 @@ class CalibrationController extends CController
         $userId = intval($this->_user->userInfo['id']);
         $avaliablefdrIds = $this->_user->getAvailableFdrs($userId);
 
-        $fdr = new Bru();
+        $fdr = new Fdr;
         $fdrInfoList = $fdr->getFdrList($avaliablefdrIds);
 
         $fdrsWithCalibration = [];
@@ -24,7 +27,7 @@ class CalibrationController extends CController
         }
 
         $fdrsAndCalibrations = [];
-        $calibration = new Calibration();
+        $calibration = new Calibration;
         foreach ($fdrsWithCalibration as $fdrInfo) {
             $fdrId = intval($fdrInfo['id']);
             $fdrCode = $fdrInfo['code'];
@@ -51,7 +54,7 @@ class CalibrationController extends CController
 
             $fdrsAndCalibrations[] = [
                 'id' => intval($fdrInfo['id']),
-                'name' => $fdrInfo['bruType'],
+                'name' => $fdrInfo['name'],
                 'calibrations' => $fdrCalibrations,
                 'calibratedParams' => $calibratedParams
             ];
@@ -83,7 +86,7 @@ class CalibrationController extends CController
             exit;
         }
 
-        $fdr = new Bru();
+        $fdr = new Fdr;
         $fdrInfo = $fdr->getFdrInfo($fdrId);
         $fdrCode = $fdrInfo['code'];
         unset($fdr);
@@ -139,7 +142,7 @@ class CalibrationController extends CController
 
         $calibration->deleteCalibration ($calibrationId, $userId);
 
-        $fdr = new Bru();
+        $fdr = new Fdr;
         $fdrInfo = $fdr->getFdrInfo($fdrId);
         $fdrCode = $fdrInfo['code'];
         unset($fdr);

@@ -1,10 +1,12 @@
 <?php
 
-require_once(@$_SERVER['DOCUMENT_ROOT'] ."/includes.php");
+namespace Model;
+
+use Exception;
 
 class Calibration
 {
-    private $table = 'calibration';
+    private $table = 'calibrations';
     private $prefix = '_c';
 
     public function getCalibrations ($fdrId, $userId)
@@ -19,7 +21,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT `id`, `name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`"
@@ -55,7 +57,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $fdrIdsChecked = [];
@@ -100,7 +102,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT `id`, `name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`"
@@ -138,7 +140,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SELECT `id`, `name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`"
@@ -182,7 +184,7 @@ class Calibration
         }
 
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO  `".$this->table."` (`name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`)
@@ -216,7 +218,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$this->table."` SET `dt_updated` = NOW() "
@@ -250,7 +252,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `".$this->table."` SET `name` = ? "
@@ -295,7 +297,7 @@ class Calibration
                 . json_encode($name), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "INSERT INTO  `".$tableName."` (`id_calibration`, `id_param`, `xy`) "
@@ -335,7 +337,7 @@ class Calibration
                 . json_encode($paramId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id_param`, `id_calibration`, `xy`"
@@ -381,7 +383,7 @@ class Calibration
                 . json_encode($calibrationId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "SELECT `id_param`, `id_calibration`, `xy`"
@@ -427,7 +429,7 @@ class Calibration
                 . json_encode($calibrationId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "DELETE FROM `".$tableName."` WHERE "
@@ -456,7 +458,7 @@ class Calibration
                 . json_encode($userId), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "DELETE FROM `".$this->table."` "
@@ -484,7 +486,7 @@ class Calibration
         $isExist = $this->checkTableExist ($dynamicCalibrationTable);
 
         if(!$isExist) {
-            $c = new DataBaseConnector();
+            $c = new DataBaseConnector;
             $link = $c->Connect();
             $q = "CREATE TABLE `".$dynamicCalibrationTable."` ("
                 ." `id` INT NOT NULL AUTO_INCREMENT ,"
@@ -523,7 +525,7 @@ class Calibration
                 . json_encode($tableName), 1);
         }
 
-        $c = new DataBaseConnector();
+        $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $q = "SHOW TABLES LIKE '".$tableName."';";
