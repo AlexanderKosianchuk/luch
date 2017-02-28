@@ -217,11 +217,11 @@ class IndexController extends CController
         printf("<script type='text/javascript' src='scripts/proto/main/FlightProccessingStatus.proto.js'></script>");
 
         //bruType
-        printf("<script type='text/javascript' src='scripts/proto/bruType/BruType.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/bruType/BruTypeGeneralInfo.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/bruType/BruTypeTemplates.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/bruType/BruTypeEvents.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/bruType/BruTypeCyclo.js'></script>");
+        printf("<script type='text/javascript' src='scripts/proto/fdr/Fdr.proto.js'></script>");
+        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrGeneralInfo.js'></script>");
+        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrTemplates.js'></script>");
+        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrEvents.js'></script>");
+        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrCyclo.js'></script>");
 
         //user
         printf("<script type='text/javascript' src='scripts/proto/user/User.proto.js'></script>");

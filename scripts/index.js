@@ -31,7 +31,7 @@ jQuery(function ($) {
             FU = new FlightUploader($window, $document, langStr, eventHandler);
             FP = new FlightProccessingStatus(langStr);
             FO = new FlightViewOptions($window, $document, langStr, eventHandler);
-            B = new BruType($window, $document, langStr, eventHandler);
+            B = new Fdr($window, $document, langStr, eventHandler);
             C = new Chart($window, $document, langStr, eventHandler);
             U = new User($window, $document, langStr, eventHandler);
             SF = new SearchFlight($window, $document, langStr, eventHandler);

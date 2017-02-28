@@ -1,7 +1,7 @@
 ///==================================================
 //GENERAL INFO
 ///==================================================
-function BruTypeGeneralInfo(langStr, eventHandler, bruTypeListFactoryContainer) {
+function FdrGeneralInfo(langStr, eventHandler, bruTypeListFactoryContainer) {
     var langStr = langStr,
         eventHandler = eventHandler;
 

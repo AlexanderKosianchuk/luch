@@ -11,6 +11,7 @@ use Model\Flight;
 class FdrController extends CController
 {
     public $curPage = 'bruTypesPage';
+    public $action = '';
 
     function __construct()
     {
@@ -326,28 +327,6 @@ class FdrController extends CController
         return "ok";
     }
 
-    public function copyTemplate($flightId, $oldName)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        unset($Fl);
-
-        $bruType = $flightInfo['bruType'];
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo ($bruType);
-        $tableName = $fdrInfo ['paramSetTemplateListTableName'];
-        unset ( $Bru );
-
-        $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
-        $username = $this->_user->username;
-        $PSTempl = new PSTempl;
-        $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
-        $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
-        unset($PSTempl);
-
-        return 'ok';
-    }
-
     private function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -357,4 +336,242 @@ class FdrController extends CController
         }
         return $randomString;
     }
+
+    /*
+    * ==========================================
+    * REAL ACTIONS
+    * ==========================================
+    */
+
+    public function putBruTypeContainer($data)
+    {
+        $topMenu = $this->PutTopMenu();
+        $leftMenu = $this->PutLeftMenu();
+        $workspace = $this->PutWorkspace();
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = [
+            'status' => 'ok',
+            'data' => [
+                'topMenu' => $topMenu,
+                'leftMenu' => $leftMenu,
+                'workspace' => $workspace,
+            ]
+        ];
+
+        echo json_encode($answ);
+    }
+
+    public function editingBruTypeTemplatesReceiveTplsList($data)
+    {
+        if(isset($data['bruTypeId']))
+        {
+            $bruTypeId = $data['bruTypeId'];
+            $tplsList = $this->GetTplsList($bruTypeId);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                    'status' => 'ok',
+                    'data' => array(
+                            'bruTypeTpls' => $tplsList
+                    )
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function editingBruTypeTemplatesReceiveParamsList($data)
+    {
+        if(isset($data['bruTypeId'])) {
+            $bruTypeId = $data['bruTypeId'];
+            $paramsList = $this->ShowParamList($bruTypeId);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                'status' => 'ok',
+                'data' => array(
+                    'bruTypeParams' => $paramsList
+                )
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function createTpl($data)
+    {
+        if(isset($data['bruTypeId']) &&
+                    isset($data['name']) &&
+                    isset($data['params']))
+        {
+            $bruTypeId = $data['bruTypeId'];
+            $name = $data['name'];
+            $params = $data['params'];
+
+            $this->CreateTemplate($bruTypeId, $name, $params);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                    'status' => 'ok',
+                    'data' => array()
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function deleteTpl($data)
+    {
+        if(isset($data['bruTypeId']) &&
+                isset($data['name']))
+        {
+            $bruTypeId = $data['bruTypeId'];
+            $name = $data['name'];
+
+            $this->DeleteTemplate($bruTypeId, $name);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                    'status' => 'ok',
+                    'data' => array()
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function defaultTpl($data)
+    {
+        if(isset($data['bruTypeId']) &&
+                isset($data['name']))
+        {
+            $bruTypeId = $data['bruTypeId'];
+            $name = $data['name'];
+
+            $this->SetDefaultTemplate($bruTypeId, $name);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                    'status' => 'ok',
+                    'data' => array()
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function updateTpl($data)
+    {
+        if(isset($data['bruTypeId']) &&
+                isset($data['name']) &&
+                isset($data['tplOldName']) &&
+                isset($data['params']))
+        {
+            $bruTypeId = $data['bruTypeId'];
+            $name = $data['name'];
+            $tplOldName = $data['tplOldName'];
+            $params = $data['params'];
+
+            $this->DeleteTemplate($bruTypeId, $tplOldName);
+            $this->CreateTemplate($bruTypeId, $name, $params);
+            $this->RegisterActionExecution($this->action, "executed");
+
+            $answ = array(
+                    'status' => 'ok',
+                    'data' => array()
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function copyTemplate($data)
+    {
+        if(isset($data['flightId']) &&
+                isset($data['tplName']))
+        {
+            $flightId = $data['flightId'];
+            $tplName = $data['tplName'];
+
+            $Fl = new Flight;
+            $flightInfo = $Fl->GetFlightInfo($flightId);
+            unset($Fl);
+
+            $bruType = $flightInfo['bruType'];
+            $Bru = new Fdr;
+            $fdrInfo = $Bru->GetBruInfo ($bruType);
+            $tableName = $fdrInfo ['paramSetTemplateListTableName'];
+            unset ( $Bru );
+
+            $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
+            $username = $this->_user->username;
+            $PSTempl = new PSTempl;
+            $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
+            $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
+            unset($PSTempl);
+
+            $answ = 'ok';
+
+            $this->RegisterActionExecution($this->action, "executed");
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page bru.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
 }

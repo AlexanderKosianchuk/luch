@@ -1,7 +1,7 @@
 ///==================================================
 //TEMPLATES
 ///==================================================
-function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
+function FdrTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
     var langStr = langStr
 
     var bruTypeId = null;
@@ -61,21 +61,19 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
                     paramCodes.push($(item).val());
                 });
 
-                var pV = {
-                        action: "updateTpl",
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        action: 'fdr/updateTpl',
                         data: {
                             bruTypeId: bruTypeId,
                             tplOldName: tplOldName$,
                             name: bruTypeNewTemplateName,
                             params: paramCodes
                         }
-                };
-
-                $.ajax({
-                    type: "POST",
-                    data: pV,
+                    },
                     datatype: 'json',
-                    url: BRU_SRC, //defined as global in BruType.proto
+                    url: ENTRY_URL,
                     async: true
                 }).fail(function(msg){
                     console.log(msg);
@@ -99,7 +97,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
         $("button#deleteBruTypeTplBut").on("click", function(e){
             var tplName$ = $("#bruTypeTplList option:selected").attr("name").trim(),
                 pV = {
-                        action: "deleteTpl",
+                        action: "fdr/deleteTpl",
                         data: {
                             bruTypeId: bruTypeId,
                             name: tplName$
@@ -110,7 +108,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
                 type: "POST",
                 data: pV,
                 datatype: 'json',
-                url: BRU_SRC, //defined as global in BruType.proto
+                url: ENTRY_URL,
                 async: true
             }).fail(function(msg){
                 console.log(msg);
@@ -135,7 +133,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
         $("button#defaultBruTypeTplBut").on("click", function(e){
             var tplName$ = $("#bruTypeTplList option:selected").attr("name").trim(),
             pV = {
-                    action: "defaultTpl",
+                    action: "fdr/defaultTpl",
                     data: {
                         bruTypeId: bruTypeId,
                         name: tplName$
@@ -146,7 +144,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
                 type: "POST",
                 data: pV,
                 datatype: 'json',
-                url: BRU_SRC, //defined as global in BruType.proto
+                url: ENTRY_URL,
                 async: true
             }).fail(function(msg){
                 console.log(msg);
@@ -254,7 +252,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
 
     CreateTpl = function(tplName, params){
         var pV = {
-                action: "createTpl",
+                action: "fdr/createTpl",
                 data: {
                     bruTypeId: bruTypeId,
                     name: tplName,
@@ -266,7 +264,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: BRU_SRC, //defined as global in BruType.proto
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -275,7 +273,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
 
     ReceiveTplsList = function(){
         var pV = {
-                action: "editingBruTypeTemplatesReceiveTplsList",
+                action: "fdr/editingBruTypeTemplatesReceiveTplsList",
                 data: {
                     bruTypeId: bruTypeId
                 }
@@ -285,7 +283,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: BRU_SRC, //defined as global in BruType.proto
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -309,7 +307,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
 
     ReceiveParamsList = function(){
         var pV = {
-                action: "editingBruTypeTemplatesReceiveParamsList",
+                action: "fdr/editingBruTypeTemplatesReceiveParamsList",
                 data: {
                     bruTypeId: bruTypeId
                 }
@@ -319,7 +317,7 @@ function BruTypeTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: BRU_SRC, //defined as global in BruType.proto
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);

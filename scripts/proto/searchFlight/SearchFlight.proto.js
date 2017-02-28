@@ -1,8 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-var SEARCH_FLIGHT_SRC = location.protocol + '//' + location.host + "/view/searchFlights.php";
-
 function SearchFlight($window, document, langStr, eventHandler) {
     'use strict';
 
@@ -67,7 +65,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
         var self = this;
 
         var pV = {
-            action : 'showSearchForm',
+            action : 'searchFlight/showSearchForm',
             data : {
                 data : 'data'
             }
@@ -77,7 +75,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
             type : "POST",
             data : pV,
             dataType : 'json',
-            url : SEARCH_FLIGHT_SRC,
+            url : ENTRY_URL,
             async : true
         })
         .fail(function(msg) {
@@ -126,7 +124,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
         if($(".search-form-alg-item:checked").length > 0) {
             var algId = $(".search-form-alg-item:checked").eq(0).val();
             var pV = {
-                    action : "applyFilter",
+                    action : "searchFlight/applyFilter",
                     data : {
                         algId : algId,
                         form: $("#search-form").serialize()
@@ -137,7 +135,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
                 type : "POST",
                 data : pV,
                 dataType : 'json',
-                url : SEARCH_FLIGHT_SRC,
+                url : ENTRY_URL,
                 async : true
             })
             .fail(function(msg) {
@@ -172,7 +170,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
             $("#search-form-flights").empty();
             var fdrId = $("#fdrForFilter option:selected").val();
             var pV = {
-                action : "getFilters",
+                action : "searchFlight/getFilters",
                 data : {
                     fdrId : fdrId
                 }
@@ -182,7 +180,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
                 type : "POST",
                 data : pV,
                 dataType : 'json',
-                url : SEARCH_FLIGHT_SRC,
+                url : ENTRY_URL,
                 async : true
             })
             .fail(function(msg) {

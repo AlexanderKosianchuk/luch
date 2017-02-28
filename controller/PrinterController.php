@@ -275,13 +275,4 @@ class PrinterController extends CController
 
         $pdf->Output ($fileName, 'I');
     }
-
-    public function GetUserInfo() {
-        $U = new User;
-        $uId = $U->GetUserIdByName ( $this->_user->username );
-        $userInfo = $U->GetUserInfo ( $uId );
-        unset ( $U );
-
-        return $userInfo;
-    }
 }

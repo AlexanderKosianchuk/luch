@@ -1,7 +1,7 @@
 ///==================================================
 //GENERAL INFO
 ///==================================================
-function BruTypeEvents(langStr) {
+function FdrCyclo(langStr) {
     this.langStr = langStr;
 
     this.bruTypeId = null;
@@ -11,7 +11,7 @@ function BruTypeEvents(langStr) {
     this.bruTypeListContent = null;
 }
 
-BruTypeEvents.prototype.ShowGeneralInfoOptions = function() {
+FdrCyclo.prototype.ShowGeneralInfoOptions = function() {
     var self = this;
 
     self.bruTypeListWorkspace.append("<div id='bruTypeOptions' class='OptionsMenu'></div>");
@@ -41,6 +41,6 @@ BruTypeEvents.prototype.ShowGeneralInfoOptions = function() {
     $("div#bruTypeOptions .Button").button();
 }
 
-BruTypeEvents.prototype.ShowGeneralInfoContent = function() {
+FdrCyclo.prototype.ShowGeneralInfoContent = function() {
     var self = this;
 }

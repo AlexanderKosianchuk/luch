@@ -1,6 +1,4 @@
-var BRU_SRC = location.protocol + '//' + location.host + "/view/bru.php";
-
-function BruType(window, document, langStr, eventHandler)
+function Fdr(window, document, langStr, eventHandler)
 {
     var langStr = langStr,
 
@@ -34,7 +32,7 @@ function BruType(window, document, langStr, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(GeneralInfo == null){
-                    GeneralInfo = new BruTypeGeneralInfo(langStr, eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new FdrGeneralInfo(langStr, eventHandler, that.bruTypeListFactoryContainer);
                 };
 
                 GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -47,7 +45,7 @@ function BruType(window, document, langStr, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(Templates == null){
-                    Templates = new BruTypeTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new FdrTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                 };
 
                 Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -90,18 +88,14 @@ function BruType(window, document, langStr, eventHandler)
 
         self.bruTypeListFactoryContainer = factoryContainer;
 
-        var pV = {
-                action: "putBruTypeContainer",
-                data: {
-                    data: 'data'
-                }
-        };
-
         $.ajax({
             type: "POST",
-            data: pV,
+            data: {
+                action: 'fdr/putBruTypeContainer',
+                data: 'data'
+            },
             dataType: 'json',
-            url: BRU_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -129,7 +123,7 @@ function BruType(window, document, langStr, eventHandler)
                         bruTypeListWorkspace.empty();
                     }
 
-                    GeneralInfo = new BruTypeGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new FdrGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
                 } else if(task == 'editingBruTypeGeneralInfo'){
@@ -139,13 +133,13 @@ function BruType(window, document, langStr, eventHandler)
                         bruTypeListWorkspace.empty();
                     }
 
-                    var GeneralInfo = new BruTypeGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    var GeneralInfo = new FdrGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
                 } else if(task == 'editingBruTypeTemplates'){
                     $("#editBruTplsLeftMenuRow").addClass("LeftMenuRowSelected");
 
-                    Templates = new BruTypeTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new FdrTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
                     Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
                 }
 
@@ -158,14 +152,14 @@ function BruType(window, document, langStr, eventHandler)
     };
 }
 
-BruType.prototype.copyTemplate = function(flightId, tplName) {
+Fdr.prototype.copyTemplate = function(flightId, tplName) {
     var $dfd = $.Deferred()
         that = this;
 
     $.post(
-        BRU_SRC,
+        ENTRY_URL,
         {
-            action: 'copyTemplate',
+            action: 'fdr/copyTemplate',
             data: {
                 flightId: flightId,
                 tplName: tplName

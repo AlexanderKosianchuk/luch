@@ -3,7 +3,6 @@
 require_once "../bootstrap.php";
 
 use Model\User;
-use Model\Folder;
 
 use Controller\FlightsController;
 
