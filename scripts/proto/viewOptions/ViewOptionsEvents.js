@@ -192,7 +192,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
 
 
         var pV = {
-                action: "getFlightDuration",
+                action: "viewOptions/getFlightDuration",
                 data: {
                     flightId: flightId
                 }
@@ -202,7 +202,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -255,7 +255,7 @@ FlightViewOptions.prototype.ShowEventsList = function() {
         self.flightOptionsContent = $("div#flightOptionsContent");
 
         var pV = {
-            action: "getEventsList",
+            action: "viewOptions/getEventsList",
             data: {
                 flightId: flightId
             }
@@ -265,7 +265,7 @@ FlightViewOptions.prototype.ShowEventsList = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -311,9 +311,9 @@ FlightViewOptions.prototype.ShowEventsList = function() {
 
                     $('#comments__btn').on("click", function(e) {
                         $.post(
-                            FLIGHTS_VIEW_OPTIONS_SRC,
+                            ENTRY_URL,
                             {
-                                action: 'saveFlightComment',
+                                action: 'viewOptions/saveFlightComment',
                                 data: $('#events-header__comments').serialize()
                             },
                             function(answ) {
@@ -342,7 +342,7 @@ FlightViewOptions.prototype.SupportReliabilityUncheck = function(exceptionTableR
             state = this$.prop('checked');
 
         var pV = {
-                action : "setEventReliability",
+                action : "viewOptions/setEventReliability",
                 data: {
                     flightId: flightId,
                     excId: excId,
@@ -354,7 +354,7 @@ FlightViewOptions.prototype.SupportReliabilityUncheck = function(exceptionTableR
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -387,9 +387,9 @@ FlightViewOptions.prototype.SupportUserComment = function() {
                 var text = $el.val();
                 var excId = $el.parents('.events_user-comment').first().data('excid');
 
-                $.post(FLIGHTS_VIEW_OPTIONS_SRC,
+                $.post(ENTRY_URL,
                     {
-                        action: 'updateComment',
+                        action: 'viewOptions/updateComment',
                         data: {
                             flightId: that.flightId,
                             excId: excId,

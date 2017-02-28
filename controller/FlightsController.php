@@ -1511,4 +1511,36 @@ class FlightsController extends CController
            echo(json_encode($answ));
        }
     }
+
+    public function getFlightFdrId($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+
+            $Fl = new Flight;
+            $flightInfo = $Fl->GetFlightInfo($flightId);
+            $fdr = $flightInfo['bruType'];
+            unset($Fl);
+
+            $Bru = new Fdr;
+            $fdrInfo = $Bru->GetBruInfo($fdr);
+            $fdrId = $fdrInfo['id'];
+            unset($Fl);
+
+            $data = array(
+                'bruTypeId' => $fdrId
+            );
+            
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
 }

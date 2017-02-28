@@ -115,7 +115,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsListOptions = function() {
             });
 
         var pV = {
-                action: "getFlightDuration",
+                action: "viewOptions/getFlightDuration",
                 data: {
                     flightId: flightId
                 }
@@ -125,7 +125,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsListOptions = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -178,7 +178,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
         self.flightOptionsContent = $("div#flightOptionsContent");
 
         var pV = {
-                action: "getParamListGivenQuantity",
+                action: "viewOptions/getParamListGivenQuantity",
                 data: {
                     flightId: flightId
                 }
@@ -188,7 +188,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -364,7 +364,7 @@ FlightViewOptions.prototype.ShowParamListPaginated = function(pageNum, totalPage
 
     if(flightId != null){
         var pV = {
-                action: "getParamListGivenQuantity",
+                action: "viewOptions/getParamListGivenQuantity",
                 data: {
                     flightId: flightId,
                     pageNum: pageNum
@@ -375,7 +375,7 @@ FlightViewOptions.prototype.ShowParamListPaginated = function(pageNum, totalPage
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -465,7 +465,7 @@ FlightViewOptions.prototype.SupportColorPicker = function(){
                 regional: 'current',
                 ok: function(event, color) {
                     var pV = {
-                        action: "changeParamColor",
+                        action: "viewOptions/changeParamColor",
                         data: {
                             flightId : self.flightId,
                             paramCode : $this.data("paramcode"),
@@ -481,7 +481,7 @@ FlightViewOptions.prototype.SupportColorPicker = function(){
                     $.ajax({
                         dataType : "json",
                         type: "POST",
-                        url : FLIGHTS_VIEW_OPTIONS_SRC,
+                        url : ENTRY_URL,
                         data : pV,
                     });
                 }
@@ -538,7 +538,7 @@ FlightViewOptions.prototype.SupportSearch = function(){
     function ReceiveSearchResult(req, flightId){
         if(flightId != null){
             var pV = {
-                    action: "getSearchedParams",
+                    action: "viewOptions/getSearchedParams",
                     data: {
                         flightId: flightId,
                         request: req
@@ -546,7 +546,7 @@ FlightViewOptions.prototype.SupportSearch = function(){
             };
 
             return $.ajax({
-                url: FLIGHTS_VIEW_OPTIONS_SRC,
+                url: ENTRY_URL,
                 type: "POST",
                 dataType: "json",
                 async: true,

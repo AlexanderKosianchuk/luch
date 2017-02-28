@@ -17,6 +17,7 @@ use Exception;
 class ViewOptionsController extends CController
 {
     public $curPage = 'viewOptionsPage';
+    public $action = '';
 
     function __construct()
     {
@@ -1131,5 +1132,392 @@ class ViewOptionsController extends CController
         $res = $FE->UpdateFalseAlarmState($excTableName, $excId, $state);
         unset($FE);
         return $res;
+    }
+
+    /*
+    * ==========================================
+    * REAL ACTIONS
+    * ==========================================
+    */
+
+    public function putViewOptionsContainer($data)
+    {
+        $topMenu = $this->PutTopMenu();
+        $leftMenu = $this->PutLeftMenu();
+        $workspace = $this->PutWorkspace();
+
+        $data = array(
+            'topMenu' => $topMenu,
+            'leftMenu' => $leftMenu,
+            'workspace' => $workspace
+        );
+        $answ["status"] = "ok";
+        $answ["data"] = $data;
+
+        echo json_encode($answ);
+    }
+
+    public function getFlightDuration($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+            $flightTiming = $this->GetFlightTiming($flightId);
+
+            $data = array(
+                'duration' => $flightTiming['duration'],
+                'startCopyTime' => $flightTiming['startCopyTime'],
+                'stepLength' => $flightTiming['stepLength']
+            );
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getParamCodesByTemplate($value='')
+    {
+        if(isset($data['flightId']) && isset($data['tplName']))
+        {
+            $flightId = intval($data['flightId']);
+            $tplName = $data['tplName'];
+
+            $params = $this->GetTplParamCodes($flightId, $tplName);
+
+            $data = array(
+                    'ap' => $params['ap'],
+                    'bp' => $params['bp']
+            );
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getDefaultTemplateParamCodes($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+
+            $params = $this->GetDefaultTplParams($flightId);
+
+            $data = array(
+                    'ap' => $params['ap'],
+                    'bp' => $params['bp']
+            );
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getBruTemplates($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+            $bruTypeTpls = $this->ShowTempltList($flightId);
+
+            $data = array(
+                'bruTypeTpls' => $bruTypeTpls
+            );
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getParamListGivenQuantity($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+
+            if(isset($data['pageNum']))
+            {
+                $pageNum = $data['pageNum'];
+
+                $paramsCount = $this->GetParamCount($flightId);
+                $bruTypeParams = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
+
+                $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING)) - 1;
+                if(count($paramsCount['apCount']) > count($paramsCount['bpCount']))
+                {
+                    $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING)) - 1;
+                }
+
+                $data = array(
+                        'bruTypeParams' => $bruTypeParams,
+                        'pagination' => true,
+                        'pageNum' => $pageNum,
+                        'totalPages' => $totalPages
+                );
+
+                $answ["status"] = "ok";
+                $answ["data"] = $data;
+
+                echo json_encode($answ);
+            }
+            else
+            {
+                $paramsCount = $this->GetParamCount($flightId);
+
+                if((count($paramsCount['apCount']) > PARAMS_PAGING) || (count($paramsCount['bpCount']) > PARAMS_PAGING))
+                {
+                    $pageNum = 0;
+                    $bruTypeParams = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
+
+                    $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING));
+                    if(count($paramsCount['apCount']) > count($paramsCount['bpCount']))
+                    {
+                        $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING));
+                    }
+
+                    $data = array(
+                            'bruTypeParams' => $bruTypeParams,
+                            'pagination' => true,
+                            'pageNum' => $pageNum,
+                            'totalPages' => $totalPages
+                    );
+
+                    $answ["status"] = "ok";
+                    $answ["data"] = $data;
+
+                    echo json_encode($answ);
+                }
+                else
+                {
+                    $bruTypeParams = $this->ShowParamList($flightId);
+
+                    $data = array(
+                            'bruTypeParams' => $bruTypeParams,
+                            'pagination' => false
+                    );
+
+                    $answ["status"] = "ok";
+                    $answ["data"] = $data;
+
+                    echo json_encode($answ);
+                }
+            }
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getSearchedParams($data)
+    {
+        if((isset($data['flightId'])) && (isset($data['request'])))
+        {
+            $flightId = intval($data['flightId']);
+            $request = $data['request'];
+
+            $data = $this->ShowSearchedParams($flightId, $request);
+
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function getEventsList($data)
+    {
+        if(isset($data['flightId']))
+        {
+            $flightId = intval($data['flightId']);
+            $eventsListHeader = $this->GetEventsListHeader($flightId);
+            $eventsList = $this->ShowEventsList($flightId);
+
+            $data = array(
+                    'eventsList' => $eventsList,
+                    'eventsListHeader' => $eventsListHeader
+            );
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function setEventReliability($data)
+    {
+        if((isset($data['flightId'])) &&
+            (isset($data['excId'])) &&
+            (isset($data['state'])))
+        {
+            $flightId = intval($data['flightId']);
+            $excId = intval($data['excId']);
+            $state = $data['state'];
+            $this->SetExcReliability($flightId, $excId, $state);
+
+            $answ["status"] = "ok";
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function createTpl($data)
+    {
+        if(isset($data['flightId']) &&
+            isset($data['tplName']) &&
+            isset($data['params']))
+        {
+            $flightId = intval($data['flightId']);
+            $tplName = $data['tplName'];
+            $params = $data['params'];
+
+            $this->CreateTemplate($flightId, $params, $tplName);
+            $params = $this->GetTplParamCodes($flightId, $tplName);
+
+            $data = array(
+                    'ap' => $params['ap'],
+                    'bp' => $params['bp']
+            );
+
+            $answ["status"] = "ok";
+            $answ["data"] = $data;
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function changeParamColor($data)
+    {
+        if(isset($data['flightId']) &&
+                isset($data['paramCode']) &&
+                isset($data['color']))
+        {
+            $flightId = intval($data['flightId']);
+            $paramCode = $data['paramCode'];
+            $color = $data['color'];
+
+            $this->UpdateParamColor($flightId, $paramCode, $color);
+            $answ["status"] = "ok";
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function updateComment($data)
+    {
+        if (isset($data['flightId']) &&
+            isset($data['excId']) &&
+            isset($data['text'])
+        ) {
+            $flightId = intval($data['flightId']);
+            $excid = $data['excId'];
+            $text = $data['text'];
+
+            $this->UpdateExceptionComment($flightId, $excid, $text);
+            $answ["status"] = "ok";
+
+            echo json_encode($answ);
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
+    }
+
+    public function saveFlightComment($data)
+    {
+        $params = [];
+        parse_str($data, $params);
+
+        if (isset($params['flight-id'])) {
+            $flightId = intval($params['flight-id']);
+
+            $Fd = new Folder;
+            $folder = $Fd->GetFlightFolder($flightId, $c->_user->userInfo['id']);
+            unset($Fd);
+
+            $answ = [];
+            $answ["status"] = "not allowed";
+            if (!empty($folder)) {
+                $c->UpdateFlightComment($flightId, $params);
+                $answ["status"] = "ok";
+            }
+
+            echo json_encode($answ);
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page fileUploader.php";
+            echo(json_encode($answ));
+        }
     }
 }

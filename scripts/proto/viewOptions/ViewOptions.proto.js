@@ -1,5 +1,3 @@
-var FLIGHTS_VIEW_OPTIONS_SRC = location.protocol + '//' + location.host + "/view/viewOptions.php";
-
 function FlightViewOptions(window, document, langStr, eventHandler)
 {
     this.langStr = langStr;
@@ -26,7 +24,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
     this.flightOptionsFactoryContainer = factoryContainer;
 
     var pV = {
-            action: "putViewOptionsContainer",
+            action: "viewOptions/putViewOptionsContainer",
             data: {
                 data: 'data'
             }
@@ -36,7 +34,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FLIGHTS_VIEW_OPTIONS_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);

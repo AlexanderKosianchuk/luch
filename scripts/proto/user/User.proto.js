@@ -35,8 +35,10 @@ function User($window, document, langStr, eventHandler) {
             async : true
         }).done(function () {
             $('<form></form>')
+                .css({display: 'none'})
                 .attr('action', window.location.protocol + '//' + window.location.host)
                 .attr('method', 'get')
+                .appendTo('body')
                 .submit();
         });
     };
@@ -57,8 +59,10 @@ function User($window, document, langStr, eventHandler) {
             async : true
         }).done(function () {
             $('<form></form>')
+                .css({display: 'none'})
                 .attr('action', window.location.protocol + '//' + window.location.host)
                 .attr('method', 'get')
+                .appendTo('body')
                 .submit();
         });
     };

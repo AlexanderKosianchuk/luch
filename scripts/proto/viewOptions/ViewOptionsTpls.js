@@ -96,7 +96,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
 
         $("#here").on("click", function(e){
             var pV = {
-                    action: "getBruTypeId",
+                    action: "flights/getFlightFdrId",
                     data: {
                         flightId: self.flightId
                     }
@@ -106,7 +106,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
                 type: "POST",
                 data: pV,
                 dataType: 'json',
-                url: FLIGHTS_VIEW_OPTIONS_SRC,
+                url: ENTRY_URL,
                 async: true
             }).fail(function(msg){
                 console.log(msg);
@@ -150,7 +150,7 @@ FlightViewOptions.prototype.ShowFlightViewTempltListOptions = function() {
         self.flightOptionsOptions = $("div#flightOptionsOptions");
 
         var pV = {
-                action: "getFlightDuration",
+                action: "viewOptions/getFlightDuration",
                 data: {
                     flightId: flightId
                 }
@@ -160,7 +160,7 @@ FlightViewOptions.prototype.ShowFlightViewTempltListOptions = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
@@ -232,7 +232,7 @@ FlightViewOptions.prototype.TplCreate = function(flightId, tplName, params) {
     var self = this;
 
     var pV = {
-            action: "createTpl",
+            action: "viewOptions/createTpl",
             data: {
                 flightId: flightId,
                 tplName: tplName,
@@ -244,7 +244,7 @@ FlightViewOptions.prototype.TplCreate = function(flightId, tplName, params) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FLIGHTS_VIEW_OPTIONS_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);
@@ -255,7 +255,7 @@ FlightViewOptions.prototype.TplParamsReceive = function(flightId, tplName) {
     var self = this;
 
     var pV = {
-            action: "getParamCodesByTemplate",
+            action: "viewOptions/getParamCodesByTemplate",
             data: {
                 flightId: flightId,
                 tplName: tplName
@@ -266,7 +266,7 @@ FlightViewOptions.prototype.TplParamsReceive = function(flightId, tplName) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FLIGHTS_VIEW_OPTIONS_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);
@@ -277,7 +277,7 @@ FlightViewOptions.prototype.DefaultTplParamsReceive = function(flightId) {
     var self = this;
 
     var pV = {
-            action: "getDefaultTemplateParamCodes",
+            action: "viewOptions/getDefaultTemplateParamCodes",
             data: {
                 flightId: flightId
             }
@@ -287,7 +287,7 @@ FlightViewOptions.prototype.DefaultTplParamsReceive = function(flightId) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FLIGHTS_VIEW_OPTIONS_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);
@@ -304,7 +304,7 @@ FlightViewOptions.prototype.ShowTempltList = function() {
         self.flightOptionsContent = $("div#flightOptionsContent");
 
         var pV = {
-                action: "getBruTemplates",
+                action: "viewOptions/getBruTemplates",
                 data: {
                     flightId: flightId
                 }
@@ -314,7 +314,7 @@ FlightViewOptions.prototype.ShowTempltList = function() {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FLIGHTS_VIEW_OPTIONS_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
