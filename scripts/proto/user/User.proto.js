@@ -1,8 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-var USER_SRC = location.protocol + '//' + location.host + "/view/user.php";
-
 function User($window, document, langStr, eventHandler) {
     'use strict';
 
@@ -23,7 +21,7 @@ function User($window, document, langStr, eventHandler) {
 
     this.logout = function () {
         var pV = {
-            action : 'userLogout',
+            action : 'user/userLogout',
             data : {
                 data : 'data'
             }
@@ -33,7 +31,7 @@ function User($window, document, langStr, eventHandler) {
             type : "POST",
             data : pV,
             dataType : 'json',
-            url : USER_SRC,
+            url : ENTRY_URL,
             async : true
         }).done(function () {
             $('<form></form>')
@@ -45,7 +43,7 @@ function User($window, document, langStr, eventHandler) {
 
     this.changeLanguage = function (lang) {
         var pV = {
-            action : 'userChangeLanguage',
+            action : 'user/userChangeLanguage',
             data : {
                 lang : lang
             }
@@ -55,7 +53,7 @@ function User($window, document, langStr, eventHandler) {
             type : "POST",
             data : pV,
             dataType : 'json',
-            url : USER_SRC,
+            url : ENTRY_URL,
             async : true
         }).done(function () {
             $('<form></form>')
@@ -133,7 +131,7 @@ function User($window, document, langStr, eventHandler) {
             });
         } else {
             var pV = {
-                action : "buildUserTable",
+                action : "user/buildUserTable",
                 data : {
                     data : 'data'
                 }
@@ -143,7 +141,7 @@ function User($window, document, langStr, eventHandler) {
                 type : "POST",
                 data : pV,
                 dataType : 'json',
-                url : USER_SRC,
+                url : ENTRY_URL,
                 async : true
             })
             .done(function (answ) {
@@ -306,10 +304,10 @@ function User($window, document, langStr, eventHandler) {
             "bServerSide" : true,
             "aLengthMenu" : false,
             "bPaginate" : false,
-            "sAjaxSource" : USER_SRC,
+            "sAjaxSource" : ENTRY_URL,
             "fnServerData" : function (sSource, aoData, fnCallback) {
                 var pV = {
-                    action : "segmentTable",
+                    action : "user/segmentTable",
                     data : {
                         data : aoData
                     }
@@ -372,10 +370,10 @@ function User($window, document, langStr, eventHandler) {
                 "dataType" : 'json',
                 "type" : "POST",
                 "data" : {
-                    'action' : action,
+                    'action' : 'user/' + action,
                     'data' : data
                 },
-                "url" : USER_SRC,
+                "url" : ENTRY_URL,
                 "async" : true
             }).done(function (html) {
                 var append = function () {
@@ -417,7 +415,7 @@ function User($window, document, langStr, eventHandler) {
         $('form#user-cru-form')
             .one('submit', function (e){
                 dfd = $.ajax({
-                    url: USER_SRC,
+                    url: ENTRY_URL,
                     type: 'POST',
                     data: new FormData(this),
                     processData: false,
@@ -444,12 +442,12 @@ function User($window, document, langStr, eventHandler) {
             "dataType" : 'json',
             "type" : "POST",
             "data" : {
-                'action' : "deleteUser",
+                'action' : "user/deleteUser",
                 'data' : {
                     'userIds' : userIds
                 }
             },
-            "url" : USER_SRC,
+            "url" : ENTRY_URL,
         });
     };
 }

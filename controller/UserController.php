@@ -10,6 +10,7 @@ use Model\UserOptions;
 class UserController extends CController
 {
     public $curPage = 'userPage';
+    public $action = '';
 
     function __construct()
     {
@@ -46,28 +47,6 @@ class UserController extends CController
         $availableUsers = $this->_user->GetAvailableUsersList($userId, $userRole);
 
         return $availableUsers;
-    }
-
-    public function BuildUserTable()
-    {
-        $table = sprintf("<table id='userTable' cellpadding='0' cellspacing='0' border='0'>
-                <thead><tr>");
-
-        $table .= sprintf("<th name='checkbox' style='width:%s;'>%s</th>", "1%", "<input id='tableCheckAllItems' type='checkbox'/>");
-        $table .= sprintf("<th name='login'>%s</th>", $this->lang->userLogin);
-        $table .= sprintf("<th name='lang'>%s</th>", $this->lang->userLang);
-        $table .= sprintf("<th name='company'>%s</th>", $this->lang->userCompany);
-        $table .= sprintf("<th name='privilege'>%s</th>", $this->lang->userPrivilege);
-        $table .= sprintf("<th name='logo'>%s</th>", $this->lang->userLogo);
-
-        $table .= sprintf("</tr></thead><tfoot style='display: none;'><tr>");
-
-        for($i = 0; $i < 6; $i++) {
-            $table .= sprintf("<th></th>");
-        }
-
-        $table .= sprintf("</tr></tfoot><tbody></tbody></table>");
-        return $table;
     }
 
     public function BuildTableSegment($extOrderColumn, $extOrderType)
@@ -218,7 +197,7 @@ class UserController extends CController
                 $roleOptions,
                 $this->lang->userLogo);
 
-        $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", "createUser");
+        $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", "user/createUser");
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
 
         //==========================================
@@ -340,7 +319,7 @@ class UserController extends CController
                 $roleOptions,
                 $this->lang->userLogo);
 
-        $form .= sprintf("<input type='text' name='action' value='%s' style='visibility:hidden;'/>", $this->userActions["updateUser"]);
+        $form .= sprintf("<input type='text' name='action' value='user/updateUser' style='visibility:hidden;'/>");
         $form .= sprintf("<input type='text' name='data' value='dummy' style='visibility:hidden;'/>");
         $form .= sprintf("<input type='text' name='useridtoupdate' value='%s' style='visibility:hidden;'/>", $updatedUsersId);
 
@@ -395,7 +374,7 @@ class UserController extends CController
         return $form;
     }
 
-    public function CreateUser($form, $file)
+    public function CreateUserByForm($form, $file)
     {
         $login = $form['login'];
         $company = $form['company'];
@@ -405,21 +384,18 @@ class UserController extends CController
         if(is_array($role)) {
             $role = $role[count($role) - 1];
         }
-        $author = $this->_user->username;
-        $permittedFlights = isset($form['flightsAvailable']) ? $form['flightsAvailable'] : [];
+        $authorId = intval($this->_user->userInfo['id']);
         $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
-        $permittedUsers = isset($form['usersAvailable']) ? $form['usersAvailable'] : [];
         $file = str_replace("\\", "/", $file);
 
         $msg = '';
 
         if (!$this->_user->CheckUserPersonalExist($login)) {
-            $this->_user->CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $file);
-            $createdUserId = $this->_user->GetIdByUsername($login);
-            $authorId = $this->_user->GetUserIdByName($this->_user->username);
+            $this->_user->CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $file, $authorId);
+            $createdUserId = intval($this->_user->GetIdByUsername($login));
 
             foreach($permittedBruTypes as $id) {
-                $this->_user->SetFDRavailable($createdUserId, $id);
+                $this->_user->SetFDRavailable($createdUserId, intval($id));
             }
         } else {
             $msg = $this->lang->userAlreadyExist;
@@ -428,8 +404,9 @@ class UserController extends CController
         return $msg;
     }
 
-    public function UpdateUser($userIdToUpdate, $form, $file)
+    public function UpdateUserByForm($userIdToUpdate, $form, $file)
     {
+        $userIdToUpdate = intval($userIdToUpdate);
         $availableForUpdate = false;
         $author = $this->_user->username;
         $authorId = $this->_user->GetUserIdByName($author);
@@ -468,34 +445,14 @@ class UserController extends CController
 
         $this->_user->UpdateUserPersonal($userIdToUpdate, $personalData);
 
-        $permittedFlights = isset($form['flightsAvailable']) ? $form['flightsAvailable'] : [];
         $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
-        $permittedUsers = isset($form['usersAvailable']) ? $form['usersAvailable'] : [];
-
         $msg = '';
 
         foreach($permittedBruTypes as $id) {
-            $this->_user->SetFDRavailable($userIdToUpdate, $id);
+            $this->_user->SetFDRavailable($userIdToUpdate, intval($id));
         }
 
         return $msg;
-    }
-
-    public function DeleteUser($userIds)
-    {
-        foreach ($userIds as $userDeleteId) {
-            if(is_int(intval($userDeleteId))) {
-                $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
-                $login = $userInfo['login'];
-
-                $this->_user->DeleteUserPersonal($login);
-                $this->_user->UnsetFDRavailable($userDeleteId);
-
-                /* TODO it is also necessary to clean up flight data and folders*/
-            }
-        }
-
-        return true;
     }
 
     /*
@@ -520,4 +477,361 @@ class UserController extends CController
 
         echo json_encode($answ);
     }
+
+    /*
+    * ==========================================
+    * REAL ACTIONS
+    * ==========================================
+    */
+
+    public function userLogout($data)
+    {
+        if(isset($data['data']))
+        {
+            $this->Logout();
+
+            $answ = array(
+                'status' => 'ok'
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function userChangeLanguage($data)
+    {
+        if(isset($data['lang']))
+        {
+            $lang = $data['lang'];
+
+            $this->ChangeLanguage($lang);
+
+            $answ = array(
+                    'status' => 'ok'
+            );
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function buildUserTable($data)
+    {
+        if(isset($data['data']))
+        {
+            $table = sprintf("<table id='userTable' cellpadding='0' cellspacing='0' border='0'>
+                    <thead><tr>");
+
+            $table .= sprintf("<th name='checkbox' style='width:%s;'>%s</th>", "1%", "<input id='tableCheckAllItems' type='checkbox'/>");
+            $table .= sprintf("<th name='login'>%s</th>", $this->lang->userLogin);
+            $table .= sprintf("<th name='lang'>%s</th>", $this->lang->userLang);
+            $table .= sprintf("<th name='company'>%s</th>", $this->lang->userCompany);
+            $table .= sprintf("<th name='privilege'>%s</th>", $this->lang->userPrivilege);
+            $table .= sprintf("<th name='logo'>%s</th>", $this->lang->userLogo);
+
+            $table .= sprintf("</tr></thead><tfoot style='display: none;'><tr>");
+
+            for($i = 0; $i < 6; $i++) {
+                $table .= sprintf("<th></th>");
+            }
+
+            $table .= sprintf("</tr></tfoot><tbody></tbody></table>");
+
+            $this->RegisterActionExecution($this->action, "executed", 0, 'getUserList', '', '');
+
+            $answ = [
+                "status" => "ok",
+                "data" => $table,
+                "sortCol" => 2, // id
+                "sortType" => 'desc'
+            ];
+
+            echo json_encode($answ);
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function segmentTable($data)
+    {
+        if(isset($data['data']))
+        {
+            $aoData = $data['data'];
+            $sEcho = $aoData[sEcho]['value'];
+            $iDisplayStart = $aoData[iDisplayStart]['value'];
+            $iDisplayLength = $aoData[iDisplayLength]['value'];
+
+            $sortValue = count($aoData) - 3;
+            $sortColumnName = 'id';
+            $sortColumnNum = $aoData[$sortValue]['value'];
+            $sortColumnType = strtoupper($aoData[$sortValue + 1]['value']);
+
+            switch ($sortColumnNum){
+                case(1): {
+                        $sortColumnName = 'login';
+                        break;
+                }
+                case(2): {
+                        $sortColumnName = 'lang';
+                        break;
+                }
+                case(3): {
+                        $sortColumnName = 'company';
+                        break;
+                }
+            }
+
+            $totalRecords = -1;
+            $aaData["sEcho"] = $sEcho;
+            $aaData["iTotalRecords"] = $totalRecords;
+            $aaData["iTotalDisplayRecords"] = $totalRecords;
+
+            $this->RegisterActionExecution($this->action, "executed", $sortColumnNum, "sortColumnNum", 0, $sortColumnType);
+
+            $tableSegment = $this->BuildTableSegment($sortColumnName, $sortColumnType);
+            $aaData["aaData"] = $tableSegment;
+
+            echo(json_encode($aaData));
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page user.php";
+                    $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+                    echo(json_encode($answ));
+        }
+    }
+
+    public function createUserForm($data)
+    {
+        $modal = $this->BuildCreateUserModal();
+        $this->RegisterActionExecution($this->action, "executed");
+        echo(json_encode($modal));
+    }
+
+    public function updateUserForm($data)
+    {
+        if(isset($data) && isset($data['userid']))
+        {
+            $userid = intval($data['userid']);
+            $modal = $this->BuildUpdateUserModal($userid);
+            $this->RegisterActionExecution($this->action, "executed");
+            echo(json_encode($modal));
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page user.php";
+                $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+                echo(json_encode($answ));
+                exit();
+        }
+    }
+
+    public function createUser($data)
+    {
+        if(isset($data) &&
+                isset($_FILES['logo']) &&
+                isset($_FILES['logo']['tmp_name']))
+        {
+            $form = $_POST;
+            $file = $_FILES['logo']['tmp_name'];
+
+            $answ = [
+                'status' => 'ok'
+            ];
+
+            if(!isset($form['login'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseInputUserLogin
+                ];
+            }
+
+            if(!isset($form['company'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseInputUserCompany
+                ];
+            }
+
+            if(!isset($form['pwd']) || !isset($form['pwd2'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseInputPass
+                ];
+            }
+
+            if($form['pwd'] != $form['pwd2']) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->passwordRepeatingIncorrect
+                ];
+            }
+
+            if(!isset($form['privilege'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseChoosePrivilege
+                ];
+            }
+
+            if(!isset($form['role'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseChooseRole
+                ];
+            }
+
+            if($answ['status'] == 'ok') {
+                $resMsg = $this->CreateUserByForm($form, $file);
+
+                if($resMsg != '') {
+                    $answ = [
+                            'status' => 'err',
+                            'error' => $resMsg
+                    ];
+                }
+            }
+
+            $this->RegisterActionExecution($this->action, "executed");
+            echo(json_encode($answ));
+            exit();
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit();
+        }
+    }
+
+    public function updateUser($data)
+    {
+        if(isset($data) && isset($_POST['useridtoupdate']))
+        {
+            $form = $_POST;
+            $userIdToUpdate = $form['useridtoupdate'];
+            $file = null;
+            if(isset($_FILES) &&
+                    isset($_FILES['logo']) &&
+                    isset($_FILES['logo']['tmp_name']))
+            {
+                $file = $_FILES['logo']['tmp_name'];
+            }
+
+            $answ = [
+                'status' => 'ok'
+            ];
+
+            if($form['pwd'] != $form['pwd2']) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->passwordRepeatingIncorrect
+                ];
+            }
+
+            if(!isset($form['privilege'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseChoosePrivilege
+                ];
+            }
+
+            if(!isset($form['role'])) {
+                $answ = [
+                    'status' => 'err',
+                    'error' => $this->lang->pleaseChooseRole
+                ];
+            }
+
+            if($answ['status'] == 'ok') {
+                $resMsg = $this->UpdateUserByForm($userIdToUpdate, $form, $file);
+
+                if($resMsg != '') {
+                    $answ = [
+                            'status' => 'err',
+                            'error' => $resMsg
+                    ];
+                }
+            }
+
+            $this->RegisterActionExecution($this->action, "executed");
+            echo(json_encode($answ));
+            exit();
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit();
+        }
+    }
+
+    public function deleteUser($data)
+    {
+        if(isset($data) && isset($data['userIds']))
+        {
+            $userIds = $data['userIds'];
+
+            foreach ($userIds as $userDeleteId) {
+                if(is_int(intval($userDeleteId))) {
+                    $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
+                    $login = $userInfo['login'];
+
+                    $this->_user->DeleteUserPersonal($login);
+                    $this->_user->UnsetFDRavailable($userDeleteId);
+
+                    /* TODO it is also necessary to clean up flight data and folders*/
+                }
+            }
+
+            $answ = [
+                'status' => 'ok'
+            ];
+
+            $c->RegisterActionExecution($c->action, "executed");
+            echo(json_encode($answ));
+            exit();
+        }
+        else
+        {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page user.php";
+            $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit();
+        }
+    }
+
 }

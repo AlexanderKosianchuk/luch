@@ -558,7 +558,7 @@ class User
         }
     }
 
-    public function CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $logo)
+    public function CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $logo, $authorId = null)
     {
         if(is_array($privilege)) {
             $privilege = implode(',', $privilege);
@@ -574,7 +574,7 @@ class User
             ."'en',"
             ."'".$role."',"
             ."LOAD_FILE('".$logo."'),"
-            ."NULL);";
+            .$authorId.");";
 
         $execInfo['query'] = $query;
         $execInfo['status'] = 0;
@@ -783,7 +783,11 @@ class User
 
         $availableUsers = [];
         if (self::isAdmin($role)) {
-            $availableUsers = $this->GetUsersByRole([self::$role['moderator'], self::$role['user']]);
+            $availableUsers = $this->GetUsersByRole([
+                self::$role['moderator'],
+                self::$role['user'],
+                self::$role['local']
+            ]);
         } else if (self::isModerator($role)) {
             $availableUsers = $this->GetUsersByAuthor($userId);
         }
