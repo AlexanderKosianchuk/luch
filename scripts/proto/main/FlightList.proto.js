@@ -1,5 +1,4 @@
-function FlightList(langStr, eventHandler)
-{
+function FlightList(langStr, eventHandler) {
     this.langStr = langStr;
 
     this.eventHandler = eventHandler;
@@ -1149,7 +1148,7 @@ FlightList.prototype.fileMenuSupport = function(
                     .append(
                          $('<a></a>', {
                              class: 'export-coordinates-href',
-                             href: '/view/flights.php?action=coordinates&id=' + flightid,
+                             href: ENTRY_URL + '?action=flights/coordinates&id=' + flightid,
                              target: '_blank'
                          }).text(text)
                      );

@@ -383,7 +383,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -409,7 +409,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -439,7 +439,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -467,7 +467,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -495,7 +495,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -528,7 +528,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
@@ -568,7 +568,7 @@ class FdrController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page bru.php";
+                    json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }

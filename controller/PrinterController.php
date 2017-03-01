@@ -8,8 +8,10 @@ use Model\Frame;
 use Model\FlightException;
 use Model\User;
 
-require_once ("../tcpdf/tcpdf.php");
-require_once ("../tcpdf/config/tcpdf_config.php");
+use TCPDF;
+
+require_once (SITE_ROOT_DIR."/tcpdf/tcpdf.php");
+require_once (SITE_ROOT_DIR."/tcpdf/config/tcpdf_config.php");
 
 class PrinterController extends CController
 {
@@ -44,14 +46,13 @@ class PrinterController extends CController
         unset($Frame);
 
         // create new PDF document
-        $pdf = new \TCPDF ( 'L', 'mm', 'A4', true, 'UTF-8', false );
+        $pdf = new TCPDF ( 'L', 'mm', 'A4', true, 'UTF-8', false );
 
         // set document information
         $pdf->SetCreator ( $user );
         $pdf->SetAuthor ( $user );
         $pdf->SetTitle ( 'Flight events list' );
         $pdf->SetSubject ( 'Flight events list' );
-        // $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 
         $bort = $flightInfo['bort'];
         $voyage = $flightInfo['voyage'];
@@ -274,5 +275,42 @@ class PrinterController extends CController
         }
 
         $pdf->Output ($fileName, 'I');
+    }
+
+    public function printBlank($data)
+    {
+        if(isset($data['flightId']) && isset($data['sections'])) {
+            $flightId = $data['flightId'];
+            $sections = explode(',', $data['sections']);
+
+            $this->ConstructFlightEventsList($flightId, $sections, true);
+
+            $this->RegisterActionExecution($this->action, "executed");
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page PrinterController.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
+    }
+
+    public function monochromePrintBlank($data)
+    {
+        if(isset($data['flightId']) && isset($data['sections']))
+        {
+            $flightId = $data['flightId'];
+            $sections = explode(',', $data['sections']);
+
+            $this->ConstructFlightEventsList($flightId, $sections, false);
+
+            $this->RegisterActionExecution($this->action, "executed");
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page PrinterController.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+        }
     }
 }

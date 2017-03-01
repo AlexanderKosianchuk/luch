@@ -907,7 +907,7 @@ class FlightsController extends CController
        $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
 
        $c = new DataBaseConnector;
-       $link = $this->Connect();
+       $link = $c->Connect();
 
        $info = [];
        $averageLat = 0;
@@ -950,7 +950,7 @@ class FlightsController extends CController
            }
        } while ($link->more_results() && $link->next_result());
 
-       $this->Disconnect();
+       $c->Disconnect();
 
        unset($c);
 
@@ -1542,5 +1542,48 @@ class FlightsController extends CController
                     json_encode($_POST) . ". Page FlightsController.php";
             echo(json_encode($answ));
         }
+    }
+
+    public function coordinates($data)
+    {
+        if (!isset($data['id'])) {
+            echo 'error';
+        }
+
+        header("Content-Type: text/comma-separated-values; charset=utf-8");
+        header("Content-Disposition: attachment; filename=coordinates.kml");  //File name extension was wrong
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private", false);
+
+        $id = $data['id'];
+        $list = $this->GetCoordinates($id);
+
+        $figPrRow = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL
+         .'<kml xmlns="http://www.opengis.net/kml/2.2"' . PHP_EOL
+         .' xmlns:gx="http://www.google.com/kml/ext/2.2"> <!-- required when using gx-prefixed elements -->' . PHP_EOL
+        .'<Placemark>' . PHP_EOL
+          .'<name>gx:altitudeMode Example</name>' . PHP_EOL
+          .'<LineString>' . PHP_EOL
+            .'<extrude>1</extrude>' . PHP_EOL
+            .'<gx:altitudeMode>absolute </gx:altitudeMode>' . PHP_EOL
+            .'<coordinates>' . PHP_EOL;
+
+        foreach ($list as $fields) {
+            for($i = 0; $i < count($fields); $i++) {
+                $figPrRow .= $fields[$i] . ",";
+            }
+
+            $figPrRow = substr($figPrRow, 0, -1);
+            $figPrRow .= PHP_EOL;
+        }
+
+        $figPrRow .= '</coordinates>' . PHP_EOL
+            .'</LineString>' . PHP_EOL
+            .'</Placemark>' . PHP_EOL
+            .'</kml>';
+
+        echo $figPrRow;
+        unset($U);
     }
 }

@@ -1,5 +1,3 @@
-var FILE_PROCCESSOR_SRC = location.protocol + '//' + location.host + "/view/fileUploader.php";
-
 function FlightUploader(window, document, langStr, eventHandler)
 {
     this.langStr = langStr;
@@ -283,7 +281,7 @@ FlightUploader.prototype.GetFlightParams = function(
     if(self.flightUploaderContent != null){
         //when file uploaded call fileProcessor to import it
         var pV = {
-                action: "flightShowUploadingOptions",
+                action: "uploader/flightShowUploadingOptions",
                 data: {
                     index: index,
                     file: file,
@@ -297,7 +295,7 @@ FlightUploader.prototype.GetFlightParams = function(
                 type: "POST",
                 data: pV,
                 dataType: 'json',
-                url: FILE_PROCCESSOR_SRC,
+                url: ENTRY_URL,
                 async: false
             }).fail(function(msg){
                 console.log(msg);
@@ -336,7 +334,7 @@ FlightUploader.prototype.GetFlightParams = function(
                 type: "POST",
                 data: pV,
                 dataType: 'json',
-                url: FILE_PROCCESSOR_SRC,
+                url: ENTRY_URL,
                 async: true
             }).fail(function(msg){
                 console.log(msg);
@@ -391,7 +389,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
 
     //when file uploaded call fileProcessor to import it
     var pV = {
-        action: "flightShowUploadingOptions",
+        action: "uploader/flightShowUploadingOptions",
         data: {
             index: index,
             file: file,
@@ -404,7 +402,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FILE_PROCCESSOR_SRC,
+        url: ENTRY_URL,
         async: false
     }).fail(function(msg){
         console.log(msg);
@@ -532,7 +530,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
             plotDataset = Object(),
 
             pV = {
-                action: "flightUploaderPreview",
+                action: "uploader/flightUploaderPreview",
                 data: {
                     file: fileName,
                     bruType: bruType,
@@ -543,7 +541,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: FILE_PROCCESSOR_SRC,
+            url: ENTRY_URL,
             async: true
         }).done(function(apDataArray){
             $("div#loadingBox" + index).remove();
@@ -734,16 +732,14 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
 
                     var flightConvertionAction = "flightProcces",
                         tempFileName = guid() + "_tempStatus.json",
-                        performProc = $el.find("input#execProc").prop('checked'),
-                        etalonIdToCompare =
-                            $el.find("select.FlightUploadingInputs :selected").data("sliceid");
+                        performProc = $el.find("input#execProc").prop('checked');
 
                     if(performProc == true){
                         flightConvertionAction = "flightProccesAndCheck";
                     }
 
                     var pV = {
-                            'action': flightConvertionAction,
+                            'action': 'uploader/' + flightConvertionAction,
                             'data': {
                                 'bruType': bruType,
                                 'calibrationId': calibrationId,
@@ -825,7 +821,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     }
 
                     var pV = {
-                            action: action,
+                            action: 'uploader/'+action,
                             data: {
                                 bruType: bruType,
                                 file: fileName,
@@ -841,7 +837,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                         type: "POST",
                         data: pV,
                         dataType: 'json',
-                        url: FILE_PROCCESSOR_SRC,
+                        url: ENTRY_URL,
                         async: true
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
@@ -902,7 +898,7 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     }
 
                     var pV = {
-                            action: action,
+                            action: 'uploader/'+action,
                             data: {
                                 bruType: bruType,
                                 file: fileName,
@@ -918,7 +914,7 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                         type: "POST",
                         data: pV,
                         dataType: 'json',
-                        url: FILE_PROCCESSOR_SRC,
+                        url: ENTRY_URL,
                         async: true
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
@@ -953,7 +949,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FILE_PROCCESSOR_SRC,
+        url: ENTRY_URL,
         async: true
     }).done(function(answ){
         if(answ["status"] == 'ok') {
@@ -980,7 +976,7 @@ FlightUploader.prototype.EasyUploading = function(
 
     var tempFileName = guid() + "_tempStatus.json";
     var pV = {
-        'action': 'flightEasyUpload',
+        'action': 'uploader/flightEasyUpload',
         'data': {
             'bruType': bruType,
             'fileName': fileName,
@@ -1000,7 +996,7 @@ FlightUploader.prototype.Import = function(
 ) {
     var self = this,
     pV = {
-        'action': "itemImport",
+        'action': "uploader/itemImport",
         'data': {
             'file': file
         }
@@ -1010,7 +1006,7 @@ FlightUploader.prototype.Import = function(
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: FILE_PROCCESSOR_SRC,
+        url: ENTRY_URL,
         async: true
     }).done(function(answ){
         if(answ["status"] == 'ok') {

@@ -135,7 +135,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
 
                 $('<form></form>', {
                     method: 'POST',
-                    action: '/view/eventsBlank.php',
+                    action: ENTRY_URL,
                     target: '_blank'
                   })
                   .css('display', 'none')
@@ -149,7 +149,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                   }))
                   .append($('<input/>', {
                     name: 'action',
-                    value: eventsPrintAction
+                    value: 'printer/'+eventsPrintAction
                   })).appendTo(
                       $('body')
                   ).submit();
