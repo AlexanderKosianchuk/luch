@@ -76,10 +76,9 @@ Param.prototype.ReceiveParams = function(lineWidth){
 //=============================================================
 Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
     var self = this,
-        apDataArray = Array();
-
+        apDataArray = Array(),
         pV = {
-            action: 'getApParamValue',
+            action: 'chart/getApParamValueAction',
             data:{
                 flightId: self.flightId,
                 paramApCode: paramCode,
@@ -94,12 +93,12 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
         data: pV,
         type: "POST",
         dataType: "json",
-        url: CHART_SRC,
+        url: ENTRY_URL,
         async: true
     }).done(function(receivedParamPoints){
         apDataArray = receivedParamPoints;
         var pV = {
-                action: 'getParamInfo',
+                action: 'chart/getParamInfoAction',
                 data: {
                     flightId: self.flightId,
                     paramCode: paramCode
@@ -110,7 +109,7 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: CHART_SRC,
+            url: ENTRY_URL,
             async: true
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],
@@ -149,7 +148,7 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
         bpDataArray = Array(),
         color = String(),
         pV = {
-            action: 'getBpParamValue',
+            action: 'chart/getBpParamValueAction',
             data:{
                 flightId: self.flightId,
                 paramBpCode: paramCode
@@ -160,13 +159,13 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: CHART_SRC,
+        url: ENTRY_URL,
         async: true
     }).done(function(receivedParamPoints){
         bpDataArray = receivedParamPoints;
 
         var pV = {
-                action: 'getParamInfo',
+                action: 'chart/getParamInfoAction',
                 data: {
                     flightId: self.flightId,
                     paramCode: paramCode
@@ -177,7 +176,7 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: CHART_SRC,
+            url: ENTRY_URL,
             async: true
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],

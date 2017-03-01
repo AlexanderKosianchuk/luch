@@ -43,7 +43,7 @@ Exception.prototype.ReceiveExcepions = function(){
     for(var i = 0; i < this.paramCount; i++){
         var refParam = this.refParamArr[i],
             pV = {
-                action: 'getFlightExceptions',
+                action: 'chart/getFlightExceptionsAction',
                 data:{
                     flightId: self.flightId,
                     refParam: refParam
@@ -53,7 +53,7 @@ Exception.prototype.ReceiveExcepions = function(){
         $.ajax({
             data: pV,
             type: "POST",
-            url: CHART_SRC,
+            url: ENTRY_URL,
             dataType: 'json',
             success: function(inData) { return inData; },
             async: false,

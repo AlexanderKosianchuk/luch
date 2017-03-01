@@ -1531,7 +1531,7 @@ class FlightsController extends CController
             $data = array(
                 'bruTypeId' => $fdrId
             );
-            
+
             $answ["status"] = "ok";
             $answ["data"] = $data;
 
@@ -1539,7 +1539,7 @@ class FlightsController extends CController
         } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page FlightsController.php";
             echo(json_encode($answ));
         }
     }

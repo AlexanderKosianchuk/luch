@@ -1,4 +1,5 @@
-﻿
+var ENTRY_URL = location.protocol + '//' + location.host + "/entry.php";
+
 jQuery(function($) {
     $(document).ready(function() {
 

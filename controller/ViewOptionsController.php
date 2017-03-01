@@ -1178,15 +1178,14 @@ class ViewOptionsController extends CController
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
-    public function getParamCodesByTemplate($value='')
+    public function getParamCodesByTemplate($data)
     {
-        if(isset($data['flightId']) && isset($data['tplName']))
-        {
+        if(isset($data['flightId']) && isset($data['tplName'])) {
             $flightId = intval($data['flightId']);
             $tplName = $data['tplName'];
 
@@ -1200,20 +1199,17 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function getDefaultTemplateParamCodes($data)
     {
-        if(isset($data['flightId']))
-        {
+        if(isset($data['flightId'])) {
             $flightId = intval($data['flightId']);
 
             $params = $this->GetDefaultTplParams($flightId);
@@ -1226,20 +1222,17 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function getBruTemplates($data)
     {
-        if(isset($data['flightId']))
-        {
+        if(isset($data['flightId'])) {
             $flightId = intval($data['flightId']);
             $bruTypeTpls = $this->ShowTempltList($flightId);
 
@@ -1250,24 +1243,20 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page fileUploader.php";
+                json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function getParamListGivenQuantity($data)
     {
-        if(isset($data['flightId']))
-        {
+        if(isset($data['flightId'])) {
             $flightId = intval($data['flightId']);
 
-            if(isset($data['pageNum']))
-            {
+            if(isset($data['pageNum'])) {
                 $pageNum = $data['pageNum'];
 
                 $paramsCount = $this->GetParamCount($flightId);
@@ -1290,9 +1279,7 @@ class ViewOptionsController extends CController
                 $answ["data"] = $data;
 
                 echo json_encode($answ);
-            }
-            else
-            {
+            } else {
                 $paramsCount = $this->GetParamCount($flightId);
 
                 if((count($paramsCount['apCount']) > PARAMS_PAGING) || (count($paramsCount['bpCount']) > PARAMS_PAGING))
@@ -1317,9 +1304,7 @@ class ViewOptionsController extends CController
                     $answ["data"] = $data;
 
                     echo json_encode($answ);
-                }
-                else
-                {
+                } else {
                     $bruTypeParams = $this->ShowParamList($flightId);
 
                     $data = array(
@@ -1333,20 +1318,17 @@ class ViewOptionsController extends CController
                     echo json_encode($answ);
                 }
             }
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function getSearchedParams($data)
     {
-        if((isset($data['flightId'])) && (isset($data['request'])))
-        {
+        if ((isset($data['flightId'])) && (isset($data['request']))) {
             $flightId = intval($data['flightId']);
             $request = $data['request'];
 
@@ -1356,20 +1338,17 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function getEventsList($data)
     {
-        if(isset($data['flightId']))
-        {
+        if(isset($data['flightId'])) {
             $flightId = intval($data['flightId']);
             $eventsListHeader = $this->GetEventsListHeader($flightId);
             $eventsList = $this->ShowEventsList($flightId);
@@ -1382,22 +1361,20 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function setEventReliability($data)
     {
-        if((isset($data['flightId'])) &&
-            (isset($data['excId'])) &&
-            (isset($data['state'])))
-        {
+        if((isset($data['flightId']))
+            && (isset($data['excId']))
+            && (isset($data['state']))
+        ) {
             $flightId = intval($data['flightId']);
             $excId = intval($data['excId']);
             $state = $data['state'];
@@ -1405,22 +1382,20 @@ class ViewOptionsController extends CController
 
             $answ["status"] = "ok";
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function createTpl($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['tplName']) &&
-            isset($data['params']))
-        {
+        if(isset($data['flightId'])
+            && isset($data['tplName'])
+            && isset($data['params'])
+        ) {
             $flightId = intval($data['flightId']);
             $tplName = $data['tplName'];
             $params = $data['params'];
@@ -1437,22 +1412,20 @@ class ViewOptionsController extends CController
             $answ["data"] = $data;
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function changeParamColor($data)
     {
-        if(isset($data['flightId']) &&
-                isset($data['paramCode']) &&
-                isset($data['color']))
-        {
+        if(isset($data['flightId'])
+            && isset($data['paramCode'])
+            && isset($data['color'])
+        ) {
             $flightId = intval($data['flightId']);
             $paramCode = $data['paramCode'];
             $color = $data['color'];
@@ -1461,21 +1434,19 @@ class ViewOptionsController extends CController
             $answ["status"] = "ok";
 
             echo json_encode($answ);
-        }
-        else
-        {
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
 
     public function updateComment($data)
     {
-        if (isset($data['flightId']) &&
-            isset($data['excId']) &&
-            isset($data['text'])
+        if (isset($data['flightId'])
+            && isset($data['excId'])
+            && isset($data['text'])
         ) {
             $flightId = intval($data['flightId']);
             $excid = $data['excId'];
@@ -1488,7 +1459,7 @@ class ViewOptionsController extends CController
         } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }
@@ -1516,7 +1487,7 @@ class ViewOptionsController extends CController
         } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page fileUploader.php";
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
             echo(json_encode($answ));
         }
     }

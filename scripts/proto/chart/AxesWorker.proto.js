@@ -119,7 +119,7 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
     for(var i = 0; i < paramsArr.length; i++)
     {
         var pV = {
-            action: "getParamMinmax",
+            action: "chart/getParamMinmaxAction",
             data:{
                 flightId: flightId,
                 paramCode: paramsArr[i],
@@ -131,7 +131,7 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: CHART_SRC,
+            url: ENTRY_URL,
             async: false
         }).done(function(receivedMinMax){
             var minMax = receivedMinMax;
@@ -159,7 +159,7 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
         for(var i = 0; i < paramsArr.length; i++)
         {
             var pV = {
-                action: "setParamMinmax",
+                action: "chart/setParamMinmaxAction",
                 data:{
                     flightId: flightId,
                     paramCode: paramsArr[i],
@@ -173,8 +173,7 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
             $.ajax({
                 type: "POST",
                 data: pV,
-                url: CHART_SRC,
-                //async: true
+                url: ENTRY_URL,
             }).done(function(e){
                 self.distributionProc--;
             }).fail(function(e){

@@ -158,7 +158,7 @@ Legend.prototype.ReceiveLegend = function(){
     if(this.legendTitlesNotReceived) {
         var paramCodes = self.apArr.concat(self.bpArr),
         pV = {
-            action: "rcvLegend",
+            action: "chart/rcvLegend",
             data:{
                 flightId: self.flightId,
                 paramCodes: paramCodes
@@ -168,7 +168,7 @@ Legend.prototype.ReceiveLegend = function(){
         $.ajax({
             data: pV,
             type: "POST",
-            url: CHART_SRC,
+            url: ENTRY_URL,
             dataType: 'json',
             success: function(inData){
                 self.dfr.resolve;

@@ -1,5 +1,4 @@
-var CHART_SRC = location.protocol + '//' + location.host + "/view/chart.php",
-    LEGEND_CONTAINER_OUTER = 175,
+var LEGEND_CONTAINER_OUTER = 175,
     PARAM_TYPE_AP = "ap",
     PARAM_TYPE_BP = "bp";
 
@@ -60,18 +59,16 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
     var self = this;
     this.chartFactoryContainer = factoryContainer;
 
-    var pV = {
-            action: "putChartContainer",
+    $.ajax({
+        type: "POST",
+        data: {
+            action: "chart/putChartContainer",
             data: {
                 data: 'data'
             }
-    };
-
-    $.ajax({
-        type: "POST",
-        data: pV,
+        },
         dataType: 'json',
-        url: CHART_SRC,
+        url: ENTRY_URL,
         async: true
     }).fail(function(msg){
         console.log(msg);
@@ -175,7 +172,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
 
     function PrintFile(flightId, fromTime, toTime, prms){
         var pV = {
-                action: "figurePrint",
+                action: "chart/figurePrint",
                 data: {
                     flightId: flightId,
                     fromTime: fromTime,
@@ -188,7 +185,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: CHART_SRC,
+            url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);

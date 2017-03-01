@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 /*global Language, WindowFactory, FlightList, FlightUploader, FlightProccessingStatus*/
-/*global FlightViewOptions, BruType, Chart, User, SearchFlight*/
+/*global FlightViewOptions, Fdr, Chart, User, SearchFlight*/
 
 var ENTRY_URL = location.protocol + '//' + location.host + "/entry.php";
 
