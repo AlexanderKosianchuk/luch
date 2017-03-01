@@ -10,7 +10,6 @@ use Model\UserOptions;
 class UserController extends CController
 {
     public $curPage = 'userPage';
-    public $action = '';
 
     function __construct()
     {

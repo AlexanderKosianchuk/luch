@@ -18,7 +18,6 @@ use ZipArchive;
 class UploaderController extends CController
 {
     public $curPage = 'uploaderPage';
-    public $action = '';
 
     function __construct()
     {

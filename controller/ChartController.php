@@ -17,7 +17,6 @@ class ChartController extends CController
 {
     public $curPage = 'chartPage';
     private $title = 'Title';
-    public $action = '';
 
     function __construct()
     {

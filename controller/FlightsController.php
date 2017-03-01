@@ -19,7 +19,6 @@ use Component\FlightComponent;
 class FlightsController extends CController
 {
    public $curPage = 'flightsPage';
-   public $action = '';
 
    function __construct()
    {

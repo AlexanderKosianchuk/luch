@@ -17,7 +17,6 @@ use Exception;
 class ViewOptionsController extends CController
 {
     public $curPage = 'viewOptionsPage';
-    public $action = '';
 
     function __construct()
     {

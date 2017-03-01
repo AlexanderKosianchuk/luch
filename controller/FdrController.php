@@ -11,7 +11,6 @@ use Model\Flight;
 class FdrController extends CController
 {
     public $curPage = 'bruTypesPage';
-    public $action = '';
 
     function __construct()
     {
