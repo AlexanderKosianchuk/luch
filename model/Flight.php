@@ -237,9 +237,9 @@ class Flight
             $aditionalInfo = strval($extAditionalInfo);
         }
 
-        $tableName = uniqid();
-        $tableNameAp = "_".$tableName."_ap";
-        $tableNameBp = "_".$tableName."_bp";
+        $tableName = "_".uniqid();
+        $tableNameAp = $tableName."_ap";
+        $tableNameBp = $tableName."_bp";
         $exTableName = '';
         $paramsTables = array("tableNameAp" => $tableNameAp, "tableNameBp" => $tableNameBp);
 
@@ -444,17 +444,17 @@ class Flight
         return $arr;
     }
 
-    public function DeleteFlight($extFlightId, $extPrefixApArr, $extPrefixBpArr)
+    public function DeleteFlight($flightId, $prefixes)
     {
-        $flightId = $extFlightId;
-        $prefixApArr = (array)$extPrefixApArr;
-        $prefixBpArr = (array)$extPrefixBpArr;
+        if (!is_int($flightId)) {
+            throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
+                . json_encode($flightId), 1);
+        }
 
         $flightInfo = $this->GetFlightInfo($flightId);
         $file = $flightInfo['fileName'];
-        $apTableName = $flightInfo['apTableName'];
-        $bpTableName = $flightInfo['bpTableName'];
-        $exTableName = $flightInfo['exTableName'];
+        $guid = $flightInfo['guid'];
+
         $result = array();
         $result['status'] = array();
         $result['query'] = array();
@@ -468,31 +468,19 @@ class Flight
         $result['status'][] = $stmt->execute();
         $stmt->close();
 
-        foreach($prefixApArr as $item => $prefix)
+        foreach($prefixes as $item => $prefix)
         {
-            $query = "DROP TABLE `". $apTableName ."_".$prefix."`;";
-            $result['query'][] = $query;
-            $stmt = $link->prepare($query);
-            $result['status'][] = $stmt->execute();
-            $stmt->close();
-        }
-
-        foreach($prefixBpArr as $item => $prefix)
-        {
-            $query = "DROP TABLE `". $bpTableName ."_".$prefix."`;";
-            $result['query'][] = $query;
-            $stmt = $link->prepare($query);
-            $result['status'][] = $stmt->execute();
-            $stmt->close();
-        }
-
-        if($exTableName != "")
-        {
-            $query = "DROP TABLE `". $exTableName ."`;";
-            $result['query'][] = $query;
-            $stmt = $link->prepare($query);
-            $result['status'][] = $stmt->execute();
-            $stmt->close();
+            $tableName =  $guid . $prefix;
+            $query = "SHOW TABLES LIKE '". $tableName ."';";
+            $res = $link->query($query);
+            if (count($res->fetch_array()))
+            {
+                $query = "DROP TABLE `". $tableName ."`;";
+                $result['query'][] = $query;
+                $stmt = $link->prepare($query);
+                $result['status'][] = $stmt->execute();
+                $stmt->close();
+            }
         }
 
         $c->Disconnect();

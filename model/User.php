@@ -17,7 +17,7 @@ class User
 {
     public $username;
     public $userInfo;
-    public $privilege;
+    public $privilege = [];
 
     public static $role = [
         'admin' => 'admin',

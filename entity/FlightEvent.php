@@ -53,6 +53,11 @@ class FlightEvent
         return $this->id;
     }
 
+    public static function getPrefix ()
+    {
+        return self::$_prefix;
+    }
+
     public function setStartTime($startTime)
     {
         $this->startTime = $startTime;

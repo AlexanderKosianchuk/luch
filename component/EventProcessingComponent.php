@@ -24,7 +24,7 @@ class EventProcessingComponent
 
     private static $eventRuntimeServiceKey = 'runtime';
 
-    public static function processEvents($flightId)
+    public static function processEvents($flightId, $emitter)
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
@@ -52,12 +52,16 @@ class EventProcessingComponent
         $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
         $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
 
+        $emitter->emit('EventProcessing:start', [count($eventsToFdr)]);
+
+        $ii = 0;
         foreach ($eventsToFdr as $eventToFdr) {
             $substitution = $eventToFdr->getSubstitution();
             $event = $eventToFdr->getEvent();
             $eventSettlements = $event->getEventSettlements();
 
             $alg = $event->getAlg();
+
             $eventAlg = self::substituteParams($alg, $substitution,
                 $fdrCode, $flightGuid);
 
@@ -69,27 +73,27 @@ class EventProcessingComponent
             $sections = self::eventArrayToSection($eventArray, $startCopyTime, $stepLength);
             $checkedSections = self::eventLengthCheck($sections, $minLength);
 
-            foreach ($eventSettlements as $settlement) {
-                $settlementAlg = $settlement->getAlg();
+            foreach ($checkedSections as $section) {
+                $flightEvent = new FlightEvent;
+                $flightEvent->setAttributes([
+                    'eventId' => $event->getId(),
+                    'startTime' => $section['startTime'],
+                    'endTime' => $section['endTime'],
+                ]);
+                $em->persist($flightEvent);
+                $em->flush();
 
-                $settlementAlg = self::substituteParams($settlementAlg, $substitution,
-                    $fdrCode, $flightGuid);
+                foreach ($eventSettlements as $settlement) {
+                    $settlementAlg = $settlement->getAlg();
 
-                $settlementAlg = self::substituteFlightInfo($settlementAlg, $flight->get());
-                $settlementAlg = self::substituteRuntime($settlementAlg, $fdrCode);
+                    $settlementAlg = self::substituteParams($settlementAlg, $substitution,
+                        $fdrCode, $flightGuid);
 
-                foreach ($checkedSections as $section) {
+                    $settlementAlg = self::substituteFlightInfo($settlementAlg, $flight->get());
+                    $settlementAlg = self::substituteRuntime($settlementAlg, $fdrCode);
+
                     $settlementAlg = self::substituteEventTime($settlementAlg, $section);
                     $value = self::executeSettlement($settlementAlg);
-
-                    $flightEvent = new FlightEvent;
-                    $flightEvent->setAttributes([
-                        'eventId' => $event->getId(),
-                        'startTime' => $section['startTime'],
-                        'endTime' => $section['endTime'],
-                    ]);
-                    $em->persist($flightEvent);
-                    $em->flush();
 
                     $flightSettlement = new FlightSettlement;
                     $flightSettlement->setAttributes([
@@ -103,7 +107,15 @@ class EventProcessingComponent
                     $em->flush();
                 }
             }
+
+            $ii ++;
+            $emitter->emit('EventProcessing:progress', [
+                $ii,
+                count($eventsToFdr)
+            ]);
         }
+
+        $emitter->emit('EventProcessing:end', []);
     }
 
     private static function executeEvent($queryAlg, $startCopyTime, $stepLength)

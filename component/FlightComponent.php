@@ -7,6 +7,9 @@ use Model\Flight;
 use Model\Fdr;
 use Model\Folder;
 
+use Entity\FlightEvent;
+use Entity\FlightSettlement;
+
 use Exception;
 
 class FlightComponent
@@ -34,7 +37,18 @@ class FlightComponent
             $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
             $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
 
-            $Fl->DeleteFlight($flightId, $prefixApArr, $prefixBpArr);
+            $prefixes = [];
+            foreach ($prefixApArr as $num) {
+                $prefixes[] = '_ap_'.$num;
+            }
+            foreach ($prefixBpArr as $num) {
+                $prefixes[] = '_bp_'.$num;
+            }
+            $prefixes[] = FlightSettlement::getPrefix();
+            $prefixes[] = FlightEvent::getPrefix();
+            $prefixes[] = '_ex';
+
+            $Fl->DeleteFlight($flightId, $prefixes);
 
             $Fd = new Folder;
             $Fd->DeleteFlightFromFolders($flightId);

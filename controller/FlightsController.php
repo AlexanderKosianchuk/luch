@@ -11,10 +11,13 @@ use Model\FlightComments;
 use Model\FlightException;
 use Model\DataBaseConnector;
 
+use Component\FlightComponent;
+use Component\EventProcessingComponent;
+
+use Evenement\EventEmitter;
+
 use Exception;
 use ZipArchive;
-
-use Component\FlightComponent;
 
 class FlightsController extends CController
 {
@@ -401,11 +404,13 @@ class FlightsController extends CController
                         $startCopyTime, $stepLength);
                }
 
+               EventProcessingComponent::processEvents($flightId, new EventEmitter);
+
                error_reporting(E_ALL);
             }
 
             unset($fdr);
-            echo 'ok';
+            echo json_encode(['status' => 'ok']);
       } else {
          $msg = "Incorrect input data. ProcessFlight id - " . json_encode($flightId) . ". Page FlightsController.php";
          throw new Exception($msg, 1);

@@ -12,6 +12,9 @@ use Model\Folder;
 use Model\FlightException;
 
 use Component\FlightComponent;
+use Component\EventProcessingComponent;
+
+use Evenement\EventEmitter;
 
 use ZipArchive;
 
@@ -163,8 +166,7 @@ class UploaderController extends CController
             }
         }
 
-        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege))
-        {
+        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege)) {
             $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
                 "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
                 </tr>";
@@ -855,10 +857,10 @@ class UploaderController extends CController
         return $flightId;
     }
 
-    public function ProccesFlightException($extFlightId,
+    public function ProccesFlightException($flightId,
             $extTempFileName)
     {
-        $flightId = $extFlightId;
+        $flightId = intval($flightId);
         $tempFile = $extTempFileName;
         $tempFilePath = UPLOADED_FILES_PATH . "proccessStatus/" . $tempFile;
 
@@ -868,9 +870,7 @@ class UploaderController extends CController
         }
 
         $tmpStatus = $this->lang->startFlExcProcc;
-        $fp = fopen($tempFilePath, "w");
-        fwrite($fp, json_encode($tmpStatus));
-        fclose($fp);
+        $this->writeStatus ($tempFilePath, $tmpStatus);
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -909,11 +909,8 @@ class UploaderController extends CController
             for($i = 0; $i < count($exList); $i++)
             {
                 //50 because we think previous 50 ware used during proc
-                $tmpStatus =  round(50 + (50 / count($exList) * $i)) . "%";
-
-                $fp = fopen($tempFilePath, "w");
-                fwrite($fp, json_encode($tmpStatus));
-                fclose($fp);
+                $tmpStatus =  round(50 + (25 / count($exList) * $i)) . "%";
+                $this->writeStatus ($tempFilePath, $tmpStatus);
 
                 $curExList = $exList[$i];
                 $FEx->PerformProcessingByExceptions($curExList,
@@ -921,6 +918,20 @@ class UploaderController extends CController
                         $apTableName, $bpTableName,
                         $startCopyTime, $stepLength);
             }
+
+            $emitter = new EventEmitter();
+
+            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath) {
+                $this->writeStatus ($tempFilePath, "75%");
+            });
+
+            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath) {
+                $tmpStatus =  round(75 + (25 / count($total) * $progress)) . "%";
+                $this->writeStatus ($tempFilePath, $tmpStatus);
+            });
+
+            EventProcessingComponent::processEvents($flightId, $emitter);
+
             unlink($tempFilePath);
             error_reporting(E_ALL);
         }
@@ -930,6 +941,13 @@ class UploaderController extends CController
         }
 
         unset($Bru);
+    }
+
+    private function writeStatus ($path, $status)
+    {
+        $fp = fopen($path, "w");
+        fwrite($fp, json_encode($status));
+        fclose($fp);
     }
 
     public function DeleteFlight()
