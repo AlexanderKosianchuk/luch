@@ -182,15 +182,12 @@ class FlightException
                 }
             }
             //else no aditional info
-        }
-        else
-        {
+        } else {
             $queryAlg = $query;
         }
 
 
-        if (!$link->multi_query($queryAlg))
-        {
+        if (!$link->multi_query($queryAlg)) {
             //err log
             error_log("Impossible to execute multiquery: (" .
                 $queryAlg . ") " . $link->error);
@@ -204,14 +201,11 @@ class FlightException
                 while($row = $res->fetch_array())
                 {
                     //exception alg can return frameNum or frameNum and time
-                    if(isset($row['time']))
-                    {
+                    if(isset($row['time'])) {
                         $resultArr[] = array(
                             "frameNum" => $row['frameNum'],
                             "time" => $row['time']);
-                    }
-                    else
-                    {
+                    } else {
                         $time = ($startCopyTime + $row['frameNum'] * $stepLength) * 1000; //1000 to convert in microsec
                         $resultArr[] = array(
                             "frameNum" => $row['frameNum'],
@@ -221,8 +215,7 @@ class FlightException
 
                 //reorganize arr to simplify inserting
                 $normalizedResultArr = array();
-                if(count($resultArr) > 0)
-                {
+                if(count($resultArr) > 0) {
                     $endFrameNum = $resultArr[0]['frameNum'] + 1;
                     $endTime = ($startCopyTime + $endFrameNum * $stepLength) * 1000; //1000 to convert in microsec
                     $normalizedResultArr[] = array(
@@ -236,8 +229,7 @@ class FlightException
                         $prevFrameNum = $resultArr[$j - 1]['frameNum'];
                         $curFrameNum = $resultArr[$j]['frameNum'];
 
-                        if(($curFrameNum - $prevFrameNum) > 1)
-                        {
+                        if(($curFrameNum - $prevFrameNum) > 1) {
                             $endFrameNum =  $curFrameNum + 1;
                             $endTime = ($startCopyTime + $endFrameNum * $stepLength) * 1000;
                             $normalizedResultArr[] = array(
@@ -245,9 +237,7 @@ class FlightException
                                 "startTime" => $resultArr[$j]["time"],
                                 "endFrameNum" => $endFrameNum,
                                 "endTime" => $endTime);
-                        }
-                        else
-                        {
+                        } else {
                             $endTime = ($startCopyTime + $curFrameNum * $stepLength) * 1000;
 
                             $normalizedResultArr[count($normalizedResultArr) - 1]["endFrameNum"] = $curFrameNum;
@@ -318,7 +308,6 @@ class FlightException
                             $aditionalInfoStr."');";
                     $stmt = $link2->prepare($query);
                     $stmt->execute();
-
                 }
 
                 $res->free();

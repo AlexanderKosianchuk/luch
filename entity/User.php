@@ -1,9 +1,5 @@
 <?php
 
-
-
-namespace Entity;
-
 namespace Entity;
 
 /**
@@ -12,7 +8,7 @@ namespace Entity;
  * @Table(name="user_personal", uniqueConstraints={@UniqueConstraint(name="login", columns={"login"})}, indexes={@Index(name="login_2", columns={"login"})})
  * @Entity
  */
-class UserPersonal
+class User
 {
     /**
      * @var integer

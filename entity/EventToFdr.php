@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Entity;
 
 /**
@@ -43,11 +41,38 @@ class EventToFdr
     private $idUser;
 
     /**
-     * @var \DateTime
+     * @var string
      *
-     * @Column(name="dt", type="datetime", nullable=false)
+     * @Column(name="param_substitution", type="text", length=65535, nullable=true)
      */
-    private $dt;
+    private $paramSubstitution;
 
+    /**
+     * Many EventToFdrs have One Event.
+     * @ManyToOne(targetEntity="Event", inversedBy="eventToFdr")
+     * @JoinColumn(name="id_event", referencedColumnName="id")
+     */
+    private $event;
 
+    /**
+     * Many EventToFdrs have One Fdr.
+     * @ManyToOne(targetEntity="Fdr", inversedBy="eventToFdr")
+     * @JoinColumn(name="id_fdr", referencedColumnName="id")
+     */
+    private $fdr;
+
+    public function getSubstitution()
+    {
+        return $this->paramSubstitution;
+    }
+
+    public function getEvent()
+    {
+        return $this->event;
+    }
+
+    public function getFdr()
+    {
+        return $this->fdr;
+    }
 }

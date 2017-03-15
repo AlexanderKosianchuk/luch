@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Entity;
 
 /**
@@ -84,5 +82,67 @@ class Event
      */
     private $visualization;
 
+    /**
+     * One Event has Many EventToFdrs.
+     * @OneToMany(targetEntity="EventToFdr", mappedBy="Event")
+     */
+    private $eventToFdrs;
 
+    /**
+     * One Event has Many EventSettlements.
+     * @OneToMany(targetEntity="EventSettlement", mappedBy="event")
+     */
+    private $eventSettlements;
+
+    public function __construct()
+    {
+        $this->eventToFdrs = new ArrayCollection();
+        $this->eventSettlements = new ArrayCollection();
+    }
+
+    public function getEventToFdrs()
+    {
+        return $this->eventToFdrs;
+    }
+
+    public function getEventSettlements()
+    {
+        return $this->eventSettlements;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAlg()
+    {
+        return $this->alg;
+    }
+
+    public function getAlgText()
+    {
+        return $this->algText;
+    }
+
+    public function getMinLength()
+    {
+        return $this->minLength;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'code' => $this->code,
+            'status' => $this->status,
+            'text' => $this->text,
+            'refParam' => $this->refParam,
+            'minLength' => $this->minLength,
+            'alg' => $this->alg,
+            'comment' => $this->comment,
+            'algText' => $this->algText,
+            'visualization' => $this->visualization
+        ];
+    }
 }

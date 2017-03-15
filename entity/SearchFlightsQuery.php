@@ -10,7 +10,7 @@ namespace Entity;
  * @Table(name="search_flights_queries")
  * @Entity
  */
-class SearchFlightsQueries
+class SearchFlightsQuery
 {
     /**
      * @var integer

@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Entity;
 
 /**
@@ -68,7 +66,7 @@ class Fdr
      *
      * @Column(name="stepLength", type="float", precision=10, scale=0, nullable=false)
      */
-    private $steplength;
+    private $stepLength;
 
     /**
      * @var integer
@@ -147,5 +145,33 @@ class Fdr
      */
     private $avaliableperspectives;
 
+    /**
+     * One Fdr has Many EventToFdrs.
+     * @OneToMany(targetEntity="EventToFdr", mappedBy="fdr")
+     */
+    private $eventsToFdr;
 
+    public function __construct() {
+        $this->eventsToFdr = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    public function getStepLength()
+    {
+        return $this->stepLength;
+    }
+
+    public function getEventsToFdr()
+    {
+        return $this->eventsToFdr;
+    }
 }

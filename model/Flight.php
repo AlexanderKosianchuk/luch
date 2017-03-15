@@ -50,37 +50,17 @@ class Flight
         $result = $link->query($query);
         $flightInfo = array();
 
-        if($row = $result->fetch_array())
-        {
-            foreach ($row as $key => $value)
-            {
-                if($key == 'flightAditionalInfo')
-                {
-                    $flightInfo[$key] = $value;
-                    if(($value != '') && ($value != ' '))
-                    {
-                        if(strrpos($value, ";") !== false)
-                        {
-                            $rest = substr($value, -1);
-                            if($rest == ";")
-                            {
-                                $value = substr($value, 0, count($value) - 2);
-                            }
+        if($row = $result->fetch_array()) {
+            foreach ($row as $key => $value) {
+                if(($key === 'flightAditionalInfo')
+                    && ($value !== null)
+                ) {
+                    $flightInfo = array_merge($flightInfo,
+                        json_decode($value, true)
+                    );
 
-                            $aditionalInfoArr = explode(";", $value);
-
-                            for($i = 0; $i < count($aditionalInfoArr); $i++)
-                            {
-                                $aditionalInfoVal = explode(":", $aditionalInfoArr[$i]);
-                                $flightInfo[$aditionalInfoVal[0]] = $aditionalInfoVal[1];
-                            }
-                        }
-                    }
                 }
-                else
-                {
-                    $flightInfo[$key] = $value;
-                }
+                $flightInfo[$key] = $value;
             }
         }
 
@@ -244,7 +224,7 @@ class Flight
     }
 
     public function InsertNewFlight($bort, $voyage,
-            $startCopyTime,
+            $startCopyTime, $fdrId,
             $bruType, $performer,
             $departureAirport, $arrivalAirport,
             $uploadedFile, $extAditionalInfo, $userId)
@@ -271,11 +251,13 @@ class Flight
                 `startCopyTime`,
                 `uploadingCopyTime`,
                 `performer`,
+                `id_fdr`,
                 `brutype`,
                 `departureAirport`,
                 `arrivalAirport`,
                 `flightAditionalInfo`,
                 `fileName`,
+                `guid`,
                 `apTableName`,
                 `bpTableName`,
                 `exTableName`,
@@ -285,11 +267,13 @@ class Flight
                         ".$startCopyTime.",
                         ".$uploadingCopyTime.",
                         '".$performer."',
+                        '".$fdrId."',
                         '".$bruType."',
                         '".$departureAirport."',
                         '".$arrivalAirport."',
                         '".$aditionalInfo."',
                         '".$uploadedFile."',
+                        '".$tableName."',
                         '".$tableNameAp."',
                         '".$tableNameBp."',
                         '".$exTableName."',

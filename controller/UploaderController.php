@@ -127,30 +127,21 @@ class UploaderController extends CController
                 $this->_user->username . "'/></td>" .
                 "</tr>";
 
-        if($fdrInfo['aditionalInfo'] != '')
-        {
-            if (strpos($fdrInfo['aditionalInfo'], ";") !== 0)
-            {
+        if ($fdrInfo['aditionalInfo'] != '') {
+            if (strpos($fdrInfo['aditionalInfo'], ";") !== 0) {
                 $aditionalInfo = explode(";", $fdrInfo['aditionalInfo']);
                 $aditionalInfo  = array_map('trim', $aditionalInfo);
-            }
-            else
-            {
+            } else {
                 $aditionalInfo = (array)trim($fdrInfo['aditionalInfo']);
             }
 
-            for($i = 0; $i < count($aditionalInfo); $i++)
-            {
+            for($i = 0; $i < count($aditionalInfo); $i++) {
 
-                if(property_exists($this->lang, $aditionalInfo[$i]))
-                {
+                if (property_exists($this->lang, $aditionalInfo[$i])) {
                     $labelsArr = get_object_vars($this->lang);
                     $label = $labelsArr[$aditionalInfo[$i]];
-                }
-                else
-                {
-                    if(!(property_exists($this->lang, 'aditionalInfo')))
-                    {
+                } else {
+                    if(!(property_exists($this->lang, 'aditionalInfo'))) {
                         $this->lang->aditionalInfo = "Aditional info";
                     }
 
@@ -160,8 +151,7 @@ class UploaderController extends CController
                 $flightParamsSrt .= "<tr><td>" . $label . "</td>";
 
                 $aditionalInfoFromHeader = "";
-                if(isset($flightInfoFromHeader[$aditionalInfo[$i]]))
-                {
+                if(isset($flightInfoFromHeader[$aditionalInfo[$i]])) {
                     $aditionalInfoFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',
                             $flightInfoFromHeader[$aditionalInfo[$i]]);
                 }
@@ -299,9 +289,8 @@ class UploaderController extends CController
         $fdrInfo = $Bru->GetBruInfo($bruType);
         $aditionalInfoArr = explode(";", $fdrInfo["aditionalInfo"]);
 
-        foreach($aditionalInfoArr as $key => $val)
-        {
-            if(isset($headerInfo[$val])) {
+        foreach($aditionalInfoArr as $key => $val) {
+            if (isset($headerInfo[$val])) {
                 $aditionalInfo[$val] = $headerInfo[$val];
             } else {
                 $aditionalInfo[$val] = "x";
@@ -310,13 +299,7 @@ class UploaderController extends CController
 
         unset($Bru);
 
-        $aditionalInfoVars = '';
-        foreach($aditionalInfo as $key => $val)
-        {
-            $aditionalInfoVars .= $key . ":" . $val . ";";
-        }
-
-        return $aditionalInfoVars;
+        return json_encode($aditionalInfo);
     }
 
     public function CopyPreview($extBruType, $extFilePath)
@@ -626,9 +609,14 @@ class UploaderController extends CController
 
         $userId = intval($this->_user->userInfo['id']);
 
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdrId = intval($fdrInfo['id']);
+        $fdrCode = $fdrInfo['code'];
+
         $Fl = new Flight;
         $flightId = $Fl->InsertNewFlight($bort, $voyage,
-                $startCopyTime,
+                $startCopyTime, $fdrId,
                 $bruType, $performer,
                 $departureAirport, $arrivalAirport,
                 $uploadedFile, $aditionalInfo, $userId);
@@ -638,10 +626,7 @@ class UploaderController extends CController
         $tableNameBp = $flightInfo['bpTableName'];
         $flightId = $flightInfo['id'];
         $fileName = $flightInfo['fileName'];
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
-        $fdrCode = $fdrInfo['code'];
+;
         $frameLength = $fdrInfo['frameLength'];
         $stepLength = $fdrInfo['stepLength'];
         $wordLength = $fdrInfo['wordLength'];
@@ -1244,9 +1229,7 @@ class UploaderController extends CController
                         (string)$receivedFlightAditionalInfo[$i + 1];
                 }
 
-                foreach($flightAditionalInfo as $key => $val) {
-                    $aditionalInfoVars .= $key . ":" . $val . ";";
-                }
+                $aditionalInfoVars = json_encode($flightAditionalInfo);
             }
 
             $bort = $flightInfo["bort"];
@@ -1329,9 +1312,7 @@ class UploaderController extends CController
                         (string)$receivedFlightAditionalInfo[$i + 1];
                 }
 
-                foreach($flightAditionalInfo as $key => $val) {
-                    $aditionalInfoVars .= $key . ":" . $val . ";";
-                }
+                $aditionalInfoVars = json_encode($flightAditionalInfo);
             }
 
             $bort = $flightInfo["bort"];

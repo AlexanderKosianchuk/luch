@@ -521,25 +521,18 @@ class ViewOptionsController extends CController
 
         $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $fdrInfo['name'];
 
-        if (strpos ( $fdrInfo ['aditionalInfo'], ";" ) >= 0) {
+        if ((strpos ( $fdrInfo ['aditionalInfo'], ";" ) >= 0)
+            && ($flightInfo['flightAditionalInfo'] !== null)
+        ) {
             $counterNeedBrake = false;
-            $aditionalInfoArr = explode ( ";", $flightInfo['flightAditionalInfo'] );
-            foreach ( $aditionalInfoArr as $aditionalInfo ) {
-                if ($aditionalInfo != "") {
-                    $nameVal = explode ( ":", $aditionalInfo );
-
-                    if(count($nameVal) > 1){
-                        $name = $nameVal [0];
-                        $val = $nameVal [1];
-
-                        if ($counterNeedBrake) {
-                            $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
-                            $counterNeedBrake = ! $counterNeedBrake;
-                        } else {
-                            $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
-                            $counterNeedBrake = ! $counterNeedBrake;
-                        }
-                    }
+            $aditionalInfoArr = json_decode($flightInfo['flightAditionalInfo'], true);
+            foreach ( $aditionalInfoArr as $name => $val) {
+                if ($counterNeedBrake) {
+                    $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
+                    $counterNeedBrake = ! $counterNeedBrake;
+                } else {
+                    $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+                    $counterNeedBrake = ! $counterNeedBrake;
                 }
             }
         }

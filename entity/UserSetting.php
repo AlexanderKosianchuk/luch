@@ -2,15 +2,13 @@
 
 namespace Entity;
 
-namespace Entity;
-
 /**
  * UserSettings
  *
  * @Table(name="user_settings")
  * @Entity
  */
-class UserSettings
+class UserSetting
 {
     /**
      * @var integer
