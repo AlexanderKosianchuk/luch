@@ -288,16 +288,14 @@ class EventProcessingComponent
         if ($substitution !== null) {
             $substitutions = json_decode($substitution, true);
 
-            foreach ($substitutions as $substitution) {
-                if (strpos('[' . $substitution['index'] . ']', $alg) !== false) {
-                    $alg = str_replace('[' . $substitution['index'] . ']',
-                        '[' . $substitution['item'] . ']',
-                        $alg);
-                } else if (strpos('[^' . $substitution['index'] . ']', $alg) !== false) {
-                    $alg = str_replace('[^' . $substitution['index'] . ']',
-                        '[^' . $substitution['item'] . ']',
-                        $alg);
-                }
+            foreach ($substitutions as $key => $substitution) {
+                $alg = str_replace('[' . $key . ']',
+                    '[' . $substitution . ']',
+                    $alg);
+
+                $alg = str_replace('[^' . $key . ']',
+                    '[^' . $substitution . ']',
+                    $alg);
             }
         }
 

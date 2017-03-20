@@ -2,12 +2,15 @@
 
 namespace Entity;
 
+use Doctrine\ORM\EntityRepository;
+
 use \Exception;
+
 /**
  * FlightEvent
  *
  * @Table(name="NULL")
- * @Entity
+ * @Entity(repositoryClass="Repository\FlightEventRepository")
  */
 class FlightEvent
 {
@@ -47,6 +50,24 @@ class FlightEvent
      * @Column(name="false_alarm", type="boolean", nullable=false)
      */
     private $falseAlarm;
+
+    /**
+     * Many FlightEvents have One Event.
+     * @ManyToOne(targetEntity="Event", inversedBy="flightEvents")
+     * @JoinColumn(name="id_event", referencedColumnName="id")
+     */
+    private $event;
+
+    /**
+     * One FlightEvent has Many FlightSettlements.
+     * @OneToMany(targetEntity="FlightSettlement", mappedBy="flightEvent")
+     */
+    private $flightSettlements;
+
+    public function getEvent()
+    {
+        return $this->event;
+    }
 
     public function getId()
     {
@@ -117,8 +138,7 @@ class FlightEvent
         $dynamicTableName = $guid . self::$_prefix;
         $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
         $result = $link->query($query);
-        if (!$result->fetch_array())
-        {
+        if (!$result->fetch_array()) {
             $query = "CREATE TABLE `".$dynamicTableName."` ("
                 . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
                 . "`start_time` BIGINT(20) NOT NULL, "
@@ -140,6 +160,23 @@ class FlightEvent
                 throw new Exception("FlightEvent dynamic table truncating query failed. Query: "
                     . $query, 1);
             }
+        }
+
+        return $dynamicTableName;
+    }
+
+    public static function getTable($link, $guid)
+    {
+        if (!is_string($guid)) {
+            throw new Exception("Incorrect guid passed. String is required. Passed: "
+                . json_encode($guid), 1);
+        }
+
+        $dynamicTableName = $guid . self::$_prefix;
+        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
+        $result = $link->query($query);
+        if (!$result->fetch_array()) {
+            return null;
         }
 
         return $dynamicTableName;

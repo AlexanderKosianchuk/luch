@@ -48,6 +48,20 @@ class FlightSettlement
      */
     private $value;
 
+    /**
+     * One FlightSettlement have One FlightEvent.
+     * @OneToOne(targetEntity="FlightEvent", inversedBy="flightSettlements")
+     * @JoinColumn(name="id_flight_event", referencedColumnName="id")
+     */
+    private $flightEvent;
+
+    /**
+     * One FlightSettlement has One EventSettlement.
+     * @OneToOne(targetEntity="EventSettlement", inversedBy="flightSettlements")
+     * @JoinColumn(name="id_settlement", referencedColumnName="id")
+     */
+    private $eventSettlement;
+
     public function setEventId($eventId)
     {
         if (!is_int($eventId)) {
@@ -137,8 +151,7 @@ class FlightSettlement
         $dynamicTableName = $guid . self::$_prefix;
         $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
         $result = $link->query($query);
-        if (!$result->fetch_array())
-        {
+        if (!$result->fetch_array()) {
             $query = "CREATE TABLE `".$dynamicTableName."` ("
                 . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
                 . "`id_event` BIGINT(20) NOT NULL, "
@@ -162,6 +175,23 @@ class FlightSettlement
                 throw new Exception("FlightSettlement dynamic table truncating query failed. Query: "
                     . $query, 1);
             }
+        }
+
+        return $dynamicTableName;
+    }
+
+    public static function getTable($link, $guid)
+    {
+        if (!is_string($guid)) {
+            throw new Exception("Incorrect guid passed. String is required. Passed: "
+                . json_encode($guid), 1);
+        }
+
+        $dynamicTableName = $guid . self::$_prefix;
+        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
+        $result = $link->query($query);
+        if (!$result->fetch_array()) {
+            return null;
         }
 
         return $dynamicTableName;

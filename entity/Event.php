@@ -84,9 +84,15 @@ class Event
 
     /**
      * One Event has Many EventToFdrs.
-     * @OneToMany(targetEntity="EventToFdr", mappedBy="Event")
+     * @OneToMany(targetEntity="EventToFdr", mappedBy="event")
      */
     private $eventToFdrs;
+
+    /**
+     * One Event has Many FlightEvents.
+     * @OneToMany(targetEntity="FlightEvent", mappedBy="event")
+     */
+    private $flightEvents;
 
     /**
      * One Event has Many EventSettlements.
@@ -97,12 +103,18 @@ class Event
     public function __construct()
     {
         $this->eventToFdrs = new ArrayCollection();
+        $this->flightEvents = new ArrayCollection();
         $this->eventSettlements = new ArrayCollection();
     }
 
     public function getEventToFdrs()
     {
         return $this->eventToFdrs;
+    }
+
+    public function getFlightEvents()
+    {
+        return $this->flightEvents;
     }
 
     public function getEventSettlements()

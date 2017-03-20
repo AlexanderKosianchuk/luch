@@ -12,6 +12,12 @@ use Model\FlightComments;
 use Model\Channel;
 use Model\User;
 
+use Entity\FlightEvent;
+use Entity\FlightSettlement;
+
+use Component\EntityManagerComponent as EM;
+use Component\RealConnectionFactory as LinkFactory;
+
 use Exception;
 
 class ViewOptionsController extends CController
@@ -697,225 +703,212 @@ class ViewOptionsController extends CController
     private static $exceptionTypes = [
         '000', '001', '002', '003', 'other'
     ];
-    public function ShowEventsList($extFlightId)
+    private static $statusColor = [
+        "C" => "LightCoral",
+        "D" => "LightYellow",
+        "E" => "LightGreen",
+    ];
+    public function ShowEventsList($flightId)
     {
-        $flightId = $extFlightId;
+        if (!is_int($flightId)) {
+            throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
+                . json_encode($flightId), 1);
+        }
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrType = $flightInfo['bruType'];
         $exTableName = $flightInfo['exTableName'];
         unset($Fl);
 
         $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
-        $flightApHeaders = $Bru->GetBruApHeaders($bruType);
-        $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
+        $fdrInfo = $Bru->GetBruInfo($fdrType);
+        $flightApHeaders = $Bru->GetBruApHeaders($fdrType);
+        $flightBpHeaders= $Bru->GetBruBpHeaders($fdrType);
         $excListTableName = $fdrInfo['excListTableName'];
         unset($Bru);
+
+        $em = EM::get();
+        $flight = $em->find('Entity\Flight', $flightId);
+        $flightGuid = $flight->getGuid();
+        $startCopyTime = $flight->getStartCopyTime();
+        $frameLength = $fdrInfo['frameLength'];
+
+        $role = $this->_user->userInfo['role'];
+        $isDisabled = " disabled='disabled' ";
+        if (User::isAdmin($role) || User::isModerator($role)) {
+            $isDisabled = '';
+        }
+
+        $flightEvents = $em->getRepository('Entity\FlightEvent')
+            ->getFormatedFlightEvents($flightGuid, $isDisabled, $startCopyTime, $frameLength);
 
         $eventsList = "";
         $eventTypeCount = [];
 
-        if($exTableName != "")
-        {
-            $FEx = new FlightException;
-            $excEventsList = $FEx->GetFlightEventsList($exTableName);
-
-            $Frame = new Frame;
-            //change frame num to time
-            for($i = 0; $i < count($excEventsList); $i++)
-            {
-                $event = $excEventsList[$i];
-                $excEventsList[$i]['start'] = date("H:i:s", $excEventsList[$i]['startTime'] / 1000);
-                $reliability = "checked";
-                //converting false alarm to reliability
-                if($excEventsList[$i]['falseAlarm'] == 0) {
-                    $reliability = "checked";
-                } else {
-                    $reliability = "";
-                }
-                $excEventsList[$i]['reliability'] = $reliability;
-                $excEventsList[$i]['end'] = date("H:i:s", $excEventsList[$i]['endTime'] / 1000);
-                $excEventsList[$i]['duration'] = $Frame->TimeStampToDuration(
-                    $excEventsList[$i]['endTime'] - $excEventsList[$i]['startTime']);
-            }
-            unset($Frame);
-
-            $role = $this->_user->userInfo['role'];
-            $isDisabled = " disabled='disabled' ";
-            if (User::isAdmin($role) || User::isModerator($role)) {
-                $isDisabled = '';
-            }
-
-            //if isset events
-            if(!(empty($excEventsList))) {
-                $accordion = [];
-
-                $eventsListTable = sprintf ("<table align='center' class='ExeptionsTable NotSelectable'>
-                        <tr class='ExeptionsTableHeader'><td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell' width='210px'> %s </td>
-                        <td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell'> %s </td>
-                        <td class='ExeptionsCell' width='50px'> %s </td>
-                        <td class='ExeptionsCell' width='210px'> %s </td></tr>",
-                $this->lang->start,
-                $this->lang->end,
-                $this->lang->duration,
-                $this->lang->code,
-                $this->lang->eventName,
-                $this->lang->algText,
-                $this->lang->aditionalInfo,
-                $this->lang->reliability,
-                $this->lang->comment);
-
-                for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
-                    if($ii == 0) {
-                        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-                                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-                                '<div class="exceptions-accordion-content"> %s',
-                                self::$exceptionTypes[$ii],
-                                $this->lang->eventCodeMask000,
-                                self::$exceptionTypes[$ii],
-                                $eventsListTable);
-                    } else if($ii == 1) {
-                        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-                                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-                                '<div class="exceptions-accordion-content"> %s',
-                                self::$exceptionTypes[$ii],
-                                $this->lang->eventCodeMask001,
-                                self::$exceptionTypes[$ii],
-                                 $eventsListTable);
-
-                    } else if($ii == 2) {
-                        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-                                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-                                '<div class="exceptions-accordion-content"> %s',
-                                self::$exceptionTypes[$ii],
-                                $this->lang->eventCodeMask002,
-                                self::$exceptionTypes[$ii],
-                                $eventsListTable);
-                    } else if($ii == 3) {
-                        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-                                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-                                '<div class="exceptions-accordion-content"> %s',
-                                self::$exceptionTypes[$ii],
-                                $this->lang->eventCodeMask003,
-                                self::$exceptionTypes[$ii],
-                                $eventsListTable);
-                    } else {
-                        $accordion[self::$exceptionTypes[$ii]] = sprintf('<div class="exceptions-accordion">'.
-                                '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
-                                '<div class="exceptions-accordion-content"> %s',
-                                self::$exceptionTypes[$ii],
-                                $this->lang->eventCodeMask,
-                                self::$exceptionTypes[$ii],
-                                $eventsListTable);
-                    }
-                }
-
-                for($i = 0; $i < count($excEventsList); $i++)
-                {
-                    $event = $excEventsList[$i];
-                    $excInfo = $FEx->GetExcInfo($excListTableName,
-                        $event['refParam'], $event['code']);
-
-                    if($excInfo['status'] == "C")
-                    {
-                        $style = "background-color:LightCoral";
-                    }
-                    else if($excInfo['status'] == "D")
-                    {
-                        $style = "background-color:LightYellow";
-                    }
-                    else if($excInfo['status'] == "E")
-                    {
-                        $style = "background-color:LightGreen";
-                    }
-                    else
-                    {
-                        $style = "background-color:none;";
-                    }
-
-                    $excAditionalInfo = $event['excAditionalInfo'];
-                    $excAditionalInfo = str_replace(";", ";</br>", $excAditionalInfo);
-
-                    $eventsListRow = sprintf ("<tr style='%s' class='ExceptionTableRow'
-                                data-refparam='%s'
-                                data-startframe='%s'
-                                data-endframe='%s'><td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell'> %s </td>
-                            <td class='ExeptionsCell' style='text-align:center;'>
-                                <input class='reliability' data-excid='%s' type='checkbox' %s %s></input>
-                            </td>
-                            <td class='ExeptionsCell events_user-comment' data-excid='%s' %s> %s </td></tr>",
-                    $style,
-                    $event['refParam'],
-                    $event['frameNum'],
-                    $event['endFrameNum'],
-                    $event['start'],
-                    $event['end'],
-                    $event['duration'],
-                    $event['code'],
-                    $excInfo['comment'],
-                    $excInfo['algText'],
-                    $excAditionalInfo,
-                    $event['id'],
-                    $event['reliability'],
-                    $isDisabled,
-                    $event['id'],
-                    $isDisabled,
-                    $event['userComment']);
-
-                    $codePrefix = substr($event['code'], 0, 3);
-                    if(in_array($codePrefix, self::$exceptionTypes)) {
-                        $accordion[$codePrefix] .= $eventsListRow;
-                        $eventTypeCount[$codePrefix] = true;
-                    } else {
-                        $accordion[self::$exceptionTypeOther] .= $eventsListRow;
-                        $eventTypeCount[self::$exceptionTypeOther] = true;
-                    }
-                }
-
-                for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
-                    $accordion[self::$exceptionTypes[$ii]] .= sprintf ("</table></div></div>");
-
-                    if(!isset($eventTypeCount[self::$exceptionTypes[$ii]]) ||
-                        !$eventTypeCount[self::$exceptionTypes[$ii]]) {
-                        unset($accordion[self::$exceptionTypes[$ii]]);
-                    }
-                }
-
-                $eventsList = '';
-                foreach ($accordion as $item) {
-                    $eventsList .= $item;
-                }
-
-                unset($FEx);
-            }
-            else
-            {
-                $eventsList .= sprintf ("<table border='1' align='center' style='padding:2px'>
-                        <tr><td>&nbsp;%s&nbsp;</td></tr>
-                        </table>", $this->lang->noEvents);
-            }
-        }
-        else
-        {
+        if (($exTableName !== "") && ($flightEvents === null)) {
             $eventsList .= sprintf ("<table border='1' align='center' style='padding:2px'>
-                        <tr><td>&nbsp;%s&nbsp;</td></tr>
-                        </table>", $this->lang->processingWasNotPerformed);
+                <tr><td>&nbsp;%s&nbsp;</td></tr>
+                </table>", $this->lang->processingWasNotPerformed);
+
+            return $eventsList;
         }
+
+        $FEx = new FlightException;
+        $excEventsList = $FEx->GetFlightEventsList($exTableName);
+
+        if (empty($excEventsList) && (count($flightEvents) === 0)) {
+            $eventsList .= sprintf ("<table border='1' align='center' style='padding:2px'>
+                <tr><td>&nbsp;%s&nbsp;</td></tr>
+                </table>", $this->lang->noEvents);
+
+            return $eventsList;
+        }
+
+        $Frame = new Frame;
+        //change frame num to time
+        for ($i = 0; $i < count($excEventsList); $i++) {
+            $event = $excEventsList[$i];
+            $event['start'] = date("H:i:s", $event['startTime'] / 1000);
+            $reliability = "checked";
+            //converting false alarm to reliability
+            if($event['falseAlarm'] == 0) {
+                $reliability = "checked";
+            } else {
+                $reliability = "";
+            }
+            $event['reliability'] = $reliability;
+            $event['end'] = date("H:i:s", $event['endTime'] / 1000);
+            $event['duration'] = $Frame->TimeStampToDuration(
+            $event['endTime'] - $event['startTime']);
+
+            $event = array_merge($event, $FEx->GetExcInfo($excListTableName,
+                $event['refParam'], $event['code']));
+
+            if (isset(self::$statusColor[$event['status']])) {
+                $style = "background-color:" . self::$statusColor[$event['status']];
+            } else {
+                $style = "background-color:none;";
+            }
+
+            $event['excAditionalInfo'] = str_replace(";", ";</br>", $event['excAditionalInfo']);
+            $event['isDisabled'] = $isDisabled;
+            $event['style'] = $style;
+
+            $flightEvents[] = $event;
+        }
+        unset($Frame);
+
+        $accordion = [];
+        $eventsListTable = sprintf ("<table align='center' class='ExeptionsTable NotSelectable'>
+                <tr class='ExeptionsTableHeader'><td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell' width='210px'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell' width='50px'> %s </td>
+                <td class='ExeptionsCell' width='210px'> %s </td></tr>",
+        $this->lang->start,
+        $this->lang->end,
+        $this->lang->duration,
+        $this->lang->code,
+        $this->lang->eventName,
+        $this->lang->algText,
+        $this->lang->aditionalInfo,
+        $this->lang->reliability,
+        $this->lang->comment);
+
+        for ($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
+            $accordion[self::$exceptionTypes[$ii]] = $this->buildEventAccordionItem ($ii, $eventsListTable);
+        }
+
+        for($i = 0; $i < count($flightEvents); $i++) {
+            $event = $flightEvents[$i];
+            $eventsListRow = $this->buildEventTableRow($event);
+
+            $codePrefix = substr($event['code'], 0, 3);
+            if(in_array($codePrefix, self::$exceptionTypes)) {
+                $accordion[$codePrefix] .= $eventsListRow;
+                $eventTypeCount[$codePrefix] = true;
+            } else {
+                $accordion[self::$exceptionTypeOther] .= $eventsListRow;
+                $eventTypeCount[self::$exceptionTypeOther] = true;
+            }
+        }
+
+        for($ii = 0; $ii < count(self::$exceptionTypes); $ii++) {
+            $accordion[self::$exceptionTypes[$ii]] .= sprintf ("</table></div></div>");
+
+            if(!isset($eventTypeCount[self::$exceptionTypes[$ii]]) ||
+                !$eventTypeCount[self::$exceptionTypes[$ii]]) {
+                unset($accordion[self::$exceptionTypes[$ii]]);
+            }
+        }
+
+        $eventsList = '';
+        foreach ($accordion as $item) {
+            $eventsList .= $item;
+        }
+
+        unset($FEx);
 
         return $eventsList;
+    }
+
+    private function buildEventAccordionItem ($num, $eventsListTable)
+    {
+        $langMask = $this->lang->eventCodeMask;
+        if (in_array($num, self::$exceptionTypes)) {
+            $mask = 'eventCodeMask00'. $num;
+            if (isset($this->lang->$mask)) {
+                $langMask = $this->lang->$mask;
+            }
+        }
+
+        return sprintf('<div class="exceptions-accordion">'.
+            '<div class="exceptions-accordion-title" data-shown="true" data-section="%s"><p>%s - %s</p></div>'.
+            '<div class="exceptions-accordion-content"> %s',
+            self::$exceptionTypes[$num],
+            $langMask,
+            self::$exceptionTypes[$num],
+            $eventsListTable);
+    }
+
+    private function buildEventTableRow($args)
+    {
+        return sprintf ("<tr style='%s' class='ExceptionTableRow'
+                    data-refparam='%s'
+                    data-startframe='%s'
+                    data-endframe='%s'><td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell'> %s </td>
+                <td class='ExeptionsCell' style='text-align:center;'>
+                    <input class='reliability' data-excid='%s' type='checkbox' %s %s></input>
+                </td>
+                <td class='ExeptionsCell events_user-comment' data-excid='%s' %s> %s </td></tr>",
+        $args['style'],
+        $args['refParam'],
+        $args['frameNum'],
+        $args['endFrameNum'],
+        $args['start'],
+        $args['end'],
+        $args['duration'],
+        $args['code'],
+        $args['comment'],
+        $args['algText'],
+        $args['excAditionalInfo'],
+        $args['id'],
+        $args['reliability'],
+        $args['isDisabled'],
+        $args['id'],
+        $args['isDisabled'],
+        $args['userComment']);
     }
 
     public function GetDefaultTplParams($extFlightId)

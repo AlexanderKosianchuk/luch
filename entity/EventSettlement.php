@@ -41,11 +41,22 @@ class EventSettlement
     private $alg;
 
     /**
-    * Many EventSettlement have One Event.
+    * Many EventSettlements have One Event.
     * @ManyToOne(targetEntity="Event", inversedBy="eventSettlements")
     * @JoinColumn(name="id_event", referencedColumnName="id")
     */
     private $event;
+
+    /**
+     * One EventSettlement has Many FlightSettlements.
+     * @OneToMany(targetEntity="FlightSettlement", mappedBy="eventSettlement")
+     */
+    private $flightSettlements;
+
+    public function __construct()
+    {
+        $this->flightSettlements = new ArrayCollection();
+    }
 
     public function getId()
     {
