@@ -2,6 +2,8 @@
 
 namespace Entity;
 
+use \Exception;
+
 /**
  * FlightSettlement
  *
@@ -82,6 +84,26 @@ class FlightSettlement
         $this->settlementId = $settlementId;
     }
 
+    public function setEventSettlement($settlement)
+    {
+        if (!is_a($settlement, 'Entity\EventSettlement')) {
+            throw new Exception("Incorrect settlement passed. EventSettlement obj is required. Passed: "
+                . get_class($settlement) . '. ' . json_encode($settlement), 1);
+        }
+
+        $this->eventSettlement = $settlement;
+    }
+
+    public function setFlightEvent($flightEvent)
+    {
+        if (!is_a($flightEvent, 'Entity\FlightEvent')) {
+            throw new Exception("Incorrect settlement passed. FightEvent obj is required. Passed: "
+                . get_class($flightEvent) . '. ' . json_encode($flightEvent), 1);
+        }
+
+        $this->flightEvent = $flightEvent;
+    }
+
     public function setFlightEventId($flightEventId)
     {
         if (!is_int($flightEventId)) {
@@ -112,6 +134,8 @@ class FlightSettlement
         if (!isset($attributes['eventId'])
             || !isset($attributes['settlementId'])
             || !isset($attributes['flightEventId'])
+            || !isset($attributes['eventSettlement'])
+            || !isset($attributes['flightEvent'])
             || !isset($attributes['value'])
         ) {
             throw new Exception("Not all necessary attributes passed. "
@@ -122,6 +146,8 @@ class FlightSettlement
         $this->setEventId($attributes['eventId']);
         $this->setSettlementId($attributes['settlementId']);
         $this->setFlightEventId($attributes['flightEventId']);
+        $this->setEventSettlement($attributes['eventSettlement']);
+        $this->setFlightEvent($attributes['flightEvent']);
         $this->setValue($attributes['value']);
     }
 

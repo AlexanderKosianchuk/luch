@@ -74,7 +74,23 @@ class FlightEvent
         return $this->id;
     }
 
-    public static function getPrefix ()
+    public function getEventId()
+    {
+        return $this->eventId;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'eventId' => $this->eventId,
+            'startTime' => $this->startTime,
+            'endTime' => $this->endTime,
+            'falseAlarm' => $this->falseAlarm
+        ];
+    }
+
+    public static function getPrefix()
     {
         return self::$_prefix;
     }
@@ -99,6 +115,16 @@ class FlightEvent
         $this->eventId = $eventId;
     }
 
+    public function setEvent($event)
+    {
+        if (!is_a($event, 'Entity\Event')) {
+            throw new Exception("Incorrect event passed. Event obj is required. Passed: "
+                . get_class($event) . '. ' .json_encode($event), 1);
+        }
+
+        $this->event = $event;
+    }
+
     public function setFalseAlarm($falseAlarm)
     {
         $this->falseAlarm = $falseAlarm;
@@ -114,6 +140,7 @@ class FlightEvent
         if (!isset($attributes['startTime'])
             || !isset($attributes['endTime'])
             || !isset($attributes['eventId'])
+            || !isset($attributes['event'])
         ) {
             throw new Exception("Not all necessary attributes passed. "
                 . "startTime, endTime, eventId are required. Passed: "
@@ -123,6 +150,7 @@ class FlightEvent
         $this->setStartTime($attributes['startTime']);
         $this->setEndTime($attributes['endTime']);
         $this->setEventId($attributes['eventId']);
+        $this->setEvent($attributes['event']);
 
         $falseAlarm = isset($attributes['falseAlarm']) ? $attributes['falseAlarm'] : false;
         $this->setFalseAlarm($falseAlarm);

@@ -79,7 +79,9 @@ class EventProcessingComponent
                     'eventId' => $event->getId(),
                     'startTime' => $section['startTime'],
                     'endTime' => $section['endTime'],
+                    'event' => $event
                 ]);
+
                 $em->persist($flightEvent);
                 $em->flush();
 
@@ -101,6 +103,8 @@ class EventProcessingComponent
                         'flightEventId' => $flightEvent->getId(),
                         'settlementId' => $settlement->getId(),
                         'value' => $value,
+                        'flightEvent' => $flightEvent,
+                        'eventSettlement' => $settlement,
                     ]);
 
                     $em->persist($flightSettlement);

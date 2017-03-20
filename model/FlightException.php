@@ -314,7 +314,6 @@ class FlightException
             }
         } while ($link->more_results() && $link->next_result());
 
-
         $c->Disconnect();
         $c2->Disconnect();
 

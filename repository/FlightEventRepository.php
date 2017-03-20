@@ -66,7 +66,7 @@ class FlightEventRepository extends EntityRepository
 
             $reliability = "checked";
             //converting false alarm to reliability
-            if($event['falseAlarm'] == 0) {
+            if($flightEvent['falseAlarm'] == 0) {
                 $reliability = "checked";
             } else {
                 $reliability = "";
