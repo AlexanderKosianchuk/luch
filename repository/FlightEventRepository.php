@@ -91,7 +91,8 @@ class FlightEventRepository extends EntityRepository
                 'excAditionalInfo' => implode(';<br>', $formatedSettlements),
                 'reliability' => $reliability,
                 'isDisabled' => $isDisabled,
-                'userComment' => ''
+                'userComment' => '',
+                'eventType' => 2
             ];
         }
 

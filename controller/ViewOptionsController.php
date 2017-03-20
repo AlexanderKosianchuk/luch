@@ -794,6 +794,7 @@ class ViewOptionsController extends CController
             $event['excAditionalInfo'] = str_replace(";", ";</br>", $event['excAditionalInfo']);
             $event['isDisabled'] = $isDisabled;
             $event['style'] = $style;
+            $event['eventType'] = 1;
 
             $flightEvents[] = $event;
         }
@@ -889,7 +890,7 @@ class ViewOptionsController extends CController
                 <td class='ExeptionsCell'> %s </td>
                 <td class='ExeptionsCell'> %s </td>
                 <td class='ExeptionsCell' style='text-align:center;'>
-                    <input class='reliability' data-excid='%s' type='checkbox' %s %s></input>
+                    <input class='reliability' data-excid='%s' data-event-type='%s' type='checkbox' %s %s></input>
                 </td>
                 <td class='ExeptionsCell events_user-comment' data-excid='%s' %s> %s </td></tr>",
         $args['style'],
@@ -904,6 +905,7 @@ class ViewOptionsController extends CController
         $args['algText'],
         $args['excAditionalInfo'],
         $args['id'],
+        $args['eventType'],
         $args['reliability'],
         $args['isDisabled'],
         $args['id'],
