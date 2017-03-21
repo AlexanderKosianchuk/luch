@@ -24,13 +24,13 @@ if (empty($CONFIG)) {
     throw new Exception("Config is not set", 1);
 }
 
-if (!isset($CONFIG['dbDoctrineConnection'])) {
-    throw new Exception("Config file does not contain doctrine dbDoctrineConnection config", 1);
+if (!isset($CONFIG['dbDoctrine'])) {
+    throw new Exception("Config file does not contain doctrine dbDoctrine config", 1);
 }
 
 // obtaining the entity manager
 $EM = EntityManager::create(
-    $CONFIG['dbDoctrineConnection'],
+    $CONFIG['dbDoctrine'],
     $anotationConfig
 );
 

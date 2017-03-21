@@ -13,7 +13,8 @@
     "require": {
         "doctrine/orm": "2.4.*",
         "symfony/yaml": "2.*",
-        "evenement/evenement": "2.0.*"
+        "evenement/evenement": "2.0.*",
+        "robmorgan/phinx": "^0.8.0"
     },
     "autoload": {
         "classmap": [
