@@ -18,11 +18,11 @@
     },
     "autoload": {
         "classmap": [
-            "repository/",
-            "entity/",
-            "model/",
-            "controller/",
-            "component/"
+            "back/repository/",
+            "back/entity/",
+            "back/model/",
+            "back/controller/",
+            "back/component/"
         ]
     }
 }

@@ -1,7 +1,5 @@
-var SERVICE_STRS = location.protocol + '//' + location.host + "/config/" + "_actions.json",
-
-    LANG_FILES_PATH = location.protocol + '//' + location.host + "/lang/",
-    LANG_FILE_DEFAULT =  location.protocol + '//' + location.host + "/lang/" + "EN.lang";
+var LANG_FILES_PATH = location.protocol + '//' + location.host + "/back/lang/";
+var LANG_FILE_DEFAULT =  location.protocol + '//' + location.host + "/back/lang/" + "EN.lang";
 
 function Language(selectedLang) {
     this.selectedLang = selectedLang;

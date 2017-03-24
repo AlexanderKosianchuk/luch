@@ -2,8 +2,8 @@
 
 namespace Model;
 
-define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/lang/");
-define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/lang/EN.lang");
+define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/back/lang/");
+define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/back/lang/EN.lang");
 
 class Language
 {
