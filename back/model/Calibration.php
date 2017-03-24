@@ -397,7 +397,7 @@ class Calibration
         $result = $stmt->get_result();
 
         $calibrationParam = [];
-        if ($row = $result->fetch_array()) {
+        while ($row = $result->fetch_array()) {
             $calibrationParam[$row['id_param']] = $row;
 
             if (isset($row['xy'])) {
