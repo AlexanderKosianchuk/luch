@@ -185,7 +185,7 @@ class UploaderController extends CController
         if($previewParams != '')
         {
             $flightParamsSrt .= "<div id='loadingBox".$index."' width='100%' style='position:absolute;'>
-                    <img style='margin:0px auto 0px;' src='stylesheets/basicImg/loading.gif'/></div>";
+                    <img style='margin:0px auto 0px;' src='/front/stylesheets/basicImg/loading.gif'/></div>";
 
             $flightParamsSrt .= "<div id='previewChartContainer".$index."' " .
                     "style='width:95%; border:0;'>

@@ -71,8 +71,10 @@ class CController
     public function ShowLoginForm()
     {
         $loginMsg = isset($this->_user->loginMsg) ? $this->_user->loginMsg : '';
+
+        printf('<script src="/public/login.js"></script>');
         printf("<div align='center' class='login-form'><p class='login-form_header'>%s</p>
-            <img src='/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
+            <img src='/front/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
             <p><label class='login-form_label login-form_label--alert'>%s</label></p>
             <form action='index.php' method='POST'>
             <table>

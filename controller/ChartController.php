@@ -57,11 +57,7 @@ class ChartController extends CController
 
     public function PutStyleSheets()
     {
-        printf("<link href='stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/jquery-ui-1.10.3.custom.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/jsTreeThemes/default/style.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/chart.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
+        printf("<link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />");
     }
 
     public function PutHeader()
@@ -76,37 +72,7 @@ class ChartController extends CController
 
     public function PutScripts()
     {
-        printf("<script type='text/javascript' src='scripts/include/jquery/jquery-2.1.1.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/jquery/jquery-ui-1.10.3.custom.min.js'></script>");
-
-        //flot
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.time.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.colorhelpers.min.js'></script>-->
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.canvas.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.categories.min.js'></script>-->
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.crosshair.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.errorbars.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.navigate.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.resize.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.selection.min.js'></script>
-            <script type='text/javascript' src='scripts/include/flot/jquery.flot.symbol.min.js'></script>
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.threshold.min.js'></script>-->
-
-            <!--[if lte IE 8]><script type='text/javascript' src='scripts/include/flot/excanvas.min.js'></script><![endif]-->
-            <!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.axislabels.js'></script>-->");
-
-        //manual scripts
-        printf("<script type='text/javascript' src='scripts/chart.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/Lang.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/WindowFactory.proto.js'></script>");
-
-        //chart scripts
-        printf("<script type='text/javascript' src='scripts/proto/chart/Chart.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/AxesWorker.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Exception.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Legend.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Param.proto.js'></script>");
+        printf("<script type='text/javascript' src='public/chart.js'></script>");
     }
 
     public function PutFooter()
@@ -176,7 +142,7 @@ class ChartController extends CController
                 "<div id='legend'></div>" .
                 "</div>" .
                 "<div id='loadingBox' class='LoadingBox'>" .
-                "<img src='stylesheets/basicImg/loading.gif'/>" .
+                "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
                 "</div>".
                 "</div>");
     }
@@ -196,7 +162,7 @@ class ChartController extends CController
                         "<div id='legend'></div>" .
                             "</div>" .
                         "<div id='loadingBox' class='LoadingBox'>" .
-                            "<img src='stylesheets/basicImg/loading.gif'/>" .
+                            "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
                         "</div>".
                     "</div>";
         return $workspace;

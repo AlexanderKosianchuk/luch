@@ -44,27 +44,27 @@ class FlightsController extends CController
 
       $topMenu = sprintf("<div id='topMenuFlightList' class='TopMenu'>
 
-            <label id='logo' class='Logo' style='background-image:url(stylesheets/basicImg/logo.png)'>
+            <label id='logo' class='Logo' style='background-image:url(/front/stylesheets/basicImg/logo.png)'>
                <span style='position:absolute; margin-top:8px;'>Luch</span>
             </label>
 
             <img class='Separator'></img>
 
-            <label id='currentUploadingTopButt' class='CurrentUploadingTopButt' style='background-image:url(stylesheets/basicImg/add.png)'>
+            <label id='currentUploadingTopButt' class='CurrentUploadingTopButt' style='background-image:url(/front/stylesheets/basicImg/add.png)'>
             </label>
 
             <label id='uploadTopButt' class='UploadButt'>
                <span style='position:absolute; margin-top:8px;'>%s</span>
             </label>
 
-            <label id='userTopButt' class='UserButt' style='background-image:url(stylesheets/basicImg/userPreferences.png); " .
+            <label id='userTopButt' class='UserButt' style='background-image:url(/front/stylesheets/basicImg/userPreferences.png); " .
             "width:%spx; font-size:%spx;'
                data-username='%s'>
                <span style='position:absolute; margin-top:%spx;'>%s</span>
             </label>
 
             <div id='view' style='display:none;'><img class='Separator2'></img>
-               <label class='ViewItem' style='background-image:url(stylesheets/basicImg/view.png);'>
+               <label class='ViewItem' style='background-image:url(/front/stylesheets/basicImg/view.png);'>
                <span style='position:absolute; margin-top:8px;'>%s</span>
             </label></div>
 
@@ -85,34 +85,34 @@ class FlightsController extends CController
        $leftMenu .= sprintf("<input class='SearchBox' value='' size='24' style='visibility: hidden;'></input>");
 
      $leftMenu .= sprintf("<div id='flightLeftMenuRow' class='LeftMenuRow LeftMenuRowSelected' data-selected='true'>
-           <img class='LeftMenuRowIcon' src='stylesheets/basicImg/flight.png'></img>
+           <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/flight.png'></img>
            %s&nbsp;
            </div>", $this->lang->flightsItem);
 
      $leftMenu .= sprintf("<div id='searchLeftMenuRow' class='LeftMenuRow'>
-           <img class='LeftMenuRowIcon' src='stylesheets/basicImg/search.png'></img>
+           <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/search.png'></img>
            %s&nbsp;
            </div>", $this->lang->searchItem);
 
       $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
-          <img class='LeftMenuRowIcon' src='stylesheets/basicImg/gear.png'></img>
-          <a style='color: #676767; text-decoration: none;' href='/view/flights.php?action=results'>%s&nbsp;</a>
+          <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/gear.png'></img>
+          %s&nbsp;
           </div>", $this->lang->resultsItem);
 
       /*$leftMenu .= sprintf("<div id='fdrLeftMenuRow' class='LeftMenuRow'>
-         <img class='LeftMenuRowIcon' src='stylesheets/basicImg/fdr.png'></img>
+         <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/fdr.png'></img>
          %s&nbsp;
          </div>", $this->lang->bruTypesItem);*/
 
       $leftMenu .= sprintf("<div id='calibrationLeftMenuRow' class='LeftMenuRow'>
-        <img class='LeftMenuRowIcon' src='stylesheets/basicImg/compass.png'></img>
+        <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/compass.png'></img>
         %s&nbsp;
         </div>", $this->lang->calibrationItem);
 
       $role = $this->_user->userInfo['role'];
       if(User::isAdmin($role) || User::isModerator($role)) {
          $leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
-               <img class='LeftMenuRowIcon' src='stylesheets/basicImg/user.png'></img>
+               <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/user.png'></img>
                %s&nbsp;
                </div>", $this->lang->usersItem);
       }

@@ -35,7 +35,7 @@ class FdrController extends CController
                 in_array($this->_user->bruTypesPrivilegeArr[3], $this->_user->privilege))
         {
             $leftMenu .= "<div id='editBruTplsLeftMenuRow' class='LeftMenuRowOptions'>" .
-                    "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>" .
+                    "<img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/templates.png'></img>" .
                     " " . $this->lang->templates .
                     "</div>";
         }

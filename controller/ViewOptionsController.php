@@ -45,17 +45,17 @@ class ViewOptionsController extends CController
         $leftMenu = "<div id='leftMenuOptionsView' class='LeftMenu'>";
         $leftMenu .= "<input class='SearchBox' value='".$this->lang->search."' disabled></input>";
         $leftMenu .= "<div id='templatesLeftMenuRow' class='LeftMenuRowOptions LeftMenuRowSelected'>" .
-                "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/templates.png'></img>" .
+                "<img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/templates.png'></img>" .
                 " " . $this->lang->flightViewOptionsTemplates .
                 "</div>";
 
         $leftMenu .= "<div id='eventsLeftMenuRow' class='LeftMenuRowOptions'>" .
-                "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/events.png'></img>" .
+                "<img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/events.png'></img>" .
                 " " . $this->lang->flightViewOptionsEvents .
                 "</div>";
 
         $leftMenu .= "<div id='paramsListLeftMenuRow' class='LeftMenuRowOptions'>" .
-                "<img class='LeftMenuRowIcon' src='stylesheets/basicImg/paramsList.png'></img>" .
+                "<img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/paramsList.png'></img>" .
                 " " . $this->lang->flightViewOptionsParamsList .
                 "</div>";
 

@@ -29,22 +29,7 @@ class IndexController extends CController
 
     public function PutStyleSheets()
     {
-        printf("<link href='stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/jquery-ui-1.10.3.custom.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/chosen/chosen.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/jsTreeThemes/default/style.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/dataTables/jquery.dataTables.min.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/jquery.colorpicker.css'/>
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/bruTypeTemplates.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsParams.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/viewOptionsEvents.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/chart.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/user.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/flight.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/searchFlight.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/login.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/pages/calibration.css' />
-                <link rel='stylesheet' type='text/css' href='stylesheets/style.css' />");
+        printf("<link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />");
     }
 
     public function PutHeader()
@@ -160,90 +145,7 @@ class IndexController extends CController
 
     public function PutScripts()
     {
-        printf("<script type='text/javascript' src='scripts/include/jquery/jquery-2.1.1.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/jquery/jquery-ui-1.10.3.custom.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/jquery/jquery.mousewheel.min.js'></script>");
-
-        printf("<script type='text/javascript' src='scripts/include/lodash.min.js'></script>");
-
-        printf("<script type='text/javascript' src='scripts/include/chosen/chosen.proto.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/chosen/chosen.jquery.js'></script>");
-
-        //The jQuery UI widget factory, can be omitted if jQuery UI is already included
-        printf("<script type='text/javascript' src='scripts/include/fileUploader/vendor/jquery.ui.widget.js'></script>");
-        //The Iframe Transport is required for browsers without support for XHR file uploads
-        printf("<script type='text/javascript' src='scripts/include/fileUploader/jquery.iframe-transport.js'></script>");
-        //jstree
-        printf("<script type='text/javascript' src='scripts/include/jstree/jstree.min.js'></script>");
-        //tables
-        //printf("<script type='text/javascript' src='scripts/include/jtable/jquery.jtable.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/dataTables/jquery.dataTables.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/dataTables/dataTables.fixedHeader.min.js'></script>");
-
-        //colorpicker
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.colorpicker.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-parser.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-crayola.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-memory.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-ral-classic.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/colorpicker/jquery.ui.colorpicker-cmyk-percentage-parser.js'></script>");
-
-        //flot
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.time.min.js'></script>");
-        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.colorhelpers.min.js'></script>-->");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.canvas.min.js'></script>");
-        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.categories.min.js'></script>-->");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.crosshair.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.errorbars.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.navigate.min.js'></script>");
-        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.resize.min.js'></script>-->");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.selection.min.js'></script>");
-        printf("<script type='text/javascript' src='scripts/include/flot/jquery.flot.symbol.min.js'></script>");
-        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.threshold.min.js'></script>-->");
-
-        //printf("<!--[if lte IE 8]><script type='text/javascript' src='scripts/include/flot/excanvas.min.js'></script><![endif]-->");
-        //printf("<!--<script type='text/javascript' src='scripts/include/flot/jquery.flot.axislabels.js'></script>-->");
-        //The basic File Upload plugin
-        printf("<script type='text/javascript' src='scripts/include/fileUploader/jquery.fileupload.js'></script>");
-        //manual scripts
-        printf("<script type='text/javascript' src='scripts/index.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/Lang.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/WindowFactory.proto.js'></script>");
-
-        //main
-        printf("<script type='text/javascript' src='scripts/proto/main/FlightList.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/main/FlightUploader.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/main/FlightProccessingStatus.proto.js'></script>");
-
-        //bruType
-        printf("<script type='text/javascript' src='scripts/proto/fdr/Fdr.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrGeneralInfo.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrTemplates.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrEvents.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/fdr/FdrCyclo.js'></script>");
-
-        //user
-        printf("<script type='text/javascript' src='scripts/proto/user/User.proto.js'></script>");
-
-        //searchFlight
-        printf("<script type='text/javascript' src='scripts/proto/searchFlight/SearchFlight.proto.js'></script>");
-
-        //calibration
-        printf("<script type='text/javascript' src='scripts/proto/calibration/Calibration.proto.js'></script>");
-
-        //viewOptions
-        printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptions.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsTpls.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsEvents.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/viewOptions/ViewOptionsParams.js'></script>");
-
-        //chart scripts
-        printf("<script type='text/javascript' src='scripts/proto/chart/Chart.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/AxesWorker.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Exception.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Legend.proto.js'></script>");
-        printf("<script type='text/javascript' src='scripts/proto/chart/Param.proto.js'></script>");
+        printf('<script src="/public/index.js"></script>');
     }
 
     public function PutFooter()
