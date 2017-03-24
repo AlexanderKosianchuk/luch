@@ -71,7 +71,7 @@ FlightList.prototype.topMenuUserButtClick = function(){
         '</ul>';
 
     userTopButt.append(fligthOptionsStr);
-    var menu = $("#userMenu").buttonset().menu().hide();
+    //var menu = $("#userMenu").buttonset().menu().hide();
 
     userTopButt.click(function(e) {
         menu.toggle().position({
@@ -216,11 +216,11 @@ FlightList.prototype.ShowFlightViewOptions = function() {
                  }
              });
              return false;
-         }).parent()
+         })/*.parent()
              .buttonset()
              .next()
              .hide()
-             .menu();
+             .menu();*/
 
          $('#treeView').on("click", function(e) {
              $("div#view").css("display", "none");
@@ -988,10 +988,10 @@ FlightList.prototype.fileMenuSupport = function(
         fileMenu.append('<li id="selectAll" style="border:none;">' + self.langStr.selectAll + '</li>');
     }
 
-    fileMenu
+    /*fileMenu
         .buttonset()
         .hide()
-        .menu();
+        .menu();*/
 
     fileMenuButt.button().click(function() {
          var menu = $(this).next().show().position({

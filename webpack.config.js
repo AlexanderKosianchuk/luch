@@ -56,28 +56,51 @@ module.exports = {
                 }
             }, {
                 test: /\.css$/,
-                use: ['style-loader','css-loader']
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ],
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|gif)$/i,
+                test: /\.sass$/,
+                exclude: /node_modules/,
+                use: [
+                    'style-loader', {
+                        loader: 'css-loader',
+                        query: {
+                            sourceMaps: NODE_ENV == 'dev'
+                        }
+                    }, {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: NODE_ENV == 'dev'
+                        }
+                    }
+                ]
+            }, {
+                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
                 exclude: /(node_modules)/,
                 loader:'file-loader?name=[path][name].[ext]'
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|gif)$/i,
+                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
                 include: /(node_modules)/,
                 loader:'file-loader?name=[1][name].[ext]&regExp=node_modules/(.*)'
+            }, {
+                test: /bootstrap\/dist\/js\/umd\//,
+                loader: 'imports-loader?jQuery=jquery'
             }
         ]
     },
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php')
+            ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php'),
+            COMPONENTS_PATH: JSON.stringify(path.join(__dirname, 'front/components'))
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery'
-        }),
+        })
     ],
 
 };

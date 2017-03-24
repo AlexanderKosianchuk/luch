@@ -14,7 +14,7 @@ function WindowFactory(window, document) {
     this.optionsMenuHeight = 45;
     this.leftMenuWidth = 210;
 
-    $("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
+    //$("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
     this.help.on("click", function(){$("#helpDialog").dialog("open")});
 }
 

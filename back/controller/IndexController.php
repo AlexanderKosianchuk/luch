@@ -51,7 +51,7 @@ class IndexController extends CController
 
     public function PutHelpDialog()
     {
-        printf("<div id='helpDialog' title='%s'>
+        printf("<div id='helpDialog' style='display: none;' title='%s'>
                 <p>
                 </p>
                 ===== F5 - Возврат в Главное меню LUCH =====
@@ -126,7 +126,7 @@ class IndexController extends CController
             $version = VERSION;
         }
 
-        printf("<div id='optionsDialog' class='options-dialog' title='%s'>
+        printf("<div id='optionsDialog' style='display:none;' class='options-dialog' title='%s'>
                 <form id='optionsForm'>
                     %s
                 </form>

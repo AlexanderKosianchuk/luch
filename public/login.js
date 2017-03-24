@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "/public/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 320);
+/******/ 	return __webpack_require__(__webpack_require__.s = 350);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -147,7 +147,7 @@ function toComment(sourceMap) {
   return '/*# ' + data + ' */';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(37).Buffer))
 
 /***/ }),
 
@@ -156,7 +156,7 @@ function toComment(sourceMap) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 var update = __webpack_require__(6)(
-	__webpack_require__(37)
+	__webpack_require__(38)
 );
 // Hot Module Replacement
 if(false) {
@@ -168,20 +168,7 @@ if(false) {
 
 /***/ }),
 
-/***/ 320:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*jslint browser: true*/
-/*global require*/
-
-
-
-__webpack_require__(23);
-
-/***/ }),
-
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports) {
 
 var g;
@@ -209,7 +196,20 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 35:
+/***/ 350:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*jslint browser: true*/
+/*global require*/
+
+
+
+__webpack_require__(23);
+
+/***/ }),
+
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -331,7 +331,7 @@ function fromByteArray (uint8) {
 
 /***/ }),
 
-/***/ 36:
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -345,9 +345,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(35)
-var ieee754 = __webpack_require__(41)
-var isArray = __webpack_require__(42)
+var base64 = __webpack_require__(36)
+var ieee754 = __webpack_require__(42)
+var isArray = __webpack_require__(43)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -2125,11 +2125,11 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35)))
 
 /***/ }),
 
-/***/ 37:
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(1)(undefined);
@@ -2144,7 +2144,7 @@ exports.push([module.i, ".login-form {\r\n    font-family: Tahoma;\r\n}\r\n.logi
 
 /***/ }),
 
-/***/ 41:
+/***/ 42:
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -2235,7 +2235,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 /***/ }),
 
-/***/ 42:
+/***/ 43:
 /***/ (function(module, exports) {
 
 var toString = {}.toString;

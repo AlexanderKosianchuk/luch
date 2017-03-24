@@ -22,6 +22,7 @@ require('flot-charts/jquery.flot.symbol');
 require('flot-charts/jquery.flot.navigate');
 require('flot-charts/jquery.flot.resize');
 require('datatables');
+require('bootstrap-loader');
 
 require('jquery-ui/themes/base/all.css');
 require('jstree/dist/themes/default/style.min.css');
@@ -56,10 +57,11 @@ var Calibration = require("Calibration");
 let React = require('react');
 let ReactDOM = require('react-dom');
 
-let ResultsComponent = require('./results/ResultsComponent');
+let Results = require('./components/results/Results');
 
 $(document).ready(function () {
-    var $document = $(document),
+    var i18n = {},
+        $document = $(document),
         $window = $(window),
         userLang = $('html').attr("lang"),
         eventHandler = $('#eventHandler'),
@@ -76,7 +78,7 @@ $(document).ready(function () {
         CLB = null;
 
     LA.GetLanguage().done(function (data) {
-        var langStr = data;
+        var langStr = i18n = data;
         var wsp = W.NewShowcase();
         FL = new FlightList(langStr, eventHandler);
         FU = new FlightUploader($window, $document, langStr, eventHandler);
@@ -217,7 +219,7 @@ $(document).ready(function () {
             W.ClearShowcase(showcase);
         }
 
-        ReactDOM.render(<div>Hello World</div>,
+        ReactDOM.render(<Results i18n={i18n} />,
             document.getElementById('flightListWorkspace')
         );
     });

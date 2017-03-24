@@ -36,6 +36,7 @@ phpunit.phar
 /log
 /www/log
 /www/php_errors.log
+npm-debug.log
 
 #uploads
 /fileUploader/files/*
