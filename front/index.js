@@ -5,59 +5,72 @@
 
 'use strict';
 
-require('jquery');
-require('jquery-mousewheel');
-require('jquery-ui');
-require('jquery-ui/ui/widgets/dialog');
-require('jquery-ui/ui/widgets/button');
-require('jquery-ui/ui/widgets/menu');
-require('jquery-ui/ui/widgets/slider');
-require('colorpicker-amin');
-require('chosen-npm');
-require('blueimp-file-upload');
-require('jstree');
-require('flot-charts');
-require('flot-charts/jquery.flot.time');
-require('flot-charts/jquery.flot.symbol');
-require('flot-charts/jquery.flot.navigate');
-require('flot-charts/jquery.flot.resize');
-require('datatables');
-require('bootstrap-loader');
+// libs
+import 'jquery';
+import 'jquery-mousewheel';
+import 'jquery-ui';
+import 'jquery-ui/ui/widgets/dialog';
+import 'jquery-ui/ui/widgets/button';
+import 'jquery-ui/ui/widgets/menu';
+import 'jquery-ui/ui/widgets/slider';
+import 'colorpicker-amin';
+import 'chosen-npm';
+import 'blueimp-file-upload';
+import 'jstree';
+import 'flot-charts';
+import 'flot-charts/jquery.flot.time';
+import 'flot-charts/jquery.flot.symbol';
+import 'flot-charts/jquery.flot.navigate';
+import 'flot-charts/jquery.flot.resize';
+import 'datatables';
+import 'bootstrap-loader';
 
-require('jquery-ui/themes/base/all.css');
-require('jstree/dist/themes/default/style.min.css');
-require('blueimp-file-upload/css/jquery.fileupload.css');
-require('blueimp-file-upload/css/jquery.fileupload-ui.css');
-require('colorpicker-amin/jquery.colorpicker.css');
-require('chosen-npm/public/chosen.css');
+// libs with export
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from'redux-thunk';
 
-require('./stylesheets/pages/bruTypeTemplates.css');
-require('./stylesheets/pages/viewOptionsParams.css');
-require('./stylesheets/pages/viewOptionsEvents.css');
-require('./stylesheets/pages/chart.css');
-require('./stylesheets/pages/user.css');
-require('./stylesheets/pages/flight.css');
-require('./stylesheets/pages/searchFlight.css');
-require('./stylesheets/pages/login.css');
-require('./stylesheets/pages/calibration.css');
-require('./stylesheets/style.css');
+// lib styles
+import 'jquery-ui/themes/base/all.css';
+import 'jstree/dist/themes/default/style.min.css';
+import 'blueimp-file-upload/css/jquery.fileupload.css';
+import 'blueimp-file-upload/css/jquery.fileupload-ui.css';
+import 'colorpicker-amin/jquery.colorpicker.css';
+import 'chosen-npm/public/chosen.css';
 
-var Language = require("Language");
-var WindowFactory = require("WindowFactory");
-var FlightList = require("FlightList");
-var FlightUploader = require("FlightUploader");
-var FlightProccessingStatus = require("FlightProccessingStatus");
-var FlightViewOptions = require("FlightViewOptions");
-var Fdr = require("Fdr");
-var Chart = require("Chart");
-var User = require("User");
-var SearchFlight = require("SearchFlight");
-var Calibration = require("Calibration");
+//old styles
+import './stylesheets/pages/bruTypeTemplates.css';
+import './stylesheets/pages/viewOptionsParams.css';
+import './stylesheets/pages/viewOptionsEvents.css';
+import './stylesheets/pages/chart.css';
+import './stylesheets/pages/user.css';
+import './stylesheets/pages/flight.css';
+import './stylesheets/pages/searchFlight.css';
+import './stylesheets/pages/login.css';
+import './stylesheets/pages/calibration.css';
+import './stylesheets/style.css';
 
-let React = require('react');
-let ReactDOM = require('react-dom');
+// old prototypes
+import Language from "Language";
+import WindowFactory from "WindowFactory";
+import FlightList from "FlightList";
+import FlightUploader from "FlightUploader";
+import FlightProccessingStatus from "FlightProccessingStatus";
+import FlightViewOptions from "FlightViewOptions";
+import Fdr from "Fdr";
+import Chart from "Chart";
+import User from "User";
+import SearchFlight from "SearchFlight";
+import Calibration from "Calibration";
 
-let Results = require('./components/results/Results');
+// react implementation
+import Results from './components/results/Results';
+import flightReducer from './reducers';
+
+const store = createStore(flightReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 $(document).ready(function () {
     var i18n = {},
@@ -219,7 +232,10 @@ $(document).ready(function () {
             W.ClearShowcase(showcase);
         }
 
-        ReactDOM.render(<Results i18n={i18n} />,
+        ReactDOM.render(
+            <Provider store={store}>
+                <Results i18n={i18n} />
+            </Provider>,
             document.getElementById('flightListWorkspace')
         );
     });
