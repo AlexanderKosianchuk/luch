@@ -29,9 +29,6 @@ import 'bootstrap-loader';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from'redux-thunk';
 
 // lib styles
 import 'jquery-ui/themes/base/all.css';
@@ -42,16 +39,16 @@ import 'colorpicker-amin/jquery.colorpicker.css';
 import 'chosen-npm/public/chosen.css';
 
 //old styles
-import './stylesheets/pages/bruTypeTemplates.css';
-import './stylesheets/pages/viewOptionsParams.css';
-import './stylesheets/pages/viewOptionsEvents.css';
-import './stylesheets/pages/chart.css';
-import './stylesheets/pages/user.css';
-import './stylesheets/pages/flight.css';
-import './stylesheets/pages/searchFlight.css';
-import './stylesheets/pages/login.css';
-import './stylesheets/pages/calibration.css';
-import './stylesheets/style.css';
+import 'stylesheets/pages/bruTypeTemplates.css';
+import 'stylesheets/pages/viewOptionsParams.css';
+import 'stylesheets/pages/viewOptionsEvents.css';
+import 'stylesheets/pages/chart.css';
+import 'stylesheets/pages/user.css';
+import 'stylesheets/pages/flight.css';
+import 'stylesheets/pages/searchFlight.css';
+import 'stylesheets/pages/login.css';
+import 'stylesheets/pages/calibration.css';
+import 'stylesheets/style.css';
 
 // old prototypes
 import Language from "Language";
@@ -67,10 +64,10 @@ import SearchFlight from "SearchFlight";
 import Calibration from "Calibration";
 
 // react implementation
-import Results from './components/results/Results';
-import flightReducer from './reducers';
+import Results from 'components/results/Results';
+import configureStore from 'store/configureStore';
 
-const store = createStore(flightReducer, composeWithDevTools(applyMiddleware(thunk)));
+const store = configureStore({});
 
 $(document).ready(function () {
     var i18n = {},

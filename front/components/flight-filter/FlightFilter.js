@@ -1,47 +1,68 @@
-var React = require('react');
-var FlightFilterItem = require(COMPONENTS_PATH + '/flight-filter-item/FlightFilterItem');
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import FlightFilterItem from 'components/flight-filter-item/FlightFilterItem';
+import applyFlightFilterAction from 'actions/applyFlightFilter';
+import changeFlightFilterItemAction from 'actions/changeFlightFilterItem';
 
 class FlightFilter extends React.Component {
     constructor(props) {
         super(props);
 
         const fields = [
-            ["flight-filter-fdr-type", "Label", "FDR type"],
-            ["flight-filter-bort", "Label", "Bort number"],
-            ["flight-filter-flight", "Label", "Flight number"],
-            ["flight-filter-departure-airport", "Label", "Departure airport"],
-            ["flight-filter-arrival-airport", "Label", "Arrival airport"],
-            ["flight-filter-from-date", "Label", "From"],
-            ["flight-filter-to-date", "Label", "To"]
+            ["fdr-type", "flight-filter-fdr-type", "Label", "FDR type"],
+            ["bort", "flight-filter-bort", "Label", "Bort number"],
+            ["flight", "flight-filter-flight", "Label", "Flight number"],
+            ["departure-airport", "flight-filter-departure-airport", "Label", "Departure airport"],
+            ["arrival-airport", "flight-filter-arrival-airport", "Label", "Arrival airport"],
+            ["from-date", "flight-filter-from-date", "Label", "From"],
+            ["to-date", "flight-filter-to-date", "Label", "To"]
         ];
 
         this.flightFilterItems = fields.map((field) =>
             <FlightFilterItem
-                key={field.toString()}
-                id={field[0]}
-                label={field[1]}
-                placeholder={field[2]}/>
+                key={field[1]}
+                propName={field[0]}
+                id={field[1]}
+                label={field[2]}
+                placeholder={field[3]}
+                changeFlightFilterItem={this.props.changeFlightFilterItem}
+            />
         );
-
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleSubmit(event) {
         event.preventDefault();
+        this.props.applyFlightFilter(this.props.flightFilter);
     }
 
     render() {
-        return <form className="flight-filter" onSubmit={this.handleSubmit}>
-                <div className="form-group flight-filter__header">
+        return (
+            <form onSubmit={this.handleSubmit.bind(this)}>
+                <div className="form-group">
                     <label>Name</label>
                 </div>
                 {this.flightFilterItems}
-                <div className="form-group flight-filter__row">
-                    <input type="submit" className="btn btn-default"
-                        id="flight-filter__apply" value="Apply" />
+                <div className="form-group">
+                    <input type="submit" className="btn btn-default" value="Apply" />
                 </div>
-            </form>;
+            </form>
+        );
     }
 }
 
-module.exports = FlightFilter;
+function mapStateToProps (state) {
+    return {
+        flightFilter: state.flightFilter
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        changeFlightFilterItem: bindActionCreators(changeFlightFilterItemAction, dispatch),
+        applyFlightFilter: bindActionCreators(applyFlightFilterAction, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlightFilter);

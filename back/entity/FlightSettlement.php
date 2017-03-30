@@ -64,6 +64,11 @@ class FlightSettlement
      */
     private $eventSettlement;
 
+    public function getEventSettlement()
+    {
+        return $this->eventSettlement;
+    }
+
     public function setEventId($eventId)
     {
         if (!is_int($eventId)) {

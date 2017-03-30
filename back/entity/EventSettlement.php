@@ -63,6 +63,11 @@ class EventSettlement
         return $this->id;
     }
 
+    public function getText()
+    {
+        return $this->text;
+    }
+
     public function getAlg()
     {
         return $this->alg;

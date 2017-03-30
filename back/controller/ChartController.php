@@ -72,7 +72,17 @@ class ChartController extends CController
 
     public function PutScripts()
     {
-        printf("<script type='text/javascript' src='public/chart.js'></script>");
+        $files = scandir ('public/');
+        $scriptName = '';
+        foreach ($files as $item) {
+            $fileParts = pathinfo($item);
+            if ((strpos($item, 'chart') !== false)
+                && ($fileParts['extension'] === 'js')
+            ) {
+                $scriptName = $item;
+            }
+        }
+        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
     }
 
     public function PutFooter()

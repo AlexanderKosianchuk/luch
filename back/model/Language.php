@@ -2,6 +2,8 @@
 
 namespace Model;
 
+use Exception;
+
 define("LANG_FILES_PATH", $_SERVER['DOCUMENT_ROOT'] . "/back/lang/");
 define("LANG_FILE_DEFAULT", $_SERVER['DOCUMENT_ROOT'] . "/back/lang/EN.lang");
 
@@ -67,11 +69,15 @@ class Language
                 if(array_key_exists($requesterPage, $langObj)) {
                     $lang = (object)$langObj->$requesterPage;
                 }  else {
-                    error_log("No any lang object in file for current page. " . $requesterPage);
+                    $msg = "No any lang object in file for current page. " . $requesterPage;
+                    throw new Exception($msg);
+                    error_log($msg);
                     exit();
                 }
             } else {
-                error_log("No even default lang object in file for current page. " . $requesterPage);
+                $msg = "No any lang object in file for current page. " . $requesterPage;
+                throw new Exception("No even default lang object in file for current page. " . $requesterPage);
+                error_log($msg);
                 exit();
             }
         }

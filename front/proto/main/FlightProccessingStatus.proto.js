@@ -195,7 +195,7 @@ FlightProccessingStatus.prototype.UpdateStatus = function() {
             $.each(self.uploadings, function(index, el){
                 var complt = el['completeStatus'],
                     progressFile = window.location.protocol + "//" + window.location.host +
-                        "/fileUploader/files/proccessStatus/" + el['statusFile'];
+                        "/back/fileUploader/files/proccessStatus/" + el['statusFile'];
                 if(complt != 1){
                     $.ajax({
                         url: progressFile,

@@ -72,7 +72,17 @@ class CController
     {
         $loginMsg = isset($this->_user->loginMsg) ? $this->_user->loginMsg : '';
 
-        printf('<script src="/public/login.js"></script>');
+        $files = scandir ('public/');
+        $scriptName = '';
+        foreach ($files as $item) {
+            $fileParts = pathinfo($item);
+            if ((strpos($item, 'login') !== false)
+                && ($fileParts['extension'] === 'js')
+            ) {
+                $scriptName = $item;
+            }
+        }
+        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
         printf("<div align='center' class='login-form'><p class='login-form_header'>%s</p>
             <img src='/front/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
             <p><label class='login-form_label login-form_label--alert'>%s</label></p>

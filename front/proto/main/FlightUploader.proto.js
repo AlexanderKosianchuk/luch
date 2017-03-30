@@ -173,7 +173,7 @@ FlightUploader.prototype.CaptureUploadingItems = function() {
     });
 
     var filesCount = 0;
-    var url = "fileUploader/";
+    var url = "back/fileUploader/";
 
     if (!self.fileupload) {
         self.fileupload = $('input#chooseFileBut').fileupload({

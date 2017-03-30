@@ -3,4 +3,4 @@
 
 'use strict';
 
-require('./stylesheets/pages/login.css');
+import 'stylesheets/pages/login.css';

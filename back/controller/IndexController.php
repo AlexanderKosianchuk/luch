@@ -145,7 +145,17 @@ class IndexController extends CController
 
     public function PutScripts()
     {
-        printf('<script src="/public/index.js"></script>');
+        $files = scandir ('public/');
+        $scriptName = '';
+        foreach ($files as $item) {
+            $fileParts = pathinfo($item);
+            if ((strpos($item, 'index') !== false)
+                && ($fileParts['extension'] === 'js')
+            ) {
+                $scriptName = $item;
+            }
+        }
+        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
     }
 
     public function PutFooter()

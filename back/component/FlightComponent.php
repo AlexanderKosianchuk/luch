@@ -10,6 +10,9 @@ use Model\Folder;
 use Entity\FlightEvent;
 use Entity\FlightSettlement;
 
+use Component\EntityManagerComponent as EM;
+use Component\RealConnectionFactory as LinkFactory;
+
 use Exception;
 
 class FlightComponent
@@ -61,5 +64,59 @@ class FlightComponent
 
         unset($U);
         return true;
+    }
+
+    public static function getFlightEvents($flightId, $flightGuid = '')
+    {
+        if (!is_int($flightId)) {
+            throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
+                . json_encode($sections), 1);
+        }
+
+        if (!is_string($flightGuid)) {
+            throw new Exception("Incorrect flightGuid passed. Integer is required. Passed: "
+                . json_encode($sections), 1);
+        }
+
+        if ($flightGuid === '') {
+            $flight = $em->find('Entity\Flight', $flightId);
+            $flightGuid = $flight->getGuid();
+        }
+
+        $link = LinkFactory::create();
+        $flightEventTable = FlightEvent::getTable($link, $flightGuid);
+        $flightSettlementTable = FlightSettlement::getTable($link, $flightGuid);
+        LinkFactory::destroy($link);
+
+        $em = EM::get();
+        $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+        $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+        $events = $em->getRepository('Entity\FlightEvent')->findAll();
+
+        return $events;
+    }
+
+    public static function getFlightSettlements($flightId, $flightGuid = '')
+    {
+        if(!is_int($flightId)) {
+            throw new Exception("Incorrect flight id passed", 1);
+        }
+
+        if ($flightGuid === '') {
+            $flight = $em->find('Entity\Flight', $flightId);
+            $flightGuid = $flight->getGuid();
+        }
+
+        $flightEvents = self::getFlightEvents($flightId, $flightGuid);
+
+        $allFlightSettlements = [];
+        foreach ($flightEvents as $flightEvent) {
+            $flightSettlements = $flightEvent->getFlightSettlements();
+            foreach ($flightSettlements as $flightSettlement) {
+                $allFlightSettlements[] = $flightSettlement;
+            }
+        }
+
+        return $allFlightSettlements;
     }
 }

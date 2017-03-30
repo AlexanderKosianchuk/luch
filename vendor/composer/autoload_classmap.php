@@ -20,6 +20,7 @@ return array(
     'Controller\\FlightsController' => $baseDir . '/back/controller/FlightsController.php',
     'Controller\\IndexController' => $baseDir . '/back/controller/IndexController.php',
     'Controller\\PrinterController' => $baseDir . '/back/controller/PrinterController.php',
+    'Controller\\ResultsController' => $baseDir . '/back/controller/ResultsController.php',
     'Controller\\SearchFlightController' => $baseDir . '/back/controller/SearchFlightController.php',
     'Controller\\UploaderController' => $baseDir . '/back/controller/UploaderController.php',
     'Controller\\UserController' => $baseDir . '/back/controller/UserController.php',

@@ -3,6 +3,7 @@
 const NODE_ENV = process.env.NODE_ENV || 'dev';
 const webpack = require('webpack');
 const path = require('path');
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
     entry: {
@@ -13,9 +14,13 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/public'),
         publicPath: '/public/',
-        filename: '[name].js',
+        filename: '[name][hash].js',
     },
     resolve: {
+        modules: [
+            path.resolve('./front'),
+            path.resolve('./node_modules')
+        ],
         extensions: ['.js', '.jsx'],
         alias: {
             'Language': path.join(__dirname, 'front/proto/Lang.proto.js'),
@@ -94,13 +99,13 @@ module.exports = {
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
             ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php'),
-            COMPONENTS_PATH: JSON.stringify(path.join(__dirname, 'front/components'))
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery'
-        })
+        }),
+        new WebpackCleanupPlugin()
     ],
 
 };

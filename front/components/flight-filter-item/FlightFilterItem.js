@@ -1,17 +1,22 @@
-var React = require('react');
+import React from 'react';
 
-class FlightFilterItem extends React.Component {
-    constructor(props) {
-        super(props);
+export default function FlightFilterItem (props) {
+    let textInput = null;
+
+    function changeItem() {
+        props.changeFlightFilterItem({
+            [props.propName]: textInput.value
+        });
     }
 
-    render() {
-        return <div className="form-group flight-filter__row">
-                <label htmlFor={this.props.id}>{this.props.label}</label>
-                <input type="text" className="form-control"
-                    id={this.props.id} placeholder={this.props.placeholder} />
-            </div>;
-    }
+    return (
+        <div className="form-group">
+            <label htmlFor={props.id}>{props.label}</label>
+            <input type="text" className="form-control"
+                id={props.id} placeholder={props.placeholder}
+                onBlur={changeItem}
+                ref={(input) => { textInput = input; }} />
+        </div>
+    );
+
 }
-
-module.exports = FlightFilterItem;

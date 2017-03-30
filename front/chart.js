@@ -25,16 +25,16 @@ require('blueimp-file-upload/css/jquery.fileupload-ui.css');
 require('colorpicker-amin/jquery.colorpicker.css');
 require('chosen-npm/public/chosen.css');
 
-require('./stylesheets/pages/bruTypeTemplates.css');
-require('./stylesheets/pages/viewOptionsParams.css');
-require('./stylesheets/pages/viewOptionsEvents.css');
-require('./stylesheets/pages/chart.css');
-require('./stylesheets/pages/user.css');
-require('./stylesheets/pages/flight.css');
-require('./stylesheets/pages/searchFlight.css');
-require('./stylesheets/pages/login.css');
-require('./stylesheets/pages/calibration.css');
-require('./stylesheets/style.css');
+require('stylesheets/pages/bruTypeTemplates.css');
+require('stylesheets/pages/viewOptionsParams.css');
+require('stylesheets/pages/viewOptionsEvents.css');
+require('stylesheets/pages/chart.css');
+require('stylesheets/pages/user.css');
+require('stylesheets/pages/flight.css');
+require('stylesheets/pages/searchFlight.css');
+require('stylesheets/pages/login.css');
+require('stylesheets/pages/calibration.css');
+require('stylesheets/style.css');
 
 var Language = require("Language");
 var WindowFactory = require("WindowFactory");

@@ -64,6 +64,11 @@ class FlightEvent
      */
     private $flightSettlements;
 
+    public function __construct()
+    {
+        $this->flightSettlements = new ArrayCollection();
+    }
+
     public function getEvent()
     {
         return $this->event;
@@ -77,6 +82,11 @@ class FlightEvent
     public function getEventId()
     {
         return $this->eventId;
+    }
+
+    public function getFlightSettlements()
+    {
+        return $this->flightSettlements;
     }
 
     public function get()

@@ -1,16 +1,17 @@
-require('./results.sass');
+import './results.sass';
 
-const React = require('react');
+import React from 'react';
+import { connect } from 'react-redux';
 
-let ResultsToolbar = require(COMPONENTS_PATH + '/results-toolbar/ResultsToolbar');
-let FlightFilter = require(COMPONENTS_PATH + '/flight-filter/FlightFilter');
-let ResultSettlementsFilter = require(COMPONENTS_PATH + '/result-settlements-filter/ResultSettlementsFilter');
+import ResultsToolbar from 'components/results-toolbar/ResultsToolbar';
+import FlightFilter from 'components/flight-filter/FlightFilter';
+import ResultSettlementFilter from 'components/result-settlements-filter/ResultSettlementFilter';
 
-class Results extends React.Component {
+export default class Results extends React.Component {
     render() {
-        return <div className="results fluid-grid">
+        return (<div className="results fluid-grid">
                 <div className="row">
-                    <div className="col-sm-12">
+                    <div className="col-sm-14">
                         <ResultsToolbar i18n={this.props.i18n} />
                     </div>
                 </div>
@@ -19,14 +20,12 @@ class Results extends React.Component {
                         <FlightFilter i18n={this.props.i18n} />
                     </div>
                     <div className="col-sm-3">
-                        <ResultSettlementsFilter i18n={this.props.i18n} />
+                        <ResultSettlementFilter i18n={this.props.i18n} />
                     </div>
                     <div className="col-sm-6">
                         &nbsp;
                     </div>
                 </div>
-            </div>;
+            </div>);
     }
 }
-
-module.exports = Results;

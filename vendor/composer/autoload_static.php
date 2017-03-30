@@ -128,6 +128,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Controller\\FlightsController' => __DIR__ . '/../..' . '/back/controller/FlightsController.php',
         'Controller\\IndexController' => __DIR__ . '/../..' . '/back/controller/IndexController.php',
         'Controller\\PrinterController' => __DIR__ . '/../..' . '/back/controller/PrinterController.php',
+        'Controller\\ResultsController' => __DIR__ . '/../..' . '/back/controller/ResultsController.php',
         'Controller\\SearchFlightController' => __DIR__ . '/../..' . '/back/controller/SearchFlightController.php',
         'Controller\\UploaderController' => __DIR__ . '/../..' . '/back/controller/UploaderController.php',
         'Controller\\UserController' => __DIR__ . '/../..' . '/back/controller/UserController.php',
