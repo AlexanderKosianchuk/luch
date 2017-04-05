@@ -13,28 +13,14 @@ class IndexController extends CController
         $this->IsAppLoggedIn();
     }
 
-    public function PutCharset()
+    public function getUserLanguage()
     {
-        printf("<!DOCTYPE html>
-            <html lang='%s'>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>",
-                $this->userLang);
+        return $this->userLang;
     }
 
-    public function PutTitle()
+    public function getUserLogin()
     {
-        printf("<title>%s</title>", $this->lang->title);
-    }
-
-    public function PutStyleSheets()
-    {
-        printf("<link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />");
-    }
-
-    public function PutHeader()
-    {
-        printf("</head><body>");
+        return $this->_user->username;
     }
 
     public function EventHandler()
@@ -157,10 +143,4 @@ class IndexController extends CController
         }
         printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
     }
-
-    public function PutFooter()
-    {
-        printf("</body></html>");
-    }
-
 }

@@ -179,6 +179,13 @@
 "eventListSave" : "Бланк",
 "saveChartTpl": "Сохр. шаблон",
 
+"flights": "Полеты",
+"fdrs": "Регистраторы",
+"calibrations": "Градуировки",
+"users": "Пользователи",
+"results": "Результаты",
+"search": "Поиск",
+
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",
     "sZeroRecords": "Поиск не дал результата",

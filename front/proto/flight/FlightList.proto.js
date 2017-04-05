@@ -1,10 +1,18 @@
-function FlightList(langStr, eventHandler) {
-    this.langStr = langStr;
+// libs with export
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import FlightListOptions from 'components/flight-list-options/FlightListOptions';
+import flightListChangeCheckstate from 'actions/flightListChangeCheckstate';
+
+function FlightList(langStr, eventHandler, userLogin, store) {
+    this.langStr = this.i18n = langStr;
+    this.userLogin = userLogin;
+    this.store = store;
 
     this.eventHandler = eventHandler;
     this.flightListFactoryContainer = null;
-    this.flightListTopMenu = null;
-    this.flightListLeftMenu = null;
     this.flightListWorkspace = null;
     this.flightListOptions = null;
     this.flightListContent = null;
@@ -33,18 +41,9 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
         if(answ["status"] == "ok") {
             var data = answ['data'];
 
-            self.flightListFactoryContainer.append(data['topMenu']);
-            self.flightListFactoryContainer.append(data['leftMenu']);
             self.flightListFactoryContainer.append(data['fileUploadBlock']);
 
-            self.flightListTopMenu = $('div#topMenuFlightList');
-            self.flightListLeftMenu = $('div#leftMenuFlightList');
-
-            self.flightListLeftMenu.on("click", function(e){
-                self.leftMenuClick(e);
-            });
-
-            self.topMenuUserButtClick();
+            //self.topMenuUserButtClick();
 
             self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
             self.flightListWorkspace = $("div#flightListWorkspace");
@@ -108,137 +107,32 @@ FlightList.prototype.topMenuUserButtClick = function(){
     });
 }
 
-FlightList.prototype.leftMenuClick = function(e){
-    var self = this,
-    target = $(e.target);
-
-    if(target.attr('id') == "flightLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-
-            target.addClass('LeftMenuRowSelected', {duration:500});
-
-            self.ShowFlightsListInitial();
-            self.TriggerResize();
-            self.TriggerUploading();
-        }
-    } else if(target.attr('id') == "searchLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-
-            target.addClass('LeftMenuRowSelected', {duration:500});
-            $("div#view").css("display", "none");
-            self.eventHandler.trigger("flightSearchFormShow", [self.flightListWorkspace]);
-        }
-    }  else if(target.attr('id') == "fdrLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-            $("div#view").css("display", "none");
-            target.addClass('LeftMenuRowSelected', {duration:500});
-        }
-    } else if(target.attr('id') == "calibrationLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-            $("div#view").css("display", "none");
-            target.addClass('LeftMenuRowSelected', {duration:500});
-
-            self.eventHandler.trigger("calibrationFormShow", [self.flightListWorkspace]);
-        }
-    }  else if(target.attr('id') == "resultsLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-            $("div#view").css("display", "none");
-            target.addClass('LeftMenuRowSelected', {duration:500});
-
-            self.eventHandler.trigger("resultsLeftMenuRow", [self.flightListWorkspace]);
-        }
-    } else if(target.attr('id') == "usersLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuFlightList .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected', {duration:500});
-            $("div#view").css("display", "none");
-            target.addClass('LeftMenuRowSelected', {duration:500});
-
-            self.eventHandler.trigger("userShowList", [self.flightListWorkspace]);
-        }
-    }
-}
-
 FlightList.prototype.ShowFlightViewOptions = function() {
     var self = this;
 
     if(self.flightListWorkspace != null) {
-        self.flightListWorkspace.append("<div id='flightListOptions' class='OptionsMenu'></div>");
+        self.flightListWorkspace.append("<div id='flightListOptions'></div>");
         self.flightListOptions = $("div#flightListOptions");
 
-        var fligthOptionsStr = "<table v-align='top'><tr><td><label>" + this.langStr.flightList + " - " + "</label></td><td>";
-        fligthOptionsStr +=
-            '<div>' +
-                '<button id="selectFligthOptionsMenu" class="Button view-options-button">' + this.langStr.initial + '</button>' +
-            '</div>' +
-            '<ul class="GroupType">' +
-                '<li id="treeView">' + this.langStr.treeView + '</li>' +
-                '<li id="tableView" style="border:none">' + this.langStr.tableView + '</li>' +
-            '</ul></td><td>' +
-            '<button id="fileMenu" class="Button">' + this.langStr.fileMenu + '</button>'+
-                '<ul class="FileMenuItems">' +
-                '</ul>' +
-            '</td></tr></table>';
+        let flightViewService = {
+            showTree: self.ShowFlightsTree.bind(this),
+            showTable: self.ShowFlightsTable.bind(this)
+        };
 
-        self.flightListOptions.append(fligthOptionsStr);
+        let flightMenuService = {
 
-         var buttonSelectFligthOptionsMenu = $("button#selectFligthOptionsMenu").button();
-         var fileMenu = $('ul.FileMenuItems');
-         var fileMenuButt = $("button#fileMenu").button();
+        };
 
-         self.fileMenuSupport(fileMenu,
-             fileMenuButt,
-             [],
-             [],
-             self
-         );
-
-         buttonSelectFligthOptionsMenu.click(function(e) {
-             var menu = $(this).parent().next().show().position({
-                 my: "left top",
-                 at: "left bottom",
-                 of: this
-             });
-             $(document).on("click", function(e) {
-                 var target = $(e.target);
-                 if(target.attr('id') !== 'byAditionalInfoInput'){
-                     menu.hide();
-                 }
-             });
-             return false;
-         })/*.parent()
-             .buttonset()
-             .next()
-             .hide()
-             .menu();*/
-
-         $('#treeView').on("click", function(e) {
-             $("div#view").css("display", "none");
-
-             self.ShowFlightsTree();
-             buttonSelectFligthOptionsMenu.button({
-                  label: self.langStr.treeView
-             });
-         });
-
-         $('#tableView').on("click", function(e) {
-             $("div#view").css("display", "none");
-
-             self.ShowFlightsTable();
-             buttonSelectFligthOptionsMenu.button({
-                  label: self.langStr.tableView
-             });
-         });
+        ReactDOM.render(
+            <Provider store={ self.store }>
+                <FlightListOptions
+                  i18n={ self.langStr }
+                  flightViewService= { flightViewService }
+                  flightMenuService= { flightMenuService }
+                 />
+            </Provider>,
+            self.flightListOptions.get(0)
+        );
     }
 }
 
@@ -372,12 +266,6 @@ FlightList.prototype.TriggerResize = function() {
 FlightList.prototype.TriggerUploading = function() {
     this.eventHandler.trigger("uploading");
 }
-
-FlightList.prototype.ActionOnDblClick = function(sender) {
-    var self = this;
-    console.log(sender);
-    console.log("ActionOnDblClick");
-};
 
 FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
     var self = this;
@@ -589,10 +477,12 @@ FlightList.prototype.SupportJsTree = function() {
             if(answ['status'] == 'ok'){
                 var content = answ['data'];
                 contentPlace.append(content);
-                self.SupportContent.call(self);
+                let selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
-                    self.SupportContent.call(self);
+                    let selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
                 });
             } else {
                 console.log(answ)
@@ -608,10 +498,13 @@ FlightList.prototype.SupportJsTree = function() {
             if(answ['status'] == 'ok'){
                 var content = answ['data'];
                 contentPlace.append(content);
-                self.SupportContent.call(self);
+
+                let selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
-                    self.SupportContent.call(self);
+                    let selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
                 });
             } else {
                 console.log(answ)
@@ -642,10 +535,13 @@ FlightList.prototype.SupportJsTree = function() {
                     if(answ['status'] == 'ok'){
                         var content = answ['data'];
                         contentPlace.append(content);
-                        self.SupportContent.call(self);
+
+                        let selectedItems = self.getFlightListSelectedItems();
+                        self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                         $(".ItemsCheck").on("change", function(e){
-                            self.SupportContent.call(self);
+                            let selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
                         });
                     } else {
                         console.log(answ)
@@ -668,10 +564,13 @@ FlightList.prototype.SupportJsTree = function() {
                     if(answ['status'] == 'ok'){
                         var content = answ['data'];
                         contentPlace.append(content);
-                        self.SupportContent.call(self);
+
+                        let selectedItems = self.getFlightListSelectedItems();
+                        self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                         $(".ItemsCheck").on("change", function(e){
-                            self.SupportContent.call(self);
+                            let selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
                         });
                     } else {
                         console.log(answ)
@@ -699,10 +598,13 @@ FlightList.prototype.SupportJsTree = function() {
                         if(answ['status'] == 'ok'){
                             var content = answ['data'];
                             contentPlace.append(content);
-                            self.SupportContent.call(self);
+
+                            let selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                             $(".ItemsCheck").on("change", function(e){
-                                self.SupportContent.call(self);
+                                let selectedItems = self.getFlightListSelectedItems();
+                                self.store.dispatch(flightListChangeCheckstate(selectedItems));
                             });
                         } else {
                             console.log(answ)
@@ -790,6 +692,26 @@ FlightList.prototype.SupportJsTree = function() {
             }
         }
     });
+}
+
+FlightList.prototype.getFlightListSelectedItems = function() {
+    var checked = $(".ItemsCheck:checked"),
+        folders = new Array(),
+        flights = new Array();
+
+    $.each(checked, function(i, el){
+        var el = $(el);
+        if(el.data('type') == 'flight'){
+            flights.push(el.data('flightid'));
+        } else if(el.data('type') == 'folder') {
+            folders.push(el.data('folderdestination'));
+        }
+    });
+
+    return {
+        selectedFlights: flights,
+        selectedFolders: folders
+    }
 }
 
 FlightList.prototype.ShowContent = function(folderId) {
@@ -915,10 +837,12 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
                 "data": pV,
                 "success": fnCallback
             }).done(function(a){
-                self.SupportContent.call(self);
+                let selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
-                    self.SupportContent.call(self);
+                    let selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
                 });
             })
             .fail(function(a){
@@ -931,7 +855,7 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
     $("#tableCheckAllItems").on("click", function(e){
         var el = $(e.target);
 
-        if(el.attr("checked") == "checked"){
+        if(el.attr("checked") == "che===cked"){
             $(".ItemsCheck").removeAttr("checked");
             $(".ItemsCheck").prop("checked", false);
             el.removeAttr("checked");
@@ -1014,10 +938,12 @@ FlightList.prototype.fileMenuSupport = function(
                  if(answ['status'] == 'ok'){
                      var content = answ['data'];
                      contentPlace.append(content);
-                     self.SupportContent.call(self);
+                     let selectedItems = self.getFlightListSelectedItems();
+                     self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
                      $(".ItemsCheck").on("change", function(e){
-                         self.SupportContent.call(self);
+                         let selectedItems = self.getFlightListSelectedItems();
+                         self.store.dispatch(flightListChangeCheckstate(selectedItems));
                      });
                  } else {
                      console.log(answ)
@@ -1058,14 +984,16 @@ FlightList.prototype.fileMenuSupport = function(
              $.each($("input.ItemsCheck:checked"), function(i, el){
                  var el = $(el).prop('checked', false);
              });
-             self.SupportContent.call(self);
+             let selectedItems = self.getFlightListSelectedItems();
+             self.store.dispatch(flightListChangeCheckstate(selectedItems));
          });
 
          $("li#selectAll").off('click').on('click', function(e){
              $.each($(".ItemsCheck"), function(i, el){
                  var el = $(el).prop('checked', true);
              });
-             self.SupportContent.call(self);
+             let selectedItems = self.getFlightListSelectedItems();
+             self.store.dispatch(flightListChangeCheckstate(selectedItems));
          });
 
          $("li#delete").off('click').on('click', function(e){

@@ -65,6 +65,7 @@ import Calibration from "Calibration";
 
 // react implementation
 import Results from 'components/results/Results';
+import Flights from 'components/flights/Flights';
 import configureStore from 'store/configureStore';
 
 const store = configureStore({});
@@ -74,6 +75,7 @@ $(document).ready(function () {
         $document = $(document),
         $window = $(window),
         userLang = $('html').attr("lang"),
+        userLogin = $('html').attr("login"),
         eventHandler = $('#eventHandler'),
         LA = new Language(userLang),
         W = new WindowFactory($window, $document),
@@ -90,7 +92,7 @@ $(document).ready(function () {
     LA.GetLanguage().done(function (data) {
         var langStr = i18n = data;
         var wsp = W.NewShowcase();
-        FL = new FlightList(langStr, eventHandler);
+        FL = new FlightList(langStr, eventHandler, userLogin, store);
         FU = new FlightUploader($window, $document, langStr, eventHandler);
         FP = new FlightProccessingStatus(langStr);
         FO = new FlightViewOptions($window, $document, langStr, eventHandler);
@@ -100,7 +102,42 @@ $(document).ready(function () {
         SF = new SearchFlight($window, $document, langStr, eventHandler);
         CLB = new Calibration($window, $document, langStr, eventHandler);
 
-        FL.FillFactoryContaider(wsp);
+        let flightsServise = {
+            showFlightsList: function () {
+                eventHandler.trigger("flightListShow", [
+                    $('#flightsContainer')
+                ]);
+            },
+            showFlightSearch: function () {
+                eventHandler.trigger("flightSearchFormShow", [
+                    $('#flightsContainer')
+                ]);
+            },
+            showResults: function () {
+                eventHandler.trigger("resultsLeftMenuRow", [
+                    $('#flightsContainer')
+                ]);
+            },
+            showCalibrations: function () {
+                eventHandler.trigger("calibrationFormShow", [
+                    $('#flightsContainer')
+                ]);
+            },
+            showUsers: function () {
+                eventHandler.trigger("userShowList", [
+                    $('#flightsContainer')
+                ]);
+            }
+        }
+
+        ReactDOM.render(
+            <Flights
+                i18n={ i18n }
+                userLogin={ userLogin }
+                flightsServise = { flightsServise }
+            />,
+            wsp.get(0)
+        );
     });
 
     $window.resize(function (e) {
@@ -181,6 +218,17 @@ $(document).ready(function () {
         }
     });
 
+    eventHandler.on("flightListShow", function (e, someshowcase) {
+        if (someshowcase === null) {
+            W.RemoveShowcases(1);
+            someshowcase = W.NewShowcase();
+        } else {
+            W.ClearShowcase(someshowcase);
+        }
+
+        FL.FillFactoryContaider(someshowcase);
+    });
+
     eventHandler.on("viewFlightOptions", function (e, flightId, task, someshowcase) {
         if (someshowcase === null) {
             W.RemoveShowcases(1);
@@ -233,7 +281,7 @@ $(document).ready(function () {
             <Provider store={store}>
                 <Results i18n={i18n} />
             </Provider>,
-            document.getElementById('flightListWorkspace')
+            showcase.get(0)
         );
     });
 

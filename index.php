@@ -5,30 +5,33 @@ require_once "back/bootstrap.php";
 use Controller\IndexController;
 
 $c = new IndexController($_POST, $_SESSION, $_COOKIE);
+?>
 
-if ($c->_user && ($c->_user->username !== null)) {
-    $c->PutCharset();
-    $c->PutTitle();
-    $c->PutStyleSheets();
+<!DOCTYPE html>
+<html lang='<?= $c->getUserLanguage(); ?>' login='<?= $c->getUserLogin(); ?>'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title><?= $c->lang->title ?></title>
+    <link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
+</head>
+<body>
+<?php if ($c->_user && ($c->_user->username !== null)): ?>
 
-    $c->PutHeader();
-    $c->EventHandler();
+    <div id='root'><div>
 
-    $c->PutMessageBox();
-    $c->PutHelpDialog();
-    $c->PutOptionsDialog();
-    $c->PutExportLink();
+    <?php
+        $c->EventHandler();
 
-    $c->PutScripts();
-    $c->PutFooter();
-} else {
-    $c->PutCharset();
-    $c->PutTitle();
-    $c->PutStyleSheets();
+        $c->PutMessageBox();
+        $c->PutHelpDialog();
+        $c->PutOptionsDialog();
+        $c->PutExportLink();
 
-    $c->PutHeader();
+        $c->PutScripts();
+    ?>
+<?php else: ?>
+    <?php $c->ShowLoginForm(); ?>
+<?php endif; ?>
 
-    $c->ShowLoginForm();
-
-    $c->PutFooter();
-}
+</body>
+</html>

@@ -179,6 +179,13 @@
 "eventListSave" : "Report",
 "saveChartTpl": "Мista snið-ð",
 
+"flights": "Flights",
+"fdrs": "FDR",
+"calibrations": "Calibration",
+"users": "Users",
+"results": "Results",
+"search": "Search",
+
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",
     "sZeroRecords": "Search не дал результата",

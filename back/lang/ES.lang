@@ -179,6 +179,13 @@
 "eventListSave" : "Formulario",
 "saveChartTpl": "Save tem-t",
 
+"flights": "Flights",
+"fdrs": "FDR",
+"calibrations": "Calibration",
+"users": "Users",
+"results": "Results",
+"search": "Search",
+
 "dataTable": {
     "sLengthMenu": "Visualización _MENU_ registros por página",
     "sZeroRecords": "No hay ningún resultado",

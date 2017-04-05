@@ -56,7 +56,7 @@ body::-webkit-scrollbar {
 {
     border:none;
     float:left;
-    width:calc(100% - 220px);
+    width:100%;
     padding:5px;
     color:#676767;
 
@@ -69,7 +69,7 @@ body::-webkit-scrollbar {
 .OptionsMenu, .OptionsMenuFullWidth
 {
     border:none;
-    height:45px;
+    min-height:45px;
     width: calc(100% - 10px);
     padding:5px;
     color:#676767;

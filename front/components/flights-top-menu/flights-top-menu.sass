@@ -1,0 +1,67 @@
+.flights-top-menu
+    width: 100%
+    min-height: 45px
+    background-color: #063a5c
+    box-shadow: 0 3px 10px 5px rgba(0,0,0,0.15)
+    z-index: 2
+
+    &__col-no-padding
+        padding: 0px
+
+    &__btn
+        display: table
+        padding: 0px 4px
+        border-radius: 3px
+
+    &__btn.is-hoverable:hover
+        background-color: #021e30
+
+    &__btn.is-aligned-right
+        margin-right: 0px
+        margin-left: auto
+
+    &__ico
+        font-size: 40px
+        background-size: contain
+        background-repeat: no-repeat
+        background-position: center center
+        display: table-cell
+        vertical-align: middle
+
+    &__label
+        font-size: 24px
+        line-height: 43px
+        padding: 0px 8px 2px
+        color: #fff
+        display: table-cell
+        vertical-align: middle
+
+    &__label.is-hidden
+        display: none
+
+    &__ico:before
+        content: "\00a0"
+
+    &__logo-ico
+        background-image: url(/front/stylesheets/basicImg/logo.png)
+
+    &__gliphicon
+        color: #fff
+        font-size: 28px
+        line-height: 40px
+        padding: 0px 4px
+        display: table-cell
+        vertical-align: middle
+
+    &__gliphicon-menu
+        font-size: 22px
+        padding-top: 1px
+        padding-bottom: 4px
+
+    &__gliphicon-config
+        padding-top: 3px
+        padding-bottom: 2px
+
+    &__gliphicon-logout
+        padding-top: 1px
+        padding-bottom: 4px
