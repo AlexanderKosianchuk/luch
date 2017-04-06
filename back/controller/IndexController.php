@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Model\UserOptions;
+use Model\Language;
 
 class IndexController extends CController
 {
@@ -16,6 +17,11 @@ class IndexController extends CController
     public function getUserLanguage()
     {
         return $this->userLang;
+    }
+
+    public function getAvaliableLanguages()
+    {
+        return implode(',', Language::getAvaliableLanguages());
     }
 
     public function getUserLogin()

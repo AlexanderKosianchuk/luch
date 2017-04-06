@@ -1,33 +1,66 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import FlightListMenuNoSelection from 'components/flight-list-menu-dropdown/FlightListMenuNoSelection';
-import FlightListMenuOneFlight from 'components/flight-list-menu-dropdown/FlightListMenuOneFlight';
-import FlightListMenuOneFolder from 'components/flight-list-menu-dropdown/FlightListMenuOneFolder';
-import FlightListMenuManyItems from 'components/flight-list-menu-dropdown/FlightListMenuManyItems';
-
 class FlightListMenuDropdown extends React.Component {
+    buildMenu(type) {
+        const menuItems = {
+            noSelection: [
+                "selectAll"
+            ],
+            oneFlight: [
+                "deleteItem",
+                "selectAll",
+                "exportItem",
+                "processItem",
+                "exportCoordinates",
+                "removeSelection"
+            ],
+            oneFolder: [
+                "openItem",
+                "renameItem",
+                "deleteItem",
+                "selectAll",
+                "removeSelection"
+            ],
+            manyItems: [
+                "deleteItem",
+                "selectAll",
+                "removeSelection"
+            ],
+        };
+
+        let currentMenuItems = menuItems[type];
+
+        return currentMenuItems.map(item => {
+            if (this.props.i18n.hasOwnProperty(item)) {
+                return <li key={ item } ><a onClick={ this.handleMenuClick.bind(this) } data-action={ item } href="#">{ this.props.i18n[item] }</a></li>
+            }
+        });
+    }
+
     setMenu() {
         let flightsCount = this.props.selectedFlights.length;
         let foldersCount = this.props.selectedFolders.length;
 
-        this.menu = <FlightListMenuNoSelection i18n={ this.props.i18n }/>
+        this.menu = this.buildMenu("manyItems");
 
-        if ((flightsCount === 1) && (foldersCount === 0)) {
-            this.menu = <FlightListMenuOneFlight i18n={ this.props.i18n }/>
+        if ((flightsCount === 0) && (foldersCount === 0)) {
+            this.menu = this.buildMenu("noSelection");
+        } else if ((flightsCount === 1) && (foldersCount === 0)) {
+            this.menu = this.buildMenu("oneFlight");
         } else if((flightsCount === 0) && (foldersCount === 1)) {
-            this.menu = <FlightListMenuOneFolder i18n={ this.props.i18n }/>
-        } else if(((flightsCount === 0) && (foldersCount > 1))
-            || ((flightsCount > 1) && (foldersCount === 0))
-            || ((flightsCount > 1) && (foldersCount > 1))
-        ) {
-            this.menu = <FlightListMenuManyItems i18n={ this.props.i18n }/>
+            this.menu = this.buildMenu("oneFolder");
         }
-
     }
 
-    handleChangeView(event) {
+    handleMenuClick(event) {
+        let action = event.target.getAttribute("data-action")
 
+        if (!this.props.flightMenuService.hasOwnProperty(action)) {
+            throw new Error("Unknown flightMenuService action. Passed: " + action)
+        }
+
+        this.props.flightMenuService[action]();
     }
 
     render() {
@@ -38,7 +71,9 @@ class FlightListMenuDropdown extends React.Component {
                   <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     { this.props.i18n.fileMenu } <span className="caret"></span>
                   </a>
-                  { this.menu }
+                  <ul className="dropdown-menu">
+                    { this.menu }
+                  </ul>
                 </li>
             </ul>
         );

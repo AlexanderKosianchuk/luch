@@ -2,46 +2,76 @@ import './flights-top-menu.sass';
 
 import React from 'react';
 
-export default function FlightsTopMenu (props) {
-    return (
-        <div className="flights-top-menu fluid-grid">
-            <div className="row">
-                <div className="col-sm-1">
-                    <span className="flights-top-menu__btn is-hoverable" onClick={ props.showMenu }>
-                        <span id="main-menu-toggle" className="flights-top-menu__gliphicon flights-top-menu__gliphicon-menu glyphicon glyphicon-menu-hamburger"></span>
-                        <span className="flights-top-menu__label is-hidden">Menu</span>
-                    </span>
-                </div>
-                <div className="flights-top-menu__col-no-padding col-sm-1">
-                    <span className="flights-top-menu__btn">
-                        <span className="flights-top-menu__label">Luch</span>
-                    </span>
-                </div>
-                <div className="col-sm-3">
-                    <span className="flights-top-menu__btn is-hoverable">
-                        <span className="flights-top-menu__gliphicon glyphicon glyphicon-upload"></span>
-                        <span className="flights-top-menu__label">{ props.i18n.flightUploaderUpload }</span>
-                    </span>
-                </div>
-                <div className="col-sm-5">
-                    <span className="flights-top-menu__btn is-aligned-right">
-                        <span className="flights-top-menu__label">{ props.userLogin }</span>
-                    </span>
-                </div>
-                <div className="col-sm-1">
-                    <span className="flights-top-menu__btn is-hoverable">
-                        <span className="flights-top-menu__gliphicon flights-top-menu__gliphicon-config glyphicon glyphicon-cog"></span>
-                        <span className="flights-top-menu__label is-hidden">{ props.i18n.options }</span>
-                    </span>
-                </div>
-                <div className="col-sm-1">
-                    <span className="flights-top-menu__btn is-hoverable">
-                        <span className="flights-top-menu__gliphicon flights-top-menu__gliphicon-logout glyphicon glyphicon-log-out"></span>
-                        <span className="flights-top-menu__label is-hidden">{ props.i18n.exit }</span>
-                    </span>
-                </div>
-            </div>
-        </div>
-    );
+export default class FlightsTopMenu extends React.Component {
+    logout() {
+        this.props.topMenuService.userLogout();
+    }
 
+    changeLanguage(event) {
+        let language = event.target.getAttribute("data-lang");
+        this.props.topMenuService.changeLanguage(language);
+    }
+
+    buildLanguageMenu() {
+        return this.props.avaliableLanguages.map(item => {
+            if (item.toUpperCase() !== this.props.userLang.toUpperCase()) {
+                return <li key={ item }><a href="#" onClick={ this.changeLanguage.bind(this) } data-lang={ item }>{ item }</a></li>
+            }
+        });
+    }
+
+    render() {
+        this.languageMenu = this.buildLanguageMenu();
+        return (
+            <nav className="flights-top-menu navbar navbar-dark">
+              <div className="container-fluid">
+                <div className="navbar-header">
+                    <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-menu-navbar-collapse" aria-expanded="false">
+                        <span className="sr-only">Toggle navigation</span>
+                        <span className="flights-top-menu__icon-bar icon-bar"></span>
+                        <span className="flights-top-menu__icon-bar icon-bar"></span>
+                        <span className="flights-top-menu__icon-bar icon-bar"></span>
+                      </button>
+                    <a className="navbar-brand is-hoverable" href="#">
+                        <span id="main-menu-toggle" className="flights-top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger"></span>
+                    </a>
+                    <a className="flights-top-menu__navbar-brand navbar-brand" href="#">Luch</a>
+                </div>
+                <div className="collapse navbar-collapse" id="top-menu-navbar-collapse">
+                  <ul className="nav navbar-nav">
+                    <li className="dropdown">
+                      <a href="#" className="dropdown-toggle is-hoverable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        { this.props.i18n.flightUploaderUpload }
+                      </a>
+                      <ul className="flights-top-menu__dropdown-menu dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li role="separator" className="divider"></li>
+                        <li><a href="#">One more separated link</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+
+                  <ul className="nav navbar-nav navbar-right">
+                    <li><a className="is-static" href="#">{ this.props.userLogin }</a></li>
+                    <li className="dropdown">
+                      <a href="#" className="dropdown-toggle is-hoverable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        { this.props.userLang.toUpperCase() }
+                     </a>
+                      <ul className="flights-top-menu__dropdown-menu flights-top-menu__language-menu dropdown-menu">
+                        { this.languageMenu }
+                      </ul>
+                    </li>
+                    <li><a className="is-hoverable" href="#">
+                        <span className="glyphicon glyphicon-cog"></span>
+                    </a></li>
+                    <li><a className="is-hoverable" onClick={ this.logout.bind(this) } href="#">
+                        <span className="glyphicon glyphicon-log-out"></span>
+                    </a></li>
+                  </ul>
+                </div>
+              </div>
+            </nav>
+        );
+    }
 }

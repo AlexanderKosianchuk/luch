@@ -76,6 +76,7 @@ $(document).ready(function () {
         $window = $(window),
         userLang = $('html').attr("lang"),
         userLogin = $('html').attr("login"),
+        avaliableLanguages = $('html').attr("avaliable-languages").toUpperCase().split(','),
         eventHandler = $('#eventHandler'),
         LA = new Language(userLang),
         W = new WindowFactory($window, $document),
@@ -128,13 +129,25 @@ $(document).ready(function () {
                     $('#flightsContainer')
                 ]);
             }
-        }
+        };
+
+        let topMenuService = {
+            userLogout: function() {
+                eventHandler.trigger("userLogout")
+            },
+            changeLanguage: function(newLang) {
+                eventHandler.trigger("userChangeLanguage", [newLang]);
+            }
+        };
 
         ReactDOM.render(
             <Flights
                 i18n={ i18n }
                 userLogin={ userLogin }
-                flightsServise = { flightsServise }
+                userLang={ userLang }
+                avaliableLanguages={ avaliableLanguages }
+                flightsServise={ flightsServise }
+                topMenuService={ topMenuService }
             />,
             wsp.get(0)
         );

@@ -36,6 +36,9 @@ export default class Flights extends React.Component {
                 <FlightsTopMenu
                     i18n={ this.props.i18n }
                     userLogin={ this.props.userLogin }
+                    userLang={ this.props.userLang }
+                    avaliableLanguages={ this.props.avaliableLanguages }
+                    topMenuService={ this.props.topMenuService }
                 />
                 <MainMenu
                     i18n={ this.props.i18n }

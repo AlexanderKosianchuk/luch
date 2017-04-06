@@ -14,18 +14,18 @@ export default class FlightListTypeDropdown extends React.Component {
 
         switch(viewState) {
             case "tree":
+                this.props.flightViewService.showTree();
                 this.setState({
                     treeActive: "active",
                     tableActive: ""
                 });
-                this.props.flightViewService.showTree();
                 break;
             case "table":
+                this.props.flightViewService.showTable();
                 this.setState({
                     treeActive: "",
                     tableActive: "active"
                 });
-                this.props.flightViewService.showTable();
                 break;
         }
     }

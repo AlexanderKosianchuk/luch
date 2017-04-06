@@ -23,10 +23,10 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
     self.flightListFactoryContainer = factoryContainer;
 
     var pV = {
-            action: "flights/flightGeneralElements",
-            data: {
-                data: 'data'
-            }
+        action: "flights/flightGeneralElements",
+        data: {
+            data: 'data'
+        }
     };
 
     $.ajax({
@@ -45,7 +45,7 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
 
             //self.topMenuUserButtClick();
 
-            self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
+            self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace not-resizable'></div>");
             self.flightListWorkspace = $("div#flightListWorkspace");
 
             self.ShowFlightsListInitial();
@@ -83,28 +83,6 @@ FlightList.prototype.topMenuUserButtClick = function(){
     $("#userOptions").on("click", function(e){
         self.ShowOptions();
     });
-
-    $("#userExit").on("click", function(e){
-        self.eventHandler.trigger("userLogout");
-    });
-
-    $(".UserChangeLang").on("click", function(e){
-        var lang = $(this).data("lang");
-        self.eventHandler.trigger("userChangeLanguage", [lang]);
-    });
-
-    $("div#view").on("click", function(e){
-        var itemsCheck = $(".ItemsCheck:checked");
-        if(itemsCheck.length == 1){
-            document.title = itemsCheck.parent().text();
-            var itemsCheckType = itemsCheck.data("type");
-            if(itemsCheckType = 'flight'){
-                var flightId = itemsCheck.data("flightid"),
-                    data = [flightId, 'getEventsList', null]
-                self.eventHandler.trigger("viewFlightOptions", data);
-            }
-        }
-    });
 }
 
 FlightList.prototype.ShowFlightViewOptions = function() {
@@ -120,15 +98,23 @@ FlightList.prototype.ShowFlightViewOptions = function() {
         };
 
         let flightMenuService = {
-
+            openItem: self.openFolder.bind(this),
+            selectAll: self.selectAll.bind(this),
+            exportCoordinates: self.exportCoordinates.bind(this),
+            exportItem: self.export.bind(this),
+            processItem: self.process.bind(this),
+            deleteItem: self.delete.bind(this),
+            removeSelection: self.removeSelection.bind(this),
+            rename: self.rename.bind(this)
         };
 
         ReactDOM.render(
             <Provider store={ self.store }>
                 <FlightListOptions
                   i18n={ self.langStr }
-                  flightViewService= { flightViewService }
-                  flightMenuService= { flightMenuService }
+                  flightViewService={ flightViewService }
+                  flightMenuService={ flightMenuService }
+                  toggleCheckboxes={ self.toggleFlightCheckboxes.bind(this) }
                  />
             </Provider>,
             self.flightListOptions.get(0)
@@ -147,6 +133,15 @@ FlightList.prototype.ShowFlightsListInitial = function() {
         self.flightListWorkspace.empty();
 
         self.ShowFlightViewOptions();
+
+        self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function(event) {
+            let currentTarget = event.currentTarget;
+            let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
+            let data = [flightId, "getEventsList", null]
+            self.eventHandler.trigger("viewFlightOptions", data);
+
+            return false;
+        });
 
         self.flightListWorkspace.append("<div id='flightListContent' class='Content is-scrollable'></div>");
         self.flightListContent = $("div#flightListContent");
@@ -169,20 +164,16 @@ FlightList.prototype.ShowFlightsListInitial = function() {
                     var type = answ['type'];
                     if (type == "flightListTree"){
                         var flightList = answ['data'];
+
                         self.flightListContent.append(flightList);
-                        $("button#selectFligthOptionsMenu").button({
-                              label: self.langStr.treeView
-                        });
                         self.SupportJsTree();
                         self.ResizeFlightList();
                     } else if (type == "flightListTable"){
                         var flightList = answ['data'],
                             sortCol = answ['sortCol'],
                             sortType = answ['sortType'];
+
                         self.flightListContent.append(flightList);
-                        $("button#selectFligthOptionsMenu").button({
-                              label: self.langStr.tableView
-                        });
                         self.SupportDataTable(sortCol, sortType);
                         self.ResizeFlightList();
                     }
@@ -318,6 +309,10 @@ FlightList.prototype.CreateNewFolder = function(folderName, folderPath) {
     });
 }
 
+FlightList.prototype.toggleFlightCheckboxes = function() {
+    $(".ItemsCheck").toggleClass('is-displayed');
+}
+
 FlightList.prototype.RenameFolder = function(folderId, folderName) {
     var self = this;
 
@@ -407,11 +402,6 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
     }).fail(function(msg){
         console.log(msg);
     });
-}
-
-FlightList.prototype.ShowFlight = function(id) {
-    $("div#flightLeftMenuRow").trigger("showOptions", id);
-    return false;
 }
 
 /* ==================================================
@@ -734,30 +724,6 @@ FlightList.prototype.ShowContent = function(folderId) {
     });
 }
 
-FlightList.prototype.SupportContent = function() {
-    var checked = $(".ItemsCheck:checked"),
-        fileMenu = $('ul.FileMenuItems'),
-        fileMenuButt = $("button#fileMenu"),
-        folders = new Array(),
-        flights = new Array();
-
-    $.each(checked, function(i, el){
-        var el = $(el);
-        if(el.data('type') == 'flight'){
-            flights.push(el);
-        } else if(el.data('type') == 'folder') {
-            folders.push(el);
-        }
-    });
-
-    this.fileMenuSupport(fileMenu,
-        fileMenuButt,
-        flights,
-        folders,
-        this
-    );
-}
-
 /* ==================================================
  * TABLE VIEW
  * ================================================== */
@@ -867,230 +833,173 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
     });
 }
 
-FlightList.prototype.fileMenuSupport = function(
-    fileMenu,
-    fileMenuButt,
-    flights,
-    folders,
-    self
-) {
-    $('#view').hide();
-    if((flights.length == 1) && (folders.length == 0)){
-        fileMenu.empty();
-        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
-        fileMenu.append('<li id="export">' + self.langStr.exportItem + '</li>');
-        fileMenu.append('<li id="process">' + self.langStr.processItem + '</li>');
-        fileMenu.append('<li id="exportCoordinates">' + self.langStr.exportCoordinates + '</li>');
-        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
+FlightList.prototype.openFolder = function(e) {
+    var self =this,
+        inputItemsCheck = $(".ItemsCheck:checked"),
+        folderId = inputItemsCheck.data('folderdestination'),
+        contentPlace = $("#jstreeContent");
+    self.ShowContent(folderId).done(function(answ){
+        contentPlace.empty();
+        if(answ['status'] == 'ok'){
+            var content = answ['data'];
+            contentPlace.append(content);
+            let selectedItems = self.getFlightListSelectedItems();
+            self.store.dispatch(flightListChangeCheckstate(selectedItems));
 
-        $('#view').show();
-    } else if((flights.length == 0) && (folders.length == 1)){
-        fileMenu.empty();
-        fileMenu.append('<li id="open">' + self.langStr.openItem + '</li>');
-        fileMenu.append('<li id="rename">' + self.langStr.renameItem + '</li>');
-        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
-        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-    } else if((flights.length > 1) && (folders.length == 0)){
-        fileMenu.empty();
-        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
-        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-    } else if((flights.length == 0) && (folders.length > 1)){
-        fileMenu.empty();
-        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
-        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-    } else if((flights.length >= 1) && (folders.length >= 1)){
-        fileMenu.empty();
-        fileMenu.append('<li id="delete">' + self.langStr.deleteItem + '</li>');
-        fileMenu.append('<li id="selectAll">' + self.langStr.selectAll + '</li>');
-        fileMenu.append('<li id="removeSelection" style="border:none;">' + self.langStr.removeSelection + '</li>');
-    } else {
-        fileMenu.empty();
-        fileMenu.append('<li id="selectAll" style="border:none;">' + self.langStr.selectAll + '</li>');
-    }
-
-    /*fileMenu
-        .buttonset()
-        .hide()
-        .menu();*/
-
-    fileMenuButt.button().click(function() {
-         var menu = $(this).next().show().position({
-             my: "left top",
-             at: "left bottom",
-             of: this
-         });
-         $(document).on("click",function(e) {
-             menu.hide();
-         });
-         return false;
-     });
-
-         $("li#open").off('click').on('click', function(e){
-             var inputItemsCheck = $(".ItemsCheck:checked"),
-             folderId = inputItemsCheck.data('folderdestination'),
-             contentPlace = $("#jstreeContent");
-             self.ShowContent(folderId).done(function(answ){
-                 contentPlace.empty();
-                 if(answ['status'] == 'ok'){
-                     var content = answ['data'];
-                     contentPlace.append(content);
-                     let selectedItems = self.getFlightListSelectedItems();
-                     self.store.dispatch(flightListChangeCheckstate(selectedItems));
-
-                     $(".ItemsCheck").on("change", function(e){
-                         let selectedItems = self.getFlightListSelectedItems();
-                         self.store.dispatch(flightListChangeCheckstate(selectedItems));
-                     });
-                 } else {
-                     console.log(answ)
-                 }
-             });
-         });
-
-         $("li#rename").off('click').on('click', function(e){
-             var inputItemsCheck = $(".ItemsCheck:checked"),
-             id = inputItemsCheck.data("folderdestination"),
-             parent = inputItemsCheck.parent(),
-             row = parent.parent(),
-             parentText = parent.text();
-             parent.text("");
-
-             parent.append(inputItemsCheck);
-             parent.append("<input id='currentChangedNameFolder' size='50' value='"+parentText+"'/>");
-
-             row.off("click");
-             row.on("click", function(e){
-                 var nodeName = $(e.target)[0].tagName;
-                 if(nodeName == "DIV"){
-                     var currentChangedNameFolder = $("#currentChangedNameFolder").val();
-                     parent.text("");
-                     parent.append(inputItemsCheck);
-                     parent.append(currentChangedNameFolder);
-
-                     self.RenameFolder(id, currentChangedNameFolder).done(function(answ) {
-                         if(answ['status'] != 'ok'){
-                             console.log(answ['data']['error']);
-                         }
-                     });
-                 }
-             });
-         });
-
-         $("li#removeSelection").off('click').on('click', function(e){
-             $.each($("input.ItemsCheck:checked"), function(i, el){
-                 var el = $(el).prop('checked', false);
-             });
-             let selectedItems = self.getFlightListSelectedItems();
-             self.store.dispatch(flightListChangeCheckstate(selectedItems));
-         });
-
-         $("li#selectAll").off('click').on('click', function(e){
-             $.each($(".ItemsCheck"), function(i, el){
-                 var el = $(el).prop('checked', true);
-             });
-             let selectedItems = self.getFlightListSelectedItems();
-             self.store.dispatch(flightListChangeCheckstate(selectedItems));
-         });
-
-         $("li#delete").off('click').on('click', function(e){
-             var inputItemsCheck = $("input.ItemsCheck:checked");
-             var deletedCount = 0;
-
-             $.each(inputItemsCheck, function(i, el){
-                 var el = $(el),
-                     type = el.data('type'),
-                     id = undefined;
-
-                 if(type == 'folder'){
-                     id = el.data('folderdestination');
-                 } else if(type == 'flight'){
-                     id = el.data('flightid');
-                 }
-                 self.DeleteItem(type, id).done(function(answ) {
-                     if(answ['status'] == 'ok'){
-                         el.removeAttr("checked");
-                         var parent = el.parents("tr") || el.parents(".JstreeContentItemFlight");
-                         parent.fadeOut(200).remove();
-                         deletedCount++;
-
-                         if (inputItemsCheck.length === deletedCount) {
-                             self.ShowFlightsTree();
-                         }
-                     } else {
-                         console.log(answ['data']['error']);
-                     }
-                 });
-             });
-         });
-
-         $("li#process").off('click').on('click', function(e){
-             var inputItemsCheck = $("input.ItemsCheck:checked");
-
-             $.each(inputItemsCheck, function(i, el){
-                 var el = $(el),
-                     type = el.data('type'),
-                     id = undefined;
-
-                 if(type == 'flight'){
-                     id = el.data('flightid');
-                     self.ProcessItem(id).done(function(answ) {
-                         if(answ['status'] == 'ok'){
-                             el.removeAttr("checked");
-                             var parent = el.parents("li");
-                             parent.fadeOut(200);
-                         } else {
-                             console.log(answ['data']['error']);
-                         }
-                     });
-                 }
-             });
-         });
-
-         $("li#export").off('click').on('click', function(e){
-             var inputItemsCheck = $("input.ItemsCheck:checked");
-             $.each(inputItemsCheck, function(i, el){
-                 var el = $(el),
-                     type = el.data('type'),
-                     id = undefined;
-
-                 if(type == 'flight'){
-                     id = el.data('flightid');
-                     self.ExportItem(id).done(function(answ) {
-                         if(answ['status'] == 'ok'){
-                             el.removeAttr("checked");
-                             var parent = el.parents("li");
-                             parent.fadeOut(200);
-                         } else {
-                             console.log(answ['data']['error']);
-                         }
-                     });
-                 }
-             });
-         });
-
-         if($("li#exportCoordinates").length) {
-             var text = $("li#exportCoordinates").text();
-
-             var inputItemsCheck = $("input.ItemsCheck:checked");
-
-             if (inputItemsCheck.length) {
-                 var flightid = inputItemsCheck.data('flightid');
-
-                 $("li#exportCoordinates")
-                    .empty()
-                    .append(
-                         $('<a></a>', {
-                             class: 'export-coordinates-href',
-                             href: ENTRY_URL + '?action=flights/coordinates&id=' + flightid,
-                             target: '_blank'
-                         }).text(text)
-                     );
-             }
-         }
+            $(".ItemsCheck").on("change", function(e){
+                let selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+            });
+        } else {
+            console.log(answ)
+        }
+    });
 }
+
+FlightList.prototype.selectAll = function(e){
+    $.each($(".ItemsCheck"), function(i, el){
+        var el = $(el).prop('checked', true);
+    });
+    let selectedItems = this.getFlightListSelectedItems();
+    this.store.dispatch(flightListChangeCheckstate(selectedItems));
+};
+
+FlightList.prototype.rename = function(e){
+    var inputItemsCheck = $(".ItemsCheck:checked"),
+    id = inputItemsCheck.data("folderdestination"),
+    parent = inputItemsCheck.parent(),
+    row = parent.parent(),
+    parentText = parent.text();
+    parent.text("");
+
+    parent.append(inputItemsCheck);
+    parent.append("<input id='currentChangedNameFolder' size='50' value='"+parentText+"'/>");
+
+    row.off("click");
+    row.on("click", function(e){
+        var nodeName = $(e.target)[0].tagName;
+        if(nodeName == "DIV"){
+            var currentChangedNameFolder = $("#currentChangedNameFolder").val();
+            parent.text("");
+            parent.append(inputItemsCheck);
+            parent.append(currentChangedNameFolder);
+
+            self.RenameFolder(id, currentChangedNameFolder).done(function(answ) {
+                if(answ['status'] != 'ok'){
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.removeSelection = function(e){
+    $.each($("input.ItemsCheck:checked"), function(i, el){
+        var el = $(el).prop('checked', false);
+    });
+    let selectedItems = this.getFlightListSelectedItems();
+    this.store.dispatch(flightListChangeCheckstate(selectedItems));
+};
+
+FlightList.prototype.delete = function(e){
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var deletedCount = 0;
+    var self = this;
+
+    $.each(inputItemsCheck, function(i, el){
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if(type == 'folder'){
+            id = el.data('folderdestination');
+        } else if(type == 'flight'){
+            id = el.data('flightid');
+        }
+        self.DeleteItem(type, id).done(function(answ) {
+            if(answ['status'] == 'ok'){
+                el.removeAttr("checked");
+                var parent = el.parents("tr") || el.parents(".JstreeContentItemFlight");
+                parent.fadeOut(200).remove();
+                deletedCount++;
+
+                if (inputItemsCheck.length === deletedCount) {
+                    self.ShowFlightsTree();
+                }
+            } else {
+                console.log(answ['data']['error']);
+            }
+        });
+    });
+};
+
+FlightList.prototype.process = function(e){
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var self = this;
+
+    $.each(inputItemsCheck, function(i, el){
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if(type == 'flight'){
+            id = el.data('flightid');
+            self.ProcessItem(id).done(function(answ) {
+                if(answ['status'] == 'ok'){
+                    el.removeAttr("checked");
+                    var parent = el.parents("li");
+                    parent.fadeOut(200);
+                } else {
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.export = function(e){
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var selt = this;
+
+    $.each(inputItemsCheck, function(i, el){
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if(type == 'flight'){
+            id = el.data('flightid');
+            self.ExportItem(id).done(function(answ) {
+                if(answ['status'] == 'ok'){
+                    el.removeAttr("checked");
+                    var parent = el.parents("li");
+                    parent.fadeOut(200);
+                } else {
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.exportCoordinates = function(event) {
+    var text = $("li#exportCoordinates").text();
+
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+
+    if (inputItemsCheck.length) {
+       var flightid = inputItemsCheck.data('flightid');
+
+         $("li#exportCoordinates")
+            .empty()
+            .append(
+                 $('<a></a>', {
+                     class: 'export-coordinates-href',
+                     href: ENTRY_URL + '?action=flights/coordinates&id=' + flightid,
+                     target: '_blank'
+                 }).text(text)
+             );
+    }
+};
+
 
 module.exports = FlightList;

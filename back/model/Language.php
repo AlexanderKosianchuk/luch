@@ -84,4 +84,18 @@ class Language
 
         return $lang;
     }
+
+    public static function getAvaliableLanguages()
+    {
+        $files = scandir (LANG_FILES_PATH);
+        $languages = [];
+
+        foreach ($files as $file) {
+            if (pathinfo($file)['extension'] === 'lang') {
+                $languages[] = pathinfo($file)['filename'];
+            }
+        }
+
+        return $languages;
+    }
 }

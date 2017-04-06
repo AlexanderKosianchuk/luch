@@ -136,8 +136,10 @@ WindowFactory.prototype.ResizeShowcase = function(e) {
         item.css('top', i * self.window.height());
     });
 
-    $(".WorkSpace").css({
+    $(".LeftMenu").css("height", self.window.height() - self.topMenuHeight);
+    $(".WorkSpace:not(.not-resizable)").css({
         "height": self.window.height() - self.topMenuHeight - 5, //5 because padding
+        "width": self.window.width() - self.leftMenuWidth,
     });
     $(".Content").css({
         "height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 15, //35 because padding and margin
