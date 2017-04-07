@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Component\\EntityManagerComponent' => $baseDir . '/back/component/EntityManagerComponent.php',
     'Component\\EventProcessingComponent' => $baseDir . '/back/component/EventProcessingComponent.php',
+    'Component\\FdrComponent' => $baseDir . '/back/component/FdrComponent.php',
     'Component\\FdrCycloComponent' => $baseDir . '/back/component/FdrCycloComponent.php',
     'Component\\FlightComponent' => $baseDir . '/back/component/FlightComponent.php',
     'Component\\OSdetectionComponent' => $baseDir . '/back/component/OSdetectionComponent.php',

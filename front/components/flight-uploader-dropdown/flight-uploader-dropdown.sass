@@ -1,0 +1,18 @@
+.flight-uploader-dropdown
+    text-align: center
+
+    & a
+        color: #333 !important
+    & a:hover
+        background-color: #fff !important
+
+    & input
+        &[type="file"]
+            z-index: 2 !important
+
+        &[type="text"]
+            z-index: 1 !important
+            max-width: 120px
+
+.flight-uploader-dropdown.is-shown
+    display: block

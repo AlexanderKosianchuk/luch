@@ -1,6 +1,11 @@
 import './flights-top-menu.sass';
 
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import FlightUploaderDropdown from 'components/flight-uploader-dropdown/FlightUploaderDropdown';
+import FlightImporterDropdown from 'components/flight-importer-dropdown/FlightImporterDropdown';
 
 export default class FlightsTopMenu extends React.Component {
     logout() {
@@ -32,23 +37,27 @@ export default class FlightsTopMenu extends React.Component {
                         <span className="flights-top-menu__icon-bar icon-bar"></span>
                         <span className="flights-top-menu__icon-bar icon-bar"></span>
                       </button>
-                    <a className="navbar-brand is-hoverable" href="#">
-                        <span id="main-menu-toggle" className="flights-top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger"></span>
+                    <a className="main-menu-toggle navbar-brand is-hoverable" href="#">
+                        <span className="main-menu-toggle flights-top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger"></span>
                     </a>
                     <a className="flights-top-menu__navbar-brand navbar-brand" href="#">Luch</a>
                 </div>
                 <div className="collapse navbar-collapse" id="top-menu-navbar-collapse">
                   <ul className="nav navbar-nav">
                     <li className="dropdown">
-                      <a href="#" className="dropdown-toggle is-hoverable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                      <a href="#" className="flight-importer-dropdown-toggle dropdown-toggle is-hoverable" role="button">
+                        { this.props.i18n.fileImport }
+                      </a>
+                      <FlightImporterDropdown />
+                    </li>
+                  </ul>
+
+                  <ul className="nav navbar-nav">
+                    <li className="dropdown">
+                      <a href="#" className="flight-uploader-dropdown-toggle dropdown-toggle is-hoverable" role="button">
                         { this.props.i18n.flightUploaderUpload }
                       </a>
-                      <ul className="flights-top-menu__dropdown-menu dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li role="separator" className="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                      </ul>
+                      <FlightUploaderDropdown i18n={ this.props.i18n }/>
                     </li>
                   </ul>
 

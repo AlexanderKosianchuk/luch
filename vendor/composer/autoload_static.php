@@ -116,6 +116,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
     public static $classMap = array (
         'Component\\EntityManagerComponent' => __DIR__ . '/../..' . '/back/component/EntityManagerComponent.php',
         'Component\\EventProcessingComponent' => __DIR__ . '/../..' . '/back/component/EventProcessingComponent.php',
+        'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',

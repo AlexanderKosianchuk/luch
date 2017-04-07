@@ -1,4 +1,6 @@
 {
+"chooseFile": "Choose file",
+"flightUploading": "Flight uploading",
 "exit": "Salida",
 "options": "Opciones",
 
@@ -185,6 +187,7 @@
 "users": "Users",
 "results": "Results",
 "search": "Search",
+"fileImport": "Importaciones",
 
 "dataTable": {
     "sLengthMenu": "Visualización _MENU_ registros por página",

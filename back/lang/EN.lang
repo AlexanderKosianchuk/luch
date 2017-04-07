@@ -1,4 +1,6 @@
 {
+"chooseFile": "Choose file",
+"flightUploading": "Flight uploading",
 "exit": "Exit",
 "options": "Options",
 
@@ -185,6 +187,7 @@
 "users": "Users",
 "results": "Results",
 "search": "Search",
+"fileImport": "Import",
 
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",

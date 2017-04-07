@@ -141,14 +141,16 @@ $(document).ready(function () {
         };
 
         ReactDOM.render(
-            <Flights
-                i18n={ i18n }
-                userLogin={ userLogin }
-                userLang={ userLang }
-                avaliableLanguages={ avaliableLanguages }
-                flightsServise={ flightsServise }
-                topMenuService={ topMenuService }
-            />,
+            <Provider store={ store }>
+                <Flights
+                    i18n={ i18n }
+                    userLogin={ userLogin }
+                    userLang={ userLang }
+                    avaliableLanguages={ avaliableLanguages }
+                    flightsServise={ flightsServise }
+                    topMenuService={ topMenuService }
+                />
+            </Provider>,
             wsp.get(0)
         );
     });

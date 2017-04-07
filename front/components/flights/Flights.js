@@ -12,7 +12,7 @@ export default class Flights extends React.Component {
     }
 
     handleToggleMenu (target) {
-        if ((target.id === 'main-menu-toggle')
+        if ((target.className.includes('main-menu-toggle'))
             && !this.state.showMenu
         ) {
             this.setState({ showMenu: true });
