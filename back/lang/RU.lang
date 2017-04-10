@@ -1,4 +1,6 @@
 {
+"chooseFile": "Выбрать файл",
+"flightUploading": "Загрузка полета",
 "exit": "Выход",
 "options": "Настройки",
 
@@ -178,6 +180,14 @@
 "monochromeEventsPrint" : "Ч/Б печать",
 "eventListSave" : "Бланк",
 "saveChartTpl": "Сохр. шаблон",
+
+"flights": "Полеты",
+"fdrs": "Регистраторы",
+"calibrations": "Градуировки",
+"users": "Пользователи",
+"results": "Результаты",
+"search": "Поиск",
+"fileImport": "Импортировать",
 
 "dataTable": {
     "sLengthMenu": "Показывать по _MENU_ записей на странице",
@@ -772,6 +782,9 @@
 },
 
 "calibrationPage":{
+},
+
+"resultsPage": {
 }
 
 }

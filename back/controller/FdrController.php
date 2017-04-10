@@ -8,6 +8,9 @@ use Model\Channel;
 use Model\Fdr;
 use Model\Flight;
 
+use Component\EntityManagerComponent as EM;
+use Component\FdrComponent;
+
 class FdrController extends CController
 {
     public $curPage = 'bruTypesPage';
@@ -53,20 +56,19 @@ class FdrController extends CController
         return $workspace;
     }
 
-    public function GetTplsList($extBruTypeId)
+    public function GetTplsList($fdrId)
     {
-        $bruTypeId = $extBruTypeId;
         $tplsListWithControlButtns = '';
 
         $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById($bruTypeId);
+        $fdrInfo = $Bru->GetBruInfoById($fdrId);
         $bruType = $fdrInfo['name'];
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
         $stepLength = $fdrInfo['stepLength'];
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
         unset($Bru);
 
         $PSTempl = new PSTempl;
@@ -571,6 +573,14 @@ class FdrController extends CController
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+    }
+
+    public function getFdrTypes($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
+
+        echo json_encode($fdrsAndCalibrations);
     }
 
 }

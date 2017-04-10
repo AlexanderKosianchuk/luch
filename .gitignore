@@ -30,15 +30,16 @@ phpunit.phar
 /phpunit.xml
 
 #config
-/config/main.json
+/config/db.json
 
 #log
 /log
 /www/log
 /www/php_errors.log
+npm-debug.log
 
 #uploads
-/fileUploader/files/*
+/back/fileUploader/files/*
 
 #server
 .bash_history
@@ -48,3 +49,6 @@ phpunit.phar
 
 #map
 /public/**/*.map
+
+#runtime
+/runtime

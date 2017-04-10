@@ -14,11 +14,11 @@ $anotationConfig = Setup::createAnnotationMetadataConfiguration(
     $isDevMode
 );
 
-$CONFIG_FILE = __DIR__."/config/main.json";
+$CONFIG_FILE = __DIR__."/config/main.php";
 if (!file_exists($CONFIG_FILE)) {
-    throw new Exception("Config file (config/main.json) does not exist", 1);
+    throw new Exception("Config file (config/main.php) does not exist", 1);
 }
-$CONFIG = json_decode(file_get_contents($CONFIG_FILE), true);
+$CONFIG = require_once($CONFIG_FILE);
 
 if (empty($CONFIG)) {
     throw new Exception("Config is not set", 1);

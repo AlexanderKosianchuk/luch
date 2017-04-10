@@ -72,7 +72,17 @@ class ChartController extends CController
 
     public function PutScripts()
     {
-        printf("<script type='text/javascript' src='public/chart.js'></script>");
+        $files = scandir ('public/');
+        $scriptName = '';
+        foreach ($files as $item) {
+            $fileParts = pathinfo($item);
+            if ((strpos($item, 'chart') !== false)
+                && ($fileParts['extension'] === 'js')
+            ) {
+                $scriptName = $item;
+            }
+        }
+        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
     }
 
     public function PutFooter()
@@ -182,8 +192,9 @@ class ChartController extends CController
 
         $Bru = new Fdr;
         $bruType = $flightInfo['bruType'];
+        $fdrId = $flightInfo['id_fdr'];
         $fdrInfo = $Bru->GetBruInfo($bruType);
-        $prefixArr = $Bru->GetBruApCycloPrefixes($flightInfo['bruType']);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
         $cycloApTableName = $fdrInfo["gradiApTableName"];
         $cycloBpTableName = $fdrInfo["gradiBpTableName"];
 

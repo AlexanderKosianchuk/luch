@@ -14,7 +14,7 @@ function WindowFactory(window, document) {
     this.optionsMenuHeight = 45;
     this.leftMenuWidth = 210;
 
-    $("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
+    //$("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
     this.help.on("click", function(){$("#helpDialog").dialog("open")});
 }
 
@@ -86,7 +86,6 @@ WindowFactory.prototype.NewShowcase = function() {
     showcase.css({
         'top': self.window.height() * self.windowStack.length,
         'height': self.window.height(),
-        'width': self.window.width()
     });
     self.windowStack.push(showcase);
 
@@ -130,7 +129,6 @@ WindowFactory.prototype.ResizeShowcase = function(e) {
     var FW = $(".FactoryWindow");
     FW.css({
         "height": self.window.height(),
-        "width": self.window.width(),
     });
 
     $.each(FW, function(i, item){
@@ -139,14 +137,12 @@ WindowFactory.prototype.ResizeShowcase = function(e) {
     });
 
     $(".LeftMenu").css("height", self.window.height() - self.topMenuHeight);
-    $(".WorkSpace").css({
-        "height": self.window.height() - self.topMenuHeight - 10, //10 because padding
+    $(".WorkSpace:not(.not-resizable)").css({
+        "height": self.window.height() - self.topMenuHeight - 5, //5 because padding
         "width": self.window.width() - self.leftMenuWidth,
     });
-    $(".OptionsMenu").css("width", self.window.width() - self.leftMenuWidth - 20);
     $(".Content").css({
-        "height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35, //35 because padding and margin
-        "width": self.window.width() - self.leftMenuWidth
+        "height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 15, //35 because padding and margin
     });
 
     $(".OptionsMenuFullWidth").css("width", self.window.width() - 10);

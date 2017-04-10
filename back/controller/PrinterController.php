@@ -30,16 +30,17 @@ class PrinterController extends CController
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = $flightInfo['id_fdr'];
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
-        $flightApHeaders= $Bru->GetBruApHeaders($bruType);
-        $flightBpHeaders = $Bru->GetBruBpHeaders($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->GetBruInfo($bruType);
+        $flightApHeaders= $fdr->GetBruApHeaders($bruType);
+        $flightBpHeaders = $fdr->GetBruBpHeaders($bruType);
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
-        unset($Bru);
+        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
+        unset($fdr);
 
         $Frame = new Frame;
         $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix

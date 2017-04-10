@@ -3,6 +3,7 @@
 const NODE_ENV = process.env.NODE_ENV || 'dev';
 const webpack = require('webpack');
 const path = require('path');
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
     entry: {
@@ -13,9 +14,13 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/public'),
         publicPath: '/public/',
-        filename: '[name].js',
+        filename: '[name][hash].js',
     },
     resolve: {
+        modules: [
+            path.resolve('./front'),
+            path.resolve('./node_modules')
+        ],
         extensions: ['.js', '.jsx'],
         alias: {
             'Language': path.join(__dirname, 'front/proto/Lang.proto.js'),
@@ -32,9 +37,9 @@ module.exports = {
             'FdrEvents': path.join(__dirname, 'front/proto/fdr/FdrEvents.proto.js'),
             'FdrGeneralInfo': path.join(__dirname, 'front/proto/fdr/FdrGeneralInfo.proto.js'),
             'FdrTemplates': path.join(__dirname, 'front/proto/fdr/FdrTemplates.proto.js'),
-            'FlightUploader': path.join(__dirname, 'front/proto/main/FlightUploader.proto.js'),
-            'FlightProccessingStatus': path.join(__dirname, 'front/proto/main/FlightProccessingStatus.proto.js'),
-            'FlightList': path.join(__dirname, 'front/proto/main/FlightList.proto.js'),
+            'FlightUploader': path.join(__dirname, 'front/proto/flight/FlightUploader.proto.js'),
+            'FlightProccessingStatus': path.join(__dirname, 'front/proto/flight/FlightProccessingStatus.proto.js'),
+            'FlightList': path.join(__dirname, 'front/proto/flight/FlightList.proto.js'),
             'SearchFlight': path.join(__dirname, 'front/proto/searchFlight/SearchFlight.proto.js'),
             'User': path.join(__dirname, 'front/proto/user/User.proto.js'),
             'FlightViewOptions': path.join(__dirname, 'front/proto/viewOptions/ViewOptions.proto.js'),
@@ -56,28 +61,51 @@ module.exports = {
                 }
             }, {
                 test: /\.css$/,
-                use: ['style-loader','css-loader']
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ],
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|gif)$/i,
+                test: /\.sass$/,
+                exclude: /node_modules/,
+                use: [
+                    'style-loader', {
+                        loader: 'css-loader',
+                        query: {
+                            sourceMaps: NODE_ENV == 'dev'
+                        }
+                    }, {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: NODE_ENV == 'dev'
+                        }
+                    }
+                ]
+            }, {
+                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
                 exclude: /(node_modules)/,
                 loader:'file-loader?name=[path][name].[ext]'
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|gif)$/i,
+                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
                 include: /(node_modules)/,
                 loader:'file-loader?name=[1][name].[ext]&regExp=node_modules/(.*)'
+            }, {
+                test: /bootstrap\/dist\/js\/umd\//,
+                loader: 'imports-loader?jQuery=jquery'
             }
         ]
     },
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php')
+            ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php'),
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery'
         }),
+        new WebpackCleanupPlugin()
     ],
 
 };

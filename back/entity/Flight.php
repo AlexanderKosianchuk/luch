@@ -13,7 +13,7 @@ class Flight
     /**
      * @var integer
      *
-     * @Column(name="id", type="bigint", nullable=false)
+     * @Column(name="id", type="integer", nullable=false)
      * @Id
      * @GeneratedValue(strategy="IDENTITY")
      */
@@ -111,6 +111,11 @@ class Flight
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getGuid()

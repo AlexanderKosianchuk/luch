@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Model\UserOptions;
+use Model\Language;
 
 class IndexController extends CController
 {
@@ -13,28 +14,19 @@ class IndexController extends CController
         $this->IsAppLoggedIn();
     }
 
-    public function PutCharset()
+    public function getUserLanguage()
     {
-        printf("<!DOCTYPE html>
-            <html lang='%s'>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>",
-                $this->userLang);
+        return $this->userLang;
     }
 
-    public function PutTitle()
+    public function getAvaliableLanguages()
     {
-        printf("<title>%s</title>", $this->lang->title);
+        return implode(',', Language::getAvaliableLanguages());
     }
 
-    public function PutStyleSheets()
+    public function getUserLogin()
     {
-        printf("<link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />");
-    }
-
-    public function PutHeader()
-    {
-        printf("</head><body>");
+        return $this->_user->username;
     }
 
     public function EventHandler()
@@ -51,7 +43,7 @@ class IndexController extends CController
 
     public function PutHelpDialog()
     {
-        printf("<div id='helpDialog' title='%s'>
+        printf("<div id='helpDialog' style='display: none;' title='%s'>
                 <p>
                 </p>
                 ===== F5 - Возврат в Главное меню LUCH =====
@@ -126,7 +118,7 @@ class IndexController extends CController
             $version = VERSION;
         }
 
-        printf("<div id='optionsDialog' class='options-dialog' title='%s'>
+        printf("<div id='optionsDialog' style='display:none;' class='options-dialog' title='%s'>
                 <form id='optionsForm'>
                     %s
                 </form>
@@ -145,12 +137,16 @@ class IndexController extends CController
 
     public function PutScripts()
     {
-        printf('<script src="/public/index.js"></script>');
+        $files = scandir ('public/');
+        $scriptName = '';
+        foreach ($files as $item) {
+            $fileParts = pathinfo($item);
+            if ((strpos($item, 'index') !== false)
+                && ($fileParts['extension'] === 'js')
+            ) {
+                $scriptName = $item;
+            }
+        }
+        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
     }
-
-    public function PutFooter()
-    {
-        printf("</body></html>");
-    }
-
 }

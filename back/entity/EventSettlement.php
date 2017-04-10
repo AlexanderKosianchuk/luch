@@ -2,6 +2,8 @@
 
 namespace Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * EventSettlement
  *
@@ -61,6 +63,11 @@ class EventSettlement
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getText()
+    {
+        return $this->text;
     }
 
     public function getAlg()

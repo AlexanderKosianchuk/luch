@@ -24,14 +24,14 @@ class FdrToUser
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $idUser;
+    private $userId;
 
     /**
      * @var integer
      *
      * @Column(name="id_fdr", type="integer", nullable=false)
      */
-    private $idFdr;
+    private $fdrId;
 
     /**
      * @var \DateTime
@@ -40,5 +40,10 @@ class FdrToUser
      */
     private $dt;
 
-
+    /**
+     * Many FdrToUser have One Fdr.
+     * @ManyToOne(targetEntity="Fdr", inversedBy="fdrToUser")
+     * @JoinColumn(name="id_fdr", referencedColumnName="id")
+     */
+    private $fdr;
 }

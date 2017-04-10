@@ -2,6 +2,8 @@
 
 namespace Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Fdr
  *
@@ -151,8 +153,16 @@ class Fdr
      */
     private $eventsToFdr;
 
-    public function __construct() {
+    /**
+     * One Fdr has Many FdrToUser.
+     * @OneToMany(targetEntity="FdrToUser", mappedBy="fdr")
+     */
+    private $fdrToUser;
+
+    public function __construct()
+    {
         $this->eventsToFdr = new ArrayCollection();
+        $this->fdrToUser = new ArrayCollection();
     }
 
     public function getId()

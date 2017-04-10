@@ -98,7 +98,7 @@ class Fdr
 
             while($row = $result->fetch_array())
             {
-                $fdrInfo = $this->GetBruInfo($row['name']);
+                $fdrInfo = $this->getFdrInfo(intval($row['id']));
                 array_push($bruList, $fdrInfo);
             }
 
@@ -150,13 +150,13 @@ class Fdr
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT * FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT * FROM `".$this->table."` WHERE `code` = '".$bruType."' LIMIT 1;";
+
         $result = $link->query($query);
         $row = $result->fetch_array();
 
         $fdrInfo = array();
-        foreach ($row as $key => $value)
-        {
+        foreach ($row as $key => $value) {
             $fdrInfo[$key] = $value;
         }
 
@@ -646,13 +646,11 @@ class Fdr
         return $res;
     }
 
-    public function GetBruApCycloPrefixOrganized($extBruType)
+    public function GetBruApCycloPrefixOrganized($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
 
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -664,8 +662,7 @@ class Fdr
         $result = $link->query($query);
 
         $prefixesArr = array();
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             array_push($prefixesArr, $row['prefix']);
         }
 
@@ -707,12 +704,10 @@ class Fdr
         return $cycloAp;
     }
 
-    public function GetBruApCycloPrefixFreq($extBruType)
+    public function GetBruApCycloPrefixFreq($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -724,8 +719,7 @@ class Fdr
         $result = $link->query($query);
 
         $prefixesArr = array();
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             array_push($prefixesArr, $row['prefix']);
         }
 
@@ -748,12 +742,10 @@ class Fdr
         return $channelFreq;
     }
 
-    public function GetBruApCycloPrefixes($extBruType)
+    public function GetBruApCycloPrefixes($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -765,8 +757,7 @@ class Fdr
         $result = $link->query($query);
 
         $prefixesArr = array();
-        while($row = $result->fetch_array())
-        {
+        while ($row = $result->fetch_array()) {
             array_push($prefixesArr, $row['prefix']);
         }
 
@@ -777,12 +768,10 @@ class Fdr
         return $prefixesArr;
     }
 
-    public function GetBruBpCycloPrefixes($extBruType)
+    public function GetBruBpCycloPrefixes($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -806,13 +795,11 @@ class Fdr
         return $prefixesArr;
     }
 
-    public function GetBruBpCycloPrefixOrganized($extBruType)
+    public function GetBruBpCycloPrefixOrganized($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
 
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `id` = '".$fdrId."' LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
@@ -860,12 +847,10 @@ class Fdr
         return $cycloBp;
     }
 
-    public function GetBruBpCycloPrefixFreq($extBruType)
+    public function GetBruBpCycloPrefixFreq($fdrId)
     {
-        $bruType = $extBruType;
-
         $c = new DataBaseConnector;
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $link = $c->Connect();
         $result = $link->query($query);
         $row = $result->fetch_array();
