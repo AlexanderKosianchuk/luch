@@ -38,7 +38,7 @@ export default function FlightUploaderFdrSelector(props) {
             if (fdrTypesList.hasOwnProperty(num)
                 && (fdrTypesList[num].id === val)
             ) {
-                props.changeFdr(fdrTypesList[num]);
+                props.changeFdrType(fdrTypesList[num]);
             }
         }
     }

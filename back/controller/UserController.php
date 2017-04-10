@@ -652,10 +652,10 @@ class UserController extends CController
 
     public function createUser($data)
     {
-        if(isset($data) &&
-                isset($_FILES['logo']) &&
-                isset($_FILES['logo']['tmp_name']))
-        {
+        if (isset($data) &&
+            isset($_FILES['logo']) &&
+            isset($_FILES['logo']['tmp_name'])
+        ) {
             $form = $_POST;
             $file = $_FILES['logo']['tmp_name'];
 

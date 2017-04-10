@@ -192,8 +192,9 @@ class ChartController extends CController
 
         $Bru = new Fdr;
         $bruType = $flightInfo['bruType'];
+        $fdrId = $flightInfo['id_fdr'];
         $fdrInfo = $Bru->GetBruInfo($bruType);
-        $prefixArr = $Bru->GetBruApCycloPrefixes($flightInfo['bruType']);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
         $cycloApTableName = $fdrInfo["gradiApTableName"];
         $cycloBpTableName = $fdrInfo["gradiBpTableName"];
 

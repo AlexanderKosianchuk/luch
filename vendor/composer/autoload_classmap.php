@@ -13,6 +13,7 @@ return array(
     'Component\\FlightComponent' => $baseDir . '/back/component/FlightComponent.php',
     'Component\\OSdetectionComponent' => $baseDir . '/back/component/OSdetectionComponent.php',
     'Component\\RealConnectionFactory' => $baseDir . '/back/component/RealConnectionComponent.php',
+    'Component\\RuntimeManager' => $baseDir . '/back/component/RuntimeManager.php',
     'Controller\\CController' => $baseDir . '/back/controller/CController.php',
     'Controller\\CalibrationController' => $baseDir . '/back/controller/CalibrationController.php',
     'Controller\\ChartController' => $baseDir . '/back/controller/ChartController.php',

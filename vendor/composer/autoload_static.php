@@ -121,6 +121,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',
         'Component\\RealConnectionFactory' => __DIR__ . '/../..' . '/back/component/RealConnectionComponent.php',
+        'Component\\RuntimeManager' => __DIR__ . '/../..' . '/back/component/RuntimeManager.php',
         'Controller\\CController' => __DIR__ . '/../..' . '/back/controller/CController.php',
         'Controller\\CalibrationController' => __DIR__ . '/../..' . '/back/controller/CalibrationController.php',
         'Controller\\ChartController' => __DIR__ . '/../..' . '/back/controller/ChartController.php',

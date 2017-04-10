@@ -30,7 +30,7 @@ phpunit.phar
 /phpunit.xml
 
 #config
-/config/main.json
+/config/db.json
 
 #log
 /log
@@ -49,3 +49,6 @@ npm-debug.log
 
 #map
 /public/**/*.map
+
+#runtime
+/runtime

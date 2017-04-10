@@ -56,20 +56,19 @@ class FdrController extends CController
         return $workspace;
     }
 
-    public function GetTplsList($extBruTypeId)
+    public function GetTplsList($fdrId)
     {
-        $bruTypeId = $extBruTypeId;
         $tplsListWithControlButtns = '';
 
         $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById($bruTypeId);
+        $fdrInfo = $Bru->GetBruInfoById($fdrId);
         $bruType = $fdrInfo['name'];
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
         $stepLength = $fdrInfo['stepLength'];
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
         unset($Bru);
 
         $PSTempl = new PSTempl;

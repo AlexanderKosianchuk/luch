@@ -3,6 +3,7 @@
 namespace Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use \Exception;
 

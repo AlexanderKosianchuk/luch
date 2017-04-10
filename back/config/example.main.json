@@ -1,9 +1,0 @@
-{
-    "db": {
-        "host": "localhost",
-        "user": "dbUserdb5",
-        "pass": "124578dbUser",
-        "type": "mysqli",
-        "dbName": "db5"
-    }
-}

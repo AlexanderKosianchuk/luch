@@ -5,11 +5,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import FileInput from 'react-file-input';
+import Guid from 'guid';
 
 import FlightUploaderDropdownLoading from 'components/flight-uploader-dropdown-loading/FlightUploaderDropdownLoading';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'components/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
 import getFdrListAction from 'actions/getFdrList';
+import flightUploaerChangeFdrTypeAction from 'actions/flightUploaderChangeFdrType';
+import flightUploaderChangeCalibrationAction from 'actions/flightUploaderChangeCalibration';
+import startEasyFlightUploadingAction from 'actions/startEasyFlightUploading';
 
 class FlightUploaderDropdown extends React.Component {
     constructor(props) {
@@ -17,21 +21,10 @@ class FlightUploaderDropdown extends React.Component {
 
         this.state = {
             isShown: false,
+            file: '',
             chosenFdr: null,
             defaultCalibration: null
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        let defaultFdr = this.setDefaultFdr(nextProps.fdrTypesList) || null;
-        let defaultCalibration = defaultFdr
-            ? this.setDefaultCalibration(defaultFdr.calibrations)
-            : null;
-
-        this.setState({
-            chosenFdr: defaultFdr,
-            defaultCalibration: defaultCalibration
-        });
     }
 
     setDefaultFdr (fdrTypesList) {
@@ -62,6 +55,16 @@ class FlightUploaderDropdown extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        let defaultFdr = this.setDefaultFdr(nextProps.fdrTypesList) || null;
+        let defaultCalibration = defaultFdr
+            ? this.setDefaultCalibration(defaultFdr.calibrations)
+            : null;
+
+        this.props.changeFdrType(defaultFdr);
+        this.props.changeCalibration(defaultCalibration);
+    }
+
     handleClickOutside(event) {
         if ((event.target.className.includes('flight-uploader-dropdown-toggle'))
             && !this.state.isShown
@@ -76,42 +79,45 @@ class FlightUploaderDropdown extends React.Component {
         let content = <FlightUploaderDropdownLoading />;
         if (this.props.fdrTypesList
             && this.props.fdrTypesList[0] //at list one el exist
+            && this.props.selectedFdrType
         ) {
             content = <FlightUploaderFdrSelector
-                defaultFdr={ this.state.chosenFdr }
+                defaultFdr={ this.props.selectedFdrType }
                 fdrTypesList={ this.props.fdrTypesList }
-                changeFdr={ this.changeFdr.bind(this) }
+                changeFdrType={ this.props.changeFdrType.bind(this) }
             />;
         }
         return content;
     }
 
     putCalibrationList() {
-        if (!this.state.chosenFdr) {
+        if (!this.props.selectedFdrType) {
             return '';
         }
 
         return <FlightUploaderCalibrationSelector
-            defaultCalibration={ this.state.defaultCalibration }
-            calibrations={ this.state.chosenFdr.calibrations }
-            changeCalibration={ this.changeCalibration.bind(this) }
+            defaultCalibration={ this.props.selectedCalibration }
+            calibrations={ this.props.selectedFdrType.calibrations }
+            changeCalibration={ this.props.changeCalibration.bind(this) }
         />;
-    }
-
-    changeFdr(item) {
-        this.setState({
-            chosenFdr: item
-        });
-    }
-
-    changeCalibration(item) {
-        console.log(item);
     }
 
     handleChange() {
         let form = new FormData(this.sendFlightForm);
-        /*!!!!*/
-        this.setState({ isShown: false });
+        let uploadingUid = Guid.create();
+        form.append('fdrId', this.props.selectedFdrType.id);
+        form.append('calibrationId', this.props.selectedCalibration.id);
+        /* just guid file name for progress reporting */
+        form.append('progressFileName', uploadingUid);
+
+        this.props.startEasyUploading({
+            form: form,
+            uploadingUid: uploadingUid
+        });
+        this.setState({
+            isShown: false,
+            file: ''
+        });
     }
 
     render() {
@@ -126,7 +132,7 @@ class FlightUploaderDropdown extends React.Component {
                            className="btn btn-default"
                            name="flightFile"
                            placeholder={ this.props.i18n.chooseFile }
-                           value=""
+                           value={ this.state.file }
                            onChange={ this.handleChange.bind(this) }
                          />
                     </form>
@@ -138,13 +144,18 @@ class FlightUploaderDropdown extends React.Component {
 
 function mapStateToProps (state) {
     return {
-        fdrTypesList: state.fdrTypesList
+        fdrTypesList: state.fdrTypesList,
+        selectedFdrType: state.flightUploader.selectedFdrType,
+        selectedCalibration: state.flightUploader.selectedCalibration,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFdrList: bindActionCreators(getFdrListAction, dispatch)
+        getFdrList: bindActionCreators(getFdrListAction, dispatch),
+        changeFdrType: bindActionCreators(flightUploaerChangeFdrTypeAction, dispatch),
+        changeCalibration: bindActionCreators(flightUploaderChangeCalibrationAction, dispatch),
+        startEasyUploading: bindActionCreators(startEasyFlightUploadingAction, dispatch)
     }
 }
 

@@ -33,12 +33,13 @@ class FlightComponent
         if (User::isAdmin($role)) {
             $Fl = new Flight;
             $flightInfo = $Fl->GetFlightInfo($flightId);
-            $bruType = $flightInfo["bruType"];
+            $fdrId = intval($flightInfo["id_fdr"]);
 
-            $Bru = new Fdr;
-            $fdrInfo = $Bru->GetBruInfo($bruType);
-            $prefixApArr = $Bru->GetBruApCycloPrefixes($bruType);
-            $prefixBpArr = $Bru->GetBruBpCycloPrefixes($bruType);
+            $fdr = new Fdr;
+            $fdrInfo = $fdr->getFdrInfo($fdrId);
+            $prefixApArr = $fdr->GetBruApCycloPrefixes($fdrId);
+            $prefixBpArr = $fdr->GetBruBpCycloPrefixes($fdrId);
+            unset($fdr);
 
             $prefixes = [];
             foreach ($prefixApArr as $num) {

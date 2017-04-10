@@ -112,7 +112,7 @@ class ViewOptionsController extends CController
         $fdrInfo = $Bru->GetBruInfo($bruType);
         $stepLength = $fdrInfo['stepLength'];
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrInfo['id']);
         unset($Bru);
 
         $Frame = new Frame;
@@ -145,7 +145,7 @@ class ViewOptionsController extends CController
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
         $stepLength = $fdrInfo['stepLength'];
         //$this->info = array_merge($this->info, $flightInfo, $fdrInfo);
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrInfo['id']);
         unset($Bru);
 
         $Frame = new Frame;
@@ -504,7 +504,7 @@ class ViewOptionsController extends CController
 
         $Bru = new Fdr;
         $fdrInfo = $Bru->GetBruInfo($bruType);
-        $prefixArr = $Bru->GetBruApCycloPrefixes($bruType);
+        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrInfo['id']);
         unset($Bru);
 
         $bort = $flightInfo['bort'];

@@ -671,7 +671,7 @@ class FlightsController extends CController
 
          $exportedFiles[] = $headerFile;
 
-         $apPrefixes = $Bru->GetBruApCycloPrefixes($flightInfo["bruType"]);
+         $apPrefixes = $Bru->GetBruApCycloPrefixes($flightInfo["id_fdr"]);
 
          for($i = 0; $i < count($apPrefixes); $i++)
          {
@@ -1426,18 +1426,15 @@ class FlightsController extends CController
            $type = $data['type'];
            $id = intval($data['id']);
 
-           if($type == 'folder')
-           {
+           if($type == 'folder') {
                $result = $this->DeleteFolderWithAllChildren($id);
 
                $answ = array();
-               if($result)
+               if ($result)
                {
                    $answ['status'] = 'ok';
                    $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
-               }
-               else
-               {
+               } else {
                    $answ['status'] = 'err';
                    $answ['data']['error'] = 'Error during folder deleting.';
                    $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
