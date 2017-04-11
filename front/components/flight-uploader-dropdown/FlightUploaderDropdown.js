@@ -4,6 +4,8 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
+import Switch from 'react-bootstrap-switch';
+import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.css';
 import FileInput from 'react-file-input';
 import Guid from 'guid';
 
@@ -13,6 +15,7 @@ import FlightUploaderCalibrationSelector from 'components/flight-uploader-calibr
 import getFdrListAction from 'actions/getFdrList';
 import flightUploaerChangeFdrTypeAction from 'actions/flightUploaderChangeFdrType';
 import flightUploaderChangeCalibrationAction from 'actions/flightUploaderChangeCalibration';
+import flightUploaderChangePreviewNeedStateAction from 'actions/flightUploaderChangePreviewNeedState';
 import startEasyFlightUploadingAction from 'actions/startEasyFlightUploading';
 
 class FlightUploaderDropdown extends React.Component {
@@ -56,6 +59,11 @@ class FlightUploaderDropdown extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        /* do not need render on switch change */
+        if (nextProps.previewState !== this.props.previewState) {
+            return false;
+        }
+
         let defaultFdr = this.setDefaultFdr(nextProps.fdrTypesList) || null;
         let defaultCalibration = defaultFdr
             ? this.setDefaultCalibration(defaultFdr.calibrations)
@@ -105,19 +113,34 @@ class FlightUploaderDropdown extends React.Component {
     handleChange() {
         let form = new FormData(this.sendFlightForm);
         let uploadingUid = Guid.create();
-        form.append('fdrId', this.props.selectedFdrType.id);
-        form.append('calibrationId', this.props.selectedCalibration.id);
-        /* just guid file name for progress reporting */
-        form.append('progressFileName', uploadingUid);
 
-        this.props.startEasyUploading({
-            form: form,
-            uploadingUid: uploadingUid
-        });
+        if (this.props.previewState) {
+            this.props.topMenuService.uploadWithPreview(
+                form,
+                uploadingUid,
+                this.props.selectedFdrType.id,
+                this.props.selectedFdrType.name,
+                this.props.selectedCalibration.id
+            );
+        } else {
+            form.append('fdrId', this.props.selectedFdrType.id);
+            form.append('calibrationId', this.props.selectedCalibration.id);
+            /* just guid file name for progress reporting */
+            form.append('progressFileName', uploadingUid);
+            this.props.startEasyUploading({
+                form: form,
+                uploadingUid: uploadingUid
+            });
+        }
+
         this.setState({
             isShown: false,
             file: ''
         });
+    }
+
+    handleSwitchChange(event, state) {
+        this.props.changePreviewNeedState(state);
     }
 
     render() {
@@ -126,6 +149,16 @@ class FlightUploaderDropdown extends React.Component {
                 <li><a href="#"><b>{ this.props.i18n.flightUploading }</b></a></li>
                 { this.putFdrList() }
                 { this.putCalibrationList() }
+                <li><a href="#">
+                    <span className="flight-uploader-dropdown__switch-label">Предпросмотр</span>
+                    <Switch
+                        value={ this.props.previewState }
+                        bsSize="mini"
+                        onText={ this.props.i18n.on }
+                        offText={ this.props.i18n.off }
+                        onChange={ this.handleSwitchChange.bind(this) }
+                    />
+                </a></li>
                 <li><a href="#">
                     <form action="" ref={ (form) => { this.sendFlightForm = form; }}>
                         <FileInput
@@ -147,6 +180,7 @@ function mapStateToProps (state) {
         fdrTypesList: state.fdrTypesList,
         selectedFdrType: state.flightUploader.selectedFdrType,
         selectedCalibration: state.flightUploader.selectedCalibration,
+        previewState: state.flightUploader.preview
     }
 }
 
@@ -155,6 +189,7 @@ function mapDispatchToProps(dispatch) {
         getFdrList: bindActionCreators(getFdrListAction, dispatch),
         changeFdrType: bindActionCreators(flightUploaerChangeFdrTypeAction, dispatch),
         changeCalibration: bindActionCreators(flightUploaderChangeCalibrationAction, dispatch),
+        changePreviewNeedState: bindActionCreators(flightUploaderChangePreviewNeedStateAction, dispatch),
         startEasyUploading: bindActionCreators(startEasyFlightUploadingAction, dispatch)
     }
 }

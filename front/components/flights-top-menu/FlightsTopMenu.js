@@ -57,7 +57,10 @@ export default class FlightsTopMenu extends React.Component {
                       <a href="#" className="flight-uploader-dropdown-toggle dropdown-toggle is-hoverable" role="button">
                         { this.props.i18n.flightUploaderUpload }
                       </a>
-                      <FlightUploaderDropdown i18n={ this.props.i18n }/>
+                      <FlightUploaderDropdown
+                          i18n={ this.props.i18n }
+                          topMenuService={ this.props.topMenuService }
+                      />
                     </li>
                   </ul>
 

@@ -3,6 +3,8 @@
 "flightUploading": "Flight uploading",
 "exit": "Exit",
 "options": "Options",
+"on": "On",
+"off": "Off",
 
 "continueLabel": "Next",
 "tplHasBeenAdded": "Template added. Demonstrate how changes to refresh the page (Shift + F5)",

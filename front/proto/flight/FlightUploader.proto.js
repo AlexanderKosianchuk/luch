@@ -1,3 +1,5 @@
+import Guid from 'guid';
+
 function FlightUploader(window, document, langStr, eventHandler)
 {
     this.langStr = langStr;
@@ -23,7 +25,10 @@ function FlightUploader(window, document, langStr, eventHandler)
     this.flightUploaderContent = null;
 }
 
-FlightUploader.prototype.FillFactoryContaider = function(factoryContainer) {
+FlightUploader.prototype.FillFactoryContaider = function(
+    factoryContainer, form, uploadingUid, fdrId, fdrName, calibrationId
+) {
+    let self = this;
     this.flightUploaderFactoryContainer = factoryContainer;
 
     this.flightUploaderFactoryContainer.append("<div id='flightUploaderTopMenu' class='TopMenu'>" +
@@ -44,7 +49,24 @@ FlightUploader.prototype.FillFactoryContaider = function(factoryContainer) {
 
     this.ResizeFlightUploader();
     this.document.scrollTop(factoryContainer.data("index") * this.window.height());
-}
+
+    this.UploadForPreview(form, uploadingUid).done(function(data) {
+        self.GetFlightParams(0, data.file, fdrId, calibrationId);
+    });
+};
+
+FlightUploader.prototype.UploadForPreview = function(form, uploadingUid) {
+    return $.ajax({
+        url: ENTRY_URL + "?action=uploader/copyToRuntime",
+        type: 'POST',
+        data: form,
+        processData: false,
+        contentType: false,
+        dataType: "json"
+    }).fail(function(msg){
+        console.log(msg);
+    });
+};
 
 FlightUploader.prototype.ResizeFlightUploader = function(e) {
     var self = this;
@@ -272,7 +294,7 @@ FlightUploader.prototype.ShowFlightUploadingOptions = function()
 FlightUploader.prototype.GetFlightParams = function(
         index,
         file,
-        fdrName,
+        fdrId,
         calibrationId = null
 ) {
 
@@ -285,7 +307,7 @@ FlightUploader.prototype.GetFlightParams = function(
                 data: {
                     index: index,
                     file: file,
-                    bruType: fdrName,
+                    fdrId: fdrId,
                     calibrationId: calibrationId
                 }
             };
@@ -320,7 +342,7 @@ FlightUploader.prototype.GetFlightParams = function(
                             previewParams,
                             index,
                             file,
-                            fdrName,
+                            fdrId,
                             chartWidth);
 
                     self.SliceFlightButtInitialSupport(parentContainer, previewParams);
@@ -360,7 +382,7 @@ FlightUploader.prototype.GetFlightParams = function(
                             previewParams,
                             index,
                             file,
-                            selectedBruType,
+                            fdrId,
                             chartWidth);
 
                     self.SliceFlightButtInitialSupport(parentContainer, previewParams);
@@ -445,7 +467,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
         previewParams,
         index,
         fileName,
-        bruType,
+        fdrId,
         chartWidth){
 
     var self = this;
@@ -533,7 +555,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
                 action: "uploader/flightUploaderPreview",
                 data: {
                     file: fileName,
-                    bruType: bruType,
+                    fdrId: fdrId,
                 }
             };
 
@@ -649,6 +671,7 @@ FlightUploader.prototype.GetValue = function(previewParams, dataset, x) {
 
         // Now Interpolate
         var y,
+            posX,
             p1 = series.data[j - 1],
             p2 = series.data[j];
 
@@ -692,7 +715,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
             $.each(flightsContainers, function(counter, el){
                 var $el = $(el),
                     fileName = $el.data("filename"),
-                    bruType = $el.data("brutype"),
+                    fdrId = $el.data("fdr-id"),
                     calibrationId = $el.data("calibration-id"),
                     index = $el.data("index"),
                     ignoreDueUploading = $el.find("#ignoreDueUploading" + index),
@@ -731,7 +754,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     }
 
                     var flightConvertionAction = "flightProcces",
-                        tempFileName = guid() + "_tempStatus.json",
+                        tempFileName = Guid.create() + "_tempStatus.json",
                         performProc = $el.find("input#execProc").prop('checked');
 
                     if(performProc == true){
@@ -741,7 +764,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     var pV = {
                             'action': 'uploader/' + flightConvertionAction,
                             'data': {
-                                'bruType': bruType,
+                                'fdrId': fdrId,
                                 'calibrationId': calibrationId,
                                 'fileName': fileName,
                                 'tempFileName': tempFileName,
@@ -940,7 +963,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
     var self = this,
         pV = postValues,
         eventInfo = {
-            'bruType': pV["data"]["bruType"],
+            'fdrId': pV["data"]["fdrId"],
             'fileName': pV["data"]["fileName"],
             'tempFileName': pV["data"]["tempFileName"]
         };
@@ -965,28 +988,6 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
     self.eventHandler.trigger("startProccessing", eventInfo);
 }
 
-///
-//EasyUploading
-///
-FlightUploader.prototype.EasyUploading = function(
-        bruType,
-        fileName,
-        calibrationId
-) {
-
-    var tempFileName = guid() + "_tempStatus.json";
-    var pV = {
-        'action': 'uploader/flightEasyUpload',
-        'data': {
-            'bruType': bruType,
-            'fileName': fileName,
-            'tempFileName': tempFileName,
-            'calibrationId': calibrationId
-        }
-    };
-
-    this.InitiateFlightProccessing(pV);
-}
 
 ///
 //Import
@@ -1027,11 +1028,5 @@ function s4() {
              .substring(1);
 };
 //=============================================================
-
-//=============================================================
-function guid() {
-  return this.s4() + this.s4() + '_' + this.s4() + '_' + this.s4() + '_' +
-         this.s4() + '_' + this.s4() + this.s4() + this.s4();
-};
 
 module.exports = FlightUploader;

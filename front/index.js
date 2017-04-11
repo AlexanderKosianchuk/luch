@@ -137,6 +137,9 @@ $(document).ready(function () {
             },
             changeLanguage: function(newLang) {
                 eventHandler.trigger("userChangeLanguage", [newLang]);
+            },
+            uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
+                eventHandler.trigger("uploadWithPreview", [form, uploadingUid, fdrId, fdrName, calibrationId]);
             }
         };
 
@@ -159,9 +162,9 @@ $(document).ready(function () {
         W.ResizeShowcase(e);
     });
 
-    eventHandler.on("uploadWithPreview", function () {
+    eventHandler.on("uploadWithPreview", function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
         var showcase = W.NewShowcase();
-        FU.FillFactoryContaider(showcase);
+        FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
     });
 
     eventHandler.on("removeShowcase", function (e, data, callback) {

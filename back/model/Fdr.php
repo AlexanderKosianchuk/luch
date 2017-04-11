@@ -237,17 +237,17 @@ class Fdr
         return $cyclo;
     }
 
-    public function GetBruApCyclo($extBruType, $extJtStartIndex, $extJtPageSize, $extJtSorting)
+    public function GetBruApCyclo($fdrId, $jtStartIndex, $jtPageSize, $jtSorting)
     {
-        $bruType = $extBruType;
-        $jtStartIndex = $extJtStartIndex;
-        $jtPageSize = $extJtPageSize;
-        $jtSorting = $extJtSorting;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int expected. Passed: "
+                . json_encode($fdrId), 1);
+        }
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -256,15 +256,13 @@ class Fdr
 
         $query = "SELECT * FROM `".$cycloApTableName."` ";
 
-        if($jtSorting != -1)
-        {
+        if($jtSorting != -1) {
             $jtSorting = explode(" ", $jtSorting);
             $jtSorting = "`" . $jtSorting[0] . "`" . $jtSorting[1];
             $query .= "ORDER BY " . $jtSorting . " ";
         }
 
-        if(($extJtStartIndex != -1) && ($extJtPageSize != -1))
-        {
+        if(($jtStartIndex != -1) && ($jtPageSize != -1)) {
             $query .= "LIMIT ". $jtStartIndex . ", " . $jtPageSize . " ";
         }
 

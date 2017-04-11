@@ -3,6 +3,8 @@
 "flightUploading": "Flight uploading",
 "exit": "Salida",
 "options": "Opciones",
+"on": "On",
+"off": "Off",
 
 "continueLabel": "Además",
 "tplHasBeenAdded": "Plantilla añadió. (Shift+F5)",

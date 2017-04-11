@@ -18,6 +18,7 @@ use Component\RuntimeManager;
 use Evenement\EventEmitter;
 
 use ZipArchive;
+use \Exception;
 
 class UploaderController extends CController
 {
@@ -29,31 +30,29 @@ class UploaderController extends CController
         $this->setAttributes();
     }
 
-    public function ShowFlightParams($index, $bruType, $filePath, $calibrationId = null)
+    public function ShowFlightParams($index, $fdrId, $filePath, $calibrationId = null)
     {
         $fileName = basename($filePath);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $previewParams = $fdrInfo['previewParams'];
-        unset($Bru);
+        unset($fdr);
 
-        $flightInfoFromHeader = $this->ReadHeader($bruType, $filePath);
+        $flightInfoFromHeader = $this->ReadHeader($fdrId, $filePath);
 
         $fileInfoColumnWidth = '100%';
-        if($previewParams != '') {
+        if ($previewParams != '') {
             $fileInfoColumnWidth = 450;
         }
 
         $flightParamsSrt = "<div id='fileFlightInfo".$index."' class='MainContainerContentRows' " .
             "data-filename='" . $filePath . "' " .
-            "data-brutype='" . $bruType . "' " .
+            "data-fdr-id='" . $fdrId . "' " .
             "data-index='" . $index . "' " .
             "data-previewparams='" . $previewParams . "' " .
             "data-calibration-id='" . $calibrationId . "' " .
             "align='left'>" .
-            "<a style='margin-left:5px; font-weight:bold;'>" .
-                $this->lang->enterFlightDetails . " - " . $fileName . "</a>" .
             "</br>" .
              //left column for flight info - right for preview
             "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
@@ -62,13 +61,13 @@ class UploaderController extends CController
             "<tr>" .
             "<td>" . $this->lang->bruType . "</td>";
 
-        $flightParamsSrt .= "<td><input id='bruType' name='bruType' class='FlightUploadingInputs' value='" . $bruType .
+        $flightParamsSrt .= "<td>"
+            ."<input id='bruType' name='fdrName' class='FlightUploadingInputs' value='" . $fdrInfo['name'] .
             "' readonly /></td>" .
             "</tr><tr>";
 
         $bortFromHeader = "";
-        if(isset($flightInfoFromHeader["bort"]))
-        {
+        if(isset($flightInfoFromHeader["bort"])) {
             $bortFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["bort"]);
         }
 
@@ -78,8 +77,7 @@ class UploaderController extends CController
             "</tr>";
 
         $voyageFromHeader = "";
-        if(isset($flightInfoFromHeader["voyage"]))
-        {
+        if (isset($flightInfoFromHeader["voyage"])) {
             $voyageFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["voyage"]);
         }
 
@@ -89,8 +87,7 @@ class UploaderController extends CController
             "</tr>";
 
         $departureAirportFromHeader = "";
-        if(isset($flightInfoFromHeader["departureAirport"]))
-        {
+        if(isset($flightInfoFromHeader["departureAirport"])) {
             $departureAirportFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["departureAirport"]);
         }
 
@@ -199,7 +196,7 @@ class UploaderController extends CController
                     "class='SliceFlightButt' ".
                     "data-index='".$index."' " .
                     "data-file='".$filePath."' " .
-                    "data-brutype='".$bruType."' " .
+                    "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
                     $this->lang->slice . "</button>";
 
@@ -207,7 +204,7 @@ class UploaderController extends CController
                     "class='SliceCyclicFlightButt' ".
                     "data-index='".$index."' " .
                     "data-file='".$filePath."' " .
-                    "data-brutype='".$bruType."' " .
+                    "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
                     $this->lang->sliceCyclic . "</button>";
         }
@@ -297,15 +294,13 @@ class UploaderController extends CController
         return json_encode($aditionalInfo);
     }
 
-    public function CopyPreview($extBruType, $extFilePath)
+    public function CopyPreview($fdrId, $file)
     {
-        $bruType = $extBruType;
-        $file = $extFilePath;
+        $fdrId = intval($fdrId);
+        $flightInfo['id_fdr'] = $fdrId;
 
-        $flightInfo['bruType'] = $bruType;
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $frameLength = $fdrInfo['frameLength'];
         $stepLength = $fdrInfo['stepLength'];
         $wordLength = $fdrInfo['wordLength'];
@@ -314,7 +309,7 @@ class UploaderController extends CController
         $frameSyncroCode = $fdrInfo['frameSyncroCode'];
 
         $previewParams = $fdrInfo['previewParams'];
-        $cycloAp = $Bru->GetBruApCyclo($bruType, -1, -1, -1);
+        $cycloAp = $fdr->GetBruApCyclo($fdrId, -1, -1, -1);
 
         $previewParams = explode(";", $previewParams);
         $previewParams = array_map('trim', $previewParams);
@@ -322,13 +317,10 @@ class UploaderController extends CController
         $previewCyclo = array();
         $cycloApByPrefixes = array();
 
-        foreach ($cycloAp as $row => $val)
-        {
-            if(in_array($val['code'], $previewParams))
-            {
+        foreach ($cycloAp as $row => $val) {
+            if(in_array($val['code'], $previewParams)) {
                 $previewCyclo[] = $val;
-                if(!in_array($val['prefix'], $cycloApByPrefixes))
-                {
+                if(!in_array($val['prefix'], $cycloApByPrefixes)) {
                     $prefixFreqArr[$val['prefix']] = count(explode(",",$val['channel']));
                 }
 
@@ -336,8 +328,8 @@ class UploaderController extends CController
             }
         }
 
-        $prefixFreqArr = $Bru->GetBruApCycloPrefixFreq($bruType);
-        unset($Bru);
+        $prefixFreqArr = $fdr->GetBruApCycloPrefixFreq($fdrId);
+        unset($fdr);
 
         $Fr = new Frame;
         $fileDesc = $Fr->OpenFile($file);
@@ -1080,51 +1072,51 @@ class UploaderController extends CController
 
     public function flightShowUploadingOptions($data)
     {
-        if(isset($data['index']) &&
-                isset($data['bruType']) &&
-                isset($data['file']))
+        if (!isset($data['index'])
+            || !isset($data['fdrId'])
+            || !isset($data['file']))
         {
-            $index = $data['index'];
-            $bruType = $data['bruType'];
-            $filePath = UPLOADED_FILES_PATH . $data['file'];
-
-            $calibrationId = null;
-            if(isset($data['calibrationId'])
-                && !empty($data['calibrationId'])
-                && is_int(intval($data['calibrationId']))
-            ) {
-                $calibrationId = intval($data['calibrationId']);
-            }
-
-            $flightParamsSrt = $this->ShowFlightParams($index, $bruType, $filePath, $calibrationId);
-
-            $answ["status"] = "ok";
-            $answ["data"] = $flightParamsSrt;
-            echo(json_encode($answ));
-        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $index = $data['index'];
+        $fdrId = intval($data['fdrId']);
+        $filePath = strval($data['file']);
+
+        $calibrationId = null;
+        if(isset($data['calibrationId'])
+            && !empty($data['calibrationId'])
+            && is_int(intval($data['calibrationId']))
+        ) {
+            $calibrationId = intval($data['calibrationId']);
+        }
+
+        $flightParamsSrt = $this->ShowFlightParams($index, $fdrId, $filePath, $calibrationId);
+
+        $answ["status"] = "ok";
+        $answ["data"] = $flightParamsSrt;
+        echo(json_encode($answ));
     }
 
     public function flightUploaderPreview($data)
     {
-        if(isset($data['bruType'])
-            && isset($data['file'])
+        if (!isset($data['fdrId'])
+            || !isset($data['file'])
         ) {
-            $bruType = $data['bruType'];
-            $filePath = UPLOADED_FILES_PATH . $data['file'];
-
-            $this->CopyPreview($bruType, $filePath);
-        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". " .
                 "Action: " . $this->action . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['fdrId']);
+        $filePath = strval($data['file']);
+
+        $this->CopyPreview($fdrId, $filePath);
     }
 
     public function flightCutFile($data)
@@ -1187,174 +1179,180 @@ class UploaderController extends CController
 
     public function flightProcces($data)
     {
-        if(isset($data['bruType']) &&
-            isset($data['fileName']) &&
-            isset($data['tempFileName']) &&
-            isset($data['flightInfo']) &&
-            isset($data['flightAditionalInfo'])
+        if(!isset($data['fdrId'])
+            || !isset($data['fileName'])
+            || !isset($data['tempFileName'])
+            || !isset($data['flightInfo'])
+            || !isset($data['flightAditionalInfo'])
         ) {
-            $bruType = $data['bruType'];
-            $uploadedFile = $data['fileName'];
-
-            $tempFileName = $data['tempFileName'];
-            $receivedFlightInfo = $data['flightInfo'];
-            $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
-            $flightInfo = array();
-            $flightAditionalInfo = array();
-
-            $calibrationId = null;
-            if(isset($data['calibrationId'])
-                && !empty($data['calibrationId'])
-                && is_int(intval($data['calibrationId']))
-            ) {
-                $calibrationId = intval($data['calibrationId']);
-            }
-
-            //in such way it was passed in js because of imposible to do it by usual asoc arr
-            for($i = 0; $i < count($receivedFlightInfo); $i+=2) {
-                if((string)$receivedFlightInfo[$i + 1] != '') {
-                    $flightInfo[(string)$receivedFlightInfo[$i]] =
-                        (string)$receivedFlightInfo[$i + 1];
-                } else {
-                    $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
-                }
-            }
-
-            $aditionalInfoVars = '';
-            if($receivedFlightAditionalInfo != '0') {
-                for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
-                    $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
-                        (string)$receivedFlightAditionalInfo[$i + 1];
-                }
-
-                $aditionalInfoVars = json_encode($flightAditionalInfo);
-            }
-
-            $bort = $flightInfo["bort"];
-            $voyage = $flightInfo["voyage"];
-            $copyCreationTime = $flightInfo["copyCreationTime"];
-            $copyCreationDate = $flightInfo["copyCreationDate"];
-            $performer = $flightInfo["performer"];
-            $departureAirport = $flightInfo["departureAirport"];
-            $arrivalAirport = $flightInfo["arrivalAirport"];
-            $totalPersentage = 100;
-
-            $this->ProccessFlightData($tempFileName,
-                $bort,
-                $voyage,
-                $copyCreationTime,
-                $copyCreationDate,
-                $bruType,
-                $performer,
-                $departureAirport,
-                $arrivalAirport,
-                $aditionalInfoVars,
-                $uploadedFile,
-                $totalPersentage,
-                $calibrationId
-            );
-
-            $answ = array(
-                    "status" => "ok",
-                    "data" => $uploadedFile
-            );
-            echo(json_encode($answ));
-        } else {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". " .
                 "Action: " . $this->action . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['fdrId']);
+        $uploadedFile = $data['fileName'];
+
+        $tempFileName = $data['tempFileName'];
+        $receivedFlightInfo = $data['flightInfo'];
+        $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
+        $flightInfo = array();
+        $flightAditionalInfo = array();
+
+        $calibrationId = null;
+        if(isset($data['calibrationId'])
+            && !empty($data['calibrationId'])
+            && is_int(intval($data['calibrationId']))
+        ) {
+            $calibrationId = intval($data['calibrationId']);
+        }
+
+        //in such way it was passed in js because of imposible to do it by usual asoc arr
+        for($i = 0; $i < count($receivedFlightInfo); $i+=2) {
+            if((string)$receivedFlightInfo[$i + 1] != '') {
+                $flightInfo[(string)$receivedFlightInfo[$i]] =
+                    (string)$receivedFlightInfo[$i + 1];
+            } else {
+                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
+            }
+        }
+
+        $aditionalInfoVars = '';
+        if($receivedFlightAditionalInfo != '0') {
+            for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
+                $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
+                    (string)$receivedFlightAditionalInfo[$i + 1];
+            }
+
+            $aditionalInfoVars = json_encode($flightAditionalInfo);
+        }
+
+        $bort = $flightInfo["bort"];
+        $voyage = $flightInfo["voyage"];
+        $copyCreationTime = $flightInfo["copyCreationTime"];
+        $copyCreationDate = $flightInfo["copyCreationDate"];
+        $performer = $flightInfo["performer"];
+        $departureAirport = $flightInfo["departureAirport"];
+        $arrivalAirport = $flightInfo["arrivalAirport"];
+        $totalPersentage = 100;
+
+        $progressFileName = RuntimeManager::createProgressFile($tempFileName);
+
+        $this->ProccessFlightData($progressFileName,
+            $bort,
+            $voyage,
+            $copyCreationTime,
+            $copyCreationDate,
+            $fdrId,
+            $performer,
+            $departureAirport,
+            $arrivalAirport,
+            $aditionalInfoVars,
+            $uploadedFile,
+            $totalPersentage,
+            $calibrationId
+        );
+
+        RuntimeManager::unlinkProgressFile($progressFilePath);
+
+        $answ = array(
+                "status" => "ok",
+                "data" => $uploadedFile
+        );
+        echo(json_encode($answ));
     }
 
     public function flightProccesAndCheck($data)
     {
-        if (isset($data['bruType']) &&
-                isset($data['fileName']) &&
-                isset($data['tempFileName']) &&
-                isset($data['flightInfo']) &&
-                isset($data['flightAditionalInfo'])
+        if (!isset($data['fdrId'])
+            || !isset($data['fileName'])
+            || !isset($data['tempFileName'])
+            || !isset($data['flightInfo'])
+            || !isset($data['flightAditionalInfo'])
         ) {
-            $bruType = $data['bruType'];
-            $uploadedFile = $data['fileName'];
-
-            $tempFileName = $data['tempFileName'];
-            $receivedFlightInfo = $data['flightInfo'];
-            $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
-            $flightInfo = array();
-            $flightAditionalInfo = array();
-
-            $calibrationId = null;
-            if(isset($data['calibrationId'])
-                && !empty($data['calibrationId'])
-                && is_int(intval($data['calibrationId']))
-            ) {
-                $calibrationId = intval($data['calibrationId']);
-            }
-
-            //in such way it was passed in js because of imposible to do it by usual aasoc arr
-            for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
-                if ((string)$receivedFlightInfo[$i + 1] != '') {
-                    $flightInfo[(string)$receivedFlightInfo[$i]] =
-                        (string)$receivedFlightInfo[$i + 1];
-                } else {
-                    $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
-                }
-            }
-
-            $aditionalInfoVars = '';
-            if($receivedFlightAditionalInfo != 0) {
-                for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
-                    $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
-                        (string)$receivedFlightAditionalInfo[$i + 1];
-                }
-
-                $aditionalInfoVars = json_encode($flightAditionalInfo);
-            }
-
-            $bort = $flightInfo["bort"];
-            $voyage = $flightInfo["voyage"];
-            $copyCreationTime = $flightInfo["copyCreationTime"];
-            $copyCreationDate = $flightInfo["copyCreationDate"];
-            $performer = $flightInfo["performer"];
-            $departureAirport = $flightInfo["departureAirport"];
-            $arrivalAirport = $flightInfo["arrivalAirport"];
-            $totalPersentage = 50;
-
-            $flightId = $this->ProccessFlightData($tempFileName,
-                $bort,
-                $voyage,
-                $copyCreationTime,
-                $copyCreationDate,
-                $bruType,
-                $performer,
-                $departureAirport,
-                $arrivalAirport,
-                $aditionalInfoVars,
-                $uploadedFile,
-                $totalPersentage,
-                $calibrationId
-            );
-
-            $this->ProccesFlightException($flightId,
-                    $tempFileName
-            );
-
-            $answ = array(
-                    "status" => "ok",
-                    "data" => $uploadedFile
-            );
-            echo(json_encode($answ));
-        }
-        else
-        {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". " .
                 "Action: " . $this->action . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['fdrId']);
+        $uploadedFile = $data['fileName'];
+
+        $tempFileName = $data['tempFileName'];
+        $receivedFlightInfo = $data['flightInfo'];
+        $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
+        $flightInfo = array();
+        $flightAditionalInfo = array();
+
+        $calibrationId = null;
+        if(isset($data['calibrationId'])
+            && !empty($data['calibrationId'])
+            && is_int(intval($data['calibrationId']))
+        ) {
+            $calibrationId = intval($data['calibrationId']);
+        }
+
+        //in such way it was passed in js because of imposible to do it by usual aasoc arr
+        for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
+            if ((string)$receivedFlightInfo[$i + 1] != '') {
+                $flightInfo[(string)$receivedFlightInfo[$i]] =
+                    (string)$receivedFlightInfo[$i + 1];
+            } else {
+                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
+            }
+        }
+
+        $aditionalInfoVars = '';
+        if($receivedFlightAditionalInfo != 0) {
+            for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
+                $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
+                    (string)$receivedFlightAditionalInfo[$i + 1];
+            }
+
+            $aditionalInfoVars = json_encode($flightAditionalInfo);
+        }
+
+        $bort = $flightInfo["bort"];
+        $voyage = $flightInfo["voyage"];
+        $copyCreationTime = $flightInfo["copyCreationTime"];
+        $copyCreationDate = $flightInfo["copyCreationDate"];
+        $performer = $flightInfo["performer"];
+        $departureAirport = $flightInfo["departureAirport"];
+        $arrivalAirport = $flightInfo["arrivalAirport"];
+        $totalPersentage = 50;
+
+        $progressFilePath = RuntimeManager::createProgressFile($tempFileName);
+
+        $flightId = $this->ProccessFlightData($progressFilePath,
+            $bort,
+            $voyage,
+            $copyCreationTime,
+            $copyCreationDate,
+            $fdrId,
+            $performer,
+            $departureAirport,
+            $arrivalAirport,
+            $aditionalInfoVars,
+            $uploadedFile,
+            $totalPersentage,
+            $calibrationId
+        );
+
+        $this->ProccesFlightException($flightId,
+            $progressFilePath
+        );
+
+        RuntimeManager::unlinkProgressFile($progressFilePath);
+
+        $answ = array(
+                "status" => "ok",
+                "data" => $uploadedFile
+        );
+        echo(json_encode($answ));
     }
 
     public function flightEasyUpload($data)
@@ -1457,6 +1455,23 @@ class UploaderController extends CController
         RuntimeManager::unlinkProgressFile($progressFilePath);
 
         echo (json_encode(['status' => 'ok']));
+    }
+
+    public function copyToRuntime($data)
+    {
+        if (!isset($_FILES['flightFile']['tmp_name'])) {
+            throw new Exception("Necessary param flightFile not passed.", 1);
+        }
+
+        $fileName = strval($_FILES['flightFile']['tmp_name']);
+        $userId = intval($this->_user->userInfo['id']);
+
+        $storedName = RuntimeManager::storeUploadedFile($fileName);
+
+        echo (json_encode([
+            'status' => 'ok',
+            'file' => $storedName
+        ]));
     }
 
     public function itemImport($data)
