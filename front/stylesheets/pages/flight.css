@@ -191,18 +191,16 @@ select.FlightUploadingInputs {
     padding:0px 5px 5px 10px;
     float:left;
     border-left:solid 1px #bbb;
-    /*height:100px;
-    background-color:red;*/
 }
 
 .JstreeContentItemFolder {
     height:25px;
-    line-height:25px;
+    line-height: 21px;
     border-radius: 2px;
     padding:2px;
     padding-left:15px;
     font-size:16px;
-    background-color:#FFD869;
+    background-color:#fbd960;
 
     margin-top:1px;
 
@@ -214,14 +212,14 @@ select.FlightUploadingInputs {
 
 .JstreeContentItemFlight {
     height:25px;
-    line-height:25px;
+    line-height: 21px;
     border-radius: 2px;
 
     padding:2px;
     padding-left:15px;
     font-size:16px;
     color:#fff;
-    background-color:#439ADC;
+    background-color:#347EAE;
 
     list-style-type: none;
     margin-top:1px;
@@ -233,7 +231,7 @@ select.FlightUploadingInputs {
 }
 
 .JstreeContentItemFlight.is-analyzed {
-    background-color: #54a247;
+    background-color: #51B283;
 }
 
 .JstreeContentItemFolder:hover, .JstreeContentItemFlight:hover {

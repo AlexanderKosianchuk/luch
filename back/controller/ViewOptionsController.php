@@ -173,7 +173,7 @@ class ViewOptionsController extends CController
         $flightTplsStr = "<select id='tplList' size='10' class='TplListSelect is-scrollable' multiple>";
 
         //here builds template options list
-        $flightTplsStr .= $this->BuildTplOptionList($paramSetTemplateListTableName, $bruType);
+        $flightTplsStr .= $this->BuildTplOptionList($paramSetTemplateListTableName, $fdrId);
 
         $foundedEventsTplName = $this->lang->foundedEventsTplName;
 
@@ -212,8 +212,10 @@ class ViewOptionsController extends CController
         return $flightTplsStr;
     }
 
-    private function BuildTplOptionList($paramSetTemplateListTableName, $bruType)
+    private function BuildTplOptionList($paramSetTemplateListTableName, $fdrId)
     {
+        $fdrId = intval($fdrId);
+
         $PSTempl = new PSTempl;
         $PSTList = $PSTempl->GetPSTList($paramSetTemplateListTableName, $this->_user->username);
         $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
@@ -222,8 +224,6 @@ class ViewOptionsController extends CController
         $optionsStr = "";
 
         $fdr = new Fdr;
-        $fdrInfo = $fdr->GetBruInfo($bruType);
-        $fdrId = intval($fdrInfo['id']);
         for($i = 0; $i < count($PSTList); $i++) {
             $PSTRow = $PSTList[$i];
             $paramsArr = $PSTRow[1];

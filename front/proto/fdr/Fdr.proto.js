@@ -1,3 +1,5 @@
+import FdrTemplates from "FdrTemplates";
+
 function Fdr(window, document, langStr, eventHandler)
 {
     var langStr = langStr,
@@ -153,7 +155,7 @@ function Fdr(window, document, langStr, eventHandler)
 }
 
 Fdr.prototype.copyTemplate = function(flightId, tplName) {
-    var $dfd = $.Deferred()
+    var $dfd = $.Deferred(),
         that = this;
 
     $.post(

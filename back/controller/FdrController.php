@@ -11,6 +11,8 @@ use Model\Flight;
 use Component\EntityManagerComponent as EM;
 use Component\FdrComponent;
 
+use \Exception;
+
 class FdrController extends CController
 {
     public $curPage = 'bruTypesPage';
@@ -59,23 +61,22 @@ class FdrController extends CController
     public function GetTplsList($fdrId)
     {
         $tplsListWithControlButtns = '';
+        $fdrId = intval($fdrId);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById($fdrId);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $bruType = $fdrInfo['name'];
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
         $stepLength = $fdrInfo['stepLength'];
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
-        unset($Bru);
+        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
 
         $PSTempl = new PSTempl;
         //if no template table - create it
         $PSTTableName = $paramSetTemplateListTableName;
-        if($PSTTableName == "")
-        {
+        if($PSTTableName == "") {
             $dummy = substr($cycloApTableName, 0, -3);
             $paramSetTemplateListTableName = $dummy . "_pst";
             $PSTTableName = $paramSetTemplateListTableName;
@@ -84,7 +85,7 @@ class FdrController extends CController
         }
 
         //here builds template options list
-        $tplsListWithControlButtns .= $this->BuildTplOptionList($paramSetTemplateListTableName, $bruType);
+        $tplsListWithControlButtns .= $this->BuildTplOptionList($paramSetTemplateListTableName, $fdrId);
 
         $foundedEventsTplName = $this->lang->foundedEventsTplName;
 
@@ -100,8 +101,7 @@ class FdrController extends CController
             }
             $params = substr($params, 0, -2);
 
-            $Bru = new Fdr;
-            $paramNamesStr = $Bru->GetParamNames($bruType, $paramsToAdd);
+            $paramNamesStr = $fdr->GetParamNames($fdrId, $paramsToAdd);
 
             $tplsListWithControlButtns .= "<option id='tplOption' " .
                     "name='".EVENTS_TPL_NAME."'  " .
@@ -114,14 +114,15 @@ class FdrController extends CController
             $this->CreateTemplate($flightId, $paramsToAdd, EVENTS_TPL_NAME);
         }
 
+        unset($fdr);
         unset($PSTempl);
 
         return $tplsListWithControlButtns;
     }
 
-    private function BuildTplOptionList($extParamSetTemplateListTableName, $extBruType) {
-        $bruType = $extBruType;
-        $paramSetTemplateListTableName = $extParamSetTemplateListTableName;
+    private function BuildTplOptionList($paramSetTemplateListTableName, $fdrId)
+    {
+        $fdrId = intval($fdrId);
         $PSTempl = new PSTempl;
         $PSTList = $PSTempl->GetPSTList ( $paramSetTemplateListTableName, $this->_user->username);
         $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
@@ -129,13 +130,13 @@ class FdrController extends CController
 
         $optionsStr = "";
 
-        $Bru = new Fdr;
-        for($i = 0; $i < count ( $PSTList ); $i ++) {
+        $fdr = new Fdr;
+        for($i = 0; $i < count ($PSTList); $i ++) {
             $PSTRow = $PSTList [$i];
             $paramsArr = $PSTRow [1];
             $params = implode ( ", ", $paramsArr );
 
-            $paramNamesStr = $Bru->GetParamNames ( $bruType, $paramsArr );
+            $paramNamesStr = $fdr->GetParamNames($fdrId, $paramsArr);
 
             if ($PSTRow [0] == $defaultPSTName) {
                 $optionsStr .= "<option id='tplOption' " .
@@ -157,7 +158,7 @@ class FdrController extends CController
                 }
             }
         }
-        unset ( $Bru );
+        unset ( $fdr );
 
         return $optionsStr;
     }
@@ -394,7 +395,7 @@ class FdrController extends CController
     public function editingBruTypeTemplatesReceiveParamsList($data)
     {
         if(isset($data['bruTypeId'])) {
-            $bruTypeId = $data['bruTypeId'];
+            $bruTypeId = intval($data['bruTypeId']);
             $paramsList = $this->ShowParamList($bruTypeId);
             $this->RegisterActionExecution($this->action, "executed");
 

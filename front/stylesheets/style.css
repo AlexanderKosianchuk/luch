@@ -28,7 +28,7 @@ body::-webkit-scrollbar {
     border:none;
     width:100%;
     height:45px;
-    background-color:#0072bc;
+    background-color:#063a5c;
 
     box-shadow:0 3px 10px 5px rgba(0,0,0,0.15);
     -o-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);
@@ -90,7 +90,7 @@ body::-webkit-scrollbar {
     margin-top:5px;
     color:#676767;
     border-bottom: 1px solid #bbb;
-    overflow-y:scroll;
+    overflow-y:auto;
 }
 
 .Logo
@@ -440,6 +440,7 @@ body::-webkit-scrollbar {
     height:45px;
     width:100%;
     font-size:20px;
+    padding: 7px 2px;
     vertical-align: middle;
 }
 
@@ -456,7 +457,7 @@ body::-webkit-scrollbar {
 {
     width:20px;
     height:20px;
-    margin:10px 0px 0px 12px;
+    margin:0px 0px 6px 12px;
 }
 
 .Label

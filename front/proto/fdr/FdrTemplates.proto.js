@@ -167,7 +167,7 @@ function FdrTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
             $("#bruTypeTplList option:selected").prop("selected", false);
             $(".ParamsCheckboxGroup").prop("checked", false);
         });
-    }
+    },
 
     ShowTopMenu = function(){
         if(bruTypeTopMenu != null){
