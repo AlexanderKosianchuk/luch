@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "/public/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 435);
+/******/ 	return __webpack_require__(__webpack_require__.s = 438);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -13606,7 +13606,24 @@ module.exports = React;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 28 */,
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Provider__ = __webpack_require__(333);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__connect_connect__ = __webpack_require__(334);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Provider", function() { return __WEBPACK_IMPORTED_MODULE_0__components_Provider__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connectAdvanced", function() { return __WEBPACK_IMPORTED_MODULE_1__components_connectAdvanced__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "connect", function() { return __WEBPACK_IMPORTED_MODULE_2__connect_connect__["a"]; });
+
+
+
+
+
+
+/***/ }),
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14174,7 +14191,43 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 module.exports = SyntheticUIEvent;
 
 /***/ }),
-/* 34 */,
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(119);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__combineReducers__ = __webpack_require__(355);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__ = __webpack_require__(354);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(353);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__compose__ = __webpack_require__(118);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warning__ = __webpack_require__(120);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createStore", function() { return __WEBPACK_IMPORTED_MODULE_0__createStore__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "combineReducers", function() { return __WEBPACK_IMPORTED_MODULE_1__combineReducers__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "bindActionCreators", function() { return __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "applyMiddleware", function() { return __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "compose", function() { return __WEBPACK_IMPORTED_MODULE_4__compose__["a"]; });
+
+
+
+
+
+
+
+/*
+* This is a dummy function to check if the function name has been altered by minification.
+* If the function has been minified and NODE_ENV !== 'production', warn the user.
+*/
+function isCrushed() {}
+
+if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warning__["a" /* default */])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+}
+
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
 /* 35 */
 /***/ (function(module, exports) {
 
@@ -15774,7 +15827,78 @@ return $.ui.safeActiveElement = function( document ) {
 
 
 /***/ }),
-/* 49 */,
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseGetTag_js__ = __webpack_require__(253);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getPrototype_js__ = __webpack_require__(255);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__isObjectLike_js__ = __webpack_require__(260);
+
+
+
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__isObjectLike_js__["a" /* default */])(value) || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__baseGetTag_js__["a" /* default */])(value) != objectTag) {
+    return false;
+  }
+  var proto = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__getPrototype_js__["a" /* default */])(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = isPlainObject;
+
+
+/***/ }),
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17515,7 +17639,34 @@ module.exports = validateDOMNesting;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 65 */,
+/* 65 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = warning;
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+  try {
+    // This error was thrown as a convenience so that if you enable
+    // "break on all exceptions" in your console,
+    // it would pause the execution at this line.
+    throw new Error(message);
+    /* eslint-disable no-empty */
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}
+
+/***/ }),
 /* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21239,7 +21390,20 @@ return $.fn.extend( {
 
 
 /***/ }),
-/* 89 */,
+/* 89 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__root_js__ = __webpack_require__(259);
+
+
+/** Built-in value references. */
+var Symbol = __WEBPACK_IMPORTED_MODULE_0__root_js__["a" /* default */].Symbol;
+
+/* harmony default export */ __webpack_exports__["a"] = Symbol;
+
+
+/***/ }),
 /* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23501,10 +23665,413 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 111 */,
-/* 112 */,
-/* 113 */,
-/* 114 */,
+/* 111 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hoist_non_react_statics__ = __webpack_require__(239);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hoist_non_react_statics___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_hoist_non_react_statics__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant__ = __webpack_require__(240);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_invariant__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_Subscription__ = __webpack_require__(340);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_PropTypes__ = __webpack_require__(113);
+/* harmony export (immutable) */ __webpack_exports__["a"] = connectAdvanced;
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+
+
+
+
+
+
+
+var hotReloadingVersion = 0;
+var dummyState = {};
+function noop() {}
+function makeSelectorStateful(sourceSelector, store) {
+  // wrap the selector in an object that tracks its results between runs.
+  var selector = {
+    run: function runComponentSelector(props) {
+      try {
+        var nextProps = sourceSelector(store.getState(), props);
+        if (nextProps !== selector.props || selector.error) {
+          selector.shouldComponentUpdate = true;
+          selector.props = nextProps;
+          selector.error = null;
+        }
+      } catch (error) {
+        selector.shouldComponentUpdate = true;
+        selector.error = error;
+      }
+    }
+  };
+
+  return selector;
+}
+
+function connectAdvanced(
+/*
+  selectorFactory is a func that is responsible for returning the selector function used to
+  compute new props from state, props, and dispatch. For example:
+     export default connectAdvanced((dispatch, options) => (state, props) => ({
+      thing: state.things[props.thingId],
+      saveThing: fields => dispatch(actionCreators.saveThing(props.thingId, fields)),
+    }))(YourComponent)
+   Access to dispatch is provided to the factory so selectorFactories can bind actionCreators
+  outside of their selector as an optimization. Options passed to connectAdvanced are passed to
+  the selectorFactory, along with displayName and WrappedComponent, as the second argument.
+   Note that selectorFactory is responsible for all caching/memoization of inbound and outbound
+  props. Do not use connectAdvanced directly without memoizing results between calls to your
+  selector, otherwise the Connect component will re-render on every state or props change.
+*/
+selectorFactory) {
+  var _contextTypes, _childContextTypes;
+
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$getDisplayName = _ref.getDisplayName,
+      getDisplayName = _ref$getDisplayName === undefined ? function (name) {
+    return 'ConnectAdvanced(' + name + ')';
+  } : _ref$getDisplayName,
+      _ref$methodName = _ref.methodName,
+      methodName = _ref$methodName === undefined ? 'connectAdvanced' : _ref$methodName,
+      _ref$renderCountProp = _ref.renderCountProp,
+      renderCountProp = _ref$renderCountProp === undefined ? undefined : _ref$renderCountProp,
+      _ref$shouldHandleStat = _ref.shouldHandleStateChanges,
+      shouldHandleStateChanges = _ref$shouldHandleStat === undefined ? true : _ref$shouldHandleStat,
+      _ref$storeKey = _ref.storeKey,
+      storeKey = _ref$storeKey === undefined ? 'store' : _ref$storeKey,
+      _ref$withRef = _ref.withRef,
+      withRef = _ref$withRef === undefined ? false : _ref$withRef,
+      connectOptions = _objectWithoutProperties(_ref, ['getDisplayName', 'methodName', 'renderCountProp', 'shouldHandleStateChanges', 'storeKey', 'withRef']);
+
+  var subscriptionKey = storeKey + 'Subscription';
+  var version = hotReloadingVersion++;
+
+  var contextTypes = (_contextTypes = {}, _contextTypes[storeKey] = __WEBPACK_IMPORTED_MODULE_4__utils_PropTypes__["a" /* storeShape */], _contextTypes[subscriptionKey] = __WEBPACK_IMPORTED_MODULE_4__utils_PropTypes__["b" /* subscriptionShape */], _contextTypes);
+  var childContextTypes = (_childContextTypes = {}, _childContextTypes[subscriptionKey] = __WEBPACK_IMPORTED_MODULE_4__utils_PropTypes__["b" /* subscriptionShape */], _childContextTypes);
+
+  return function wrapWithConnect(WrappedComponent) {
+    __WEBPACK_IMPORTED_MODULE_1_invariant___default()(typeof WrappedComponent == 'function', 'You must pass a component to the function returned by ' + ('connect. Instead received ' + JSON.stringify(WrappedComponent)));
+
+    var wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+
+    var displayName = getDisplayName(wrappedComponentName);
+
+    var selectorFactoryOptions = _extends({}, connectOptions, {
+      getDisplayName: getDisplayName,
+      methodName: methodName,
+      renderCountProp: renderCountProp,
+      shouldHandleStateChanges: shouldHandleStateChanges,
+      storeKey: storeKey,
+      withRef: withRef,
+      displayName: displayName,
+      wrappedComponentName: wrappedComponentName,
+      WrappedComponent: WrappedComponent
+    });
+
+    var Connect = function (_Component) {
+      _inherits(Connect, _Component);
+
+      function Connect(props, context) {
+        _classCallCheck(this, Connect);
+
+        var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+
+        _this.version = version;
+        _this.state = {};
+        _this.renderCount = 0;
+        _this.store = props[storeKey] || context[storeKey];
+        _this.propsMode = Boolean(props[storeKey]);
+        _this.setWrappedInstance = _this.setWrappedInstance.bind(_this);
+
+        __WEBPACK_IMPORTED_MODULE_1_invariant___default()(_this.store, 'Could not find "' + storeKey + '" in either the context or props of ' + ('"' + displayName + '". Either wrap the root component in a <Provider>, ') + ('or explicitly pass "' + storeKey + '" as a prop to "' + displayName + '".'));
+
+        _this.initSelector();
+        _this.initSubscription();
+        return _this;
+      }
+
+      Connect.prototype.getChildContext = function getChildContext() {
+        var _ref2;
+
+        // If this component received store from props, its subscription should be transparent
+        // to any descendants receiving store+subscription from context; it passes along
+        // subscription passed to it. Otherwise, it shadows the parent subscription, which allows
+        // Connect to control ordering of notifications to flow top-down.
+        var subscription = this.propsMode ? null : this.subscription;
+        return _ref2 = {}, _ref2[subscriptionKey] = subscription || this.context[subscriptionKey], _ref2;
+      };
+
+      Connect.prototype.componentDidMount = function componentDidMount() {
+        if (!shouldHandleStateChanges) return;
+
+        // componentWillMount fires during server side rendering, but componentDidMount and
+        // componentWillUnmount do not. Because of this, trySubscribe happens during ...didMount.
+        // Otherwise, unsubscription would never take place during SSR, causing a memory leak.
+        // To handle the case where a child component may have triggered a state change by
+        // dispatching an action in its componentWillMount, we have to re-run the select and maybe
+        // re-render.
+        this.subscription.trySubscribe();
+        this.selector.run(this.props);
+        if (this.selector.shouldComponentUpdate) this.forceUpdate();
+      };
+
+      Connect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+        this.selector.run(nextProps);
+      };
+
+      Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate() {
+        return this.selector.shouldComponentUpdate;
+      };
+
+      Connect.prototype.componentWillUnmount = function componentWillUnmount() {
+        if (this.subscription) this.subscription.tryUnsubscribe();
+        this.subscription = null;
+        this.notifyNestedSubs = noop;
+        this.store = null;
+        this.selector.run = noop;
+        this.selector.shouldComponentUpdate = false;
+      };
+
+      Connect.prototype.getWrappedInstance = function getWrappedInstance() {
+        __WEBPACK_IMPORTED_MODULE_1_invariant___default()(withRef, 'To access the wrapped instance, you need to specify ' + ('{ withRef: true } in the options argument of the ' + methodName + '() call.'));
+        return this.wrappedInstance;
+      };
+
+      Connect.prototype.setWrappedInstance = function setWrappedInstance(ref) {
+        this.wrappedInstance = ref;
+      };
+
+      Connect.prototype.initSelector = function initSelector() {
+        var sourceSelector = selectorFactory(this.store.dispatch, selectorFactoryOptions);
+        this.selector = makeSelectorStateful(sourceSelector, this.store);
+        this.selector.run(this.props);
+      };
+
+      Connect.prototype.initSubscription = function initSubscription() {
+        if (!shouldHandleStateChanges) return;
+
+        // parentSub's source should match where store came from: props vs. context. A component
+        // connected to the store via props shouldn't use subscription from context, or vice versa.
+        var parentSub = (this.propsMode ? this.props : this.context)[subscriptionKey];
+        this.subscription = new __WEBPACK_IMPORTED_MODULE_3__utils_Subscription__["a" /* default */](this.store, parentSub, this.onStateChange.bind(this));
+
+        // `notifyNestedSubs` is duplicated to handle the case where the component is  unmounted in
+        // the middle of the notification loop, where `this.subscription` will then be null. An
+        // extra null check every change can be avoided by copying the method onto `this` and then
+        // replacing it with a no-op on unmount. This can probably be avoided if Subscription's
+        // listeners logic is changed to not call listeners that have been unsubscribed in the
+        // middle of the notification loop.
+        this.notifyNestedSubs = this.subscription.notifyNestedSubs.bind(this.subscription);
+      };
+
+      Connect.prototype.onStateChange = function onStateChange() {
+        this.selector.run(this.props);
+
+        if (!this.selector.shouldComponentUpdate) {
+          this.notifyNestedSubs();
+        } else {
+          this.componentDidUpdate = this.notifyNestedSubsOnComponentDidUpdate;
+          this.setState(dummyState);
+        }
+      };
+
+      Connect.prototype.notifyNestedSubsOnComponentDidUpdate = function notifyNestedSubsOnComponentDidUpdate() {
+        // `componentDidUpdate` is conditionally implemented when `onStateChange` determines it
+        // needs to notify nested subs. Once called, it unimplements itself until further state
+        // changes occur. Doing it this way vs having a permanent `componentDidMount` that does
+        // a boolean check every time avoids an extra method call most of the time, resulting
+        // in some perf boost.
+        this.componentDidUpdate = undefined;
+        this.notifyNestedSubs();
+      };
+
+      Connect.prototype.isSubscribed = function isSubscribed() {
+        return Boolean(this.subscription) && this.subscription.isSubscribed();
+      };
+
+      Connect.prototype.addExtraProps = function addExtraProps(props) {
+        if (!withRef && !renderCountProp && !(this.propsMode && this.subscription)) return props;
+        // make a shallow copy so that fields added don't leak to the original selector.
+        // this is especially important for 'ref' since that's a reference back to the component
+        // instance. a singleton memoized selector would then be holding a reference to the
+        // instance, preventing the instance from being garbage collected, and that would be bad
+        var withExtras = _extends({}, props);
+        if (withRef) withExtras.ref = this.setWrappedInstance;
+        if (renderCountProp) withExtras[renderCountProp] = this.renderCount++;
+        if (this.propsMode && this.subscription) withExtras[subscriptionKey] = this.subscription;
+        return withExtras;
+      };
+
+      Connect.prototype.render = function render() {
+        var selector = this.selector;
+        selector.shouldComponentUpdate = false;
+
+        if (selector.error) {
+          throw selector.error;
+        } else {
+          return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"])(WrappedComponent, this.addExtraProps(selector.props));
+        }
+      };
+
+      return Connect;
+    }(__WEBPACK_IMPORTED_MODULE_2_react__["Component"]);
+
+    Connect.WrappedComponent = WrappedComponent;
+    Connect.displayName = displayName;
+    Connect.childContextTypes = childContextTypes;
+    Connect.contextTypes = contextTypes;
+    Connect.propTypes = contextTypes;
+
+    if (process.env.NODE_ENV !== 'production') {
+      Connect.prototype.componentWillUpdate = function componentWillUpdate() {
+        // We are hot reloading!
+        if (this.version !== version) {
+          this.version = version;
+          this.initSelector();
+
+          if (this.subscription) this.subscription.tryUnsubscribe();
+          this.initSubscription();
+          if (shouldHandleStateChanges) this.subscription.trySubscribe();
+        }
+      };
+    }
+
+    return __WEBPACK_IMPORTED_MODULE_0_hoist_non_react_statics___default()(Connect, WrappedComponent);
+  };
+}
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 112 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_verifyPlainObject__ = __webpack_require__(114);
+/* harmony export (immutable) */ __webpack_exports__["b"] = wrapMapToPropsConstant;
+/* unused harmony export getDependsOnOwnProps */
+/* harmony export (immutable) */ __webpack_exports__["a"] = wrapMapToPropsFunc;
+
+
+function wrapMapToPropsConstant(getConstant) {
+  return function initConstantSelector(dispatch, options) {
+    var constant = getConstant(dispatch, options);
+
+    function constantSelector() {
+      return constant;
+    }
+    constantSelector.dependsOnOwnProps = false;
+    return constantSelector;
+  };
+}
+
+// dependsOnOwnProps is used by createMapToPropsProxy to determine whether to pass props as args
+// to the mapToProps function being wrapped. It is also used by makePurePropsSelector to determine
+// whether mapToProps needs to be invoked when props have changed.
+// 
+// A length of one signals that mapToProps does not depend on props from the parent component.
+// A length of zero is assumed to mean mapToProps is getting args via arguments or ...args and
+// therefore not reporting its length accurately..
+function getDependsOnOwnProps(mapToProps) {
+  return mapToProps.dependsOnOwnProps !== null && mapToProps.dependsOnOwnProps !== undefined ? Boolean(mapToProps.dependsOnOwnProps) : mapToProps.length !== 1;
+}
+
+// Used by whenMapStateToPropsIsFunction and whenMapDispatchToPropsIsFunction,
+// this function wraps mapToProps in a proxy function which does several things:
+// 
+//  * Detects whether the mapToProps function being called depends on props, which
+//    is used by selectorFactory to decide if it should reinvoke on props changes.
+//    
+//  * On first call, handles mapToProps if returns another function, and treats that
+//    new function as the true mapToProps for subsequent calls.
+//    
+//  * On first call, verifies the first result is a plain object, in order to warn
+//    the developer that their mapToProps function is not returning a valid result.
+//    
+function wrapMapToPropsFunc(mapToProps, methodName) {
+  return function initProxySelector(dispatch, _ref) {
+    var displayName = _ref.displayName;
+
+    var proxy = function mapToPropsProxy(stateOrDispatch, ownProps) {
+      return proxy.dependsOnOwnProps ? proxy.mapToProps(stateOrDispatch, ownProps) : proxy.mapToProps(stateOrDispatch);
+    };
+
+    // allow detectFactoryAndVerify to get ownProps
+    proxy.dependsOnOwnProps = true;
+
+    proxy.mapToProps = function detectFactoryAndVerify(stateOrDispatch, ownProps) {
+      proxy.mapToProps = mapToProps;
+      proxy.dependsOnOwnProps = getDependsOnOwnProps(mapToProps);
+      var props = proxy(stateOrDispatch, ownProps);
+
+      if (typeof props === 'function') {
+        proxy.mapToProps = props;
+        proxy.dependsOnOwnProps = getDependsOnOwnProps(props);
+        props = proxy(stateOrDispatch, ownProps);
+      }
+
+      if (process.env.NODE_ENV !== 'production') __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_verifyPlainObject__["a" /* default */])(props, displayName, methodName);
+
+      return props;
+    };
+
+    return proxy;
+  };
+}
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 113 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return subscriptionShape; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return storeShape; });
+
+
+var subscriptionShape = __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].shape({
+  trySubscribe: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  tryUnsubscribe: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  notifyNestedSubs: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  isSubscribed: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired
+});
+
+var storeShape = __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].shape({
+  subscribe: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  dispatch: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  getState: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired
+});
+
+/***/ }),
+/* 114 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__warning__ = __webpack_require__(65);
+/* harmony export (immutable) */ __webpack_exports__["a"] = verifyPlainObject;
+
+
+
+function verifyPlainObject(value, displayName, methodName) {
+  if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__["a" /* default */])(value)) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__warning__["a" /* default */])(methodName + '() in ' + displayName + ' must return a plain object. Instead received ' + value + '.');
+  }
+}
+
+/***/ }),
 /* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23792,9 +24359,334 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 118 */,
-/* 119 */,
-/* 120 */,
+/* 118 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = compose;
+/**
+ * Composes single-argument functions from right to left. The rightmost
+ * function can take multiple arguments as it provides the signature for
+ * the resulting composite function.
+ *
+ * @param {...Function} funcs The functions to compose.
+ * @returns {Function} A function obtained by composing the argument functions
+ * from right to left. For example, compose(f, g, h) is identical to doing
+ * (...args) => f(g(h(...args))).
+ */
+
+function compose() {
+  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  if (funcs.length === 0) {
+    return function (arg) {
+      return arg;
+    };
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  var last = funcs[funcs.length - 1];
+  var rest = funcs.slice(0, -1);
+  return function () {
+    return rest.reduceRight(function (composed, f) {
+      return f(composed);
+    }, last.apply(undefined, arguments));
+  };
+}
+
+/***/ }),
+/* 119 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(356);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_symbol_observable__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ActionTypes; });
+/* harmony export (immutable) */ __webpack_exports__["a"] = createStore;
+
+
+
+/**
+ * These are private action types reserved by Redux.
+ * For any unknown actions, you must return the current state.
+ * If the current state is undefined, you must return the initial state.
+ * Do not reference these action types directly in your code.
+ */
+var ActionTypes = {
+  INIT: '@@redux/INIT'
+};
+
+/**
+ * Creates a Redux store that holds the state tree.
+ * The only way to change the data in the store is to call `dispatch()` on it.
+ *
+ * There should only be a single store in your app. To specify how different
+ * parts of the state tree respond to actions, you may combine several reducers
+ * into a single reducer function by using `combineReducers`.
+ *
+ * @param {Function} reducer A function that returns the next state tree, given
+ * the current state tree and the action to handle.
+ *
+ * @param {any} [preloadedState] The initial state. You may optionally specify it
+ * to hydrate the state from the server in universal apps, or to restore a
+ * previously serialized user session.
+ * If you use `combineReducers` to produce the root reducer function, this must be
+ * an object with the same shape as `combineReducers` keys.
+ *
+ * @param {Function} enhancer The store enhancer. You may optionally specify it
+ * to enhance the store with third-party capabilities such as middleware,
+ * time travel, persistence, etc. The only store enhancer that ships with Redux
+ * is `applyMiddleware()`.
+ *
+ * @returns {Store} A Redux store that lets you read the state, dispatch actions
+ * and subscribe to changes.
+ */
+function createStore(reducer, preloadedState, enhancer) {
+  var _ref2;
+
+  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = preloadedState;
+    preloadedState = undefined;
+  }
+
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error('Expected the enhancer to be a function.');
+    }
+
+    return enhancer(createStore)(reducer, preloadedState);
+  }
+
+  if (typeof reducer !== 'function') {
+    throw new Error('Expected the reducer to be a function.');
+  }
+
+  var currentReducer = reducer;
+  var currentState = preloadedState;
+  var currentListeners = [];
+  var nextListeners = currentListeners;
+  var isDispatching = false;
+
+  function ensureCanMutateNextListeners() {
+    if (nextListeners === currentListeners) {
+      nextListeners = currentListeners.slice();
+    }
+  }
+
+  /**
+   * Reads the state tree managed by the store.
+   *
+   * @returns {any} The current state tree of your application.
+   */
+  function getState() {
+    return currentState;
+  }
+
+  /**
+   * Adds a change listener. It will be called any time an action is dispatched,
+   * and some part of the state tree may potentially have changed. You may then
+   * call `getState()` to read the current state tree inside the callback.
+   *
+   * You may call `dispatch()` from a change listener, with the following
+   * caveats:
+   *
+   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+   * If you subscribe or unsubscribe while the listeners are being invoked, this
+   * will not have any effect on the `dispatch()` that is currently in progress.
+   * However, the next `dispatch()` call, whether nested or not, will use a more
+   * recent snapshot of the subscription list.
+   *
+   * 2. The listener should not expect to see all state changes, as the state
+   * might have been updated multiple times during a nested `dispatch()` before
+   * the listener is called. It is, however, guaranteed that all subscribers
+   * registered before the `dispatch()` started will be called with the latest
+   * state by the time it exits.
+   *
+   * @param {Function} listener A callback to be invoked on every dispatch.
+   * @returns {Function} A function to remove this change listener.
+   */
+  function subscribe(listener) {
+    if (typeof listener !== 'function') {
+      throw new Error('Expected listener to be a function.');
+    }
+
+    var isSubscribed = true;
+
+    ensureCanMutateNextListeners();
+    nextListeners.push(listener);
+
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return;
+      }
+
+      isSubscribed = false;
+
+      ensureCanMutateNextListeners();
+      var index = nextListeners.indexOf(listener);
+      nextListeners.splice(index, 1);
+    };
+  }
+
+  /**
+   * Dispatches an action. It is the only way to trigger a state change.
+   *
+   * The `reducer` function, used to create the store, will be called with the
+   * current state tree and the given `action`. Its return value will
+   * be considered the **next** state of the tree, and the change listeners
+   * will be notified.
+   *
+   * The base implementation only supports plain object actions. If you want to
+   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+   * wrap your store creating function into the corresponding middleware. For
+   * example, see the documentation for the `redux-thunk` package. Even the
+   * middleware will eventually dispatch plain object actions using this method.
+   *
+   * @param {Object} action A plain object representing “what changed”. It is
+   * a good idea to keep actions serializable so you can record and replay user
+   * sessions, or use the time travelling `redux-devtools`. An action must have
+   * a `type` property which may not be `undefined`. It is a good idea to use
+   * string constants for action types.
+   *
+   * @returns {Object} For convenience, the same action object you dispatched.
+   *
+   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+   * return something else (for example, a Promise you can await).
+   */
+  function dispatch(action) {
+    if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__["a" /* default */])(action)) {
+      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+    }
+
+    if (typeof action.type === 'undefined') {
+      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+    }
+
+    if (isDispatching) {
+      throw new Error('Reducers may not dispatch actions.');
+    }
+
+    try {
+      isDispatching = true;
+      currentState = currentReducer(currentState, action);
+    } finally {
+      isDispatching = false;
+    }
+
+    var listeners = currentListeners = nextListeners;
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i]();
+    }
+
+    return action;
+  }
+
+  /**
+   * Replaces the reducer currently used by the store to calculate the state.
+   *
+   * You might need this if your app implements code splitting and you want to
+   * load some of the reducers dynamically. You might also need this if you
+   * implement a hot reloading mechanism for Redux.
+   *
+   * @param {Function} nextReducer The reducer for the store to use instead.
+   * @returns {void}
+   */
+  function replaceReducer(nextReducer) {
+    if (typeof nextReducer !== 'function') {
+      throw new Error('Expected the nextReducer to be a function.');
+    }
+
+    currentReducer = nextReducer;
+    dispatch({ type: ActionTypes.INIT });
+  }
+
+  /**
+   * Interoperability point for observable/reactive libraries.
+   * @returns {observable} A minimal observable of state changes.
+   * For more information, see the observable proposal:
+   * https://github.com/zenparsing/es-observable
+   */
+  function observable() {
+    var _ref;
+
+    var outerSubscribe = subscribe;
+    return _ref = {
+      /**
+       * The minimal observable subscription method.
+       * @param {Object} observer Any object that can be used as an observer.
+       * The observer object should have a `next` method.
+       * @returns {subscription} An object with an `unsubscribe` method that can
+       * be used to unsubscribe the observable from the store, and prevent further
+       * emission of values from the observable.
+       */
+      subscribe: function subscribe(observer) {
+        if (typeof observer !== 'object') {
+          throw new TypeError('Expected the observer to be an object.');
+        }
+
+        function observeState() {
+          if (observer.next) {
+            observer.next(getState());
+          }
+        }
+
+        observeState();
+        var unsubscribe = outerSubscribe(observeState);
+        return { unsubscribe: unsubscribe };
+      }
+    }, _ref[__WEBPACK_IMPORTED_MODULE_1_symbol_observable___default.a] = function () {
+      return this;
+    }, _ref;
+  }
+
+  // When a store is created, an "INIT" action is dispatched so that every
+  // reducer returns their initial state. This effectively populates
+  // the initial state tree.
+  dispatch({ type: ActionTypes.INIT });
+
+  return _ref2 = {
+    dispatch: dispatch,
+    subscribe: subscribe,
+    getState: getState,
+    replaceReducer: replaceReducer
+  }, _ref2[__WEBPACK_IMPORTED_MODULE_1_symbol_observable___default.a] = observable, _ref2;
+}
+
+/***/ }),
+/* 120 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = warning;
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+  try {
+    // This error was thrown as a convenience so that if you enable
+    // "break on all exceptions" in your console,
+    // it would pause the execution at this line.
+    throw new Error(message);
+    /* eslint-disable no-empty */
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}
+
+/***/ }),
 /* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23859,7 +24751,7 @@ function WindowFactory(window, document) {
     this.optionsMenuHeight = 45;
     this.leftMenuWidth = 210;
 
-    $("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight: 600 });
+    //$("#helpDialog").dialog({ autoOpen: false, width: 800, maxHeight:600 });
     this.help.on("click", function () {
         $("#helpDialog").dialog("open");
     });
@@ -23871,9 +24763,9 @@ WindowFactory.prototype.SupportMoveMenu = function () {
         self.moveMenu.css({
             "display": "none"
         });
-    } else if (self.document.height() > self.window.height() + 50 &&
-    /* +50px becase there some deviations during ResizeContent() */
-    self.document.height() <= self.window.height() * 2) {
+    } else if (self.document.height() > self.window.height() + 30 &&
+    /* +5px becase there some deviations during ResizeContent() */
+    self.document.height() <= self.window.height() * 2 + 30) {
         self.moveMenu.empty();
         self.moveMenu.css({
             "display": "block",
@@ -23884,7 +24776,7 @@ WindowFactory.prototype.SupportMoveMenu = function () {
         self.moveMenu.append("<div class='MoveMenuItem'>1</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>2</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>></div>");
-    } else if (self.document.height() > self.window.height() * 2 + 50 && self.document.height() <= self.window.height() * 3) {
+    } else if (self.document.height() > self.window.height() * 2 + 30 && self.document.height() <= self.window.height() * 3 + 30) {
         self.moveMenu.empty();
         self.moveMenu.css({
             "display": "block",
@@ -23930,8 +24822,7 @@ WindowFactory.prototype.NewShowcase = function () {
     var showcase = $("div#factoryWindow" + maxIndex);
     showcase.css({
         'top': self.window.height() * self.windowStack.length,
-        'height': self.window.height(),
-        'width': self.window.width()
+        'height': self.window.height()
     });
     self.windowStack.push(showcase);
 
@@ -23974,8 +24865,7 @@ WindowFactory.prototype.ResizeShowcase = function (e) {
 
     var FW = $(".FactoryWindow");
     FW.css({
-        "height": self.window.height(),
-        "width": self.window.width()
+        "height": self.window.height()
     });
 
     $.each(FW, function (i, item) {
@@ -23984,15 +24874,12 @@ WindowFactory.prototype.ResizeShowcase = function (e) {
     });
 
     $(".LeftMenu").css("height", self.window.height() - self.topMenuHeight);
-    $(".WorkSpace").css({
-        "height": self.window.height() - self.topMenuHeight - 10, //10 because padding
+    $(".WorkSpace:not(.not-resizable)").css({
+        "height": self.window.height() - self.topMenuHeight - 5, //5 because padding
         "width": self.window.width() - self.leftMenuWidth
     });
-    $(".OptionsMenu").css("width", self.window.width() - self.leftMenuWidth - 20);
     $(".Content").css({
-        "height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35, //35 because padding and margin
-        "width": self.window.width() - self.leftMenuWidth
-    });
+        "height": self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 15 });
 
     $(".OptionsMenuFullWidth").css("width", self.window.width() - 10);
     $(".ContentFullWidth").css({
@@ -25458,21 +26345,2174 @@ module.exports = Fdr;
 
 /***/ }),
 /* 126 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/var/www/luch/front/proto/flight/FlightList.proto.js'\n    at Error (native)");
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+var _react = __webpack_require__(11);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(71);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _reactRedux = __webpack_require__(28);
+
+var _FlightListOptions = __webpack_require__(163);
+
+var _FlightListOptions2 = _interopRequireDefault(_FlightListOptions);
+
+var _flightListChangeCheckstate = __webpack_require__(161);
+
+var _flightListChangeCheckstate2 = _interopRequireDefault(_flightListChangeCheckstate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function FlightList(langStr, eventHandler, userLogin, store) {
+    this.langStr = this.i18n = langStr;
+    this.userLogin = userLogin;
+    this.store = store;
+
+    this.eventHandler = eventHandler;
+    this.flightListFactoryContainer = null;
+    this.flightListWorkspace = null;
+    this.flightListOptions = null;
+    this.flightListContent = null;
+} // libs with export
+
+
+FlightList.prototype.FillFactoryContaider = function (factoryContainer) {
+    var self = this;
+    self.flightListFactoryContainer = factoryContainer;
+
+    var pV = {
+        action: "flights/flightGeneralElements",
+        data: {
+            data: 'data'
+        }
+    };
+
+    $.ajax({
+        type: "POST",
+        data: pV,
+        dataType: 'json',
+        url: "http://local-luch15.com/entry.php",
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    }).done(function (answ) {
+        if (answ["status"] == "ok") {
+            var data = answ['data'];
+
+            self.flightListFactoryContainer.append(data['fileUploadBlock']);
+
+            self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace not-resizable'></div>");
+            self.flightListWorkspace = $("div#flightListWorkspace");
+
+            self.ShowFlightsListInitial();
+            self.TriggerResize();
+        } else {
+            console.log(answ["error"]);
+        }
+    });
+};
+
+FlightList.prototype.topMenuUserButtClick = function () {
+    var self = this,
+        userTopButt = $("#userTopButt");
+
+    var fligthOptionsStr = '<ul id="userMenu" class="UserMenuGroup">' + '<li id="userOptions">' + this.langStr.options + '</li>' + '<li class="UserChangeLang" data-lang="ru">' + "Русский" + '</li>' + '<li class="UserChangeLang" data-lang="en">' + "English" + '</li>' + '<li class="UserChangeLang" data-lang="es">' + "Español" + '</li>' + '<li id="userExit">' + this.langStr.exit + '</li>' + '</ul>';
+
+    userTopButt.append(fligthOptionsStr);
+    //var menu = $("#userMenu").buttonset().menu().hide();
+
+    userTopButt.click(function (e) {
+        menu.toggle().position({
+            my: "right top",
+            at: "right bottom",
+            of: this
+        });
+    });
+
+    $("#userOptions").on("click", function (e) {
+        self.ShowOptions();
+    });
+};
+
+FlightList.prototype.ShowFlightViewOptions = function () {
+    var self = this;
+
+    if (self.flightListWorkspace != null) {
+        self.flightListWorkspace.append("<div id='flightListOptions'></div>");
+        self.flightListOptions = $("div#flightListOptions");
+
+        var flightViewService = {
+            showTree: self.ShowFlightsTree.bind(this),
+            showTable: self.ShowFlightsTable.bind(this)
+        };
+
+        var flightMenuService = {
+            openItem: self.openFolder.bind(this),
+            selectAll: self.selectAll.bind(this),
+            exportCoordinates: self.exportCoordinates.bind(this),
+            exportItem: self.export.bind(this),
+            processItem: self.process.bind(this),
+            deleteItem: self.delete.bind(this),
+            removeSelection: self.removeSelection.bind(this),
+            rename: self.rename.bind(this)
+        };
+
+        _reactDom2.default.render(_react2.default.createElement(
+            _reactRedux.Provider,
+            { store: self.store },
+            _react2.default.createElement(_FlightListOptions2.default, {
+                i18n: self.langStr,
+                flightViewService: flightViewService,
+                flightMenuService: flightMenuService,
+                toggleCheckboxes: self.toggleFlightCheckboxes.bind(this)
+            })
+        ), self.flightListOptions.get(0));
+    }
+};
+
+/* ==================================================
+ * INITIAL VIEW
+ * ================================================== */
+
+FlightList.prototype.ShowFlightsListInitial = function () {
+    var self = this;
+
+    if (self.flightListWorkspace != null) {
+        self.flightListWorkspace.empty();
+
+        self.ShowFlightViewOptions();
+
+        self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function (event) {
+            var currentTarget = event.currentTarget;
+            var flightId = $(currentTarget).find("[data-flightid]").data("flightid");
+            var data = [flightId, "getEventsList", null];
+            self.eventHandler.trigger("viewFlightOptions", data);
+
+            return false;
+        });
+
+        self.flightListWorkspace.append("<div id='flightListContent' class='Content is-scrollable'></div>");
+        self.flightListContent = $("div#flightListContent");
+
+        var pV = {
+            action: "flights/getLastView",
+            data: {
+                data: 'data'
+            }
+        };
+
+        $.ajax({
+            type: "POST",
+            data: pV,
+            url: "http://local-luch15.com/entry.php",
+            dataType: 'json',
+            async: true,
+            success: function success(answ) {
+                if (answ['status'] == 'ok') {
+                    var type = answ['type'];
+                    if (type == "flightListTree") {
+                        var flightList = answ['data'];
+
+                        self.flightListContent.append(flightList);
+                        self.SupportJsTree();
+                        self.ResizeFlightList();
+                    } else if (type == "flightListTable") {
+                        var flightList = answ['data'],
+                            sortCol = answ['sortCol'],
+                            sortType = answ['sortType'];
+
+                        self.flightListContent.append(flightList);
+                        self.SupportDataTable(sortCol, sortType);
+                        self.ResizeFlightList();
+                    }
+                } else {
+                    console.log(answ);
+                    console.log(data['error']);
+                }
+            }
+        }).fail(function (msg) {
+            console.log(msg);
+        });
+    }
+};
+
+FlightList.prototype.ShowOptions = function () {
+    var self = this;
+    var form = $('#optionsForm');
+
+    var optionsDialog = $("#optionsDialog").dialog({
+        resizable: false,
+        autoOpen: true,
+        width: '60%',
+        modal: true,
+        buttons: [{
+            text: self.langStr.apply,
+            click: function click() {
+                self.UpdateOptions();
+                optionsDialog.dialog("close");
+            }
+        }, {
+            text: self.langStr.cancelAction,
+            click: function click() {
+                optionsDialog.dialog("close");
+            }
+        }],
+        hide: {
+            effect: "fadeOut",
+            duration: 150
+        },
+        show: {
+            effect: "fadeIn",
+            duration: 150
+        }
+    });
+};
+
+FlightList.prototype.UpdateOptions = function () {
+    var self = this;
+    var msg = $('#optionsForm').serialize();
+
+    return $.ajax({
+        type: "POST",
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        data: {
+            action: "user/updateUserOptions",
+            data: msg
+        }
+    });
+};
+
+FlightList.prototype.ResizeFlightList = function (e) {
+    var self = this;
+
+    var tree = $(".Tree"),
+        treeContent = $(".TreeContent");
+    if (tree.length > 0 && treeContent.length > 0) {
+        tree.css('height', self.flightListContent.height() - 5);
+        treeContent.css('height', self.flightListContent.height() - 5);
+    }
+};
+
+FlightList.prototype.TriggerResize = function () {
+    this.eventHandler.trigger("resizeShowcase");
+};
+
+FlightList.prototype.ActionChangePath = function (senderType, sender, target) {
+    var self = this;
+
+    var pV = {
+        action: '',
+        data: {
+            sender: sender,
+            target: target
+        }
+    };
+
+    if (senderType == 'flight') {
+        pV.action = "flights/flightChangePath";
+    } else if (senderType == 'folder') {
+        pV.action = "flights/folderChangePath";
+    }
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+FlightList.prototype.CreateNewFolder = function (folderName, folderPath) {
+    var self = this,
+        folderdestination = 0;
+
+    var pV = {
+        action: "flights/folderCreateNew",
+        data: {
+            folderName: folderName,
+            fullpath: folderPath
+        }
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+FlightList.prototype.toggleFlightCheckboxes = function () {
+    $(".ItemsCheck").toggleClass('is-displayed');
+};
+
+FlightList.prototype.RenameFolder = function (folderId, folderName) {
+    var self = this;
+
+    var pV = {
+        action: "flights/folderRename",
+        data: {
+            folderId: folderId,
+            folderName: folderName
+        }
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+FlightList.prototype.DeleteItem = function (type, id) {
+    var self = this;
+
+    var pV = {
+        action: "flights/itemDelete",
+        data: {
+            type: type,
+            id: id
+        }
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+FlightList.prototype.ProcessItem = function (id) {
+    var self = this;
+
+    var pV = {
+        action: "flights/processFlight",
+        data: {
+            id: id
+        }
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+FlightList.prototype.ExportItem = function (flightIds, folderDest) {
+    var self = this;
+
+    var pV = {
+        action: "flights/itemExport",
+        data: {
+            flightIds: flightIds,
+            folderDest: folderDest
+        }
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: pV,
+        url: "http://local-luch15.com/entry.php",
+        dataType: 'json',
+        async: true
+    }).done(function (msg) {
+        if (msg['status'] === 'ok') {
+            window.location = msg['zipUrl'];
+        }
+    }).fail(function (msg) {
+        console.log(msg);
+    });
+};
+
+/* ==================================================
+ * TREE VIEW
+ * ================================================== */
+
+FlightList.prototype.ShowFlightsTree = function () {
+    var self = this;
+
+    self.flightListContent.slideUp(function (e) {
+        self.flightListContent.empty();
+        var pV = {
+            action: "flights/flightListTree",
+            data: {
+                data: 'data'
+            }
+        };
+
+        $.ajax({
+            type: "POST",
+            data: pV,
+            url: "http://local-luch15.com/entry.php",
+            dataType: 'json',
+            async: true,
+            success: function success(answ) {
+                if (answ['status'] == 'ok') {
+                    var flightList = answ['data'];
+                    self.flightListContent.append(flightList);
+                    self.flightListContent.slideDown(function (e) {
+                        self.SupportJsTree();
+                        self.ResizeFlightList(e);
+                    });
+                } else {
+                    console.log(answ);
+                    console.log(data['error']);
+                }
+            }
+        }).fail(function (msg) {
+            console.log(msg);
+        });
+        /*});
+        });*/
+    });
+};
+
+/*=======================================================================
+ * JSTREE SERVICE
+ * */
+FlightList.prototype.SupportJsTree = function () {
+    var self = this,
+        contentPlace = $("#jstreeContent");
+
+    var treePrivate = $('#jstree').on("select_node.jstree", function (e, data) {
+        var selectedjsTreeNode = 0;
+        if (data.node.type == 'flight') {
+            selectedjsTreeNode = data.node.parent;
+        } else {
+            selectedjsTreeNode = data.node.id;
+        }
+
+        self.ShowContent(selectedjsTreeNode).done(function (answ) {
+            contentPlace.empty();
+            if (answ['status'] == 'ok') {
+                var content = answ['data'];
+                contentPlace.append(content);
+                var selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                $(".ItemsCheck").on("change", function (e) {
+                    var selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                });
+            } else {
+                console.log(answ);
+            }
+        });
+    }).on('loaded.jstree', function (e, data) {
+        // invoked after jstree has loaded
+        var node = $('#jstree').jstree('get_selected'),
+            selectedjsTreeNode = node[0];
+
+        self.ShowContent(selectedjsTreeNode).done(function (answ) {
+            contentPlace.empty();
+            if (answ['status'] == 'ok') {
+                var content = answ['data'];
+                contentPlace.append(content);
+
+                var selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                $(".ItemsCheck").on("change", function (e) {
+                    var selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                });
+            } else {
+                console.log(answ);
+            }
+        });
+    }).on("create_node.jstree", function (e, data) {
+        var node = data.node,
+            parentId = data.parent,
+            folderName = node.text;
+
+        self.CreateNewFolder(folderName, parentId).done(function (answ) {
+            var nodeNewId = answ["data"]['folderId'];
+            data.instance.set_id(node, nodeNewId);
+            data.instance.set_type(node, "folder");
+        });
+    }).on("delete_node.jstree", function (e, data) {
+        var node = data.node,
+            type = node.type,
+            id = data.node.id;
+
+        self.DeleteItem(type, id).done(function (answ) {
+            if (answ['status'] == 'ok') {
+                //show root
+                var rootNodeId = 0;
+                $('#jstree').jstree("select_node", "#" + rootNodeId + "_anchor");
+                self.ShowContent(0).done(function (answ) {
+                    contentPlace.empty();
+                    if (answ['status'] == 'ok') {
+                        var content = answ['data'];
+                        contentPlace.append(content);
+
+                        var selectedItems = self.getFlightListSelectedItems();
+                        self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                        $(".ItemsCheck").on("change", function (e) {
+                            var selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                        });
+                    } else {
+                        console.log(answ);
+                    }
+                });
+            } else {
+                console.log(answ['data']['error']);
+            }
+        });
+    }).on("rename_node.jstree", function (e, data) {
+        var node = data.node,
+            id = node.id,
+            folderName = node.text;
+
+        self.RenameFolder(id, folderName).done(function (answ) {
+            if (answ['status'] == 'ok') {
+                self.ShowContent(id).done(function (answ) {
+                    contentPlace.empty();
+                    if (answ['status'] == 'ok') {
+                        var content = answ['data'];
+                        contentPlace.append(content);
+
+                        var selectedItems = self.getFlightListSelectedItems();
+                        self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                        $(".ItemsCheck").on("change", function (e) {
+                            var selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                        });
+                    } else {
+                        console.log(answ);
+                    }
+                });
+            } else {
+                console.log(answ['data']['error']);
+            }
+        });
+    }).on("move_node.jstree", function (e, data) {
+        var node = data.node,
+            type = node.type,
+            id = node.id,
+            newParent = node.parent,
+            isNewParentInt = /^\+?(0|[1-9]\d*)$/.test(newParent);
+
+        if (isNewParentInt) {
+            var parentNode = $("li#" + newParent).find("a").find("i");
+
+            if (parentNode.hasClass('jstree-folder')) {
+
+                self.ActionChangePath(type, id, newParent).done(function (e) {
+                    self.ShowContent(newParent).done(function (answ) {
+                        contentPlace.empty();
+                        if (answ['status'] == 'ok') {
+                            var content = answ['data'];
+                            contentPlace.append(content);
+
+                            var selectedItems = self.getFlightListSelectedItems();
+                            self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                            $(".ItemsCheck").on("change", function (e) {
+                                var selectedItems = self.getFlightListSelectedItems();
+                                self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                            });
+                        } else {
+                            console.log(answ);
+                        }
+                    });
+                });
+            } else {
+                alert("Incorrect action");
+                treePrivate.jstree("refresh");
+            }
+        }
+    }).on("export_node.jstree", function (e, data) {
+        console.log(e);
+        console.log(data);
+        console.log("export");
+    }).jstree({
+        "types": {
+            "folder": {
+                "icon": "jstree-folder"
+            },
+            "flight": {
+                "icon": "jstree-file"
+            }
+        },
+        'core': {
+            'data': {
+                "url": "http://local-luch15.com/entry.php",
+                "type": "POST",
+                "dataType": "json", // needed only if you do not supply JSON headers
+                "data": function data(node) {
+                    var pV = {
+                        action: "flights/receiveTree",
+                        data: {
+                            data: 'data'
+                        }
+                    };
+                    return pV;
+                }
+            },
+            "check_callback": true
+        },
+        "plugins": ["dnd", "types", "contextmenu"],
+        "contextmenu": {
+            "items": function items($node) {
+                var tree = $("#jstree").jstree(true);
+                return {
+                    "Create": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": self.langStr.jsTree.create,
+                        "action": function action(obj) {
+                            $node = tree.create_node($node);
+                            tree.edit($node);
+                        }
+                    },
+                    "Rename": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": self.langStr.jsTree.rename,
+                        "action": function action(obj) {
+                            if ($node.type != "flight") {
+                                tree.edit($node);
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
+                    "Remove": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "label": self.langStr.jsTree.remove,
+                        "action": function action(obj) {
+                            tree.delete_node($node);
+                        }
+                    }
+                };
+            }
+        }
+    });
+};
+
+FlightList.prototype.getFlightListSelectedItems = function () {
+    var checked = $(".ItemsCheck:checked"),
+        folders = new Array(),
+        flights = new Array();
+
+    $.each(checked, function (i, el) {
+        var el = $(el);
+        if (el.data('type') == 'flight') {
+            flights.push(el.data('flightid'));
+        } else if (el.data('type') == 'folder') {
+            folders.push(el.data('folderdestination'));
+        }
+    });
+
+    return {
+        selectedFlights: flights,
+        selectedFolders: folders
+    };
+};
+
+FlightList.prototype.ShowContent = function (folderId) {
+    var self = this,
+        pV = {
+        action: "flights/showFolderContent",
+        data: {
+            folderId: folderId
+        }
+    };
+
+    return $.ajax({
+        url: "http://local-luch15.com/entry.php",
+        type: "POST",
+        data: pV,
+        dataType: "json",
+        async: true
+    }).fail(function (e) {
+        console.log(e);
+    });
+};
+
+/* ==================================================
+ * TABLE VIEW
+ * ================================================== */
+
+FlightList.prototype.ShowFlightsTable = function () {
+    var self = this;
+
+    self.flightListContent.slideUp(function (e) {
+        self.flightListContent.empty();
+        var pV = {
+            action: "flights/flightListTable",
+            data: {
+                data: 'data'
+            }
+        };
+
+        $.ajax({
+            type: "POST",
+            data: pV,
+            url: "http://local-luch15.com/entry.php",
+            dataType: 'json',
+            async: true,
+            success: function success(answ) {
+                if (answ['status'] == 'ok') {
+                    var flightList = answ['data'],
+                        sortCol = answ['sortCol'],
+                        sortType = answ['sortType'];
+                    self.flightListContent.append(flightList);
+                    self.flightListContent.slideDown(function (e) {
+                        self.SupportDataTable(sortCol, sortType);
+                        self.ResizeFlightList(e);
+                    });
+                } else {
+                    console.log(data['error']);
+                }
+            }
+        }).fail(function (msg) {
+            console.log(msg);
+        });
+        /*});
+        });*/
+    });
+};
+
+FlightList.prototype.SupportDataTable = function (sortColumn, sortType) {
+    var self = this,
+        sortType = sortType.toLowerCase();
+
+    var oTable = $('#flightTable').dataTable({
+        "bInfo": false,
+        "bSort": true,
+        "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [0] }, { "sClass": "FlightTableCheckboxCenter", 'aTargets': [0] }],
+        "order": [[sortColumn, sortType]],
+        "bFilter": false,
+        "bLengthChange": false,
+        "bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+        "aLengthMenu": false,
+        "bPaginate": false,
+        "sAjaxSource": "http://local-luch15.com/entry.php",
+        "fnServerData": function fnServerData(sSource, aoData, fnCallback) {
+            var pV = {
+                action: "flights/segmentTable",
+                data: {
+                    data: aoData
+                }
+            };
+
+            $.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": pV,
+                "success": fnCallback
+            }).done(function (a) {
+                var selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+                $(".ItemsCheck").on("change", function (e) {
+                    var selectedItems = self.getFlightListSelectedItems();
+                    self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+                });
+            }).fail(function (a) {
+                console.log(a);
+            });
+        },
+        "oLanguage": self.langStr.dataTable
+    });
+
+    $("#tableCheckAllItems").on("click", function (e) {
+        var el = $(e.target);
+
+        if (el.attr("checked") == "che===cked") {
+            $(".ItemsCheck").removeAttr("checked");
+            $(".ItemsCheck").prop("checked", false);
+            el.removeAttr("checked");
+        } else {
+            $(".ItemsCheck").attr("checked", "checked");
+            $(".ItemsCheck").prop("checked", true);
+            el.attr("checked", "checked");
+        }
+    });
+};
+
+FlightList.prototype.openFolder = function (e) {
+    var self = this,
+        inputItemsCheck = $(".ItemsCheck:checked"),
+        folderId = inputItemsCheck.data('folderdestination'),
+        contentPlace = $("#jstreeContent");
+    self.ShowContent(folderId).done(function (answ) {
+        contentPlace.empty();
+        if (answ['status'] == 'ok') {
+            var content = answ['data'];
+            contentPlace.append(content);
+            var selectedItems = self.getFlightListSelectedItems();
+            self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+
+            $(".ItemsCheck").on("change", function (e) {
+                var selectedItems = self.getFlightListSelectedItems();
+                self.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+            });
+        } else {
+            console.log(answ);
+        }
+    });
+};
+
+FlightList.prototype.selectAll = function (e) {
+    $.each($(".ItemsCheck"), function (i, el) {
+        var el = $(el).prop('checked', true);
+    });
+    var selectedItems = this.getFlightListSelectedItems();
+    this.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+};
+
+FlightList.prototype.rename = function (e) {
+    var inputItemsCheck = $(".ItemsCheck:checked"),
+        id = inputItemsCheck.data("folderdestination"),
+        parent = inputItemsCheck.parent(),
+        row = parent.parent(),
+        parentText = parent.text();
+    parent.text("");
+
+    parent.append(inputItemsCheck);
+    parent.append("<input id='currentChangedNameFolder' size='50' value='" + parentText + "'/>");
+
+    row.off("click");
+    row.on("click", function (e) {
+        var nodeName = $(e.target)[0].tagName;
+        if (nodeName == "DIV") {
+            var currentChangedNameFolder = $("#currentChangedNameFolder").val();
+            parent.text("");
+            parent.append(inputItemsCheck);
+            parent.append(currentChangedNameFolder);
+
+            self.RenameFolder(id, currentChangedNameFolder).done(function (answ) {
+                if (answ['status'] != 'ok') {
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.removeSelection = function (e) {
+    $.each($("input.ItemsCheck:checked"), function (i, el) {
+        var el = $(el).prop('checked', false);
+    });
+    var selectedItems = this.getFlightListSelectedItems();
+    this.store.dispatch((0, _flightListChangeCheckstate2.default)(selectedItems));
+};
+
+FlightList.prototype.delete = function (e) {
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var deletedCount = 0;
+    var self = this;
+
+    $.each(inputItemsCheck, function (i, el) {
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if (type == 'folder') {
+            id = el.data('folderdestination');
+        } else if (type == 'flight') {
+            id = el.data('flightid');
+        }
+        self.DeleteItem(type, id).done(function (answ) {
+            if (answ['status'] == 'ok') {
+                el.removeAttr("checked");
+                var parent = el.parents("tr") || el.parents(".JstreeContentItemFlight");
+                parent.fadeOut(200).remove();
+                deletedCount++;
+
+                if (inputItemsCheck.length === deletedCount) {
+                    self.ShowFlightsTree();
+                }
+            } else {
+                console.log(answ['data']['error']);
+            }
+        });
+    });
+};
+
+FlightList.prototype.process = function (e) {
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var self = this;
+
+    $.each(inputItemsCheck, function (i, el) {
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if (type == 'flight') {
+            id = el.data('flightid');
+            self.ProcessItem(id).done(function (answ) {
+                if (answ['status'] == 'ok') {
+                    el.removeAttr("checked");
+                    var parent = el.parents("li");
+                    parent.fadeOut(200);
+                } else {
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.export = function (e) {
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+    var selt = this;
+
+    $.each(inputItemsCheck, function (i, el) {
+        var el = $(el),
+            type = el.data('type'),
+            id = undefined;
+
+        if (type == 'flight') {
+            id = el.data('flightid');
+            self.ExportItem(id).done(function (answ) {
+                if (answ['status'] == 'ok') {
+                    el.removeAttr("checked");
+                    var parent = el.parents("li");
+                    parent.fadeOut(200);
+                } else {
+                    console.log(answ['data']['error']);
+                }
+            });
+        }
+    });
+};
+
+FlightList.prototype.exportCoordinates = function (event) {
+    var text = $("li#exportCoordinates").text();
+
+    var inputItemsCheck = $("input.ItemsCheck:checked");
+
+    if (inputItemsCheck.length) {
+        var flightid = inputItemsCheck.data('flightid');
+
+        $("li#exportCoordinates").empty().append($('<a></a>', {
+            class: 'export-coordinates-href',
+            href: "http://local-luch15.com/entry.php" + '?action=flights/coordinates&id=' + flightid,
+            target: '_blank'
+        }).text(text));
+    }
+};
+
+module.exports = FlightList;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 127 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/var/www/luch/front/proto/flight/FlightProccessingStatus.proto.js'\n    at Error (native)");
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+function FlightProccessingStatus(langStr) {
+    this.uploadings = new Object();
+    this.updateUploadsStatusNeed = false;
+    this.indicator = null;
+    this.uploadTopButt = null;
+    this.langStr = langStr;
+}
+
+FlightProccessingStatus.prototype.SupportUploadingStatus = function () {
+    var self = this;
+    self.indicator = $("#currentUploadingTopButt");
+    self.indicator.on("mouseenter", function (e) {
+        self.ShowProgressInfo();
+    });
+
+    self.indicator.on("mouseleave", function (e) {
+        self.HideProgressInfo();
+    });
+};
+
+FlightProccessingStatus.prototype.SetUpload = function (fileName, bruType, statusFile) {
+    this.uploadings[fileName] = {
+        'bruType': bruType,
+        'uploadingFile': fileName,
+        'statusFile': statusFile,
+        'completeStatus': 0,
+        'status': 0,
+        'container': Object(),
+        'progressBar': Object()
+    };
+
+    this.SetIndicatorVal();
+};
+
+FlightProccessingStatus.prototype.RemoveUpload = function (fileName) {
+    this.uploadings[fileName]['completeStatus'] = 1;
+    this.SetIndicatorVal();
+};
+
+FlightProccessingStatus.prototype.SetIndicatorVal = function () {
+    var uploadingsCount = 0;
+
+    $.each(this.uploadings, function (index, el) {
+        if (el['completeStatus'] < 1) {
+            uploadingsCount++;
+        }
+    });
+
+    if (this.indicator) {
+        if (uploadingsCount > 0) {
+            this.indicator.text(uploadingsCount);
+        } else {
+            this.indicator.text("");
+            location.reload();
+        }
+    }
+};
+
+FlightProccessingStatus.prototype.ShowProgressInfo = function () {
+    if (this.AssocArraySize(this.uploadings) > 0) {
+        this.updateUploadsStatusNeed = true;
+        this.UpdateStatus();
+        this.BuildContainers();
+        this.UpdateValues();
+    }
+};
+
+FlightProccessingStatus.prototype.HideProgressInfo = function () {
+    var self = this,
+        UploadingProgressInfo = $("div.UploadingProgressInfo");
+    this.updateUploadsStatusNeed = false;
+
+    $.each(self.uploadings, function (index, el) {
+        if (el['completeStatus'] == 1) {
+            delete self.uploadings[el['uploadingFile']];
+        }
+    });
+
+    $.each(UploadingProgressInfo, function (index, el) {
+        $(el).fadeOut().remove();
+    });
+};
+
+FlightProccessingStatus.prototype.BuildContainers = function () {
+    var self = this,
+        indicator = self.indicator;
+
+    if (self.AssocArraySize(self.uploadings) > 0) {
+        var count = 0,
+            priviousEl = indicator;
+
+        $.each(self.uploadings, function (index, el) {
+            var uploadingFile = el['uploadingFile'].replace(/^.*[\\\/]/, ''),
+                uploadingFileBruType = el['bruType'],
+                uploadingStatus = el['status'];
+            if (count == 0) {
+                indicator.after("<div id='uploadingProgressInfo" + count + "' " + "class='UploadingProgressInfo'>" + "<a style='font-weight:bold;'>" + uploadingFile + "</a></br>" + "<a>" + uploadingFileBruType + "</a></br>" + "<a class='ProgressStatus'>" + uploadingStatus + "</a></br>" + "<div style='height:15px;'></div>" + "</div>");
+                var newProgressInfo = $("div#uploadingProgressInfo" + count),
+                    progressBarContainer = newProgressInfo.children().last(),
+                    pb = progressBarContainer.progressbar({
+                    value: false
+                });
+
+                newProgressInfo.position({
+                    my: 'left top',
+                    at: 'left bottom',
+                    of: priviousEl
+                }).fadeIn();
+
+                el['container'] = newProgressInfo;
+                el['progressBar'] = pb;
+                priviousEl = newProgressInfo;
+            } else {
+                indicator.after("<div id='uploadingProgressInfo" + count + "' " + "class='UploadingProgressInfo'>" + "<a style='font-weight:bold;'>" + uploadingFile + "</a></br>" + "<a>" + uploadingFileBruType + "</a></br>" + "<a class='ProgressStatus'>" + uploadingStatus + "</a></br>" + "<div style='height:15px;'></div>" + "</div>");
+                var newProgressInfo = $("div#uploadingProgressInfo" + count),
+                    progressBarContainer = newProgressInfo.children().last(),
+                    pb = progressBarContainer.progressbar({
+                    value: false
+                });
+
+                newProgressInfo.position({
+                    my: 'left top',
+                    at: 'left bottom',
+                    of: priviousEl
+                }).fadeIn();
+
+                el['container'] = newProgressInfo;
+                el['progressBar'] = pb;
+                priviousEl = newProgressInfo;
+            }
+            count++;
+        });
+    }
+};
+
+FlightProccessingStatus.prototype.UpdateValues = function () {
+    var self = this,
+        indicator = self.indicator;
+
+    if (this.updateUploadsStatusNeed) {
+        if (self.AssocArraySize(self.uploadings) > 0) {
+            $.each(self.uploadings, function (index, el) {
+                var container = el['container'],
+                    progressBar = el['progressBar'],
+                    status = el['status'].toString(),
+                    complt = el['completeStatus'];
+
+                if (complt > 0) {
+                    container.find(".ProgressStatus").text(self.langStr["flightUploadComplt"]);
+                    progressBar.progressbar({
+                        value: 100
+                    });
+                } else {
+                    //if % than it is progress val
+                    if (status.indexOf("%") > -1) {
+                        container.find(".ProgressStatus").text(status);
+                        progressBar.progressbar({
+                            value: parseInt(status.substring(0, status.length - 1))
+                        });
+                    } else {
+                        container.find(".ProgressStatus").text(status);
+                        progressBar.progressbar({
+                            value: false
+                        });
+                    }
+                }
+            });
+
+            setTimeout(function () {
+                self.UpdateValues();
+            }, 1000);
+        }
+    }
+};
+
+FlightProccessingStatus.prototype.UpdateStatus = function () {
+    var self = this;
+
+    if (this.updateUploadsStatusNeed) {
+        if (self.AssocArraySize(self.uploadings) > 0) {
+            $.each(self.uploadings, function (index, el) {
+                var complt = el['completeStatus'],
+                    progressFile = window.location.protocol + "//" + window.location.host + "/back/fileUploader/files/proccessStatus/" + el['statusFile'];
+                if (complt != 1) {
+                    $.ajax({
+                        url: progressFile,
+                        dataType: 'json'
+                    }).done(function (serverAnswer) {
+                        el['completeStatus'] = 0;
+                        if (serverAnswer != null && serverAnswer.toString() != "") {
+                            if (el['status'] != serverAnswer) {
+                                el['status'] = serverAnswer;
+                            }
+                            setTimeout(function () {
+                                self.UpdateStatus();
+                            }, 3000);
+                        } else {
+                            setTimeout(function () {
+                                self.UpdateStatus();
+                            }, 3000);
+                        }
+                    }).fail(function () {
+                        el['completeStatus']--;
+                        if (el['completeStatus'] >= -7) {
+                            setTimeout(function () {
+                                self.UpdateStatus();
+                            }, 3000);
+                        } else {
+                            self.RemoveUpload(el['uploadingFile']);
+                        }
+                    });
+                }
+            });
+        }
+    }
+};
+
+FlightProccessingStatus.prototype.AssocArraySize = function (obj) {
+    // http://stackoverflow.com/a/6700/11236
+    var size = 0,
+        key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+module.exports = FlightProccessingStatus;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 128 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/var/www/luch/front/proto/flight/FlightUploader.proto.js'\n    at Error (native)");
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+function FlightUploader(window, document, langStr, eventHandler) {
+    this.langStr = langStr;
+    this.firstUploadedComplt = false;
+    this.updateLegendTimeout = false;
+
+    this.plotStack = Object();
+    this.plotAxesStack = Object();
+    this.plotDatasetStack = Object();
+    this.plotSelectedFromRangeStack = Object();
+    this.plotSelectedToRangeStack = Object();
+
+    this.plotRequests = 0;
+    this.plotRequestsClosed = 0;
+
+    this.eventHandler = eventHandler;
+    this.window = window;
+    this.document = document;
+
+    this.flightUploaderFactoryContainer = null;
+    this.flightUploaderTopMenu = null;
+    this.flightUploaderOptions = null;
+    this.flightUploaderContent = null;
+}
+
+FlightUploader.prototype.FillFactoryContaider = function (factoryContainer) {
+    this.flightUploaderFactoryContainer = factoryContainer;
+
+    this.flightUploaderFactoryContainer.append("<div id='flightUploaderTopMenu' class='TopMenu'>" + "<label id='convertSelected' class='Up'>" + "<span style='position:absolute; margin-top:8px;'>&nbsp;" + this.langStr.flightUploaderUpload + "</span>" + "</label>" + "</div>");
+    this.flightUploaderFactoryContainer.append("<div id='flightUploaderOptions' class='OptionsMenuFullWidth' style='margin-top:5px;'></div>");
+    this.flightUploaderFactoryContainer.append("<div id='flightUploaderContent' class='ContentFullWidth is-scrollable' style='margin-top:5px;'></div>");
+
+    this.flightUploaderTopMenu = $("#flightUploaderTopMenu");
+    this.flightUploaderOptions = $("#flightUploaderOptions");
+    this.flightUploaderContent = $("#flightUploaderContent");
+
+    this.ShowFlightUploadingOptions();
+
+    this.ResizeFlightUploader();
+    this.document.scrollTop(factoryContainer.data("index") * this.window.height());
+};
+
+FlightUploader.prototype.ResizeFlightUploader = function (e) {
+    var self = this;
+
+    if (self.flightUploaderOptions != null && self.flightUploaderFactoryContainer != null) {
+        self.flightUploaderOptions.css({
+            'width': self.flightUploaderFactoryContainer.width(),
+            'height': '50px'
+        });
+    }
+
+    if (self.flightUploaderTopMenu != null && self.flightUploaderOptions != null && self.flightUploaderFactoryContainer != null) {
+        self.flightUploaderContent.css({
+            'width': self.flightUploaderFactoryContainer.width() - 10,
+            "height": self.window.height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35 });
+    }
+};
+
+FlightUploader.prototype.CaptureUploadingItems = function () {
+    var self = this;
+    var previewCheckBoxDiv = $("div#previewCheckBoxDiv");
+    var bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
+    var $calibrations = $('.calibrations-for-ubloading');
+    var importInsteadConvert = false;
+    var dialogHeightDelta = 0;
+    var dialogInitialHeight = 0;
+
+    if (!self.fileUploadDialog) {
+        self.fileUploadDialog = $('div#fileUploadDialog').dialog({
+            resizable: false,
+            autoOpen: false,
+            resize: false,
+            width: 280,
+            hide: {
+                effect: "fadeOut",
+                duration: 150
+            },
+            show: {
+                effect: "fadeIn",
+                duration: 150
+            },
+            open: function open(event, ui) {
+                if (dialogInitialHeight === 0) {
+                    dialogInitialHeight = self.fileUploadDialog.height();
+                }
+
+                if (!self.bruTypeSelectForUploading) {
+                    self.bruTypeSelectForUploading = $('#bruTypeSelectForUploading').on('chosen:activate chosen:showing_dropdown chosen:hiding_dropdown', function (ev) {
+                        if ($('.chosen-container').first().hasClass('chosen-with-drop')) {
+                            self.fileUploadDialog.height(dialogInitialHeight + $('.chosen-drop').first().height() - $('#chooseFileBut').height() - 30);
+                        } else {
+                            self.fileUploadDialog.height(dialogInitialHeight);
+                        }
+                    }).chosen();
+
+                    $('.chosen-search input, .chosen-drop').on('keyup', function (ev) {
+                        if ($('.chosen-container').hasClass('chosen-with-drop')) {
+                            self.fileUploadDialog.height(dialogInitialHeight + $('.chosen-drop').first().height() - $('#chooseFileBut').height() - 30);
+                        } else {
+                            self.fileUploadDialog.height(dialogInitialHeight);
+                        }
+                    });
+
+                    $('#bruTypeSelectForUploading').change(function () {
+                        var $this = $(this);
+                        var fdrId = $this.val();
+                        $calibrations.find('select').hide();
+                        $calibrations.find('select[data-fdr-id="' + fdrId + '"]').show();
+                    });
+                }
+
+                dialogHeightDelta = previewCheckBoxDiv.height() + bruTypeSelectForUploadingDiv.height() + $calibrations.height() + 20;
+            }
+        }).css('overflow', 'hidden');
+    }
+
+    //radiobuttons import/convert
+    $("div#importConvertRadio").buttonset().change(function (e) {
+        var el = $(e.target);
+        if (el.attr("id") == "convertFl") {
+            previewCheckBoxDiv.slideToggle(200);
+            bruTypeSelectForUploadingDiv.slideToggle(200);
+            $calibrations.slideToggle(200);
+            importInsteadConvert = false;
+
+            if (self.fileUploadDialog) {
+                self.fileUploadDialog.animate({
+                    height: "+=" + dialogHeightDelta
+                }, 200);
+            }
+        } else if (el.attr("id") == "importFl") {
+            previewCheckBoxDiv.slideToggle(200);
+            bruTypeSelectForUploadingDiv.slideToggle(200);
+            $calibrations.slideToggle(200);
+            importInsteadConvert = true;
+
+            if (self.fileUploadDialog) {
+                self.fileUploadDialog.animate({
+                    height: "-=" + dialogHeightDelta
+                }, 200);
+            }
+        }
+    });
+
+    var filesCount = 0;
+    var url = "back/fileUploader/";
+
+    if (!self.fileupload) {
+        self.fileupload = $('input#chooseFileBut').fileupload({
+            url: url,
+            dataType: 'json',
+            done: function done(e, data) {
+                var fdrName = $("#bruTypeSelectForUploading option:selected").text();
+                var $calibration = $('.calibrations-for-ubloading select:visible');
+                var calibrationId = null;
+
+                if ($calibration.length > 0) {
+                    calibrationId = $calibration.val();
+                }
+
+                if (importInsteadConvert) {
+                    $.each(data.result.files, function (index, file) {
+                        $('<p/>').text(file.name).appendTo('#files');
+                        self.Import(file.name);
+                        filesCount++;
+                    });
+                } else {
+                    if ($("input#previewCheckBox:checked").length > 0) {
+                        //show flight info and preview
+
+                        if (filesCount === 0) {
+                            self.eventHandler.trigger("uploadWithPreview");
+                        }
+
+                        $.each(data.result.files, function (index, file) {
+                            $('<p/>').text(file.name).appendTo('#files');
+                            self.GetFlightParams(filesCount, file.name, fdrName, calibrationId);
+                            filesCount++;
+                        });
+                    } else {
+                        //else background uploading
+                        $.each(data.result.files, function (index, file) {
+                            $('<p/>').text(file.name).appendTo('#files');
+                            self.EasyUploading(fdrName, file.name, calibrationId);
+                            filesCount++;
+                        });
+                    }
+                }
+            },
+            progressall: function progressall(e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+
+                if (progress >= 100) {
+                    setTimeout(function () {
+                        self.fileUploadDialog.dialog("close");
+                    }, 300);
+                } else {
+                    $('#progress .progress-bar').css({
+                        'width': progress + '%'
+                    });
+                }
+            }
+        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+    }
+
+    $("#uploadTopButt").click(function (e) {
+        $('#progress .progress-bar').css('width', 0 + '%');
+
+        var dialogHeight = 165;
+        var $importConvert = $("#importConvertRadio :radio:checked").attr('id');
+        if ($importConvert === "convertFl") {
+            dialogHeight = 260;
+        }
+
+        self.fileUploadDialog.dialog("option", {
+            height: dialogHeight,
+            position: {
+                my: "left top",
+                at: "left bottom",
+                of: $("#uploadTopButt")
+            }
+        });
+
+        self.fileUploadDialog.dialog("open");
+    });
+};
+
+FlightUploader.prototype.ShowFlightUploadingOptions = function () {
+    if (this.flightUploaderOptions != null) {
+        var uploaderOptionsStr = "<table v-align='top'><tr><td>" + "<label style='line-height: 35px;'>" + this.langStr.flightFilesList + "</label></td>" + "</tr></table>";
+        this.flightUploaderOptions.append(uploaderOptionsStr);
+    }
+};
+
+FlightUploader.prototype.GetFlightParams = function (index, file, fdrName) {
+    var calibrationId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+
+    var self = this;
+
+    if (self.flightUploaderContent != null) {
+        //when file uploaded call fileProcessor to import it
+        var pV = {
+            action: "uploader/flightShowUploadingOptions",
+            data: {
+                index: index,
+                file: file,
+                bruType: fdrName,
+                calibrationId: calibrationId
+            }
+        };
+
+        if (index == 0 || self.firstUploadedComplt == false) {
+            $.ajax({
+                type: "POST",
+                data: pV,
+                dataType: 'json',
+                url: "http://local-luch15.com/entry.php",
+                async: false
+            }).fail(function (msg) {
+                console.log(msg);
+            }).done(function (answ) {
+                if (answ["status"] == "ok") {
+                    var flightUploadingProfile = answ["data"];
+                    self.flightUploaderContent.append(flightUploadingProfile);
+
+                    var parentContainer = $("div#fileFlightInfo" + index),
+                        previewParamsRaw = parentContainer.data("previewparams"),
+                        flightInfoColunmWidth = 450,
+                        chartWidth = self.window - flightInfoColunmWidth - 30,
+                        previewParams = Array();
+
+                    if (previewParamsRaw.indexOf(";") > -1) {
+                        previewParams = previewParamsRaw.split(";");
+                    } else {
+                        previewParams[0] = previewParamsRaw;
+                    }
+
+                    self.PreviewChart(parentContainer, previewParams, index, file, fdrName, chartWidth);
+
+                    self.SliceFlightButtInitialSupport(parentContainer, previewParams);
+                    self.firstUploadedComplt = true;
+                } else {
+                    console.log(answ["error"]);
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                data: pV,
+                dataType: 'json',
+                url: "http://local-luch15.com/entry.php",
+                async: true
+            }).fail(function (msg) {
+                console.log(msg);
+            }).done(function (answ) {
+                if (answ["status"] == "ok") {
+                    //if first uploaded, need to hide FlightView and show FlightUpload content
+                    var flightUploadingProfile = answ["data"];
+                    self.flightUploaderContent.append(flightUploadingProfile);
+
+                    var parentContainer = $("div#fileFlightInfo" + index),
+                        previewParamsRaw = parentContainer.data("previewparams"),
+                        flightInfoColunmWidth = 450,
+                        chartWidth = self.window - flightInfoColunmWidth - 30,
+                        previewParams = Array();
+
+                    if (previewParamsRaw.indexOf(";") > -1) {
+                        previewParams = previewParamsRaw.split(";");
+                    } else {
+                        previewParams[0] = previewParamsRaw;
+                    }
+
+                    self.PreviewChart(parentContainer, previewParams, index, file, selectedBruType, chartWidth);
+
+                    self.SliceFlightButtInitialSupport(parentContainer, previewParams);
+                } else {
+                    console.log(answ["error"]);
+                }
+            });
+        }
+    }
+};
+
+FlightUploader.prototype.GetSlicedFlightParams = function (extIndex, extFile, extSelectedBruType, extParentIndex) {
+
+    var self = this,
+        index = extIndex,
+        file = extFile,
+        containerWidth = self.containerWidth,
+        selectedBruType = extSelectedBruType,
+        parentToAppentAfter = $("div#fileFlightInfo" + extParentIndex);
+
+    //when file uploaded call fileProcessor to import it
+    var pV = {
+        action: "uploader/flightShowUploadingOptions",
+        data: {
+            index: index,
+            file: file,
+            containerWidth: containerWidth,
+            bruType: selectedBruType
+        }
+    };
+
+    $.ajax({
+        type: "POST",
+        data: pV,
+        dataType: 'json',
+        url: "http://local-luch15.com/entry.php",
+        async: false
+    }).fail(function (msg) {
+        console.log(msg);
+    }).done(function (answ) {
+        if (answ["status"] == "ok") {
+            //uppending answer
+            //mainContainer.append(answ["data"]);
+
+            parentToAppentAfter.after(answ["data"]);
+
+            var parentContainer = $("div#fileFlightInfo" + index),
+                previewParamsRaw = parentContainer.data("previewparams"),
+                flightInfoColunmWidth = containerWidth / 2.5,
+                chartWidth = containerWidth - flightInfoColunmWidth - 30,
+                previewParams = Array();
+
+            if (previewParamsRaw.indexOf(";") > -1) {
+                previewParams = previewParamsRaw.split(";");
+            } else {
+                previewParams[0] = previewParamsRaw;
+            }
+
+            self.PreviewChart(parentContainer, previewParams, index, file, selectedBruType, chartWidth);
+
+            self.SliceFlightButtDynamicCreatedSupport(parentContainer, previewParams);
+        } else {
+            console.log(answ["error"]);
+        }
+    });
+};
+
+//PREVIEW CHART
+FlightUploader.prototype.PreviewChart = function (parent, previewParams, index, fileName, bruType, chartWidth) {
+
+    var self = this;
+
+    //$("#flightUploaderContent").css("height", self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35);
+    //console.log($("#flightUploaderContent").css("height"));
+
+    self.ResizeFlightUploader();
+
+    if (previewParams.length > 0 && previewParams[0] != "") {
+
+        var gCont = parent.find("div#previewChartContainer" + index),
+            placeholderSelector = "div#previewChartPlaceholder" + index,
+            placeholder = $(placeholderSelector),
+            loadingBox = $("div#loadingBox" + index);
+
+        self.plotRequests++;
+
+        //=============================================================
+
+        //=============================================================
+        //prepare placeholder and plot
+        gCont.css({
+            "width": chartWidth + 'px',
+            "height": 300 + 'px'
+        });
+        placeholder.css({
+            "width": gCont.width() - 10 + 'px',
+            "height": gCont.height() - 10 + 'px'
+        });
+
+        loadingBox.position({
+            my: "center",
+            at: "center",
+            of: gCont
+        }).fadeIn();
+
+        //=============================================================
+
+        //=============================================================
+        //flot options
+        var options = {
+            xaxis: {
+                mode: "time",
+                timezone: "utc"
+            },
+            yaxis: {
+                ticks: 0,
+                //tickLength: 1,
+                position: "right",
+                zoomRange: [0, 0]
+            },
+            crosshair: {
+                mode: "x"
+            },
+            grid: {
+                aboveData: true,
+                hoverable: true,
+                clickable: true,
+                tickColor: "rgba(255, 255, 255, 0)",
+                borderWidth: 1,
+                backgroundColor: "#fff",
+                markingsLineWidth: 1
+
+            },
+            legend: {
+                position: "nw"
+            },
+            lines: {
+                lineWidth: 1
+            },
+            selection: {
+                mode: "x"
+            }
+        };
+
+        //=============================================================
+        //flot data
+        //=============================================================
+        var plot = Object(),
+            plotAxes = Object(),
+            plotDataset = Object(),
+            pV = {
+            action: "uploader/flightUploaderPreview",
+            data: {
+                file: fileName,
+                bruType: bruType
+            }
+        };
+
+        $.ajax({
+            type: "POST",
+            data: pV,
+            dataType: 'json',
+            url: "http://local-luch15.com/entry.php",
+            async: true
+        }).done(function (apDataArray) {
+            $("div#loadingBox" + index).remove();
+            var prmData = Array(),
+                i = 0;
+            for (var key in apDataArray) {
+                i++;
+                var apDataFlotSeries = {
+                    data: apDataArray[key],
+                    label: key + " = 0.00",
+                    yaxis: i,
+                    shadowSize: 0,
+                    lines: { lineWidth: 1, show: true }
+                };
+                prmData.push(apDataFlotSeries);
+            }
+
+            self.plotStack[index] = $.plot(placeholderSelector, prmData, options);
+            self.plotAxesStack[index] = self.plotStack[index].getAxes();
+            self.plotDatasetStack[index] = self.plotStack[index].getData();
+
+            self.plotRequestsClosed++;
+        }).fail(function (mess) {
+            console.log(mess);
+        });
+
+        var updateLegendTimeout = false,
+            curPos = Array();
+
+        $("div.PreviewChartPlaceholder").on('plothover', function (event, pos, item) {
+            var legendParent = $(event.target),
+                legendParentId = legendParent.attr("id"),
+                curIndex = legendParent.data("index");
+
+            //if chart already ploted
+            if (self.plotDatasetStack[curIndex] != null) {
+                if (!self.updateLegendTimeout) {
+                    self.updateLegendTimeout = true;
+                    setTimeout(function () {
+
+                        var values = self.GetValue(previewParams, self.plotDatasetStack[curIndex], pos.x);
+
+                        self.UpdateLegend(previewParams, legendParentId, self.plotDatasetStack[curIndex], self.plotAxesStack[curIndex], pos, values);
+                    }, 200);
+                }
+
+                curPos = pos;
+            }
+        });
+
+        //====================================================
+        //flot selection
+        //====================================================
+        $("div.PreviewChartPlaceholder").on("plotselected", function (event, ranges) {
+            var parent = $(event.target),
+                curIndex = parent.data("index");
+
+            self.plotSelectedFromRangeStack[curIndex] = ranges.xaxis.from.toFixed(0);
+            self.plotSelectedToRangeStack[curIndex] = ranges.xaxis.to.toFixed(0);
+        });
+    }
+};
+
+FlightUploader.prototype.UpdateLegend = function (previewParams, placeholderSelector, dataset, plotAxes, pos, valuesArr) {
+    this.updateLegendTimeout = false;
+    //update each time legends because it can be lost after zoom or pan
+    var legndLabls = $("#" + placeholderSelector + " .legendLabel");
+
+    if (pos.x < plotAxes.xaxis.min || pos.x > plotAxes.xaxis.max || pos.y < plotAxes.yaxis.min || pos.y > plotAxes.yaxis.max) {
+        return;
+    }
+    //update legend only for ap
+    for (var i = 0; i < previewParams.length; ++i) {
+        var series = dataset[i],
+            y = valuesArr[i],
+            s = series.label.substring(0, series.label.indexOf('='));
+        legndLabls.eq(i).text(s + " = " + Number(y).toFixed(2));
+    }
+    this.updateLegendTimeout = false;
+};
+
+//Get value by x coord by interpolating
+FlightUploader.prototype.GetValue = function (previewParams, dataset, x) {
+    var yArr = Array();
+    for (var i = 0; i < previewParams.length; i++) {
+        var series = dataset[i];
+
+        // Find the nearest points, x-wise
+        for (var j = 0; j < series.data.length; j++) {
+            if (series.data[j][0] > x) {
+                break;
+            };
+        }
+
+        // Now Interpolate
+        var y,
+            p1 = series.data[j - 1],
+            p2 = series.data[j];
+
+        if (p1 == null && p2 != null) {
+            y = Number(p2[1]);
+        } else if (p1 != null && p2 == null) {
+            y = Number(p1[1]);
+        } else if (p1 != null && p2 != null) {
+            p1[0] = Number(p1[0]);
+            p1[1] = Number(p1[1]);
+            p2[0] = Number(p2[0]);
+            p2[1] = Number(p2[1]);
+            posX = Number(x);
+            y = p1[1] + (p2[1] - p1[1]) * (posX - p1[0]) / (p2[0] - p1[0]);
+        } else {
+            y = 0;
+        }
+
+        yArr.push(Number(y).toFixed(2));
+    }
+    return yArr;
+};
+
+///
+//SLICE FLIGHT BUTTON
+///
+FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previewParams) {
+    var self = this;
+
+    ///
+    //UPLOAD SELECTED BUTTON
+    ///
+    var convertSelected = $("label#convertSelected");
+    convertSelected.click(function (event) {
+        event.preventDefault();
+
+        if (self.plotRequests == self.plotRequestsClosed) {
+            var flightsContainers = $("div.MainContainerContentRows");
+
+            $.each(flightsContainers, function (counter, el) {
+                var $el = $(el),
+                    fileName = $el.data("filename"),
+                    bruType = $el.data("brutype"),
+                    calibrationId = $el.data("calibration-id"),
+                    index = $el.data("index"),
+                    ignoreDueUploading = $el.find("#ignoreDueUploading" + index),
+                    flightInfo = [],
+                    flightAditionalInfo = [],
+                    flightInfoCells = $el.find("input.FlightUploadingInputs"),
+                    flightAditionalInfoCells = $el.find("input.FlightUploadingInputsAditionalInfo");
+
+                if (ignoreDueUploading.prop('checked') == false && !ignoreDueUploading.attr('checked')) {
+                    $.each(flightInfoCells, function (j, subEl) {
+                        var $subEl = $(subEl);
+                        if ($subEl.attr('type') == 'checkbox') {
+                            if ($subEl.prop('checked')) {
+                                flightInfo.push($subEl.attr('id'));
+                                flightInfo.push(1);
+                            } else {
+                                flightInfo.push($subEl.attr('id'));
+                                flightInfo.push(0);
+                            }
+                        } else {
+                            flightInfo.push($subEl.attr('id'));
+                            flightInfo.push($subEl.val());
+                        }
+                    });
+
+                    $.each(flightAditionalInfoCells, function (j, subEl) {
+                        var $subEl = $(subEl);
+                        flightAditionalInfo.push($subEl.attr('id'));
+                        flightAditionalInfo.push($subEl.val());
+                    });
+
+                    //if no aditional info set it to zero
+                    if (flightAditionalInfo.length == 0) {
+                        flightAditionalInfo = 0;
+                    }
+
+                    var flightConvertionAction = "flightProcces",
+                        tempFileName = guid() + "_tempStatus.json",
+                        performProc = $el.find("input#execProc").prop('checked');
+
+                    if (performProc == true) {
+                        flightConvertionAction = "flightProccesAndCheck";
+                    }
+
+                    var pV = {
+                        'action': 'uploader/' + flightConvertionAction,
+                        'data': {
+                            'bruType': bruType,
+                            'calibrationId': calibrationId,
+                            'fileName': fileName,
+                            'tempFileName': tempFileName,
+                            'flightInfo': flightInfo,
+                            'flightAditionalInfo': flightAditionalInfo
+                        }
+                    };
+
+                    self.InitiateFlightProccessing(pV);
+                }
+                $el.remove();
+            });
+
+            self.mainContainerOptions = $("div.MainContainerOptions");
+            //fire to index event to show flight list
+            self.mainContainerOptions.slideUp(function (e) {
+                self.mainContainerOptions.empty();
+                self.eventHandler.trigger("convertSelectedClicked");
+            });
+        }
+
+        var counter = 0;
+
+        self.eventHandler.trigger("removeShowcase", [self.flightUploaderFactoryContainer, function () {
+            var interval = setInterval(function () {
+                if (counter < 200) {
+                    self.window.scrollTop(0);
+                } else {
+                    clearInterval(interval);
+                }
+            }, 10);
+        }]);
+    });
+
+    ///
+    //SLICE FILE BUTTONS
+    ///
+    if (previewParams.length > 0 && previewParams[0] != "") {
+
+        var butEl = $("button.SliceFlightButt, button.SliceCyclicFlightButt");
+
+        $.each(butEl, function (counter, el) {
+            var $el = $(el);
+            if ($el.attr("role") == undefined) {
+                var button = $el.button().first().css({
+                    'padding-top': '0px !important'
+                });
+            }
+        });
+
+        $(".SliceFlightButt, .SliceCyclicFlightButt").off("click");
+        $(".SliceFlightButt, .SliceCyclicFlightButt").on("click", function (e) {
+            e.preventDefault();
+
+            //if all charts ploted
+            if (self.plotRequests == self.plotRequestsClosed) {
+
+                var el = $(e.currentTarget),
+                    curIndex = el.data("index"),
+                    fileName = el.data("file"),
+                    bruType = el.data("brutype"),
+                    newIndex = $("div.PreviewChartPlaceholder").length,
+                    action = "flightCutFile";
+
+                if (self.plotSelectedFromRangeStack[curIndex] != undefined && self.plotSelectedToRangeStack[curIndex] != undefined) {
+
+                    $("input#ignoreDueUploading" + curIndex).prop('checked', true);
+
+                    if (el.hasClass('SliceFlightButt')) {
+                        action = "flightCutFile";
+                    } else if (el.hasClass('SliceCyclicFlightButt')) {
+                        action = "flightCyclicSliceFile";
+                    }
+
+                    var pV = {
+                        action: 'uploader/' + action,
+                        data: {
+                            bruType: bruType,
+                            file: fileName,
+
+                            startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
+                            endCopyTime: self.plotAxesStack[curIndex].xaxis.max,
+                            startSliceTime: self.plotSelectedFromRangeStack[curIndex],
+                            endSliceTime: self.plotSelectedToRangeStack[curIndex]
+                        }
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        data: pV,
+                        dataType: 'json',
+                        url: "http://local-luch15.com/entry.php",
+                        async: true
+                    }).done(function (answ) {
+                        if (answ["status"] == 'ok') {
+                            var newFileName = answ["data"];
+
+                            self.GetSlicedFlightParams(newIndex, newFileName, bruType, curIndex);
+                        } else {
+                            console.log(answ["error"]);
+                        }
+                    }).fail(function (mess) {
+                        console.log(mess);
+                    });
+                }
+            }
+        });
+    }
+};
+
+FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function (parent, previewParams) {
+
+    var self = this;
+
+    if (previewParams.length > 0 && previewParams[0] != "") {
+
+        var appendedButt = parent.find("button.SliceFlightButt, button.SliceCyclicFlightButt");
+
+        if (appendedButt.attr("role") == undefined) {
+            var button = appendedButt.button().first().css({
+                'padding-top': '0px !important'
+            });
+        }
+
+        appendedButt.on("click", function (e) {
+            event.preventDefault();
+
+            //if all charts ploted
+            if (self.plotRequests == self.plotRequestsClosed) {
+                var el = $(e.target).parent(),
+                    curIndex = el.data("index"),
+                    fileName = el.data("file"),
+                    bruType = el.data("brutype"),
+                    newIndex = $("div.PreviewChartPlaceholder").length,
+                    action = "flightCutFile";
+
+                if (self.plotSelectedFromRangeStack[curIndex] != undefined && self.plotSelectedToRangeStack[curIndex] != undefined) {
+
+                    $("input#ignoreDueUploading" + curIndex).prop('checked', true);
+
+                    if (el.hasClass('SliceFlightButt')) {
+                        action = "flightCutFile";
+                    } else if (el.hasClass('SliceCyclicFlightButt')) {
+                        action = "flightCyclicSliceFile";
+                    }
+
+                    var pV = {
+                        action: 'uploader/' + action,
+                        data: {
+                            bruType: bruType,
+                            file: fileName,
+
+                            startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
+                            endCopyTime: self.plotAxesStack[curIndex].xaxis.max,
+                            startSliceTime: self.plotSelectedFromRangeStack[curIndex],
+                            endSliceTime: self.plotSelectedToRangeStack[curIndex]
+                        }
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        data: pV,
+                        dataType: 'json',
+                        url: "http://local-luch15.com/entry.php",
+                        async: true
+                    }).done(function (answ) {
+                        if (answ["status"] == 'ok') {
+                            var newFileName = answ["data"];
+
+                            self.GetSlicedFlightParams(newIndex, newFileName, bruType, curIndex);
+                        } else {
+                            console.log(answ["error"]);
+                        }
+                    }).fail(function (mess) {
+                        console.log(mess);
+                    });
+                }
+            }
+        });
+    }
+};
+
+FlightUploader.prototype.InitiateFlightProccessing = function (postValues) {
+    var self = this,
+        pV = postValues,
+        eventInfo = {
+        'bruType': pV["data"]["bruType"],
+        'fileName': pV["data"]["fileName"],
+        'tempFileName': pV["data"]["tempFileName"]
+    };
+
+    $.ajax({
+        type: "POST",
+        data: pV,
+        dataType: 'json',
+        url: "http://local-luch15.com/entry.php",
+        async: true
+    }).done(function (answ) {
+        if (answ["status"] == 'ok') {
+            var fileComplName = answ["data"];
+            self.eventHandler.trigger("endProccessing", fileComplName);
+        } else {
+            console.log(answ["error"]);
+        }
+    }).fail(function (mess) {
+        console.log(mess);
+    });
+
+    self.eventHandler.trigger("startProccessing", eventInfo);
+};
+
+///
+//EasyUploading
+///
+FlightUploader.prototype.EasyUploading = function (bruType, fileName, calibrationId) {
+
+    var tempFileName = guid() + "_tempStatus.json";
+    var pV = {
+        'action': 'uploader/flightEasyUpload',
+        'data': {
+            'bruType': bruType,
+            'fileName': fileName,
+            'tempFileName': tempFileName,
+            'calibrationId': calibrationId
+        }
+    };
+
+    this.InitiateFlightProccessing(pV);
+};
+
+///
+//Import
+///
+FlightUploader.prototype.Import = function (file) {
+    var self = this,
+        pV = {
+        'action': "uploader/itemImport",
+        'data': {
+            'file': file
+        }
+    };
+
+    $.ajax({
+        type: "POST",
+        data: pV,
+        dataType: 'json',
+        url: "http://local-luch15.com/entry.php",
+        async: true
+    }).done(function (answ) {
+        if (answ["status"] == 'ok') {
+            location.reload();
+        } else {
+            console.log(answ["error"]);
+        }
+    }).fail(function (mess) {
+        console.log(mess);
+    });
+};
+
+//=============================================================
+function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+};
+//=============================================================
+
+//=============================================================
+function guid() {
+    return this.s4() + this.s4() + '_' + this.s4() + '_' + this.s4() + '_' + this.s4() + '_' + this.s4() + this.s4() + this.s4();
+};
+
+module.exports = FlightUploader;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 129 */
@@ -63903,10 +66943,376 @@ if(false) {
 }
 
 /***/ }),
-/* 161 */,
-/* 162 */,
-/* 163 */,
-/* 164 */,
+/* 161 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = flightListChangeCheckstate;
+function flightListChangeCheckstate(payload) {
+    return function (dispatch) {
+        dispatch({
+            type: 'FLIGHT_LIST_CHANGE_CHECKSTATE',
+            payload: payload
+        });
+    };
+};
+
+/***/ }),
+/* 162 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(11);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(28);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FlightListMenuDropdown = function (_React$Component) {
+    _inherits(FlightListMenuDropdown, _React$Component);
+
+    function FlightListMenuDropdown() {
+        _classCallCheck(this, FlightListMenuDropdown);
+
+        return _possibleConstructorReturn(this, (FlightListMenuDropdown.__proto__ || Object.getPrototypeOf(FlightListMenuDropdown)).apply(this, arguments));
+    }
+
+    _createClass(FlightListMenuDropdown, [{
+        key: 'buildMenu',
+        value: function buildMenu(type) {
+            var _this2 = this;
+
+            var menuItems = {
+                noSelection: ["selectAll"],
+                oneFlight: ["deleteItem", "selectAll", "exportItem", "processItem", "exportCoordinates", "removeSelection"],
+                oneFolder: ["openItem", "renameItem", "deleteItem", "selectAll", "removeSelection"],
+                manyItems: ["deleteItem", "selectAll", "removeSelection"]
+            };
+
+            var currentMenuItems = menuItems[type];
+
+            return currentMenuItems.map(function (item) {
+                if (_this2.props.i18n.hasOwnProperty(item)) {
+                    return _react2.default.createElement(
+                        'li',
+                        { key: item },
+                        _react2.default.createElement(
+                            'a',
+                            { onClick: _this2.handleMenuClick.bind(_this2), 'data-action': item, href: '#' },
+                            _this2.props.i18n[item]
+                        )
+                    );
+                }
+            });
+        }
+    }, {
+        key: 'setMenu',
+        value: function setMenu() {
+            var flightsCount = this.props.selectedFlights.length;
+            var foldersCount = this.props.selectedFolders.length;
+
+            this.menu = this.buildMenu("manyItems");
+
+            if (flightsCount === 0 && foldersCount === 0) {
+                this.menu = this.buildMenu("noSelection");
+            } else if (flightsCount === 1 && foldersCount === 0) {
+                this.menu = this.buildMenu("oneFlight");
+            } else if (flightsCount === 0 && foldersCount === 1) {
+                this.menu = this.buildMenu("oneFolder");
+            }
+        }
+    }, {
+        key: 'handleMenuClick',
+        value: function handleMenuClick(event) {
+            var action = event.target.getAttribute("data-action");
+
+            if (!this.props.flightMenuService.hasOwnProperty(action)) {
+                throw new Error("Unknown flightMenuService action. Passed: " + action);
+            }
+
+            this.props.flightMenuService[action]();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            this.setMenu();
+            return _react2.default.createElement(
+                'ul',
+                { className: 'nav navbar-nav' },
+                _react2.default.createElement(
+                    'li',
+                    { className: 'dropdown' },
+                    _react2.default.createElement(
+                        'a',
+                        { href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown', role: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+                        this.props.i18n.fileMenu,
+                        ' ',
+                        _react2.default.createElement('span', { className: 'caret' })
+                    ),
+                    _react2.default.createElement(
+                        'ul',
+                        { className: 'dropdown-menu' },
+                        this.menu
+                    )
+                )
+            );
+        }
+    }]);
+
+    return FlightListMenuDropdown;
+}(_react2.default.Component);
+
+function mapStateToProps(state) {
+    return _extends({}, state.chosenFlightListItems);
+}
+
+function mapDispatchToProps(dispatch) {
+    return {};
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(FlightListMenuDropdown);
+
+/***/ }),
+/* 163 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(11);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _FlightListTypeSwitch = __webpack_require__(164);
+
+var _FlightListTypeSwitch2 = _interopRequireDefault(_FlightListTypeSwitch);
+
+var _FlightListMenuDropdown = __webpack_require__(162);
+
+var _FlightListMenuDropdown2 = _interopRequireDefault(_FlightListMenuDropdown);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FlightListOptions = function (_React$Component) {
+    _inherits(FlightListOptions, _React$Component);
+
+    function FlightListOptions(props) {
+        _classCallCheck(this, FlightListOptions);
+
+        var _this = _possibleConstructorReturn(this, (FlightListOptions.__proto__ || Object.getPrototypeOf(FlightListOptions)).call(this, props));
+
+        _this.state = {
+            glyphicon: "glyphicon-unchecked"
+        };
+        return _this;
+    }
+
+    _createClass(FlightListOptions, [{
+        key: 'toggleFlightCheckboxes',
+        value: function toggleFlightCheckboxes() {
+            this.props.toggleCheckboxes();
+            var currentState = this.state.glyphicon === "glyphicon-remove" ? "glyphicon-unchecked" : "glyphicon-remove";
+            this.setState({ glyphicon: currentState });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'nav',
+                { className: 'navbar navbar-default' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'container-fluid' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'navbar-header' },
+                        _react2.default.createElement(
+                            'button',
+                            { type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#bs-navbar-collapse', 'aria-expanded': 'false' },
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'sr-only' },
+                                'Toggle navigation'
+                            ),
+                            _react2.default.createElement('span', { className: 'icon-bar' }),
+                            _react2.default.createElement('span', { className: 'icon-bar' }),
+                            _react2.default.createElement('span', { className: 'icon-bar' })
+                        ),
+                        _react2.default.createElement(
+                            'a',
+                            { className: 'navbar-brand', href: '#' },
+                            this.props.i18n.flightList
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'collapse navbar-collapse', id: 'bs-navbar-collapse' },
+                        _react2.default.createElement(_FlightListTypeSwitch2.default, {
+                            i18n: this.props.i18n,
+                            flightViewService: this.props.flightViewService
+                        }),
+                        _react2.default.createElement(_FlightListMenuDropdown2.default, {
+                            i18n: this.props.i18n,
+                            flightMenuService: this.props.flightMenuService
+                        }),
+                        _react2.default.createElement(
+                            'ul',
+                            { className: 'nav navbar-nav navbar-right' },
+                            _react2.default.createElement(
+                                'li',
+                                null,
+                                _react2.default.createElement(
+                                    'a',
+                                    { href: '#' },
+                                    _react2.default.createElement('span', {
+                                        onClick: this.toggleFlightCheckboxes.bind(this),
+                                        className: "toggle-flight-checkboxes glyphicon " + this.state.glyphicon,
+                                        'aria-hidden': 'true' })
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return FlightListOptions;
+}(_react2.default.Component);
+
+exports.default = FlightListOptions;
+
+/***/ }),
+/* 164 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(11);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FlightListTypeDropdown = function (_React$Component) {
+    _inherits(FlightListTypeDropdown, _React$Component);
+
+    function FlightListTypeDropdown(props) {
+        _classCallCheck(this, FlightListTypeDropdown);
+
+        var _this = _possibleConstructorReturn(this, (FlightListTypeDropdown.__proto__ || Object.getPrototypeOf(FlightListTypeDropdown)).call(this, props));
+
+        _this.state = {
+            treeActive: "active",
+            tableActive: ""
+        };
+        return _this;
+    }
+
+    _createClass(FlightListTypeDropdown, [{
+        key: "handleChangeView",
+        value: function handleChangeView(event) {
+            var viewState = event.target.getAttribute("data");
+
+            switch (viewState) {
+                case "tree":
+                    this.props.flightViewService.showTree();
+                    this.setState({
+                        treeActive: "active",
+                        tableActive: ""
+                    });
+                    break;
+                case "table":
+                    this.props.flightViewService.showTable();
+                    this.setState({
+                        treeActive: "",
+                        tableActive: "active"
+                    });
+                    break;
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "ul",
+                { className: "nav navbar-nav" },
+                _react2.default.createElement(
+                    "li",
+                    { className: this.state.treeActive, onClick: this.handleChangeView.bind(this) },
+                    _react2.default.createElement(
+                        "a",
+                        { data: "tree", href: "#" },
+                        this.props.i18n.treeView
+                    )
+                ),
+                _react2.default.createElement(
+                    "li",
+                    { className: this.state.tableActive, onClick: this.handleChangeView.bind(this) },
+                    _react2.default.createElement(
+                        "a",
+                        { data: "table", href: "#" },
+                        this.props.i18n.tableView
+                    )
+                )
+            );
+        }
+    }]);
+
+    return FlightListTypeDropdown;
+}(_react2.default.Component);
+
+exports.default = FlightListTypeDropdown;
+
+/***/ }),
 /* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65033,6 +68439,8 @@ Legend.prototype.UpdateLegend = function (posx, valuesArr, binariesArr) {
     //update each time legends because it can be lost after zoom or pan
     this.updateLegendTimeout = null;
     var legndLabls = this.legndCont.find(".legendLabel");
+    var y = 0;
+    var s = 0;
 
     if (posx < this.xax.min || posx > this.xax.max) {
         return;
@@ -65079,10 +68487,10 @@ Legend.prototype.UpdateLegend = function (posx, valuesArr, binariesArr) {
 //=============================================================
 //highlight overed series
 Legend.prototype.HighlightLegend = function (seriesIndex) {
-    legndLabls = this.legndCont.find(".legendLabel");
+    var legndLabls = this.legndCont.find(".legendLabel");
     if (seriesIndex >= 0) {
-        for ($i = 0; $i < legndLabls.length; $i++) {
-            legndLabls.eq($i).css({
+        for (var ii = 0; ii < legndLabls.length; ii++) {
+            legndLabls.eq(ii).css({
                 "background-color": "transparent"
             });
         }
@@ -65090,8 +68498,8 @@ Legend.prototype.HighlightLegend = function (seriesIndex) {
             "background-color": "rgb(10,10,220, 0.15)"
         });
     } else {
-        for ($i = 0; $i < legndLabls.length; $i++) {
-            legndLabls.eq($i).css({
+        for (var ii = 0; ii < legndLabls.length; ii++) {
+            legndLabls.eq(ii).css({
                 "background-color": "transparent"
             });
         }
@@ -66141,6 +69549,7 @@ Param.prototype.GetBpParam = function (paramCode, i, lineWidth, dfd) {
 //Get value by x coord by interpolating
 Param.prototype.GetValue = function (dataset, x) {
     var yArr = Array();
+    var posX = 0;
     for (var i = 0; i < this.apCount; ++i) {
         var series = dataset[i];
         // Find the nearest points, x-wise
@@ -66260,7 +69669,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, ".FlightUploadingInputs {\r\n    margin:10px 0px;\r\n    width:200px;\r\n}\r\n\r\nselect.FlightUploadingInputs {\r\n    margin:10px 0px;\r\n    width:250px;\r\n}\r\n\r\n.FlightUploadingInputsAditionalInfo {\r\n    margin-top:10px;\r\n    width:200px;\r\n}\r\n\r\n.UploadingProgressInfo {\r\n    width:300px;\r\n    /*height:60px;*/\r\n    overflow: hidden;\r\n    background-color:#fff;\r\n    border: 2px solid #0072bc;\r\n    border-top: 0px;\r\n    position:absolute;\r\n    display:none;\r\n    padding:15px;\r\n    padding-top:5px;\r\n    text-align:center;\r\n    z-index:2;\r\n}\r\n\r\n#sortableLeft, #sortableRight{\r\n    list-style-type: none;\r\n    padding-left:0px !important;\r\n    margin:0px !important;\r\n    min-height:35px;\r\n}\r\n\r\n.ui-state-highlight {\r\n    list-style-type: none;\r\n    height: 7.5em;\r\n    margin-top:1px;\r\n    padding-left:0px !important;\r\n    width:calc(100% + 25px);\r\n}\r\n\r\n.NonSortableList{\r\n    margin:0px !important;\r\n    padding-left:0px !important;\r\n}\r\n\r\n.ErrorDuringDrop{\r\n    background-color: #EA0000 !important;\r\n}\r\n\r\n.TwoColumnsTable {\r\n    width:100%;\r\n    padding:5px;\r\n}\r\n\r\n.TwoColumnsTableColumn{\r\n    vertical-align:top;\r\n    width:50%;\r\n}\r\n\r\n.FolderPathInTwoColumnContainer {\r\n    background: #dfdfdf;\r\n    height:30px;\r\n    line-height: 2em;\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n\r\n    border-bottom:1px solid #c8c8c8;\r\n}\r\n\r\n.FolderInTwoColumnContainer {\r\n    height:45px;\r\n    line-height: 2.5em;\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    background-color:#FFD869;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.FlightInTwoColumnContainer {\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    color:#fff;\r\n    background-color:#439ADC;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.FlightInTwoColumnContainer p {\r\n    line-height: 0.1;\r\n}\r\n\r\n.GroupType {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.GroupType li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.GroupType li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n.UserMenuGroup {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.UserMenuGroup li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.UserMenuGroup li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n#fileMenu{\r\n    padding:2px;\r\n    font-size:16px;\r\n    margin-left:20px;\r\n}\r\n\r\n.FileMenuItems {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.FileMenuItems li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.FileMenuItems li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n.Tree {\r\n    width:255px;\r\n    float:left;\r\n    overflow-y:auto;\r\n    overflow-x:scroll;\r\n}\r\n\r\n.TreeContent {\r\n    width:calc(100% - 290px);\r\n    margin:0px 5px 0px 10px;\r\n    padding:0px 5px 5px 10px;\r\n    float:left;\r\n    border-left:solid 1px #bbb;\r\n    /*height:100px;\r\n    background-color:red;*/\r\n}\r\n\r\n.JstreeContentItemFolder {\r\n    height:25px;\r\n    line-height:25px;\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    background-color:#FFD869;\r\n\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.JstreeContentItemFlight {\r\n    height:25px;\r\n    line-height:25px;\r\n\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    color:#fff;\r\n    background-color:#439ADC;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.JstreeContentItemFlight.is-analyzed {\r\n    background-color: #54a247;\r\n}\n\r\n.JstreeContentItemFolder:hover, .JstreeContentItemFlight:hover {\r\n    background-color: #c0c0c0 !important;\r\n}\r\n\r\n.ItemsCheckJstreeContent {\r\n    vertical-align: text-bottom;\r\n}\r\n\r\n.FlightTableCheckboxCenter {\r\n    text-align:center;\r\n}\r\n\r\ntable.dataTable thead th,\r\ntable.dataTable thead td {\r\n    border-bottom: 1px solid #c0c0c0;\r\n}\r\n\r\ntable.dataTable tfoot th,\r\ntable.dataTable tfoot td {\r\n    border-top: 1px solid #c0c0c0;\r\n}\r\n\r\n#optionsDialog {\r\n    display: none;\r\n    max-width:100%;\r\n    min-width:75%;\r\n    height:90% !important;\r\n    max-height:90% !important;\r\n}\r\n\r\n#optionsDialog .options-row {\r\n    width: 100%;\r\n    padding: 5px;\r\n}\r\n\r\n#optionsDialog .options-name {\r\n    float:left;\r\n    width: 35%;\r\n}\r\n\r\n#optionsDialog .options-value {\r\n    float:left;\r\n    width: 65%;\r\n    text-align: right;\r\n}\r\n\r\n#optionsDialog .options-clear {\r\n    clear: both;\r\n}\r\n\r\n.export-coordinates-href {\r\n    text-decoration: none;\r\n}\r\n\r\n.options-dialog__version {\r\n    padding: 0px 6px;\r\n    margin-bottom: -6px;\r\n}\r\n\r\n.fdr-calibration {\r\n    display: none;\r\n}\r\n\r\n.calibrations-for-ubloading select {\r\n    border-radius: 4px;\r\n    margin: 4px 0px 0px;\r\n    background: transparent;\r\n    height: 28px;\r\n    padding: 5px;\r\n    border: 1px solid #bbb;\r\n    font-size: 13px;\r\n    line-height: 1;\r\n    -webkit-appearance: none;\r\n    min-width: 200px;\r\n    width: 100%;\r\n}\r\n\r\n.choose-file-btn input {\r\n    margin-top: -15px;\r\n}\r\n", ""]);
+exports.push([module.i, ".FlightUploadingInputs {\r\n    margin:10px 0px;\r\n    width:200px;\r\n}\r\n\r\nselect.FlightUploadingInputs {\r\n    margin:10px 0px;\r\n    width:250px;\r\n}\r\n\r\n.FlightUploadingInputsAditionalInfo {\r\n    margin-top:10px;\r\n    width:200px;\r\n}\r\n\r\n.UploadingProgressInfo {\r\n    width:300px;\r\n    /*height:60px;*/\r\n    overflow: hidden;\r\n    background-color:#fff;\r\n    border: 2px solid #0072bc;\r\n    border-top: 0px;\r\n    position:absolute;\r\n    display:none;\r\n    padding:15px;\r\n    padding-top:5px;\r\n    text-align:center;\r\n    z-index:2;\r\n}\r\n\r\n#sortableLeft, #sortableRight{\r\n    list-style-type: none;\r\n    padding-left:0px !important;\r\n    margin:0px !important;\r\n    min-height:35px;\r\n}\r\n\r\n.ui-state-highlight {\r\n    list-style-type: none;\r\n    height: 7.5em;\r\n    margin-top:1px;\r\n    padding-left:0px !important;\r\n    width:calc(100% + 25px);\r\n}\r\n\r\n.NonSortableList{\r\n    margin:0px !important;\r\n    padding-left:0px !important;\r\n}\r\n\r\n.ErrorDuringDrop{\r\n    background-color: #EA0000 !important;\r\n}\r\n\r\n.TwoColumnsTable {\r\n    width:100%;\r\n    padding:5px;\r\n}\r\n\r\n.TwoColumnsTableColumn{\r\n    vertical-align:top;\r\n    width:50%;\r\n}\r\n\r\n.FolderPathInTwoColumnContainer {\r\n    background: #dfdfdf;\r\n    height:30px;\r\n    line-height: 2em;\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n\r\n    border-bottom:1px solid #c8c8c8;\r\n}\r\n\r\n.FolderInTwoColumnContainer {\r\n    height:45px;\r\n    line-height: 2.5em;\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    background-color:#FFD869;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.FlightInTwoColumnContainer {\r\n    padding:2px;\r\n    padding-left:5px;\r\n    font-size:16px;\r\n    color:#fff;\r\n    background-color:#439ADC;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.FlightInTwoColumnContainer p {\r\n    line-height: 0.1;\r\n}\r\n\r\n.GroupType {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.GroupType li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.GroupType li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n.UserMenuGroup {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.UserMenuGroup li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.UserMenuGroup li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n#fileMenu{\r\n    padding:2px;\r\n    font-size:16px;\r\n    margin-left:20px;\r\n}\r\n\r\n.FileMenuItems {\r\n    position: absolute;\r\n    background-color: #F3F3F3;\r\n    font-size: 16px;\r\n    width:213px;\r\n    z-index:1;\r\n}\r\n\r\n.FileMenuItems li{\r\n    border-bottom: 1px solid #979797;\r\n    padding: 7px;\r\n    margin: 1px;\r\n}\r\n\r\n.FileMenuItems li:hover{\r\n    background-color: #BBB;\r\n}\r\n\r\n.Tree {\r\n    width:255px;\r\n    float:left;\r\n    overflow-y:auto;\r\n    overflow-x:scroll;\r\n}\r\n\r\n.TreeContent {\r\n    width:calc(100% - 290px);\r\n    margin:0px 5px 0px 10px;\r\n    padding:0px 5px 5px 10px;\r\n    float:left;\r\n    border-left:solid 1px #bbb;\r\n    /*height:100px;\r\n    background-color:red;*/\r\n}\r\n\r\n.JstreeContentItemFolder {\r\n    height:25px;\r\n    line-height:25px;\r\n    border-radius: 2px;\r\n    padding:2px;\r\n    padding-left:15px;\r\n    font-size:16px;\r\n    background-color:#FFD869;\r\n\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.JstreeContentItemFlight {\r\n    height:25px;\r\n    line-height:25px;\r\n    border-radius: 2px;\r\n\r\n    padding:2px;\r\n    padding-left:15px;\r\n    font-size:16px;\r\n    color:#fff;\r\n    background-color:#439ADC;\r\n\r\n    list-style-type: none;\r\n    margin-top:1px;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.JstreeContentItemFlight.is-analyzed {\r\n    background-color: #54a247;\r\n}\n\r\n.JstreeContentItemFolder:hover, .JstreeContentItemFlight:hover {\r\n    background-color: #c0c0c0 !important;\r\n}\r\n\r\n.ItemsCheckJstreeContent {\r\n    vertical-align: text-bottom;\r\n}\r\n\r\n.ItemsCheck {\r\n    display: none;\r\n}\r\n\r\n.ItemsCheck.is-displayed {\r\n    display: inline-block;\r\n    padding-left: 5px;\r\n}\r\n\r\n.FlightTableCheckboxCenter {\r\n    text-align:center;\r\n}\r\n\r\ntable.dataTable thead th,\r\ntable.dataTable thead td {\r\n    border-bottom: 1px solid #c0c0c0;\r\n}\r\n\r\ntable.dataTable tfoot th,\r\ntable.dataTable tfoot td {\r\n    border-top: 1px solid #c0c0c0;\r\n}\r\n\r\n#optionsDialog {\r\n    display: none;\r\n    max-width:100%;\r\n    min-width:75%;\r\n    height:90% !important;\r\n    max-height:90% !important;\r\n}\r\n\r\n#optionsDialog .options-row {\r\n    width: 100%;\r\n    padding: 5px;\r\n}\r\n\r\n#optionsDialog .options-name {\r\n    float:left;\r\n    width: 35%;\r\n}\r\n\r\n#optionsDialog .options-value {\r\n    float:left;\r\n    width: 65%;\r\n    text-align: right;\r\n}\r\n\r\n#optionsDialog .options-clear {\r\n    clear: both;\r\n}\r\n\r\n.export-coordinates-href {\r\n    text-decoration: none;\r\n}\r\n\r\n.options-dialog__version {\r\n    padding: 0px 6px;\r\n    margin-bottom: -6px;\r\n}\r\n\r\n.fdr-calibration {\r\n    display: none;\r\n}\r\n\r\n.calibrations-for-ubloading select {\r\n    border-radius: 4px;\r\n    margin: 4px 0px 0px;\r\n    background: transparent;\r\n    height: 28px;\r\n    padding: 5px;\r\n    border: 1px solid #bbb;\r\n    font-size: 13px;\r\n    line-height: 1;\r\n    -webkit-appearance: none;\r\n    min-width: 200px;\r\n    width: 100%;\r\n}\r\n\r\n.choose-file-btn input {\r\n    margin-top: -15px;\r\n}\r\n", ""]);
 
 // exports
 
@@ -66330,7 +69739,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "@charset \"utf-8\";\r\n/* CSS Document */\r\n\r\nbody {\r\n    font-family: \"Trebuchet MS\", Helvetica, sans-serif;\r\n    font-size:14px;\r\n    background-color:#fff;\r\n    color:#000;\r\n    overflow-x:hidden;\r\n}\r\n\r\nbody::scrollbar { \r\n    display: none;\r\n}\r\n\r\nbody::-webkit-scrollbar {\r\n    display: none;\r\n}\r\n\r\n.FactoryWindow {\r\n    position:absolute;\r\n    left:0px;\r\n    border:none;\r\n    width:100%;\r\n}\r\n\r\n.TopMenu {\r\n    border:none;\r\n    width:100%;\r\n    height:45px;\r\n    background-color:#0072bc;\r\n\r\n    box-shadow:0 3px 10px 5px rgba(0,0,0,0.15);\r\n    -o-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -ms-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -moz-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    z-index:2;\r\n}\r\n\r\n.LeftMenu\r\n{\r\n    border:none;\r\n    float: left;\r\n    width:180px;\r\n    color:#676767;\r\n    background-color:#f3f3f3;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.WorkSpace\r\n{\r\n    border:none;\r\n    float:left;\r\n    width:calc(100% - 220px);\r\n    padding:5px;\r\n    color:#676767;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.OptionsMenu, .OptionsMenuFullWidth\r\n{\r\n    border:none;\r\n    height:45px;\r\n    width: calc(100% - 10px);\r\n    padding:5px;\r\n    color:#676767;\r\n    font-size:20px;\r\n    border-bottom: 1px solid #bbb;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Content, .ContentFullWidth, .ContentFullSize\r\n{\r\n    border:none;\r\n    width: calc(100% - 10px);\r\n    padding:5px;\r\n    margin-top:5px;\r\n    color:#676767;\r\n    border-bottom: 1px solid #bbb;\r\n    overflow-y:scroll;\r\n}\r\n\r\n.Logo\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:20px;\r\n    width:60px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:70px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UserButt\r\n{\r\n    float:right;\r\n    border:none;\r\n    /*width:150px;*/\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:50px;\r\n    padding-right:10px;\r\n    margin-right:10px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UserButt:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Down\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:20px;\r\n\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(47) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Up\r\n{\r\n    display:inline;\r\n    float:right;\r\n    border:none;\r\n    margin-right: 150px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(80) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.HereRight\r\n{\r\n    display:inline;\r\n    float:right;\r\n    border:none;\r\n    margin-right: 150px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(238) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Up:hover, .Down:hover, .HereRight:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.TopMenuLeftSecondButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:245px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(47) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.CurrentUploadingTopButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:245px;\r\n    width:47px;\r\n    height:45px;\r\n    color:#fff;\r\n\r\n    background-repeat: no-repeat;\r\n    z-index:1;\r\n}\r\n\r\n.CurrentUploadingTopButt:hover, .TopMenuLeftSecondButt:hover\r\n{\r\n    background-color:#005791;\r\n}\r\n\r\n.UploadButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:290px;\r\n    width:115px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:5px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UploadButt:hover, .TopMenuLeftSecondButt:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Separator\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:7px;\r\n    left:180px;\r\n    width:2px;\r\n    height:31px;\r\n    background-color:#fff;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Separator2\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:7px;\r\n    left:440px;\r\n    width:2px;\r\n    height:31px;\r\n    background-color:#fff;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.ViewItem\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:475px;\r\n    width:115px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:55px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.ViewItem:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Button {\r\n    text-align:center;\r\n    border-radius:3px;\r\n    text-shadow:1px 1px 0 #fff;\r\n    font-size:16px;\r\n}\r\n\r\n.view-options-button {\r\n    margin-right:1px;\r\n    min-width:155px;\r\n}\r\n\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n#helpDialog {\r\n    display: none;\r\n}\r\n\r\n.Help\r\n{\r\n    height: 34px;\r\n    width: 34px;\r\n    background-color:#EFEFEF;\r\n    opacity:0.75;\r\n    position: fixed;\r\n    right: 1px;\r\n    bottom: 40px;\r\n    border-radius:2px;\r\n    padding: 5px 2px 0px 0px;\r\n    display: block;\r\n    z-index:2;\r\n    font-size: 24px;\r\n    text-align: center;\r\n\r\n    box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -o-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 1 5px 2px 2px rgba(0,0,0,0.1);\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.MoveMenu\r\n{\r\n    height: 34px;\r\n    width: 34px;\r\n    background-color:#EFEFEF;\r\n    opacity:0.75;\r\n    position: fixed;\r\n    right: 1px;\r\n    bottom: 1px;\r\n    border-radius:2px;\r\n    padding-right:2px;\r\n    display: none;\r\n    z-index:2;\r\n\r\n    box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -o-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.MoveMenuItem\r\n{\r\n    height: 30px;\r\n    width: 30px;\r\n    border: 1px solid rgb(254, 254, 254);\r\n    font-size: 24px;\r\n    text-align: center;\r\n    margin: 2px 0px 2px 2px;\r\n    float: left;\r\n}\r\n\r\n.SearchBox\r\n{\r\n    font-family: \"Trebuchet MS\", Helvetica, sans-serif;\r\n    margin:12px 0px 12px 12px;\r\n    width: 85%;\r\n}\r\n\r\n.LeftMenuRow, .LeftMenuRowOptions\r\n{\r\n    height:45px;\r\n    width:100%;\r\n    font-size:20px;\r\n    vertical-align: middle;\r\n}\r\n\r\n.LeftMenuRowSelected{\r\n    background-color: #bbb !important;\r\n}\r\n\r\n.LeftMenuRow:hover, .LeftMenuRowOptions:hover\r\n{\r\n    background-color:#d4d4d4;\r\n}\r\n\r\n.LeftMenuRowIcon\r\n{\r\n    width:20px;\r\n    height:20px;\r\n    margin:10px 0px 0px 12px;\r\n}\r\n\r\n.Label\r\n{\r\n    font-size:36px;\r\n    color:#004;\r\n    text-align:center;\r\n    padding:6px;\r\n}\r\n\r\n.OptionBlock {\r\n    padding:5px;\r\n    background-color:#fff;\r\n    position:absolute;\r\n    display:none;\r\n    text-align:left;\r\n    z-index:1;\r\n    overflow: hidden;\r\n}\r\n\r\n\r\n\r\n/* OPTIONS VIEW PAGE*/\r\n\r\n.TplListSelect{\r\n    width:100%;\r\n    overflow-y:scroll;\r\n    font-size:16px;\r\n    height:45%;\r\n}\r\n\r\n.TplListTextareaComment{\r\n    width:calc(100% - 7px);\r\n    overflow:scroll;\r\n    font-size:18px;\r\n    resize:none;\r\n    height:45%;\r\n}\r\n\r\n.ListContainer {\r\n    overflow:hidden;\r\n    text-align:left;\r\n}\r\n\r\n.ApList {\r\n    border: none;\r\n    border-right:1px solid #c0c0c0;\r\n    width:45%;\r\n    float:left;\r\n    padding:10px;\r\n    padding-right:23px;\r\n    text-align:right;\r\n    font-size:13px;\r\n    direction: rtl;\r\n}\r\n\r\n.BpList {\r\n    border: none;\r\n    width:45%;\r\n    float:left;\r\n    padding:10px;\r\n    text-align:left;\r\n    margin-left:15px;\r\n    font-size:12px;\r\n}\r\n\r\n.ExeptionsTable {\r\n    width: 99%;\r\n    border-collapse: collapse;\r\n}\r\n\r\n.ExeptionsTableHeader td{\r\n    font-weight:bold;\r\n    text-align:center;\r\n    font-size:16px;\r\n    color:#FFFAFA;\r\n    background-color:#708090;\r\n    height:50px;\r\n}\r\n\r\n.ExeptionsTableRowSelected {\r\n    background-color:#B0DDFA !important;\r\n}\r\n\r\n.ExeptionsTable tr.ExceptionTableRow:hover td{\r\n    background-color:#c0c0c0;\r\n}\r\n\r\n.ExeptionsCell {\r\n    border: 1px solid #444;\r\n    padding: 0.1em 0.3em;\r\n}\r\n\r\n/*Diagnostic page*/\r\n\r\n.DiagnosticMenuContaider,\r\n.ReportMenuContaider {\r\n    /*position: fixed;*/\r\n    border:1px solid #000;\r\n    border-radius:3px;\r\n    margin-left:-25px;\r\n    width:250px;\r\n    height:98%;\r\n    background-color:#eee;\r\n    text-align:left;\r\n    padding-top:5px;\r\n\r\n    box-shadow: 0 3px 10px 5px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n}\r\n\r\n.DiagnosticChartContaider,\r\n.ReportContaider {\r\n    border:1px solid #222;\r\n    border-style: ridge;\r\n    border-radius:3px;\r\n    text-align:left;\r\n    padding:10px;\r\n    margin-right:-25px;\r\n    overflow-y: visible;\r\n\r\n    font-family: Tahoma, 'Times New Roman', Times, monospace;\r\n    background: #F5F5F5;\r\n\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n}\r\n\r\n.ReportTable {\r\n    width:100%;\r\n    border:solid 1px #000;\r\n    background-color:#fff;\r\n    border-collapse: collapse;\r\n}\r\n\r\n.ReportTable td{\r\n    border:solid 1px #000;\r\n    padding:5px;\r\n    font-size:14px;\r\n}\r\n\r\n.ReportTableHeader td{\r\n    font-weight:bold;\r\n    text-align:center;\r\n    font-size:16px;\r\n    color:#FFFAFA;\r\n    background-color:#708090;\r\n    height:70px;\r\n}\r\n\r\n.ReportTableHeader td{\r\n    text-align:center;\r\n}\r\n\r\n.DiagnosticChartPlaceholder {\r\n    border:0px solid #222;\r\n    text-align:left;\r\n    padding:10px;\r\n    width:98%;\r\n    margin:0px auto 10px;\r\n    height:390px;\r\n\r\n    font-family: Tahoma, 'Times New Roman', Times, monospace;\r\n    background: #F5F5F5;\r\n}\r\n\r\n.colorpicker-popup {\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n    cursor: default;\r\n}\r\n\r\n/*jQuery UI*/\r\ndiv#draggableProgressContainer {\r\n    position: absolute;\r\n    top:0px;\r\n    width:500px;\r\n    display: none;\r\n    border-radius:5px;\r\n    padding:30px;\r\n    background: rgba(150,150,150,0.85);\r\n    text-align:center;\r\n    z-index:2 !important; /*slider has z-index 1*/\r\n}\r\n\r\ndiv#progressbar {\r\n    margin:10px auto 10px;\r\n}\r\n\r\ndiv#progressLabel {\r\n    text-align: center;\r\n    text-shadow: 1px 1px 0 #fff;\r\n    font-family: Tahoma, \"Times New Roman\", Times, serif;\r\n    font-size:15px;\r\n    font-weight:900;\r\n}\r\n\r\n#progressbar .ui-progressbar-value {\r\n    background:#03C;\r\n    background-color:#036;\r\n    border-color:#FFF;\r\n}\r\n\r\n/* tell the SVG path to be a thin blue line without any area fill */\r\n.GraphContainer {\r\n    width:100%;\r\n    position: absolute;\r\n    box-sizing: border-box;\r\n    overflow-y: hidden;\r\n    overflow-x: hidden;\r\n    border: 1px solid #ddd;\r\n    background: #fff;\r\n    background: linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n}\r\n\r\n#placeholder {\r\n    font-size: 14px;\r\n    line-height: 1.2em;\r\n    overflow-x: hidden;\r\n    float:left;\r\n}\r\n\r\n.InfoFromRequest {\r\n    display: none;\r\n}\r\n\r\n#legend {\r\n    overflow-y:auto;\r\n    text-align:left;\r\n    font-family: Tahoma, Geneva, sans-serif;\r\n    font-size:12px;\r\n}\r\n\r\n.LoadingBox{\r\n    position: absolute;\r\n    top:300px;\r\n    width: 100%;\r\n    text-align: center;\r\n    z-index:1;\r\n}\r\n\r\n#tableContainer {\r\n    display: none;\r\n    position: relative;\r\n    box-sizing: border-box;\r\n    overflow-y: auto;\r\n    border: 1px solid #ddd;\r\n    background: #fff;\r\n    background: linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n}\r\n\r\n.row_selected {\r\n    background-color: gray !important;\r\n}\r\n\r\n.MapCanvas {\r\n    position: absolute;\r\n    height: 99%;\r\n    width: 99%;\r\n    overflow: hidden;\r\n    margin: 0px;\r\n    padding: 0px;\r\n}\r\n\r\n#toolbar {\r\n    padding: 4px;\r\n    display: inline-block;\r\n    width:99%;\r\n}\r\n\r\n/* support: IE7 */\r\n*+html #toolbar {\r\n   display: inline;\r\n}\r\n\r\n.NotSelectable {\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.BruTypeParamsPaginatedList{\r\n    overflow-y: scroll;\r\n}\r\n", ""]);
+exports.push([module.i, "@charset \"utf-8\";\r\n/* CSS Document */\r\n\r\nbody {\r\n    font-family: \"Trebuchet MS\", Helvetica, sans-serif;\r\n    font-size:14px;\r\n    background-color:#fff;\r\n    color:#000;\r\n    overflow-x:hidden;\r\n}\r\n\r\nbody::scrollbar {\r\n    display: none;\r\n}\r\n\r\nbody::-webkit-scrollbar {\r\n    display: none;\r\n}\r\n\r\n.FactoryWindow {\r\n    position:absolute;\r\n    left:0px;\r\n    border:none;\r\n    width:100%;\r\n}\r\n\r\n.TopMenu {\r\n    border:none;\r\n    width:100%;\r\n    height:45px;\r\n    background-color:#0072bc;\r\n\r\n    box-shadow:0 3px 10px 5px rgba(0,0,0,0.15);\r\n    -o-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -ms-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -moz-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow:0 3px 10px 5px rgba(0,0,0,0.2);\r\n    z-index:2;\r\n}\r\n\r\n.LeftMenu\r\n{\r\n    border:none;\r\n    float: left;\r\n    width:180px;\r\n    color:#676767;\r\n    background-color:#f3f3f3;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.WorkSpace\r\n{\r\n    border:none;\r\n    float:left;\r\n    width:100%;\r\n    padding:5px;\r\n    color:#676767;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.OptionsMenu, .OptionsMenuFullWidth\r\n{\r\n    border:none;\r\n    min-height:45px;\r\n    width: calc(100% - 10px);\r\n    padding:5px;\r\n    color:#676767;\r\n    font-size:20px;\r\n    border-bottom: 1px solid #bbb;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Content, .ContentFullWidth, .ContentFullSize\r\n{\r\n    border:none;\r\n    width: calc(100% - 10px);\r\n    padding:5px;\r\n    margin-top:5px;\r\n    color:#676767;\r\n    border-bottom: 1px solid #bbb;\r\n    overflow-y:scroll;\r\n}\r\n\r\n.Logo\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:20px;\r\n    width:60px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:70px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UserButt\r\n{\r\n    float:right;\r\n    border:none;\r\n    /*width:150px;*/\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:50px;\r\n    padding-right:10px;\r\n    margin-right:10px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UserButt:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Down\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:20px;\r\n\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(47) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Up\r\n{\r\n    display:inline;\r\n    float:right;\r\n    border:none;\r\n    margin-right: 150px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(80) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.HereRight\r\n{\r\n    display:inline;\r\n    float:right;\r\n    border:none;\r\n    margin-right: 150px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(238) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Up:hover, .Down:hover, .HereRight:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.TopMenuLeftSecondButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:245px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:40px;\r\n    background-repeat: no-repeat;\r\n    background-image:url(" + __webpack_require__(47) + ");\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.CurrentUploadingTopButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:245px;\r\n    width:47px;\r\n    height:45px;\r\n    color:#fff;\r\n\r\n    background-repeat: no-repeat;\r\n    z-index:1;\r\n}\r\n\r\n.CurrentUploadingTopButt:hover, .TopMenuLeftSecondButt:hover\r\n{\r\n    background-color:#005791;\r\n}\r\n\r\n.UploadButt\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:290px;\r\n    width:115px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:5px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.UploadButt:hover, .TopMenuLeftSecondButt:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Separator\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:7px;\r\n    left:180px;\r\n    width:2px;\r\n    height:31px;\r\n    background-color:#fff;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.Separator2\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:7px;\r\n    left:440px;\r\n    width:2px;\r\n    height:31px;\r\n    background-color:#fff;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.ViewItem\r\n{\r\n    position:absolute;\r\n    border:none;\r\n    top:0px;\r\n    left:475px;\r\n    width:115px;\r\n    height:45px;\r\n    color:#fff;\r\n    font-size:24px;\r\n\r\n    padding-left:55px;\r\n    background-repeat: no-repeat;\r\n    cursor: pointer;\r\n    z-index:1;\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.ViewItem:hover\r\n{\r\n    background-color:#004a7a;\r\n}\r\n\r\n.Button {\r\n    text-align:center;\r\n    border-radius:3px;\r\n    text-shadow:1px 1px 0 #fff;\r\n    font-size:16px;\r\n}\r\n\r\n.view-options-button {\r\n    margin-right:1px;\r\n    min-width:155px;\r\n}\r\n\r\n.hidden {\r\n    display: none;\r\n}\r\n\r\n#helpDialog {\r\n    display: none;\r\n}\r\n\r\n.Help\r\n{\r\n    height: 34px;\r\n    width: 34px;\r\n    background-color:#EFEFEF;\r\n    opacity:0.75;\r\n    position: fixed;\r\n    right: 1px;\r\n    bottom: 40px;\r\n    border-radius:2px;\r\n    padding: 5px 2px 0px 0px;\r\n    display: block;\r\n    z-index:2;\r\n    font-size: 24px;\r\n    text-align: center;\r\n\r\n    box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -o-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 1px 2px 2px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 1 5px 2px 2px rgba(0,0,0,0.1);\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.MoveMenu\r\n{\r\n    height: 34px;\r\n    width: 34px;\r\n    background-color:#EFEFEF;\r\n    opacity:0.75;\r\n    position: fixed;\r\n    right: 1px;\r\n    bottom: 1px;\r\n    border-radius:2px;\r\n    padding-right:2px;\r\n    display: none;\r\n    z-index:2;\r\n\r\n    box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -o-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 5px 10px 3px rgba(0,0,0,0.2);\r\n\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.MoveMenuItem\r\n{\r\n    height: 30px;\r\n    width: 30px;\r\n    border: 1px solid rgb(254, 254, 254);\r\n    font-size: 24px;\r\n    text-align: center;\r\n    margin: 2px 0px 2px 2px;\r\n    float: left;\r\n}\r\n\r\n.SearchBox\r\n{\r\n    font-family: \"Trebuchet MS\", Helvetica, sans-serif;\r\n    margin:12px 0px 12px 12px;\r\n    width: 85%;\r\n}\r\n\r\n.LeftMenuRow, .LeftMenuRowOptions\r\n{\r\n    height:45px;\r\n    width:100%;\r\n    font-size:20px;\r\n    vertical-align: middle;\r\n}\r\n\r\n.LeftMenuRowSelected{\r\n    background-color: #bbb !important;\r\n}\r\n\r\n.LeftMenuRow:hover, .LeftMenuRowOptions:hover\r\n{\r\n    background-color:#d4d4d4;\r\n}\r\n\r\n.LeftMenuRowIcon\r\n{\r\n    width:20px;\r\n    height:20px;\r\n    margin:10px 0px 0px 12px;\r\n}\r\n\r\n.Label\r\n{\r\n    font-size:36px;\r\n    color:#004;\r\n    text-align:center;\r\n    padding:6px;\r\n}\r\n\r\n.OptionBlock {\r\n    padding:5px;\r\n    background-color:#fff;\r\n    position:absolute;\r\n    display:none;\r\n    text-align:left;\r\n    z-index:1;\r\n    overflow: hidden;\r\n}\r\n\r\n\r\n\r\n/* OPTIONS VIEW PAGE*/\r\n\r\n.TplListSelect{\r\n    width:100%;\r\n    overflow-y:scroll;\r\n    font-size:16px;\r\n    height:45%;\r\n}\r\n\r\n.TplListTextareaComment{\r\n    width:calc(100% - 7px);\r\n    overflow:scroll;\r\n    font-size:18px;\r\n    resize:none;\r\n    height:45%;\r\n}\r\n\r\n.ListContainer {\r\n    overflow:hidden;\r\n    text-align:left;\r\n}\r\n\r\n.ApList {\r\n    border: none;\r\n    border-right:1px solid #c0c0c0;\r\n    width:45%;\r\n    float:left;\r\n    padding:10px;\r\n    padding-right:23px;\r\n    text-align:right;\r\n    font-size:13px;\r\n    direction: rtl;\r\n}\r\n\r\n.BpList {\r\n    border: none;\r\n    width:45%;\r\n    float:left;\r\n    padding:10px;\r\n    text-align:left;\r\n    margin-left:15px;\r\n    font-size:12px;\r\n}\r\n\r\n.ExeptionsTable {\r\n    width: 99%;\r\n    border-collapse: collapse;\r\n}\r\n\r\n.ExeptionsTableHeader td{\r\n    font-weight:bold;\r\n    text-align:center;\r\n    font-size:16px;\r\n    color:#FFFAFA;\r\n    background-color:#708090;\r\n    height:50px;\r\n}\r\n\r\n.ExeptionsTableRowSelected {\r\n    background-color:#B0DDFA !important;\r\n}\r\n\r\n.ExeptionsTable tr.ExceptionTableRow:hover td{\r\n    background-color:#c0c0c0;\r\n}\r\n\r\n.ExeptionsCell {\r\n    border: 1px solid #444;\r\n    padding: 0.1em 0.3em;\r\n}\r\n\r\n/*Diagnostic page*/\r\n\r\n.DiagnosticMenuContaider,\r\n.ReportMenuContaider {\r\n    /*position: fixed;*/\r\n    border:1px solid #000;\r\n    border-radius:3px;\r\n    margin-left:-25px;\r\n    width:250px;\r\n    height:98%;\r\n    background-color:#eee;\r\n    text-align:left;\r\n    padding-top:5px;\r\n\r\n    box-shadow: 0 3px 10px 5px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 3px 10px 5px rgba(0,0,0,0.2);\r\n}\r\n\r\n.DiagnosticChartContaider,\r\n.ReportContaider {\r\n    border:1px solid #222;\r\n    border-style: ridge;\r\n    border-radius:3px;\r\n    text-align:left;\r\n    padding:10px;\r\n    margin-right:-25px;\r\n    overflow-y: visible;\r\n\r\n    font-family: Tahoma, 'Times New Roman', Times, monospace;\r\n    background: #F5F5F5;\r\n\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.2);\r\n}\r\n\r\n.ReportTable {\r\n    width:100%;\r\n    border:solid 1px #000;\r\n    background-color:#fff;\r\n    border-collapse: collapse;\r\n}\r\n\r\n.ReportTable td{\r\n    border:solid 1px #000;\r\n    padding:5px;\r\n    font-size:14px;\r\n}\r\n\r\n.ReportTableHeader td{\r\n    font-weight:bold;\r\n    text-align:center;\r\n    font-size:16px;\r\n    color:#FFFAFA;\r\n    background-color:#708090;\r\n    height:70px;\r\n}\r\n\r\n.ReportTableHeader td{\r\n    text-align:center;\r\n}\r\n\r\n.DiagnosticChartPlaceholder {\r\n    border:0px solid #222;\r\n    text-align:left;\r\n    padding:10px;\r\n    width:98%;\r\n    margin:0px auto 10px;\r\n    height:390px;\r\n\r\n    font-family: Tahoma, 'Times New Roman', Times, monospace;\r\n    background: #F5F5F5;\r\n}\r\n\r\n.colorpicker-popup {\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n    cursor: default;\r\n}\r\n\r\n/*jQuery UI*/\r\ndiv#draggableProgressContainer {\r\n    position: absolute;\r\n    top:0px;\r\n    width:500px;\r\n    display: none;\r\n    border-radius:5px;\r\n    padding:30px;\r\n    background: rgba(150,150,150,0.85);\r\n    text-align:center;\r\n    z-index:2 !important; /*slider has z-index 1*/\r\n}\r\n\r\ndiv#progressbar {\r\n    margin:10px auto 10px;\r\n}\r\n\r\ndiv#progressLabel {\r\n    text-align: center;\r\n    text-shadow: 1px 1px 0 #fff;\r\n    font-family: Tahoma, \"Times New Roman\", Times, serif;\r\n    font-size:15px;\r\n    font-weight:900;\r\n}\r\n\r\n#progressbar .ui-progressbar-value {\r\n    background:#03C;\r\n    background-color:#036;\r\n    border-color:#FFF;\r\n}\r\n\r\n/* tell the SVG path to be a thin blue line without any area fill */\r\n.GraphContainer {\r\n    width:100%;\r\n    position: absolute;\r\n    box-sizing: border-box;\r\n    overflow-y: hidden;\r\n    overflow-x: hidden;\r\n    border: 1px solid #ddd;\r\n    background: #fff;\r\n    background: linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n}\r\n\r\n#placeholder {\r\n    font-size: 14px;\r\n    line-height: 1.2em;\r\n    overflow-x: hidden;\r\n    float:left;\r\n}\r\n\r\n.InfoFromRequest {\r\n    display: none;\r\n}\r\n\r\n#legend {\r\n    overflow-y:auto;\r\n    text-align:left;\r\n    font-family: Tahoma, Geneva, sans-serif;\r\n    font-size:12px;\r\n}\r\n\r\n.LoadingBox{\r\n    position: absolute;\r\n    top:300px;\r\n    width: 100%;\r\n    text-align: center;\r\n    z-index:1;\r\n}\r\n\r\n#tableContainer {\r\n    display: none;\r\n    position: relative;\r\n    box-sizing: border-box;\r\n    overflow-y: auto;\r\n    border: 1px solid #ddd;\r\n    background: #fff;\r\n    background: linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);\r\n    box-shadow: 0 3px 10px rgba(0,0,0,0.15);\r\n    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);\r\n}\r\n\r\n.row_selected {\r\n    background-color: gray !important;\r\n}\r\n\r\n.MapCanvas {\r\n    position: absolute;\r\n    height: 99%;\r\n    width: 99%;\r\n    overflow: hidden;\r\n    margin: 0px;\r\n    padding: 0px;\r\n}\r\n\r\n#toolbar {\r\n    padding: 4px;\r\n    display: inline-block;\r\n    width:99%;\r\n}\r\n\r\n/* support: IE7 */\r\n*+html #toolbar {\r\n   display: inline;\r\n}\r\n\r\n.NotSelectable {\r\n    -moz-user-select: none;\r\n    -khtml-user-select: none;\r\n    -webkit-user-select: none;\r\n    -o-user-select: none;\r\n}\r\n\r\n.BruTypeParamsPaginatedList{\r\n    overflow-y: scroll;\r\n}\r\n", ""]);
 
 // exports
 
@@ -67586,8 +70995,122 @@ module.exports = __webpack_require__.p + "jquery-ui/themes/base/images/ui-icons_
 module.exports = __webpack_require__.p + "front/stylesheets/basicImg/here.png";
 
 /***/ }),
-/* 239 */,
-/* 240 */,
+/* 239 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+
+
+var REACT_STATICS = {
+    childContextTypes: true,
+    contextTypes: true,
+    defaultProps: true,
+    displayName: true,
+    getDefaultProps: true,
+    mixins: true,
+    propTypes: true,
+    type: true
+};
+
+var KNOWN_STATICS = {
+    name: true,
+    length: true,
+    prototype: true,
+    caller: true,
+    arguments: true,
+    arity: true
+};
+
+var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
+
+module.exports = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
+    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
+        var keys = Object.getOwnPropertyNames(sourceComponent);
+
+        /* istanbul ignore else */
+        if (isGetOwnPropertySymbolsAvailable) {
+            keys = keys.concat(Object.getOwnPropertySymbols(sourceComponent));
+        }
+
+        for (var i = 0; i < keys.length; ++i) {
+            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]] && (!customStatics || !customStatics[keys[i]])) {
+                try {
+                    targetComponent[keys[i]] = sourceComponent[keys[i]];
+                } catch (error) {
+
+                }
+            }
+        }
+    }
+
+    return targetComponent;
+};
+
+
+/***/ }),
+/* 240 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var invariant = function(condition, format, a, b, c, d, e, f) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  }
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error(
+        'Minified exception occurred; use the non-minified dev environment ' +
+        'for the full error message and additional helpful warnings.'
+      );
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(
+        format.replace(/%s/g, function() { return args[argIndex++]; })
+      );
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+};
+
+module.exports = invariant;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
 /* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -71070,14 +74593,228 @@ return $.ui.resizable;
 
 
 /***/ }),
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */,
-/* 259 */,
-/* 260 */,
+/* 253 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getRawTag_js__ = __webpack_require__(256);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__objectToString_js__ = __webpack_require__(257);
+
+
+
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = __WEBPACK_IMPORTED_MODULE_0__Symbol_js__["a" /* default */] ? __WEBPACK_IMPORTED_MODULE_0__Symbol_js__["a" /* default */].toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__getRawTag_js__["a" /* default */])(value)
+    : __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__objectToString_js__["a" /* default */])(value);
+}
+
+/* harmony default export */ __webpack_exports__["a"] = baseGetTag;
+
+
+/***/ }),
+/* 254 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/* harmony default export */ __webpack_exports__["a"] = freeGlobal;
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(35)))
+
+/***/ }),
+/* 255 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__overArg_js__ = __webpack_require__(258);
+
+
+/** Built-in value references. */
+var getPrototype = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__overArg_js__["a" /* default */])(Object.getPrototypeOf, Object);
+
+/* harmony default export */ __webpack_exports__["a"] = getPrototype;
+
+
+/***/ }),
+/* 256 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(89);
+
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = __WEBPACK_IMPORTED_MODULE_0__Symbol_js__["a" /* default */] ? __WEBPACK_IMPORTED_MODULE_0__Symbol_js__["a" /* default */].toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = getRawTag;
+
+
+/***/ }),
+/* 257 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+/* harmony default export */ __webpack_exports__["a"] = objectToString;
+
+
+/***/ }),
+/* 258 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = overArg;
+
+
+/***/ }),
+/* 259 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__ = __webpack_require__(254);
+
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__["a" /* default */] || freeSelf || Function('return this')();
+
+/* harmony default export */ __webpack_exports__["a"] = root;
+
+
+/***/ }),
+/* 260 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+/* harmony default export */ __webpack_exports__["a"] = isObjectLike;
+
+
+/***/ }),
 /* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -80470,15 +84207,582 @@ module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ }),
 /* 332 */,
-/* 333 */,
-/* 334 */,
-/* 335 */,
-/* 336 */,
-/* 337 */,
-/* 338 */,
-/* 339 */,
-/* 340 */,
-/* 341 */,
+/* 333 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_PropTypes__ = __webpack_require__(113);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_warning__ = __webpack_require__(65);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Provider; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+var didWarnAboutReceivingStore = false;
+function warnAboutReceivingStore() {
+  if (didWarnAboutReceivingStore) {
+    return;
+  }
+  didWarnAboutReceivingStore = true;
+
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_warning__["a" /* default */])('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/reactjs/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
+}
+
+var Provider = function (_Component) {
+  _inherits(Provider, _Component);
+
+  Provider.prototype.getChildContext = function getChildContext() {
+    return { store: this.store, storeSubscription: null };
+  };
+
+  function Provider(props, context) {
+    _classCallCheck(this, Provider);
+
+    var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+
+    _this.store = props.store;
+    return _this;
+  }
+
+  Provider.prototype.render = function render() {
+    return __WEBPACK_IMPORTED_MODULE_0_react__["Children"].only(this.props.children);
+  };
+
+  return Provider;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+
+
+
+if (process.env.NODE_ENV !== 'production') {
+  Provider.prototype.componentWillReceiveProps = function (nextProps) {
+    var store = this.store;
+    var nextStore = nextProps.store;
+
+
+    if (store !== nextStore) {
+      warnAboutReceivingStore();
+    }
+  };
+}
+
+Provider.propTypes = {
+  store: __WEBPACK_IMPORTED_MODULE_1__utils_PropTypes__["a" /* storeShape */].isRequired,
+  children: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].element.isRequired
+};
+Provider.childContextTypes = {
+  store: __WEBPACK_IMPORTED_MODULE_1__utils_PropTypes__["a" /* storeShape */].isRequired,
+  storeSubscription: __WEBPACK_IMPORTED_MODULE_1__utils_PropTypes__["b" /* subscriptionShape */]
+};
+Provider.displayName = 'Provider';
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 334 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_connectAdvanced__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_shallowEqual__ = __webpack_require__(341);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__mapDispatchToProps__ = __webpack_require__(335);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__mapStateToProps__ = __webpack_require__(336);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mergeProps__ = __webpack_require__(337);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__selectorFactory__ = __webpack_require__(338);
+/* unused harmony export createConnect */
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+
+
+
+
+
+
+
+/*
+  connect is a facade over connectAdvanced. It turns its args into a compatible
+  selectorFactory, which has the signature:
+
+    (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
+  
+  connect passes its args to connectAdvanced as options, which will in turn pass them to
+  selectorFactory each time a Connect component instance is instantiated or hot reloaded.
+
+  selectorFactory returns a final props selector from its mapStateToProps,
+  mapStateToPropsFactories, mapDispatchToProps, mapDispatchToPropsFactories, mergeProps,
+  mergePropsFactories, and pure args.
+
+  The resulting final props selector is called by the Connect component instance whenever
+  it receives new props or store state.
+ */
+
+function match(arg, factories, name) {
+  for (var i = factories.length - 1; i >= 0; i--) {
+    var result = factories[i](arg);
+    if (result) return result;
+  }
+
+  return function (dispatch, options) {
+    throw new Error('Invalid value of type ' + typeof arg + ' for ' + name + ' argument when connecting component ' + options.wrappedComponentName + '.');
+  };
+}
+
+function strictEqual(a, b) {
+  return a === b;
+}
+
+// createConnect with default args builds the 'official' connect behavior. Calling it with
+// different options opens up some testing and extensibility scenarios
+function createConnect() {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref$connectHOC = _ref.connectHOC,
+      connectHOC = _ref$connectHOC === undefined ? __WEBPACK_IMPORTED_MODULE_0__components_connectAdvanced__["a" /* default */] : _ref$connectHOC,
+      _ref$mapStateToPropsF = _ref.mapStateToPropsFactories,
+      mapStateToPropsFactories = _ref$mapStateToPropsF === undefined ? __WEBPACK_IMPORTED_MODULE_3__mapStateToProps__["a" /* default */] : _ref$mapStateToPropsF,
+      _ref$mapDispatchToPro = _ref.mapDispatchToPropsFactories,
+      mapDispatchToPropsFactories = _ref$mapDispatchToPro === undefined ? __WEBPACK_IMPORTED_MODULE_2__mapDispatchToProps__["a" /* default */] : _ref$mapDispatchToPro,
+      _ref$mergePropsFactor = _ref.mergePropsFactories,
+      mergePropsFactories = _ref$mergePropsFactor === undefined ? __WEBPACK_IMPORTED_MODULE_4__mergeProps__["a" /* default */] : _ref$mergePropsFactor,
+      _ref$selectorFactory = _ref.selectorFactory,
+      selectorFactory = _ref$selectorFactory === undefined ? __WEBPACK_IMPORTED_MODULE_5__selectorFactory__["a" /* default */] : _ref$selectorFactory;
+
+  return function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        _ref2$pure = _ref2.pure,
+        pure = _ref2$pure === undefined ? true : _ref2$pure,
+        _ref2$areStatesEqual = _ref2.areStatesEqual,
+        areStatesEqual = _ref2$areStatesEqual === undefined ? strictEqual : _ref2$areStatesEqual,
+        _ref2$areOwnPropsEqua = _ref2.areOwnPropsEqual,
+        areOwnPropsEqual = _ref2$areOwnPropsEqua === undefined ? __WEBPACK_IMPORTED_MODULE_1__utils_shallowEqual__["a" /* default */] : _ref2$areOwnPropsEqua,
+        _ref2$areStatePropsEq = _ref2.areStatePropsEqual,
+        areStatePropsEqual = _ref2$areStatePropsEq === undefined ? __WEBPACK_IMPORTED_MODULE_1__utils_shallowEqual__["a" /* default */] : _ref2$areStatePropsEq,
+        _ref2$areMergedPropsE = _ref2.areMergedPropsEqual,
+        areMergedPropsEqual = _ref2$areMergedPropsE === undefined ? __WEBPACK_IMPORTED_MODULE_1__utils_shallowEqual__["a" /* default */] : _ref2$areMergedPropsE,
+        extraOptions = _objectWithoutProperties(_ref2, ['pure', 'areStatesEqual', 'areOwnPropsEqual', 'areStatePropsEqual', 'areMergedPropsEqual']);
+
+    var initMapStateToProps = match(mapStateToProps, mapStateToPropsFactories, 'mapStateToProps');
+    var initMapDispatchToProps = match(mapDispatchToProps, mapDispatchToPropsFactories, 'mapDispatchToProps');
+    var initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps');
+
+    return connectHOC(selectorFactory, _extends({
+      // used in error messages
+      methodName: 'connect',
+
+      // used to compute Connect's displayName from the wrapped component's displayName.
+      getDisplayName: function getDisplayName(name) {
+        return 'Connect(' + name + ')';
+      },
+
+      // if mapStateToProps is falsy, the Connect component doesn't subscribe to store state changes
+      shouldHandleStateChanges: Boolean(mapStateToProps),
+
+      // passed through to selectorFactory
+      initMapStateToProps: initMapStateToProps,
+      initMapDispatchToProps: initMapDispatchToProps,
+      initMergeProps: initMergeProps,
+      pure: pure,
+      areStatesEqual: areStatesEqual,
+      areOwnPropsEqual: areOwnPropsEqual,
+      areStatePropsEqual: areStatePropsEqual,
+      areMergedPropsEqual: areMergedPropsEqual
+
+    }, extraOptions));
+  };
+}
+
+/* harmony default export */ __webpack_exports__["a"] = createConnect();
+
+/***/ }),
+/* 335 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wrapMapToProps__ = __webpack_require__(112);
+/* unused harmony export whenMapDispatchToPropsIsFunction */
+/* unused harmony export whenMapDispatchToPropsIsMissing */
+/* unused harmony export whenMapDispatchToPropsIsObject */
+
+
+
+function whenMapDispatchToPropsIsFunction(mapDispatchToProps) {
+  return typeof mapDispatchToProps === 'function' ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__wrapMapToProps__["a" /* wrapMapToPropsFunc */])(mapDispatchToProps, 'mapDispatchToProps') : undefined;
+}
+
+function whenMapDispatchToPropsIsMissing(mapDispatchToProps) {
+  return !mapDispatchToProps ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__wrapMapToProps__["b" /* wrapMapToPropsConstant */])(function (dispatch) {
+    return { dispatch: dispatch };
+  }) : undefined;
+}
+
+function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
+  return mapDispatchToProps && typeof mapDispatchToProps === 'object' ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__wrapMapToProps__["b" /* wrapMapToPropsConstant */])(function (dispatch) {
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_redux__["bindActionCreators"])(mapDispatchToProps, dispatch);
+  }) : undefined;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
+
+/***/ }),
+/* 336 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wrapMapToProps__ = __webpack_require__(112);
+/* unused harmony export whenMapStateToPropsIsFunction */
+/* unused harmony export whenMapStateToPropsIsMissing */
+
+
+function whenMapStateToPropsIsFunction(mapStateToProps) {
+  return typeof mapStateToProps === 'function' ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__wrapMapToProps__["a" /* wrapMapToPropsFunc */])(mapStateToProps, 'mapStateToProps') : undefined;
+}
+
+function whenMapStateToPropsIsMissing(mapStateToProps) {
+  return !mapStateToProps ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__wrapMapToProps__["b" /* wrapMapToPropsConstant */])(function () {
+    return {};
+  }) : undefined;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
+
+/***/ }),
+/* 337 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_verifyPlainObject__ = __webpack_require__(114);
+/* unused harmony export defaultMergeProps */
+/* unused harmony export wrapMergePropsFunc */
+/* unused harmony export whenMergePropsIsFunction */
+/* unused harmony export whenMergePropsIsOmitted */
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+
+
+function defaultMergeProps(stateProps, dispatchProps, ownProps) {
+  return _extends({}, ownProps, stateProps, dispatchProps);
+}
+
+function wrapMergePropsFunc(mergeProps) {
+  return function initMergePropsProxy(dispatch, _ref) {
+    var displayName = _ref.displayName,
+        pure = _ref.pure,
+        areMergedPropsEqual = _ref.areMergedPropsEqual;
+
+    var hasRunOnce = false;
+    var mergedProps = void 0;
+
+    return function mergePropsProxy(stateProps, dispatchProps, ownProps) {
+      var nextMergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+
+      if (hasRunOnce) {
+        if (!pure || !areMergedPropsEqual(nextMergedProps, mergedProps)) mergedProps = nextMergedProps;
+      } else {
+        hasRunOnce = true;
+        mergedProps = nextMergedProps;
+
+        if (process.env.NODE_ENV !== 'production') __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_verifyPlainObject__["a" /* default */])(mergedProps, displayName, 'mergeProps');
+      }
+
+      return mergedProps;
+    };
+  };
+}
+
+function whenMergePropsIsFunction(mergeProps) {
+  return typeof mergeProps === 'function' ? wrapMergePropsFunc(mergeProps) : undefined;
+}
+
+function whenMergePropsIsOmitted(mergeProps) {
+  return !mergeProps ? function () {
+    return defaultMergeProps;
+  } : undefined;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 338 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__verifySubselectors__ = __webpack_require__(339);
+/* unused harmony export impureFinalPropsSelectorFactory */
+/* unused harmony export pureFinalPropsSelectorFactory */
+/* harmony export (immutable) */ __webpack_exports__["a"] = finalPropsSelectorFactory;
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+
+
+function impureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch) {
+  return function impureFinalPropsSelector(state, ownProps) {
+    return mergeProps(mapStateToProps(state, ownProps), mapDispatchToProps(dispatch, ownProps), ownProps);
+  };
+}
+
+function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, _ref) {
+  var areStatesEqual = _ref.areStatesEqual,
+      areOwnPropsEqual = _ref.areOwnPropsEqual,
+      areStatePropsEqual = _ref.areStatePropsEqual;
+
+  var hasRunAtLeastOnce = false;
+  var state = void 0;
+  var ownProps = void 0;
+  var stateProps = void 0;
+  var dispatchProps = void 0;
+  var mergedProps = void 0;
+
+  function handleFirstCall(firstState, firstOwnProps) {
+    state = firstState;
+    ownProps = firstOwnProps;
+    stateProps = mapStateToProps(state, ownProps);
+    dispatchProps = mapDispatchToProps(dispatch, ownProps);
+    mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+    hasRunAtLeastOnce = true;
+    return mergedProps;
+  }
+
+  function handleNewPropsAndNewState() {
+    stateProps = mapStateToProps(state, ownProps);
+
+    if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
+
+    mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+    return mergedProps;
+  }
+
+  function handleNewProps() {
+    if (mapStateToProps.dependsOnOwnProps) stateProps = mapStateToProps(state, ownProps);
+
+    if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
+
+    mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+    return mergedProps;
+  }
+
+  function handleNewState() {
+    var nextStateProps = mapStateToProps(state, ownProps);
+    var statePropsChanged = !areStatePropsEqual(nextStateProps, stateProps);
+    stateProps = nextStateProps;
+
+    if (statePropsChanged) mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+
+    return mergedProps;
+  }
+
+  function handleSubsequentCalls(nextState, nextOwnProps) {
+    var propsChanged = !areOwnPropsEqual(nextOwnProps, ownProps);
+    var stateChanged = !areStatesEqual(nextState, state);
+    state = nextState;
+    ownProps = nextOwnProps;
+
+    if (propsChanged && stateChanged) return handleNewPropsAndNewState();
+    if (propsChanged) return handleNewProps();
+    if (stateChanged) return handleNewState();
+    return mergedProps;
+  }
+
+  return function pureFinalPropsSelector(nextState, nextOwnProps) {
+    return hasRunAtLeastOnce ? handleSubsequentCalls(nextState, nextOwnProps) : handleFirstCall(nextState, nextOwnProps);
+  };
+}
+
+// TODO: Add more comments
+
+// If pure is true, the selector returned by selectorFactory will memoize its results,
+// allowing connectAdvanced's shouldComponentUpdate to return false if final
+// props have not changed. If false, the selector will always return a new
+// object and shouldComponentUpdate will always return true.
+
+function finalPropsSelectorFactory(dispatch, _ref2) {
+  var initMapStateToProps = _ref2.initMapStateToProps,
+      initMapDispatchToProps = _ref2.initMapDispatchToProps,
+      initMergeProps = _ref2.initMergeProps,
+      options = _objectWithoutProperties(_ref2, ['initMapStateToProps', 'initMapDispatchToProps', 'initMergeProps']);
+
+  var mapStateToProps = initMapStateToProps(dispatch, options);
+  var mapDispatchToProps = initMapDispatchToProps(dispatch, options);
+  var mergeProps = initMergeProps(dispatch, options);
+
+  if (process.env.NODE_ENV !== 'production') {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__verifySubselectors__["a" /* default */])(mapStateToProps, mapDispatchToProps, mergeProps, options.displayName);
+  }
+
+  var selectorFactory = options.pure ? pureFinalPropsSelectorFactory : impureFinalPropsSelectorFactory;
+
+  return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
+}
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 339 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_warning__ = __webpack_require__(65);
+/* harmony export (immutable) */ __webpack_exports__["a"] = verifySubselectors;
+
+
+function verify(selector, methodName, displayName) {
+  if (!selector) {
+    throw new Error('Unexpected value for ' + methodName + ' in ' + displayName + '.');
+  } else if (methodName === 'mapStateToProps' || methodName === 'mapDispatchToProps') {
+    if (!selector.hasOwnProperty('dependsOnOwnProps')) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_warning__["a" /* default */])('The selector for ' + methodName + ' of ' + displayName + ' did not specify a value for dependsOnOwnProps.');
+    }
+  }
+}
+
+function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, displayName) {
+  verify(mapStateToProps, 'mapStateToProps', displayName);
+  verify(mapDispatchToProps, 'mapDispatchToProps', displayName);
+  verify(mergeProps, 'mergeProps', displayName);
+}
+
+/***/ }),
+/* 340 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Subscription; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// encapsulates the subscription logic for connecting a component to the redux store, as
+// well as nesting subscriptions of descendant components, so that we can ensure the
+// ancestor components re-render before descendants
+
+var CLEARED = null;
+var nullListeners = {
+  notify: function notify() {}
+};
+
+function createListenerCollection() {
+  // the current/next pattern is copied from redux's createStore code.
+  // TODO: refactor+expose that code to be reusable here?
+  var current = [];
+  var next = [];
+
+  return {
+    clear: function clear() {
+      next = CLEARED;
+      current = CLEARED;
+    },
+    notify: function notify() {
+      var listeners = current = next;
+      for (var i = 0; i < listeners.length; i++) {
+        listeners[i]();
+      }
+    },
+    subscribe: function subscribe(listener) {
+      var isSubscribed = true;
+      if (next === current) next = current.slice();
+      next.push(listener);
+
+      return function unsubscribe() {
+        if (!isSubscribed || current === CLEARED) return;
+        isSubscribed = false;
+
+        if (next === current) next = current.slice();
+        next.splice(next.indexOf(listener), 1);
+      };
+    }
+  };
+}
+
+var Subscription = function () {
+  function Subscription(store, parentSub, onStateChange) {
+    _classCallCheck(this, Subscription);
+
+    this.store = store;
+    this.parentSub = parentSub;
+    this.onStateChange = onStateChange;
+    this.unsubscribe = null;
+    this.listeners = nullListeners;
+  }
+
+  Subscription.prototype.addNestedSub = function addNestedSub(listener) {
+    this.trySubscribe();
+    return this.listeners.subscribe(listener);
+  };
+
+  Subscription.prototype.notifyNestedSubs = function notifyNestedSubs() {
+    this.listeners.notify();
+  };
+
+  Subscription.prototype.isSubscribed = function isSubscribed() {
+    return Boolean(this.unsubscribe);
+  };
+
+  Subscription.prototype.trySubscribe = function trySubscribe() {
+    if (!this.unsubscribe) {
+      this.unsubscribe = this.parentSub ? this.parentSub.addNestedSub(this.onStateChange) : this.store.subscribe(this.onStateChange);
+
+      this.listeners = createListenerCollection();
+    }
+  };
+
+  Subscription.prototype.tryUnsubscribe = function tryUnsubscribe() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+      this.listeners.clear();
+      this.listeners = nullListeners;
+    }
+  };
+
+  return Subscription;
+}();
+
+
+
+/***/ }),
+/* 341 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = shallowEqual;
+var hasOwn = Object.prototype.hasOwnProperty;
+
+function is(x, y) {
+  if (x === y) {
+    return x !== 0 || y !== 0 || 1 / x === 1 / y;
+  } else {
+    return x !== x && y !== y;
+  }
+}
+
+function shallowEqual(objA, objB) {
+  if (is(objA, objB)) return true;
+
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+    return false;
+  }
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (var i = 0; i < keysA.length; i++) {
+    if (!hasOwn.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/***/ }),
 /* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -82581,13 +86885,356 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 353 */,
-/* 354 */,
-/* 355 */,
-/* 356 */,
-/* 357 */,
-/* 358 */,
-/* 359 */,
+/* 353 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__compose__ = __webpack_require__(118);
+/* harmony export (immutable) */ __webpack_exports__["a"] = applyMiddleware;
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+
+
+/**
+ * Creates a store enhancer that applies middleware to the dispatch method
+ * of the Redux store. This is handy for a variety of tasks, such as expressing
+ * asynchronous actions in a concise manner, or logging every action payload.
+ *
+ * See `redux-thunk` package as an example of the Redux middleware.
+ *
+ * Because middleware is potentially asynchronous, this should be the first
+ * store enhancer in the composition chain.
+ *
+ * Note that each middleware will be given the `dispatch` and `getState` functions
+ * as named arguments.
+ *
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */
+function applyMiddleware() {
+  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+    middlewares[_key] = arguments[_key];
+  }
+
+  return function (createStore) {
+    return function (reducer, preloadedState, enhancer) {
+      var store = createStore(reducer, preloadedState, enhancer);
+      var _dispatch = store.dispatch;
+      var chain = [];
+
+      var middlewareAPI = {
+        getState: store.getState,
+        dispatch: function dispatch(action) {
+          return _dispatch(action);
+        }
+      };
+      chain = middlewares.map(function (middleware) {
+        return middleware(middlewareAPI);
+      });
+      _dispatch = __WEBPACK_IMPORTED_MODULE_0__compose__["a" /* default */].apply(undefined, chain)(store.dispatch);
+
+      return _extends({}, store, {
+        dispatch: _dispatch
+      });
+    };
+  };
+}
+
+/***/ }),
+/* 354 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = bindActionCreators;
+function bindActionCreator(actionCreator, dispatch) {
+  return function () {
+    return dispatch(actionCreator.apply(undefined, arguments));
+  };
+}
+
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass a single function as the first argument,
+ * and get a function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */
+function bindActionCreators(actionCreators, dispatch) {
+  if (typeof actionCreators === 'function') {
+    return bindActionCreator(actionCreators, dispatch);
+  }
+
+  if (typeof actionCreators !== 'object' || actionCreators === null) {
+    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+  }
+
+  var keys = Object.keys(actionCreators);
+  var boundActionCreators = {};
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var actionCreator = actionCreators[key];
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+  }
+  return boundActionCreators;
+}
+
+/***/ }),
+/* 355 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(119);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_es_isPlainObject__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_warning__ = __webpack_require__(120);
+/* harmony export (immutable) */ __webpack_exports__["a"] = combineReducers;
+
+
+
+
+function getUndefinedStateErrorMessage(key, action) {
+  var actionType = action && action.type;
+  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+
+  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
+}
+
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
+  var reducerKeys = Object.keys(reducers);
+  var argumentName = action && action.type === __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+
+  if (reducerKeys.length === 0) {
+    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+  }
+
+  if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_lodash_es_isPlainObject__["a" /* default */])(inputState)) {
+    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+  }
+
+  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+    return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
+  });
+
+  unexpectedKeys.forEach(function (key) {
+    unexpectedKeyCache[key] = true;
+  });
+
+  if (unexpectedKeys.length > 0) {
+    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+  }
+}
+
+function assertReducerSanity(reducers) {
+  Object.keys(reducers).forEach(function (key) {
+    var reducer = reducers[key];
+    var initialState = reducer(undefined, { type: __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT });
+
+    if (typeof initialState === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+    }
+
+    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + __WEBPACK_IMPORTED_MODULE_0__createStore__["b" /* ActionTypes */].INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+    }
+  });
+}
+
+/**
+ * Turns an object whose values are different reducer functions, into a single
+ * reducer function. It will call every child reducer, and gather their results
+ * into a single state object, whose keys correspond to the keys of the passed
+ * reducer functions.
+ *
+ * @param {Object} reducers An object whose values correspond to different
+ * reducer functions that need to be combined into one. One handy way to obtain
+ * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+ * undefined for any action. Instead, they should return their initial state
+ * if the state passed to them was undefined, and the current state for any
+ * unrecognized action.
+ *
+ * @returns {Function} A reducer function that invokes every reducer inside the
+ * passed object, and builds a state object with the same shape.
+ */
+function combineReducers(reducers) {
+  var reducerKeys = Object.keys(reducers);
+  var finalReducers = {};
+  for (var i = 0; i < reducerKeys.length; i++) {
+    var key = reducerKeys[i];
+
+    if (process.env.NODE_ENV !== 'production') {
+      if (typeof reducers[key] === 'undefined') {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_warning__["a" /* default */])('No reducer provided for key "' + key + '"');
+      }
+    }
+
+    if (typeof reducers[key] === 'function') {
+      finalReducers[key] = reducers[key];
+    }
+  }
+  var finalReducerKeys = Object.keys(finalReducers);
+
+  if (process.env.NODE_ENV !== 'production') {
+    var unexpectedKeyCache = {};
+  }
+
+  var sanityError;
+  try {
+    assertReducerSanity(finalReducers);
+  } catch (e) {
+    sanityError = e;
+  }
+
+  return function combination() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var action = arguments[1];
+
+    if (sanityError) {
+      throw sanityError;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
+      if (warningMessage) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_warning__["a" /* default */])(warningMessage);
+      }
+    }
+
+    var hasChanged = false;
+    var nextState = {};
+    for (var i = 0; i < finalReducerKeys.length; i++) {
+      var key = finalReducerKeys[i];
+      var reducer = finalReducers[key];
+      var previousStateForKey = state[key];
+      var nextStateForKey = reducer(previousStateForKey, action);
+      if (typeof nextStateForKey === 'undefined') {
+        var errorMessage = getUndefinedStateErrorMessage(key, action);
+        throw new Error(errorMessage);
+      }
+      nextState[key] = nextStateForKey;
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+    }
+    return hasChanged ? nextState : state;
+  };
+}
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
+
+/***/ }),
+/* 356 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(357);
+
+
+/***/ }),
+/* 357 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global, module) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ponyfill = __webpack_require__(358);
+
+var _ponyfill2 = _interopRequireDefault(_ponyfill);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var root; /* global window */
+
+
+if (typeof self !== 'undefined') {
+  root = self;
+} else if (typeof window !== 'undefined') {
+  root = window;
+} else if (typeof global !== 'undefined') {
+  root = global;
+} else if (true) {
+  root = module;
+} else {
+  root = Function('return this')();
+}
+
+var result = (0, _ponyfill2['default'])(root);
+exports['default'] = result;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35), __webpack_require__(359)(module)))
+
+/***/ }),
+/* 358 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports['default'] = symbolObservablePonyfill;
+function symbolObservablePonyfill(root) {
+	var result;
+	var _Symbol = root.Symbol;
+
+	if (typeof _Symbol === 'function') {
+		if (_Symbol.observable) {
+			result = _Symbol.observable;
+		} else {
+			result = _Symbol('observable');
+			_Symbol.observable = result;
+		}
+	} else {
+		result = '@@observable';
+	}
+
+	return result;
+};
+
+/***/ }),
+/* 359 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
 /* 360 */,
 /* 361 */,
 /* 362 */,
@@ -82663,16 +87310,14 @@ module.exports = traverseAllChildren;
 /* 432 */,
 /* 433 */,
 /* 434 */,
-/* 435 */
+/* 435 */,
+/* 436 */,
+/* 437 */,
+/* 438 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {/*jslint browser: true*/
-/*global $, jQuery*/
-/*global Language, WindowFactory, FlightList, FlightUploader, FlightProccessingStatus*/
-/*global FlightViewOptions, Fdr, Chart, User, SearchFlight*/
-
-
+/* WEBPACK VAR INJECTION */(function(jQuery) {
 
 __webpack_require__(1);
 __webpack_require__(141);
@@ -82722,307 +87367,113 @@ var User = __webpack_require__(130);
 var SearchFlight = __webpack_require__(129);
 var Calibration = __webpack_require__(123);
 
-var React = __webpack_require__(11);
-var ReactDOM = __webpack_require__(71);
+var LEGEND_CONTAINER_OUTER = 175,
+    PARAM_TYPE_AP = "ap",
+    PARAM_TYPE_BP = "bp";
 
-var ResultsComponent = __webpack_require__(441);
+jQuery(function ($) {
+    $(document).ready(function () {
 
-$(document).ready(function () {
-    var $document = $(document),
-        $window = $(window),
-        userLang = $('html').attr("lang"),
-        eventHandler = $('#eventHandler'),
-        LA = new Language(userLang),
-        W = new WindowFactory($window, $document),
-        FP = null,
-        FU = null,
-        FO = null,
-        B = null,
-        C = null,
-        U = null,
-        FL = null,
-        SF = null,
-        CLB = null;
+        var $document = $(document),
+            $window = $(window),
+            userLang = $('html').attr("lang"),
+            eventHandler = $('#eventHandler');
 
-    LA.GetLanguage().done(function (data) {
-        var langStr = data;
-        var wsp = W.NewShowcase();
-        FL = new FlightList(langStr, eventHandler);
-        FU = new FlightUploader($window, $document, langStr, eventHandler);
-        FP = new FlightProccessingStatus(langStr);
-        FO = new FlightViewOptions($window, $document, langStr, eventHandler);
-        B = new Fdr($window, $document, langStr, eventHandler);
-        C = new Chart($window, $document, langStr, eventHandler);
-        U = new User($window, $document, langStr, eventHandler);
-        SF = new SearchFlight($window, $document, langStr, eventHandler);
-        CLB = new Calibration($window, $document, langStr, eventHandler);
+        var LA = new Language(userLang),
+            C = null;
 
-        FL.FillFactoryContaider(wsp);
-    });
+        LA.GetLanguage().done(function (data) {
+            var langStr = data;
+            C = new Chart($window, $document, langStr, eventHandler, true);
 
-    $window.resize(function (e) {
-        if (W !== null) {
-            W.ResizeShowcase(e);
+            var flightId = $("#flightId").text(),
+                tplName = $("#tplName").text(),
+                stepLength = $("#stepLength").text(),
+                startCopyTime = $("#startCopyTime").text(),
+                startFrame = $("#startFrame").text(),
+                endFrame = $("#endFrame").text(),
+                apParams = $("#apParams").text().split(","),
+                bpParams = $("#bpParams").text().split(",");
+
+            var showcase = $window;
+
+            if (C != null) {
+                C.SetChartData(flightId, tplName, stepLength, startCopyTime, startFrame, endFrame, apParams, bpParams);
+
+                C.chartFactoryContainer = showcase;
+
+                C.chartWorkspace = $('div#chartWorkspace');
+                C.chartContent = $('div#graphContainer');
+
+                C.loadingBox = $("div#loadingBox").css("top", $window.height() / 2 - 40);
+                C.legend = $('div#legend');
+                C.placeholder = $('div#placeholder');
+
+                C.placeholder.on("mouseover", function (e) {
+                    C.mouseInChat = true;
+                });
+
+                C.placeholder.on("mouseout", function (e) {
+                    C.mouseInChat = false;
+                });
+
+                setInitialChartSize.apply(C);
+                C.LoadFlotChart();
+
+                C.chartWorkspace.resizable().resize(function () {
+                    var interval = setInterval(function () {
+                        ResizeChart.apply(C);
+                        C.plot.pan(0);
+                        clearInterval(interval);
+                    }, 1000);
+                });
+            }
+        });
+
+        function setInitialChartSize() {
+            this.chartWorkspace.css({
+                "top": 0,
+                "left": 0,
+                "height": this.window.height() - 25,
+                "width": this.window.width() - 25
+            });
+            ResizeChart.apply(this);
         }
 
-        if (FL !== null) {
-            FL.ResizeFlightList(e);
-        }
-        if (FO !== null) {
-            FO.ResizeFlightViewOptionsContainer(e);
-        }
-        if (C !== null) {
-            C.ResizeChartContainer(e);
-        }
+        function ResizeChart() {
+            this.chartContent.css({
+                "top": 0,
+                "left": 0,
+                "width": this.chartWorkspace.width(),
+                "height": this.chartWorkspace.height()
+            });
 
-        if (B !== null) {
-            B.ResizeBruTypeContainer(e);
-        }
-    });
+            if (this.chartContent !== null && this.placeholder !== null && this.legend !== null && this.apParams !== null && this.bpParams !== null) {
 
-    $document.resize(function (e) {
-        if (W !== null) {
-            W.ResizeShowcase(e);
-        }
-    });
+                this.placeholder.css({
+                    "margin-top": '30px',
+                    "width": this.chartContent.width() - LEGEND_CONTAINER_OUTER + 'px',
+                    "height": this.chartContent.height() - 35 + 'px'
+                });
+                this.legend.css({
+                    "margin-top": '35px',
+                    "width": LEGEND_CONTAINER_OUTER + "px",
+                    "height": this.placeholder.height() - 25 + 'px'
+                });
 
-    eventHandler.on("resizeShowcase", function (e) {
-        W.ResizeShowcase(e);
-    });
+                this.placeholder.css("width", this.chartContent.width() - (this.legend.width() + 30) + (this.apParams.length + this.bpParams.length) * 18 + "px");
 
-    eventHandler.on("uploading", function () {
-        FU.CaptureUploadingItems();
-        FP.SupportUploadingStatus();
-    });
-
-    eventHandler.on("uploadWithPreview", function () {
-        var showcase = W.NewShowcase();
-        FU.FillFactoryContaider(showcase);
-    });
-
-    eventHandler.on("removeShowcase", function (e, data, callback) {
-        var flightUploaderFactoryContainer = data;
-        W.RemoveShowcase(flightUploaderFactoryContainer);
-
-        if ($.isFunction(callback)) {
-            callback();
-        }
-    });
-
-    ///=======================================================
-    //FlightList
-    ///
-
-    eventHandler.on("startProccessing", function (e, data) {
-        var bruType = data['bruType'],
-            fileName = data['fileName'],
-            tempFileName = data['tempFileName'];
-
-        if (FP !== null) {
-            FP.SetUpload(fileName, bruType, tempFileName);
-        }
-    });
-
-    eventHandler.on("endProccessing", function (e, data) {
-        var fileName = data;
-        if (FP !== null) {
-            FP.RemoveUpload(fileName);
-        }
-    });
-
-    eventHandler.on("convertSelectedClicked", function (e) {
-        W.RemoveShowcases(1);
-
-        if (FL !== null) {
-            FL.ShowFlightsByPath();
-        }
-    });
-
-    eventHandler.on("viewFlightOptions", function (e, flightId, task, someshowcase) {
-        if (someshowcase === null) {
-            W.RemoveShowcases(1);
-            someshowcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(someshowcase);
-        }
-
-        if (flightId !== null) {
-            FO.flightId = flightId;
-        }
-
-        if (task !== null) {
-            FO.task = task;
-        }
-
-        if (FO.flightId !== null) {
-            FO.FillFactoryContaider(someshowcase);
-        }
-    });
-
-    eventHandler.on("showBruTypeEditingForm", function (e, bruTypeId, task, showcase) {
-        if (showcase === null) {
-            W.RemoveShowcases(1);
-            showcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(showcase);
-        }
-
-        if (bruTypeId !== null) {
-            B.bruTypeId = bruTypeId;
-        }
-
-        if (task !== null) {
-            B.task = task;
-        }
-
-        B.FillFactoryContaider(showcase);
-    });
-
-    eventHandler.on("resultsLeftMenuRow", function (e, showcase) {
-        if (showcase === null) {
-            W.RemoveShowcases(1);
-            showcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(showcase);
-        }
-
-        ReactDOM.render(React.createElement(
-            'div',
-            null,
-            'Hello World'
-        ), document.getElementById('flightListWorkspace'));
-    });
-
-    eventHandler.on("userLogout", function (e) {
-        U.logout();
-    });
-
-    eventHandler.on("userChangeLanguage", function (e, lang) {
-        U.changeLanguage(lang);
-    });
-
-    eventHandler.on("userShowList", function (e, showcase) {
-        if (showcase === null) {
-            W.RemoveShowcases(1);
-            showcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(showcase);
-        }
-
-        U.FillFactoryContaider(showcase);
-    });
-
-    eventHandler.on("flightSearchFormShow", function (e, showcase) {
-        if (showcase === null) {
-            W.RemoveShowcases(1);
-            showcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(showcase);
-        }
-
-        SF.FillFactoryContaider(showcase);
-    });
-
-    eventHandler.on("calibrationFormShow", function (e, showcase) {
-        if (showcase === null) {
-            W.RemoveShowcases(1);
-            showcase = W.NewShowcase();
-        } else {
-            W.ClearShowcase(showcase);
-        }
-
-        CLB.FillFactoryContaider(showcase);
-    });
-
-    eventHandler.on("showChart", function (e, flightId, tplName, stepLength, startCopyTime, startFrame, endFrame, apParams, bpParams) {
-
-        W.RemoveShowcases(2);
-        var showcase = W.NewShowcase();
-
-        if (C !== null) {
-            C.SetChartData(flightId, tplName, stepLength, startCopyTime, startFrame, endFrame, apParams, bpParams);
-
-            C.FillFactoryContaider(showcase);
-        }
-    });
-
-    eventHandler.on("saveChartTpl", function (e, flightId, tplName, saveChartTplCb) {
-        B.copyTemplate(flightId, tplName).then(saveChartTplCb);
-    });
-
-    var allowScrollUp = false;
-    var allowScrollDown = false;
-
-    function updateScrollPermission(event) {
-        var $el = $(event.target);
-
-        allowScrollUp = false;
-        allowScrollDown = false;
-
-        if ($el.hasClass('is-scrollable') && $el.scrollTop() > 0 || $el.parents('.is-scrollable').length && $($el.parents('.is-scrollable').get(0)).scrollTop() > 0) {
-            allowScrollUp = true;
-        }
-
-        if ($el.hasClass('is-scrollable') && $el.scrollTop() < $el.get(0).scrollHeight - $el.get(0).clientHeight || $el.parents('.is-scrollable').length && $($el.parents('.is-scrollable').get(0)).scrollTop() < $el.parents('.is-scrollable').get(0).scrollHeight - $el.parents('.is-scrollable').get(0).clientHeight) {
-            allowScrollDown = true;
-        }
-    }
-
-    $(window).bind('mousewheel DOMMouseScroll', function (event) {
-        updateScrollPermission(event);
-        if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
-            if (!allowScrollUp) return false;
-        } else {
-            if (!allowScrollDown) return false;
+                if (this.apParams.length == 1 && this.bpParams.length === 0) {
+                    this.placeholder.css("margin-left", "-7px");
+                } else {
+                    this.placeholder.css("margin-left", "-" + (this.apParams.length + this.bpParams.length - 1) * 18 + "px");
+                }
+            }
         }
     });
 });
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
-/***/ }),
-/* 436 */,
-/* 437 */,
-/* 438 */,
-/* 439 */,
-/* 440 */,
-/* 441 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = __webpack_require__(11);
-var ReactDOM = __webpack_require__(71);
-
-var ResultsComponent = function (_React$Component) {
-    _inherits(ResultsComponent, _React$Component);
-
-    function ResultsComponent() {
-        _classCallCheck(this, ResultsComponent);
-
-        return _possibleConstructorReturn(this, (ResultsComponent.__proto__ || Object.getPrototypeOf(ResultsComponent)).apply(this, arguments));
-    }
-
-    _createClass(ResultsComponent, [{
-        key: 'render',
-        value: function render() {
-            return '<div>Hello World</div>';
-        }
-    }]);
-
-    return ResultsComponent;
-}(React.Component);
-
-module.exports = ResultsComponent;
-
 /***/ })
 /******/ ]);
-//# sourceMappingURL=index60e4945397c316be23c5.js.map
+//# sourceMappingURL=chart857aac69491f8b5010a2.js.map

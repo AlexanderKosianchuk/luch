@@ -886,13 +886,18 @@ class Fdr
         return $channelFreq;
     }
 
-    public function GetBruApHeaders($extBruType)
+    public function GetBruApHeaders($fdrId)
     {
-        $bruType = $extBruType;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` "
+         ."WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -924,15 +929,18 @@ class Fdr
         return $apHeader;
     }
 
-    public function GetBruApHeadersWithPaging($extBruType, $extStartIndex, $extEndIndex)
+    public function GetBruApHeadersWithPaging($fdrId, $startIndex, $endIndex)
     {
-        $bruType = $extBruType;
-        $startIndex = $extStartIndex;
-        $endIndex = $extEndIndex;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` "
+            ."WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -965,13 +973,17 @@ class Fdr
         return $apHeader;
     }
 
-    public function GetBruApHeadersByRequest($extBruType, $request)
+    public function GetBruApHeadersByRequest($fdrId, $request)
     {
-        $bruType = $extBruType;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName` FROM `".$this->table."` WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -985,8 +997,7 @@ class Fdr
 
         $result = $link->query($query);
 
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             $paramInfo = array("id" => $row['id'],
                     "channel" => $row['channel'],
                     "code" => $row['code'],
@@ -1006,13 +1017,18 @@ class Fdr
         return $apHeader;
     }
 
-    public function GetBruBpHeaders($extBruType)
+    public function GetBruBpHeaders($fdrId)
     {
-        $bruType = $extBruType;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` "
+            ."WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1045,16 +1061,21 @@ class Fdr
         return $bpHeader;
     }
 
-    public function GetBruBpHeadersWithPaging($extBruType, $extStartIndex, $extEndIndex)
+    public function GetBruBpHeadersWithPaging($fdrId, $startIndex, $endIndex)
     {
-        $bruType = $extBruType;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
         $startIndex = $extStartIndex;
         $endIndex = $extEndIndex;
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` "
+            ."WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1068,8 +1089,7 @@ class Fdr
 
         $result = $link->query($query);
 
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             $paramInfo = array("id" => $row['id'],
                     "code" => $row['code'],
                     "channel" => $row['channel'],
@@ -1089,15 +1109,18 @@ class Fdr
         return $bpHeader;
     }
 
-    public function GetBruBpHeadersByRequest($extBruType, $extRequest)
+    public function GetBruBpHeadersByRequest($fdrId, $request)
     {
-        $bruType = $extBruType;
-        $request = $extRequest;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiBpTableName` FROM `".$this->table."` "
+            ."WHERE `id` = ".$fdrId." LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1131,96 +1154,6 @@ class Fdr
 
         return $bpHeader;
     }
-
-//     public function GetBruApHeadersNormalized($extBruType)
-//     {
-//         $bruType = $extBruType;
-//         $apHeader = $this->GetBruApGradi($bruType);
-
-//         $apHeaderNorm = array();
-//         $apHeaderNormCounter = -1;
-
-//         for ($i = 0; $i < count($apHeader); $i++)
-//         {
-//         array_push($apHeaderNorm, $apHeader[$i]);
-//         $apHeaderNormCounter++;
-//         unset($apHeader[$i]);
-//         $i--;
-//         $apHeader = array_values($apHeader);
-
-//         for($j = 0; $j < count($apHeader);)
-//         {
-//         if($apHeaderNorm[$apHeaderNormCounter]['code'] == $apHeader[$j]['code'])
-//         {
-//                         //if params have same codes, concat channel
-//         $apHeaderNorm[$apHeaderNormCounter]['channel'] =
-//         $apHeaderNorm[$apHeaderNormCounter]['channel'] . ", " .$apHeader[$j]['channel'];
-//         unset($apHeader[$j]);
-//         $apHeader = array_values($apHeader);
-//         }
-//         else
-//         {
-//         $j++;
-//         }
-//         }
-//         }
-//         return $apHeaderNorm;
-//         }
-
-//         public function GetBruBpHeadersNormalized($extBruType)
-//         {
-//         $bruType = $extBruType;
-//         $bpHeader = $this->GetBruBpGradi($bruType);
-
-//         $bpHeaderNorm = array();
-//         $bpHeaderNormCounter = -1;
-
-//         for ($i = 0; $i < count($bpHeader); $i++)
-//         {
-//         array_push($bpHeaderNorm, $bpHeader[$i]);
-//         $bpHeaderNormCounter++;
-//             unset($bpHeader[$i]);
-//             $i--;
-//             $bpHeader = array_values($bpHeader);
-
-//             for($j = 0; $j < count($bpHeader);)
-//             {
-//             if($bpHeaderNorm[$bpHeaderNormCounter]['code'] == $bpHeader[$j]['code'])
-//                 {
-//                 //if params have same codes, concat channel and mask
-//                         $bpHeaderNorm[$bpHeaderNormCounter]['channel'] =
-//                 $bpHeaderNorm[$bpHeaderNormCounter]['channel'] . ", " .$bpHeader[$j]['channel'];
-//                 unset($bpHeader[$j]);
-//                 $bpHeader = array_values($bpHeader);
-//                 }
-//                     else
-//                 {
-//                     $j++;
-//                 }
-//             }
-//         }
-//         return $bpHeaderNorm;
-//     }
-
-
-
-//    public function ShowAllApHeaders($extApHeader)
-//    {
-//        $apHeader = (array)$extApHeader;
-//        $cellCount = count($apHeader);
-//        $tableWidth = $cellCount * 180 + 180;
-//
-//        printf("<table border=\"1\" width=\"%s px\"><tr>
-//            <td class=\"VievTableCellHeader\" style=\"text-align:center;\">T</td>", $tableWidth);
-//        for($i = 0; $i < $cellCount; $i++)
-//        {
-//            $paramInfo = $apHeader[$i];
-//            printf("<td class=\"VievTableCellHeader\">%s, %s</br>%s (%s)</td>",
-//                $paramInfo['name'], $paramInfo['dim'], $paramInfo['code'], $paramInfo['channel']);
-//        }
-//
-//        printf("</tr></table>");
-//    }
 
     public function GetSelectedFlightApHeadersByCodes($extCodes, $extBruType)
     {
@@ -1465,10 +1398,8 @@ class Fdr
         return $paramInfo;
     }
 
-    public function GetParamNames($extBruType, $extParamCodeArr)
+    public function GetParamNames($fdrId, $paramCodeArr)
     {
-        $bruType = $extBruType;
-        $paramCodeArr = $extParamCodeArr;
         $paramCodeArrImploded = implode("','", $paramCodeArr);
         $paramCodeArrImploded = "'" . $paramCodeArrImploded . "'";
 
@@ -1476,7 +1407,8 @@ class Fdr
         $link = $c->Connect();
         $paramInfo = array();
 
-        $query = "SELECT `gradiApTableName`, `gradiBpTableName` FROM `".$this->table."` WHERE `name` = '".$bruType."' LIMIT 1;";
+        $query = "SELECT `gradiApTableName`, `gradiBpTableName` FROM `".$this->table."` WHERE "
+            ."`id` = '".$fdrId."' LIMIT 1;";
         $result = $link->query($query);
         $row = $result->fetch_array();
 
@@ -1490,8 +1422,7 @@ class Fdr
                 "IN (".$paramCodeArrImploded.") " .
                 "ORDER BY `code`;";
         $result = $link->query($query);
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             $names .= $row['code'] . " : " . $row['name'] . "(" . $row['dim'] . ") \n ";
         }
 
@@ -1499,8 +1430,7 @@ class Fdr
                 "IN (".$paramCodeArrImploded.") " .
                 "ORDER BY `code`;";
         $result = $link->query($query);
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             $names .= $row['code'] . " : " . $row['name'] ."\n ";
         }
 

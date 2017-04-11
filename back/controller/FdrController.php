@@ -162,16 +162,17 @@ class FdrController extends CController
         return $optionsStr;
     }
 
-    public function ShowParamList($extBruTypeId)
+    public function ShowParamList($fdrId)
     {
-        $bruTypeId = $extBruTypeId;
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById($bruTypeId);
-        $bruType = $fdrInfo['name'];
-        $flightApHeaders = $Bru->GetBruApHeaders($bruType);
-        $flightBpHeaders= $Bru->GetBruBpHeaders($bruType);
-        unset($Bru);
+        $fdr = new Fdr;
+        $flightApHeaders = $fdr->GetBruApHeaders($fdrId);
+        $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
+        unset($fdr);
 
         $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer is-scrollable'>");
         $paramList .= sprintf ("<div class='BruTypeTemplatesApList'>");

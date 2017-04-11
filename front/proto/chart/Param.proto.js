@@ -215,6 +215,7 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
 //Get value by x coord by interpolating
 Param.prototype.GetValue = function(dataset, x) {
     var yArr = Array();
+    let posX = 0;
     for (var i = 0; i < this.apCount; ++i) {
         var series = dataset[i];
         // Find the nearest points, x-wise

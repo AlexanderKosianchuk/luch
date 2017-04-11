@@ -155,39 +155,8 @@ $(document).ready(function () {
         );
     });
 
-    $window.resize(function (e) {
-        if (W !== null) {
-            W.ResizeShowcase(e);
-        }
-
-        if (FL !== null) {
-            FL.ResizeFlightList(e);
-        }
-        if (FO !== null) {
-            FO.ResizeFlightViewOptionsContainer(e);
-        }
-        if (C !== null) {
-            C.ResizeChartContainer(e);
-        }
-
-        if (B !== null) {
-            B.ResizeBruTypeContainer(e);
-        }
-    });
-
-    $document.resize(function (e) {
-        if (W !== null) {
-            W.ResizeShowcase(e);
-        }
-    });
-
     eventHandler.on("resizeShowcase", function (e) {
         W.ResizeShowcase(e);
-    });
-
-    eventHandler.on("uploading", function () {
-        FU.CaptureUploadingItems();
-        FP.SupportUploadingStatus();
     });
 
     eventHandler.on("uploadWithPreview", function () {

@@ -24,9 +24,9 @@ WindowFactory.prototype.SupportMoveMenu = function() {
         self.moveMenu.css({
             "display" : "none"
         });
-    } else if((self.document.height() > self.window.height() + 50) &&
-            /* +50px becase there some deviations during ResizeContent() */
-            (self.document.height() <= self.window.height() * 2)){
+    } else if((self.document.height() > self.window.height() + 30) &&
+            /* +5px becase there some deviations during ResizeContent() */
+            (self.document.height() <= (self.window.height() * 2 + 30))){
         self.moveMenu.empty();
         self.moveMenu.css({
             "display" : "block",
@@ -37,8 +37,8 @@ WindowFactory.prototype.SupportMoveMenu = function() {
         self.moveMenu.append("<div class='MoveMenuItem'>1</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>2</div>");
         self.moveMenu.append("<div class='MoveMenuItem'>></div>");
-    }  else if((self.document.height() > self.window.height() * 2 + 50) &&
-            (self.document.height() <= self.window.height() * 3)){
+    }  else if((self.document.height() > self.window.height() * 2 + 30) &&
+            (self.document.height() <= (self.window.height() * 3 + 30))){
         self.moveMenu.empty();
         self.moveMenu.css({
             "display" : "block",

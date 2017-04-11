@@ -23,21 +23,20 @@ class PrinterController extends CController
         $this->setAttributes();
     }
 
-    public function ConstructFlightEventsList($extFlightId, $sections = [], $colored = false)
+    public function ConstructFlightEventsList($flightId, $sections = [], $colored = false)
     {
-        $flightId = $extFlightId;
         $user = $this->_user->username;
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = $flightInfo['id_fdr'];
+        $fdrId = intval($flightInfo['id_fdr']);
         $bruType = $flightInfo['bruType'];
         unset($Fl);
 
         $fdr = new Fdr;
-        $fdrInfo = $fdr->GetBruInfo($bruType);
-        $flightApHeaders= $fdr->GetBruApHeaders($bruType);
-        $flightBpHeaders = $fdr->GetBruBpHeaders($bruType);
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $flightApHeaders= $fdr->GetBruApHeaders($fdrId);
+        $flightBpHeaders = $fdr->GetBruBpHeaders($fdrId);
 
         $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
         unset($fdr);

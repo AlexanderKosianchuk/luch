@@ -82,6 +82,8 @@ Legend.prototype.UpdateLegend = function(posx, valuesArr,
     //update each time legends because it can be lost after zoom or pan
     this.updateLegendTimeout = null;
     var legndLabls = this.legndCont.find(".legendLabel");
+    let y = 0;
+    let s = 0;
 
     if (posx < this.xax.min || posx > this.xax.max) {
         return;
@@ -129,10 +131,10 @@ Legend.prototype.UpdateLegend = function(posx, valuesArr,
 //highlight overed series
 Legend.prototype.HighlightLegend = function(seriesIndex)
 {
-    legndLabls = this.legndCont.find(".legendLabel");
+    let legndLabls = this.legndCont.find(".legendLabel");
     if(seriesIndex >= 0){
-        for($i = 0; $i < legndLabls.length; $i++) {
-            legndLabls.eq($i ).css({
+        for(var ii = 0; ii < legndLabls.length; ii++) {
+            legndLabls.eq(ii).css({
                 "background-color" : "transparent",
             });
         }
@@ -140,8 +142,8 @@ Legend.prototype.HighlightLegend = function(seriesIndex)
             "background-color" : "rgb(10,10,220, 0.15)",
         });
     } else {
-        for($i = 0; $i < legndLabls.length; $i++) {
-            legndLabls.eq($i ).css({
+        for(var ii = 0; ii < legndLabls.length; ii++) {
+            legndLabls.eq(ii).css({
                 "background-color" : "transparent",
             });
         }

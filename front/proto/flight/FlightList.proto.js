@@ -43,14 +43,11 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
 
             self.flightListFactoryContainer.append(data['fileUploadBlock']);
 
-            //self.topMenuUserButtClick();
-
             self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace not-resizable'></div>");
             self.flightListWorkspace = $("div#flightListWorkspace");
 
             self.ShowFlightsListInitial();
             self.TriggerResize();
-            self.TriggerUploading();
         } else {
             console.log(answ["error"]);
         }
@@ -252,10 +249,6 @@ FlightList.prototype.ResizeFlightList = function(e) {
 
 FlightList.prototype.TriggerResize = function() {
     this.eventHandler.trigger("resizeShowcase");
-}
-
-FlightList.prototype.TriggerUploading = function() {
-    this.eventHandler.trigger("uploading");
 }
 
 FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
