@@ -112,12 +112,12 @@ class FlightUploaderDropdown extends React.Component {
 
     handleChange() {
         let form = new FormData(this.sendFlightForm);
-        let uploadingUid = Guid.create();
+        let progressStatusFile = Guid.create() + '.prgs';
 
         if (this.props.previewState) {
             this.props.topMenuService.uploadWithPreview(
                 form,
-                uploadingUid,
+                progressStatusFile,
                 this.props.selectedFdrType.id,
                 this.props.selectedFdrType.name,
                 this.props.selectedCalibration.id
@@ -129,7 +129,9 @@ class FlightUploaderDropdown extends React.Component {
             form.append('progressFileName', uploadingUid);
             this.props.startEasyUploading({
                 form: form,
-                uploadingUid: uploadingUid
+                fdrId: this.props.selectedFdrType.id,
+                calibrationId: this.props.selectedCalibration.id,
+                progressStatusFile: progressStatusFile
             });
         }
 

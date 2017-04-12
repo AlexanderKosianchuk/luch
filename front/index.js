@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
-/*global Language, WindowFactory, FlightList, FlightUploader, FlightProccessingStatus*/
+/*global Language, WindowFactory, FlightList, FlightUploader*/
 /*global FlightViewOptions, Fdr, Chart, User, SearchFlight*/
 
 'use strict';
@@ -14,7 +14,6 @@ import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/menu';
 import 'jquery-ui/ui/widgets/slider';
 import 'colorpicker-amin';
-import 'chosen-npm';
 import 'blueimp-file-upload';
 import 'jstree';
 import 'flot-charts';
@@ -36,7 +35,6 @@ import 'jstree/dist/themes/default/style.min.css';
 import 'blueimp-file-upload/css/jquery.fileupload.css';
 import 'blueimp-file-upload/css/jquery.fileupload-ui.css';
 import 'colorpicker-amin/jquery.colorpicker.css';
-import 'chosen-npm/public/chosen.css';
 
 //old styles
 import 'stylesheets/pages/bruTypeTemplates.css';
@@ -55,7 +53,6 @@ import Language from "Language";
 import WindowFactory from "WindowFactory";
 import FlightList from "FlightList";
 import FlightUploader from "FlightUploader";
-import FlightProccessingStatus from "FlightProccessingStatus";
 import FlightViewOptions from "FlightViewOptions";
 import Fdr from "Fdr";
 import Chart from "Chart";
@@ -67,6 +64,10 @@ import Calibration from "Calibration";
 import Results from 'components/results/Results';
 import Flights from 'components/flights/Flights';
 import configureStore from 'store/configureStore';
+
+import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
+import startFlightUploadingAction from 'actions/startFlightUploading';
+import completeFlightUploadingAction from 'actions/completeFlightUploading';
 
 const store = configureStore({});
 
@@ -80,7 +81,6 @@ $(document).ready(function () {
         eventHandler = $('#eventHandler'),
         LA = new Language(userLang),
         W = new WindowFactory($window, $document),
-        FP = null,
         FU = null,
         FO = null,
         B = null,
@@ -95,7 +95,6 @@ $(document).ready(function () {
         var wsp = W.NewShowcase();
         FL = new FlightList(langStr, eventHandler, userLogin, store);
         FU = new FlightUploader($window, $document, langStr, eventHandler);
-        FP = new FlightProccessingStatus(langStr);
         FO = new FlightViewOptions($window, $document, langStr, eventHandler);
         B = new Fdr($window, $document, langStr, eventHandler);
         C = new Chart($window, $document, langStr, eventHandler);
@@ -140,6 +139,9 @@ $(document).ready(function () {
             },
             uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
                 eventHandler.trigger("uploadWithPreview", [form, uploadingUid, fdrId, fdrName, calibrationId]);
+            },
+            easyUploading: function(uploadingUid, fdrId, calibrationId) {
+                eventHandler.trigger("easyUploading", [uploadingUid, fdrId, calibrationId]);
             }
         };
 
@@ -181,20 +183,16 @@ $(document).ready(function () {
     ///
 
     eventHandler.on("startProccessing", function (e, data) {
-        var bruType = data['bruType'],
-            fileName = data['fileName'],
-            tempFileName = data['tempFileName'];
+        let fileName = data['fileName'];
+        let tempFileName = data['tempFileName'];
 
-        if (FP !== null) {
-            FP.SetUpload(fileName, bruType, tempFileName);
-        }
+        self.store.dispatch(flightListChangeCheckstate(selectedItems));
     });
 
     eventHandler.on("endProccessing", function (e, data) {
-        var fileName = data;
-        if (FP !== null) {
-            FP.RemoveUpload(fileName);
-        }
+        let fileName = data['fileName'];
+        let tempFileName = data['tempFileName'];
+
     });
 
     eventHandler.on("convertSelectedClicked", function (e) {

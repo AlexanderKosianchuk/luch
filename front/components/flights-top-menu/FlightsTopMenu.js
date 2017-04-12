@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 
 import FlightUploaderDropdown from 'components/flight-uploader-dropdown/FlightUploaderDropdown';
 import FlightImporterDropdown from 'components/flight-importer-dropdown/FlightImporterDropdown';
+import FlightUploadingProgressIndicator from 'components/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
+
 
 export default class FlightsTopMenu extends React.Component {
     logout() {
@@ -62,6 +64,10 @@ export default class FlightsTopMenu extends React.Component {
                           topMenuService={ this.props.topMenuService }
                       />
                     </li>
+                  </ul>
+
+                  <ul className="nav navbar-nav">
+                      <FlightUploadingProgressIndicator />
                   </ul>
 
                   <ul className="nav navbar-nav navbar-right">

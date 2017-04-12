@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import FlightListOptions from 'components/flight-list-options/FlightListOptions';
-import flightListChangeCheckstate from 'actions/flightListChangeCheckstate';
+import flightListChangeCheckstateAction from 'actions/flightListChangeCheckstate';
 
 function FlightList(langStr, eventHandler, userLogin, store) {
     this.langStr = this.i18n = langStr;
@@ -461,11 +461,11 @@ FlightList.prototype.SupportJsTree = function() {
                 var content = answ['data'];
                 contentPlace.append(content);
                 let selectedItems = self.getFlightListSelectedItems();
-                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
                     let selectedItems = self.getFlightListSelectedItems();
-                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                    self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                 });
             } else {
                 console.log(answ)
@@ -483,11 +483,11 @@ FlightList.prototype.SupportJsTree = function() {
                 contentPlace.append(content);
 
                 let selectedItems = self.getFlightListSelectedItems();
-                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
                     let selectedItems = self.getFlightListSelectedItems();
-                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                    self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                 });
             } else {
                 console.log(answ)
@@ -520,11 +520,11 @@ FlightList.prototype.SupportJsTree = function() {
                         contentPlace.append(content);
 
                         let selectedItems = self.getFlightListSelectedItems();
-                        self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                        self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                         $(".ItemsCheck").on("change", function(e){
                             let selectedItems = self.getFlightListSelectedItems();
-                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                            self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                         });
                     } else {
                         console.log(answ)
@@ -549,11 +549,11 @@ FlightList.prototype.SupportJsTree = function() {
                         contentPlace.append(content);
 
                         let selectedItems = self.getFlightListSelectedItems();
-                        self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                        self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                         $(".ItemsCheck").on("change", function(e){
                             let selectedItems = self.getFlightListSelectedItems();
-                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                            self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                         });
                     } else {
                         console.log(answ)
@@ -583,11 +583,11 @@ FlightList.prototype.SupportJsTree = function() {
                             contentPlace.append(content);
 
                             let selectedItems = self.getFlightListSelectedItems();
-                            self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                            self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                             $(".ItemsCheck").on("change", function(e){
                                 let selectedItems = self.getFlightListSelectedItems();
-                                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                             });
                         } else {
                             console.log(answ)
@@ -797,11 +797,11 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
                 "success": fnCallback
             }).done(function(a){
                 let selectedItems = self.getFlightListSelectedItems();
-                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
                     let selectedItems = self.getFlightListSelectedItems();
-                    self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                    self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                 });
             })
             .fail(function(a){
@@ -837,11 +837,11 @@ FlightList.prototype.openFolder = function(e) {
             var content = answ['data'];
             contentPlace.append(content);
             let selectedItems = self.getFlightListSelectedItems();
-            self.store.dispatch(flightListChangeCheckstate(selectedItems));
+            self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
             $(".ItemsCheck").on("change", function(e){
                 let selectedItems = self.getFlightListSelectedItems();
-                self.store.dispatch(flightListChangeCheckstate(selectedItems));
+                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
             });
         } else {
             console.log(answ)
@@ -854,7 +854,7 @@ FlightList.prototype.selectAll = function(e){
         var el = $(el).prop('checked', true);
     });
     let selectedItems = this.getFlightListSelectedItems();
-    this.store.dispatch(flightListChangeCheckstate(selectedItems));
+    this.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 };
 
 FlightList.prototype.rename = function(e){
@@ -891,7 +891,7 @@ FlightList.prototype.removeSelection = function(e){
         var el = $(el).prop('checked', false);
     });
     let selectedItems = this.getFlightListSelectedItems();
-    this.store.dispatch(flightListChangeCheckstate(selectedItems));
+    this.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 };
 
 FlightList.prototype.delete = function(e){

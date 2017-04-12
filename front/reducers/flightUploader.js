@@ -15,8 +15,6 @@ export default function flightUploader(state = initialState, action) {
         case 'CHANGE_PREVIEW_NEED_STATE':
             state.preview = action.payload;
             return { ...state }
-        case 'START_EASY_FLIGHT_UPLOADING':
-            return { ...state }
         default:
             return state;
     }

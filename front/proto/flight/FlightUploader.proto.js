@@ -976,8 +976,8 @@ FlightUploader.prototype.InitiateFlightProccessing = function(postValues) {
         async: true
     }).done(function(answ){
         if(answ["status"] == 'ok') {
-            var fileComplName = answ["data"];
-            self.eventHandler.trigger("endProccessing", fileComplName);
+            eventInfo['responce'] = answ["data"];
+            self.eventHandler.trigger("endProccessing", eventInfo);
         } else {
             console.log(answ["error"]);
         }
