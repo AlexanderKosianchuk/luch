@@ -14,7 +14,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/public'),
         publicPath: '/public/',
-        filename: '[name][hash].js',
+        filename: '[name][hash:6].js',
     },
     resolve: {
         modules: [
@@ -81,13 +81,11 @@ module.exports = {
                     }
                 ]
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
-                exclude: /(node_modules)/,
-                loader:'file-loader?name=[path][name].[ext]'
+                test: /\.(jpe?g|png|svg|gif)$/i,
+                loader:'file-loader?name=images/[name].[ext]'
             }, {
-                test: /\.(jpe?g|png|svg|ttf|eot|woff|woff2|gif)$/i,
-                include: /(node_modules)/,
-                loader:'file-loader?name=[1][name].[ext]&regExp=node_modules/(.*)'
+                test: /\.(ttf|eot|woff|woff2)$/i,
+                loader:'file-loader?name=fonts/[name].[ext]'
             }, {
                 test: /bootstrap\/dist\/js\/umd\//,
                 loader: 'imports-loader?jQuery=jquery'
