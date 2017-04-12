@@ -1,12 +1,38 @@
-//import './flight-uploader-dropdown-loading.sass';
+import './flight-uploader-progress-indicator.sass';
 
 import React from 'react';
-//import CircularProgressbar from 'react-circular-progressbar';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import CircularProgressbar from 'react-circular-progressbar';
 
-export default function  FlightUploadingProgressIndicator (props) {
-    return (
-        <li><a>
+class FlightUploadingProgressIndicator extends React.Component {
+    constructor(props) {
+        super(props);
 
-        </a></li>
-    );
+        this.state = {
+            isShown: false
+        }
+    }
+
+    render() {
+        return (
+            <li><div className={
+                    "flight-uploader-progress-indicator"
+                    + ( this.state.isShown ? 'is-shown' : '' )
+                }>
+                <CircularProgressbar
+                    percentage={60}
+                    strokeWidth={5}
+                />
+            </div></li>
+        );
+    }
 }
+
+function mapStateToProps (state) {
+    return {
+        uploads: state.flightUploadingState.uploads
+    }
+}
+
+export default connect(mapStateToProps)(FlightUploadingProgressIndicator);

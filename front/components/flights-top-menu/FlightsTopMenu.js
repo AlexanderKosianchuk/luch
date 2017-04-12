@@ -8,7 +8,6 @@ import FlightUploaderDropdown from 'components/flight-uploader-dropdown/FlightUp
 import FlightImporterDropdown from 'components/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'components/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
-
 export default class FlightsTopMenu extends React.Component {
     logout() {
         this.props.topMenuService.userLogout();
@@ -71,7 +70,7 @@ export default class FlightsTopMenu extends React.Component {
                   </ul>
 
                   <ul className="nav navbar-nav navbar-right">
-                    <li><a className="is-static" href="#">{ this.props.userLogin }</a></li>
+                    <li><span>{ this.props.userLogin }</span></li>
                     <li className="dropdown">
                       <a href="#" className="dropdown-toggle is-hoverable" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         { this.props.userLang.toUpperCase() }
