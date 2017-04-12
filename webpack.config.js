@@ -38,7 +38,6 @@ module.exports = {
             'FdrGeneralInfo': path.join(__dirname, 'front/proto/fdr/FdrGeneralInfo.proto.js'),
             'FdrTemplates': path.join(__dirname, 'front/proto/fdr/FdrTemplates.proto.js'),
             'FlightUploader': path.join(__dirname, 'front/proto/flight/FlightUploader.proto.js'),
-            'FlightProccessingStatus': path.join(__dirname, 'front/proto/flight/FlightProccessingStatus.proto.js'),
             'FlightList': path.join(__dirname, 'front/proto/flight/FlightList.proto.js'),
             'SearchFlight': path.join(__dirname, 'front/proto/searchFlight/SearchFlight.proto.js'),
             'User': path.join(__dirname, 'front/proto/user/User.proto.js'),
