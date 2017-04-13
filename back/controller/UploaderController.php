@@ -30,7 +30,7 @@ class UploaderController extends CController
         $this->setAttributes();
     }
 
-    public function ShowFlightParams($index, $fdrId, $filePath, $calibrationId = null)
+    public function ShowFlightParams($index, $uploadingUid, $fdrId, $filePath, $calibrationId = null)
     {
         $fileName = basename($filePath);
 
@@ -48,6 +48,7 @@ class UploaderController extends CController
 
         $flightParamsSrt = "<div id='fileFlightInfo".$index."' class='MainContainerContentRows' " .
             "data-filename='" . $filePath . "' " .
+            "data-uploading-uid='" . $uploadingUid . "' " .
             "data-fdr-id='" . $fdrId . "' " .
             "data-index='" . $index . "' " .
             "data-previewparams='" . $previewParams . "' " .
@@ -97,8 +98,7 @@ class UploaderController extends CController
                 "</tr>";
 
         $arrivalAirportFromHeader = "";
-        if(isset($flightInfoFromHeader["arrivalAirport"]))
-        {
+        if (isset($flightInfoFromHeader["arrivalAirport"])) {
             $arrivalAirportFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["arrivalAirport"]);
         }
 
@@ -109,9 +109,9 @@ class UploaderController extends CController
 
         $copyCreationTimeFromHeader = "";
         $copyCreationDateFromHeader = "";
-        if(isset($flightInfoFromHeader["copyCreationTime"]) &&
-            isset($flightInfoFromHeader["copyCreationDate"]))
-        {
+        if (isset($flightInfoFromHeader["copyCreationTime"])
+            && isset($flightInfoFromHeader["copyCreationDate"])
+        ) {
             $copyCreationTimeFromHeader = $flightInfoFromHeader["copyCreationTime"];
             $copyCreationDateFromHeader = $flightInfoFromHeader["copyCreationDate"];
         }
@@ -195,6 +195,7 @@ class UploaderController extends CController
             $flightParamsSrt .= "<button id='sliceFlightButt".$index."' ".
                     "class='SliceFlightButt' ".
                     "data-index='".$index."' " .
+                    "data-uploading-uid='" . $uploadingUid . "' " .
                     "data-file='".$filePath."' " .
                     "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
@@ -203,6 +204,7 @@ class UploaderController extends CController
             $flightParamsSrt .= "<button id='sliceCyclicFlightButt".$index."' ".
                     "class='SliceCyclicFlightButt' ".
                     "data-index='".$index."' " .
+                    "data-uploading-uid='" . $uploadingUid . "' " .
                     "data-file='".$filePath."' " .
                     "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
@@ -421,83 +423,6 @@ class UploaderController extends CController
         $newFileName = $filePath;
         $newFileAppendix = 'a';
 
-        do
-        {
-            $newFileAppendix++;
-        }
-        while(file_exists($newFileName . $newFileAppendix));
-        $newFileName = $newFileName . $newFileAppendix;
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
-        $headerLength = $fdrInfo['headerLength'];
-        $frameLength = $fdrInfo['frameLength'];
-
-        $handle = fopen($filePath, "r");
-        $newHandle = fopen($newFileName, "w");
-
-        if($headerLength > 0)
-        {
-            $fileHeader = fread($handle, $headerLength);
-            fwrite($newHandle, $fileHeader);
-        }
-
-        //$writtenHeaderLength = file_put_contents($newFileName, $fileHeader);
-
-        $fileSize = filesize ($filePath);
-        $Bs = ($fileSize - $headerLength) / ($endCopyTime - $startCopyTime);
-        $stB = $Bs * ($startSliceTime - $startCopyTime) + $headerLength;
-        $endB = $Bs * ($endSliceTime - $startCopyTime) + $headerLength;
-
-        $stB = round($stB / $frameLength , 0) * $frameLength + $headerLength;
-
-        if($endB > $fileSize)
-        {
-            $endB = $fileSize;
-        }
-
-        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize)
-        {
-            fseek($handle, $stB);
-            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB)
-            {
-                $fileFrame = fread($handle, $frameLength);
-                fwrite($newHandle, $fileFrame);
-            }
-            fclose($handle);
-            fclose($newHandle);
-
-            $newFileName = basename($newFileName);
-
-            $answ["status"] = "ok";
-            $answ["data"] = $newFileName;
-
-            echo(json_encode($answ));
-        }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Invalid slice range. Page UploaderController.php";
-
-            error_log("Invalid slice range. Page UploaderController.php");
-            echo(json_encode($answ));
-            exit();
-        }
-    }
-
-    public function CyclicSliceCopy($extBruType, $extFilePath,
-            $extStartCopyTime, $extEndCopyTime, $extStartSliceTime)
-    {
-        $bruType = $extBruType;
-        $filePath = $extFilePath;
-
-        $startCopyTime = $extStartCopyTime;
-        $endCopyTime = $extEndCopyTime;
-        $startSliceTime = $extStartSliceTime;
-
-        $newFileName = $filePath;
-        $newFileAppendix = 'a';
-
         do {
             $newFileAppendix++;
         } while(file_exists($newFileName . $newFileAppendix));
@@ -516,33 +441,22 @@ class UploaderController extends CController
             fwrite($newHandle, $fileHeader);
         }
 
+        //$writtenHeaderLength = file_put_contents($newFileName, $fileHeader);
+
         $fileSize = filesize ($filePath);
         $Bs = ($fileSize - $headerLength) / ($endCopyTime - $startCopyTime);
         $stB = $Bs * ($startSliceTime - $startCopyTime) + $headerLength;
-        $endB = $fileSize;
+        $endB = $Bs * ($endSliceTime - $startCopyTime) + $headerLength;
 
         $stB = round($stB / $frameLength , 0) * $frameLength + $headerLength;
 
-        $stB2 = $headerLength;
-        $endB2 = $stB - 1;
-
-        if($endB > $fileSize)
-        {
+        if ($endB > $fileSize) {
             $endB = $fileSize;
         }
 
-        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize)
-        {
+        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
             fseek($handle, $stB);
-            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB)
-            {
-                $fileFrame = fread($handle, $frameLength);
-                fwrite($newHandle, $fileFrame);
-            }
-
-            fseek($handle, $headerLength);
-            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB2)
-            {
+            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB) {
                 $fileFrame = fread($handle, $frameLength);
                 fwrite($newHandle, $fileFrame);
             }
@@ -555,9 +469,79 @@ class UploaderController extends CController
             $answ["data"] = $newFileName;
 
             echo(json_encode($answ));
+        } else {
+            $answ["status"] = "err";
+            $answ["error"] = "Invalid slice range. Page UploaderController.php";
+
+            error_log("Invalid slice range. Page UploaderController.php");
+            echo(json_encode($answ));
+            exit();
         }
-        else
-        {
+    }
+
+    public function CyclicSliceCopy($bruType,
+        $filePath,
+        $startCopyTime,
+        $endCopyTime,
+        $startSliceTime
+    ) {
+        $newFileName = $filePath;
+        $newFileAppendix = 'a';
+
+        do {
+            $newFileAppendix++;
+        } while(file_exists($newFileName . $newFileAppendix));
+        $newFileName = $newFileName . $newFileAppendix;
+
+        $Bru = new Fdr;
+        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $headerLength = $fdrInfo['headerLength'];
+        $frameLength = $fdrInfo['frameLength'];
+
+        $handle = fopen($filePath, "r");
+        $newHandle = fopen($newFileName, "w");
+
+        if ($headerLength > 0) {
+            $fileHeader = fread($handle, $headerLength);
+            fwrite($newHandle, $fileHeader);
+        }
+
+        $fileSize = filesize ($filePath);
+        $Bs = ($fileSize - $headerLength) / ($endCopyTime - $startCopyTime);
+        $stB = $Bs * ($startSliceTime - $startCopyTime) + $headerLength;
+        $endB = $fileSize;
+
+        $stB = round($stB / $frameLength , 0) * $frameLength + $headerLength;
+
+        $stB2 = $headerLength;
+        $endB2 = $stB - 1;
+
+        if ($endB > $fileSize) {
+            $endB = $fileSize;
+        }
+
+        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
+            fseek($handle, $stB);
+            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB) {
+                $fileFrame = fread($handle, $frameLength);
+                fwrite($newHandle, $fileFrame);
+            }
+
+            fseek($handle, $headerLength);
+            while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB2) {
+                $fileFrame = fread($handle, $frameLength);
+                fwrite($newHandle, $fileFrame);
+            }
+            fclose($handle);
+            fclose($newHandle);
+
+            $newFileName = basename($newFileName);
+
+            $answ["status"] = "ok";
+            $answ["data"] = $newFileName;
+
+            echo(json_encode($answ));
+        } else {
             $answ["status"] = "err";
             $answ["error"] = "Invalid slice range. Page UploaderController.php";
 
@@ -580,11 +564,10 @@ class UploaderController extends CController
             $uploadedFile,
             $totalPersentage,
             $calibrationId = null
-        )
-    {
+    ) {
         $fdrId = intval($fdrId);
 
-        if(strlen($copyCreationTime) > 5) {
+        if (strlen($copyCreationTime) > 5) {
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime);
         } else {
             $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime . ":00");
@@ -1079,9 +1062,10 @@ class UploaderController extends CController
     public function flightShowUploadingOptions($data)
     {
         if (!isset($data['index'])
+            || !isset($data['uploadingUid'])
             || !isset($data['fdrId'])
-            || !isset($data['file']))
-        {
+            || !isset($data['file'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". Page UploaderController.php";
@@ -1091,6 +1075,7 @@ class UploaderController extends CController
         $index = $data['index'];
         $fdrId = intval($data['fdrId']);
         $filePath = strval($data['file']);
+        $uploadingUid = strval($data['uploadingUid']);
 
         $calibrationId = null;
         if(isset($data['calibrationId'])
@@ -1100,7 +1085,7 @@ class UploaderController extends CController
             $calibrationId = intval($data['calibrationId']);
         }
 
-        $flightParamsSrt = $this->ShowFlightParams($index, $fdrId, $filePath, $calibrationId);
+        $flightParamsSrt = $this->ShowFlightParams($index, $uploadingUid, $fdrId, $filePath, $calibrationId);
 
         $answ["status"] = "ok";
         $answ["data"] = $flightParamsSrt;
@@ -1187,7 +1172,7 @@ class UploaderController extends CController
     {
         if(!isset($data['fdrId'])
             || !isset($data['fileName'])
-            || !isset($data['tempFileName'])
+            || !isset($data['uploadingUid'])
             || !isset($data['flightInfo'])
             || !isset($data['flightAditionalInfo'])
         ) {
@@ -1201,7 +1186,7 @@ class UploaderController extends CController
         $fdrId = intval($data['fdrId']);
         $uploadedFile = $data['fileName'];
 
-        $tempFileName = $data['tempFileName'];
+        $uploadingUid = $data['uploadingUid'];
         $receivedFlightInfo = $data['flightInfo'];
         $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
         $flightInfo = array();
@@ -1244,7 +1229,7 @@ class UploaderController extends CController
         $arrivalAirport = $flightInfo["arrivalAirport"];
         $totalPersentage = 100;
 
-        $progressFileName = RuntimeManager::createProgressFile($tempFileName);
+        $progressFileName = RuntimeManager::createProgressFile($uploadingUid);
 
         $this->ProccessFlightData($progressFileName,
             $bort,
@@ -1273,8 +1258,8 @@ class UploaderController extends CController
     public function flightProccesAndCheck($data)
     {
         if (!isset($data['fdrId'])
+            || !isset($data['uploadingUid'])
             || !isset($data['fileName'])
-            || !isset($data['tempFileName'])
             || !isset($data['flightInfo'])
             || !isset($data['flightAditionalInfo'])
         ) {
@@ -1285,17 +1270,17 @@ class UploaderController extends CController
             echo(json_encode($answ));
         }
 
+        $uploadingUid = $data['uploadingUid'];
         $fdrId = intval($data['fdrId']);
         $uploadedFile = $data['fileName'];
 
-        $tempFileName = $data['tempFileName'];
         $receivedFlightInfo = $data['flightInfo'];
         $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
         $flightInfo = array();
         $flightAditionalInfo = array();
 
         $calibrationId = null;
-        if(isset($data['calibrationId'])
+        if (isset($data['calibrationId'])
             && !empty($data['calibrationId'])
             && is_int(intval($data['calibrationId']))
         ) {
@@ -1313,7 +1298,7 @@ class UploaderController extends CController
         }
 
         $aditionalInfoVars = '';
-        if($receivedFlightAditionalInfo != 0) {
+        if ($receivedFlightAditionalInfo != 0) {
             for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
                 $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
                     (string)$receivedFlightAditionalInfo[$i + 1];
@@ -1331,7 +1316,7 @@ class UploaderController extends CController
         $arrivalAirport = $flightInfo["arrivalAirport"];
         $totalPersentage = 50;
 
-        $progressFilePath = RuntimeManager::createProgressFile($tempFileName);
+        $progressFilePath = RuntimeManager::createProgressFile($uploadingUid);
 
         $flightId = $this->ProccessFlightData($progressFilePath,
             $bort,
@@ -1354,11 +1339,12 @@ class UploaderController extends CController
 
         RuntimeManager::unlinkProgressFile($progressFilePath);
 
-        $answ = array(
-                "status" => "ok",
-                "data" => $uploadedFile
-        );
-        echo(json_encode($answ));
+        echo(json_encode([
+            "status" => "complete",
+            "uploadingUid" => $uploadingUid
+        ]));
+
+        exit;
     }
 
     public function flightEasyUpload($data)
@@ -1461,7 +1447,11 @@ class UploaderController extends CController
 
         RuntimeManager::unlinkProgressFile($progressFilePath);
 
-        echo (json_encode(['status' => 'ok']));
+        echo(json_encode([
+            "status" => "complete",
+            "uploadingUid" => $uploadingUid
+        ]));
+        exit;
     }
 
     public function getUploadingStatus($data)

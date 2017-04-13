@@ -27979,8 +27979,8 @@ FlightUploader.prototype.FillFactoryContaider = function (factoryContainer, form
     this.ResizeFlightUploader();
     this.document.scrollTop(factoryContainer.data("index") * this.window.height());
 
-    this.UploadForPreview(form, uploadingUid).done(function (data) {
-        self.GetFlightParams(0, data.file, fdrId, calibrationId);
+    this.UploadForPreview(form).done(function (data) {
+        self.GetFlightParams(0, uploadingUid, data.file, fdrId, calibrationId);
     });
 };
 
@@ -28014,173 +28014,19 @@ FlightUploader.prototype.ResizeFlightUploader = function (e) {
     }
 };
 
+/*NOT USED AFTER REACT IMPLEMENT
+TO REMOVE AFTER IMPORT IMPLEMENT*/
 FlightUploader.prototype.CaptureUploadingItems = function () {
-    var self = this;
-    var previewCheckBoxDiv = $("div#previewCheckBoxDiv");
-    var bruTypeSelectForUploadingDiv = $("div#bruTypeSelectForUploadingDiv");
-    var $calibrations = $('.calibrations-for-ubloading');
-    var importInsteadConvert = false;
-    var dialogHeightDelta = 0;
-    var dialogInitialHeight = 0;
-
-    if (!self.fileUploadDialog) {
-        self.fileUploadDialog = $('div#fileUploadDialog').dialog({
-            resizable: false,
-            autoOpen: false,
-            resize: false,
-            width: 280,
-            hide: {
-                effect: "fadeOut",
-                duration: 150
-            },
-            show: {
-                effect: "fadeIn",
-                duration: 150
-            },
-            open: function open(event, ui) {
-                if (dialogInitialHeight === 0) {
-                    dialogInitialHeight = self.fileUploadDialog.height();
-                }
-
-                if (!self.bruTypeSelectForUploading) {
-                    self.bruTypeSelectForUploading = $('#bruTypeSelectForUploading').on('chosen:activate chosen:showing_dropdown chosen:hiding_dropdown', function (ev) {
-                        if ($('.chosen-container').first().hasClass('chosen-with-drop')) {
-                            self.fileUploadDialog.height(dialogInitialHeight + $('.chosen-drop').first().height() - $('#chooseFileBut').height() - 30);
-                        } else {
-                            self.fileUploadDialog.height(dialogInitialHeight);
-                        }
-                    }).chosen();
-
-                    $('.chosen-search input, .chosen-drop').on('keyup', function (ev) {
-                        if ($('.chosen-container').hasClass('chosen-with-drop')) {
-                            self.fileUploadDialog.height(dialogInitialHeight + $('.chosen-drop').first().height() - $('#chooseFileBut').height() - 30);
-                        } else {
-                            self.fileUploadDialog.height(dialogInitialHeight);
-                        }
-                    });
-
-                    $('#bruTypeSelectForUploading').change(function () {
-                        var $this = $(this);
-                        var fdrId = $this.val();
-                        $calibrations.find('select').hide();
-                        $calibrations.find('select[data-fdr-id="' + fdrId + '"]').show();
-                    });
-                }
-
-                dialogHeightDelta = previewCheckBoxDiv.height() + bruTypeSelectForUploadingDiv.height() + $calibrations.height() + 20;
-            }
-        }).css('overflow', 'hidden');
-    }
-
-    //radiobuttons import/convert
-    $("div#importConvertRadio").buttonset().change(function (e) {
-        var el = $(e.target);
-        if (el.attr("id") == "convertFl") {
-            previewCheckBoxDiv.slideToggle(200);
-            bruTypeSelectForUploadingDiv.slideToggle(200);
-            $calibrations.slideToggle(200);
-            importInsteadConvert = false;
-
-            if (self.fileUploadDialog) {
-                self.fileUploadDialog.animate({
-                    height: "+=" + dialogHeightDelta
-                }, 200);
-            }
-        } else if (el.attr("id") == "importFl") {
-            previewCheckBoxDiv.slideToggle(200);
-            bruTypeSelectForUploadingDiv.slideToggle(200);
-            $calibrations.slideToggle(200);
-            importInsteadConvert = true;
-
-            if (self.fileUploadDialog) {
-                self.fileUploadDialog.animate({
-                    height: "-=" + dialogHeightDelta
-                }, 200);
-            }
-        }
-    });
-
     var filesCount = 0;
     var url = "back/fileUploader/";
 
-    if (!self.fileupload) {
-        self.fileupload = $('input#chooseFileBut').fileupload({
-            url: url,
-            dataType: 'json',
-            done: function done(e, data) {
-                var fdrName = $("#bruTypeSelectForUploading option:selected").text();
-                var $calibration = $('.calibrations-for-ubloading select:visible');
-                var calibrationId = null;
-
-                if ($calibration.length > 0) {
-                    calibrationId = $calibration.val();
-                }
-
-                if (importInsteadConvert) {
-                    $.each(data.result.files, function (index, file) {
-                        $('<p/>').text(file.name).appendTo('#files');
-                        self.Import(file.name);
-                        filesCount++;
-                    });
-                } else {
-                    if ($("input#previewCheckBox:checked").length > 0) {
-                        //show flight info and preview
-
-                        if (filesCount === 0) {
-                            self.eventHandler.trigger("uploadWithPreview");
-                        }
-
-                        $.each(data.result.files, function (index, file) {
-                            $('<p/>').text(file.name).appendTo('#files');
-                            self.GetFlightParams(filesCount, file.name, fdrName, calibrationId);
-                            filesCount++;
-                        });
-                    } else {
-                        //else background uploading
-                        $.each(data.result.files, function (index, file) {
-                            $('<p/>').text(file.name).appendTo('#files');
-                            self.EasyUploading(fdrName, file.name, calibrationId);
-                            filesCount++;
-                        });
-                    }
-                }
-            },
-            progressall: function progressall(e, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10);
-
-                if (progress >= 100) {
-                    setTimeout(function () {
-                        self.fileUploadDialog.dialog("close");
-                    }, 300);
-                } else {
-                    $('#progress .progress-bar').css({
-                        'width': progress + '%'
-                    });
-                }
-            }
-        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
-    }
-
-    $("#uploadTopButt").click(function (e) {
-        $('#progress .progress-bar').css('width', 0 + '%');
-
-        var dialogHeight = 165;
-        var $importConvert = $("#importConvertRadio :radio:checked").attr('id');
-        if ($importConvert === "convertFl") {
-            dialogHeight = 260;
-        }
-
-        self.fileUploadDialog.dialog("option", {
-            height: dialogHeight,
-            position: {
-                my: "left top",
-                at: "left bottom",
-                of: $("#uploadTopButt")
-            }
+    if ('import') {
+        $.each(data.result.files, function (index, file) {
+            $('<p/>').text(file.name).appendTo('#files');
+            self.Import(file.name);
+            filesCount++;
         });
-
-        self.fileUploadDialog.dialog("open");
-    });
+    }
 };
 
 FlightUploader.prototype.ShowFlightUploadingOptions = function () {
@@ -28190,8 +28036,8 @@ FlightUploader.prototype.ShowFlightUploadingOptions = function () {
     }
 };
 
-FlightUploader.prototype.GetFlightParams = function (index, file, fdrId) {
-    var calibrationId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+FlightUploader.prototype.GetFlightParams = function (index, uploadingUid, file, fdrId) {
+    var calibrationId = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
 
 
     var self = this;
@@ -28202,6 +28048,7 @@ FlightUploader.prototype.GetFlightParams = function (index, file, fdrId) {
             action: "uploader/flightShowUploadingOptions",
             data: {
                 index: index,
+                uploadingUid: uploadingUid,
                 file: file,
                 fdrId: fdrId,
                 calibrationId: calibrationId
@@ -28571,6 +28418,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
             $.each(flightsContainers, function (counter, el) {
                 var $el = $(el),
                     fileName = $el.data("filename"),
+                    uploadingUid = $el.data("uploading-uid"),
                     fdrId = $el.data("fdr-id"),
                     calibrationId = $el.data("calibration-id"),
                     index = $el.data("index"),
@@ -28609,7 +28457,6 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
                     }
 
                     var flightConvertionAction = "flightProcces",
-                        tempFileName = (0, _v2.default)() + "_tempStatus.json",
                         performProc = $el.find("input#execProc").prop('checked');
 
                     if (performProc == true) {
@@ -28617,14 +28464,14 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
                     }
 
                     var pV = {
-                        'action': 'uploader/' + flightConvertionAction,
-                        'data': {
-                            'fdrId': fdrId,
-                            'calibrationId': calibrationId,
-                            'fileName': fileName,
-                            'tempFileName': tempFileName,
-                            'flightInfo': flightInfo,
-                            'flightAditionalInfo': flightAditionalInfo
+                        action: 'uploader/' + flightConvertionAction,
+                        data: {
+                            fdrId: fdrId,
+                            uploadingUid: uploadingUid,
+                            calibrationId: calibrationId,
+                            fileName: fileName,
+                            flightInfo: flightInfo,
+                            flightAditionalInfo: flightAditionalInfo
                         }
                     };
 
@@ -28802,14 +28649,9 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function (parent
     }
 };
 
-FlightUploader.prototype.InitiateFlightProccessing = function (postValues) {
+FlightUploader.prototype.InitiateFlightProccessing = function (pV) {
     var self = this,
-        pV = postValues,
-        eventInfo = {
-        'fdrId': pV["data"]["fdrId"],
-        'fileName': pV["data"]["fileName"],
-        'tempFileName': pV["data"]["tempFileName"]
-    };
+        uploadingUid = pV.data.uploadingUid;
 
     $.ajax({
         type: "POST",
@@ -28818,17 +28660,12 @@ FlightUploader.prototype.InitiateFlightProccessing = function (postValues) {
         url: "http://local-luch15.com/entry.php",
         async: true
     }).done(function (answ) {
-        if (answ["status"] == 'ok') {
-            eventInfo['responce'] = answ["data"];
-            self.eventHandler.trigger("endProccessing", eventInfo);
-        } else {
-            console.log(answ["error"]);
-        }
+        self.eventHandler.trigger("endProccessing", [uploadingUid]);
     }).fail(function (mess) {
         console.log(mess);
     });
 
-    self.eventHandler.trigger("startProccessing", eventInfo);
+    self.eventHandler.trigger("startProccessing", [uploadingUid]);
 };
 
 ///
@@ -87204,8 +87041,49 @@ function startFlightUploading(payload) {
     return function (dispatch) {
         dispatch({
             type: 'START_FLIGHT_UPLOADING',
-            payload: payload
+            payload: {
+                uploadingUid: payload.uploadingUid
+            }
         });
+
+        var checkProgress = function checkProgress() {
+            fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid=' + payload.uploadingUid, {
+                method: 'GET',
+                credentials: "omit"
+            }).then(function (response) {
+                try {
+                    return response.json();
+                } catch (e) {
+                    setTimeout(checkProgress, 1000);
+                }
+            }).then(function (json) {
+                if (!json) {
+                    return;
+                }
+
+                if (json.status === 'ok') {
+                    dispatch({
+                        type: 'FLIGHT_UPLOADING_PROGRESS_CHANGE',
+                        payload: {
+                            uploadingUid: json.uploadingUid,
+                            progress: json.progress
+                        }
+                    });
+                    setTimeout(checkProgress, 1000);
+                } else if (json.status === 'complete') {
+                    dispatch({
+                        type: 'FLIGHT_UPLOADING_COMPLETE',
+                        payload: {
+                            uploadingUid: payload.uploadingUid
+                        }
+                    });
+                } else {
+                    setTimeout(checkProgress, 1000);
+                }
+            });
+        };
+
+        setTimeout(checkProgress, 1000);
     };
 };
 
@@ -89392,6 +89270,19 @@ $(document).ready(function () {
                 topMenuService: topMenuService
             })
         ), wsp.get(0));
+
+        var currentValue = void 0;
+        function select(state) {
+            return state.flightUploadingState.length;
+        }
+        store.subscribe(function () {
+            var previousValue = currentValue;
+            currentValue = select(store.getState());
+
+            if (currentValue === 0 && previousValue > 0) {
+                eventHandler.trigger("flightListShow", [$('#flightsContainer')]);
+            }
+        });
     });
 
     eventHandler.on("resizeShowcase", function (e) {
@@ -89416,16 +89307,23 @@ $(document).ready(function () {
     //FlightList
     ///
 
-    eventHandler.on("startProccessing", function (e, data) {
-        var fileName = data['fileName'];
-        var tempFileName = data['tempFileName'];
-
-        self.store.dispatch(flightListChangeCheckstate(selectedItems));
+    eventHandler.on("startProccessing", function (e, uploadingUid) {
+        store.dispatch((0, _startFlightUploading2.default)({
+            uploadingUid: uploadingUid
+        }));
     });
 
-    eventHandler.on("endProccessing", function (e, data) {
-        var fileName = data['fileName'];
-        var tempFileName = data['tempFileName'];
+    eventHandler.on("endProccessing", function (e, uploadingUid) {
+        store.dispatch(function () {
+            return function () {
+                dispatch({
+                    type: 'FLIGHT_UPLOADING_COMPLETE',
+                    payload: {
+                        uploadingUid: uploadingUid
+                    }
+                });
+            };
+        });
     });
 
     eventHandler.on("convertSelectedClicked", function (e) {
@@ -100318,4 +100216,4 @@ module.exports = isInteger;
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=index93b2d3.js.map
+//# sourceMappingURL=indexcb25df.js.map

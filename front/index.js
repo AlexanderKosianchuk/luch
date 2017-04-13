@@ -158,6 +158,23 @@ $(document).ready(function () {
             </Provider>,
             wsp.get(0)
         );
+
+        let currentValue;
+        function select(state) {
+            return state.flightUploadingState.length;
+        }
+        store.subscribe(() => {
+            let previousValue = currentValue;
+             currentValue = select(store.getState())
+
+             if ((currentValue === 0)
+                && (previousValue > 0)
+            ) {
+                eventHandler.trigger("flightListShow", [
+                    $('#flightsContainer')
+                ]);
+             }
+        });
     });
 
     eventHandler.on("resizeShowcase", function (e) {
@@ -182,17 +199,21 @@ $(document).ready(function () {
     //FlightList
     ///
 
-    eventHandler.on("startProccessing", function (e, data) {
-        let fileName = data['fileName'];
-        let tempFileName = data['tempFileName'];
-
-        self.store.dispatch(flightListChangeCheckstate(selectedItems));
+    eventHandler.on("startProccessing", function (e, uploadingUid) {
+        store.dispatch(startFlightUploadingAction({
+            uploadingUid: uploadingUid
+        }));
     });
 
-    eventHandler.on("endProccessing", function (e, data) {
-        let fileName = data['fileName'];
-        let tempFileName = data['tempFileName'];
-
+    eventHandler.on("endProccessing", function (e, uploadingUid) {
+        store.dispatch(() => () => {
+            dispatch({
+                type: 'FLIGHT_UPLOADING_COMPLETE',
+                payload: {
+                    uploadingUid: uploadingUid
+                }
+            });
+        });
     });
 
     eventHandler.on("convertSelectedClicked", function (e) {
