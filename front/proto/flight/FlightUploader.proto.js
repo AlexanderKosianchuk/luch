@@ -1,4 +1,4 @@
-import Guid from 'guid';
+import uuidV4 from 'uuid/v4';
 
 function FlightUploader(window, document, langStr, eventHandler)
 {
@@ -754,7 +754,7 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     }
 
                     var flightConvertionAction = "flightProcces",
-                        tempFileName = Guid.create() + "_tempStatus.json",
+                        tempFileName = uuidV4() + "_tempStatus.json",
                         performProc = $el.find("input#execProc").prop('checked');
 
                     if(performProc == true){

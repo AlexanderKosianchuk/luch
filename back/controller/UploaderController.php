@@ -684,8 +684,11 @@ class UploaderController extends CController
         set_time_limit (0);
 
         $algHeap = array();
-        if($frameSyncroCode != '')
-        {
+        $tmpStatus = 0;
+        $newStatus = 0;
+        $this->writeStatus ($tempFilePath, $tmpStatus);
+
+        if($frameSyncroCode != '') {
             while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
             //while(($frameNum < 20) && ($curOffset < $fileSize))
             {
@@ -698,16 +701,14 @@ class UploaderController extends CController
                     $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
 
                     $apPhisicsByPrefixes = array();
-                    foreach($cycloApByPrefixes as $prefix => $cycloAp)
-                    {
+                    foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
                         $channelFreq = $prefixFreqArr[$prefix];
                         $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
                         $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
                     }
 
                     $bpPhisicsByPrefixes = array();
-                    foreach($cycloBpByPrefixes as $prefix => $cycloBp)
-                    {
+                    foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
                         $channelFreq = $prefixBpFreqArr[$prefix];
                         $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
                             $frameNum,
@@ -725,9 +726,7 @@ class UploaderController extends CController
                     $Fr->AppendFrameToFile($bpPhisicsByPrefixes, $fileNameBpDescArr);
 
                     $frameNum++;
-                }
-                else
-                {
+                } else {
                     $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $curOffset, $fileName);
 
                     fseek($fileDesc, $syncroWordOffset, SEEK_SET);
@@ -737,15 +736,13 @@ class UploaderController extends CController
 
                 }
 
-                $tmpStatus =  round($totalPersentage / $fileSize * $frameNum * $frameLength) . "%";
-
-                $fp = fopen($tempFilePath, "w");
-                fwrite($fp, json_encode($tmpStatus));
-                fclose($fp);
+                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                    $this->writeStatus ($tempFilePath, $tmpStatus);
+                }
             }
-        }
-        else
-        {
+        } else {
             while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
             //while(($frameNum < 20) && ($curOffset < $fileSize))
             {
@@ -756,16 +753,14 @@ class UploaderController extends CController
                 $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
 
                 $apPhisicsByPrefixes = array();
-                foreach($cycloApByPrefixes as $prefix => $cycloAp)
-                {
+                foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
                     $channelFreq = $prefixFreqArr[$prefix];
                     $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
                     $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
                 }
 
                 $bpPhisicsByPrefixes = array();
-                foreach($cycloBpByPrefixes as $prefix => $cycloBp)
-                {
+                foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
                     $channelFreq = $prefixBpFreqArr[$prefix];
                     $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
                         $frameNum,
@@ -784,19 +779,15 @@ class UploaderController extends CController
 
                 $frameNum++;
 
-                $tmpStatus =  round($totalPersentage / $fileSize * $frameNum * $frameLength) . "%";
-
-                $fp = fopen($tempFilePath, "w");
-                fwrite($fp, json_encode($tmpStatus));
-                fclose($fp);
+                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                    $this->writeStatus ($tempFilePath, $tmpStatus);
+                }
             }
         }
 
-        $tmpStatus = $this->lang->uploadingToDb;
-
-        $fp = fopen($tempFilePath, "w");
-        fwrite($fp, json_encode($tmpStatus));
-        fclose($fp);
+        $this->writeStatus ($tempFilePath, $totalPersentage);
 
         error_reporting(E_ALL);
 
@@ -804,15 +795,13 @@ class UploaderController extends CController
         $Fr->CloseFile($fileDesc);
         unlink($uploadedFile);
 
-        foreach($fileNameApArr as $prefix => $fileNameAp)
-        {
+        foreach($fileNameApArr as $prefix => $fileNameAp) {
             fclose($fileNameApDescArr[$prefix]);
             $Fr->LoadFileToTable($tableNameAp . "_" . $prefix, $fileNameAp);
             unlink($fileNameAp);
         }
 
-        foreach($fileNameBpArr as $prefix => $fileNameBp)
-        {
+        foreach($fileNameBpArr as $prefix => $fileNameBp) {
             fclose($fileNameBpDescArr[$prefix]);
             $Fr->LoadFileToTable($tableNameBp . "_" . $prefix, $fileNameBp);
             unlink($fileNameBp);
@@ -835,9 +824,10 @@ class UploaderController extends CController
         return $flightId;
     }
 
-    public function ProccesFlightException($flightId,
-            $tempFilePath)
-    {
+    public function ProccesFlightException(
+        $flightId,
+        $tempFilePath
+    ) {
         $flightId = intval($flightId);
 
         $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
@@ -845,8 +835,7 @@ class UploaderController extends CController
             mkdir($tmpProccStatusFilesDir);
         }
 
-        $tmpStatus = $this->lang->startFlExcProcc;
-        $this->writeStatus ($tempFilePath, $tmpStatus);
+        $this->writeStatus ($tempFilePath, 50);
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -881,12 +870,16 @@ class UploaderController extends CController
             error_reporting(E_ALL ^ E_WARNING);
             set_time_limit (0);
 
-            //perform proc be cached table
-            for($i = 0; $i < count($exList); $i++)
-            {
-                //50 because we think previous 50 ware used during proc
-                $tmpStatus =  round(50 + (25 / count($exList) * $i)) . "%";
-                $this->writeStatus ($tempFilePath, $tmpStatus);
+            //50 because we think previous 50 ware used during proc
+            $tmpStatus = 50;
+            $newStatus = 50;
+
+            for($i = 0; $i < count($exList); $i++) {
+                $newStatus = round(50 + (25 / count($exList) * $i));
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                    $this->writeStatus ($tempFilePath, $tmpStatus);
+                }
 
                 $curExList = $exList[$i];
                 $FEx->PerformProcessingByExceptions($curExList,
@@ -897,12 +890,21 @@ class UploaderController extends CController
 
             $emitter = new EventEmitter();
 
-            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath) {
-                $this->writeStatus ($tempFilePath, "75%");
+            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath, $tmpStatus) {
+                $tmpStatus = 75;
+                $this->writeStatus ($tempFilePath, $tmpStatus);
             });
 
-            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath) {
-                $tmpStatus =  round(75 + (25 / count($total) * $progress)) . "%";
+            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath, $tmpStatus, $newStatus) {
+                $newStatus = round(75 + (25 / count($total) * $progress));
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                    $this->writeStatus ($tempFilePath, $tmpStatus);
+                }
+            });
+
+            $emitter->on('EventProcessing:end', function ($progress, $total) use ($tempFilePath, $tmpStatus) {
+                $tmpStatus = 100;
                 $this->writeStatus ($tempFilePath, $tmpStatus);
             });
 
@@ -916,9 +918,13 @@ class UploaderController extends CController
 
     private function writeStatus ($path, $status)
     {
-        $fp = fopen($path, "w");
-        fwrite($fp, json_encode($status));
-        fclose($fp);
+        if (file_exists($path)) {
+            try {
+                $fp = fopen($path, "w");
+                fwrite($fp, json_encode($status));
+                fclose($fp);
+            } catch (Exception $e) { }
+        }
     }
 
     public function DeleteFlight()
@@ -1361,8 +1367,8 @@ class UploaderController extends CController
             throw new Exception("Necessary param fdrId not passed.", 1);
         }
 
-        if (!isset($_POST['progressFileName'])) {
-            throw new Exception("Necessary param progressFileName not passed.", 1);
+        if (!isset($_POST['uploadingUid'])) {
+            throw new Exception("Necessary param uploadingUid not passed.", 1);
         }
 
         if (!isset($_FILES['flightFile']['tmp_name'])) {
@@ -1375,10 +1381,11 @@ class UploaderController extends CController
                 . json_encode($fdrId), 1);
         }
 
-        $progressFileName = strval($_POST['progressFileName']);
-        if (!is_string($_POST['progressFileName'])) {
-            throw new Exception("Incorrect progressFileName passed. String is required. Passed: "
-                . json_encode($_POST['progressFileName']), 1);
+
+        $uploadingUid = strval($_POST['uploadingUid']);
+        if (!is_string($_POST['uploadingUid'])) {
+            throw new Exception("Incorrect uploadingUid passed. String is required. Passed: "
+                . json_encode($_POST['uploadingUid']), 1);
         }
 
         $fileName = strval($_FILES['flightFile']['tmp_name']);
@@ -1433,7 +1440,7 @@ class UploaderController extends CController
         $aditionalInfoVars = $this->CheckAditionalInfoFromHeader($fdrId, $flightInfoFromHeader);
         $totalPersentage = 50;
 
-        $progressFilePath = RuntimeManager::createProgressFile($progressFileName);
+        $progressFilePath = RuntimeManager::createProgressFile($uploadingUid);
 
         $flightId = $this->ProccessFlightData($progressFilePath,
                 $bort,
@@ -1455,6 +1462,66 @@ class UploaderController extends CController
         RuntimeManager::unlinkProgressFile($progressFilePath);
 
         echo (json_encode(['status' => 'ok']));
+    }
+
+    public function getUploadingStatus($data)
+    {
+        if (!isset($data['uploadingUid'])) {
+            throw new Exception("Necessary param uploadingUid not passed.", 1);
+        }
+
+        $uploadingUid = strval($data['uploadingUid']);
+        if (!is_string($data['uploadingUid'])) {
+            throw new Exception("Incorrect uploadingUid passed. String is required. Passed: "
+                . json_encode($data['uploadingUid']), 1);
+        }
+
+        $progressFilePath = RuntimeManager::getProgressFilePath($uploadingUid);
+
+        //file can be accesed by ajax while try to open what can cause warning
+        error_reporting(0);
+
+        if (file_exists($progressFilePath)) {
+            try {
+                $val = file_get_contents($progressFilePath);
+            } catch(Exception $e) {
+                echo(json_encode([
+                    "status" => "busy",
+                    "progress" => -1,
+                    "uploadingUid" => $uploadingUid
+                ]));
+                exit;
+            }
+
+            $val = preg_replace("/[^0-9]/","",$val);
+
+            if (!is_int(intval($val))) {
+                echo(json_encode([
+                    "status" => "busy",
+                    "progress" => -1,
+                    "uploadingUid" => $uploadingUid
+                ]));
+                exit;
+            }
+
+            $val = intval($val);
+
+            if ($val >= 0 && $val <= 100) {
+                echo(json_encode([
+                    "status" => "ok",
+                    "progress" => $val,
+                    "uploadingUid" => $uploadingUid
+                ]));
+                exit;
+            }
+        } else {
+            echo(json_encode([
+                "status" => "complete",
+                "progress" => 101,
+                "uploadingUid" => $uploadingUid
+            ]));
+            exit;
+        }
     }
 
     public function copyToRuntime($data)

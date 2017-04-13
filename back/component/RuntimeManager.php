@@ -18,10 +18,15 @@ class RuntimeManager
         return $runtimeDirectory;
     }
 
-    public static function createProgressFile($fileName)
+    public static function getProgressFilePath($uploadingUid)
     {
         $runtimeDirectory = self::getRuntimeFolder();
-        $filePath = $runtimeDirectory . DIRECTORY_SEPARATOR . $fileName;
+        return $runtimeDirectory . DIRECTORY_SEPARATOR . $uploadingUid . '.tmps';
+    }
+
+    public static function createProgressFile($uploadingUid)
+    {
+        $filePath = self::getProgressFilePath($uploadingUid);
         $fileNameDesc = fopen($filePath, "w");
         fclose($fileNameDesc);
 

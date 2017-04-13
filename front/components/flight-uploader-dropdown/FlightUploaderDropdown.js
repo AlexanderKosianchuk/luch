@@ -7,7 +7,7 @@ import onClickOutside from 'react-onclickoutside';
 import Switch from 'react-bootstrap-switch';
 import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.css';
 import FileInput from 'react-file-input';
-import Guid from 'guid';
+import uuidV4 from 'uuid/v4';
 
 import FlightUploaderDropdownLoading from 'components/flight-uploader-dropdown-loading/FlightUploaderDropdownLoading';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
@@ -112,12 +112,12 @@ class FlightUploaderDropdown extends React.Component {
 
     handleChange() {
         let form = new FormData(this.sendFlightForm);
-        let progressStatusFile = Guid.create() + '.prgs';
+        let uploadingUid = uuidV4();
 
         if (this.props.previewState) {
             this.props.topMenuService.uploadWithPreview(
                 form,
-                progressStatusFile,
+                uploadingUid,
                 this.props.selectedFdrType.id,
                 this.props.selectedFdrType.name,
                 this.props.selectedCalibration.id
@@ -126,12 +126,12 @@ class FlightUploaderDropdown extends React.Component {
             form.append('fdrId', this.props.selectedFdrType.id);
             form.append('calibrationId', this.props.selectedCalibration.id);
             /* just guid file name for progress reporting */
-            form.append('progressFileName', uploadingUid);
+            form.append('uploadingUid', uploadingUid);
             this.props.startEasyUploading({
                 form: form,
                 fdrId: this.props.selectedFdrType.id,
                 calibrationId: this.props.selectedCalibration.id,
-                progressStatusFile: progressStatusFile
+                uploadingUid: uploadingUid
             });
         }
 

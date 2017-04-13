@@ -8,13 +8,20 @@ class EntryController extends CController
 {
     public $curPage = 'indexPage';
 
+    private static $noAuthActions = [
+        'uploader/getUploadingStatus'
+    ];
+
     function __construct()
     {
-        if(!$this->IsAppLoggedIn()) {
-            $this->ShowLoginForm();
-        }
-
         $this->setAttributes();
+
+        if (!in_array($this->action, self::$noAuthActions)
+            && !$this->IsAppLoggedIn()
+        ) {
+            $this->ShowLoginForm();
+            exit;
+        }
 
         if (strpos($this->action, '/') !== false) {
             $exp = explode('/', $this->action);
@@ -32,9 +39,14 @@ class EntryController extends CController
                     $C->IsAppLoggedIn();
                     $C->$method($this->data);
                 } else {
-                    throw new Exception("Called method unexist", 1);
+                    throw new Exception("Called method unexist. "
+                        . "Controller: ". $controller . ", "
+                        . "Method: ". $method . ", "
+                        . "Args: " . json_encode($this->data), 1);
                 }
             }
         }
+
+        exit (0);
     }
 }
