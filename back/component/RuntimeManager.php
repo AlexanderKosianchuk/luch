@@ -42,10 +42,25 @@ class RuntimeManager
             mkdir($uploadedFilesDir, 0755, true);
         }
 
-        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . uniqid() . '.tmpsf';
+        $storedFileName = uniqid() . '.tmpf';
+        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
 
         if (!file_exists($storedFilePath)) {
             move_uploaded_file ($fileName, $storedFilePath);
+        }
+
+        return $storedFileName;
+    }
+
+    public static function getUploadedFilePath($fileName)
+    {
+        $runtimeDirectory = self::getRuntimeFolder();
+        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . 'uploadedFlights';
+
+        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $fileName;
+
+        if (!file_exists($storedFilePath)) {
+            throw new Exception("Requested uploaded file unexist. Name ". $fileName, 1);
         }
 
         return $storedFilePath;

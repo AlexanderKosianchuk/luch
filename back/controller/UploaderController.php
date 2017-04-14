@@ -136,7 +136,7 @@ class UploaderController extends CController
                 $aditionalInfo = (array)trim($fdrInfo['aditionalInfo']);
             }
 
-            for($i = 0; $i < count($aditionalInfo); $i++) {
+            for ($i = 0; $i < count($aditionalInfo); $i++) {
 
                 if (property_exists($this->lang, $aditionalInfo[$i])) {
                     $labelsArr = get_object_vars($this->lang);
@@ -180,8 +180,7 @@ class UploaderController extends CController
         $flightParamsSrt .= "</td><td align='center' style='vertical-align:top; padding-top:7px;'>";
 
         $previewParams = trim($previewParams);
-        if($previewParams != '')
-        {
+        if ($previewParams != '') {
             $flightParamsSrt .= "<div id='loadingBox".$index."' width='100%' style='position:absolute;'>
                     <img style='margin:0px auto 0px;' src='/front/stylesheets/basicImg/loading.gif'/></div>";
 
@@ -405,20 +404,15 @@ class UploaderController extends CController
 
         $Fr->CloseFile($fileDesc);
         unset($Fr);
-        echo(json_encode($data));
+
+        return $data;
     }
 
-    public function CutCopy($extBruType, $extFilePath,
-            $extStartCopyTime, $extEndCopyTime,
-            $extStartSliceTime, $extEndSliceTime)
+    public function CutCopy($fdrId, $filePath,
+            $startCopyTime, $endCopyTime,
+            $startSliceTime, $endSliceTime)
     {
-        $bruType = $extBruType;
-        $filePath = $extFilePath;
-
-        $startCopyTime = $extStartCopyTime;
-        $endCopyTime = $extEndCopyTime;
-        $startSliceTime = $extStartSliceTime;
-        $endSliceTime = $extEndSliceTime;
+        $fdrId = intval($fdrId);
 
         $newFileName = $filePath;
         $newFileAppendix = 'a';
@@ -428,15 +422,16 @@ class UploaderController extends CController
         } while(file_exists($newFileName . $newFileAppendix));
         $newFileName = $newFileName . $newFileAppendix;
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        unset ($fdr);
         $headerLength = $fdrInfo['headerLength'];
         $frameLength = $fdrInfo['frameLength'];
 
         $handle = fopen($filePath, "r");
         $newHandle = fopen($newFileName, "w");
 
-        if($headerLength > 0) {
+        if ($headerLength > 0) {
             $fileHeader = fread($handle, $headerLength);
             fwrite($newHandle, $fileHeader);
         }
@@ -454,7 +449,7 @@ class UploaderController extends CController
             $endB = $fileSize;
         }
 
-        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
+        if ($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
             fseek($handle, $stB);
             while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB) {
                 $fileFrame = fread($handle, $frameLength);
@@ -468,14 +463,12 @@ class UploaderController extends CController
             $answ["status"] = "ok";
             $answ["data"] = $newFileName;
 
-            echo(json_encode($answ));
+            return $answ;
         } else {
             $answ["status"] = "err";
             $answ["error"] = "Invalid slice range. Page UploaderController.php";
 
-            error_log("Invalid slice range. Page UploaderController.php");
-            echo(json_encode($answ));
-            exit();
+            return $answ;
         }
     }
 
@@ -1084,8 +1077,8 @@ class UploaderController extends CController
         ) {
             $calibrationId = intval($data['calibrationId']);
         }
-
-        $flightParamsSrt = $this->ShowFlightParams($index, $uploadingUid, $fdrId, $filePath, $calibrationId);
+        $uploadedFile = RuntimeManager::getUploadedFilePath($filePath);
+        $flightParamsSrt = $this->ShowFlightParams($index, $uploadingUid, $fdrId, $uploadedFile, $calibrationId);
 
         $answ["status"] = "ok";
         $answ["data"] = $flightParamsSrt;
@@ -1107,38 +1100,45 @@ class UploaderController extends CController
         $fdrId = intval($data['fdrId']);
         $filePath = strval($data['file']);
 
-        $this->CopyPreview($fdrId, $filePath);
+        $storedFilePath = RuntimeManager::getUploadedFilePath($filePath);
+        $resp = $this->CopyPreview($fdrId, $storedFilePath);
+
+        echo(json_encode($resp));
     }
 
     public function flightCutFile($data)
     {
-        if(isset($data['bruType'])
-            && isset($data['file'])
-            && isset($data['startCopyTime'])
-            && isset($data['endCopyTime'])
-            && isset($data['startSliceTime'])
-            && isset($data['endSliceTime'])
+        if(!isset($data['fdrId'])
+            || !isset($data['file'])
+            || !isset($data['newUid'])
+            || !isset($data['uploadingUid'])
+            || !isset($data['startCopyTime'])
+            || !isset($data['endCopyTime'])
+            || !isset($data['startSliceTime'])
+            || !isset($data['endSliceTime'])
         ) {
-            $bruType = $data['bruType'];
-            $filePath = $data['file'];
-
-            $startCopyTime = $data['startCopyTime'];
-            $endCopyTime = $data['endCopyTime'];
-            $startSliceTime = $data['startSliceTime'];
-            $endSliceTime = $data['endSliceTime'];
-
-            $this->CutCopy($bruType, $filePath,
-                $startCopyTime, $endCopyTime,
-                $startSliceTime, $endSliceTime);
-        }
-        else
-        {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". " .
                 "Action: " . $this->action . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['fdrId']);
+        $filePath = $data['file'];
+        $newUid = $data['newUid'];
+        $uploadingUid = $data['uploadingUid'];
+
+        $startCopyTime = $data['startCopyTime'];
+        $endCopyTime = $data['endCopyTime'];
+        $startSliceTime = $data['startSliceTime'];
+        $endSliceTime = $data['endSliceTime'];
+
+        $res = $this->CutCopy($fdrId, $filePath,
+            $startCopyTime, $endCopyTime,
+            $startSliceTime, $endSliceTime);
+        $res['newUid'] = $newUid;
+        echo(json_encode($res));
     }
 
     public function flightCyclicSliceFile($data)

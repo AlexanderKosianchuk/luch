@@ -1,4 +1,5 @@
 import uuidV4 from 'uuid/v4';
+import 'flot-charts/jquery.flot.selection';
 
 function FlightUploader(window, document, langStr, eventHandler)
 {
@@ -225,27 +226,26 @@ FlightUploader.prototype.GetFlightParams = function(
 };
 
 FlightUploader.prototype.GetSlicedFlightParams = function(
-        extIndex,
-        extFile,
-        extSelectedBruType,
-        extParentIndex
+        index,
+        file,
+        uploadingUid,
+        fdrId,
+        parentIndex
 ) {
 
     var self = this,
-        index = extIndex,
-        file = extFile,
         containerWidth = self.containerWidth,
-        selectedBruType = extSelectedBruType,
-        parentToAppentAfter = $("div#fileFlightInfo" + extParentIndex);
+        parentToAppentAfter = $("div#fileFlightInfo" + parentIndex);
 
     //when file uploaded call fileProcessor to import it
     var pV = {
         action: "uploader/flightShowUploadingOptions",
         data: {
             index: index,
+            uploadingUid: uploadingUid,
             file: file,
             containerWidth: containerWidth,
-            bruType: selectedBruType
+            fdrId: fdrId
         }
     };
 
@@ -276,12 +276,14 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
                 previewParams[0] = previewParamsRaw;
             }
 
-            self.PreviewChart(parentContainer,
-                    previewParams,
-                    index,
-                    file,
-                    selectedBruType,
-                    chartWidth);
+            self.PreviewChart(
+                parentContainer,
+                previewParams,
+                index,
+                file,
+                fdrId,
+                chartWidth
+            );
 
             self.SliceFlightButtDynamicCreatedSupport(parentContainer, previewParams);
 
@@ -657,7 +659,8 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                 var el = $(e.currentTarget),
                     curIndex = el.data("index"),
                     fileName = el.data("file"),
-                    bruType = el.data("brutype"),
+                    fdrId = el.data("fdr-id"),
+                    uploadingUid = el.data("uploading-uid"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
                     action = "flightCutFile";
 
@@ -675,7 +678,9 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     var pV = {
                             action: 'uploader/'+action,
                             data: {
-                                bruType: bruType,
+                                uploadingUid: uploadingUid,
+                                newUid: uuidV4(),
+                                fdrId: fdrId,
                                 file: fileName,
 
                                 startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
@@ -694,10 +699,12 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
                             var newFileName = answ["data"];
+                            let newUid = answ["newUid"];
 
                             self.GetSlicedFlightParams(newIndex,
                                     newFileName,
-                                    bruType,
+                                    newUid,
+                                    fdrId,
                                     curIndex);
                         } else {
                             console.log(answ["error"]);
@@ -734,7 +741,8 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                 var el = $(e.target).parent(),
                     curIndex = el.data("index"),
                     fileName = el.data("file"),
-                    bruType = el.data("brutype"),
+                    fdrId = el.data("fdr-id"),
+                    uploadingUid = el.data("uploading-uid"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
                     action = "flightCutFile";
 
@@ -743,7 +751,7 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
 
                     $("input#ignoreDueUploading" + curIndex).prop('checked', true);
 
-                    if(el.hasClass('SliceFlightButt')){
+                    if (el.hasClass('SliceFlightButt')){
                         action = "flightCutFile";
                     } else if(el.hasClass('SliceCyclicFlightButt')){
                         action = "flightCyclicSliceFile";
@@ -752,7 +760,9 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     var pV = {
                             action: 'uploader/'+action,
                             data: {
-                                bruType: bruType,
+                                uploadingUid: uploadingUid,
+                                newUid: uuidV4(),
+                                fdrId: fdrId,
                                 file: fileName,
 
                                 startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
@@ -771,10 +781,12 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
                             var newFileName = answ["data"];
+                            let newUid = answ["newUid"];
 
                             self.GetSlicedFlightParams(newIndex,
                                     newFileName,
-                                    bruType,
+                                    newUid,
+                                    fdrId,
                                     curIndex);
                         } else {
                             console.log(answ["error"]);

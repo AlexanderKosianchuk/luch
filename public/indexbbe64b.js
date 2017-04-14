@@ -27936,6 +27936,8 @@ var _v = __webpack_require__(161);
 
 var _v2 = _interopRequireDefault(_v);
 
+__webpack_require__(462);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function FlightUploader(window, document, langStr, eventHandler) {
@@ -28127,23 +28129,21 @@ FlightUploader.prototype.GetFlightParams = function (index, uploadingUid, file, 
     }
 };
 
-FlightUploader.prototype.GetSlicedFlightParams = function (extIndex, extFile, extSelectedBruType, extParentIndex) {
+FlightUploader.prototype.GetSlicedFlightParams = function (index, file, uploadingUid, fdrId, parentIndex) {
 
     var self = this,
-        index = extIndex,
-        file = extFile,
         containerWidth = self.containerWidth,
-        selectedBruType = extSelectedBruType,
-        parentToAppentAfter = $("div#fileFlightInfo" + extParentIndex);
+        parentToAppentAfter = $("div#fileFlightInfo" + parentIndex);
 
     //when file uploaded call fileProcessor to import it
     var pV = {
         action: "uploader/flightShowUploadingOptions",
         data: {
             index: index,
+            uploadingUid: uploadingUid,
             file: file,
             containerWidth: containerWidth,
-            bruType: selectedBruType
+            fdrId: fdrId
         }
     };
 
@@ -28174,7 +28174,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function (extIndex, extFile, ex
                 previewParams[0] = previewParamsRaw;
             }
 
-            self.PreviewChart(parentContainer, previewParams, index, file, selectedBruType, chartWidth);
+            self.PreviewChart(parentContainer, previewParams, index, file, fdrId, chartWidth);
 
             self.SliceFlightButtDynamicCreatedSupport(parentContainer, previewParams);
         } else {
@@ -28527,7 +28527,8 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
                 var el = $(e.currentTarget),
                     curIndex = el.data("index"),
                     fileName = el.data("file"),
-                    bruType = el.data("brutype"),
+                    fdrId = el.data("fdr-id"),
+                    uploadingUid = el.data("uploading-uid"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
                     action = "flightCutFile";
 
@@ -28544,7 +28545,9 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
                     var pV = {
                         action: 'uploader/' + action,
                         data: {
-                            bruType: bruType,
+                            uploadingUid: uploadingUid,
+                            newUid: (0, _v2.default)(),
+                            fdrId: fdrId,
                             file: fileName,
 
                             startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
@@ -28563,8 +28566,9 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function (parent, previ
                     }).done(function (answ) {
                         if (answ["status"] == 'ok') {
                             var newFileName = answ["data"];
+                            var newUid = answ["newUid"];
 
-                            self.GetSlicedFlightParams(newIndex, newFileName, bruType, curIndex);
+                            self.GetSlicedFlightParams(newIndex, newFileName, newUid, fdrId, curIndex);
                         } else {
                             console.log(answ["error"]);
                         }
@@ -28599,7 +28603,8 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function (parent
                 var el = $(e.target).parent(),
                     curIndex = el.data("index"),
                     fileName = el.data("file"),
-                    bruType = el.data("brutype"),
+                    fdrId = el.data("fdr-id"),
+                    uploadingUid = el.data("uploading-uid"),
                     newIndex = $("div.PreviewChartPlaceholder").length,
                     action = "flightCutFile";
 
@@ -28616,7 +28621,9 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function (parent
                     var pV = {
                         action: 'uploader/' + action,
                         data: {
-                            bruType: bruType,
+                            uploadingUid: uploadingUid,
+                            newUid: (0, _v2.default)(),
+                            fdrId: fdrId,
                             file: fileName,
 
                             startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
@@ -28635,8 +28642,9 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function (parent
                     }).done(function (answ) {
                         if (answ["status"] == 'ok') {
                             var newFileName = answ["data"];
+                            var newUid = answ["newUid"];
 
-                            self.GetSlicedFlightParams(newIndex, newFileName, bruType, curIndex);
+                            self.GetSlicedFlightParams(newIndex, newFileName, newUid, fdrId, curIndex);
                         } else {
                             console.log(answ["error"]);
                         }
@@ -86694,7 +86702,7 @@ var _reactDom = __webpack_require__(45);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _shallowEqualFuzzy = __webpack_require__(447);
+var _shallowEqualFuzzy = __webpack_require__(449);
 
 var _shallowEqualFuzzy2 = _interopRequireDefault(_shallowEqualFuzzy);
 
@@ -86702,7 +86710,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(446);
+__webpack_require__(448);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -87196,7 +87204,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(459);
+__webpack_require__(461);
 
 var _react = __webpack_require__(10);
 
@@ -87290,11 +87298,11 @@ exports.default = configureStore;
 
 var _redux = __webpack_require__(30);
 
-var _reduxThunk = __webpack_require__(445);
+var _reduxThunk = __webpack_require__(447);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _reduxDevtoolsExtension = __webpack_require__(444);
+var _reduxDevtoolsExtension = __webpack_require__(446);
 
 var _rootReducer = __webpack_require__(406);
 
@@ -87755,7 +87763,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(450);
+__webpack_require__(452);
 
 var _react = __webpack_require__(10);
 
@@ -87845,7 +87853,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = FlightUploaderCalibrationSelector;
 
-__webpack_require__(451);
+__webpack_require__(453);
 
 var _react = __webpack_require__(10);
 
@@ -87918,7 +87926,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = FlightUploaderDropdownLoading;
 
-__webpack_require__(452);
+__webpack_require__(454);
 
 var _react = __webpack_require__(10);
 
@@ -87951,7 +87959,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(453);
+__webpack_require__(455);
 
 var _react = __webpack_require__(10);
 
@@ -87965,13 +87973,13 @@ var _reactOnclickoutside = __webpack_require__(334);
 
 var _reactOnclickoutside2 = _interopRequireDefault(_reactOnclickoutside);
 
-var _reactBootstrapSwitch = __webpack_require__(441);
+var _reactBootstrapSwitch = __webpack_require__(443);
 
 var _reactBootstrapSwitch2 = _interopRequireDefault(_reactBootstrapSwitch);
 
-__webpack_require__(448);
+__webpack_require__(450);
 
-var _reactFileInput = __webpack_require__(443);
+var _reactFileInput = __webpack_require__(445);
 
 var _reactFileInput2 = _interopRequireDefault(_reactFileInput);
 
@@ -88246,7 +88254,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = FlightUploaderFdrSelector;
 
-__webpack_require__(454);
+__webpack_require__(456);
 
 var _react = __webpack_require__(10);
 
@@ -88327,7 +88335,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(455);
+__webpack_require__(457);
 
 var _react = __webpack_require__(10);
 
@@ -88337,11 +88345,11 @@ var _redux = __webpack_require__(30);
 
 var _reactRedux = __webpack_require__(24);
 
-var _reactCircularProgressbar = __webpack_require__(442);
+var _reactCircularProgressbar = __webpack_require__(444);
 
 var _reactCircularProgressbar2 = _interopRequireDefault(_reactCircularProgressbar);
 
-var _lodash = __webpack_require__(460);
+var _lodash = __webpack_require__(441);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -88437,7 +88445,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(456);
+__webpack_require__(458);
 
 var _react = __webpack_require__(10);
 
@@ -88650,7 +88658,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(457);
+__webpack_require__(459);
 
 var _react = __webpack_require__(10);
 
@@ -88902,7 +88910,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(458);
+__webpack_require__(460);
 
 var _react = __webpack_require__(10);
 
@@ -89635,7 +89643,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = flightUploadingState;
 
-var _lodash = __webpack_require__(461);
+var _lodash = __webpack_require__(442);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -89784,7 +89792,7 @@ function settlementFilter() {
 /* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports.css = __webpack_require__ (449);
+module.exports.css = __webpack_require__ (451);
 module.exports.js = __webpack_require__ (409);
 
 
@@ -93208,6 +93216,314 @@ module.exports = __webpack_require__.p + "images/glyphicons-halflings-regular.sv
 
 /***/ }),
 /* 441 */
+/***/ (function(module, exports) {
+
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var getter = _.constant(object);
+ * getter() === object;
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+
+module.exports = constant;
+
+
+/***/ }),
+/* 442 */
+/***/ (function(module, exports) {
+
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0,
+    MAX_INTEGER = 1.7976931348623157e+308,
+    NAN = 0 / 0;
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Checks if `value` is an integer.
+ *
+ * **Note:** This method is based on
+ * [`Number.isInteger`](https://mdn.io/Number/isInteger).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an integer, else `false`.
+ * @example
+ *
+ * _.isInteger(3);
+ * // => true
+ *
+ * _.isInteger(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isInteger(Infinity);
+ * // => false
+ *
+ * _.isInteger('3');
+ * // => false
+ */
+function isInteger(value) {
+  return typeof value == 'number' && value == toInteger(value);
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a finite number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * _.toFinite(3.2);
+ * // => 3.2
+ *
+ * _.toFinite(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toFinite(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toFinite('3.2');
+ * // => 3.2
+ */
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0;
+  }
+  value = toNumber(value);
+  if (value === INFINITY || value === -INFINITY) {
+    var sign = (value < 0 ? -1 : 1);
+    return sign * MAX_INTEGER;
+  }
+  return value === value ? value : 0;
+}
+
+/**
+ * Converts `value` to an integer.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * _.toInteger(3.2);
+ * // => 3
+ *
+ * _.toInteger(Number.MIN_VALUE);
+ * // => 0
+ *
+ * _.toInteger(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toInteger('3.2');
+ * // => 3
+ */
+function toInteger(value) {
+  var result = toFinite(value),
+      remainder = result % 1;
+
+  return result === result ? (remainder ? result - remainder : result) : 0;
+}
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = isInteger;
+
+
+/***/ }),
+/* 443 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -93739,13 +94055,13 @@ Switch.propTypes = {
 };
 
 /***/ }),
-/* 442 */
+/* 444 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(e,t){ true?module.exports=t(__webpack_require__(10)):"function"==typeof define&&define.amd?define(["react"],t):"object"==typeof exports?exports.CircularProgressbar=t(require("react")):e.CircularProgressbar=t(e.React)}(this,function(e){return function(e){function t(n){if(r[n])return r[n].exports;var o=r[n]={exports:{},id:n,loaded:!1};return e[n].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var r={};return t.m=e,t.c=r,t.p="",t(0)}([function(e,t,r){e.exports=r(1)},function(e,t,r){"use strict";function n(e){return e&&e.__esModule?e:{"default":e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function a(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var s=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}(),c=r(2),p=n(c),u=function(e){function t(e){o(this,t);var r=i(this,Object.getPrototypeOf(t).call(this,e));return r.state={percentage:e.initialAnimation?0:e.percentage},r}return a(t,e),s(t,[{key:"componentDidMount",value:function(){var e=this;this.props.initialAnimation&&(this.initialTimeout=setTimeout(function(){e.requestAnimationFrame=window.requestAnimationFrame(function(){e.setState({percentage:e.props.percentage})})},0))}},{key:"componentWillReceiveProps",value:function(e){this.setState({percentage:e.percentage})}},{key:"componentWillUnmount",value:function(){clearTimeout(this.initialTimeout),window.cancelAnimationFrame(this.requestAnimationFrame)}},{key:"render",value:function(){var e=50-this.props.strokeWidth/2,t="\n      M 50,50 m 0,-"+e+"\n      a "+e+","+e+" 0 1 1 0,"+2*e+"\n      a "+e+","+e+" 0 1 1 0,-"+2*e+"\n    ",r=2*Math.PI*e,n={strokeDasharray:r+"px "+r+"px",strokeDashoffset:(100-this.state.percentage)/100*r+"px"};return p["default"].createElement("svg",{className:"CircularProgressbar "+(this.props.classForPercentage?this.props.classForPercentage(this.props.percentage):""),viewBox:"0 0 100 100"},p["default"].createElement("path",{className:"CircularProgressbar-trail",d:t,strokeWidth:this.props.strokeWidth,fillOpacity:0}),p["default"].createElement("path",{className:"CircularProgressbar-path",d:t,strokeWidth:this.props.strokeWidth,fillOpacity:0,style:n}),p["default"].createElement("text",{className:"CircularProgressbar-text",x:50,y:50},this.props.textForPercentage(this.props.percentage)))}}]),t}(p["default"].Component);u.propTypes={percentage:c.PropTypes.number.isRequired,strokeWidth:c.PropTypes.number,initialAnimation:c.PropTypes.bool,classForPercentage:c.PropTypes.func,textForPercentage:c.PropTypes.func},u.defaultProps={strokeWidth:8,textForPercentage:function(e){return e+"%"},initialAnimation:!1},t["default"]=u},function(t,r){t.exports=e}])});
 
 /***/ }),
-/* 443 */
+/* 445 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var React = __webpack_require__(10);
@@ -93816,7 +94132,7 @@ module.exports = FileInput;
 
 
 /***/ }),
-/* 444 */
+/* 446 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -93843,7 +94159,7 @@ exports.devToolsEnhancer = (
 
 
 /***/ }),
-/* 445 */
+/* 447 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -93872,7 +94188,7 @@ thunk.withExtraArgument = createThunkMiddleware;
 exports['default'] = thunk;
 
 /***/ }),
-/* 446 */
+/* 448 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -99607,7 +99923,7 @@ S2.define('jquery.select2',[
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 447 */
+/* 449 */
 /***/ (function(module, exports) {
 
 // inlined http://underscorejs.org/ realization isString, isNumber
@@ -99715,7 +100031,7 @@ module.exports = shallowEqualFuzzy;
 
 
 /***/ }),
-/* 448 */
+/* 450 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99731,7 +100047,7 @@ if(false) {
 }
 
 /***/ }),
-/* 449 */
+/* 451 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99747,7 +100063,7 @@ if(false) {
 }
 
 /***/ }),
-/* 450 */
+/* 452 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99763,7 +100079,7 @@ if(false) {
 }
 
 /***/ }),
-/* 451 */
+/* 453 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99779,7 +100095,7 @@ if(false) {
 }
 
 /***/ }),
-/* 452 */
+/* 454 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99795,7 +100111,7 @@ if(false) {
 }
 
 /***/ }),
-/* 453 */
+/* 455 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99811,7 +100127,7 @@ if(false) {
 }
 
 /***/ }),
-/* 454 */
+/* 456 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99827,7 +100143,7 @@ if(false) {
 }
 
 /***/ }),
-/* 455 */
+/* 457 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99843,7 +100159,7 @@ if(false) {
 }
 
 /***/ }),
-/* 456 */
+/* 458 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99859,7 +100175,7 @@ if(false) {
 }
 
 /***/ }),
-/* 457 */
+/* 459 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99875,7 +100191,7 @@ if(false) {
 }
 
 /***/ }),
-/* 458 */
+/* 460 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99891,7 +100207,7 @@ if(false) {
 }
 
 /***/ }),
-/* 459 */
+/* 461 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -99907,313 +100223,372 @@ if(false) {
 }
 
 /***/ }),
-/* 460 */
-/***/ (function(module, exports) {
+/* 462 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
+/* WEBPACK VAR INJECTION */(function(jQuery) {/* Flot plugin for selecting regions of a plot.
 
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
+Copyright (c) 2007-2014 IOLA and Ole Laursen.
+Licensed under the MIT license.
+
+The plugin supports these options:
+
+selection: {
+	mode: null or "x" or "y" or "xy",
+	color: color,
+	shape: "round" or "miter" or "bevel",
+	minSize: number of pixels
 }
 
-module.exports = constant;
+Selection support is enabled by setting the mode to one of "x", "y" or "xy".
+In "x" mode, the user will only be able to specify the x range, similarly for
+"y" mode. For "xy", the selection becomes a rectangle where both ranges can be
+specified. "color" is color of the selection (if you need to change the color
+later on, you can get to it with plot.getOptions().selection.color). "shape"
+is the shape of the corners of the selection.
+
+"minSize" is the minimum size a selection can be in pixels. This value can
+be customized to determine the smallest size a selection can be and still
+have the selection rectangle be displayed. When customizing this value, the
+fact that it refers to pixels, not axis units must be taken into account.
+Thus, for example, if there is a bar graph in time mode with BarWidth set to 1
+minute, setting "minSize" to 1 will not make the minimum selection size 1
+minute, but rather 1 pixel. Note also that setting "minSize" to 0 will prevent
+"plotunselected" events from being fired when the user clicks the mouse without
+dragging.
+
+When selection support is enabled, a "plotselected" event will be emitted on
+the DOM element you passed into the plot function. The event handler gets a
+parameter with the ranges selected on the axes, like this:
+
+	placeholder.bind( "plotselected", function( event, ranges ) {
+		alert("You selected " + ranges.xaxis.from + " to " + ranges.xaxis.to)
+		// similar for yaxis - with multiple axes, the extra ones are in
+		// x2axis, x3axis, ...
+	});
+
+The "plotselected" event is only fired when the user has finished making the
+selection. A "plotselecting" event is fired during the process with the same
+parameters as the "plotselected" event, in case you want to know what's
+happening while it's happening,
+
+A "plotunselected" event with no arguments is emitted when the user clicks the
+mouse to remove the selection. As stated above, setting "minSize" to 0 will
+destroy this behavior.
+
+The plugin allso adds the following methods to the plot object:
+
+- setSelection( ranges, preventEvent )
+
+  Set the selection rectangle. The passed in ranges is on the same form as
+  returned in the "plotselected" event. If the selection mode is "x", you
+  should put in either an xaxis range, if the mode is "y" you need to put in
+  an yaxis range and both xaxis and yaxis if the selection mode is "xy", like
+  this:
+
+	setSelection({ xaxis: { from: 0, to: 10 }, yaxis: { from: 40, to: 60 } });
+
+  setSelection will trigger the "plotselected" event when called. If you don't
+  want that to happen, e.g. if you're inside a "plotselected" handler, pass
+  true as the second parameter. If you are using multiple axes, you can
+  specify the ranges on any of those, e.g. as x2axis/x3axis/... instead of
+  xaxis, the plugin picks the first one it sees.
+
+- clearSelection( preventEvent )
+
+  Clear the selection rectangle. Pass in true to avoid getting a
+  "plotunselected" event.
+
+- getSelection()
+
+  Returns the current selection in the same format as the "plotselected"
+  event. If there's currently no selection, the function returns null.
+
+*/
+
+(function ($) {
+    function init(plot) {
+        var selection = {
+                first: { x: -1, y: -1}, second: { x: -1, y: -1},
+                show: false,
+                active: false
+            };
+
+        // FIXME: The drag handling implemented here should be
+        // abstracted out, there's some similar code from a library in
+        // the navigation plugin, this should be massaged a bit to fit
+        // the Flot cases here better and reused. Doing this would
+        // make this plugin much slimmer.
+        var savedhandlers = {};
+
+        var mouseUpHandler = null;
+        
+        function onMouseMove(e) {
+            if (selection.active) {
+                updateSelection(e);
+                
+                plot.getPlaceholder().trigger("plotselecting", [ getSelection() ]);
+            }
+        }
+
+        function onMouseDown(e) {
+            if (e.which != 1)  // only accept left-click
+                return;
+            
+            // cancel out any text selections
+            document.body.focus();
+
+            // prevent text selection and drag in old-school browsers
+            if (document.onselectstart !== undefined && savedhandlers.onselectstart == null) {
+                savedhandlers.onselectstart = document.onselectstart;
+                document.onselectstart = function () { return false; };
+            }
+            if (document.ondrag !== undefined && savedhandlers.ondrag == null) {
+                savedhandlers.ondrag = document.ondrag;
+                document.ondrag = function () { return false; };
+            }
+
+            setSelectionPos(selection.first, e);
+
+            selection.active = true;
+
+            // this is a bit silly, but we have to use a closure to be
+            // able to whack the same handler again
+            mouseUpHandler = function (e) { onMouseUp(e); };
+            
+            $(document).one("mouseup", mouseUpHandler);
+        }
+
+        function onMouseUp(e) {
+            mouseUpHandler = null;
+            
+            // revert drag stuff for old-school browsers
+            if (document.onselectstart !== undefined)
+                document.onselectstart = savedhandlers.onselectstart;
+            if (document.ondrag !== undefined)
+                document.ondrag = savedhandlers.ondrag;
+
+            // no more dragging
+            selection.active = false;
+            updateSelection(e);
+
+            if (selectionIsSane())
+                triggerSelectedEvent();
+            else {
+                // this counts as a clear
+                plot.getPlaceholder().trigger("plotunselected", [ ]);
+                plot.getPlaceholder().trigger("plotselecting", [ null ]);
+            }
+
+            return false;
+        }
+
+        function getSelection() {
+            if (!selectionIsSane())
+                return null;
+            
+            if (!selection.show) return null;
+
+            var r = {}, c1 = selection.first, c2 = selection.second;
+            $.each(plot.getAxes(), function (name, axis) {
+                if (axis.used) {
+                    var p1 = axis.c2p(c1[axis.direction]), p2 = axis.c2p(c2[axis.direction]); 
+                    r[name] = { from: Math.min(p1, p2), to: Math.max(p1, p2) };
+                }
+            });
+            return r;
+        }
+
+        function triggerSelectedEvent() {
+            var r = getSelection();
+
+            plot.getPlaceholder().trigger("plotselected", [ r ]);
+
+            // backwards-compat stuff, to be removed in future
+            if (r.xaxis && r.yaxis)
+                plot.getPlaceholder().trigger("selected", [ { x1: r.xaxis.from, y1: r.yaxis.from, x2: r.xaxis.to, y2: r.yaxis.to } ]);
+        }
+
+        function clamp(min, value, max) {
+            return value < min ? min: (value > max ? max: value);
+        }
+
+        function setSelectionPos(pos, e) {
+            var o = plot.getOptions();
+            var offset = plot.getPlaceholder().offset();
+            var plotOffset = plot.getPlotOffset();
+            pos.x = clamp(0, e.pageX - offset.left - plotOffset.left, plot.width());
+            pos.y = clamp(0, e.pageY - offset.top - plotOffset.top, plot.height());
+
+            if (o.selection.mode == "y")
+                pos.x = pos == selection.first ? 0 : plot.width();
+
+            if (o.selection.mode == "x")
+                pos.y = pos == selection.first ? 0 : plot.height();
+        }
+
+        function updateSelection(pos) {
+            if (pos.pageX == null)
+                return;
+
+            setSelectionPos(selection.second, pos);
+            if (selectionIsSane()) {
+                selection.show = true;
+                plot.triggerRedrawOverlay();
+            }
+            else
+                clearSelection(true);
+        }
+
+        function clearSelection(preventEvent) {
+            if (selection.show) {
+                selection.show = false;
+                plot.triggerRedrawOverlay();
+                if (!preventEvent)
+                    plot.getPlaceholder().trigger("plotunselected", [ ]);
+            }
+        }
+
+        // function taken from markings support in Flot
+        function extractRange(ranges, coord) {
+            var axis, from, to, key, axes = plot.getAxes();
+
+            for (var k in axes) {
+                axis = axes[k];
+                if (axis.direction == coord) {
+                    key = coord + axis.n + "axis";
+                    if (!ranges[key] && axis.n == 1)
+                        key = coord + "axis"; // support x1axis as xaxis
+                    if (ranges[key]) {
+                        from = ranges[key].from;
+                        to = ranges[key].to;
+                        break;
+                    }
+                }
+            }
+
+            // backwards-compat stuff - to be removed in future
+            if (!ranges[key]) {
+                axis = coord == "x" ? plot.getXAxes()[0] : plot.getYAxes()[0];
+                from = ranges[coord + "1"];
+                to = ranges[coord + "2"];
+            }
+
+            // auto-reverse as an added bonus
+            if (from != null && to != null && from > to) {
+                var tmp = from;
+                from = to;
+                to = tmp;
+            }
+            
+            return { from: from, to: to, axis: axis };
+        }
+        
+        function setSelection(ranges, preventEvent) {
+            var axis, range, o = plot.getOptions();
+
+            if (o.selection.mode == "y") {
+                selection.first.x = 0;
+                selection.second.x = plot.width();
+            }
+            else {
+                range = extractRange(ranges, "x");
+
+                selection.first.x = range.axis.p2c(range.from);
+                selection.second.x = range.axis.p2c(range.to);
+            }
+
+            if (o.selection.mode == "x") {
+                selection.first.y = 0;
+                selection.second.y = plot.height();
+            }
+            else {
+                range = extractRange(ranges, "y");
+
+                selection.first.y = range.axis.p2c(range.from);
+                selection.second.y = range.axis.p2c(range.to);
+            }
+
+            selection.show = true;
+            plot.triggerRedrawOverlay();
+            if (!preventEvent && selectionIsSane())
+                triggerSelectedEvent();
+        }
+
+        function selectionIsSane() {
+            var minSize = plot.getOptions().selection.minSize;
+            return Math.abs(selection.second.x - selection.first.x) >= minSize &&
+                Math.abs(selection.second.y - selection.first.y) >= minSize;
+        }
+
+        plot.clearSelection = clearSelection;
+        plot.setSelection = setSelection;
+        plot.getSelection = getSelection;
+
+        plot.hooks.bindEvents.push(function(plot, eventHolder) {
+            var o = plot.getOptions();
+            if (o.selection.mode != null) {
+                eventHolder.mousemove(onMouseMove);
+                eventHolder.mousedown(onMouseDown);
+            }
+        });
 
 
-/***/ }),
-/* 461 */
-/***/ (function(module, exports) {
+        plot.hooks.drawOverlay.push(function (plot, ctx) {
+            // draw selection
+            if (selection.show && selectionIsSane()) {
+                var plotOffset = plot.getPlotOffset();
+                var o = plot.getOptions();
 
-/**
- * lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="npm" -o ./`
- * Copyright jQuery Foundation and other contributors <https://jquery.org/>
- * Released under MIT license <https://lodash.com/license>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- */
+                ctx.save();
+                ctx.translate(plotOffset.left, plotOffset.top);
 
-/** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0,
-    MAX_INTEGER = 1.7976931348623157e+308,
-    NAN = 0 / 0;
+                var c = $.color.parse(o.selection.color);
 
-/** `Object#toString` result references. */
-var symbolTag = '[object Symbol]';
+                ctx.strokeStyle = c.scale('a', 0.8).toString();
+                ctx.lineWidth = 1;
+                ctx.lineJoin = o.selection.shape;
+                ctx.fillStyle = c.scale('a', 0.4).toString();
 
-/** Used to match leading and trailing whitespace. */
-var reTrim = /^\s+|\s+$/g;
+                var x = Math.min(selection.first.x, selection.second.x) + 0.5,
+                    y = Math.min(selection.first.y, selection.second.y) + 0.5,
+                    w = Math.abs(selection.second.x - selection.first.x) - 1,
+                    h = Math.abs(selection.second.y - selection.first.y) - 1;
 
-/** Used to detect bad signed hexadecimal string values. */
-var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+                ctx.fillRect(x, y, w, h);
+                ctx.strokeRect(x, y, w, h);
 
-/** Used to detect binary string values. */
-var reIsBinary = /^0b[01]+$/i;
+                ctx.restore();
+            }
+        });
+        
+        plot.hooks.shutdown.push(function (plot, eventHolder) {
+            eventHolder.unbind("mousemove", onMouseMove);
+            eventHolder.unbind("mousedown", onMouseDown);
+            
+            if (mouseUpHandler)
+                $(document).unbind("mouseup", mouseUpHandler);
+        });
 
-/** Used to detect octal string values. */
-var reIsOctal = /^0o[0-7]+$/i;
+    }
 
-/** Built-in method references without a dependency on `root`. */
-var freeParseInt = parseInt;
+    $.plot.plugins.push({
+        init: init,
+        options: {
+            selection: {
+                mode: null, // one of null, "x", "y" or "xy"
+                color: "#e8cfac",
+                shape: "round", // one of "round", "miter", or "bevel"
+                minSize: 5 // minimum number of pixels
+            }
+        },
+        name: 'selection',
+        version: '1.1'
+    });
+})(jQuery);
 
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objectToString = objectProto.toString;
-
-/**
- * Checks if `value` is an integer.
- *
- * **Note:** This method is based on
- * [`Number.isInteger`](https://mdn.io/Number/isInteger).
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an integer, else `false`.
- * @example
- *
- * _.isInteger(3);
- * // => true
- *
- * _.isInteger(Number.MIN_VALUE);
- * // => false
- *
- * _.isInteger(Infinity);
- * // => false
- *
- * _.isInteger('3');
- * // => false
- */
-function isInteger(value) {
-  return typeof value == 'number' && value == toInteger(value);
-}
-
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-function isObject(value) {
-  var type = typeof value;
-  return !!value && (type == 'object' || type == 'function');
-}
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return !!value && typeof value == 'object';
-}
-
-/**
- * Checks if `value` is classified as a `Symbol` primitive or object.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
- * @example
- *
- * _.isSymbol(Symbol.iterator);
- * // => true
- *
- * _.isSymbol('abc');
- * // => false
- */
-function isSymbol(value) {
-  return typeof value == 'symbol' ||
-    (isObjectLike(value) && objectToString.call(value) == symbolTag);
-}
-
-/**
- * Converts `value` to a finite number.
- *
- * @static
- * @memberOf _
- * @since 4.12.0
- * @category Lang
- * @param {*} value The value to convert.
- * @returns {number} Returns the converted number.
- * @example
- *
- * _.toFinite(3.2);
- * // => 3.2
- *
- * _.toFinite(Number.MIN_VALUE);
- * // => 5e-324
- *
- * _.toFinite(Infinity);
- * // => 1.7976931348623157e+308
- *
- * _.toFinite('3.2');
- * // => 3.2
- */
-function toFinite(value) {
-  if (!value) {
-    return value === 0 ? value : 0;
-  }
-  value = toNumber(value);
-  if (value === INFINITY || value === -INFINITY) {
-    var sign = (value < 0 ? -1 : 1);
-    return sign * MAX_INTEGER;
-  }
-  return value === value ? value : 0;
-}
-
-/**
- * Converts `value` to an integer.
- *
- * **Note:** This method is loosely based on
- * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to convert.
- * @returns {number} Returns the converted integer.
- * @example
- *
- * _.toInteger(3.2);
- * // => 3
- *
- * _.toInteger(Number.MIN_VALUE);
- * // => 0
- *
- * _.toInteger(Infinity);
- * // => 1.7976931348623157e+308
- *
- * _.toInteger('3.2');
- * // => 3
- */
-function toInteger(value) {
-  var result = toFinite(value),
-      remainder = result % 1;
-
-  return result === result ? (remainder ? result - remainder : result) : 0;
-}
-
-/**
- * Converts `value` to a number.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to process.
- * @returns {number} Returns the number.
- * @example
- *
- * _.toNumber(3.2);
- * // => 3.2
- *
- * _.toNumber(Number.MIN_VALUE);
- * // => 5e-324
- *
- * _.toNumber(Infinity);
- * // => Infinity
- *
- * _.toNumber('3.2');
- * // => 3.2
- */
-function toNumber(value) {
-  if (typeof value == 'number') {
-    return value;
-  }
-  if (isSymbol(value)) {
-    return NAN;
-  }
-  if (isObject(value)) {
-    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-    value = isObject(other) ? (other + '') : other;
-  }
-  if (typeof value != 'string') {
-    return value === 0 ? value : +value;
-  }
-  value = value.replace(reTrim, '');
-  var isBinary = reIsBinary.test(value);
-  return (isBinary || reIsOctal.test(value))
-    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-    : (reIsBadHex.test(value) ? NAN : +value);
-}
-
-module.exports = isInteger;
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=indexcb25df.js.map
+//# sourceMappingURL=indexbbe64b.js.map
