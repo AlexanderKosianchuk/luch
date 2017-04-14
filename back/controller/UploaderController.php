@@ -472,7 +472,8 @@ class UploaderController extends CController
         }
     }
 
-    public function CyclicSliceCopy($bruType,
+    public function CyclicSliceCopy(
+        $fdrId,
         $filePath,
         $startCopyTime,
         $endCopyTime,
@@ -486,8 +487,8 @@ class UploaderController extends CController
         } while(file_exists($newFileName . $newFileAppendix));
         $newFileName = $newFileName . $newFileAppendix;
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $headerLength = $fdrInfo['headerLength'];
         $frameLength = $fdrInfo['frameLength'];
 
@@ -513,7 +514,7 @@ class UploaderController extends CController
             $endB = $fileSize;
         }
 
-        if($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
+        if ($stB > 0 && $stB < $fileSize && $endB > 0 && $endB <= $fileSize) {
             fseek($handle, $stB);
             while ((ftell($handle) <= $fileSize - $frameLength) && ftell($handle) < $endB) {
                 $fileFrame = fread($handle, $frameLength);
@@ -533,14 +534,12 @@ class UploaderController extends CController
             $answ["status"] = "ok";
             $answ["data"] = $newFileName;
 
-            echo(json_encode($answ));
+            return $answ;
         } else {
             $answ["status"] = "err";
             $answ["error"] = "Invalid slice range. Page UploaderController.php";
 
-            error_log("Invalid slice range. Page UploaderController.php");
-            echo(json_encode($answ));
-            exit();
+            return $answ;
         }
     }
 
@@ -1143,29 +1142,40 @@ class UploaderController extends CController
 
     public function flightCyclicSliceFile($data)
     {
-        if(isset($data['bruType'])
-            && isset($data['file'])
-            && isset($data['startCopyTime'])
-            && isset($data['endCopyTime'])
-            && isset($data['startSliceTime'])
+        if(!isset($data['fdrId'])
+            || !isset($data['file'])
+            || !isset($data['uploadingUid'])
+            || !isset($data['newUid'])
+            || !isset($data['startCopyTime'])
+            || !isset($data['endCopyTime'])
+            || !isset($data['startSliceTime'])
         ) {
-            $bruType = $data['bruType'];
-            $filePath = $data['file'];
-            $startCopyTime = $data['startCopyTime'];
-            $endCopyTime = $data['endCopyTime'];
-            $startSliceTime = $data['startSliceTime'];
-
-            $this->CyclicSliceCopy($bruType, $filePath,
-                    $startCopyTime, $endCopyTime, $startSliceTime);
-        }
-        else
-        {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". " .
                 "Action: " . $this->action . ". Page UploaderController.php";
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['fdrId']);
+        $filePath = $data['file'];
+        $uploadingUid = $data['uploadingUid'];
+        $newUid = $data['newUid'];
+        $startCopyTime = $data['startCopyTime'];
+        $endCopyTime = $data['endCopyTime'];
+        $startSliceTime = $data['startSliceTime'];
+
+        $resp = $this->CyclicSliceCopy(
+                $fdrId,
+                $filePath,
+                $startCopyTime,
+                $endCopyTime,
+                $startSliceTime
+            );
+
+        $resp['newUid'] = $newUid;
+
+        echo(json_encode($resp));
     }
 
     public function flightProcces($data)
