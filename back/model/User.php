@@ -311,8 +311,10 @@ class User
         if ($userId) {
             $this->userInfo = $this->GetUserInfo(intval($userId));
 
+            if (session_status() == PHP_SESSION_NONE) session_start();
             $_SESSION['uid'] = $this->userInfo['id'];
             $_SESSION['username'] = $this->userInfo['login'];
+            session_write_close();
 
             $this->username = $this->userInfo['login'];
             $this->privilege = $this->GetUserPrivilege($this->username);
@@ -361,9 +363,11 @@ class User
     {
         $userId = $this->GetUserIdByName($username);
 
+        if (session_status() == PHP_SESSION_NONE) session_start();
         unset($_SESSION['uid']);
         unset($_SESSION['username']);
         unset($_SESSION['token']);
+        session_write_close();
 
         setcookie('token', null, -1, '/');
 

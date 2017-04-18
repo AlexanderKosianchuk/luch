@@ -87424,7 +87424,7 @@ function startFlightUploading(payload) {
         var checkProgress = function checkProgress() {
             fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid=' + payload.uploadingUid, {
                 method: 'GET',
-                credentials: "omit"
+                credentials: "same-origin"
             }).then(function (response) {
                 try {
                     return response.json();
@@ -87906,7 +87906,7 @@ function startEasyFlightUploading(payload) {
         var checkProgress = function checkProgress() {
             fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid=' + payload.uploadingUid, {
                 method: 'GET',
-                credentials: "omit"
+                credentials: "same-origin"
             }).then(function (response) {
                 try {
                     return response.json();
@@ -88747,25 +88747,24 @@ var FlightUploadingProgressIndicator = function (_React$Component) {
     _createClass(FlightUploadingProgressIndicator, [{
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
+            var setIndicatorState = function setIndicatorState(totalProgress, flightUploadsCount) {
+                var currentProgress = Math.max(Math.round(totalProgress / flightUploadsCount), this.state.progress);
+
+                this.setState({
+                    isShown: true,
+                    progress: currentProgress,
+                    itemsCount: flightUploadsCount
+                });
+            };
+
             if (nextProps.flightUploads.length === 1) {
-                this.setState({
-                    isShown: true,
-                    progress: nextProps.flightUploads[0].progress,
-                    itemsCount: 1
-                });
+                setIndicatorState.call(this, nextProps.flightUploads[0].progress, 1);
             } else if (nextProps.flightUploads.length > 1) {
-                var totalProgress = 0;
-                totalProgress += nextProps.flightUploads.map(function (item, index) {
-                    return item.progress;
+                var totalProgress = nextProps.flightUploads.reduce(function (previousValue, currentValue) {
+                    return previousValue.progress + currentValue.progress;
                 });
 
-                totalProgress = totalProgress / nextProps.flightUploads.length;
-
-                this.setState({
-                    isShown: true,
-                    progress: totalProgress,
-                    itemsCount: nextProps.flightUploads.length
-                });
+                setIndicatorState.call(this, totalProgress, nextProps.flightUploads.length);
             } else {
                 this.setState({ isShown: false });
             }
@@ -100591,4 +100590,4 @@ if(false) {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=indexd2d326.js.map
+//# sourceMappingURL=index82b0e8.js.map

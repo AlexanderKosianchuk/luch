@@ -8,17 +8,11 @@ class EntryController extends CController
 {
     public $curPage = 'indexPage';
 
-    private static $noAuthActions = [
-        'uploader/getUploadingStatus'
-    ];
-
     function __construct()
     {
         $this->setAttributes();
 
-        if (!in_array($this->action, self::$noAuthActions)
-            && !$this->IsAppLoggedIn()
-        ) {
+        if (!$this->IsAppLoggedIn()) {
             $this->ShowLoginForm();
             exit;
         }

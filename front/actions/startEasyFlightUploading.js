@@ -10,7 +10,7 @@ export default function startEasyFlightUploading(payload) {
         let checkProgress = function () {
             fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid='+payload.uploadingUid, {
                 method: 'GET',
-                credentials: "omit"
+                credentials: "same-origin"
             })
             .then((response) => {
                 try {  return response.json() }

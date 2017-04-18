@@ -18,25 +18,33 @@ class FlightUploadingProgressIndicator extends React.Component {
     }
 
     componentWillReceiveProps (nextProps) {
+        let setIndicatorState = function(totalProgress, flightUploadsCount) {
+            let currentProgress = Math.max(
+                Math.round(totalProgress / flightUploadsCount),
+                this.state.progress
+            );
+
+            this.setState({
+                isShown: true,
+                progress: currentProgress,
+                itemsCount: flightUploadsCount
+            });
+        }
+
         if (nextProps.flightUploads.length === 1) {
-            this.setState({
-                isShown: true,
-                progress: nextProps.flightUploads[0].progress,
-                itemsCount: 1
-            });
+            setIndicatorState.call(
+                this, nextProps.flightUploads[0].progress, 1
+            );
         } else if (nextProps.flightUploads.length > 1) {
-            let totalProgress = 0;
-            totalProgress += nextProps.flightUploads.map((item, index) => {
-                return item.progress;
-            });
+            let totalProgress = nextProps.flightUploads.reduce(
+                (previousValue, currentValue) => {
+                    return previousValue.progress + currentValue.progress;
+                }
+            );
 
-            totalProgress = totalProgress / nextProps.flightUploads.length;
-
-            this.setState({
-                isShown: true,
-                progress: totalProgress,
-                itemsCount: nextProps.flightUploads.length
-            });
+            setIndicatorState.call(
+                this, totalProgress, nextProps.flightUploads.length
+            );
         } else {
             this.setState({isShown: false});
         }

@@ -7,6 +7,10 @@ require_once "vendor/autoload.php";
 
 require_once "includes.php";
 
+// for $_SESSION init
+if (session_status() == PHP_SESSION_NONE) session_start();
+session_write_close();
+
 // Create a simple "default" Doctrine ORM configuration for Annotations
 $isDevMode = true;
 $anotationConfig = Setup::createAnnotationMetadataConfiguration(

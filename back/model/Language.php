@@ -14,7 +14,9 @@ class Language
         if(isset($_SESSION['lang']) && ($_SESSION['lang'] != '')) {
             return $_SESSION['lang'];
         } else {
+            if (session_status() == PHP_SESSION_NONE) session_start();
             $_SESSION['lang'] = 'en';
+            session_write_close();
             return 'en';
         }
     }
@@ -22,7 +24,9 @@ class Language
     public function SetLanguageName($extSelectedLang)
     {
         $selectedLang = $extSelectedLang;
+        if (session_status() == PHP_SESSION_NONE) session_start();
         $_SESSION['lang'] = $selectedLang;
+        session_write_close();
     }
 
     public function GetLanguage($extRequesterPage)

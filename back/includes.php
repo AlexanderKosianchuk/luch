@@ -11,10 +11,6 @@ define("SITE_ROOT_DIR", __DIR__);
 define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
 define("UPLOADED_FILES_PATH", @$_SERVER['DOCUMENT_ROOT'] . UPLOADED_FILES_DIR);
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
 define("PARAM_TYPE_AP", "ap");
 define("PARAM_TYPE_BP", "bp");
 define("POINT_MAX_COUNT", 8500);
