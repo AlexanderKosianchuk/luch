@@ -34,7 +34,7 @@ FlightUploader.prototype.FillFactoryContaider = function(
 
     this.flightUploaderFactoryContainer.append("<div id='flightUploaderTopMenu' class='TopMenu'>" +
                 "<label id='convertSelected' class='Up'>" +
-                    "<span style='position:absolute; margin-top:8px;'>&nbsp;" +
+                    "<span style='position:absolute; margin-top:5px;'>&nbsp;" +
                     this.langStr.flightUploaderUpload +
                     "</span>" +
                 "</label>" +
@@ -593,16 +593,16 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
                     }
 
                     var pV = {
-                            action: 'uploader/' + flightConvertionAction,
-                            data: {
-                                fdrId: fdrId,
-                                uploadingUid: uploadingUid,
-                                calibrationId: calibrationId,
-                                fileName: fileName,
-                                flightInfo: flightInfo,
-                                flightAditionalInfo : flightAditionalInfo
-                            }
-                        };
+                        action: 'uploader/' + flightConvertionAction,
+                        data: {
+                            fdrId: fdrId,
+                            uploadingUid: uploadingUid,
+                            calibrationId: calibrationId,
+                            fileName: fileName,
+                            flightInfo: flightInfo,
+                            flightAditionalInfo : flightAditionalInfo
+                        }
+                    };
 
                     self.InitiateFlightProccessing(pV);
                 }
