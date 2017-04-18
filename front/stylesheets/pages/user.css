@@ -4,7 +4,7 @@
 }
 
 .items-avaliability-table-wrap {
-	overflow-y:scroll; 
+	overflow-y:scroll;
 	height:300px
 }
 
@@ -26,7 +26,7 @@
 .items-avaliability-table-row--selected {
 	background-color:#B0DDFA !important;
 }
- 
+
 .items-avaliability-table tr.items-avaliability-table-row:hover td{
 	background-color:#c0c0c0;
 }
@@ -44,7 +44,7 @@
     width: 140px;
     height: 140px;
     display: table;
-    background-color: #ccc;         
+    background-color: #ccc;
 }
 
 .userlist-img-image-container {
@@ -55,5 +55,13 @@
 
 .userlist-img-image-container img {
      max-width: 140px;
-     max-height: 140px;        
+     max-height: 140px;
  }
+
+#userListOptions label {
+    margin: 0 10px 0 0 !important;
+}
+
+#userListContent td {
+    padding: 5px 2px !important;
+}

@@ -176,7 +176,7 @@ function FdrTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
             }
 
             bruTypeTopMenu.append('<label id="here" class="HereRight">' +
-                    '<span style="position:absolute; margin-top:8px;">&nbsp;' +
+                    '<span style="position:absolute; margin-top:5px;">&nbsp;' +
                     langStr.bruTypeTplsToViewOptions +
                     '</span>' +
                 '</label>');

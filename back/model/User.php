@@ -371,6 +371,7 @@ class User
 
         setcookie('token', null, -1, '/');
 
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
@@ -423,7 +424,9 @@ class User
         $stmt->execute();
         $stmt->close();
 
+        if (session_status() == PHP_SESSION_NONE) session_start();
         $_SESSION['token'] = $token;
+        session_write_close();
 
         if ($autologin) {
             setcookie('token', $token);
@@ -472,7 +475,7 @@ class User
     public function GetUserInfo($userIdentity)
     {
         $userId = $userIdentity;
-        if(is_string($userIdentity)) {
+        if (is_string($userIdentity)) {
             $userId = $this->GetIdByUsername($userIdentity);
         }
 
@@ -482,10 +485,8 @@ class User
         $result = $link->query("SELECT * FROM `user_personal` WHERE `id`='".$userId."' LIMIT 1;");
 
         $userInfo = array();
-        if($row = $result->fetch_array())
-        {
-            foreach ($row as $key => $val)
-            {
+        if ($row = $result->fetch_array()) {
+            foreach ($row as $key => $val) {
                 $userInfo[$key] = $val;
             }
         }
@@ -562,7 +563,7 @@ class User
         }
     }
 
-    public function CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $logo, $authorId = null)
+    public function CreateUserPersonal($login, $pwd, $privilege, $company, $role, $logo, $authorId = null)
     {
         if(is_array($privilege)) {
             $privilege = implode(',', $privilege);

@@ -91,7 +91,7 @@ function User($window, document, langStr, eventHandler) {
                     .append(
                         $('<button></button>')
                             .attr('id', id)
-                            .addClass('Button user-opitons-button')
+                            .addClass('btn btn-default user-opitons-button')
                             .append(label)
                     );
             };
@@ -381,7 +381,7 @@ function User($window, document, langStr, eventHandler) {
                 "async" : true
             }).done(function (html) {
                 var append = function () {
-                    self.userListWorkspace.append("<div id='createUpdateUserContent' class='Content user-content'></div>");
+                    self.userListWorkspace.append("<div id='createUpdateUserContent' class='Content user-content is-scrollable'></div>");
                     createUpdateUserContent = $('#createUpdateUserContent');
 
                     createUpdateUserContent

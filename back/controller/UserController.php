@@ -390,7 +390,7 @@ class UserController extends CController
         $msg = '';
 
         if (!$this->_user->CheckUserPersonalExist($login)) {
-            $this->_user->CreateUserPersonal($login, $pwd, $privilege, $author, $company, $role, $file, $authorId);
+            $this->_user->CreateUserPersonal($login, $pwd, $privilege, $company, $role, $file, $authorId);
             $createdUserId = intval($this->_user->GetIdByUsername($login));
 
             foreach($permittedBruTypes as $id) {
@@ -798,39 +798,38 @@ class UserController extends CController
 
     public function deleteUser($data)
     {
-        if(isset($data) && isset($data['userIds']))
-        {
-            $userIds = $data['userIds'];
+        if (!isset($data) || !isset($data['userIds'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page user.php";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit();
+        }
 
-            foreach ($userIds as $userDeleteId) {
-                if(is_int(intval($userDeleteId))) {
-                    $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
+        $userIds = $data['userIds'];
+
+        foreach ($userIds as $userDeleteId) {
+            if (is_int(intval($userDeleteId))) {
+                $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
+
+                if (!empty($userInfo)) {
                     $login = $userInfo['login'];
-
                     $this->_user->DeleteUserPersonal($login);
                     $this->_user->UnsetFDRavailable($userDeleteId);
 
                     /* TODO it is also necessary to clean up flight data and folders*/
                 }
             }
-
-            $answ = [
-                'status' => 'ok'
-            ];
-
-            $c->RegisterActionExecution($c->action, "executed");
-            echo(json_encode($answ));
-            exit();
         }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page user.php";
-            $c->RegisterActionReject($c->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit();
-        }
+
+        $answ = [
+            'status' => 'ok'
+        ];
+
+        $this->RegisterActionExecution($this->action, "executed");
+        echo(json_encode($answ));
+        exit();
     }
 
 }

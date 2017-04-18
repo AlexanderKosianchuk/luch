@@ -13,13 +13,14 @@ export default class FlightListOptions extends React.Component {
     }
 
     toggleFlightCheckboxes() {
-        this.props.toggleCheckboxes();
+        // temporary disabled
+        /*this.props.toggleCheckboxes();
         let currentState = this.state.glyphicon === "glyphicon-remove"
             ? "glyphicon-unchecked"
             : "glyphicon-remove";
         this.setState(
             { glyphicon: currentState }
-        );
+        );*/
     }
 
     render() {

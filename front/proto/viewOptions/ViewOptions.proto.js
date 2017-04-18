@@ -174,7 +174,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
         }
 
         self.flightOptionsTopMenu.append('<label id="down" class="Down">' +
-                '<span style="position:absolute; margin-top:8px;">&nbsp;' +
+                '<span style="position:absolute; margin-top:5px;">&nbsp;' +
                 self.langStr.flightViewOptionsShow +
                 '</span>' +
                 '</label>');
@@ -272,7 +272,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
         $("<span></span>")
             .css({
                 "position": "absolute",
-                "margin-top": "8px",
+                "margin-top": "5px",
                 "margin-left": "5px",
             })
             .text(self.langStr.eventListSave)
@@ -599,7 +599,7 @@ FlightViewOptions.prototype.ShowTopMenuParamsListButtons = function(){
         }
 
         self.flightOptionsTopMenu.append('<label id="down" class="Down">' +
-                '<span style="position:absolute; margin-top:8px;">&nbsp;' +
+                '<span style="position:absolute; margin-top:5px;">&nbsp;' +
                 self.langStr.flightViewOptionsShow +
                 '</span>' +
                 '</label>');
@@ -1178,7 +1178,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
         }
 
         self.flightOptionsTopMenu.append('<label id="down" class="Down">' +
-                '<span style="position:absolute; margin-top:8px;">&nbsp;' +
+                '<span style="position:absolute; margin-top:5px;">&nbsp;' +
                 self.langStr.flightViewOptionsShow +
                 '</span>' +
                 '</label>');

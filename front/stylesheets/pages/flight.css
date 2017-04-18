@@ -243,7 +243,7 @@ select.FlightUploadingInputs {
 }
 
 .ItemsCheck {
-    display: none;
+    /*display: none;*/
 }
 
 .ItemsCheck.is-displayed {
