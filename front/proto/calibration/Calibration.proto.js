@@ -1,5 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
+import 'chosen-js';
+import 'chosen-js/chosen.css';
 
 function Calibration($window, document, langStr, eventHandler) {
     'use strict';
@@ -61,8 +63,8 @@ function Calibration($window, document, langStr, eventHandler) {
         this.calibrationOptions.empty();
         this.calibrationOptions.append(that.renderCalibrationMenu(avaliableFDRs, selectedFdrId));
 
-        var $createCalibrationBtn = $('#create-calibration').button();
-        var $listCalibrationBtn = $('#list-calibration').button();
+        var $createCalibrationBtn = $('#create-calibration').addClass('btn btn-default');
+        var $listCalibrationBtn = $('#list-calibration').addClass('btn btn-default');
         var $fdrCalibrationSelect = $('#fdr-calibration').chosen();
 
         $fdrCalibrationSelect

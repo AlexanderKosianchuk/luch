@@ -172,11 +172,10 @@
 
 .calibration_button__small {
     width: 100%;
-    max-width: 22px;
+    max-width: 30px;
     min-height: 22px;
     padding: 0px 2px;
-    margin: 0px 2px;
-    line-height: 22px;
+    line-height: 16px;
     vertical-align: middle;
     text-align: center;
 }
@@ -209,4 +208,12 @@
     height: 100%;
     font-size: 14px;
     line-height: 1.2em;
+}
+
+#calibration-form-content {
+    padding: 0 20px;
+}
+
+#calibrationFormOptions td label {
+    padding: 5px 5px 0px;
 }
