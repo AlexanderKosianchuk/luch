@@ -95,7 +95,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            ENTRY_URL: JSON.stringify('http://local-luch15.com/entry.php'),
+            ENTRY_URL: JSON.stringify('/entry.php'),
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',

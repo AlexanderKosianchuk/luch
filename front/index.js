@@ -63,6 +63,7 @@ import Calibration from "Calibration";
 // react implementation
 import Results from 'components/results/Results';
 import Flights from 'components/flights/Flights';
+import UserOptions from 'components/user-options/UserOptions';
 import configureStore from 'store/configureStore';
 
 import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
@@ -132,7 +133,12 @@ $(document).ready(function () {
 
         let topMenuService = {
             userLogout: function() {
-                eventHandler.trigger("userLogout")
+                eventHandler.trigger("userLogout");
+            },
+            userOptionsShow: function() {
+                eventHandler.trigger("userOptionsShow", [
+                    $('#flightsContainer')
+                ]);
             },
             changeLanguage: function(newLang) {
                 eventHandler.trigger("userChangeLanguage", [newLang]);
@@ -233,6 +239,22 @@ $(document).ready(function () {
         }
 
         FL.FillFactoryContaider(someshowcase);
+    });
+
+    eventHandler.on("userOptionsShow", function (e, showcase) {
+        if (showcase === null) {
+            W.RemoveShowcases(1);
+            showcase = W.NewShowcase();
+        } else {
+            W.ClearShowcase(showcase);
+        }
+
+        ReactDOM.render(
+            <Provider store={store}>
+                <UserOptions i18n={i18n} />
+            </Provider>,
+            showcase.get(0)
+        );
     });
 
     eventHandler.on("viewFlightOptions", function (e, flightId, task, someshowcase) {

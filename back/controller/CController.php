@@ -26,18 +26,35 @@ class CController
         ) {
             $this->action = $post['action'];
             $this->data = $post['data'];
-        } else if ($get != null) {
-            $this->data = $get;
 
+            return;
+        } else if ($get != null) {
             if ($get['action']) {
                 $this->action = $get['action'];
             }
+
+            if (isset($post['data'])) {
+                if ($this->isJson($post['data'])) {
+                    $this->data = json_decode($post['data'], true);
+
+                    return;
+                }
+
+                $this->data = $post['data'];
+
+                return;
+            }
+
+            $this->data = $get;
+
+            return;
         } else {
             $msg = "Incorect input. Data: " . json_encode(isset($post['data']) ? $post['data'] : '') .
                 " . Action: " . json_encode(isset($post['action']) ? $post['action'] : '') .
                 " . Page: " . $this->curPage. ".";
             echo($msg);
             error_log($msg);
+            return;
         }
     }
 
@@ -126,5 +143,14 @@ class CController
             $senderId, $senderName, $targetId, $targetName);
 
       unset($U);
+   }
+
+   private function isJson($string) {
+       if (!is_string($string)) {
+           return false;
+       }
+
+       json_decode($string);
+       return (json_last_error() == JSON_ERROR_NONE);
    }
 }

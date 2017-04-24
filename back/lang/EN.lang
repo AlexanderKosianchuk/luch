@@ -5,6 +5,10 @@
 "options": "Options",
 "on": "On",
 "off": "Off",
+"userOptions": "User Options",
+"printTableStep": "Print table step",
+"mainChartColor": "Main chart background color",
+"lineWidth": "Сhart lines width",
 
 "continueLabel": "Next",
 "tplHasBeenAdded": "Template added. Demonstrate how changes to refresh the page (Shift + F5)",
@@ -224,12 +228,6 @@
     "filePreview": "Preview",
     "chooseFile": "Choose File",
     "helpTitle": "ShortInformation",
-
-    "viewItem" : "View",
-    "options": "Options",
-    "printTableStep": "Print table step",
-    "mainChartColor": "Main chart background color",
-    "lineWidth": "Сhart lines width",
 
     "sliceCreation": "Создание среза",
     "sliceName": "Name",

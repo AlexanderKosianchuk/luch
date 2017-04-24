@@ -28,7 +28,6 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 
         $c->PutMessageBox();
         $c->PutHelpDialog();
-        $c->PutOptionsDialog();
         $c->PutExportLink();
 
         $c->PutScripts();

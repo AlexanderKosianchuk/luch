@@ -2,6 +2,8 @@
 
 namespace Model;
 
+use \Exception;
+
 class UserOptions
 {
 
@@ -127,16 +129,28 @@ class UserOptions
 
     public function UpdateOptions($options, $userId)
     {
+        if (!isset($options) || !is_array($options) || empty($options)) {
+            throw new Exception("Incorrect options passed. Not empty array is required. Passed: "
+                . json_encode($options), 1);
+        }
+
+        if(!is_int($userId)) {
+            throw new Exception("Incorrect user id passed. Integer is expected. Passed: "
+                . json_encode($userId), 1);
+        }
+
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $oldOptions = $this->GetOptions($userId);
 
         foreach($options as $key => $val) {
-            if(isset($oldOptions[$key])) {
+            if (isset($oldOptions[$key])) {
                 if($oldOptions[$key] != $val) {
                     $this->UpdateOption($key, $val, $userId);
                 }
+            } else {
+                $this->InsertOption($key, $val, $userId);
             }
         }
 

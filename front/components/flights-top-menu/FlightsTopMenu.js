@@ -13,6 +13,10 @@ export default class FlightsTopMenu extends React.Component {
         this.props.topMenuService.userLogout();
     }
 
+    showOptions() {
+        this.props.topMenuService.userOptionsShow();
+    }
+
     changeLanguage(event) {
         let language = event.target.getAttribute("data-lang");
         this.props.topMenuService.changeLanguage(language);
@@ -79,7 +83,7 @@ export default class FlightsTopMenu extends React.Component {
                         { this.languageMenu }
                       </ul>
                     </li>
-                    <li><a className="is-hoverable" href="#">
+                    <li><a className="is-hoverable" onClick={ this.showOptions.bind(this) } href="#">
                         <span className="glyphicon glyphicon-cog"></span>
                     </a></li>
                     <li><a className="is-hoverable" onClick={ this.logout.bind(this) } href="#">

@@ -31,6 +31,7 @@ class EntryController extends CController
 
                 if (method_exists ($C, $method)) {
                     $C->IsAppLoggedIn();
+
                     $C->$method($this->data);
                 } else {
                     throw new Exception("Called method unexist. "

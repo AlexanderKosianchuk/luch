@@ -5,6 +5,10 @@
 "options": "Настройки",
 "on": "Вкл",
 "off": "Выкл",
+"userOptions": "Пользовательские настройки",
+"printTableStep": "Шаг цифропечати",
+"mainChartColor": "Заливка графика",
+"lineWidth": "Толщина линий на графике",
 
 "continueLabel": "Далее",
 "tplHasBeenAdded": "Шаблон добавлен. Для приминения изменений обновите страницу (Shift+F5)",
@@ -224,12 +228,6 @@
     "filePreview": "Предпросмотр",
     "chooseFile": "Выберите файл",
     "helpTitle": "Краткая информация",
-
-    "viewItem" : "Обзор",
-    "options": "Настройки",
-    "printTableStep": "Шаг цифропечати",
-    "mainChartColor": "Заливка графика",
-    "lineWidth": "Толщина линий на графике",
 
     "sliceCreation": "Создание среза",
     "sliceName": "Название",

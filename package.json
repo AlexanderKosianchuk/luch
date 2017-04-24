@@ -58,7 +58,8 @@
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "url-loader": "^0.5.8",
     "webpack": "^2.2.1",
-    "webpack-cleanup-plugin": "^0.5.1"
+    "webpack-cleanup-plugin": "^0.5.1",
+    "webpack-dev-server": "^2.4.4"
   },
   "dependencies": {
     "blueimp-file-upload": "^9.17.0",
@@ -73,6 +74,7 @@
     "jstable": "^2.0.5",
     "jstree": "^3.3.3",
     "lodash.constant": "^3.0.0",
+    "lodash.isempty": "^4.4.0",
     "lodash.isinteger": "^4.0.4",
     "react": "^15.4.2",
     "react-circular-progressbar": "^0.1.3",

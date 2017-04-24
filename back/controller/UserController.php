@@ -832,4 +832,32 @@ class UserController extends CController
         exit();
     }
 
+    public function getUserOptions()
+    {
+        $O = new UserOptions();
+        $userInfo = $this->_user->GetUserInfo($this->_user->username);
+        $userId = $userInfo['id'];
+        $options = $O->GetOptions($userId);
+        unset($O);
+
+        echo json_encode($options);
+        exit;
+    }
+
+    public function setUserOptions($options)
+    {
+        if (!isset($options) || !is_array($options) || empty($options)) {
+            throw new Exception("Incorrect options passed. Not empty array is required. Passed: "
+                . json_encode($options), 1);
+        }
+
+        $O = new UserOptions();
+        $userInfo = $this->_user->GetUserInfo($this->_user->username);
+        $userId = intval($userInfo['id']);
+        $O->UpdateOptions($options, $userId);
+        unset($O);
+
+        echo json_encode(['status' => 'ok']);
+        exit;
+    }
 }

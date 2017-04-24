@@ -43,6 +43,11 @@ class IndexController extends CController
 
     public function PutHelpDialog()
     {
+        $version = '1.01';
+        if(defined('VERSION')) {
+            $version = VERSION;
+        }
+
         printf("<div id='helpDialog' style='display: none;' title='%s'>
                 <p>
                 </p>
@@ -88,46 +93,10 @@ class IndexController extends CController
                 </p>
                 <p>
                 </p>
-                </div>", $this->lang->helpTitle);
-    }
-
-    public function PutOptionsDialog()
-    {
-        $O = new UserOptions();
-        $userInfo = $this->_user->GetUserInfo($this->_user->username);
-        $userId = $userInfo['id'];
-        $options = $O->GetOptions($userId);
-        unset($O);
-
-        $optionsStr = '';
-        foreach ($options as $key => $val) {
-            $input = sprintf('<input  class="options-value-input" name="%s" value="%s">',
-                $key, $val);
-
-            $optionsStr .= sprintf('<div class="options-row">' .
-                '<div class="options-name">%s</div>' .
-                '<div class="options-value">%s</div>' .
-                '<div class="options-clear"></div>' .
-                '</div>',
-                (isset($this->lang->$key) ? $this->lang->$key : $key),
-                $input);
-        }
-
-        $version = '1.01';
-        if(defined('VERSION')) {
-            $version = VERSION;
-        }
-
-        printf("<div id='optionsDialog' style='display:none;' class='options-dialog' title='%s'>
-                <form id='optionsForm'>
-                    %s
-                </form>
-                <p class='options-dialog__version'>Version: %s</p>
-                </div>",
-                $this->lang->options,
-                $optionsStr,
-                $version
-        );
+                <p>
+                Версия: %s
+                </p>
+                </div>", $this->lang->helpTitle, $version);
     }
 
     public function PutExportLink()

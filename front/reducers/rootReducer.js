@@ -5,6 +5,7 @@ import chosenFlightListItems from 'reducers/chosenFlightListItems';
 import fdrTypesList from 'reducers/fdrTypesList';
 import flightUploader from 'reducers/flightUploader';
 import flightUploadingState from 'reducers/flightUploadingState';
+import userOptions from 'reducers/userOptions';
 
 export default combineReducers({
     fdrTypesList,
@@ -12,5 +13,6 @@ export default combineReducers({
     flightUploadingState,
     flightFilter,
     settlementFilter,
-    chosenFlightListItems
+    chosenFlightListItems,
+    userOptions
 });
