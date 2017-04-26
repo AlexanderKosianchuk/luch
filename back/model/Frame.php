@@ -2187,11 +2187,8 @@ class Frame
         }
     }
 
-    public function LoadFileToTable($extTableName, $extFileName)
+    public function LoadFileToTable($tableName, $file)
     {
-        $tableName = $extTableName;
-        $file = $extFileName;
-
         $c = new DataBaseConnector;
         $link = $c->Connect();
 

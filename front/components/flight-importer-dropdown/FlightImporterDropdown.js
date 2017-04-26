@@ -4,6 +4,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
+import FileInput from 'react-file-input';
 
 class FlightImporterDropdown extends React.Component {
     constructor(props) {
@@ -18,16 +19,33 @@ class FlightImporterDropdown extends React.Component {
             && !this.state.isShown
         ) {
             this.setState({ isShown: true });
-        } else {
-            this.setState({ isShown: false });
+            return;
         }
+
+        this.setState({ isShown: false });
+    }
+
+    handleChange() {
+        this.setState({ isShown: false });
+        let form = new FormData(this.importFlightForm);
+        this.props.topMenuService.importItem(form);
     }
 
     render() {
         return (
             <ul className={ "flight-importer-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
-              <li><a href="#">1</a></li>
-              <li><a href="#">One more separated link</a></li>
+              <li><a href="#"><b>{ this.props.i18n.fileImport }</b></a></li>
+              <li><a href="#">
+                  <form action="" ref={ (form) => { this.importFlightForm = form; }}>
+                      <FileInput
+                         className="btn btn-default"
+                         name="flightFileArchive"
+                         placeholder={ this.props.i18n.chooseFile }
+                         value={ this.state.file }
+                         onChange={ this.handleChange.bind(this) }
+                       />
+                  </form>
+             </a></li>
             </ul>
         );
     }

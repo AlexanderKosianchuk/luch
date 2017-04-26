@@ -92,21 +92,6 @@ FlightUploader.prototype.ResizeFlightUploader = function(e) {
     }
 }
 
-/*NOT USED AFTER REACT IMPLEMENT
-TO REMOVE AFTER IMPORT IMPLEMENT*/
-FlightUploader.prototype.CaptureUploadingItems = function() {
-    var filesCount = 0;
-    var url = "back/fileUploader/";
-
-    if('import') {
-        $.each(data.result.files, function (index, file) {
-            $('<p/>').text(file.name).appendTo('#files');
-            self.Import(file.name);
-            filesCount++;
-        });
-    }
-};
-
 FlightUploader.prototype.ShowFlightUploadingOptions = function()
 {
     if(this.flightUploaderOptions != null){
@@ -823,31 +808,25 @@ FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
 ///
 //Import
 ///
-FlightUploader.prototype.Import = function(
-        file
-) {
-    var self = this,
-    pV = {
-        'action': "uploader/itemImport",
-        'data': {
-            'file': file
-        }
-    };
+FlightUploader.prototype.Import = function(form, dfd) {
+    var self = this;
 
     $.ajax({
         type: "POST",
-        data: pV,
+        data: form,
         dataType: 'json',
-        url: ENTRY_URL,
-        async: true
+        processData: false,
+        contentType: false,
+        url: ENTRY_URL + "?action=uploader/itemImport"
     }).done(function(answ){
-        if(answ["status"] == 'ok') {
-            location.reload();
+        if (answ["status"] == 'ok') {
+            dfd.resolve();
         } else {
             console.log(answ["error"]);
         }
     }).fail(function(mess){
         console.log(mess);
+        dfd.reject();
     });
 }
 

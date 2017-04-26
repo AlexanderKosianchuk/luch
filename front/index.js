@@ -148,6 +148,9 @@ $(document).ready(function () {
             },
             easyUploading: function(uploadingUid, fdrId, calibrationId) {
                 eventHandler.trigger("easyUploading", [uploadingUid, fdrId, calibrationId]);
+            },
+            importItem: function(form) {
+                eventHandler.trigger("importItem", [form]);
             }
         };
 
@@ -191,6 +194,26 @@ $(document).ready(function () {
         var showcase = W.NewShowcase();
         FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
     });
+
+    eventHandler.on("importItem", function (e, form) {
+        let dfd = $.Deferred();
+        FU.Import(form, dfd);
+        dfd.promise();
+
+        dfd.then(
+            () => {
+                if ($('#flightsContainer')) {
+                    eventHandler.trigger("flightListShow", [
+                        $('#flightsContainer')
+                    ]);
+                    return this;
+                }
+
+                location.reload();
+            }
+        );
+    });
+
 
     eventHandler.on("removeShowcase", function (e, data, callback) {
         var flightUploaderFactoryContainer = data;

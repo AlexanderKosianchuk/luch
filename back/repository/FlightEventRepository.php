@@ -53,7 +53,7 @@ class FlightEventRepository extends EntityRepository
                 . json_encode($flightGuid), 1);
         }
 
-        $flightEvents = $this->getFlightEvents($flightGuid);
+        $flightEvents = $this->getFlightEvents($flightGuid) ?? [];
         $formated = [];
 
         foreach ($flightEvents as $flightEvent) {

@@ -6,6 +6,10 @@ use Exception;
 
 class RuntimeManager
 {
+    const UPLOADED_FLIGHTS_FOLDER = 'uploaded-flights';
+    const EXPORTED_FOLDER = 'exported';
+    const IMPORTED_FOLDER = 'imported';
+
     public static function getRuntimeFolder()
     {
         global $CONFIG;
@@ -16,6 +20,66 @@ class RuntimeManager
         }
 
         return $runtimeDirectory;
+    }
+
+    public static function getExportFolder()
+    {
+        $runtimeDirectory = self::getRuntimeFolder();
+        $exportedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::EXPORTED_FOLDER;
+
+        if (!is_dir($exportedFilesDir)) {
+            mkdir($exportedFilesDir, 0755, true);
+        }
+
+        return $exportedFilesDir;
+    }
+
+    public static function getImportFolder()
+    {
+        $runtimeDirectory = self::getRuntimeFolder();
+        $importFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::IMPORTED_FOLDER;
+
+        if (!is_dir($importFilesDir)) {
+            mkdir($importFilesDir, 0755, true);
+        }
+
+        return $importFilesDir;
+    }
+
+    public static function getExportedUrl($fileName)
+    {
+        $runtimeDirectory = self::getRuntimeFolder();
+        $runtimeDirName = basename($runtimeDirectory);
+
+        $exportedUrl = 'http';
+        if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on")) {
+           $exportedUrl .= "s";
+        }
+        $exportedUrl .= "://";
+        if ($_SERVER["SERVER_PORT"] != "80") {
+           $exportedUrl .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
+        }
+        else
+        {
+           $exportedUrl .= $_SERVER["SERVER_NAME"];
+        }
+
+        return $exportedUrl.'/'.$runtimeDirName.'/'.self::EXPORTED_FOLDER.'/'.$fileName . '.zip';
+    }
+
+    public static function getExportedFilePath($fileName)
+    {
+        $exportedFileDir = self::getExportFolder();
+        return $exportedFileDir . DIRECTORY_SEPARATOR . $fileName . '.zip';
+    }
+
+    public static function createExportedFile($fileName)
+    {
+        $filePath = self::getExportedFilePath($fileName);
+        $fileNameDesc = fopen($filePath, "w");
+        fclose($fileNameDesc);
+
+        return $filePath;
     }
 
     public static function getProgressFilePath($uploadingUid)
@@ -36,7 +100,7 @@ class RuntimeManager
     public static function storeUploadedFile($fileName)
     {
         $runtimeDirectory = self::getRuntimeFolder();
-        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . 'uploadedFlights';
+        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
 
         if (!is_dir($uploadedFilesDir)) {
             mkdir($uploadedFilesDir, 0755, true);
@@ -55,7 +119,7 @@ class RuntimeManager
     public static function getUploadedFilePath($fileName)
     {
         $runtimeDirectory = self::getRuntimeFolder();
-        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . 'uploadedFlights';
+        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
 
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $fileName;
 
@@ -66,7 +130,7 @@ class RuntimeManager
         return $storedFilePath;
     }
 
-    public static function unlinkProgressFile($filePath)
+    public static function unlinkRuntimeFile($filePath)
     {
         if (file_exists($filePath)) {
             unlink($filePath);

@@ -62,15 +62,13 @@ class DataBaseConnector
         $this->link->close();
     }
 
-    public function ExportTable($extTableName, $extFileName, $root)
+    public function ExportTable($tableName, $fileName, $root)
     {
-        $tableName = $extTableName;
-        $fileName = $extFileName;
         $link = $this->Connect();
 
         $exportedFileName['dir'] = $root;
-        $exportedFileName['tmp'] = '/tmp/'.$fileName.".csv";
-        $exportedFileName['root'] = $root.$fileName.".csv";
+        $exportedFileName['tmp'] = sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileName.".csv";
+        $exportedFileName['root'] = $root.DIRECTORY_SEPARATOR.$fileName.".csv";
         $exportedFileName['filename'] = $fileName.".csv";
 
         /*GRANT FILE ON *.* TO 'dbUser'@'localhost'*/
@@ -86,10 +84,26 @@ class DataBaseConnector
         if (file_exists($exportedFileName['tmp'])) {
             try {
                 $status = copy($exportedFileName['tmp'], $exportedFileName['root']);
-                unlink($exportedFileName['tmp']);
+                //unlink($exportedFileName['tmp']);
             } catch(Exception $e) { }
         }
 
         return $exportedFileName;
+    }
+
+    public function checkTableExist($tableName)
+    {
+        $link = $this->Connect();
+
+        $query = "SHOW TABLES LIKE '".$tableName."';";
+
+        $result = $link->query($query);
+        $this->Disconnect();
+
+        if (!$result->fetch_array()) {
+            return false;
+        }
+
+        return true;
     }
 }

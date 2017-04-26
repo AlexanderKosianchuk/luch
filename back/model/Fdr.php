@@ -781,8 +781,7 @@ class Fdr
         $result = $link->query($query);
 
         $prefixesArr = array();
-        while($row = $result->fetch_array())
-        {
+        while ($row = $result->fetch_array()) {
             array_push($prefixesArr, $row['prefix']);
         }
 

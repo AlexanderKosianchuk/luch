@@ -8,9 +8,6 @@ ini_set('default_charset', 'utf-8');
 
 define("SITE_ROOT_DIR", __DIR__);
 
-define("UPLOADED_FILES_DIR",  "/fileUploader/files/");
-define("UPLOADED_FILES_PATH", @$_SERVER['DOCUMENT_ROOT'] . UPLOADED_FILES_DIR);
-
 define("PARAM_TYPE_AP", "ap");
 define("PARAM_TYPE_BP", "bp");
 define("POINT_MAX_COUNT", 8500);

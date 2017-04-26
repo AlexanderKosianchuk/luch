@@ -952,7 +952,7 @@ FlightList.prototype.process = function(e){
 
 FlightList.prototype.export = function(e){
     var inputItemsCheck = $("input.ItemsCheck:checked");
-    var selt = this;
+    var self = this;
 
     $.each(inputItemsCheck, function(i, el){
         var el = $(el),

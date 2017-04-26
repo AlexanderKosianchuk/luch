@@ -223,12 +223,18 @@ class Flight
         return $flightsListInfo;
     }
 
-    public function InsertNewFlight($bort, $voyage,
-            $startCopyTime, $fdrId,
-            $bruType, $performer,
-            $departureAirport, $arrivalAirport,
-            $uploadedFile, $extAditionalInfo, $userId)
-    {
+    public function InsertNewFlight($bort,
+            $voyage,
+            $startCopyTime,
+            $fdrId,
+            $bruType,
+            $performer,
+            $departureAirport,
+            $arrivalAirport,
+            $uploadedFile,
+            $extAditionalInfo,
+            $userId
+    ) {
 
         $uploadingCopyTime = time();
         $aditionalInfo = "";
