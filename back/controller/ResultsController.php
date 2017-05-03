@@ -4,7 +4,9 @@ namespace Controller;
 
 use Component\EntityManagerComponent as EM;
 use Component\FlightComponent;
+use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
 use Entity\Flight;
+use Entity\Fdr;
 
 class ResultsController extends CController
 {
@@ -26,40 +28,97 @@ class ResultsController extends CController
         $this->setAttributes();
     }
 
-    private function addFdrtypeCondition($qb, $val)
+    private function addFdrtypeCondition(&$qb, $fdrName)
     {
-        return $qb->expr()->eq('fl.id_fdr', $val);
+        if (empty($fdrName)) {
+            return 0;
+        }
+
+        $em = EM::get();
+
+        $result = $em->getRepository('Entity\Fdr')->createQueryBuilder('fdr')
+           ->andWhere('fdr.name LIKE :fdrName')
+           ->setParameter('fdrName', '%'.$fdrName.'%')
+           ->getQuery()
+           ->getResult();
+
+        $fdrs = new ArrayCollection($result);
+
+        $count = 0;
+
+        foreach ($fdrs as $fdr) {
+            $qb->orWhere(
+                $qb->expr()->eq('fl.id_fdr', $fdr->getId())
+            );
+
+            $count++;
+        }
+
+        return $count;
     }
 
-    private function addBortCondition($qb, $val)
+    private function addBortCondition(&$qb, $val)
     {
-        return $qb->expr()->like('fl.bort', $qb->expr()->literal($val));
+        if (empty($val)) {
+            return 0;
+        }
+
+        $qb->andWhere(
+            $qb->expr()->like('fl.bort', $qb->expr()->literal($val))
+        );
+
+        return 1;
     }
 
-    private function addFlightCondition($qb, $val)
+    private function addFlightCondition(&$qb, $val)
     {
-        return $qb->expr()->like('fl.voyage', $qb->expr()->literal($val));
+        if (empty($val)) {
+            return 0;
+        }
+
+        $qb->andWhere(
+            $qb->expr()->like('fl.voyage', $qb->expr()->literal($val))
+        );
+
+        return 1;
     }
 
-    private function addDepartureairportCondition($qb, $val)
+    private function addDepartureairportCondition(&$qb, $val)
     {
-        return $qb->expr()->like('fl.departureAirport', $qb->expr()->literal($val));
+        if (empty($val)) {
+            return 0;
+        }
+
+        $qb->andWhere(
+            $qb->expr()->like('fl.departureAirport', $qb->expr()->literal($val))
+        );
+
+        return 1;
     }
 
-    private function addArrivalairportCondition($qb, $val)
+    private function addArrivalairportCondition(&$qb, $val)
     {
-        return $qb->expr()->like('fl.arrivalAirport', $qb->expr()->literal($val));
+        if (empty($val)) {
+            return 0;
+        }
+
+        $qb->andWhere(
+            $qb->expr()->like('fl.arrivalAirport', $qb->expr()->literal($val))
+        );
+        return 1;
     }
 
-    private function addFromdateCondition($qb, $val)
+    private function addFromdateCondition(&$qb, $val)
     {
         $timestamp = strtotime($val);
 
         if ($timestamp === false) {
-            return false;
+            return 0;
         }
 
-        return $qb->expr()->gte('fl.startCopyTime', $timestamp);
+        $qb->andWhere($qb->expr()->gte('fl.startCopyTime', $timestamp));
+
+        return 1;
     }
 
     private function addTodateCondition($qb, $val)
@@ -67,38 +126,39 @@ class ResultsController extends CController
         $timestamp = strtotime($val);
 
         if ($timestamp === false) {
-            return false;
+            return 0;
         }
 
-        return $qb->expr()->lte('fl.startCopyTime', $timestamp);
+        $condition = $qb->expr()->lte('fl.startCopyTime', $timestamp);
+        $expr->andX()->add($condition);
+
+        return 1;
     }
 
     public function getSettlements($args)
     {
         $em = EM::get();
 
-        $qb = $em->createQueryBuilder();
-        $andX = $qb->expr()->andX();
+        $qb = $em->createQueryBuilder()
+            ->select('fl')
+            ->from('Entity\Flight', 'fl');
+        $conditionsCount = 0;
 
         foreach ($args as $key => $val) {
             $method = 'add' . ucfirst(str_replace('-', '', $key)) . 'Condition';
-            if(!method_exists($this, $method)) {
+            if (!method_exists($this, $method)) {
                 continue;
             }
 
-            $expr = $this->$method($qb, $val);
-            if ($expr === false) {
-                continue;
-            }
-
-            $andX->add($expr);
+            $conditionsCount += $this->$method($qb, $val);
         }
 
-        $flights = $qb->select('fl')
-            ->from('Entity\Flight', 'fl')
-            ->where($andX)
-            ->getQuery()
-            ->getResult();
+        if ($conditionsCount === 0) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $flights = $qb->getQuery()->getResult();
 
         $flightSettlements = [];
         foreach ($flights as $flight) {
@@ -123,5 +183,6 @@ class ResultsController extends CController
         }
 
         echo json_encode($resp);
+        exit;
     }
 }

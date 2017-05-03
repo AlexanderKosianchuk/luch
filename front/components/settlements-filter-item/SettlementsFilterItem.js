@@ -12,7 +12,8 @@ export default class SettlementsFilterItem extends React.Component {
 
     changeCheckstate(event) {
         this.props.changeCheckstate({
-            [this.props.id]: this.checkbox.checked
+            id: this.props.id,
+            state: this.checkbox.checked
         });
 
         const target = event.target;

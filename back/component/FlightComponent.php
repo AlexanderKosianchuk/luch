@@ -89,6 +89,12 @@ class FlightComponent
         $flightSettlementTable = FlightSettlement::getTable($link, $flightGuid);
         LinkFactory::destroy($link);
 
+        if (!isset($flightEventTable)
+            || !isset($flightSettlementTable)
+        ) {
+            return [];
+        }
+
         $em = EM::get();
         $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
         $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
@@ -99,7 +105,7 @@ class FlightComponent
 
     public static function getFlightSettlements($flightId, $flightGuid = '')
     {
-        if(!is_int($flightId)) {
+        if (!is_int($flightId)) {
             throw new Exception("Incorrect flight id passed", 1);
         }
 

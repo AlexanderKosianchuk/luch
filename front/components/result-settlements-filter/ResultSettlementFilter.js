@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import changeSettlementItemCheckstateAction from 'actions/changeSettlementItemCheckstate';
 import applyResultSettlementFilterAction from 'actions/applyResultSettlementFilter';
 import SettlementsFilterItem from 'components/settlements-filter-item/SettlementsFilterItem';
+import ContentLoader from 'components/content-loader/ContentLoader';
 
 class ResultSettlementFilter extends React.Component {
     constructor(props) {
         super(props);
-        this.settlementItems = [];
     }
 
     handleSubmit(event) {
@@ -17,14 +17,8 @@ class ResultSettlementFilter extends React.Component {
         event.preventDefault();
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!nextProps.hasOwnProperty('avaliableSettlements')) {
-            return;
-        }
-
-        let settlements = nextProps.avaliableSettlements;
-
-        this.settlementItems = settlements.map((settlement) => {
+    buildSettlements(settlements) {
+        return settlements.map((settlement) => {
             let label = settlement.text;
             if (this.props.i18n[settlement.text]) {
                 label = this.props.i18n[settlement.text];
@@ -39,32 +33,46 @@ class ResultSettlementFilter extends React.Component {
                 />
             );
         });
-
-        this.setState(nextProps);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (JSON.stringify(this.props.avaliableSettlements)
-            === JSON.stringify(nextProps.avaliableSettlements)
-        ) {
-            return false;
+    allEmpty (obj) {
+        for (var key in obj) {
+            if (obj[key] !== null && obj[key] != "")
+                return false;
         }
-
         return true;
     }
 
     render() {
-        let body = '';
+        let body = this.props.i18n.putFlightFilter;
         let button ='';
-        if (this.settlementItems.length !== 0) {
-            body = this.settlementItems;
+        let settlementFilter  = this.props.settlementFilter;
+
+        if (!this.allEmpty(this.props.flightFilter)
+            && settlementFilter
+            && (settlementFilter.receiving === false)
+        ) {
+            body = this.props.i18n.noMonitoredParamsOnSpecifyedFilter;
+        }
+
+        if (settlementFilter && settlementFilter.receiving) {
+            body = <ContentLoader margin={ 5 } size={ 75 } />;
+        }
+
+        if (settlementFilter
+            && (settlementFilter.receiving === false)
+            && Array.isArray(settlementFilter.avaliableSettlements)
+            && (settlementFilter.avaliableSettlements.length > 0)
+        ) {
+            body = this.buildSettlements(settlementFilter.avaliableSettlements);
             button = <div className="form-group">
-                <input type="submit" className="btn btn-default" value="Apply" />
+                <input type="submit" className="btn btn-default" value={ this.props.i18n.apply } />
             </div>;
         }
 
         return (
             <form onSubmit={this.handleSubmit.bind(this)}>
+                <p><b>{ this.props.i18n.monitoredParameters }</b></p>
                 { body }
                 { button }
             </form>
@@ -72,8 +80,11 @@ class ResultSettlementFilter extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
-    return { ...state.settlementFilter };
+function mapStateToProps (store) {
+    return {
+        settlementFilter: store.settlementFilter,
+        flightFilter: store.flightFilter
+    }
 }
 
 function mapDispatchToProps(dispatch) {

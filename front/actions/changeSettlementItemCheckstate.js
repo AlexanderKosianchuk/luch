@@ -1,7 +1,8 @@
 export default function changeSettlementItemCheckstate(payload) {
     return function(dispatch) {
         dispatch({
-            type: 'CHANGE_SETTLEMENT_ITEM_CHECKSTATE'
+            type: 'CHANGE_SETTLEMENT_ITEM_CHECKSTATE',
+            payload: payload
         });
     }
 };

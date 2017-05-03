@@ -90,6 +90,13 @@ class Flight
     private $guid;
 
     /**
+     * @var string
+     *
+     * @Column(name="id_fdr", type="integer", nullable=false)
+     */
+    private $id_fdr;
+
+    /**
      * One Flight has One Fdr.
      * @OneToOne(targetEntity="Fdr")
      * @JoinColumn(name="id_fdr", referencedColumnName="id")

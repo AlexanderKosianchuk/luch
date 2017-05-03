@@ -9,7 +9,8 @@ import ResultSettlementFilter from 'components/result-settlements-filter/ResultS
 
 export default class Results extends React.Component {
     render() {
-        return (<div className="results fluid-grid">
+        return (
+            <div className="results container-fluid">
                 <div className="row">
                     <div className="col-sm-14">
                         <ResultsToolbar i18n={this.props.i18n} />
@@ -26,6 +27,7 @@ export default class Results extends React.Component {
                         &nbsp;
                     </div>
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
