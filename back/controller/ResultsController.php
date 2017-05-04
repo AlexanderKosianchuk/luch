@@ -254,10 +254,14 @@ class ResultsController extends CController
                     $report[$settlementId]['values'][] = $flightSettlement->getValue();
                 }
             }
-
         }
 
-        echo json_encode($report);
+        $resp = [];
+        foreach ($report as $item) {
+            $resp[] = $item;
+        }
+
+        echo json_encode($resp);
         exit;
     }
 }

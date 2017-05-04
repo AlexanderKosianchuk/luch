@@ -8,10 +8,6 @@ import SettlementsFilterItem from 'components/settlements-filter-item/Settlement
 import ContentLoader from 'components/content-loader/ContentLoader';
 
 class ResultSettlementFilter extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     handleSubmit(event) {
         let settlementFilter  = this.props.settlementFilter;
         let flightFilter = this.props.flightFilter;

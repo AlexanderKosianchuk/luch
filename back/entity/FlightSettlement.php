@@ -44,9 +44,9 @@ class FlightSettlement
     private $flightEventId;
 
     /**
-     * @var string
+     * @var float
      *
-     * @Column(name="value", type="string", length=255, nullable=false)
+     * @Column(name="value", type="float", nullable=false)
      */
     private $value;
 
@@ -193,7 +193,7 @@ class FlightSettlement
                 . "`id_event` BIGINT(20) NOT NULL, "
                 . "`id_settlement` BIGINT(20) NOT NULL, "
                 . "`id_flight_event` BIGINT(20) NOT NULL, "
-                . "`value` VARCHAR(255) NOT NULL, "
+                . "`value` DOUBLE NOT NULL, "
                 . " INDEX (`id_event`), "
                 . " INDEX (`id_settlement`), "
                 . " INDEX (`id_flight_event`), "
