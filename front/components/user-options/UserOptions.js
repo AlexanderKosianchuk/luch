@@ -36,6 +36,12 @@ class UserOptions extends React.Component {
             );
         });
 
+        options.push(
+            <button className='btn btn-default' onClick={ this.onClick.bind(this) } >
+                { this.props.i18n.save }
+            </button>
+        );
+
         return options;
     }
 
@@ -52,9 +58,6 @@ class UserOptions extends React.Component {
                     { this.props.i18n.userOptions }
                 </h4>
                 { content }
-                <button className='btn btn-default' onClick={ this.onClick.bind(this) } >
-                    { this.props.i18n.save }
-                </button>
             </div>
         );
     }

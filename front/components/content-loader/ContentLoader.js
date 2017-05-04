@@ -8,7 +8,7 @@ export default function  ContentLoader (props) {
             return { margin: props.margin + 'px'};
         }
 
-        return '';
+        return {};
     }
 
     function getSize()
@@ -20,7 +20,7 @@ export default function  ContentLoader (props) {
             };
         }
 
-        return '';
+        return {};
     }
 
     return (
