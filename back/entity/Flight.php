@@ -90,11 +90,18 @@ class Flight
     private $guid;
 
     /**
-     * @var string
+     * @var integer
      *
      * @Column(name="id_fdr", type="integer", nullable=false)
      */
     private $id_fdr;
+
+    /**
+     * @var integer
+     *
+     * @Column(name="id_user", type="integer", nullable=false)
+     */
+    private $id_user;
 
     /**
      * One Flight has One Fdr.
@@ -118,6 +125,11 @@ class Flight
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getUserId()
+    {
+        return $this->id_user;
     }
 
     public function getId()

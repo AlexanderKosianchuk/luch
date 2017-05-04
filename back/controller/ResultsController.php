@@ -4,9 +4,13 @@ namespace Controller;
 
 use Component\EntityManagerComponent as EM;
 use Component\FlightComponent;
+use Component\RealConnectionFactory as LinkFactory;
 use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
 use Entity\Flight;
 use Entity\Fdr;
+use Entity\FlightSettlement;
+
+use \ReflectionMethod;
 
 class ResultsController extends CController
 {
@@ -28,7 +32,7 @@ class ResultsController extends CController
         $this->setAttributes();
     }
 
-    private function addFdrtypeCondition(&$qb, $fdrName)
+    private static function addFdrtypeCondition(&$qb, $fdrName)
     {
         if (empty($fdrName)) {
             return 0;
@@ -57,7 +61,7 @@ class ResultsController extends CController
         return $count;
     }
 
-    private function addBortCondition(&$qb, $val)
+    private static function addBortCondition(&$qb, $val)
     {
         if (empty($val)) {
             return 0;
@@ -70,7 +74,7 @@ class ResultsController extends CController
         return 1;
     }
 
-    private function addFlightCondition(&$qb, $val)
+    private static function addFlightCondition(&$qb, $val)
     {
         if (empty($val)) {
             return 0;
@@ -83,7 +87,7 @@ class ResultsController extends CController
         return 1;
     }
 
-    private function addDepartureairportCondition(&$qb, $val)
+    private static function addDepartureairportCondition(&$qb, $val)
     {
         if (empty($val)) {
             return 0;
@@ -96,7 +100,7 @@ class ResultsController extends CController
         return 1;
     }
 
-    private function addArrivalairportCondition(&$qb, $val)
+    private static function addArrivalairportCondition(&$qb, $val)
     {
         if (empty($val)) {
             return 0;
@@ -108,7 +112,7 @@ class ResultsController extends CController
         return 1;
     }
 
-    private function addFromdateCondition(&$qb, $val)
+    private static function addFromdateCondition(&$qb, $val)
     {
         $timestamp = strtotime($val);
 
@@ -121,7 +125,7 @@ class ResultsController extends CController
         return 1;
     }
 
-    private function addTodateCondition($qb, $val)
+    private static function addTodateCondition($qb, $val)
     {
         $timestamp = strtotime($val);
 
@@ -129,14 +133,17 @@ class ResultsController extends CController
             return 0;
         }
 
-        $condition = $qb->expr()->lte('fl.startCopyTime', $timestamp);
-        $expr->andX()->add($condition);
+        $qb->andWhere($qb->expr()->lte('fl.startCopyTime', $timestamp));
 
         return 1;
     }
 
-    public function getSettlements($args)
+    private static function getFlightsByFilter($filter, $userId = null)
     {
+        if (!$userId) {
+            $userId = intval($this->_user->userInfo['id']);
+        }
+
         $em = EM::get();
 
         $qb = $em->createQueryBuilder()
@@ -144,21 +151,41 @@ class ResultsController extends CController
             ->from('Entity\Flight', 'fl');
         $conditionsCount = 0;
 
-        foreach ($args as $key => $val) {
+        foreach ($filter as $key => $val) {
             $method = 'add' . ucfirst(str_replace('-', '', $key)) . 'Condition';
-            if (!method_exists($this, $method)) {
+
+            if (!method_exists('\Controller\ResultsController', $method)) {
                 continue;
             }
 
-            $conditionsCount += $this->$method($qb, $val);
+            $conditionsCount += self::$method($qb, $val);
         }
 
         if ($conditionsCount === 0) {
+            return null;
+        }
+
+        return $qb
+            ->join(
+                '\Entity\FlightToFolder',
+                'flightToFolders',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'fl.id = flightToFolders.flightId'
+            )
+            ->andWhere($qb->expr()->eq('flightToFolders.userId', $userId))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getSettlements($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+        $flights = self::getFlightsByFilter($args, $userId);
+
+        if ($flights === null) {
             echo json_encode([]);
             exit;
         }
-
-        $flights = $qb->getQuery()->getResult();
 
         $flightSettlements = [];
         foreach ($flights as $flight) {
@@ -183,6 +210,54 @@ class ResultsController extends CController
         }
 
         echo json_encode($resp);
+        exit;
+    }
+
+    public function getReport($args)
+    {
+        $settlements = $args['settlements'];
+        $userId = intval($this->_user->userInfo['id']);
+        $flights = self::getFlightsByFilter($args, $userId);
+        $report = [];
+        $em = EM::get();
+
+        foreach ($flights as $flight) {
+            $flightGuid = $flight->getGuid();
+
+            $link = LinkFactory::create();
+            $flightSettlementTable = FlightSettlement::getTable($link, $flightGuid);
+
+            LinkFactory::destroy($link);
+
+            $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+
+            foreach ($settlements as $settlementId) {
+                if (!isset($report[$settlementId])) {
+                    $report[$settlementId] = [];
+                }
+
+                $flightSettlements = $em->getRepository('Entity\FlightSettlement')->findBy([
+                    'settlementId' => $settlementId
+                ]);
+
+                for ($ii = 0; $ii < count($flightSettlements); $ii++) {
+                    $flightSettlement = $flightSettlements[$ii];
+
+                    if (!isset($report[$settlementId]['text'])
+                        && ($ii === 0)
+                    ) {
+                        $report[$settlementId]['text']
+                            = $flightSettlement->getEventSettlement()->getText();
+                        $report[$settlementId]['values'] = [];
+                    }
+
+                    $report[$settlementId]['values'][] = $flightSettlement->getValue();
+                }
+            }
+
+        }
+
+        echo json_encode($report);
         exit;
     }
 }

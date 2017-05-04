@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import changeSettlementItemCheckstateAction from 'actions/changeSettlementItemCheckstate';
-import applyResultSettlementFilterAction from 'actions/applyResultSettlementFilter';
+import applySettlementFilterAction from 'actions/applySettlementFilter';
 import SettlementsFilterItem from 'components/settlements-filter-item/SettlementsFilterItem';
 import ContentLoader from 'components/content-loader/ContentLoader';
 
@@ -13,7 +13,20 @@ class ResultSettlementFilter extends React.Component {
     }
 
     handleSubmit(event) {
-        alert('A name was submitted: ');
+        let settlementFilter  = this.props.settlementFilter;
+        let flightFilter = this.props.flightFilter;
+
+        if (settlementFilter
+            && !this.allEmpty(this.props.flightFilter)
+            && Array.isArray(settlementFilter.chosenSettlements)
+            && (settlementFilter.chosenSettlements.length > 0)
+        ) {
+            let chosenSettlements = settlementFilter.chosenSettlements.map((item) => item.id);
+            this.props.applySettlementFilter({
+                chosenSettlements: chosenSettlements,
+                flightFilter: flightFilter
+            });
+        }
         event.preventDefault();
     }
 
@@ -90,7 +103,7 @@ function mapStateToProps (store) {
 function mapDispatchToProps(dispatch) {
     return {
         changeCheckstate: bindActionCreators(changeSettlementItemCheckstateAction, dispatch),
-        applyResultSettlementFilter: bindActionCreators(applyResultSettlementFilterAction, dispatch)
+        applySettlementFilter: bindActionCreators(applySettlementFilterAction, dispatch)
     }
 }
 

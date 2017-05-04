@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import flightFilter from 'reducers/flightFilter';
 import settlementFilter from 'reducers/settlementFilter';
+import settlementsReport from 'reducers/settlementsReport';
 import chosenFlightListItems from 'reducers/chosenFlightListItems';
 import fdrTypesList from 'reducers/fdrTypesList';
 import flightUploader from 'reducers/flightUploader';
@@ -13,6 +14,7 @@ export default combineReducers({
     flightUploadingState,
     flightFilter,
     settlementFilter,
+    settlementsReport,
     chosenFlightListItems,
     userOptions
 });

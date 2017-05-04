@@ -24,21 +24,21 @@ class FlightToFolder
      *
      * @Column(name="flightId", type="integer", nullable=true)
      */
-    private $flightid;
+    private $flightId;
 
     /**
      * @var integer
      *
      * @Column(name="folderId", type="integer", nullable=true)
      */
-    private $folderid;
+    private $folderId;
 
     /**
      * @var integer
      *
      * @Column(name="userId", type="integer", nullable=true)
      */
-    private $userid;
+    private $userId;
 
 
 }
