@@ -299,7 +299,7 @@ Chart.prototype.LoadFlotChart = function() {
     //flot options
     var self = this;
     var bg = self.isPrintPage ? "#fff" : "#"+self.placeholder.data('bgcolor');
-    var options    = {
+    var options = {
             xaxis: {
                 mode: "time",
                 timezone: "browser",
@@ -310,7 +310,7 @@ Chart.prototype.LoadFlotChart = function() {
             yaxis:{
                 ticks: 0,
                 position : "left",
-                zoomRange: [0,0],
+                zoomRange: false,
             },
             zoom: {
                 interactive: true,
@@ -531,14 +531,6 @@ Chart.prototype.SupportPlotEvents = function(e) {
         if(self.Legnd.showSeriesLabelsNeed){
             self.Legnd.ShowSeriesLabels();
         }
-    });
-
-    //prevent scrolling window during scrolling plot
-    self.chartWorkspace.mousewheel(function(event, delta) {
-        var target = $(event.target);
-        event.stopPropagation();
-        event.preventDefault();
-
     });
 }
 
@@ -764,15 +756,15 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
             }
         }
 
-        if(event.which == CTRL){
+        if (event.which == CTRL){
             self.ctrlPressed = false;
         }
 
-        if(event.which == SHIFT) {
+        if (event.which == SHIFT) {
             self.shiftPressed = false;
             var yAxArr = self.plot.getYAxes();
-            for(var i = 0; i < yAxArr.length; i++){
-                yAxArr[i].options.zoomRange = [0,0];
+            for (var i = 0; i < yAxArr.length; i++){
+                yAxArr[i].options.zoomRange = false;
             }
             self.plot.getXAxes()[0].options.zoomRange = null;
         }
@@ -838,7 +830,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
             }
         }
 
-        if(event.which == KEY_ARROW_UP){
+        if (event.which == KEY_ARROW_UP){
             event.stopPropagation();
             event.preventDefault();
 
@@ -875,7 +867,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
             for(var i = 0; i < yAxArr.length; i++){
                 yAxArr[i].options.zoomRange = null;
             }
-            self.plot.getXAxes()[0].options.zoomRange = [0,0];
+            self.plot.getXAxes()[0].options.zoomRange = false;
         }
 
     });

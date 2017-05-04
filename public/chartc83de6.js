@@ -26188,7 +26188,7 @@ Chart.prototype.LoadFlotChart = function () {
         yaxis: {
             ticks: 0,
             position: "left",
-            zoomRange: [0, 0]
+            zoomRange: false
         },
         zoom: {
             interactive: true
@@ -26386,13 +26386,6 @@ Chart.prototype.SupportPlotEvents = function (e) {
         if (self.Legnd.showSeriesLabelsNeed) {
             self.Legnd.ShowSeriesLabels();
         }
-    });
-
-    //prevent scrolling window during scrolling plot
-    self.chartWorkspace.mousewheel(function (event, delta) {
-        var target = $(event.target);
-        event.stopPropagation();
-        event.preventDefault();
     });
 };
 
@@ -26642,7 +26635,7 @@ Chart.prototype.SupportKeyBoardEvents = function (e) {
             self.shiftPressed = false;
             var yAxArr = self.plot.getYAxes();
             for (var i = 0; i < yAxArr.length; i++) {
-                yAxArr[i].options.zoomRange = [0, 0];
+                yAxArr[i].options.zoomRange = false;
             }
             self.plot.getXAxes()[0].options.zoomRange = null;
         }
@@ -26745,7 +26738,7 @@ Chart.prototype.SupportKeyBoardEvents = function (e) {
             for (var i = 0; i < yAxArr.length; i++) {
                 yAxArr[i].options.zoomRange = null;
             }
-            self.plot.getXAxes()[0].options.zoomRange = [0, 0];
+            self.plot.getXAxes()[0].options.zoomRange = false;
         }
     });
 
@@ -88257,4 +88250,4 @@ jQuery(function ($) {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=chart7298d6.js.map
+//# sourceMappingURL=chartc83de6.js.map
