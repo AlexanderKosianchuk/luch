@@ -68,6 +68,11 @@ class Calibration
         }
 
         $fdrIdsChecked = implode(',', $fdrIdsChecked);
+        $calibrations = [];
+
+        if (!is_array($fdrIdsChecked)) {
+            return $calibrations;
+        }
 
         $q = "SELECT `id`, `name`, `id_fdr`, `id_user`, `dt_created`, `dt_updated`"
             ." FROM `".$this->table."`"
@@ -78,7 +83,6 @@ class Calibration
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $calibrations = [];
         while ($row = $result->fetch_array()) {
             $calibrations[$row['id_fdr']][] = $row;
         }
