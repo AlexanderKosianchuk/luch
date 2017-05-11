@@ -172,6 +172,7 @@ $(document).ready(function () {
         function select(state) {
             return state.flightUploadingState.length;
         }
+
         store.subscribe(() => {
             let previousValue = currentValue;
              currentValue = select(store.getState())
