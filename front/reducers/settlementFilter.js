@@ -1,5 +1,5 @@
 const initialState = {
-    receiving: null,
+    pending: null,
     avaliableSettlements: [],
     chosenSettlements: []
 };
@@ -7,11 +7,11 @@ const initialState = {
 export default function settlementFilter(state = initialState, action) {
     switch (action.type) {
         case 'APPLY_FLIGHT_FILTER':
-            state.receiving = true;
+            state.pending = true;
             return { ...state };
         case 'SETTLEMENTS_FETCHED':
             return { ... Object.assign(state, {
-                receiving: false,
+                pending: false,
                 avaliableSettlements: action.payload.slice(), // copy array
                 chosenSettlements: action.payload.slice()
             })};
