@@ -27910,17 +27910,35 @@ FlightList.prototype.export = function (e) {
 
 FlightList.prototype.exportCoordinates = function (event) {
     var text = $("li#exportCoordinates").text();
-
     var inputItemsCheck = $("input.ItemsCheck:checked");
 
     if (inputItemsCheck.length) {
         var flightid = inputItemsCheck.data('flightid');
+        var form = $('#export-coordinates');
 
-        $("li#exportCoordinates").empty().append($('<a></a>', {
-            class: 'export-coordinates-href',
-            href: "/entry.php" + '?action=flights/coordinates&id=' + flightid,
+        if (form.length) {
+            form.remove();
+        }
+
+        form = $('<form></form>', {
+            id: 'export-coordinates',
+            action: "/entry.php",
             target: '_blank'
-        }).text(text));
+        }).css('display', 'none');
+
+        form.append($('<input>', {
+            name: 'action',
+            value: 'flights/coordinates'
+        }));
+
+        form.append($('<input>', {
+            name: 'id',
+            value: flightid
+        }));
+
+        $('body').append(form);
+
+        form.submit();
     }
 };
 
@@ -66030,11 +66048,7 @@ function mapStateToProps(state) {
     return _extends({}, state.chosenFlightListItems);
 }
 
-function mapDispatchToProps(dispatch) {
-    return {};
-}
-
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(FlightListMenuDropdown);
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(FlightListMenuDropdown);
 
 /***/ }),
 /* 167 */
@@ -88250,4 +88264,4 @@ jQuery(function ($) {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=chart0d5506.js.map
+//# sourceMappingURL=chart05bef8.js.map

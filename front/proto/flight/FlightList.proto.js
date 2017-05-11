@@ -976,21 +976,39 @@ FlightList.prototype.export = function(e){
 
 FlightList.prototype.exportCoordinates = function(event) {
     var text = $("li#exportCoordinates").text();
-
     var inputItemsCheck = $("input.ItemsCheck:checked");
 
     if (inputItemsCheck.length) {
-       var flightid = inputItemsCheck.data('flightid');
+        let flightid = inputItemsCheck.data('flightid');
+        let form = $('#export-coordinates');
 
-         $("li#exportCoordinates")
-            .empty()
-            .append(
-                 $('<a></a>', {
-                     class: 'export-coordinates-href',
-                     href: ENTRY_URL + '?action=flights/coordinates&id=' + flightid,
-                     target: '_blank'
-                 }).text(text)
-             );
+        if (form.length) {
+            form.remove()
+        }
+
+        form = $('<form></form>', {
+            id: 'export-coordinates',
+            action: ENTRY_URL,
+            target: '_blank'
+        }).css('display', 'none');
+
+        form.append(
+            $('<input>', {
+                name: 'action',
+                value: 'flights/coordinates'
+            })
+        )
+
+        form.append(
+            $('<input>', {
+                name: 'id',
+                value: flightid
+            })
+        )
+
+        $('body').append(form);
+
+        form.submit();
     }
 };
 

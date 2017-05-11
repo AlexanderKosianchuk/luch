@@ -84,8 +84,4 @@ function mapStateToProps (state) {
     return { ... state.chosenFlightListItems };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FlightListMenuDropdown);
+export default connect(mapStateToProps)(FlightListMenuDropdown);
