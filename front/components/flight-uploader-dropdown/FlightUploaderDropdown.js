@@ -9,7 +9,7 @@ import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.cs
 import FileInput from 'react-file-input';
 import uuidV4 from 'uuid/v4';
 
-import FlightUploaderDropdownLoading from 'components/flight-uploader-dropdown-loading/FlightUploaderDropdownLoading';
+import ContentLoader from 'components/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'components/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
 import getFdrListAction from 'actions/getFdrList';
@@ -25,52 +25,13 @@ class FlightUploaderDropdown extends React.Component {
         this.state = {
             isShown: false,
             file: '',
-            chosenFdr: null,
-            defaultCalibration: null
         };
     }
 
-    setDefaultFdr (fdrTypesList) {
-        if (!fdrTypesList
-            || fdrTypesList.length === 0
-            || !fdrTypesList[0].id
-        ) {
-            return null;
-        }
-
-        return fdrTypesList[0];
-    }
-
-    setDefaultCalibration (calibrationList) {
-        if (!calibrationList
-            || calibrationList.length === 0
-            || !calibrationList[0].id
-        ) {
-            return [];
-        }
-
-        return calibrationList[0];
-    }
-
     componentWillMount() {
-        if (!this.props.fdrTypes) {
+        if (!this.props.fdrTypesList) {
             this.props.getFdrList();
         }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        /* do not need render on switch change */
-        if (nextProps.previewState !== this.props.previewState) {
-            return false;
-        }
-
-        let defaultFdr = this.setDefaultFdr(nextProps.fdrTypesList) || null;
-        let defaultCalibration = defaultFdr
-            ? this.setDefaultCalibration(defaultFdr.calibrations)
-            : null;
-
-        this.props.changeFdrType(defaultFdr);
-        this.props.changeCalibration(defaultCalibration);
     }
 
     handleClickOutside(event) {
@@ -84,30 +45,33 @@ class FlightUploaderDropdown extends React.Component {
     }
 
     putFdrList() {
-        let content = <FlightUploaderDropdownLoading />;
         if (this.props.fdrTypesList
-            && this.props.fdrTypesList[0] //at list one el exist
+            && (this.props.fdrTypesList.length > 0)
             && this.props.selectedFdrType
         ) {
-            content = <FlightUploaderFdrSelector
+            return <FlightUploaderFdrSelector
                 defaultFdr={ this.props.selectedFdrType }
                 fdrTypesList={ this.props.fdrTypesList }
                 changeFdrType={ this.props.changeFdrType.bind(this) }
             />;
         }
-        return content;
+
+        return '';
     }
 
     putCalibrationList() {
-        if (!this.props.selectedFdrType) {
-            return '';
+        if (this.props.selectedFdrType
+            && this.props.selectedFdrType.calibrations
+            && (this.props.selectedFdrType.calibrations.length > 0)
+        ) {
+            return <FlightUploaderCalibrationSelector
+                defaultCalibration={ this.props.selectedCalibration }
+                calibrations={ this.props.selectedFdrType.calibrations }
+                changeCalibration={ this.props.changeCalibration.bind(this) }
+            />;
         }
 
-        return <FlightUploaderCalibrationSelector
-            defaultCalibration={ this.props.selectedCalibration }
-            calibrations={ this.props.selectedFdrType.calibrations }
-            changeCalibration={ this.props.changeCalibration.bind(this) }
-        />;
+        return '';
     }
 
     handleChange() {
@@ -145,9 +109,9 @@ class FlightUploaderDropdown extends React.Component {
         this.props.changePreviewNeedState(state);
     }
 
-    render() {
-        return (
-            <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
+    buildBody() {
+        if (!this.props.fdrTypesListPending) {
+            return <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
                 <li><a href="#"><b>{ this.props.i18n.flightUploading }</b></a></li>
                 { this.putFdrList() }
                 { this.putCalibrationList() }
@@ -173,13 +137,23 @@ class FlightUploaderDropdown extends React.Component {
                     </form>
                </a></li>
             </ul>
-        );
+        }
+
+        return <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
+            <li><a href="#"><b>{ this.props.i18n.flightUploading }</b></a></li>
+            <li><ContentLoader margin={ 5 } size={ 75 } /></li>
+        </ul>;
+    }
+
+    render() {
+        return this.buildBody();
     }
 }
 
 function mapStateToProps (state) {
     return {
-        fdrTypesList: state.fdrTypesList,
+        fdrTypesListPending: state.fdrTypesList.pending,
+        fdrTypesList: state.fdrTypesList.items,
         selectedFdrType: state.flightUploader.selectedFdrType,
         selectedCalibration: state.flightUploader.selectedCalibration,
         previewState: state.flightUploader.preview

@@ -1,6 +1,6 @@
 const initialState = {
-    "selectedFlights": [],
-    "selectedFolders": [],
+    selectedFlights: [],
+    selectedFolders: [],
 };
 
 export default function chosenFlightListItems(state = initialState, action) {

@@ -6,12 +6,12 @@ import ContentLoader from 'components/content-loader/ContentLoader';
 import SettlementsReportRow from 'components/settlements-report-row/SettlementsReportRow';
 
 class SettlementsReport extends React.Component {
-    buildReport(receiving, report) {
-        if (receiving === null) {
+    buildReport(pending, report) {
+        if (pending === null) {
             return this.props.i18n.setParamsForReportGenerating;
         }
 
-        if (receiving) {
+        if (pending) {
             return <ContentLoader margin={ 5 } size={ 75 } />;;
         }
 
@@ -48,7 +48,7 @@ class SettlementsReport extends React.Component {
     }
 
     render() {
-        let body = this.buildReport(this.props.receiving, this.props.report);
+        let body = this.buildReport(this.props.pending, this.props.report);
         return (
             <div>
                 <p><b>{ this.props.i18n.settlementsReport }</b></p>
@@ -60,7 +60,7 @@ class SettlementsReport extends React.Component {
 
 function mapStateToProps (store) {
     return {
-        receiving: store.settlementsReport.receiving,
+        pending: store.settlementsReport.pending,
         report: store.settlementsReport.report
     }
 }

@@ -59,17 +59,17 @@ class ResultSettlementFilter extends React.Component {
 
         if (!this.allEmpty(this.props.flightFilter)
             && settlementFilter
-            && (settlementFilter.receiving === false)
+            && (settlementFilter.pending === false)
         ) {
             body = this.props.i18n.noMonitoredParamsOnSpecifyedFilter;
         }
 
-        if (settlementFilter && settlementFilter.receiving) {
+        if (settlementFilter && settlementFilter.pending) {
             body = <ContentLoader margin={ 5 } size={ 75 } />;
         }
 
         if (settlementFilter
-            && (settlementFilter.receiving === false)
+            && (settlementFilter.pending === false)
             && Array.isArray(settlementFilter.avaliableSettlements)
             && (settlementFilter.avaliableSettlements.length > 0)
         ) {

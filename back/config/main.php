@@ -12,13 +12,5 @@ return [
         "type" => "mysqli",
         "dbName" => "db5"
     ],
-    "dbSphinx" => [
-        "adapter" => "mysql",
-        "host" => "localhost",
-        "name" => "db5",
-        "user" => "dbUserdb5",
-        "pass" => "124578dbUser",
-        "port" => "3306",
-        "charset" => "utf8"
-    ]
+    "dbSphinx" => include('db.php'),
 ];

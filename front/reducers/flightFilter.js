@@ -1,7 +1,7 @@
 const initialState = {
     "fdr-type": "",
-    "bort": "",
-    "flight": "",
+    bort: "",
+    flight: "",
     "departure-airport": "",
     "arrival-airport": "",
     "from-date": "",

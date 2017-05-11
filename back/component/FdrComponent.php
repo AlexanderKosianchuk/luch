@@ -66,13 +66,6 @@ class FdrComponent
                 'calibrations' => $fdrCalibrations,
                 'calibratedParams' => $calibratedParams
             ];
-
-            $fdrsAndCalibrations[] = [
-                'id' => intval(2),
-                'name' => "dgsdg",
-                'calibrations' => $fdrCalibrations,
-                'calibratedParams' => $calibratedParams
-            ];
         }
 
         return $fdrsAndCalibrations;
