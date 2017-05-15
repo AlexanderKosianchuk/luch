@@ -294,7 +294,7 @@ class UploaderController extends CController
             }
         }
 
-        unset($Bru);
+        unset($fdr);
 
         return json_encode($aditionalInfo);
     }
@@ -818,6 +818,7 @@ class UploaderController extends CController
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         $apTableName = $flightInfo["apTableName"];
         $bpTableName = $flightInfo["bpTableName"];
         $excEventsTableName = $flightInfo["exTableName"];
@@ -826,14 +827,13 @@ class UploaderController extends CController
         unset($Fl);
 
         $fdr = new Fdr;
-        $fdrInfo = $fdr->GetBruInfo($flightInfo["bruType"]);
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $excListTableName = $fdrInfo["excListTableName"];
         $apGradiTableName = $fdrInfo["gradiApTableName"];
         $bpGradiTableName = $fdrInfo["gradiBpTableName"];
         $stepLength = $fdrInfo["stepLength"];
 
         if ($excListTableName != "") {
-            $fdrInfo = $fdr->GetBruInfo($flightInfo["bruType"]);
             $excListTableName = $fdrInfo["excListTableName"];
             $apGradiTableName = $fdrInfo["gradiApTableName"];
             $bpGradiTableName = $fdrInfo["gradiBpTableName"];

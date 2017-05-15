@@ -2303,10 +2303,8 @@ class Frame
         return $normFrame;
     }
 
-    public function CreateTableNormalizedFrames($extAPheaders)
+    public function CreateTableNormalizedFrames($APheaders)
     {
-        $bruType = $extBRUtype;
-        $APheaders = $extAPheaders;
         $tableName = uniqid().time()."tmp";
 
         $c = new DataBaseConnector;
@@ -2490,64 +2488,16 @@ class Frame
         printf("</table>");
     }
 
-    public function GetFlightNormalizedFrame($extFlightId, $extCurrFrameId)
+    public function SearchSyncroWord($frameSyncroCode, $offset, $fileName)
     {
-        $flightId = $extFlightId;
-        $currFrameId = $extCurrFrameId;
-
-        $d = new DataTransitionProvider();
-        $flightInfo = $d->GetFlightInfo($flightId);
-        $startCopyTime = $flightInfo['startCopyTime'];
-        $bruType = $flightInfo['bruType'];
-        $fdrInfo = $d->GetBRUinfo($bruType);
-        $stepLength = $fdrInfo['stepLength'];
-        $stepDivider = $fdrInfo['stepDivider'];
-        $codesArray = $d->GetCodesArray($bruType);
-
-        $frame = $d->GetFlightFrame($flightId, $currFrameId, $codesArray);
-
-        unset($d);
-
-        return $frame;
-    }
-
-    /*public function ShowTimeRangeSlider($extStartCopyTime, $extFrameCount, $extStepLength)
-    {
-        $startCopyTime = $extStartCopyTime;
-        $frameCount = $extFrameCount;
-        $stepLength = $extStepLength;
-
-        //jQ script will provide range slider
-        printf("
-                <input id=\"startCopyTime\" type=\"hidden\" value=\"%s\" />
-                <input id=\"frameCount\" type=\"hidden\" value=\"%s\" />
-                <input id=\"stepLength\" type=\"hidden\" value=\"%s\" />
-                <p>
-                <label for=\"amount\">Price range:</label>
-                <input type=\"text\" id=\"amount\" style=\"border: 0; color: #f6931f; font-weight: bold;\" />
-                </p>
-
-                <div id=\"slider-range\"></div>
-                <input id=\"startFrame\" type=\"hidden\" value=\"0\" />
-                <input id=\"endFrame\" type=\"hidden\" value=\"%s\" />", $startCopyTime, $frameCount, $stepLength, $frameCount);
-    }*/
-
-    public function SearchSyncroWord($extFrameSyncroCode, $extOffset, $extFileName)
-    {
-        $frameSyncroCode = $extFrameSyncroCode;
-        $offset = $extOffset;
-        $fileName = $extFileName;
-
         $fileDesc = $this->OpenFile($fileName);
         $fileSize = $this->GetFileSize($fileName) - $offset;
         fseek($fileDesc, $offset, SEEK_SET);
 
         $syncroWordSeek = $offset;
         $frameSyncroCode = strtolower($frameSyncroCode);
-        if($frameSyncroCode != '')
-        {
-            if(substr($frameSyncroCode, -1) == '*')
-            {
+        if ($frameSyncroCode != '') {
+            if (substr($frameSyncroCode, -1) == '*') {
                 $updatedSyncroCode = substr($frameSyncroCode, 0, -1);
                 $syncroCodeLength = strlen($updatedSyncroCode) / 2; // because 2 symb in byte
 

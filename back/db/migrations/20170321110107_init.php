@@ -20,6 +20,16 @@ class Init extends AbstractMigration
             KEY `id_user` (`id_user`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
         $this->execute($q);
+        echo $q . PHP_EOL . PHP_EOL;
+
+        $q = "CREATE TABLE `event_settlements` (
+          `id` int(11) NOT NULL,
+          `id_event` int(11) NOT NULL,
+          `text` varchar(255) NOT NULL,
+          `alg` text NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        $this->execute($q);
+        echo $q . PHP_EOL . PHP_EOL;
 
         $q = "DELETE FROM `user_avaliability`
             WHERE `type` != 'brutype';";

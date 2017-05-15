@@ -364,59 +364,6 @@ class Flight
         }
     }
 
-    public function GetFlightExtendedInfo($extFlightInfo)
-    {
-        $flightInfo = $extFlightInfo;
-        if (isset($flightInfo['bort']) && isset($flightInfo['voyage']) && isset($flightInfo['startCopyTime']) &&
-            isset($flightInfo['performer']) && isset($flightInfo['bruType']))
-        {
-            $bort = $flightInfo['bort'];
-            $startCopyTime = $flightInfo['startCopyTime'];
-            $performer = $flightInfo['performer'];
-            $bruType = $flightInfo['bruType'];
-            $voyage = $flightInfo['voyage'];
-
-            $query = "SELECT `id` FROM `flights` WHERE (bort = '".$bort."') AND
-                (`startCopyTime` = '".$startCopyTime."') AND
-                (`performer` = '".$performer."') AND
-                (`bruType` = '".$bruType."') AND
-                (`voyage` = '".$voyage."')
-                LIMIT 1;";
-
-            $c = new DataBaseConnector;
-            $link = $c->Connect();
-            $result = $link->query($query);
-            $row = $result->fetch_array();
-            $flightInfo = $this->GetFlightInfo($row['id']);
-            $result->free();
-            $c->Disconnect();
-            unset($c);
-
-            return $flightInfo;
-        }
-        else if (isset($flightInfo['tableNameAp']) &&
-            isset($flightInfo['tableNameBp']))
-        {
-            $tableNameAp = $flightInfo['tableNameAp'];
-            $tableNameBp = $flightInfo['tableNameBp'];
-
-            $query = "SELECT * FROM `flights` WHERE (`apTableName` = '".$tableNameAp."') AND
-                            (`bpTableName` = '".$tableNameBp."')
-                            LIMIT 1;";
-
-            $c = new DataBaseConnector;
-            $link = $c->Connect();
-            $result = $link->query($query);
-            $row = $result->fetch_array();
-            $flightInfo = $this->GetFlightInfo($row['id']);
-            $result->free();
-            $c->Disconnect();
-            unset($c);
-
-            return $flightInfo;
-        }
-    }
-
     public function GetFlightsByFilter($filter)
     {
         $query = "SELECT `id` FROM `flights` WHERE ";

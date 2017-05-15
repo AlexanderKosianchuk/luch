@@ -79,9 +79,8 @@ class Fdr
 
     public function GetBruList($availableBruTypesIds)
     {
-        $bruList = array();
-        if(count($availableBruTypesIds) > 0)
-        {
+        $list = array();
+        if (count($availableBruTypesIds) > 0) {
             $inString = "";
             foreach($availableBruTypesIds as $id)
             {
@@ -99,7 +98,7 @@ class Fdr
             while($row = $result->fetch_array())
             {
                 $fdrInfo = $this->getFdrInfo(intval($row['id']));
-                array_push($bruList, $fdrInfo);
+                array_push($list, $fdrInfo);
             }
 
             $result->free();
@@ -108,7 +107,7 @@ class Fdr
             unset($c);
         }
 
-        return $bruList;
+        return $list;
     }
 
     public function getFdrInfo($fdrId)
@@ -140,54 +139,6 @@ class Fdr
         $stmt->close();
 
         $c->Disconnect();
-        unset($c);
-
-        return $fdrInfo;
-    }
-
-    public function GetBruInfo($bruType)
-    {
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `".$this->table."` WHERE `code` = '".$bruType."' LIMIT 1;";
-
-        $result = $link->query($query);
-        $row = $result->fetch_array();
-
-        $fdrInfo = array();
-        foreach ($row as $key => $value) {
-            $fdrInfo[$key] = $value;
-        }
-
-        $result->free();
-        $c->Disconnect();
-
-        unset($c);
-
-        return $fdrInfo;
-    }
-
-    public function GetBruInfoById($extBruTypeId)
-    {
-        $bruTypeId = $extBruTypeId;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `".$this->table."` WHERE `id` = '".$bruTypeId."' LIMIT 1;";
-        $result = $link->query($query);
-        $row = $result->fetch_array();
-
-        $fdrInfo = array();
-        foreach ($row as $key => $value)
-        {
-            $fdrInfo[$key] = $value;
-        }
-
-        $result->free();
-        $c->Disconnect();
-
         unset($c);
 
         return $fdrInfo;
@@ -1475,47 +1426,6 @@ class Fdr
         unset($c);
 
         return $color;
-    }
-
-    public function GetBrutypesByAuthor($extAuthor)
-    {
-        $author = $extAuthor;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT `id` FROM `".$this->table."` WHERE `author` = '".$author."';";
-        $mySqliResult = $link->query($query);//, MYSQLI_USE_RESULT);
-
-        $list = array();
-        while($row = $mySqliResult->fetch_array())
-        {
-            $item = $this->GetBruInfoById($row['id']);
-            array_push($list, $item);
-        }
-        $mySqliResult->free();
-        $c->Disconnect();
-
-        unset($c);
-
-        return $list;
-    }
-
-    public function DeleteBrutypesByAuthor($extAuthor)
-    {
-        $author = $extAuthor;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "DELETE FROM `".$this->table."` WHERE `author` = '".$author."';";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
     }
 
     public function checkCalibrationParamsExist($fdrId)

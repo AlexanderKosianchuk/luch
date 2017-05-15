@@ -7,6 +7,7 @@ import fdrTypesList from 'reducers/fdrTypesList';
 import flightUploader from 'reducers/flightUploader';
 import flightUploadingState from 'reducers/flightUploadingState';
 import userOptions from 'reducers/userOptions';
+import { routerReducer } from 'react-router-redux';
 
 export default combineReducers({
     fdrTypesList,
@@ -16,5 +17,6 @@ export default combineReducers({
     settlementFilter,
     settlementsReport,
     chosenFlightListItems,
-    userOptions
+    userOptions,
+    router: routerReducer
 });

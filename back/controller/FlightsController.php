@@ -907,15 +907,15 @@ class FlightsController extends CController
 
        $Fl = new Flight;
        $flight = $Fl->GetFlightInfo($flightId);
+       $fdrId = intval($flightInfo['id_fdr']);
        unset($Fl);
 
-       $bruType = $flight['bruType'];
        $apTableName = $flight['apTableName'];
        $bpTableName = $flight['bpTableName'];
 
-       $Bru = new Fdr;
-       $fdrInfo = $Bru->GetBruInfo($bruType);
-       unset($Bru);
+       $fdr = new Fdr;
+       $fdrInfo = $fdr->getFdrInfo($fdrId);
+       unset($fdr);
 
        $kmlScript = $fdrInfo['kml_export_script'];
        $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
@@ -928,8 +928,7 @@ class FlightsController extends CController
        $averageLat = 0;
        $averageLong = 0;
 
-       if (!$link->multi_query($kmlScript))
-       {
+       if (!$link->multi_query($kmlScript)) {
            //err log
            error_log("Impossible to execute multiquery: (" .
                $kmlScript . ") " . $link->error);
@@ -937,10 +936,8 @@ class FlightsController extends CController
 
        do
        {
-           if ($res = $link->store_result())
-           {
-               while($row = $res->fetch_array())
-               {
+           if ($res = $link->store_result())  {
+               while($row = $res->fetch_array()) {
                    $lat = $row['LAT'];
                    $long = $row['LONG'];
                    $h = $row['H'];
@@ -1530,34 +1527,32 @@ class FlightsController extends CController
 
     public function getFlightFdrId($data)
     {
-        if(isset($data['flightId']))
-        {
-            $flightId = intval($data['flightId']);
-
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            $fdr = $flightInfo['bruType'];
-            unset($Fl);
-
-            $Bru = new Fdr;
-            $fdrInfo = $Bru->GetBruInfo($fdr);
-            $fdrId = $fdrInfo['id'];
-            unset($Fl);
-
-            $data = array(
-                'bruTypeId' => $fdrId
-            );
-
-            $answ["status"] = "ok";
-            $answ["data"] = $data;
-
-            echo json_encode($answ);
-        } else {
+        if (isset($data['flightId'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FlightsController.php";
             echo(json_encode($answ));
         }
+
+        $flightId = intval($data['flightId']);
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        unset($Fl);
+
+        $data = array(
+            'bruTypeId' => $fdrId
+        );
+
+        $answ["status"] = "ok";
+        $answ["data"] = $data;
+
+        echo json_encode($answ);
     }
 
     public function coordinates($data)

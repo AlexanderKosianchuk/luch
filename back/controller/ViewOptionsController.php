@@ -72,48 +72,19 @@ class ViewOptionsController extends CController
         return $workspace;
     }
 
-    public function GetBruType($extFlightId)
-    {
-        $flightId = $extFlightId;
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
-        unset($Fl);
-
-        return $bruType;
-    }
-
-    public function GetBruTypeId($extFlightId)
-    {
-        $flightId = $extFlightId;
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
-        unset($Fl);
-
-        $Bru = new Fdr;
-        $bruTypeInfo = $Bru->GetBruInfo($bruType);
-        $bruTypeId = $bruTypeInfo['id'];
-        unset($Fl);
-
-        return $bruTypeId;
-    }
-
     public function GetFlightTiming($flightId)
     {
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $stepLength = $fdrInfo['stepLength'];
 
-        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrInfo['id']);
-        unset($Bru);
+        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrInfo['id']);
+        unset($fdr);
 
         $Frame = new Frame;
         $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
@@ -131,7 +102,6 @@ class ViewOptionsController extends CController
     {
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
         $fdrId = intval($flightInfo['id_fdr']);
         $apTableName = $flightInfo['apTableName'];
         $bpTableName = $flightInfo['bpTableName'];
@@ -153,13 +123,12 @@ class ViewOptionsController extends CController
         $PSTempl = new PSTempl;
         //if no template table - create it
         $PSTTableName = $paramSetTemplateListTableName;
-        if($PSTTableName == "")
-        {
+        if ($PSTTableName == "") {
             $dummy = substr($cycloApTableName, 0, -3);
             $paramSetTemplateListTableName = $dummy . "_pst";
             $PSTTableName = $paramSetTemplateListTableName;
             $PSTempl->CreatePSTTable($PSTTableName);
-            $PSTempl->AddPSTTable($bruType, $PSTTableName);
+            $PSTempl->AddPSTTable($fdrId, $PSTTableName);
         }
 
         //if isset excListTable create list to add template
@@ -272,7 +241,6 @@ class ViewOptionsController extends CController
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $fdrId = intval($flightInfo['id_fdr']);
-        $bruType = $flightInfo['bruType'];
         unset($Fl);
 
         $fdr = new Fdr;
@@ -285,8 +253,7 @@ class ViewOptionsController extends CController
 
         $paramList .= sprintf ("<div class='ApList'>");
 
-        for ($i = 0; $i < count($flightApHeaders); $i++)
-        {
+        for ($i = 0; $i < count($flightApHeaders); $i++) {
             $paramList .= sprintf ("
                 <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
                     data-colorpicker='false' readonly/>
@@ -308,16 +275,17 @@ class ViewOptionsController extends CController
         {
             $paramList .= sprintf ("<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
                 data-colorpicker='false' readonly/>
-            <label style='display:inline;'>
-            <input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
-            %s, %s</label></br>",
-                    $flightBpHeaders[$i]['color'],
-                    $flightBpHeaders[$i]['color'],
-                            $flightBpHeaders[$i]['code'],
-                            $flightBpHeaders[$i]['color'],
-                            $flightBpHeaders[$i]['code'],
-                            $flightBpHeaders[$i]['name'],
-                            $flightBpHeaders[$i]['code']);
+                <label style='display:inline;'>
+                <input type='checkbox' id='bpCheckboxGroup' class='ParamsCheckboxGroup' value='%s'/>
+                %s, %s</label></br>",
+                $flightBpHeaders[$i]['color'],
+                $flightBpHeaders[$i]['color'],
+                $flightBpHeaders[$i]['code'],
+                $flightBpHeaders[$i]['color'],
+                $flightBpHeaders[$i]['code'],
+                $flightBpHeaders[$i]['name'],
+                $flightBpHeaders[$i]['code']
+            );
         }
 
         $paramList .= sprintf("</div></div></br>");
@@ -330,7 +298,6 @@ class ViewOptionsController extends CController
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $fdrId = intval($flightInfo['id_fdr']);
-        $bruType = $flightInfo['bruType'];
         unset($Fl);
 
         $fdr = new Fdr;
@@ -363,11 +330,11 @@ class ViewOptionsController extends CController
         $fdrInfo = $fdr->getFdrInfo($fdrId);
         $flightApHeaders = $fdr->GetBruApHeadersWithPaging($fdrId, $startIndex, $endIndex);
         $flightBpHeaders = $fdr->GetBruBpHeadersWithPaging($fdrId, $startIndex, $endIndex);
-        unset($Bru);
+        unset($fdr);
 
         $paramList = sprintf ("<div class='ListContainer'>");
 
-        if(count($flightApHeaders) < 1) {
+        if (count($flightApHeaders) < 1) {
             $paramList .= sprintf ("<div class='ApList' style='visibility:hidden'>");
         } else {
             $paramList .= sprintf ("<div class='ApList'>");
@@ -418,11 +385,11 @@ class ViewOptionsController extends CController
     {
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
         $fdr = new Fdr;
-        $fdrInfo = $fdr->GetBruInfo($fdrId);
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $flightApHeaders = $fdr->GetBruApHeadersByRequest($fdrId, $request);
         $flightBpHeaders = $fdr->GetBruBpHeadersByRequest($fdrId, $request);
         unset($fdr);
@@ -907,11 +874,11 @@ class ViewOptionsController extends CController
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
@@ -922,20 +889,16 @@ class ViewOptionsController extends CController
 
         $apParams = array();
         $bpParams = array();
-        foreach($params as $paramCode)
-        {
-            $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-            if($paramInfo["paramType"] == PARAM_TYPE_AP)
-            {
+        foreach($params as $paramCode) {
+            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+            if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
                 $apParams[] = $paramInfo['code'];
-            }
-            else if($paramInfo["paramType"] == PARAM_TYPE_BP)
-            {
+            } else if($paramInfo["paramType"] == PARAM_TYPE_BP) {
                 $bpParams[] = $paramInfo['code'];
             }
         }
 
-        unset($Bru);
+        unset($fdr);
         return array(
             'ap' => $apParams,
             'bp' => $bpParams);
@@ -948,11 +911,11 @@ class ViewOptionsController extends CController
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
@@ -963,41 +926,33 @@ class ViewOptionsController extends CController
 
         $apParams = array();
         $bpParams = array();
-        foreach($params as $paramCode)
-        {
-            $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-            if($paramInfo["paramType"] == PARAM_TYPE_AP)
-            {
+        foreach ($params as $paramCode) {
+            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+            if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
                 $apParams[] = $paramInfo['code'];
-            }
-            else if($paramInfo["paramType"] == PARAM_TYPE_BP)
-            {
+            } else if($paramInfo["paramType"] == PARAM_TYPE_BP) {
                 $bpParams[] = $paramInfo['code'];
             }
         }
 
-        unset($Bru);
+        unset($fdr);
         return array(
                 'ap' => $apParams,
                 'bp' => $bpParams);
     }
 
-    public function CreateTemplate($extFlightId, $extParamsToAdd, $extTplName)
+    public function CreateTemplate($flightId, $paramsToAdd, $tplName)
     {
-        $flightId = $extFlightId;
-        $paramsToAdd = $extParamsToAdd;
-        $tplName = $extTplName;
-
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
 
         $apTableName = $flightInfo['apTableName'];
         $bpTableName = $flightInfo['bpTableName'];
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
         $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
@@ -1005,12 +960,12 @@ class ViewOptionsController extends CController
         $paramsWithType = array();
         $Ch = new Channel;
 
-        for($i = 0; $i < count($paramsToAdd); $i++)
-        {
-            $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramsToAdd[$i]);
+        for($i = 0; $i < count($paramsToAdd); $i++) {
+            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramsToAdd[$i]);
 
-            if(isset($paramInfo['paramType']) && ($paramInfo['paramType'] == PARAM_TYPE_AP))
-            {
+            if (isset($paramInfo['paramType'])
+                && ($paramInfo['paramType'] == PARAM_TYPE_AP)
+            ) {
                 $apTableNameWithPrefix = $apTableName . "_" . $paramInfo['prefix'];
                 $paramMinMax = $Ch->GetParamMinMax($apTableNameWithPrefix,
                 $paramsToAdd[$i], $this->_user->username);
@@ -1019,14 +974,14 @@ class ViewOptionsController extends CController
                     'code' => $paramsToAdd[$i],
                     'min' => $paramMinMax['min'],
                     'max' => $paramMinMax['max']);
-            }
-            else if(isset($paramInfo['paramType']) && ($paramInfo['paramType'] == PARAM_TYPE_BP))
-            {
+            } else if(isset($paramInfo['paramType'])
+                && ($paramInfo['paramType'] == PARAM_TYPE_BP)
+            ) {
                 $paramsWithType[PARAM_TYPE_BP][] = array(
                 'code' => $paramsToAdd[$i]);
             }
         }
-        unset($Bru);
+        unset($fdr);
 
         $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
@@ -1036,34 +991,27 @@ class ViewOptionsController extends CController
         unset($PSTempl);
     }
 
-    public function UpdateParamColor($extFlightId, $extParamCode, $extParamColor)
+    public function UpdateParamColor($flightId, $paramCode, $color)
     {
-        $flightId = $extFlightId;
-        $paramCode = $extParamCode;
-        $color = $extParamColor;
-
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
 
-        if($paramInfo["paramType"] == PARAM_TYPE_AP)
-        {
-            $Bru->UpdateParamColor($cycloApTableName, $paramCode, $color);
-        }
-        else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
-        {
-            $Bru->UpdateParamColor($cycloBpTableName, $paramCode, $color);
+        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
+            $fdr->UpdateParamColor($cycloApTableName, $paramCode, $color);
+        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
+            $fdr->UpdateParamColor($cycloBpTableName, $paramCode, $color);
         }
 
-        unset($Bru);
+        unset($fdr);
     }
 
     public function UpdateExceptionComment($flightId, $excId, $text)
@@ -1207,47 +1155,78 @@ class ViewOptionsController extends CController
 
     public function getBruTemplates($data)
     {
-        if(isset($data['flightId'])) {
-            $flightId = intval($data['flightId']);
-            $bruTypeTpls = $this->ShowTempltList($flightId);
+        if (isset($data['flightId'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                json_encode($_POST) . ". Page ViewOptionsController.php";
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $flightId = intval($data['flightId']);
+        $fdrTpls = $this->ShowTempltList($flightId);
+
+        $data = array(
+            'bruTypeTpls' => $fdrTpls
+        );
+        $answ["status"] = "ok";
+        $answ["data"] = $data;
+
+        echo json_encode($answ);
+    }
+
+    public function getParamListGivenQuantity($data)
+    {
+        if(!isset($data['flightId'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page ViewOptionsController.php";
+            echo(json_encode($answ));
+        }
+
+        $flightId = intval($data['flightId']);
+
+        if (isset($data['pageNum'])) {
+            $pageNum = $data['pageNum'];
+
+            $paramsCount = $this->GetParamCount($flightId);
+            $params = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
+
+            $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING)) - 1;
+            if (count($paramsCount['apCount']) > count($paramsCount['bpCount'])) {
+                $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING)) - 1;
+            }
 
             $data = array(
-                'bruTypeTpls' => $bruTypeTpls
+                'bruTypeParams' => $params,
+                'pagination' => true,
+                'pageNum' => $pageNum,
+                'totalPages' => $totalPages
             );
+
             $answ["status"] = "ok";
             $answ["data"] = $data;
 
             echo json_encode($answ);
         } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page ViewOptionsController.php";
-            echo(json_encode($answ));
-        }
-    }
+            $paramsCount = $this->GetParamCount($flightId);
 
-    public function getParamListGivenQuantity($data)
-    {
-        if(isset($data['flightId'])) {
-            $flightId = intval($data['flightId']);
+            if((count($paramsCount['apCount']) > PARAMS_PAGING) || (count($paramsCount['bpCount']) > PARAMS_PAGING))
+            {
+                $pageNum = 0;
+                $params = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
 
-            if(isset($data['pageNum'])) {
-                $pageNum = $data['pageNum'];
-
-                $paramsCount = $this->GetParamCount($flightId);
-                $bruTypeParams = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
-
-                $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING)) - 1;
+                $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING));
                 if(count($paramsCount['apCount']) > count($paramsCount['bpCount']))
                 {
-                    $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING)) - 1;
+                    $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING));
                 }
 
                 $data = array(
-                        'bruTypeParams' => $bruTypeParams,
-                        'pagination' => true,
-                        'pageNum' => $pageNum,
-                        'totalPages' => $totalPages
+                    'bruTypeParams' => $params,
+                    'pagination' => true,
+                    'pageNum' => $pageNum,
+                    'totalPages' => $totalPages
                 );
 
                 $answ["status"] = "ok";
@@ -1255,49 +1234,18 @@ class ViewOptionsController extends CController
 
                 echo json_encode($answ);
             } else {
-                $paramsCount = $this->GetParamCount($flightId);
+                $params = $this->ShowParamList($flightId);
 
-                if((count($paramsCount['apCount']) > PARAMS_PAGING) || (count($paramsCount['bpCount']) > PARAMS_PAGING))
-                {
-                    $pageNum = 0;
-                    $bruTypeParams = $this->ShowParamListWithPaging($flightId, $pageNum, PARAMS_PAGING);
+                $data = array(
+                    'bruTypeParams' => $params,
+                    'pagination' => false
+                );
 
-                    $totalPages = intval(ceil(count($paramsCount['bpCount'])/PARAMS_PAGING));
-                    if(count($paramsCount['apCount']) > count($paramsCount['bpCount']))
-                    {
-                        $totalPages = intval(ceil(count($paramsCount['apCount'])/PARAMS_PAGING));
-                    }
+                $answ["status"] = "ok";
+                $answ["data"] = $data;
 
-                    $data = array(
-                            'bruTypeParams' => $bruTypeParams,
-                            'pagination' => true,
-                            'pageNum' => $pageNum,
-                            'totalPages' => $totalPages
-                    );
-
-                    $answ["status"] = "ok";
-                    $answ["data"] = $data;
-
-                    echo json_encode($answ);
-                } else {
-                    $bruTypeParams = $this->ShowParamList($flightId);
-
-                    $data = array(
-                            'bruTypeParams' => $bruTypeParams,
-                            'pagination' => false
-                    );
-
-                    $answ["status"] = "ok";
-                    $answ["data"] = $data;
-
-                    echo json_encode($answ);
-                }
+                echo json_encode($answ);
             }
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ViewOptionsController.php";
-            echo(json_encode($answ));
         }
     }
 

@@ -102,10 +102,11 @@ class ChartController extends CController
 
                 $Fl = new Flight();
                 $flightInfo = $Fl->GetFlightInfo($flightId);
+                $fdrId = intval($flightInfo['id_fdr']);
                 unset($Fl);
-                $bruType = $flightInfo['bruType'];
-                $Bru = new Fdr;
-                $fdrInfo = $Bru->GetBruInfo($bruType);
+
+                $fdr = new Fdr;
+                $fdrInfo = $fdr->getFdrInfo($fdrId);
                 $PSTListTableName = $fdrInfo['paramSetTemplateListTableName'];
                 $apCycloTable = $fdrInfo['gradiApTableName'];
                 $bpCycloTable = $fdrInfo['gradiBpTableName'];
@@ -115,20 +116,16 @@ class ChartController extends CController
 
                 $apParams = array();
                 $bpParams = array();
-                foreach ($params as $item)
-                {
-                    $type = $Bru->GetParamType($item, $apCycloTable, $bpCycloTable);
-                    if($type == PARAM_TYPE_AP)
-                    {
+                foreach ($params as $item) {
+                    $type = $fdr->GetParamType($item, $apCycloTable, $bpCycloTable);
+                    if ($type == PARAM_TYPE_AP) {
                         $apParams[] = $item;
-                    }
-                    else if($type == PARAM_TYPE_BP)
-                    {
+                    } else if($type == PARAM_TYPE_BP) {
                         $bpParams[] = $item;
                     }
                 }
 
-                unset($Bru);
+                unset($fdr);
                 printf("<div id='%s' class='InfoFromRequest'>%s</div>", 'apParams', implode(",", $apParams));
                 printf("<div id='%s' class='InfoFromRequest'>%s</div>", 'bpParams', implode(",", $bpParams));
             }
@@ -178,23 +175,25 @@ class ChartController extends CController
         return $workspace;
     }
 
-    public function GetApParamValue($flightId,
-        $startFrame, $endFrame, $seriesCount,
-        $code, $isPrintPage)
-    {
+    public function GetApParamValue(
+        $flightId,
+        $startFrame,
+        $endFrame,
+        $seriesCount,
+        $code,
+        $isPrintPage
+    ) {
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         $apTableName = $flightInfo['apTableName'];
         $bpTableName = $flightInfo['bpTableName'];
         $startCopyTime = $flightInfo['startCopyTime'];
         unset($Fl);
 
-        $Bru = new Fdr;
-        $bruType = $flightInfo['bruType'];
-        $fdrId = $flightInfo['id_fdr'];
-        $fdrInfo = $Bru->GetBruInfo($bruType);
-        $prefixArr = $Bru->GetBruApCycloPrefixes($fdrId);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
         $cycloApTableName = $fdrInfo["gradiApTableName"];
         $cycloBpTableName = $fdrInfo["gradiBpTableName"];
 
@@ -202,25 +201,25 @@ class ChartController extends CController
         $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
         unset($Frame);
 
-        if($startFrame == null) {
+        if ($startFrame == null) {
             $startFrame = 0;
         }
 
-        if($startFrame == null) {
+        if ($startFrame == null) {
             $endFrame = $framesCount;
         }
 
-        if($endFrame > $framesCount) {
+        if ($endFrame > $framesCount) {
             $endFrame = $framesCount;
         }
 
-        if($seriesCount == null) {
+        if ($seriesCount == null) {
             $seriesCount = 1;
         }
 
         $Ch = new Channel();
 
-        $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName,
+        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName,
             $code, PARAM_TYPE_AP);
 
         $prefix = $paramInfo["prefix"];
@@ -262,14 +261,13 @@ class ChartController extends CController
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         $apTableName = $flightInfo['apTableName'];
         $bpTableName = $flightInfo['bpTableName'];
         unset($Fl);
 
-        $Bru = new Fdr;
-        $bruType = $flightInfo['bruType'];
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $cycloApTableName = $fdrInfo["gradiApTableName"];
         $cycloBpTableName = $fdrInfo["gradiBpTableName"];
         $stepLength = $fdrInfo["stepLength"];
@@ -277,9 +275,10 @@ class ChartController extends CController
         $Ch = new Channel();
         $paramValuesArr = array();
 
-        $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_BP);
+        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_BP);
         $bpTableName = $bpTableName . "_" . $paramInfo['prefix'];
         $freq = $paramInfo['freq'];
+        unset($fdr);
 
         $syncParam = $Ch->GetBinaryParam($bpTableName, $code, $stepLength, $freq);
 
@@ -295,26 +294,23 @@ class ChartController extends CController
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $bruType = $flightInfo['bruType'];
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $gradiApTableName = $fdrInfo['gradiApTableName'];
         $gradiBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $paramInfo = $Bru->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
+        $paramInfo = $fdr->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
 
-        if($paramInfo["paramType"] == PARAM_TYPE_AP)
-        {
-            $color = $Bru->GetParamColor($gradiApTableName, $paramCode);
-        }
-        else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
-        {
-            $color = $Bru->GetParamColor($gradiBpTableName, $paramCode);
+        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
+            $color = $fdr->GetParamColor($gradiApTableName, $paramCode);
+        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
+            $color = $fdr->GetParamColor($gradiBpTableName, $paramCode);
         }
 
-        unset($Bru);
+        unset($fdr);
 
         return $color;
     }
@@ -328,119 +324,106 @@ class ChartController extends CController
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $bruType = $flightInfo['bruType'];
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $gradiApTableName = $fdrInfo['gradiApTableName'];
         $gradiBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $paramInfo = $Bru->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
+        $paramInfo = $fdr->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
 
-        if($paramInfo["paramType"] == PARAM_TYPE_AP)
-        {
-            $color = $Bru->GetParamColor($gradiApTableName, $paramCode);
-        }
-        else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
-        {
-            $color = $Bru->GetParamColor($gradiBpTableName, $paramCode);
+        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
+            $color = $fdr->GetParamColor($gradiApTableName, $paramCode);
+        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
+            $color = $fdr->GetParamColor($gradiBpTableName, $paramCode);
         }
 
         $paramInfo['color'] = $color;
 
-        unset($Bru);
+        unset($fdr);
 
         return $paramInfo;
     }
 
-    public function GetLegend($extFlightId, $extCodes)
+    public function GetLegend($flightId, $paramCodeArray)
     {
-        $flightId = $extFlightId;
-        $paramCodeArray = $extCodes;
-
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $bruType = $flightInfo['bruType'];
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        for($i = 0; $i < count($paramCodeArray); $i++)
-        {
+        for ($i = 0; $i < count($paramCodeArray); $i++) {
             $paramCode = $paramCodeArray[$i];
-            if(!empty($paramCode)) {
-                $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+            if (!empty($paramCode)) {
+                $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
 
-                if($paramInfo["paramType"] == PARAM_TYPE_AP)
-                {
+                if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
                     $infoArray[] = $paramInfo['name'].", ".
                     $paramInfo['dim'];
-                }
-                else if ($paramInfo["paramType"] == PARAM_TYPE_BP)
-                {
+                } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
                     $infoArray[] = $paramInfo['name'];
                 }
             }
         }
-        unset($Bru);
+        unset($fdr);
 
         return $infoArray;
     }
 
-    public function GetParamMinmax($exFlightId, $extParamCode, $extTplName)
+    public function GetParamMinmax($flightId, $paramCode, $tplName)
     {
-        $flightId = $exFlightId;
-        $paramCode = $extParamCode;
-        $tplName = $extTplName;
         $user = $this->_user->username;
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
-        unset($Bru);
+        unset($fdr);
 
         $PSTempl = new PSTempl;
         $minMax = $PSTempl->GetParamMinMax($PSTTableName, $tplName,
                 $paramCode, $user);
         unset($PSTempl);
 
-        if($minMax == '')
-        {
+        if ($minMax == '') {
             $minMax = array(
-                    'min' => -1,
-                    'max' => 1);
+                'min' => -1,
+                'max' => 1
+            );
         }
 
         return $minMax;
     }
 
-    public function SetParamMinmax($exFlightId, $extParamCode, $extTplName, $extMin, $extMax)
-    {
-        $flightId = $exFlightId;
-        $paramCode = $extParamCode;
-        $tplName = $extTplName;
-        $min = $extMin;
-        $max = $extMax;
+    public function SetParamMinmax(
+        $flightId,
+        $paramCode,
+        $tplName,
+        $min,
+        $max
+    ) {
         $user = $this->_user->username;
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($flightInfo['bruType']);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
-        unset($Bru);
+        unset($fdr);
 
         $PSTempl = new PSTempl;
         $PSTempl->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
@@ -449,36 +432,35 @@ class ChartController extends CController
         return "ok";
     }
 
-    public function GetFlightExceptions($extFlightId, $extRefParam)
+    public function GetFlightExceptions($flightId, $refParam)
     {
-        $flightId = $extFlightId;
-        $refParam = $extRefParam;
-
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($Fl);
 
         $excTableName = $flightInfo['exTableName'];
 
-        if($excTableName != '')
-        {
-            $bruType = $flightInfo['bruType'];
+        if ($excTableName != '') {
             $startCopyTime = $flightInfo['startCopyTime'];
             $apTableName = $flightInfo['apTableName'];
 
-            $Bru = new Fdr;
-            $fdrInfo = $Bru->GetBruInfo($bruType);
+            $fdr = new Fdr;
+            $fdrInfo = $fdr->getFdrInfo($fdrId);
             $stepLength = $fdrInfo['stepLength'];
             $cycloApTableName = $fdrInfo['gradiApTableName'];
             $cycloBpTableName = $fdrInfo['gradiBpTableName'];
             $excListTableName = $fdrInfo['excListTableName'];
-            $paramType = $Bru->GetParamType($refParam,
+            $paramType = $fdr->GetParamType($refParam,
                     $cycloApTableName,$cycloBpTableName);
             $excList = array();
-            if($paramType == PARAM_TYPE_AP)
-            {
-                $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName,
-                        $cycloBpTableName, $refParam, PARAM_TYPE_AP);
+            if ($paramType == PARAM_TYPE_AP) {
+                $paramInfo = $fdr->GetParamInfoByCode(
+                    $cycloApTableName,
+                    $cycloBpTableName,
+                    $refParam,
+                    PARAM_TYPE_AP
+                );
 
                 $prefix = $paramInfo["prefix"];
                 $apTableName = $apTableName . "_" . $prefix;
@@ -487,19 +469,15 @@ class ChartController extends CController
                 $excList = (array)$FEx->GetExcApByCode($excTableName,
                         $refParam, $apTableName, $excListTableName);
                 unset($FEx);
-            }
-            else if($paramType == PARAM_TYPE_BP)
-            {
+            } else if($paramType == PARAM_TYPE_BP) {
                 $FEx = new FlightException;
                 $excList = (array)$FEx->GetExcBpByCode($excTableName, $refParam,
                         $stepLength, $startCopyTime, $excListTableName);
                 unset($FEx);
             }
-            unset($Bru);
+            unset($fdr);
             return $excList;
-        }
-        else
-        {
+        } else {
             return 'null';
         }
 
@@ -514,22 +492,21 @@ class ChartController extends CController
 
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
-        $bruType = $flightInfo['bruType'];
+        $fdrId = intval($flightInfo['id_fdr']);
         $apTableName = $flightInfo['apTableName'];
         $bpTableName = $flightInfo['bpTableName'];
         $startCopyTime = $flightInfo['startCopyTime'];
         unset($Fl);
 
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfo($bruType);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         $stepLength = $fdrInfo['stepLength'];
         $stepDivider = $fdrInfo['stepDivider'];
         $startCopyTime = $flightInfo['startCopyTime'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        if($fromTime < $startCopyTime)
-        {
+        if ($fromTime < $startCopyTime) {
             $fromTime = $startCopyTime;
         }
 
@@ -543,14 +520,12 @@ class ChartController extends CController
         $globalRawParamArr = array();
         array_push($globalRawParamArr, $normParam);
 
-        for($i = 0; $i < count($paramCodeArr); $i++)
-        {
-            $paramType = $Bru->GetParamType($paramCodeArr[$i],
+        for ($i = 0; $i < count($paramCodeArr); $i++) {
+            $paramType = $fdr->GetParamType($paramCodeArr[$i],
                 $cycloApTableName, $cycloBpTableName);
 
-            if($paramType == PARAM_TYPE_AP)
-            {
-                $paramInfo = $Bru->GetParamInfoByCode($cycloApTableName, '',
+            if ($paramType == PARAM_TYPE_AP) {
+                $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, '',
                         $paramCodeArr[$i], PARAM_TYPE_AP);
 
                 $normParam = $Ch->GetNormalizedApParam($apTableName,
@@ -558,10 +533,8 @@ class ChartController extends CController
                     $startFrame, $endFrame);
 
                 array_push($globalRawParamArr, $normParam);
-            }
-            else if($paramType == PARAM_TYPE_BP)
-            {
-                $paramInfo = $Bru->GetParamInfoByCode('', $cycloBpTableName,
+            } else if($paramType == PARAM_TYPE_BP) {
+                $paramInfo = $fdr->GetParamInfoByCode('', $cycloBpTableName,
                         $paramCodeArr[$i], PARAM_TYPE_BP);
                 $normParam = $Ch->GetNormalizedBpParam($bpTableName,
                         $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
@@ -572,7 +545,7 @@ class ChartController extends CController
         }
 
         unset($Ch);
-        unset($Bru);
+        unset($fdr);
 
         return $globalRawParamArr;
     }
@@ -607,10 +580,11 @@ class ChartController extends CController
     {
         $F = new Flight;
         $flightInfo = $F->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         unset($F);
 
         $fdr = new Fdr;
-        $fdrInfo = $fdr->GetBruInfo($flightInfo['bruType']);
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
         unset($fdr);
 
         $userId = $this->_user->GetUserIdByName($this->_user->username);
@@ -619,7 +593,7 @@ class ChartController extends CController
         $step = $O->GetOptionValue($userId, 'printTableStep');
         unset($O);
 
-        if($step === null) {
+        if ($step === null) {
             $step = 0;
         } else {
             $step = $step * $fdrInfo['stepDivider'];

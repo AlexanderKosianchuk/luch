@@ -206,11 +206,11 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
-            $Bru = new Fdr;
+            $fdr = new Fdr;
             $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
-            $availableBruTypes = $Bru->GetBruList($availableIds);
+            $availableBruTypes = $fdr->GetBruList($availableIds);
 
-            if(count($availableBruTypes) > 0) {
+            if (count($availableBruTypes) > 0) {
                 $headerLables = [
                     $this->lang->bruTypesName,
                     $this->lang->bruTypesStepLenth,
@@ -235,7 +235,7 @@ class UserController extends CController
                         $this->lang->noDataToOpenAccess);
             }
             $form .= sprintf("</div>");
-            unset($Bru);
+            unset($fdr);
         }
 
         $form .= '</form></div>';
@@ -329,12 +329,12 @@ class UserController extends CController
         {
             $form .= sprintf("<div><p class='Label'>%s</p></br>", $this->lang->openAccessForBruTypes);
 
-            $Bru = new Fdr;
+            $fdr = new Fdr;
             $availableIds = $this->_user->GetAvailableBruTypes($this->_user->username);
-            $availableBruTypes = $Bru->GetBruList($availableIds);
+            $availableBruTypes = $fdr->GetBruList($availableIds);
             $attachedfdrIds = $this->_user->GetAvailableBruTypes($userInfo['login']);
 
-            if(count($availableBruTypes) > 0) {
+            if (count($availableBruTypes) > 0) {
                 $headerLables = [
                     $this->lang->bruTypesName,
                     $this->lang->bruTypesStepLenth,
@@ -365,7 +365,7 @@ class UserController extends CController
                         $this->lang->noDataToOpenAccess);
             }
             $form .= sprintf("</div>");
-            unset($Bru);
+            unset($fdr);
         }
 
         $form .= '</form></div>';

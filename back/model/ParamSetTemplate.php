@@ -32,17 +32,14 @@ class PSTempl
         unset($c);
     }
 
-    public function AddPSTTable($extBruType, $extPSTTableName)
+    public function AddPSTTable($fdrId, $PSTTableName)
     {
-        $bruType = $extBruType;
-        $PSTTableName = $extPSTTableName;
-
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
         $query = "UPDATE `fdrs`
             SET paramSetTemplateListTableName = '".
-            $PSTTableName."' WHERE bruType='".$bruType."';";
+            $PSTTableName."' WHERE id='".$fdrId."';";
         $stmt = $link->prepare($query);
         $stmt->execute();
         $stmt->close();
@@ -51,10 +48,8 @@ class PSTempl
         unset($c);
     }
 
-    public function GetPSTList($extPSTListTableName, $extUser)
+    public function GetPSTList($PSTListTableName, $user)
     {
-        $PSTListTableName = $extPSTListTableName;
-        $user = $extUser;
         $PSTList = array();
 
         $c = new DataBaseConnector;

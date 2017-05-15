@@ -24,11 +24,6 @@ import 'flot-charts/jquery.flot.resize';
 import 'datatables';
 import 'bootstrap-loader';
 
-// libs with export
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-
 // lib styles
 import 'jquery-ui/themes/base/all.css';
 import 'jstree/dist/themes/default/style.min.css';
@@ -47,6 +42,15 @@ import 'stylesheets/pages/searchFlight.css';
 import 'stylesheets/pages/login.css';
 import 'stylesheets/pages/calibration.css';
 import 'stylesheets/style.css';
+
+// libs with export
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { Route } from 'react-router';
+import { ConnectedRouter } from 'react-router-redux';
+import createHistory from 'history/createBrowserHistory'
+import { routerMiddleware } from 'react-router-redux';
 
 // old prototypes
 import Language from "Language";
@@ -70,7 +74,9 @@ import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingPr
 import startFlightUploadingAction from 'actions/startFlightUploading';
 import completeFlightUploadingAction from 'actions/completeFlightUploading';
 
-const store = configureStore({});
+const history = createHistory();
+const routerMiddlewareInstance = routerMiddleware(history);
+const store = configureStore({}, routerMiddlewareInstance);
 
 $(document).ready(function () {
     var i18n = {},
@@ -154,16 +160,14 @@ $(document).ready(function () {
             }
         };
 
+debugger;
         ReactDOM.render(
             <Provider store={ store }>
-                <Flights
-                    i18n={ i18n }
-                    userLogin={ userLogin }
-                    userLang={ userLang }
-                    avaliableLanguages={ avaliableLanguages }
-                    flightsServise={ flightsServise }
-                    topMenuService={ topMenuService }
-                />
+                <ConnectedRouter history={ history }>
+                  <div>
+                    <Route exact path="/" component={ Flights } />
+                  </div>
+                </ConnectedRouter>
             </Provider>,
             wsp.get(0)
         );

@@ -30,7 +30,6 @@ class PrinterController extends CController
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $fdrId = intval($flightInfo['id_fdr']);
-        $bruType = $flightInfo['bruType'];
         unset($Fl);
 
         $fdr = new Fdr;

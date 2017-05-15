@@ -37,43 +37,44 @@ class SearchFlightController extends CController
     public function GetFlightsByCriteria($filterData)
     {
         $filterParams = [];
-        if(isset($filterData['fdr']) && !empty($filterData['fdr'])) {
-            $FDR = new Fdr;
-            $FDRinfo = $FDR->GetBruInfoById($filterData['fdr']);
+        if (isset($filterData['fdr']) && !empty($filterData['fdr'])) {
+            $fdr = new Fdr;
+            $fdrInfo = $fdr->getFdrInfo($filterData['fdr']);
             $filterParams['bruType'] = $fdrInfo['name'];
+            unset($fdr);
         }
 
-        if(isset($filterData['bort']) && !empty($filterData['bort'])) {
+        if (isset($filterData['bort']) && !empty($filterData['bort'])) {
             $filterParams['bort'] = $filterData['bort'];
         }
 
-        if(isset($filterData['voyage']) && !empty($filterData['voyage'])) {
+        if (isset($filterData['voyage']) && !empty($filterData['voyage'])) {
             $filterParams['voyage'] = $filterData['voyage'];
         }
 
-        if(isset($filterData['departureAirport']) && !empty($filterData['departureAirport'])) {
+        if (isset($filterData['departureAirport']) && !empty($filterData['departureAirport'])) {
             $filterParams['departureAirport'] = $filterData['departureAirport'];
         }
 
-        if(isset($filterData['arrivalAirport']) && !empty($filterData['arrivalAirport'])) {
+        if (isset($filterData['arrivalAirport']) && !empty($filterData['arrivalAirport'])) {
             $filterParams['arrivalAirport'] = $filterData['arrivalAirport'];
         }
 
-        if(isset($filterData['aditionalInfo']) && !empty($filterData['aditionalInfo'])) {
+        if (isset($filterData['aditionalInfo']) && !empty($filterData['aditionalInfo'])) {
             $filterParams['flightAditionalInfo'] = $filterData['aditionalInfo'];
         }
 
-        if(isset($filterData['performer']) && !empty($filterData['performer'])) {
+        if (isset($filterData['performer']) && !empty($filterData['performer'])) {
             $filterParams['performer'] = $filterData['performer'];
         }
 
-        if(isset($filterData['flightDateFrom']) &&
+        if (isset($filterData['flightDateFrom']) &&
                 !empty($filterData['flightDateFrom']) &&
                 strtotime($filterData['flightDateFrom'])) {
             $filterParams['from'] = strtotime($filterData['flightDateFrom']);
         }
 
-        if(isset($filterData['flightDateTo']) &&
+        if (isset($filterData['flightDateTo']) &&
                 !empty($filterData['flightDateTo']) &&
                 strtotime($filterData['flightDateTo'])) {
             $filterParams['to'] = strtotime($filterData['flightDateTo']);
@@ -169,79 +170,7 @@ class SearchFlightController extends CController
 
     public function showSearchForm($data)
     {
-        if(isset($data['data']))
-        {
-            $form = '';
-            $form .= sprintf("<div class='search-flight-filter'>");
-            $form .= sprintf("<form id='search-form' enctype='multipart/form-data'>");
-
-            $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
-
-            $fdr = new Fdr;
-            $bruList = $fdr->GetBruList($avalibleBruTypes);
-            unset($fdr);
-
-            $optionString = "";
-
-            $selectedFdr = '';
-            foreach($bruList as $fdrInfo)
-            {
-                if($selectedFdr == '') {
-                    $selectedFdr = $fdrInfo['id'];
-                    $optionString .="<option selected='selected' value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
-                } else {
-                    $optionString .="<option value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
-                }
-            }
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->bruType);
-            $form .= sprintf("<select id='fdrForFilter' name='fdr' class='search-form-inputs'>%s</select>", $optionString);
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->bort);
-            $form .= sprintf("<input name='bort' type='text' class='search-form-inputs' value=''/>");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->voyage);
-            $form .= sprintf("<input name='voyage' type='text' class='search-form-inputs' value=''/>");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->departureAirport);
-            $form .= sprintf("<input type='text' name='departureAirport' class='search-form-inputs' value=''/>");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->arrivalAirport);
-            $form .= sprintf("<input type='text' name='arrivalAirport' class='search-form-inputs' value=''/>");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->flightDateFrom);
-            $form .= sprintf("<input type='date' name='flightDateFrom' class='search-form-inputs' />");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->flightDateTo);
-            $form .= sprintf("<input type='date' name='flightDateTo' class='search-form-inputs' />");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->performer);
-            $form .= sprintf("<input name='performer' type='text' class='search-form-inputs' value=''/>");
-
-            $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->aditionalInfo);
-            $form .= sprintf("<input name='aditionalInfo' type='text' class='search-form-inputs' value='' />");
-
-            $form .= "</form>";
-            $form .= "</div>";
-
-            $alg = $this->BuildSearchFlightAlgorithmesList($selectedFdr);
-
-            $form .= sprintf("<div class='search-form-alg'><form id='search-form-alg-list'>%s</form></div>", $alg);
-            $form .= sprintf("<div id='search-form-flights' class='search-form-flights'>&nbsp;</div>");
-            $form .= "<div class='search-form-clear'></div>";
-
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                'status' => 'ok',
-                'data' => $form
-            );
-
-            echo json_encode($answ);
-            exit();
-        }
-        else
-        {
+        if(!isset($data['data'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page search.php";
@@ -249,6 +178,74 @@ class SearchFlightController extends CController
             echo(json_encode($answ));
             exit();
         }
+
+        $form = '';
+        $form .= sprintf("<div class='search-flight-filter'>");
+        $form .= sprintf("<form id='search-form' enctype='multipart/form-data'>");
+
+        $avalibleBruTypes = $this->_user->GetAvailableBruTypes($this->_user->username);
+
+        $fdr = new Fdr;
+        $fdrList = $fdr->GetBruList($avalibleBruTypes);
+        unset($fdr);
+
+        $optionString = "";
+
+        $selectedFdr = '';
+        foreach($fdrList as $fdrInfo) {
+            if ($selectedFdr == '') {
+                $selectedFdr = $fdrInfo['id'];
+                $optionString .="<option selected='selected' value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
+            } else {
+                $optionString .="<option value='".$fdrInfo['id']."'>".$fdrInfo['name']."</option>";
+            }
+        }
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->bruType);
+        $form .= sprintf("<select id='fdrForFilter' name='fdr' class='search-form-inputs'>%s</select>", $optionString);
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->bort);
+        $form .= sprintf("<input name='bort' type='text' class='search-form-inputs' value=''/>");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->voyage);
+        $form .= sprintf("<input name='voyage' type='text' class='search-form-inputs' value=''/>");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->departureAirport);
+        $form .= sprintf("<input type='text' name='departureAirport' class='search-form-inputs' value=''/>");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->arrivalAirport);
+        $form .= sprintf("<input type='text' name='arrivalAirport' class='search-form-inputs' value=''/>");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->flightDateFrom);
+        $form .= sprintf("<input type='date' name='flightDateFrom' class='search-form-inputs' />");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->flightDateTo);
+        $form .= sprintf("<input type='date' name='flightDateTo' class='search-form-inputs' />");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->performer);
+        $form .= sprintf("<input name='performer' type='text' class='search-form-inputs' value=''/>");
+
+        $form .= sprintf("<p class='search-form-labels'>%s</p>", $this->lang->aditionalInfo);
+        $form .= sprintf("<input name='aditionalInfo' type='text' class='search-form-inputs' value='' />");
+
+        $form .= "</form>";
+        $form .= "</div>";
+
+        $alg = $this->BuildSearchFlightAlgorithmesList($selectedFdr);
+
+        $form .= sprintf("<div class='search-form-alg'><form id='search-form-alg-list'>%s</form></div>", $alg);
+        $form .= sprintf("<div id='search-form-flights' class='search-form-flights'>&nbsp;</div>");
+        $form .= "<div class='search-form-clear'></div>";
+
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => $form
+        );
+
+        echo json_encode($answ);
+        exit();
     }
 
     public function getFilters($data)

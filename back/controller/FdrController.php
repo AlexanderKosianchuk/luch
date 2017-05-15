@@ -65,7 +65,6 @@ class FdrController extends CController
 
         $fdr = new Fdr;
         $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $bruType = $fdrInfo['name'];
         $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
@@ -81,7 +80,7 @@ class FdrController extends CController
             $paramSetTemplateListTableName = $dummy . "_pst";
             $PSTTableName = $paramSetTemplateListTableName;
             $PSTempl->CreatePSTTable($PSTTableName);
-            $PSTempl->AddPSTTable($bruType, $PSTTableName);
+            $PSTempl->AddPSTTable($fdrId, $PSTTableName);
         }
 
         //here builds template options list
@@ -90,12 +89,10 @@ class FdrController extends CController
         $foundedEventsTplName = $this->lang->foundedEventsTplName;
 
         //if performed exception search and isset events
-        if(!(empty($excEventsList)))
-        {
+        if(!(empty($excEventsList))) {
             $params    = "";
             $paramsToAdd = array();
-            for($i = 0; $i < count($excEventsList); $i++)
-            {
+            for ($i = 0; $i < count($excEventsList); $i++) {
                 $params .= $excEventsList[$i] . ", ";
                     $paramsToAdd[] = $excEventsList[$i];
             }
@@ -217,14 +214,10 @@ class FdrController extends CController
         return $paramList;
     }
 
-    public function CreateTemplate($extBruTypeId, $extTplName, $extParams)
+    public function CreateTemplate($user, $tplName, $paramsToAdd)
     {
-        $bruTypeId = $extBruTypeId;
-        $tplName = $extTplName;
-        $paramsToAdd = $extParams;
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo(intval($user));
         $gradiApTableName = $fdrInfo ['gradiApTableName'];
         $gradiBpTableName = $fdrInfo ['gradiBpTableName'];
         $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
@@ -232,8 +225,8 @@ class FdrController extends CController
         $paramsWithType = array ();
         $Ch = new Channel;
 
-        for($i = 0; $i < count ( $paramsToAdd ); $i ++) {
-            $paramInfo = $Bru->GetParamInfoByCode ( $gradiApTableName, $gradiBpTableName, $paramsToAdd [$i] );
+        for ($i = 0; $i < count ( $paramsToAdd ); $i ++) {
+            $paramInfo = $fdr->GetParamInfoByCode ( $gradiApTableName, $gradiBpTableName, $paramsToAdd [$i] );
             if ($paramInfo ['paramType'] == PARAM_TYPE_AP) {
 
                 $paramsWithType [PARAM_TYPE_AP] [] = array (
@@ -247,14 +240,14 @@ class FdrController extends CController
                 );
             }
         }
-        unset ( $Bru );
+        unset ($fdr);
 
         $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
 
         $apCount = count ( $paramsWithType [PARAM_TYPE_AP] );
 
-        for($i = 0; $i < count ( $paramsWithType [PARAM_TYPE_AP] ); $i ++) {
+        for ($i = 0; $i < count ( $paramsWithType [PARAM_TYPE_AP] ); $i ++) {
             $paramCode = $paramsWithType [PARAM_TYPE_AP] [$i];
             $yMax = $paramsWithType [PARAM_TYPE_AP] [$i] ['max'];
             $yMin = $paramsWithType [PARAM_TYPE_AP] [$i] ['min'];
@@ -296,15 +289,12 @@ class FdrController extends CController
         return "ok";
     }
 
-    public function DeleteTemplate($extBruTypeId, $extTplName)
+    public function DeleteTemplate($fdrId, $tplName)
     {
-        $bruTypeId = $extBruTypeId;
-        $tplName = $extTplName;
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo(intval($fdrId));
         $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
-        unset ( $Bru );
+        unset ($fdr);
 
         $PSTempl = new PSTempl;
         $PSTempl->DeleteTemplate ( $PSTTableName, $tplName, $this->_user->username);
@@ -313,15 +303,12 @@ class FdrController extends CController
         return "ok";
     }
 
-    public function SetDefaultTemplate($extBruTypeId, $extTplName)
+    public function SetDefaultTemplate($fdrId, $tplName)
     {
-        $bruTypeId = $extBruTypeId;
-        $tplName = $extTplName;
-
-        $Bru = new Fdr;
-        $fdrInfo = $Bru->GetBruInfoById ($bruTypeId);
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo(intval($fdrId));
         $PSTTableName = $fdrInfo ['paramSetTemplateListTableName'];
-        unset ( $Bru );
+        unset ($fdr);
 
         $PSTempl = new PSTempl;
         $PSTempl->SetDefaultTemplate($PSTTableName, $tplName, $this->_user->username);
@@ -367,78 +354,58 @@ class FdrController extends CController
 
     public function editingBruTypeTemplatesReceiveTplsList($data)
     {
-        if(isset($data['bruTypeId']))
-        {
-            $bruTypeId = $data['bruTypeId'];
-            $tplsList = $this->GetTplsList($bruTypeId);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                    'status' => 'ok',
-                    'data' => array(
-                            'bruTypeTpls' => $tplsList
-                    )
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if (!isset($data['bruTypeId'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
+            exit;
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $tplsList = $this->GetTplsList($fdrId);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => array(
+                'bruTypeTpls' => $tplsList
+            )
+        );
+
+        echo json_encode($answ);
     }
 
     public function editingBruTypeTemplatesReceiveParamsList($data)
     {
-        if(isset($data['bruTypeId'])) {
-            $bruTypeId = intval($data['bruTypeId']);
-            $paramsList = $this->ShowParamList($bruTypeId);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                'status' => 'ok',
-                'data' => array(
-                    'bruTypeParams' => $paramsList
-                )
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if (!isset($data['bruTypeId'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $paramsList = $this->ShowParamList($fdrId);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => array(
+                'bruTypeParams' => $paramsList
+            )
+        );
+
+        echo json_encode($answ);
     }
 
     public function createTpl($data)
     {
-        if(isset($data['bruTypeId']) &&
-                    isset($data['name']) &&
-                    isset($data['params']))
-        {
-            $bruTypeId = $data['bruTypeId'];
-            $name = $data['name'];
-            $params = $data['params'];
-
-            $this->CreateTemplate($bruTypeId, $name, $params);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                    'status' => 'ok',
-                    'data' => array()
-            );
-
-            echo json_encode($answ);
-        }
-        else
+        if (!isset($data['bruTypeId'])
+            || !isset($data['name'])
+            || !isset($data['params']))
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -446,135 +413,144 @@ class FdrController extends CController
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $name = $data['name'];
+        $params = $data['params'];
+
+        $this->CreateTemplate($fdrId, $name, $params);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+                'status' => 'ok',
+                'data' => array()
+        );
+
+        echo json_encode($answ);
     }
 
     public function deleteTpl($data)
     {
-        if(isset($data['bruTypeId']) &&
-                isset($data['name']))
-        {
-            $bruTypeId = $data['bruTypeId'];
-            $name = $data['name'];
-
-            $this->DeleteTemplate($bruTypeId, $name);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                    'status' => 'ok',
-                    'data' => array()
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if (!isset($data['bruTypeId'])
+            || !isset($data['name'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
+            exit;
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $name = $data['name'];
+
+        $this->DeleteTemplate($fdrId, $name);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => array()
+        );
+
+        echo json_encode($answ);
     }
 
     public function defaultTpl($data)
     {
-        if(isset($data['bruTypeId']) &&
-                isset($data['name']))
-        {
-            $bruTypeId = $data['bruTypeId'];
-            $name = $data['name'];
-
-            $this->SetDefaultTemplate($bruTypeId, $name);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                    'status' => 'ok',
-                    'data' => array()
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if(!isset($data['bruTypeId'])
+            || !isset($data['name'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $name = $data['name'];
+
+        $this->SetDefaultTemplate($fdrId, $name);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => []
+        );
+
+        echo json_encode($answ);
     }
 
     public function updateTpl($data)
     {
-        if(isset($data['bruTypeId']) &&
-                isset($data['name']) &&
-                isset($data['tplOldName']) &&
-                isset($data['params']))
-        {
-            $bruTypeId = $data['bruTypeId'];
-            $name = $data['name'];
-            $tplOldName = $data['tplOldName'];
-            $params = $data['params'];
-
-            $this->DeleteTemplate($bruTypeId, $tplOldName);
-            $this->CreateTemplate($bruTypeId, $name, $params);
-            $this->RegisterActionExecution($this->action, "executed");
-
-            $answ = array(
-                    'status' => 'ok',
-                    'data' => array()
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if(!isset($data['bruTypeId'])
+            || !isset($data['name'])
+            || !isset($data['tplOldName'])
+            || !isset($data['params'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
+            exit;
         }
+
+        $fdrId = intval($data['bruTypeId']);
+        $name = $data['name'];
+        $tplOldName = $data['tplOldName'];
+        $params = $data['params'];
+
+        $this->DeleteTemplate($fdrId, $tplOldName);
+        $this->CreateTemplate($fdrId, $name, $params);
+        $this->RegisterActionExecution($this->action, "executed");
+
+        $answ = array(
+            'status' => 'ok',
+            'data' => array()
+        );
+
+        echo json_encode($answ);
     }
 
     public function copyTemplate($data)
     {
-        if(isset($data['flightId']) &&
-                isset($data['tplName']))
-        {
-            $flightId = $data['flightId'];
-            $tplName = $data['tplName'];
-
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            unset($Fl);
-
-            $bruType = $flightInfo['bruType'];
-            $Bru = new Fdr;
-            $fdrInfo = $Bru->GetBruInfo ($bruType);
-            $tableName = $fdrInfo ['paramSetTemplateListTableName'];
-            unset ( $Bru );
-
-            $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
-            $username = $this->_user->username;
-            $PSTempl = new PSTempl;
-            $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
-            $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
-            unset($PSTempl);
-
-            $answ = 'ok';
-
-            $this->RegisterActionExecution($this->action, "executed");
-            echo json_encode($answ);
-        }
-        else
-        {
+        if (!isset($data['flightId'])
+            || !isset($data['tplName'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $flightId = intval($data['flightId']);
+        $tplName = $data['tplName'];
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $tableName = $fdrInfo ['paramSetTemplateListTableName'];
+        unset ($fdr);
+
+        $newName = date('Y-m-d') . '_' . $this->_user->username . '_' . $this->generateRandomString(3);
+        $username = $this->_user->username;
+        $PSTempl = new PSTempl;
+        $tpl = $PSTempl->getTemplate($tableName, $oldName, $username);
+        $PSTempl->createTemplate($newName, $tpl, $tableName, $username);
+        unset($PSTempl);
+
+        $answ = 'ok';
+
+        $this->RegisterActionExecution($this->action, "executed");
+        echo json_encode($answ);
+
     }
 
     public function getFdrTypes($args)
