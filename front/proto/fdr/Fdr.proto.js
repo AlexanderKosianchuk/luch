@@ -1,15 +1,11 @@
 import FdrTemplates from "FdrTemplates";
 
-function Fdr(window, document, langStr, eventHandler)
+function Fdr(langStr)
 {
-    var langStr = langStr,
-
-    window = window;
-    document = document;
+    var langStr = langStr;
 
     this.bruTypeId = null;
     this.task = null;
-    this.eventHandler = eventHandler;
     this.bruTypeListFactoryContainer = null;
 
     ///
@@ -34,7 +30,7 @@ function Fdr(window, document, langStr, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(GeneralInfo == null){
-                    GeneralInfo = new FdrGeneralInfo(langStr, eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new FdrGeneralInfo(langStr, that.bruTypeListFactoryContainer);
                 };
 
                 GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -47,7 +43,7 @@ function Fdr(window, document, langStr, eventHandler)
                 target.addClass('LeftMenuRowSelected', {duration:500});
 
                 if(Templates == null){
-                    Templates = new FdrTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new FdrTemplates(langStr, that.bruTypeListFactoryContainer);
                 };
 
                 Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
@@ -78,7 +74,7 @@ function Fdr(window, document, langStr, eventHandler)
     ///
 
     this.ResizeBruTypeContainer = function(e) {
-        that.eventHandler.trigger("resizeShowcase");
+        $(document).trigger("resizeShowcase");
         return this;
     };
 
@@ -125,7 +121,7 @@ function Fdr(window, document, langStr, eventHandler)
                         bruTypeListWorkspace.empty();
                     }
 
-                    GeneralInfo = new FdrGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    GeneralInfo = new FdrGeneralInfo(langStr, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
                 } else if(task == 'editingBruTypeGeneralInfo'){
@@ -135,13 +131,13 @@ function Fdr(window, document, langStr, eventHandler)
                         bruTypeListWorkspace.empty();
                     }
 
-                    var GeneralInfo = new FdrGeneralInfo(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    var GeneralInfo = new FdrGeneralInfo(langStr, that.bruTypeListFactoryContainer);
                     GeneralInfo.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
 
                 } else if(task == 'editingBruTypeTemplates'){
                     $("#editBruTplsLeftMenuRow").addClass("LeftMenuRowSelected");
 
-                    Templates = new FdrTemplates(langStr, that.eventHandler, that.bruTypeListFactoryContainer);
+                    Templates = new FdrTemplates(langStr, that.bruTypeListFactoryContainer);
                     Templates.Show(bruTypeId, bruTypeListTopMenu, bruTypeListWorkspace);
                 }
 
@@ -173,7 +169,7 @@ Fdr.prototype.copyTemplate = function(flightId, tplName) {
                 that.bruTypeListFactoryContainer
             ];
 
-            that.eventHandler.trigger("viewFlightOptions", data);
+            $(document).trigger("viewFlightOptions", data);
 
             $dfd.resolve();
         }

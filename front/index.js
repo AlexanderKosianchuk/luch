@@ -50,7 +50,9 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router';
 import { ConnectedRouter } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory'
-import { routerMiddleware } from 'react-router-redux';
+import { routerMiddleware, routerActions } from 'react-router-redux';
+import { setLocale, loadTranslations, syncTranslationWithStore } from 'react-redux-i18n';
+import { UserAuthWrapper } from 'redux-auth-wrapper';
 
 // old prototypes
 import Language from "Language";
@@ -68,29 +70,35 @@ import Calibration from "Calibration";
 import Results from 'components/results/Results';
 import Flights from 'components/flights/Flights';
 import UserOptions from 'components/user-options/UserOptions';
+import UserLogin from 'components/user-login/UserLogin';
 import configureStore from 'store/configureStore';
 
 import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
 import startFlightUploadingAction from 'actions/startFlightUploading';
 import completeFlightUploadingAction from 'actions/completeFlightUploading';
 
+import translationsEn from 'translations/translationsEn';
+import translationsEs from 'translations/translationsEs';
+import translationsRu from 'translations/translationsRu';
+
+const translationsObject = {...translationsEn, ...translationsEs, ...translationsRu};
 const history = createHistory();
 const routerMiddlewareInstance = routerMiddleware(history);
 const store = configureStore({}, routerMiddlewareInstance);
 
+store.dispatch(loadTranslations(translationsObject));
+store.dispatch(setLocale('en'));
+
 $(document).ready(function () {
-    var i18n = {},
+    var i18n = null,
         $document = $(document),
         $window = $(window),
         userLang = $('html').attr("lang"),
-        userLogin = $('html').attr("login"),
-        avaliableLanguages = $('html').attr("avaliable-languages").toUpperCase().split(','),
-        eventHandler = $('#eventHandler'),
         LA = new Language(userLang),
         W = new WindowFactory($window, $document),
         FU = null,
         FO = null,
-        B = null,
+        F = null,
         C = null,
         U = null,
         FL = null,
@@ -100,42 +108,14 @@ $(document).ready(function () {
     LA.GetLanguage().done(function (data) {
         var langStr = i18n = data;
         var wsp = W.NewShowcase();
-        FL = new FlightList(langStr, eventHandler, userLogin, store);
-        FU = new FlightUploader($window, $document, langStr, eventHandler);
-        FO = new FlightViewOptions($window, $document, langStr, eventHandler);
-        B = new Fdr($window, $document, langStr, eventHandler);
-        C = new Chart($window, $document, langStr, eventHandler);
-        U = new User($window, $document, langStr, eventHandler);
-        SF = new SearchFlight($window, $document, langStr, eventHandler);
-        CLB = new Calibration($window, $document, langStr, eventHandler);
-
-        let flightsServise = {
-            showFlightsList: function () {
-                eventHandler.trigger("flightListShow", [
-                    $('#flightsContainer')
-                ]);
-            },
-            showFlightSearch: function () {
-                eventHandler.trigger("flightSearchFormShow", [
-                    $('#flightsContainer')
-                ]);
-            },
-            showResults: function () {
-                eventHandler.trigger("resultsLeftMenuRow", [
-                    $('#flightsContainer')
-                ]);
-            },
-            showCalibrations: function () {
-                eventHandler.trigger("calibrationFormShow", [
-                    $('#flightsContainer')
-                ]);
-            },
-            showUsers: function () {
-                eventHandler.trigger("userShowList", [
-                    $('#flightsContainer')
-                ]);
-            }
-        };
+        FL = new FlightList(langStr, store);
+        FU = new FlightUploader(langStr);
+        FO = new FlightViewOptions(langStr);
+        F = new Fdr(langStr);
+        C = new Chart(langStr);
+        U = new User(langStr);
+        SF = new SearchFlight(langStr);
+        CLB = new Calibration(langStr);
 
         let topMenuService = {
             userLogout: function() {
@@ -160,47 +140,54 @@ $(document).ready(function () {
             }
         };
 
-debugger;
+        // Redirects to /login by default
+        const UserIsAuthenticated = UserAuthWrapper({
+            authSelector: state => state.user, // how to get the user state
+            redirectAction: routerActions.replace, // the redux action to dispatch for redirect
+            wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
+        });
+
         ReactDOM.render(
             <Provider store={ store }>
                 <ConnectedRouter history={ history }>
                   <div>
-                    <Route exact path="/" component={ Flights } />
+                    <Route exact path="/" component={ UserIsAuthenticated(Flights) } />
+                    <Route exact path="/login" component={ UserLogin } />
                   </div>
                 </ConnectedRouter>
             </Provider>,
             wsp.get(0)
         );
 
-        let currentValue;
-        function select(state) {
+        let currentFlightUploadingStateValue;
+        function selectFlightUploadingState(state) {
             return state.flightUploadingState.length;
         }
 
         store.subscribe(() => {
-            let previousValue = currentValue;
-             currentValue = select(store.getState())
+            let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
+             currentFlightUploadingStateValue = selectFlightUploadingState(store.getState())
 
-             if ((currentValue === 0)
-                && (previousValue > 0)
-            ) {
-                eventHandler.trigger("flightListShow", [
+             if ((currentFlightUploadingStateValue === 0)
+                && (previousFlightUploadingStateValue > 0)
+             ) {
+                $(document).trigger("flightListShow", [
                     $('#flightsContainer')
                 ]);
              }
         });
     });
 
-    eventHandler.on("resizeShowcase", function (e) {
+    $(document).on("resizeShowcase", function (e) {
         W.ResizeShowcase(e);
     });
 
-    eventHandler.on("uploadWithPreview", function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
+    $(document).on("uploadWithPreview", function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
         var showcase = W.NewShowcase();
         FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
     });
 
-    eventHandler.on("importItem", function (e, form) {
+    $(document).on("importItem", function (e, form) {
         let dfd = $.Deferred();
         FU.Import(form, dfd);
         dfd.promise();
@@ -208,7 +195,7 @@ debugger;
         dfd.then(
             () => {
                 if ($('#flightsContainer')) {
-                    eventHandler.trigger("flightListShow", [
+                    $(document).trigger("flightListShow", [
                         $('#flightsContainer')
                     ]);
                     return this;
@@ -220,7 +207,7 @@ debugger;
     });
 
 
-    eventHandler.on("removeShowcase", function (e, data, callback) {
+    $(document).on("removeShowcase", function (e, data, callback) {
         var flightUploaderFactoryContainer = data;
         W.RemoveShowcase(flightUploaderFactoryContainer);
 
@@ -233,13 +220,13 @@ debugger;
     //FlightList
     ///
 
-    eventHandler.on("startProccessing", function (e, uploadingUid) {
+    $(document).on("startProccessing", function (e, uploadingUid) {
         store.dispatch(startFlightUploadingAction({
             uploadingUid: uploadingUid
         }));
     });
 
-    eventHandler.on("endProccessing", function (e, uploadingUid) {
+    $(document).on("endProccessing", function (e, uploadingUid) {
         store.dispatch(() => () => {
             dispatch({
                 type: 'FLIGHT_UPLOADING_COMPLETE',
@@ -250,7 +237,7 @@ debugger;
         });
     });
 
-    eventHandler.on("convertSelectedClicked", function (e) {
+    $(document).on("convertSelectedClicked", function (e) {
         W.RemoveShowcases(1);
 
         if (FL !== null) {
@@ -258,7 +245,7 @@ debugger;
         }
     });
 
-    eventHandler.on("flightListShow", function (e, someshowcase) {
+    $(document).on("flightListShow", function (e, someshowcase) {
         if (someshowcase === null) {
             W.RemoveShowcases(1);
             someshowcase = W.NewShowcase();
@@ -269,7 +256,7 @@ debugger;
         FL.FillFactoryContaider(someshowcase);
     });
 
-    eventHandler.on("userOptionsShow", function (e, showcase) {
+    $(document).on("userOptionsShow", function (e, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -285,7 +272,7 @@ debugger;
         );
     });
 
-    eventHandler.on("viewFlightOptions", function (e, flightId, task, someshowcase) {
+    $(document).on("viewFlightOptions", function (e, flightId, task, someshowcase) {
         if (someshowcase === null) {
             W.RemoveShowcases(1);
             someshowcase = W.NewShowcase();
@@ -306,7 +293,7 @@ debugger;
         }
     });
 
-    eventHandler.on("showBruTypeEditingForm", function (e, bruTypeId, task, showcase) {
+    $(document).on("showBruTypeEditingForm", function (e, bruTypeId, task, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -315,17 +302,17 @@ debugger;
         }
 
         if (bruTypeId !== null) {
-            B.bruTypeId = bruTypeId;
+            F.bruTypeId = bruTypeId;
         }
 
         if (task !== null) {
-            B.task = task;
+            F.task = task;
         }
 
-        B.FillFactoryContaider(showcase);
+        Fdr.FillFactoryContaider(showcase);
     });
 
-    eventHandler.on("resultsLeftMenuRow", function (e, showcase) {
+    $(document).on("resultsLeftMenuRow", function (e, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -341,15 +328,15 @@ debugger;
         );
     });
 
-    eventHandler.on("userLogout", function (e) {
+    $(document).on("userLogout", function (e) {
         U.logout();
     });
 
-    eventHandler.on("userChangeLanguage", function (e, lang) {
+    $(document).on("userChangeLanguage", function (e, lang) {
         U.changeLanguage(lang);
     });
 
-    eventHandler.on("userShowList", function (e, showcase) {
+    $(document).on("userShowList", function (e, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -360,7 +347,7 @@ debugger;
         U.FillFactoryContaider(showcase);
     });
 
-    eventHandler.on("flightSearchFormShow", function (e, showcase) {
+    $(document).on("flightSearchFormShow", function (e, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -371,7 +358,7 @@ debugger;
         SF.FillFactoryContaider(showcase);
     });
 
-    eventHandler.on("calibrationFormShow", function (e, showcase) {
+    $(document).on("calibrationFormShow", function (e, showcase) {
         if (showcase === null) {
             W.RemoveShowcases(1);
             showcase = W.NewShowcase();
@@ -382,7 +369,7 @@ debugger;
         CLB.FillFactoryContaider(showcase);
     });
 
-    eventHandler.on("showChart", function (e,
+    $(document).on("showChart", function (e,
             flightId, tplName,
             stepLength, startCopyTime, startFrame, endFrame,
             apParams, bpParams) {
@@ -399,8 +386,8 @@ debugger;
         }
     });
 
-    eventHandler.on("saveChartTpl", function (e, flightId, tplName, saveChartTplCb) {
-        B.copyTemplate(flightId, tplName).then(saveChartTplCb);
+    $(document).on("saveChartTpl", function (e, flightId, tplName, saveChartTplCb) {
+        Fdr.copyTemplate(flightId, tplName).then(saveChartTplCb);
     });
 
     var allowScrollUp = false;

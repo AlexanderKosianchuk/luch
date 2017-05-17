@@ -1,14 +1,10 @@
-function FlightViewOptions(window, document, langStr, eventHandler)
+function FlightViewOptions(langStr)
 {
     this.langStr = langStr;
 
     this.flightId = null;
     this.task = null;
 
-    this.window = window;
-    this.document = document;
-
-    this.eventHandler = eventHandler;
     this.flightOptionsFactoryContainer = null;
     this.flightOptionsTopMenu = null;
     this.flightOptionsLeftMenu = null;
@@ -75,7 +71,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
             }
 
             self.ResizeFlightViewOptionsContainer();
-            self.document.scrollTop(factoryContainer.data("index") * self.window.height());
+            $(document).scrollTop(factoryContainer.data("index") * $(window).height());
 
         } else {
             console.log(answ["error"]);
@@ -116,7 +112,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
 
 FlightViewOptions.prototype.ResizeFlightViewOptionsContainer = function(e) {
     var self = this;
-    self.eventHandler.trigger("resizeShowcase");
+    $(document).trigger("resizeShowcase");
     return false;
 }
 
@@ -225,7 +221,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                                                 startFrame, endFrame,
                                                 apParams, bpParams];
 
-                                        self.eventHandler.trigger("showChart", data);
+                                        $(document).trigger("showChart", data);
 
                                     } else {
                                         console.log(answ["error"]);
@@ -247,7 +243,7 @@ FlightViewOptions.prototype.ShowTopMenuEventsListButtons = function(){
                                                 startFrame, endFrame,
                                                 apParams, bpParams];
 
-                                        self.eventHandler.trigger("showChart", data);
+                                        $(document).trigger("showChart", data);
 
                                     } else {
                                         console.log(answ["error"]);
@@ -635,7 +631,7 @@ FlightViewOptions.prototype.ShowTopMenuParamsListButtons = function(){
                                     startFrame, endFrame,
                                     apParams, bpParams];
 
-                            self.eventHandler.trigger("showChart", data);
+                            $(document).trigger("showChart", data);
 
                         } else {
                             console.log(answ["error"]);
@@ -850,7 +846,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
                             "</div>";
 
                         $("#bruTypeParamsPaginatedList").height(
-                                self.window.innerHeight() -
+                                $(window).innerHeight() -
                                 self.flightOptionsTopMenu.height() -
                                 self.flightOptionsOptions.height() -
                                 paginationContainer$.outerHeight() - 180
@@ -1225,7 +1221,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
                                         startFrame, endFrame,
                                         apParams, bpParams];
 
-                                self.eventHandler.trigger("showChart", data);
+                                $(document).trigger("showChart", data);
 
                             } else {
                                 console.log(answ["error"]);
@@ -1252,7 +1248,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
                                         startFrame, endFrame,
                                         apParams, bpParams];
 
-                                self.eventHandler.trigger("showChart", data);
+                                $(document).trigger("showChart", data);
 
                             } else {
                                 console.log(answ["error"]);
@@ -1287,7 +1283,7 @@ FlightViewOptions.prototype.ShowTopMenuTempltListButtons = function(){
                                 'editingBruTypeTemplates',
                                 self.flightOptionsFactoryContainer];
 
-                    self.eventHandler.trigger("showBruTypeEditingForm", data);
+                    $(document).trigger("showBruTypeEditingForm", data);
                 } else {
                     console.log(answ['error']);
                 }

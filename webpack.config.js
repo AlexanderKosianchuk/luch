@@ -8,8 +8,7 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 module.exports = {
     entry: {
         chart: './front/chart',
-        index: './front/index',
-        login: './front/login'
+        index: './front/index'
     },
     output: {
         path: path.join(__dirname, '/public'),

@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-function SearchFlight($window, document, langStr, eventHandler) {
+function SearchFlight(langStr) {
     'use strict';
 
     var userId = null,
@@ -12,7 +12,7 @@ function SearchFlight($window, document, langStr, eventHandler) {
     this.task = null;
 
     this.ResizeContainer = function(e) {
-        eventHandler.trigger("resizeShowcase");
+        $(document).trigger("resizeShowcase");
         return this;
     };
 

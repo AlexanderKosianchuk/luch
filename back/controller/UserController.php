@@ -860,4 +860,56 @@ class UserController extends CController
         echo json_encode(['status' => 'ok']);
         exit;
     }
+
+    public function login ($args)
+    {
+        if (empty($args)
+            || !(isset($args['login']))
+            || !(isset($args['pass']))
+        ) {
+            header('HTTP/1.0 401 Unauthorized');
+            echo json_encode([
+                'error' => 'Not all necessary fields passed',
+                'code' => 0
+            ]);
+            exit;
+        }
+
+        $U = new User();
+        $data = [
+            'user' => $args['login'],
+            'pwd' => $args['pass']
+        ];
+
+        $success = false;
+        $lang = 'en';
+
+        if ($U->tryAuth($data, $_SESSION, $_COOKIE)) {
+            if (isset($U->username) && ($U->username != '')) {
+                $usrInfo = $U->GetUsersInfo($U->username);
+                $lang = strtolower($usrInfo['lang']);
+
+                echo json_encode([
+                    'status' => 'ok',
+                    'login' => $args['login'],
+                    'lang' => $lang
+                ]);
+                exit;
+            } else {
+                header('HTTP/1.0 401 Unauthorized');
+                echo json_encode([
+                    'error' => 'Incorrect login or password',
+                    'code' => 1
+                ]);
+                exit;
+            }
+        } else {
+            header('HTTP/1.0 401 Unauthorized');
+            echo json_encode([
+                'error' => 'Incorrect login or password',
+                'code' => 1
+            ]);
+            exit;
+        }
+    }
 }

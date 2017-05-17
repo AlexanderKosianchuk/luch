@@ -1,5 +1,5 @@
 
-function FdrTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
+function FdrTemplates(langStr, bruTypeListFactoryContainer) {
     var langStr = langStr
 
     var bruTypeId = null;
@@ -186,7 +186,7 @@ function FdrTemplates(langStr, eventHandler, bruTypeListFactoryContainer) {
                     'getBruTemplates',
                     factoryWindow];
 
-                eventHandler.trigger("viewFlightOptions", data);
+                $(document).trigger("viewFlightOptions", data);
             });
         }
     },

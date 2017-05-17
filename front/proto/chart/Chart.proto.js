@@ -8,15 +8,11 @@ var LEGEND_CONTAINER_OUTER = 175,
     PARAM_TYPE_AP = "ap",
     PARAM_TYPE_BP = "bp";
 
-function Chart(window, document, langStr, eventHandler, isPrintPage)
+function Chart(langStr, isPrintPage)
 {
     this.langStr = langStr;
     this.isPrintPage = isPrintPage || false;
 
-    this.window = window;
-    this.document = document;
-
-    this.eventHandler = eventHandler;
     this.chartFactoryContainer = null;
     this.chartTopMenu = null;
     this.chartWorkspace = null;
@@ -88,7 +84,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             self.chartWorkspace = $('div#chartWorkspace');
             self.chartContent = $('div#graphContainer');
 
-            self.loadingBox = $("div#loadingBox").css("top", self.window.height() / 2 - 40);
+            self.loadingBox = $("div#loadingBox").css("top", $(window).height() / 2 - 40);
             self.legend = $('div#legend');
             self.placeholder = $('div#placeholder');
 
@@ -101,7 +97,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             });
 
             self.ResizeChartContainer();
-            self.document.scrollTop(factoryContainer.data("index") * self.window.height());
+            $(document).scrollTop(factoryContainer.data("index") * $(window).height());
 
             self.LoadFlotChart();
         } else {
@@ -167,7 +163,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
                             }, 2000);
                         }
                     ];
-                    self.eventHandler.trigger("saveChartTpl", data);
+                    $(document).trigger("saveChartTpl", data);
                 }
             }).append(
                 $("<span><span>")
@@ -199,7 +195,6 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             if(answ["status"] == "ok") {
                 var url = answ["data"];
                 location.href = url;
-                //window.open = url;
             }
         });
     }
@@ -215,7 +210,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             "startCopyTime=" + self.startCopyTime + "&" +
             "startFrame=" + self.startFrame + "&" +
             "endFrame=" + self.endFrame;
-        window.open(location.origin + getParams, '_blank');
+        $(window).open(location.origin + getParams, '_blank');
     }
 }
 
@@ -224,9 +219,9 @@ Chart.prototype.ResizeChartContainer = function(e) {
     if(self.chartWorkspace != null){
         self.chartWorkspace.css({
             "left": 0,
-            "top" : self.window.height() * 2,
-            "height": self.window.height(),
-            "width": self.window.width()
+            "top" : $(window).height() * 2,
+            "height": $(window).height(),
+            "width": $(window).width()
         });
     }
 
@@ -237,7 +232,7 @@ Chart.prototype.ResizeChartContainer = function(e) {
         self.chartContent.css({
             "left": 0,
             "top" : self.chartTopMenu.height(),
-            "width" : self.window.width(),
+            "width" : $(window).width(),
             "height": self.chartWorkspace.height() -
                 self.chartTopMenu.height()
         });
@@ -251,7 +246,7 @@ Chart.prototype.ResizeChartContainer = function(e) {
 
         self.placeholder.css({
             "margin-top": '30px',
-            "width": self.window.width() - LEGEND_CONTAINER_OUTER + 'px',
+            "width": $(window).width() - LEGEND_CONTAINER_OUTER + 'px',
             "height": self.chartContent.height() - 35 + 'px'
             });
         self.legend.css({
@@ -260,7 +255,7 @@ Chart.prototype.ResizeChartContainer = function(e) {
             "height": self.placeholder.height() - 25 + 'px'
         });
 
-        self.placeholder.css("width",  (self.window.width() - (self.legend.width() + 30) +
+        self.placeholder.css("width",  ($(window).width() - (self.legend.width() + 30) +
             (self.apParams.length + self.bpParams.length) * 18) + "px");
 
         if((self.apParams.length == 1) && (self.bpParams.length == 0)){
@@ -271,7 +266,7 @@ Chart.prototype.ResizeChartContainer = function(e) {
         }
     }
 
-    self.eventHandler.trigger("resizeShowcase");
+    $(document).trigger("resizeShowcase");
 
     return false;
 }
@@ -620,7 +615,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
         CTRL = 17;
 
     //build bar
-    self.document.keyup(function(event) {
+    $(document).keyup(function(event) {
         if(self.Legnd.verticalTextInput) {
             var yAxArr = self.plot.getYAxes();
             for(var i = 0; i < yAxArr.length; i++){
@@ -784,7 +779,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
         }
     });
     var moveVerticalTimeout = true;
-    self.document.keydown(function(event) {
+    $(document).keydown(function(event) {
         if(event.which == KEY_ARROW_LEFT){
             if(self.shiftPressed) {
                 if(moveVerticalTimeout && !self.Legnd.crosshairLocked) {

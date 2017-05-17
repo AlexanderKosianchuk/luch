@@ -1,9 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import FlightsTopMenu from 'components/flights-top-menu/FlightsTopMenu';
 import MainMenu from 'components/main-menu/MainMenu';
 
-export default class Flights extends React.Component {
+import showFlightsListAction from 'actions/showFlightsList';
+
+class Flights extends React.Component {
     constructor(props) {
         super (props);
         this.state = {
@@ -22,26 +26,18 @@ export default class Flights extends React.Component {
     }
 
     handleMenuItemClick (action) {
-        this.props.flightsServise[action]();
         this.setState({ showMenu: false });
     }
 
     componentDidMount() {
-        this.props.flightsServise.showFlightsList();
+        this.props.showFlightsList();
     }
 
     render () {
         return (
             <span>
-                <FlightsTopMenu
-                    i18n={ this.props.i18n }
-                    userLogin={ this.props.userLogin }
-                    userLang={ this.props.userLang }
-                    avaliableLanguages={ this.props.avaliableLanguages }
-                    topMenuService={ this.props.topMenuService }
-                />
+                <FlightsTopMenu />
                 <MainMenu
-                    i18n={ this.props.i18n }
                     isShown={ this.state.showMenu }
                     toggleMenu={ this.handleToggleMenu.bind(this) }
                     handleMenuItemClick={ this.handleMenuItemClick.bind(this) }
@@ -51,3 +47,11 @@ export default class Flights extends React.Component {
         );
     }
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        showFlightsList: bindActionCreators(showFlightsListAction, dispatch)
+    }
+}
+
+export default connect(() => { return {} }, mapDispatchToProps)(Flights);

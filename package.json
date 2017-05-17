@@ -68,6 +68,7 @@
     "colorpicker-amin": "^1.2.1",
     "datatables": "^1.10.13",
     "flot-charts": "^0.8.3",
+    "history": "^4.6.1",
     "jquery": "^2.1.1",
     "jquery-mousewheel": "^3.1.13",
     "jquery-ui": "^1.12.1",
@@ -79,7 +80,9 @@
     "react": "^15.4.2",
     "react-circular-progressbar": "^0.1.3",
     "react-dom": "^15.4.2",
+    "react-redux-i18n": "^1.8.0",
     "react-router-redux": "^5.0.0-alpha.6",
+    "redux-auth-wrapper": "^1.1.0",
     "uuid": "^3.0.1"
   }
 }

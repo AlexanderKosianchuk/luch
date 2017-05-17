@@ -85,47 +85,6 @@ class CController
         return $success;
     }
 
-    public function ShowLoginForm()
-    {
-        $loginMsg = isset($this->_user->loginMsg) ? $this->_user->loginMsg : '';
-
-        $files = scandir ('public/');
-        $scriptName = '';
-        foreach ($files as $item) {
-            $fileParts = pathinfo($item);
-            if ((strpos($item, 'login') !== false)
-                && ($fileParts['extension'] === 'js')
-            ) {
-                $scriptName = $item;
-            }
-        }
-        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
-        printf("<div align='center' class='login-form'><p class='login-form_header'>%s</p>
-            <img src='/front/stylesheets/basicImg/login-logo.png' alt='luch logo'/></br>
-            <p><label class='login-form_label login-form_label--alert'>%s</label></p>
-            <form action='index.php' method='POST'>
-            <table>
-                <tr><td><label class='login-form_label'>%s</label></td><td>
-                    <input type='text' name='user' class='login-form_input'>
-                </td></tr>
-                <tr><td><label class='login-form_label'>%s</label></td><td>
-                    <input type='password' name='pwd' class='login-form_input'>
-                </td></tr>
-                <tr><td><label class='login-form_label'>%s</label></td><td align='center'>
-                    <input type='checkbox' name='autologin' value='1' class='login-form_checkbox'>
-                </td></tr>
-            </table>
-
-            <input class='login-form_button' type='submit' value='%s'>
-        </form></div>", $this->lang->loginForm,
-        $loginMsg,
-        $this->lang->userName,
-        $this->lang->pass,
-        $this->lang->rememberMe,
-
-        $this->lang->login);
-    }
-
     public function RegisterActionExecution($action, $status,
          $senderId = null, $senderName = null, $targetId = null, $targetName = null)
    {

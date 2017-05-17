@@ -1,7 +1,7 @@
 import uuidV4 from 'uuid/v4';
 import 'flot-charts/jquery.flot.selection';
 
-function FlightUploader(window, document, langStr, eventHandler)
+function FlightUploader(langStr)
 {
     this.langStr = langStr;
     this.firstUploadedComplt = false;
@@ -15,10 +15,6 @@ function FlightUploader(window, document, langStr, eventHandler)
 
     this.plotRequests = 0;
     this.plotRequestsClosed = 0;
-
-    this.eventHandler = eventHandler;
-    this.window = window;
-    this.document = document;
 
     this.flightUploaderFactoryContainer = null;
     this.flightUploaderTopMenu = null;
@@ -49,7 +45,7 @@ FlightUploader.prototype.FillFactoryContaider = function(
     this.ShowFlightUploadingOptions();
 
     this.ResizeFlightUploader();
-    this.document.scrollTop(factoryContainer.data("index") * this.window.height());
+    $(document).scrollTop(factoryContainer.data("index") * $(window).height());
 
     this.UploadForPreview(form).done(function(data) {
         self.GetFlightParams(0, uploadingUid, data.file, fdrId, calibrationId);
@@ -87,7 +83,7 @@ FlightUploader.prototype.ResizeFlightUploader = function(e) {
     ){
         self.flightUploaderContent.css({
             'width': self.flightUploaderFactoryContainer.width() - 10,
-            "height": self.window.height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35, //35 because padding and margin
+            "height": $(window).height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35, //35 because padding and margin
         });
     }
 }
@@ -142,7 +138,7 @@ FlightUploader.prototype.GetFlightParams = function(
                     var parentContainer = $("div#fileFlightInfo" + index),
                         previewParamsRaw = parentContainer.data("previewparams"),
                         flightInfoColunmWidth = 450,
-                        chartWidth = self.window - flightInfoColunmWidth - 30,
+                        chartWidth = $(window).width() - flightInfoColunmWidth - 30,
                         previewParams = Array();
 
                     if(previewParamsRaw.indexOf(";") > -1) {
@@ -184,7 +180,7 @@ FlightUploader.prototype.GetFlightParams = function(
                     var parentContainer = $("div#fileFlightInfo" + index),
                         previewParamsRaw = parentContainer.data("previewparams"),
                         flightInfoColunmWidth = 450,
-                        chartWidth = self.window - flightInfoColunmWidth - 30,
+                        chartWidth = $(window).width() - flightInfoColunmWidth - 30,
                         previewParams = Array();
 
                     if(previewParamsRaw.indexOf(";") > -1) {
@@ -287,9 +283,6 @@ FlightUploader.prototype.PreviewChart = function (parent,
         chartWidth){
 
     var self = this;
-
-    //$("#flightUploaderContent").css("height", self.window.height() - self.optionsMenuHeight - self.topMenuHeight - 35);
-    //console.log($("#flightUploaderContent").css("height"));
 
     self.ResizeFlightUploader();
 
@@ -598,18 +591,18 @@ FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previe
             //fire to index event to show flight list
             self.mainContainerOptions.slideUp(function(e){
                 self.mainContainerOptions.empty();
-                self.eventHandler.trigger("convertSelectedClicked");
+                $(document).trigger("convertSelectedClicked");
             });
         }
 
         var counter = 0;
 
-        self.eventHandler.trigger("removeShowcase", [
+        $(document).trigger("removeShowcase", [
             self.flightUploaderFactoryContainer,
             function() {
                 var interval = setInterval(function() {
                     if (counter < 200) {
-                        self.window.scrollTop(0);
+                        $(document).scrollTop(0);
                     } else {
                         clearInterval(interval);
                     }
@@ -796,12 +789,12 @@ FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
         url: ENTRY_URL,
         async: true
     }).done(function(answ){
-        self.eventHandler.trigger("endProccessing", [uploadingUid]);
+        $(document).trigger("endProccessing", [uploadingUid]);
     }).fail(function(mess){
         console.log(mess);
     });
 
-    self.eventHandler.trigger("startProccessing", [uploadingUid]);
+    $(document).trigger("startProccessing", [uploadingUid]);
 }
 
 

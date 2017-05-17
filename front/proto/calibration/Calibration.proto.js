@@ -3,7 +3,7 @@
 import 'chosen-js';
 import 'chosen-js/chosen.css';
 
-function Calibration($window, document, langStr, eventHandler) {
+function Calibration(langStr) {
     'use strict';
 
     var userId = null,
@@ -16,7 +16,7 @@ function Calibration($window, document, langStr, eventHandler) {
 
     this.resizeContainer = function(e)
     {
-        eventHandler.trigger("resizeShowcase");
+        $(document).trigger("resizeShowcase");
         return this;
     };
 

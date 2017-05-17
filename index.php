@@ -19,8 +19,6 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
     <link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
 </head>
 <body>
-<?php if ($c->_user && ($c->_user->username !== null)): ?>
-
     <div id='root'><div>
 
     <?php
@@ -32,9 +30,5 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 
         $c->PutScripts();
     ?>
-<?php else: ?>
-    <?php $c->ShowLoginForm(); ?>
-<?php endif; ?>
-
 </body>
 </html>

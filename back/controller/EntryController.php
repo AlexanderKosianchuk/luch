@@ -12,8 +12,10 @@ class EntryController extends CController
     {
         $this->setAttributes();
 
-        if (!$this->IsAppLoggedIn()) {
-            $this->ShowLoginForm();
+        if (!$this->IsAppLoggedIn()
+            && ($this->action !== 'user/login')
+        ) {
+            echo (json_encode('Auth failed'));
             exit;
         }
 

@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-function User($window, document, langStr, eventHandler) {
+function User(langStr) {
     'use strict';
 
     var userId = null,
@@ -15,7 +15,7 @@ function User($window, document, langStr, eventHandler) {
     this.task = null;
 
     this.ResizeUserContainer = function () {
-        eventHandler.trigger("resizeShowcase");
+        $(document).trigger("resizeShowcase");
         return this;
     };
 
@@ -36,7 +36,7 @@ function User($window, document, langStr, eventHandler) {
         }).done(function () {
             $('<form></form>')
                 .css({display: 'none'})
-                .attr('action', window.location.protocol + '//' + window.location.host)
+                .attr('action', $(window).location.protocol + '//' + $(window).location.host)
                 .attr('method', 'get')
                 .appendTo('body')
                 .submit();
@@ -60,7 +60,7 @@ function User($window, document, langStr, eventHandler) {
         }).done(function () {
             $('<form></form>')
                 .css({display: 'none'})
-                .attr('action', window.location.protocol + '//' + window.location.host)
+                .attr('action', $(window).location.protocol + '//' + $(window).location.host)
                 .attr('method', 'get')
                 .appendTo('body')
                 .submit();

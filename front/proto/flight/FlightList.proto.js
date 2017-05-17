@@ -6,12 +6,10 @@ import { Provider } from 'react-redux';
 import FlightListOptions from 'components/flight-list-options/FlightListOptions';
 import flightListChangeCheckstateAction from 'actions/flightListChangeCheckstate';
 
-function FlightList(langStr, eventHandler, userLogin, store) {
+function FlightList(langStr, store) {
     this.langStr = this.i18n = langStr;
-    this.userLogin = userLogin;
     this.store = store;
 
-    this.eventHandler = eventHandler;
     this.flightListFactoryContainer = null;
     this.flightListWorkspace = null;
     this.flightListOptions = null;
@@ -135,7 +133,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
             let currentTarget = event.currentTarget;
             let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
             let data = [flightId, "getEventsList", null]
-            self.eventHandler.trigger("viewFlightOptions", data);
+            $(document).trigger("viewFlightOptions", data);
 
             return false;
         });
@@ -248,7 +246,7 @@ FlightList.prototype.ResizeFlightList = function(e) {
 }
 
 FlightList.prototype.TriggerResize = function() {
-    this.eventHandler.trigger("resizeShowcase");
+    $(document).trigger("resizeShowcase");
 }
 
 FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
@@ -390,7 +388,7 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
         async: true
     }).done(function(msg){
         if(msg['status'] === 'ok') {
-            window.location = msg['zipUrl'];
+            $(window).location = msg['zipUrl'];
         }
     }).fail(function(msg){
         console.log(msg);

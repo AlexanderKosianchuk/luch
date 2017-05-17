@@ -3,12 +3,15 @@ import './flights-top-menu.sass';
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Translate } from 'react-redux-i18n';
 
 import FlightUploaderDropdown from 'components/flight-uploader-dropdown/FlightUploaderDropdown';
 import FlightImporterDropdown from 'components/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'components/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
-export default class FlightsTopMenu extends React.Component {
+import logoutAction from 'actions/logout';
+
+class FlightsTopMenu extends React.Component {
     logout() {
         this.props.topMenuService.userLogout();
     }
@@ -23,8 +26,10 @@ export default class FlightsTopMenu extends React.Component {
     }
 
     buildLanguageMenu() {
-        return this.props.avaliableLanguages.map(item => {
-            if (item.toUpperCase() !== this.props.userLang.toUpperCase()) {
+        return Object.keys(this.props.avaliableLanguages).map(item => {
+            if ((item.length === 2) // language only 2 symbol length
+                && (item.toUpperCase() !== this.props.userLang.toUpperCase())
+            ) {
                 return <li key={ item }><a href="#" onClick={ this.changeLanguage.bind(this) } data-lang={ item }>{ item }</a></li>
             }
         });
@@ -51,24 +56,18 @@ export default class FlightsTopMenu extends React.Component {
                   <ul className="nav navbar-nav">
                     <li className="dropdown">
                       <a href="#" className="flight-importer-dropdown-toggle dropdown-toggle is-hoverable" role="button">
-                        { this.props.i18n.fileImport }
+                        <Translate value='flightsTopMenu.fileImport'/>
                       </a>
-                      <FlightImporterDropdown
-                        i18n={ this.props.i18n }
-                        topMenuService={ this.props.topMenuService }
-                      />
+                      <FlightImporterDropdown/>
                     </li>
                   </ul>
 
                   <ul className="nav navbar-nav">
                     <li className="dropdown">
                       <a href="#" className="flight-uploader-dropdown-toggle dropdown-toggle is-hoverable" role="button">
-                        { this.props.i18n.flightUploaderUpload }
+                        <Translate value='flightsTopMenu.flightUploaderUpload'/>
                       </a>
-                      <FlightUploaderDropdown
-                          i18n={ this.props.i18n }
-                          topMenuService={ this.props.topMenuService }
-                      />
+                      <FlightUploaderDropdown/>
                     </li>
                   </ul>
 
@@ -99,3 +98,19 @@ export default class FlightsTopMenu extends React.Component {
         );
     }
 }
+
+function mapStateToProps (state) {
+    return {
+        userLogin: state.user.login,
+        userLang: state.user.lang,
+        avaliableLanguages: state.i18n.translations
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        logout: bindActionCreators(logoutAction, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlightsTopMenu);

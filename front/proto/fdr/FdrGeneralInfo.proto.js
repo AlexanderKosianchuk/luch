@@ -1,7 +1,6 @@
 
-function FdrGeneralInfo(langStr, eventHandler, bruTypeListFactoryContainer) {
-    var langStr = langStr,
-        eventHandler = eventHandler;
+function FdrGeneralInfo(langStr, bruTypeListFactoryContainer) {
+    var langStr = langStr;
 
     var bruTypeId = null;
 

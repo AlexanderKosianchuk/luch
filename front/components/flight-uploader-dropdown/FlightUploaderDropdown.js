@@ -8,6 +8,7 @@ import Switch from 'react-bootstrap-switch';
 import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.css';
 import FileInput from 'react-file-input';
 import uuidV4 from 'uuid/v4';
+import { Translate } from 'react-redux-i18n';
 
 import ContentLoader from 'components/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
@@ -112,16 +113,16 @@ class FlightUploaderDropdown extends React.Component {
     buildBody() {
         if (!this.props.fdrTypesListPending) {
             return <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
-                <li><a href="#"><b>{ this.props.i18n.flightUploading }</b></a></li>
+                <li><a href="#"><b><Translate value='flightUploaderDropdown.flightUploading'/></b></a></li>
                 { this.putFdrList() }
                 { this.putCalibrationList() }
                 <li><a href="#">
-                    <span className="flight-uploader-dropdown__switch-label">Предпросмотр</span>
+                    <span className="flight-uploader-dropdown__switch-label"><Translate value='flightUploaderDropdown.preview'/></span>
                     <Switch
                         value={ this.props.previewState }
                         bsSize="mini"
-                        onText={ this.props.i18n.on }
-                        offText={ this.props.i18n.off }
+                        onText={ <Translate value='flightUploaderDropdown.on'/> }
+                        offText={ <Translate value='flightUploaderDropdown.off'/> }
                         onChange={ this.handleSwitchChange.bind(this) }
                     />
                 </a></li>
@@ -130,7 +131,7 @@ class FlightUploaderDropdown extends React.Component {
                         <FileInput
                            className="btn btn-default"
                            name="flightFile"
-                           placeholder={ this.props.i18n.chooseFile }
+                           placeholder={ <Translate value='flightUploaderDropdown.chooseFile'/> }
                            value={ this.state.file }
                            onChange={ this.handleChange.bind(this) }
                          />
@@ -140,7 +141,7 @@ class FlightUploaderDropdown extends React.Component {
         }
 
         return <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
-            <li><a href="#"><b>{ this.props.i18n.flightUploading }</b></a></li>
+            <li><a href="#"><b><Translate value='flightUploaderDropdown.flightUploading'/></b></a></li>
             <li><ContentLoader margin={ 5 } size={ 75 } /></li>
         </ul>;
     }
