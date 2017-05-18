@@ -180,6 +180,7 @@ select.FlightUploadingInputs {
 
 .Tree {
     width:255px;
+    min-height: 500px;
     float:left;
     overflow-y:auto;
     overflow-x:scroll;

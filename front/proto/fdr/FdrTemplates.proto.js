@@ -334,7 +334,6 @@ function FdrTemplates(langStr, bruTypeListFactoryContainer) {
                 .attr("size", "160")
                 .attr("multiple", false)
                 .addClass("BruTypeTplListSelect")
-                .addClass("is-scrollable")
                 .appendTo(bruTypeListContent);
 
             AddNewTemplateCtrls(bruTypeListContent);
@@ -342,7 +341,6 @@ function FdrTemplates(langStr, bruTypeListFactoryContainer) {
             $("<div></div>")
                 .attr("id", "bruTypeTplParamsListContainer")
                 .addClass("TemplatesParamsListContainer")
-                .addClass("is-scrollable")
                 .appendTo(bruTypeListContent);
 
             ReceiveTplsList()

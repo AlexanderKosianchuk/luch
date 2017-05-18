@@ -1,6 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightFilterItem from 'components/flight-filter-item/FlightFilterItem';
 import applyFlightFilterAction from 'actions/applyFlightFilter';
@@ -11,13 +12,13 @@ class FlightFilter extends React.Component {
         super(props);
 
         const fields = [
-            ["fdr-type", "flight-filter-fdr-type", props.i18n.fdrType, ''],
-            ["bort", "flight-filter-bort",  props.i18n.bort, ''],
-            ["flight", "flight-filter-flight",  props.i18n.voyage, ''],
-            ["departure-airport", "flight-filter-departure-airport",  props.i18n.departureAirport, 'DDDD'],
-            ["arrival-airport", "flight-filter-arrival-airport",  props.i18n.arrivalAirport, 'AAAA'],
-            ["from-date", "flight-filter-from-date",  props.i18n.departureFromDate, 'YYYY/mm/dd'],
-            ["to-date", "flight-filter-to-date",  props.i18n.departureToDate, 'YYYY/mm/dd']
+            ["fdr-type", "flight-filter-fdr-type", I18n.t('flightFilter.fdrType'), ''],
+            ["bort", "flight-filter-bort",  I18n.t('flightFilter.bort'), ''],
+            ["flight", "flight-filter-flight",  I18n.t('flightFilter.voyage'), ''],
+            ["departure-airport", "flight-filter-departure-airport",  I18n.t('flightFilter.departureAirport'), 'DDDD'],
+            ["arrival-airport", "flight-filter-arrival-airport",  I18n.t('flightFilter.arrivalAirport'), 'AAAA'],
+            ["from-date", "flight-filter-from-date",  I18n.t('flightFilter.departureFromDate'), 'YYYY/mm/dd'],
+            ["to-date", "flight-filter-to-date",  I18n.t('flightFilter.departureToDate'), 'YYYY/mm/dd']
         ];
 
         this.flightFilterItems = fields.map((field) =>
@@ -40,10 +41,10 @@ class FlightFilter extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit.bind(this)}>
-                <p><b>{ this.props.i18n.flightInfoFilter }</b></p>
+                <p><b><Translate value='flightFilter.flightInfoFilter'/></b></p>
                 { this.flightFilterItems }
                 <div className="form-group">
-                    <input type="submit" className="btn btn-default" value={ this.props.i18n.apply }/>
+                    <input type="submit" className="btn btn-default" value={ I18n.t('flightFilter.apply') }/>
                 </div>
             </form>
         );

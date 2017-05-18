@@ -1,6 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import ContentLoader from 'components/content-loader/ContentLoader';
 import SettlementsReportRow from 'components/settlements-report-row/SettlementsReportRow';
@@ -8,7 +9,7 @@ import SettlementsReportRow from 'components/settlements-report-row/SettlementsR
 class SettlementsReport extends React.Component {
     buildReport(pending, report) {
         if (pending === null) {
-            return this.props.i18n.setParamsForReportGenerating;
+            return I18n.t('settlementsReport.setParamsForReportGenerating');
         }
 
         if (pending) {
@@ -16,7 +17,7 @@ class SettlementsReport extends React.Component {
         }
 
         if (!report || report.length === 0) {
-            return this.props.i18n.noDataToGenerateReport;
+            return I18n.t('settlementsReport.noDataToGenerateReport');
         }
 
         let rows = [];
@@ -51,7 +52,7 @@ class SettlementsReport extends React.Component {
         let body = this.buildReport(this.props.pending, this.props.report);
         return (
             <div>
-                <p><b>{ this.props.i18n.settlementsReport }</b></p>
+                <p><b><Translate value='settlementsReport.settlementsReport' /></b></p>
                 { body }
             </div>
         );

@@ -139,7 +139,7 @@ class ViewOptionsController extends CController
             unset($FEx);
         }
 
-        $flightTplsStr = "<select id='tplList' size='10' class='TplListSelect is-scrollable' multiple>";
+        $flightTplsStr = "<select id='tplList' size='10' class='TplListSelect' multiple>";
 
         //here builds template options list
         $flightTplsStr .= $this->BuildTplOptionList($paramSetTemplateListTableName, $fdrId);
@@ -175,7 +175,7 @@ class ViewOptionsController extends CController
         unset($PSTempl);
 
         $flightTplsStr .= "</select><br><br>
-            <textarea id='tplComment' class='TplListTextareaComment is-scrollable'
+            <textarea id='tplComment' class='TplListTextareaComment'
                 rows='10' readonly/></textarea>";
 
         return $flightTplsStr;

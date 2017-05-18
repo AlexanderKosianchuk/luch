@@ -1,4 +1,3 @@
-import queryString from 'query-string';
 import { push } from 'react-router-redux'
 
 export default function logout(payload) {
@@ -7,7 +6,7 @@ export default function logout(payload) {
             type: 'LOGOUT_PENDING'
         });
 
-        fetch('/entry.php?action=user/logout&' + queryString.stringify(payload),
+        fetch('/entry.php?action=user/userLogout&data=some-data',
             { credentials: "same-origin" }
         ).then((response) => {
                 response
@@ -19,7 +18,7 @@ export default function logout(payload) {
                                 payload: json
                             });
 
-                            dispatch(push('/'));
+                            dispatch(push('/login'));
                         } else {
                             dispatch({
                                 type: 'LOGOUT_FAILED',

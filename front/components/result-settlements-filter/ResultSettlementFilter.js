@@ -1,6 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import changeSettlementItemCheckstateAction from 'actions/changeSettlementItemCheckstate';
 import applySettlementFilterAction from 'actions/applySettlementFilter';
@@ -28,10 +29,7 @@ class ResultSettlementFilter extends React.Component {
 
     buildSettlements(settlements) {
         return settlements.map((settlement) => {
-            let label = settlement.text;
-            if (this.props.i18n[settlement.text]) {
-                label = this.props.i18n[settlement.text];
-            }
+            let label = I18n.t('resultSettlementFilter.' + settlement.text);
 
             return (
                 <SettlementsFilterItem
@@ -53,7 +51,7 @@ class ResultSettlementFilter extends React.Component {
     }
 
     render() {
-        let body = this.props.i18n.putFlightFilter;
+        let body = I18n.t('resultSettlementFilter.putFlightFilter');
         let button ='';
         let settlementFilter  = this.props.settlementFilter;
 
@@ -61,7 +59,7 @@ class ResultSettlementFilter extends React.Component {
             && settlementFilter
             && (settlementFilter.pending === false)
         ) {
-            body = this.props.i18n.noMonitoredParamsOnSpecifyedFilter;
+            body = I18n.t('resultSettlementFilter.noMonitoredParamsOnSpecifyedFilter');
         }
 
         if (settlementFilter && settlementFilter.pending) {
@@ -75,13 +73,13 @@ class ResultSettlementFilter extends React.Component {
         ) {
             body = this.buildSettlements(settlementFilter.avaliableSettlements);
             button = <div className="form-group">
-                <input type="submit" className="btn btn-default" value={ this.props.i18n.apply } />
+                <input type="submit" className="btn btn-default" value={ I18n.t('resultSettlementFilter.apply') } />
             </div>;
         }
 
         return (
             <form onSubmit={this.handleSubmit.bind(this)}>
-                <p><b>{ this.props.i18n.monitoredParameters }</b></p>
+                <p><b><Translate value='resultSettlementFilter.monitoredParameters' /></b></p>
                 { body }
                 { button }
             </form>

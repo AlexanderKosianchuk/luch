@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import FileInput from 'react-file-input';
-import { Translate } from 'react-redux-i18n';
+import { Translate, I18n } from 'react-redux-i18n';
 
 class FlightImporterDropdown extends React.Component {
     constructor(props) {
@@ -41,7 +41,7 @@ class FlightImporterDropdown extends React.Component {
                       <FileInput
                          className="btn btn-default"
                          name="flightFileArchive"
-                         placeholder={ <Translate value='flightImporterDropdown.fileImport'/> }
+                         placeholder={ I18n.t('flightUploaderDropdown.chooseFile') }
                          value={ this.state.file }
                          onChange={ this.handleChange.bind(this) }
                        />

@@ -8,7 +8,7 @@ import Switch from 'react-bootstrap-switch';
 import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.css';
 import FileInput from 'react-file-input';
 import uuidV4 from 'uuid/v4';
-import { Translate } from 'react-redux-i18n';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import ContentLoader from 'components/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
@@ -131,7 +131,7 @@ class FlightUploaderDropdown extends React.Component {
                         <FileInput
                            className="btn btn-default"
                            name="flightFile"
-                           placeholder={ <Translate value='flightUploaderDropdown.chooseFile'/> }
+                           placeholder={ I18n.t('flightUploaderDropdown.chooseFile') }
                            value={ this.state.file }
                            onChange={ this.handleChange.bind(this) }
                          />

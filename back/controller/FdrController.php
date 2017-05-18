@@ -172,7 +172,7 @@ class FdrController extends CController
         $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
         unset($fdr);
 
-        $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer is-scrollable'>");
+        $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer'>");
         $paramList .= sprintf ("<div class='BruTypeTemplatesApList'>");
 
         for ($i = 0; $i < count($flightApHeaders); $i++)

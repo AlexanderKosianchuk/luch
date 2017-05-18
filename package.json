@@ -62,7 +62,6 @@
     "webpack-dev-server": "^2.4.4"
   },
   "dependencies": {
-    "blueimp-file-upload": "^9.17.0",
     "bootstrap": "^3.3.7",
     "chosen-js": "^1.7.0",
     "colorpicker-amin": "^1.2.1",
@@ -70,7 +69,6 @@
     "flot-charts": "^0.8.3",
     "history": "^4.6.1",
     "jquery": "^2.1.1",
-    "jquery-mousewheel": "^3.1.13",
     "jquery-ui": "^1.12.1",
     "jstable": "^2.0.5",
     "jstree": "^3.3.3",

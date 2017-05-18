@@ -4,7 +4,9 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
+import { Translate, I18n } from 'react-redux-i18n';
 
+import MainPage from 'components/main-page/MainPage';
 import ContentLoader from 'components/content-loader/ContentLoader';
 import UserOptionsItem from 'components/user-options-item/UserOptionsItem';
 import getUserOptionsAction from 'actions/getUserOptions';
@@ -20,10 +22,7 @@ class UserOptions extends React.Component {
         }
 
         let options = Object.keys(userOptions).map((objectKey, index) => {
-            let label = objectKey;
-            if (this.props.i18n[objectKey]) {
-                label = this.props.i18n[objectKey];
-            }
+            let label = I18n.t(objectKey);
 
             return (
                 <UserOptionsItem
@@ -37,8 +36,8 @@ class UserOptions extends React.Component {
         });
 
         options.push(
-            <button className='btn btn-default' onClick={ this.onClick.bind(this) } >
-                { this.props.i18n.save }
+            <button key='userOptionsButton' className='btn btn-default' onClick={ this.onClick.bind(this) } >
+                <Translate value='userOptions.save'/>
             </button>
         );
 
@@ -53,11 +52,14 @@ class UserOptions extends React.Component {
         let content = this.buildContent();
 
         return (
-            <div className='user-options container-fluid'>
-                <h4 className='user-options__header'>
-                    { this.props.i18n.userOptions }
-                </h4>
-                { content }
+            <div>
+                <MainPage />
+                <div className='user-options container-fluid'>
+                    <h4 className='user-options__header'>
+                        <Translate value='userOptions.options'/>
+                    </h4>
+                    { content }
+                </div>
             </div>
         );
     }

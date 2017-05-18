@@ -435,7 +435,7 @@ FlightViewOptions.prototype.ShowEventsList = function() {
                     flightOptionsContent =
                         document.getElementById(self.flightOptionsContent.attr('id'));
                     flightOptionsContent.innerHTML = data['eventsListHeader']
-                        + '<div class="container__events-list is-scrollable">' + data['eventsList'] + '</div>';
+                        + '<div class="container__events-list">' + data['eventsList'] + '</div>';
 
                     self.ResizeFlightViewOptionsContainer();
 
@@ -757,7 +757,7 @@ FlightViewOptions.prototype.ShowFlightViewParamsListOptions = function() {
 FlightViewOptions.prototype.ShowParamList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
@@ -841,7 +841,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
                             .appendTo(paginationContainer$);
 
                         flightOptionsContent.innerHTML +=
-                            "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList is-scrollable'>" +
+                            "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList'>" +
                             data['bruTypeParams'] +
                             "</div>";
 
@@ -1462,7 +1462,7 @@ FlightViewOptions.prototype.DefaultTplParamsReceive = function(flightId) {
 FlightViewOptions.prototype.ShowTempltList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content is-scrollable'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);

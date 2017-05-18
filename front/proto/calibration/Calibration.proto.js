@@ -28,7 +28,7 @@ function Calibration(langStr) {
         var dfd = this.calibrationFormOptions();
 
         var buildCalibrationForm = function (selectedFDR) {
-            that.calibrationWorkspace.append("<div id='calibration-form-content' class='Content is-scrollable'></div>");
+            that.calibrationWorkspace.append("<div id='calibration-form-content' class='Content'></div>");
             that.calibrationFormContent = $('#calibration-form-content');
 
             that.calibrationList(selectedFDR);

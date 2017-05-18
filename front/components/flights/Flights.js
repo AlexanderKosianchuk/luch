@@ -2,55 +2,28 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import FlightsTopMenu from 'components/flights-top-menu/FlightsTopMenu';
-import MainMenu from 'components/main-menu/MainMenu';
+import MainPage from 'components/main-page/MainPage';
 
-import showFlightsListAction from 'actions/showFlightsList';
+import showPageAction from 'actions/showPage';
 
 class Flights extends React.Component {
-    constructor(props) {
-        super (props);
-        this.state = {
-            showMenu: false
-        };
-    }
-
-    handleToggleMenu (target) {
-        if ((target.className.includes('main-menu-toggle'))
-            && !this.state.showMenu
-        ) {
-            this.setState({ showMenu: true });
-        } else {
-            this.setState({ showMenu: false });
-        }
-    }
-
-    handleMenuItemClick (action) {
-        this.setState({ showMenu: false });
-    }
-
     componentDidMount() {
-        this.props.showFlightsList();
+        this.props.showPage('flightListShow');
     }
 
     render () {
         return (
-            <span>
-                <FlightsTopMenu />
-                <MainMenu
-                    isShown={ this.state.showMenu }
-                    toggleMenu={ this.handleToggleMenu.bind(this) }
-                    handleMenuItemClick={ this.handleMenuItemClick.bind(this) }
-                />
-                <div id="flightsContainer"></div>
-            </span>
+            <div>
+                <MainPage />
+                <div id='flightsContainer'></div>
+            </div>
         );
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        showFlightsList: bindActionCreators(showFlightsListAction, dispatch)
+        showPage: bindActionCreators(showPageAction, dispatch)
     }
 }
 

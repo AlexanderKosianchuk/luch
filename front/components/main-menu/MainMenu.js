@@ -11,31 +11,31 @@ class MainMenu extends React.Component {
 
     render() {
         return (
-            <div className={ "main-menu fluid-grid " + ( this.props.isShown ? '' : 'is-hidden' ) } >
-                <div className="main-menu__row"
-                        onClick={ this.props.handleMenuItemClick.bind(null, "showFlightsList") }>
-                    <span className="main-menu__glyphicon glyphicon glyphicon-send"></span>
-                    <span className="main-menu__label"><Translate value='mainMenu.flights'/></span>
+            <div className={ 'main-menu fluid-grid ' + ( this.props.isShown ? '' : 'is-hidden' ) } >
+                <div className='main-menu__row'
+                        onClick={ this.props.handleMenuItemClick.bind(null, '/') }>
+                    <span className='main-menu__glyphicon glyphicon glyphicon-send'></span>
+                    <span className='main-menu__label'><Translate value='mainMenu.flights'/></span>
                 </div>
-                <div className="main-menu__row"
-                        onClick={ this.props.handleMenuItemClick.bind(null, "showFlightSearch") }>
-                    <span className="main-menu__glyphicon glyphicon glyphicon-search"></span>
-                    <span className="main-menu__label"><Translate value='mainMenu.search'/></span>
+                <div className='main-menu__row'
+                        onClick={ this.props.handleMenuItemClick.bind(null, '/flights-search') }>
+                    <span className='main-menu__glyphicon glyphicon glyphicon-search'></span>
+                    <span className='main-menu__label'><Translate value='mainMenu.search'/></span>
                 </div>
-                <div className="main-menu__row"
-                        onClick={ this.props.handleMenuItemClick.bind(null, "showResults") }>
-                    <span className="main-menu__glyphicon glyphicon glyphicon-stats"></span>
-                    <span className="main-menu__label"><Translate value='mainMenu.results'/></span>
+                <div className='main-menu__row'
+                        onClick={ this.props.handleMenuItemClick.bind(null, '/results') }>
+                    <span className='main-menu__glyphicon glyphicon glyphicon-stats'></span>
+                    <span className='main-menu__label'><Translate value='mainMenu.results'/></span>
                 </div>
-                <div className="main-menu__row"
-                        onClick={ this.props.handleMenuItemClick.bind(null, "showCalibrations") }>
-                    <span className="main-menu__glyphicon glyphicon glyphicon-screenshot"></span>
-                    <span className="main-menu__label"></span>
+                <div className='main-menu__row'
+                        onClick={ this.props.handleMenuItemClick.bind(null, '/calibrations') }>
+                    <span className='main-menu__glyphicon glyphicon glyphicon-screenshot'></span>
+                    <span className='main-menu__label'><Translate value='mainMenu.calibration'/></span>
                 </div>
-                <div className="main-menu__row"
-                        onClick={ this.props.handleMenuItemClick.bind(null, "showUsers") }>
-                    <span className="main-menu__glyphicon glyphicon glyphicon-user"></span>
-                    <span className="main-menu__label"><Translate value='mainMenu.users'/></span>
+                <div className='main-menu__row'
+                        onClick={ this.props.handleMenuItemClick.bind(null, '/users') }>
+                    <span className='main-menu__glyphicon glyphicon glyphicon-user'></span>
+                    <span className='main-menu__label'><Translate value='mainMenu.users'/></span>
                 </div>
             </div>
         );

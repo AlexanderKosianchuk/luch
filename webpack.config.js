@@ -7,7 +7,6 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
     entry: {
-        chart: './front/chart',
         index: './front/index'
     },
     output: {

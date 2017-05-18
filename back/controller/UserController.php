@@ -485,17 +485,7 @@ class UserController extends CController
 
     public function userLogout($data)
     {
-        if(isset($data['data']))
-        {
-            $this->Logout();
-
-            $answ = array(
-                'status' => 'ok'
-            );
-
-            echo json_encode($answ);
-        }
-        else
+        if (!isset($data['data']))
         {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -503,30 +493,32 @@ class UserController extends CController
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $this->Logout();
+
+        $answ = array(
+            'status' => 'ok'
+        );
+
+        echo json_encode($answ);
     }
 
     public function userChangeLanguage($data)
     {
-        if(isset($data['lang']))
-        {
-            $lang = $data['lang'];
-
-            $this->ChangeLanguage($lang);
-
-            $answ = array(
-                    'status' => 'ok'
-            );
-
-            echo json_encode($answ);
-        }
-        else
-        {
+        if (!isset($data['lang'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page user.php";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
         }
+
+        $lang = $data['lang'];
+        $this->ChangeLanguage($lang);
+
+        echo json_encode([
+            'status' => 'ok'
+        ]);
     }
 
     public function buildUserTable($data)

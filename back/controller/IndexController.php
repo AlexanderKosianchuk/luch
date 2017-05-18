@@ -29,11 +29,6 @@ class IndexController extends CController
         return $this->_user->username;
     }
 
-    public function EventHandler()
-    {
-        printf("<div id='eventHandler'></div>");
-    }
-
     public function PutMessageBox()
     {
         printf("<div id='dialog' title='%s'>

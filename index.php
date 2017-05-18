@@ -11,7 +11,6 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 <html
     lang='<?= $c->getUserLanguage(); ?>'
     login='<?= $c->getUserLogin(); ?>'
-    avaliable-languages='<?= $c->getAvaliableLanguages(); ?>'
 >
 <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
@@ -22,8 +21,6 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
     <div id='root'><div>
 
     <?php
-        $c->EventHandler();
-
         $c->PutMessageBox();
         $c->PutHelpDialog();
         $c->PutExportLink();

@@ -152,7 +152,7 @@ function User(langStr) {
                 if (answ["status"] == "ok") {
                     var userTable = answ['data'], sortCol = answ['sortCol'], sortType = answ['sortType'];
                     var append = function () {
-                        self.userListWorkspace.append("<div id='userListContent' class='Content user-content is-scrollable'></div>");
+                        self.userListWorkspace.append("<div id='userListContent' class='Content user-content'></div>");
                         userListContent = $('#userListContent');
 
                         userListContent
@@ -381,7 +381,7 @@ function User(langStr) {
                 "async" : true
             }).done(function (html) {
                 var append = function () {
-                    self.userListWorkspace.append("<div id='createUpdateUserContent' class='Content user-content is-scrollable'></div>");
+                    self.userListWorkspace.append("<div id='createUpdateUserContent' class='Content user-content'></div>");
                     createUpdateUserContent = $('#createUpdateUserContent');
 
                     createUpdateUserContent

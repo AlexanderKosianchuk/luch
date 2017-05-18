@@ -138,7 +138,7 @@ FlightList.prototype.ShowFlightsListInitial = function() {
             return false;
         });
 
-        self.flightListWorkspace.append("<div id='flightListContent' class='Content is-scrollable'></div>");
+        self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
         self.flightListContent = $("div#flightListContent");
 
         var pV = {

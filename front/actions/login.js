@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import { push } from 'react-router-redux'
+import { setLocale } from 'react-redux-i18n';
 
 export default function login(payload) {
     return function(dispatch) {
@@ -18,6 +19,10 @@ export default function login(payload) {
                                 type: 'USER_LOGGED_IN',
                                 payload: json
                             });
+
+                            if (json.lang && json.lang.length === 2) {
+                                dispatch(setLocale(json.lang.toLowerCase()));
+                            }
 
                             dispatch(push('/'));
                         } else {
