@@ -31,7 +31,7 @@ const translationsRu = {
         },
         userOptions: {
             options: 'Пользовательские настройки',
-            save: 'Save',
+            save: 'Сохранить',
             printTableStep: 'Шаг цифропечати',
             mainChartColor: 'Заливка графика',
             lineWidth: 'Толщина линий на графике',
@@ -60,12 +60,59 @@ const translationsRu = {
             settlementsReport: 'Результаты',
             setParamsForReportGenerating: 'Задайте параметры для формирования результатов',
             noDataToGenerateReport: 'Нет данных для формирования результатов',
-            settlementsReportRowTitle: 'Параметр',
-            settlementsReportRowCount: 'Количество',
-            settlementsReportRowMin: 'Мин',
-            settlementsReportRowAvg: 'Среднее',
-            settlementsReportRowSum: 'Сумма',
-            settlementsReportRowMax: 'Макс',
+        },
+        settlementsReportRow: {
+            title: 'Параметр',
+            count: 'Количество',
+            min: 'Мин',
+            avg: 'Среднее',
+            sum: 'Сумма',
+            max: 'Макс',
+        },
+        flightList: {
+            apply: 'Принять',
+        },
+        flightListOptions: {
+            flightList: 'Перечень полетов'
+        },
+        flightListTypeSwitch : {
+            treeView: 'Дерево',
+            tableView: 'Таблица',
+        },
+        flightListMenuDropdown: {
+            fileMenu: 'Меню',
+            deleteItem: 'Удалить',
+            exportItem: 'Экспортировать',
+            processItem: 'Обработать',
+            removeSelection: 'Отменить выделение',
+            selectAll: 'Выбрать все',
+            exportCoordinates: 'Выгрузить маршрут',
+            syncFlightHeaders: 'Синхронизировать опознавательные данные',
+        },
+        flightListTree: {
+            create: 'Создать',
+            rename: 'Переименовать',
+            remove: 'Удалить'
+        },
+        flightViewOptionsSwitch: {
+            events: 'События',
+            params: 'Параметры',
+            templates: 'Шаблоны'
+        },
+        dataTable: {
+            sLengthMenu: 'Показывать по _MENU_ записей на странице',
+            sZeroRecords: 'Поиск не дал результата',
+            sInfo: 'Показано с _START_ по _END_ запись из  _TOTAL_ ',
+            sInfoEmpty: 'Записи Non',
+            sInfoFiltered: '(всего _MAX_ )',
+            sSearch: 'Поиск ',
+            sProcessing: 'Получение данных...',
+            oPaginate: {
+                sFirst: 'Начало',
+                sNext: 'Следующий',
+                sPrevious: 'Предыдущий',
+                sLast: 'Конец'
+            }
         },
         application: {
             "exit": "Выход",
@@ -107,27 +154,7 @@ const translationsRu = {
             "userCreationFailed": "Не удалось создать пользователя",
             "userAlreadyExist": "Пользователь с указанным логином уже существует",
 
-            "initial": "Исходный",
-            "flightList": "Перечень полетов",
-            "inTwoColumns": "В две колонки",
-            "treeView": "Дерево",
-            "tableView": "Таблица",
-            "byAditionalInfo": "По доп. инф.",
-            "groupType" : "Тип группировки",
-
             "newFolder" : "Новый каталог",
-
-            "fileMenu" : "Меню",
-            "openItem" : "Открыть",
-            "deleteItem" : "Удалить",
-            "renameItem" : "Переименовать",
-            "exportItem" : "Экспортировать",
-            "processItem" : "Обработать",
-            "moveItem" : "Переместить",
-            "removeSelection" : "Отменить выделение",
-            "selectAll" : "Выбрать все",
-            "exportCoordinates" : "Выгрузить маршрут",
-            "syncFlightHeaders": "Синхронизировать опознавательные данные",
 
             "flightFilesList": "Перечень файлов для конвертирования",
             "flightsConvertSelected": "Конв. выбранное",

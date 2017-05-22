@@ -8,30 +8,15 @@ export default function changeLanguage(payload) {
 
         dispatch(setLocale(payload.language));
 
-        fetch('/entry.php?action=user/userChangeLanguage&lang=' . payload.language,
-            { credentials: "same-origin" }
-        ).then((response) => {
-                response
-                    .json()
-                    .then(json => {
-                        if (json.status === 'ok') {
-                            dispatch({
-                                type: 'LANGUAGE_CHANGED',
-                                payload: json
-                            });
-                        } else {
-                            dispatch({
-                                type: 'LANGUAGE_CHANGE_FAILED',
-                                payload: json
-                            });
-                        }
-                    });
-            }, (response) => {
-                dispatch({
-                    type: 'LANGUAGE_CHANGE_FAILED',
-                    payload: response
-                });
+        dispatch({
+            type: 'LANGUAGE_CHANGED',
+            payload: {
+                lang: payload.language
             }
+        });
+
+        fetch('/entry.php?action=user/userChangeLanguage&lang=' + payload.language,
+            { credentials: "same-origin" }
         );
     }
 };

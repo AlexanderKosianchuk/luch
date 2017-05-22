@@ -1,6 +1,7 @@
 import React from 'react';
+import { I18n } from 'react-redux-i18n';
 
-export default class FlightListTypeDropdown extends React.Component {
+export default class FlightListTypeSwitch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -34,10 +35,10 @@ export default class FlightListTypeDropdown extends React.Component {
         return (
             <ul className="nav navbar-nav">
                 <li className={ this.state.treeActive } onClick={ this.handleChangeView.bind(this) }>
-                    <a data="tree" href="#">{ this.props.i18n.treeView }</a>
+                    <a data="tree" href="#">{ I18n.t('flightListTypeSwitch.treeView') }</a>
                 </li>
                 <li className={ this.state.tableActive } onClick={ this.handleChangeView.bind(this) }>
-                    <a data="table" href="#">{ this.props.i18n.tableView }</a>
+                    <a data="table" href="#">{ I18n.t('flightListTypeSwitch.tableView') }</a>
                 </li>
             </ul>
         );

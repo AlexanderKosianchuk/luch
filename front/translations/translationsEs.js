@@ -59,13 +59,60 @@ const translationsEs = {
         settlementsReport: {
             settlementsReport: 'Report',
             setParamsForReportGenerating: 'Set params for report generating',
-            noDataToGenerateReport: 'No data to generate report',
-            settlementsReportRowTitle: 'Param',
-            settlementsReportRowCount: 'Count',
-            settlementsReportRowMin: 'Min',
-            settlementsReportRowAvg: 'Avg',
-            settlementsReportRowSum: 'Sum',
-            settlementsReportRowMax: 'Max',
+            noDataToGenerateReport: 'No data to generate report'
+        },
+        settlementsReportRow: {
+            title: 'Param',
+            count: 'Count',
+            min: 'Min',
+            avg: 'Avg',
+            sum: 'Sum',
+            max: 'Max',
+        },
+        flightList: {
+            apply: 'Aplicar',
+        },
+        flightListOptions: {
+            flightList: 'lista de los vuelos'
+        },
+        flightListTypeSwitch : {
+            treeView: 'Madera',
+            tableView: 'Mesa',
+        },
+        flightListMenuDropdown: {
+            fileMenu: 'Menú',
+            deleteItem: 'Borrar',
+            exportItem: 'Exportación',
+            processItem: 'Editar',
+            removeSelection: 'Cancelar asignación',
+            selectAll: 'Seleccionar todo',
+            exportCoordinates: 'Export coordinates',
+            syncFlightHeaders: 'Sincronizar los datos de identificación',
+        },
+        flightListTree: {
+            create: 'Create',
+            rename: 'Rename',
+            remove: 'Remove'
+        },
+        flightViewOptionsSwitch: {
+            events: 'Events',
+            params: 'Parameters',
+            templates: 'Templates'
+        },
+        dataTable: {
+            sLengthMenu: 'Visualización _MENU_ registros por página',
+            sZeroRecords: 'No hay ningún resultado',
+            sInfo: 'resultados _START_ e _END_ registro de  _TOTAL_ ',
+            sInfoEmpty: 'entradas que faltan',
+            sInfoFiltered: '(Solamente _MAX_ )',
+            sSearch: 'Búsqueda',
+            sProcessing: 'Recuperando datos...',
+            oPaginate: {
+                sFirst: 'Principio',
+                sNext: 'Siguiente',
+                sPrevious: 'Anterior',
+                sLast: 'Final'
+            }
         },
         application: {
             "flightUploading": "Flight uploading",
@@ -108,27 +155,7 @@ const translationsEs = {
             "userCreationFailed": "No se pudo crear un usuario",
             "userAlreadyExist": "Usuario con esta entrada ya existe",
 
-            "initial": "Padre",
-            "flightList": "lista de los vuelos",
-            "inTwoColumns": "Las dos columnas",
-            "treeView": "Madera",
-            "tableView": "Mesa",
-            "byAditionalInfo": "A medida que más inf.",
-            "groupType" : "Tipo de agrupación",
-
             "newFolder" : "El nuevo catálogo",
-
-            "fileMenu" : "Menú",
-            "openItem" : "Abierto",
-            "deleteItem" : "Borrar",
-            "renameItem" : "Rebautizar",
-            "exportItem" : "Exportación",
-            "processItem" : "Editar",
-            "moveItem" : "Movimiento",
-            "removeSelection" : "Cancelar asignación",
-            "selectAll" : "Seleccionar todo",
-            "exportCoordinates" : "Export coordinates",
-            "syncFlightHeaders": "Sincronizar los datos de identificación",
 
             "flightFilesList": "La lista de archivos para convertir",
             "flightsConvertSelected": "Convertir",

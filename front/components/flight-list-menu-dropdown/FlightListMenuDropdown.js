@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Translate, I18n } from 'react-redux-i18n';
 
 class FlightListMenuDropdown extends React.Component {
     buildMenu(type) {
@@ -16,8 +17,9 @@ class FlightListMenuDropdown extends React.Component {
                 "removeSelection"
             ],
             oneFolder: [
-                "openItem",
+                /*"openItem",
                 "renameItem",
+                "moveItem",*/
                 "deleteItem",
                 "selectAll",
                 "removeSelection"
@@ -32,9 +34,11 @@ class FlightListMenuDropdown extends React.Component {
         let currentMenuItems = menuItems[type];
 
         return currentMenuItems.map(item => {
-            if (this.props.i18n.hasOwnProperty(item)) {
-                return <li key={ item } ><a onClick={ this.handleMenuClick.bind(this) } data-action={ item } href="#">{ this.props.i18n[item] }</a></li>
-            }
+            return <li key={ item } >
+                <a onClick={ this.handleMenuClick.bind(this) }
+                    data-action={ item } href="#">{ I18n.t('flightListMenuDropdown.'+item) }
+                </a>
+            </li>;
         });
     }
 
@@ -69,7 +73,7 @@ class FlightListMenuDropdown extends React.Component {
             <ul className="nav navbar-nav">
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    { this.props.i18n.fileMenu } <span className="caret"></span>
+                    <Translate value='flightListMenuDropdown.fileMenu' /><span className="caret"></span>
                   </a>
                   <ul className="dropdown-menu">
                     { this.menu }

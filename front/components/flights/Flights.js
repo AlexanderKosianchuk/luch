@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import MainPage from 'components/main-page/MainPage';
+import FlightListOptions from 'components/flight-list-options/FlightListOptions';
 
 import showPageAction from 'actions/showPage';
 
@@ -14,8 +15,9 @@ class Flights extends React.Component {
     render () {
         return (
             <div>
-                <MainPage />
-                <div id='flightsContainer'></div>
+                <MainPage/>
+                <FlightListOptions/>
+                <div id='container'></div>
             </div>
         );
     }

@@ -15,7 +15,7 @@ class Users extends React.Component {
         return (
             <div>
                 <MainPage />
-                <div id='flightsContainer'></div>
+                <div id='container'></div>
             </div>
         );
     }

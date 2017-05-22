@@ -1,7 +1,5 @@
-function FlightViewOptions(langStr)
+function FlightViewOptions(store)
 {
-    this.langStr = langStr;
-
     this.flightId = null;
     this.task = null;
 
@@ -37,42 +35,18 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
     }).done(function(answ) {
         if(answ["status"] == "ok") {
             var data = answ['data'];
-
-            self.flightOptionsFactoryContainer.append(data['topMenu']);
-            self.flightOptionsFactoryContainer.append(data['leftMenu']);
             self.flightOptionsFactoryContainer.append(data['workspace']);
-
-            self.flightOptionsTopMenu = $('div#topMenuOptionsView');
-
-            self.flightOptionsLeftMenu = $('div#leftMenuOptionsView');
-            self.flightOptionsLeftMenu.on("click", function(e){
-                self.leftMenuClick(e);
-            });
-
             self.flightOptionsWorkspace = $('div#flightOptionsWorkspace');
 
             if(self.task == null){
                 self.ShowFlightViewTemplates();
-            } else if(self.task === 'getBruTemplates'){
-                $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
-                $("#templatesLeftMenuRow").addClass('LeftMenuRowSelected');
-
+            } else if(self.task === 'getTemplates'){
                 self.ShowFlightViewTemplates();
             } else if(self.task === 'getEventsList'){
-                $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
-                $("#eventsLeftMenuRow").addClass('LeftMenuRowSelected');
-
                 self.ShowFlightViewEvents();
             } else if(self.task === 'getParamList'){
-                $("#leftMenuOptionsView .LeftMenuRowSelected").removeClass('LeftMenuRowSelected');
-                $("#paramsListLeftMenuRow").addClass('LeftMenuRowSelected');
-
                 self.ShowFlightViewParamsList();
             }
-
-            self.ResizeFlightViewOptionsContainer();
-            $(document).scrollTop(factoryContainer.data("index") * $(window).height());
-
         } else {
             console.log(answ["error"]);
         }
@@ -84,8 +58,6 @@ FlightViewOptions.prototype.ShowFlightViewTemplates = function() {
         this.flightOptionsWorkspace.empty();
     }
 
-    this.ShowTopMenuTempltListButtons();
-    this.ShowFlightViewTempltListOptions();
     this.ShowTempltList();
 }
 
@@ -94,8 +66,6 @@ FlightViewOptions.prototype.ShowFlightViewEvents = function() {
         this.flightOptionsWorkspace.empty();
     }
 
-    this.ShowTopMenuEventsListButtons();
-    this.ShowFlightViewEventsListOptions();
     this.ShowEventsList();
     this.SupportUserComment();
 }
@@ -105,8 +75,6 @@ FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
         this.flightOptionsWorkspace.empty();
     }
 
-    this.ShowTopMenuParamsListButtons();
-    this.ShowFlightViewParamsListOptions();
     this.ShowParamList();
 }
 
@@ -114,47 +82,6 @@ FlightViewOptions.prototype.ResizeFlightViewOptionsContainer = function(e) {
     var self = this;
     $(document).trigger("resizeShowcase");
     return false;
-}
-
-///====================================================
-//
-///====================================================
-FlightViewOptions.prototype.leftMenuClick = function(e){
-    var self = this,
-    target = $(e.target);
-    e.stopPropagation();
-
-    if(target.attr('id') == "templatesLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuOptionsView .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected');
-
-            target.addClass('LeftMenuRowSelected');
-            $("#leftMenuOptionsView .SearchBox").prop('disabled', true);
-
-            self.ShowFlightViewTemplates();
-        }
-    } else if(target.attr('id') == "eventsLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuOptionsView .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected');
-
-            target.addClass('LeftMenuRowSelected');
-            $("#leftMenuOptionsView .SearchBox").prop('disabled', true);
-
-            self.ShowFlightViewEvents();
-        }
-    } else if(target.attr('id') == "paramsListLeftMenuRow"){
-        if(!target.hasClass('LeftMenuRowSelected')){
-            $("#leftMenuOptionsView .LeftMenuRowSelected")
-                .removeClass('LeftMenuRowSelected');
-
-            target.addClass('LeftMenuRowSelected');
-            $("#leftMenuOptionsView .SearchBox").prop('disabled', true);
-
-            self.ShowFlightViewParamsList();
-        }
-    }
 }
 
 
@@ -407,7 +334,7 @@ FlightViewOptions.prototype.ShowFlightViewEventsListOptions = function() {
 FlightViewOptions.prototype.ShowEventsList = function() {
     var self = this,
         flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content content--no-scroll'></div>";
+        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
 
     if(flightId != null){
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
@@ -429,63 +356,60 @@ FlightViewOptions.prototype.ShowEventsList = function() {
         }).fail(function(msg){
             console.log(msg);
         }).done(function(answ) {
-            if($("#eventsLeftMenuRow").hasClass("LeftMenuRowSelected")){
-                if(answ["status"] == "ok") {
-                    var data = answ["data"],
-                    flightOptionsContent =
-                        document.getElementById(self.flightOptionsContent.attr('id'));
-                    flightOptionsContent.innerHTML = data['eventsListHeader']
-                        + '<div class="container__events-list">' + data['eventsList'] + '</div>';
+            if (answ["status"] == "ok") {
+                var data = answ["data"],
+                flightOptionsContent =
+                    document.getElementById(self.flightOptionsContent.attr('id'));
+                flightOptionsContent.innerHTML = data['eventsListHeader']
+                    + '<div class="container__events-list">' + data['eventsList'] + '</div>';
 
-                    self.ResizeFlightViewOptionsContainer();
+                self.ResizeFlightViewOptionsContainer();
 
-                    var $accordionButtons = $(".exceptions-accordion-title");
-                    self.SupportAccordion($accordionButtons);
+                var $accordionButtons = $(".exceptions-accordion-title");
+                self.SupportAccordion($accordionButtons);
 
-                    var exceptionTableRow = $(".ExceptionTableRow");
-                    self.SupportReliabilityUncheck.call(self, exceptionTableRow, flightId);
+                var exceptionTableRow = $(".ExceptionTableRow");
+                self.SupportReliabilityUncheck.call(self, exceptionTableRow, flightId);
 
-                    $('.container__events-list').height(
-                        $('#flightOptionsContent').height()
-                        - $('.container__events-header').eq(0).outerHeight(true)
-                    );
+                $('.container__events-list').height(
+                    $('#flightOptionsContent').height()
+                    - $('.container__events-header').eq(0).outerHeight(true)
+                );
 
-                    exceptionTableRow.on("click", function(e){
-                        var row = $(this);
+                exceptionTableRow.on("click", function(e){
+                    var row = $(this);
 
-                        $.each(exceptionTableRow, function(index, item){
-                            $(item).removeClass("ExeptionsTableRowSelected");
-                        });
-
-                        row.addClass("ExeptionsTableRowSelected");
-
-                        var rowStartframe = row.data("startframe"),
-                        rowEndframe = row.data("endframe"),
-                        steplength = self.rangeSlider.data("steplength"),
-                        from = rowStartframe * steplength * 0.5,
-                        to = rowEndframe * steplength * 1.5;
-
-                        self.rangeSlider.slider('option', { values: [from, to] });
+                    $.each(exceptionTableRow, function(index, item){
+                        $(item).removeClass("ExeptionsTableRowSelected");
                     });
 
-                    $('#comments__btn').on("click", function(e) {
-                        $.post(
-                            ENTRY_URL,
-                            {
-                                action: 'viewOptions/saveFlightComment',
-                                data: $('#events-header__comments').serialize()
-                            },
-                            function(answ) {
-                                $('#comments__btn').addClass('is-analyzed');
-                                location.reload(true);
-                            }
-                        )
-                    });
-                } else {
-                    console.log(answ["error"]);
-                }
+                    row.addClass("ExeptionsTableRowSelected");
+
+                    var rowStartframe = row.data("startframe"),
+                    rowEndframe = row.data("endframe"),
+                    steplength = self.rangeSlider.data("steplength"),
+                    from = rowStartframe * steplength * 0.5,
+                    to = rowEndframe * steplength * 1.5;
+
+                    self.rangeSlider.slider('option', { values: [from, to] });
+                });
+
+                $('#comments__btn').on("click", function(e) {
+                    $.post(
+                        ENTRY_URL,
+                        {
+                            action: 'viewOptions/saveFlightComment',
+                            data: $('#events-header__comments').serialize()
+                        },
+                        function(answ) {
+                            $('#comments__btn').addClass('is-analyzed');
+                            location.reload(true);
+                        }
+                    )
+                });
+            } else {
+                console.log(answ["error"]);
             }
-
         });
     }
 

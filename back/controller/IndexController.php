@@ -111,6 +111,6 @@ class IndexController extends CController
                 $scriptName = $item;
             }
         }
-        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
+        printf("<script type='text/javascript' src='/public/".$scriptName."'></script>");
     }
 }

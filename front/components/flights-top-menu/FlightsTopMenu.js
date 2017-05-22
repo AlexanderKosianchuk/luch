@@ -18,7 +18,7 @@ class FlightsTopMenu extends React.Component {
     changeLanguage(event) {
         let language = event.target.getAttribute('data-lang');
         this.props.changeLanguage({
-            language: language
+            language: language.toLowerCase()
         });
     }
 

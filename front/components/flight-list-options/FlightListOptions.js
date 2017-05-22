@@ -1,4 +1,5 @@
 import React from 'react';
+import { Translate } from 'react-redux-i18n';
 
 import FlightListTypeSwitch from 'components/flight-list-type-switch/FlightListTypeSwitch';
 import FlightListMenuDropdown from 'components/flight-list-menu-dropdown/FlightListMenuDropdown';
@@ -34,18 +35,16 @@ export default class FlightListOptions extends React.Component {
                         <span className="icon-bar"></span>
                         <span className="icon-bar"></span>
                       </button>
-                      <a className="navbar-brand" href="#">{ this.props.i18n.flightList }</a>
+                      <a className="navbar-brand" href="#"><Translate value='flightListOptions.flightList' /></a>
                     </div>
 
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">
 
                       <FlightListTypeSwitch
-                        i18n={ this.props.i18n }
                         flightViewService= { this.props.flightViewService }
                       />
 
                       <FlightListMenuDropdown
-                        i18n={ this.props.i18n }
                         flightMenuService= { this.props.flightMenuService }
                       />
 

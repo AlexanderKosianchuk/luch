@@ -72,6 +72,9 @@ import UserLogin from 'components/user-login/UserLogin';
 import FlightsSearch from 'components/flights-search/FlightsSearch';
 import Calibrations from 'components/calibrations/Calibrations';
 import Users from 'components/users/Users';
+import FlightEvents from 'components/flight-events/FlightEvents';
+import FlightTemplates from 'components/flight-templates/FlightTemplates';
+import FlightParams from 'components/flight-params/FlightParams';
 import configureStore from 'store/configureStore';
 
 import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
@@ -88,18 +91,15 @@ const routerMiddlewareInstance = routerMiddleware(history);
 const store = configureStore({}, routerMiddlewareInstance);
 
 store.dispatch(loadTranslations(translationsObject));
-store.dispatch(setLocale('en'));
+store.dispatch(setLocale('ru'));
 
 $(document).ready(function () {
-    var i18n = null,
-        userLang = $('html').attr('lang'),
+    var userLang = $('html').attr('lang'),
         LA = new Language(userLang),
         FU = null,
-        FO = null,
         F = null,
         C = null,
         U = null,
-        FL = null,
         SF = null,
         CLB = null;
 
@@ -120,10 +120,8 @@ $(document).ready(function () {
     }
 
     LA.GetLanguage().done(function (data) {
-        var langStr = i18n = data;
-        FL = new FlightList(langStr, store);
+        var langStr = data;
         FU = new FlightUploader(langStr);
-        FO = new FlightViewOptions(langStr);
         F = new Fdr(langStr);
         C = new Chart(langStr);
         U = new User(langStr);
@@ -163,6 +161,9 @@ $(document).ready(function () {
                     <Route exact path='/results' component={ UserIsAuthenticated(Results) } />
                     <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
                     <Route exact path='/users' component={ UserIsAuthenticated(Users) } />
+                    <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
+                    <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
+                    <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
                   </div>
                 </ConnectedRouter>
             </Provider>,
@@ -182,7 +183,7 @@ $(document).ready(function () {
                 && (previousFlightUploadingStateValue > 0)
              ) {
                 $(document).trigger('flightListShow', [
-                    $('#flightsContainer')
+                    $('#container')
                 ]);
              }
         });
@@ -199,9 +200,9 @@ $(document).ready(function () {
 
         dfd.then(
             () => {
-                if ($('#flightsContainer')) {
+                if ($('#container')) {
                     $(document).trigger('flightListShow', [
-                        $('#flightsContainer')
+                        $('#container')
                     ]);
                     return this;
                 }
@@ -228,28 +229,32 @@ $(document).ready(function () {
         });
     });
 
+    let FL = new FlightList(store);
     $(document).on('convertSelectedClicked', function (e) {
-        if (FL !== null) {
-            FL.ShowFlightsByPath();
-        }
+        FL.ShowFlightsByPath();
     });
 
     $(document).on('flightListShow', function (e, someshowcase) {
         FL.FillFactoryContaider(someshowcase);
     });
 
-    $(document).on('viewFlightOptions', function (e, flightId, task, someshowcase) {
-        if (flightId !== null) {
-            FO.flightId = flightId;
-        }
+    let FO = new FlightViewOptions(store);
+    $(document).on('flightEvents', function (e, someshowcase, flightId) {
+        FO.task = 'getEventsList';
+        FO.flightId = flightId;
+        FO.FillFactoryContaider(someshowcase);
+    });
 
-        if (task !== null) {
-            FO.task = task;
-        }
+    $(document).on('flightTemplates', function (e, someshowcase, flightId) {
+        FO.task = 'getTemplates';
+        FO.flightId = flightId;
+        FO.FillFactoryContaider(someshowcase);
+    });
 
-        if (FO.flightId !== null) {
-            FO.FillFactoryContaider(someshowcase);
-        }
+    $(document).on('flightParams', function (e, someshowcase, flightId) {
+        FO.task = 'getParamList';
+        FO.flightId = flightId;
+        FO.FillFactoryContaider(someshowcase);
     });
 
     $(document).on('showBruTypeEditingForm', function (e, bruTypeId, task, showcase) {

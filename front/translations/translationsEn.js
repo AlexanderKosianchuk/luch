@@ -60,12 +60,59 @@ const translationsEn = {
             settlementsReport: 'Report',
             setParamsForReportGenerating: 'Set params for report generating',
             noDataToGenerateReport: 'No data to generate report',
-            settlementsReportRowTitle: 'Param',
-            settlementsReportRowCount: 'Count',
-            settlementsReportRowMin: 'Min',
-            settlementsReportRowAvg: 'Avg',
-            settlementsReportRowSum: 'Sum',
-            settlementsReportRowMax: 'Max',
+        },
+        settlementsReportRow: {
+            title: 'Param',
+            count: 'Count',
+            min: 'Min',
+            avg: 'Avg',
+            sum: 'Sum',
+            max: 'Max',
+        },
+        flightList: {
+            apply: 'Apply',
+        },
+        flightListOptions: {
+            flightList: 'Flights list'
+        },
+        flightListTypeSwitch : {
+            treeView: 'Tree',
+            tableView: 'Table',
+        },
+        flightListMenuDropdown: {
+            fileMenu: 'Menu',
+            deleteItem: 'Delete',
+            exportItem: 'Export',
+            processItem: 'Process',
+            removeSelection: 'Cancel selection',
+            selectAll: 'Select all',
+            exportCoordinates: 'Export coordinates',
+            syncFlightHeaders: 'Sync Headers',
+        },
+        flightListTree: {
+            create: 'Create',
+            rename: 'Rename',
+            remove: 'Remove'
+        },
+        flightViewOptionsSwitch: {
+            events: 'Events',
+            params: 'Parameters',
+            templates: 'Templates'
+        },
+        dataTable: {
+            sLengthMenu: 'Show by _MENU_ rows on page',
+            sZeroRecords: 'Search result empty',
+            sInfo: 'Shown _START_ from _END_ rows of  _TOTAL_ ',
+            sInfoEmpty: 'rows Non',
+            sInfoFiltered: '(total _MAX_ )',
+            sSearch: 'Search ',
+            sProcessing: 'Receiving data...',
+            oPaginate: {
+                sFirst: 'Start',
+                sNext: 'Next',
+                sPrevious: 'Prev',
+                sLast: 'End'
+            }
         },
         application: {
             "exit": "Exit",
@@ -77,7 +124,7 @@ const translationsEn = {
             "tplHasBeenEdit": "Template changed. Demonstrate how changes to refresh the page (Shift + F5)",
             "tplHasBeenSetAsDefault": "The default template set. Demonstrate how changes to refresh the page (Shift + F5)",
 
-            "colorpickerOk" : "Accept",
+            "colorpickerOk": "Accept",
             "colorpickerCancel" : "Cancel",
             "colorpickerNone" : "No",
             "colorpickerButton" : "Color",
@@ -106,27 +153,7 @@ const translationsEn = {
             "userCreationFailed": "Не удалось Create пользователя",
             "userAlreadyExist": "Пользователь с указанным User Nameом уже существует",
 
-            "initial": "Исходный",
-            "flightList": "Flights list",
-            "inTwoColumns": "In Two Columns",
-            "treeView": "Tree View",
-            "tableView": "Table View",
-            "byAditionalInfo": "By Aditional Info",
-            "groupType" : "Type Group",
-
             "newFolder" : "New Folder",
-
-            "fileMenu" : "Menu",
-            "openItem" : "Open",
-            "deleteItem" : "Delete",
-            "renameItem" : "Rename",
-            "exportItem" : "Export",
-            "processItem" : "Process",
-            "moveItem" : "Rename",
-            "removeSelection" : "Cancel selection",
-            "selectAll" : "Select all",
-            "exportCoordinates" : "Export coordinates",
-            "syncFlightHeaders": "Sync Headers",
 
             "flightFilesList": "Flight files for convertion",
             "flightsConvertSelected": "Convert selected",
