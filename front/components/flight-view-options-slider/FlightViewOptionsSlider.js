@@ -9,6 +9,8 @@ import { I18n } from 'react-redux-i18n';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
 import getFlightInfoAction from 'actions/getFlightInfo';
+import changeSelectedStartFrameAction from 'actions/changeSelectedStartFrame';
+import changeSelectedEndFrameAction from 'actions/changeSelectedEndFrame';
 
 class FlightViewOptionsSlider extends React.Component {
     buildBody()
@@ -23,10 +25,14 @@ class FlightViewOptionsSlider extends React.Component {
     buildSlider()
     {
         return <ReactBootstrapSlider
-            value={ [0, this.props.flightDuration] }
+            value={ [
+                this.props.selectedStartFrame,
+                this.props.selectedEndFrame
+            ] }
+            change={ this.changeSlider.bind(this) }
             step={ this.props.stepLength }
-            max={ this.props.flightDuration }
             min={ 0 }
+            max={ this.props.flightDuration }
             tooltip='hide'
             orientation='horizontal'
             handle='square'
@@ -34,7 +40,56 @@ class FlightViewOptionsSlider extends React.Component {
          />;
     }
 
-    render() {
+    changeSlider(event)
+    {
+        if (event.target.value[0] !== this.props.selectedStartFrame) {
+            this.props.changeSelectedStartFrame(event.target.value[0]);
+        }
+
+        if (event.target.value[1] !== this.props.selectedEndFrame) {
+            this.props.changeSelectedEndFrame(event.target.value[1]);
+        }
+    }
+
+    setStartTime()
+    {
+        if (this.props.selectedStartFrame === null) {
+            return '';
+        }
+
+        return <a href="#">
+            { this.framesToTime(this.props.selectedStartFrame, this.props.stepLength) }
+        </a>;
+    }
+
+    setEndTime()
+    {
+        if (this.props.selectedEndFrame === null) {
+            return '';
+        }
+
+        return <a href="#">
+            { this.framesToTime(this.props.selectedEndFrame, this.props.stepLength) }
+        </a>;
+    }
+
+    framesToTime(frames, stepLength)
+    {
+        let value = frames * stepLength;
+        var secNum = parseInt(value, 10);
+        var hours = Math.floor(secNum / 3600);
+        var minutes = Math.floor((secNum - (hours * 3600)) / 60);
+        var seconds = secNum - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {hours   = "0" + hours;}
+        if (minutes < 10) {minutes = "0" + minutes;}
+        if (seconds < 10) {seconds = "0" + seconds;}
+        var time = hours+':'+minutes+':'+seconds;
+        return time;
+    }
+
+    render()
+    {
         if (this.props.flightDuration === null) {
             this.props.getFlightInfo({flightId: this.props.flightId});
         }
@@ -42,7 +97,13 @@ class FlightViewOptionsSlider extends React.Component {
         return (
             <ul className="flight-view-options-slider nav navbar-nav">
                 <li>
-                    { this.buildBody.apply(this) }
+                    { this.setStartTime.apply(this) }
+                </li>
+                <li>
+                    <a href='#'>{ this.buildBody.apply(this) }</a>
+                </li>
+                <li>
+                    { this.setEndTime.apply(this) }
                 </li>
             </ul>
         );
@@ -53,13 +114,17 @@ function mapStateToProps(state, ownProps) {
     return {
         flightInfoPending: state.flightInfo.pending,
         flightDuration: state.flightInfo.duration,
-        stepLength: state.flightInfo.stepLength
+        stepLength: state.flightInfo.stepLength,
+        selectedStartFrame: state.flightInfo.selectedStartFrame,
+        selectedEndFrame: state.flightInfo.selectedEndFrame
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightInfo: bindActionCreators(getFlightInfoAction, dispatch)
+        getFlightInfo: bindActionCreators(getFlightInfoAction, dispatch),
+        changeSelectedStartFrame: bindActionCreators(changeSelectedStartFrameAction, dispatch),
+        changeSelectedEndFrame: bindActionCreators(changeSelectedEndFrameAction, dispatch)
     }
 }
 
