@@ -1,24 +1,28 @@
 const initialState = {
     pending: null,
-    duration: null
+    duration: null,
+    stepLength: null
 };
 
-export default function flightInfo(state = {}, action) {
+export default function flightInfo(state = initialState, action) {
     switch (action.type) {
-        case 'DURATION_PENDING':
+        case 'FLIGHT_INFO_PENDING':
             return {
                 pending: true,
-                duration: null
+                duration: null,
+                stepLength: null
             };
-        case 'DURATION_RECEIVED':
+        case 'FLIGHT_INFO_RECEIVED':
             return {
                 pending: false,
-                duration: action.payload.duration
+                duration: action.payload.duration,
+                stepLength: action.payload.stepLength
             };
-        case 'DURATION_RECEIVING_FAILED':
+        case 'FLIGHT_INFO_RECEIVING_FAILED':
             return {
                 pending: false,
-                duration: action.payload.errorCode || 0
+                duration: null,
+                stepLength: null
             };
         default:
             return state;

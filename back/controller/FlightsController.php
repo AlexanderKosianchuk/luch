@@ -4,6 +4,7 @@ namespace Controller;
 
 use Model\User;
 use Model\Fdr;
+use Model\Frame;
 use Model\Calibration;
 use Model\Folder;
 use Model\Flight;
@@ -969,6 +970,31 @@ class FlightsController extends CController
        return $info;
    }
 
+   public function GetFlightTiming($flightId)
+   {
+       $Fl = new Flight;
+       $flightInfo = $Fl->GetFlightInfo($flightId);
+       $fdrId = intval($flightInfo['id_fdr']);
+       unset($Fl);
+
+       $fdr = new Fdr;
+       $fdrInfo = $fdr->getFdrInfo($fdrId);
+       $stepLength = $fdrInfo['stepLength'];
+
+       $prefixArr = $fdr->GetBruApCycloPrefixes($fdrInfo['id']);
+       unset($fdr);
+
+       $Frame = new Frame;
+       $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
+       unset($Frame);
+
+       $stepsCount = $framesCount * $stepLength;
+       $flightTiming['duration'] = $stepsCount;
+       $flightTiming['startCopyTime'] = $flightInfo['startCopyTime'];
+       $flightTiming['stepLength'] = $stepLength;
+
+       return $flightTiming;
+   }
 
    /*
    * ==========================================
@@ -1527,7 +1553,7 @@ class FlightsController extends CController
 
     public function getFlightFdrId($data)
     {
-        if (isset($data['flightId'])) {
+        if (!isset($data['flightId'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FlightsController.php";
@@ -1596,5 +1622,30 @@ class FlightsController extends CController
 
         echo $figPrRow;
         unset($U);
+    }
+
+    public function getFlightInfo($data)
+    {
+        if (!isset($data['flightId'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FlightsController.php";
+            echo(json_encode($answ));
+        }
+
+        $flightId = intval($data['flightId']);
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $flightTiming = $this->GetFlightTiming($flightId);
+        unset($Fl);
+
+        echo json_encode(array_merge($flightInfo,
+            [
+                'duration' => $flightTiming['duration'],
+                'startCopyTime' => $flightTiming['startCopyTime'],
+                'stepLength' => $flightTiming['stepLength']
+            ]
+        ));
     }
 }

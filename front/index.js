@@ -11,7 +11,6 @@ import 'jquery-ui';
 import 'jquery-ui/ui/widgets/dialog';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/menu';
-import 'jquery-ui/ui/widgets/slider';
 import 'colorpicker-amin';
 import 'blueimp-file-upload';
 import 'jstree';

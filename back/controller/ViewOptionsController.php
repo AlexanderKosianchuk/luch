@@ -72,32 +72,6 @@ class ViewOptionsController extends CController
         return $workspace;
     }
 
-    public function GetFlightTiming($flightId)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $stepLength = $fdrInfo['stepLength'];
-
-        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrInfo['id']);
-        unset($fdr);
-
-        $Frame = new Frame;
-        $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
-        unset($Frame);
-
-        $stepsCount = $framesCount * $stepLength;
-        $flightTiming['duration'] = $stepsCount;
-        $flightTiming['startCopyTime'] = $flightInfo['startCopyTime'];
-        $flightTiming['stepLength'] = $stepLength;
-
-        return $flightTiming;
-    }
-
     public function ShowTempltList($flightId)
     {
         $Fl = new Flight;

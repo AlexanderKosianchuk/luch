@@ -3,7 +3,7 @@ const initialState = {
     errorCode: null
 };
 
-export default function authorization(state = {}, action) {
+export default function authorization(state = initialState, action) {
     switch (action.type) {
         case 'LOGIN_PENDING':
             return {
