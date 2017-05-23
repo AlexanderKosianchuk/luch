@@ -10,10 +10,6 @@ const views = [
 ]
 
 class FlightViewOptionsSwitch extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     handleChangeView(event) {
         let viewState = event.target.getAttribute("data");
 

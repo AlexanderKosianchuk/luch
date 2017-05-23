@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import FlightsTopMenu from 'components/flights-top-menu/FlightsTopMenu';
+import TopMenu from 'components/top-menu/TopMenu';
 import MainMenu from 'components/main-menu/MainMenu';
 
 import redirectAction from 'actions/redirect';
@@ -33,7 +33,7 @@ class MainPage extends React.Component {
     render () {
         return (
             <div>
-                <FlightsTopMenu
+                <TopMenu
                     toggleMenu={ this.handleToggleMenu.bind(this) }
                 />
                 <MainMenu

@@ -1,0 +1,47 @@
+.top-menu
+    width: calc(100% + 2px)
+    margin: -1px 0 0
+    border-radius: 0px
+    background-color: #063a5c
+    box-shadow: 0 1px 10px 3px rgba(0,0,0,0.15)
+    z-index: 2
+
+    & li > span
+        position: relative
+        display: block
+        padding: 15px 15px
+        line-height: 20px
+        color: #fff
+
+    & a
+        color: #fff !important
+
+    & a.is-hoverable:hover
+        background-color: #021e30 !important
+
+    & a.is-hoverable:visited,
+    & a.is-hoverable:active,
+    & a.is-hoverable:focus
+        background-color: #063a5c
+
+    & a.is-static,
+    & a.is-static:hover
+        background-color: #063a5c !important
+        cursor: default
+
+    &__main-menu-toggle
+        font-size: 14px  !important
+
+    &__icon-bar
+        background-color: #fff
+
+    &__navbar-brand
+        margin: 0 10px !important
+        font-weight: bold
+
+    &__dropdown-menu a
+        color: #333 !important
+
+    &__language-menu
+        min-width: 60px !important
+        left: -5px !important

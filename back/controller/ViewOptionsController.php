@@ -1038,16 +1038,11 @@ class ViewOptionsController extends CController
         unset($Fl);
         $excTableName = $flightInfo['exTableName'];
 
-        if(($state == false) || ($state == 'false'))
-        {
+        if (($state == false) || ($state == 'false')) {
             $state = 1;
-        }
-        else if(($state == true) || ($state == 'true'))
-        {
+        } else if(($state == true) || ($state == 'true')) {
             $state = 0;
-        }
-        else
-        {
+        } else {
             $state = 0;
         }
 
@@ -1155,7 +1150,7 @@ class ViewOptionsController extends CController
 
     public function getBruTemplates($data)
     {
-        if (isset($data['flightId'])) {
+        if (!isset($data['flightId'])) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". Page ViewOptionsController.php";

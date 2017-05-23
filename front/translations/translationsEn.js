@@ -99,6 +99,14 @@ const translationsEn = {
             params: 'Parameters',
             templates: 'Templates'
         },
+        colorpicker: {
+            ok: 'Accept',
+            cancel: 'Cancel',
+            none: 'No',
+            button: 'Color',
+            title: 'Select Color',
+            transparent: 'Transparent',
+        },
         dataTable: {
             sLengthMenu: 'Show by _MENU_ rows on page',
             sZeroRecords: 'Search result empty',

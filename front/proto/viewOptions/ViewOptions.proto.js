@@ -1,3 +1,5 @@
+import { I18n }  from 'react-redux-i18n';
+
 function FlightViewOptions(store)
 {
     this.flightId = null;
@@ -77,13 +79,6 @@ FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
 
     this.ShowParamList();
 }
-
-FlightViewOptions.prototype.ResizeFlightViewOptionsContainer = function(e) {
-    var self = this;
-    $(document).trigger("resizeShowcase");
-    return false;
-}
-
 
 ///====================================================
 //EVENTS
@@ -362,8 +357,6 @@ FlightViewOptions.prototype.ShowEventsList = function() {
                     document.getElementById(self.flightOptionsContent.attr('id'));
                 flightOptionsContent.innerHTML = data['eventsListHeader']
                     + '<div class="container__events-list">' + data['eventsList'] + '</div>';
-
-                self.ResizeFlightViewOptionsContainer();
 
                 var $accordionButtons = $(".exceptions-accordion-title");
                 self.SupportAccordion($accordionButtons);
@@ -687,180 +680,175 @@ FlightViewOptions.prototype.ShowParamList = function() {
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
         self.flightOptionsContent = $("div#flightOptionsContent");
 
-        var pV = {
+        $.ajax({
+            type: "POST",
+            data: {
                 action: "viewOptions/getParamListGivenQuantity",
                 data: {
                     flightId: flightId
                 }
-        };
-
-        $.ajax({
-            type: "POST",
-            data: pV,
+            },
             dataType: 'json',
             url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
         }).done(function(answ) {
-            if($("#paramsListLeftMenuRow").hasClass("LeftMenuRowSelected")){
-                if(answ["status"] == "ok") {
-                    var data = answ["data"],
-                        flightOptionsContent =
-                            document.getElementById(self.flightOptionsContent.attr('id')),
-                        flightOptionsContent$ = $("#" + self.flightOptionsContent.attr('id'));
-                    if(data['pagination']) {
+            if (answ["status"] === "ok") {
+                var data = answ["data"];
+                let flightOptionsContent =
+                        document.getElementById(self.flightOptionsContent.attr('id')),
+                    flightOptionsContent$ = $("#" + self.flightOptionsContent.attr('id'));
+                if (data['pagination']) {
 
-                        $("#leftMenuOptionsView .SearchBox").prop('disabled', false).val("");
-                        self.SupportSearch();
+                    $("#leftMenuOptionsView .SearchBox").prop('disabled', false).val("");
+                    self.SupportSearch();
 
-                        var pageNum = data['pageNum'],
-                            totalPages = data['totalPages'];
+                    var pageNum = data['pageNum'],
+                        totalPages = data['totalPages'];
 
-                         $("<div></div>")
-                            .attr('id', "paginationContainer")
-                            .appendTo(flightOptionsContent$);
+                     $("<div></div>")
+                        .attr('id', "paginationContainer")
+                        .appendTo(flightOptionsContent$);
 
-                         paginationContainer$ = $("#paginationContainer");
+                     paginationContainer$ = $("#paginationContainer");
 
-                         $("<div></div>")
-                            .addClass('SelectedParams')
-                            .attr('id', "selectedParams")
-                            .appendTo(paginationContainer$);
+                     $("<div></div>")
+                        .addClass('SelectedParams')
+                        .attr('id', "selectedParams")
+                        .appendTo(paginationContainer$);
 
-                         $("<div></div>")
-                            .addClass('SearchResult')
-                            .attr('id', "searchResult")
-                            .appendTo(paginationContainer$);
+                     $("<div></div>")
+                        .addClass('SearchResult')
+                        .attr('id', "searchResult")
+                        .appendTo(paginationContainer$);
 
-                         $("<div></div>")
-                            .addClass('ParamsPagination')
-                            .attr('id', "prevPage")
-                            .attr("disabled", "disabled")
-                            .text(self.langStr.viewOptionsPrevPage)
-                            .appendTo(paginationContainer$);
+                     $("<div></div>")
+                        .addClass('ParamsPagination')
+                        .attr('id', "prevPage")
+                        .attr("disabled", "disabled")
+                        .text(self.langStr.viewOptionsPrevPage)
+                        .appendTo(paginationContainer$);
 
-                        $("<div></div>")
-                            .addClass('ParamsPagination')
-                            .attr('id', "nextPage")
-                            .text(self.langStr.viewOptionsNextPage)
-                            .appendTo(paginationContainer$);
+                    $("<div></div>")
+                        .addClass('ParamsPagination')
+                        .attr('id', "nextPage")
+                        .text(self.langStr.viewOptionsNextPage)
+                        .appendTo(paginationContainer$);
 
-                        $("<div></div>")
-                            .addClass('ParamsPaginationInline')
-                            .attr('id', "firstPage")
-                            .text(self.langStr.viewOptionsFirstPage)
-                            .appendTo(paginationContainer$);
+                    $("<div></div>")
+                        .addClass('ParamsPaginationInline')
+                        .attr('id', "firstPage")
+                        .text(self.langStr.viewOptionsFirstPage)
+                        .appendTo(paginationContainer$);
 
-                        $("<div></div>")
-                            .addClass('ParamsPaginationInline')
-                            .attr('id', "paginationCurPageOfTotal")
-                            .text((pageNum + 1) + " " + self.langStr.viewOptionsOf + " " + totalPages)
-                            .appendTo(paginationContainer$);
+                    $("<div></div>")
+                        .addClass('ParamsPaginationInline')
+                        .attr('id', "paginationCurPageOfTotal")
+                        .text((pageNum + 1) + " " + self.langStr.viewOptionsOf + " " + totalPages)
+                        .appendTo(paginationContainer$);
 
-                        $("<div></div>")
-                            .addClass('ParamsPaginationInline')
-                            .attr('id', "lastPage")
-                            .text(self.langStr.viewOptionsLastPage)
-                            .appendTo(paginationContainer$);
+                    $("<div></div>")
+                        .addClass('ParamsPaginationInline')
+                        .attr('id', "lastPage")
+                        .text(self.langStr.viewOptionsLastPage)
+                        .appendTo(paginationContainer$);
 
-                        flightOptionsContent.innerHTML +=
-                            "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList'>" +
-                            data['bruTypeParams'] +
-                            "</div>";
+                    flightOptionsContent.innerHTML +=
+                        "<div id='bruTypeParamsPaginatedList' class='BruTypeParamsPaginatedList'>" +
+                        data['bruTypeParams'] +
+                        "</div>";
 
-                        $("#bruTypeParamsPaginatedList").height(
-                                $(window).innerHeight() -
-                                self.flightOptionsTopMenu.height() -
-                                self.flightOptionsOptions.height() -
-                                paginationContainer$.outerHeight() - 180
+                    $("#bruTypeParamsPaginatedList").height(
+                            $(window).innerHeight() -
+                            self.flightOptionsTopMenu.height() -
+                            self.flightOptionsOptions.height() -
+                            paginationContainer$.outerHeight() - 180
+                    );
+
+                    self.SupportParamsChecking();
+                    self.SupportColorPicker();
+
+                    $("#prevPage").button()
+                    .on('click', function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
+                        curpage = parseInt(paginationCurPageOfTotal.data("curpage")) - 1;
+
+                        if(curpage >= 0){
+                            self.ShowParamListPaginated(curpage, totalPages);
+                            paginationCurPageOfTotal.data("curpage", curpage);
+                            paginationCurPageOfTotal.button("option", "label",
+                                (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
+                            );
+                        }
+                    });
+
+                    $("#nextPage").button()
+                    .on('click', function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
+                            curpage = parseInt(paginationCurPageOfTotal.data("curpage")) + 1;
+
+                        if(curpage < totalPages){
+                            self.ShowParamListPaginated(curpage, totalPages);
+                            paginationCurPageOfTotal.data("curpage", curpage);
+                            paginationCurPageOfTotal.button("option", "label",
+                                (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
+                            );
+                        }
+                    });
+
+                    $("#firstPage").button()
+                    .on('click', function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
+                            curpage = 0;
+                        self.ShowParamListPaginated(curpage, totalPages);
+                        paginationCurPageOfTotal.data("curpage", curpage);
+                        paginationCurPageOfTotal.button("option", "label",
+                            (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
                         );
+                    });
 
-                        self.SupportParamsChecking();
-                        self.SupportColorPicker();
+                    $("#paginationCurPageOfTotal")
+                    .button()
+                    .data("curpage", '0') //set cur page 0
+                    .on('click', function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
+                            curpage = Math.round(totalPages/2);
+                        self.ShowParamListPaginated(curpage, totalPages);
+                        paginationCurPageOfTotal.data("curpage", curpage);
+                        paginationCurPageOfTotal.button("option", "label",
+                            (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
+                        );
+                    })
 
-                        $("#prevPage").button()
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-                            curpage = parseInt(paginationCurPageOfTotal.data("curpage")) - 1;
+                    $("#lastPage").button()
+                    .on('click', function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
+                            curpage = totalPages - 1;
+                        self.ShowParamListPaginated(curpage, totalPages);
+                        paginationCurPageOfTotal.data("curpage", curpage);
+                        paginationCurPageOfTotal.button("option", "label",
+                            (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
+                        );
+                    });
 
-                            if(curpage >= 0){
-                                self.ShowParamListPaginated(curpage, totalPages);
-                                paginationCurPageOfTotal.data("curpage", curpage);
-                                paginationCurPageOfTotal.button("option", "label",
-                                    (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
-                                );
-                            }
-                        });
-
-                        $("#nextPage").button()
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-                                curpage = parseInt(paginationCurPageOfTotal.data("curpage")) + 1;
-
-                            if(curpage < totalPages){
-                                self.ShowParamListPaginated(curpage, totalPages);
-                                paginationCurPageOfTotal.data("curpage", curpage);
-                                paginationCurPageOfTotal.button("option", "label",
-                                    (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
-                                );
-                            }
-                        });
-
-                        $("#firstPage").button()
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-                                curpage = 0;
-                            self.ShowParamListPaginated(curpage, totalPages);
-                            paginationCurPageOfTotal.data("curpage", curpage);
-                            paginationCurPageOfTotal.button("option", "label",
-                                (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
-                            );
-                        });
-
-                        $("#paginationCurPageOfTotal")
-                        .button()
-                        .data("curpage", '0') //set cur page 0
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-                                curpage = Math.round(totalPages/2);
-                            self.ShowParamListPaginated(curpage, totalPages);
-                            paginationCurPageOfTotal.data("curpage", curpage);
-                            paginationCurPageOfTotal.button("option", "label",
-                                (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
-                            );
-                        })
-
-                        $("#lastPage").button()
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var paginationCurPageOfTotal = $("#paginationCurPageOfTotal"),
-                                curpage = totalPages - 1;
-                            self.ShowParamListPaginated(curpage, totalPages);
-                            paginationCurPageOfTotal.data("curpage", curpage);
-                            paginationCurPageOfTotal.button("option", "label",
-                                (curpage+1) + " " + self.langStr.viewOptionsOf + " " + (totalPages)
-                            );
-                        });
-
-                    } else {
-                        flightOptionsContent.innerHTML = data['bruTypeParams'];
-
-                        self.SupportColorPicker();
-                    }
-                    self.ResizeFlightViewOptionsContainer();
                 } else {
-                    console.log(answ["error"]);
+                    flightOptionsContent.innerHTML = data['bruTypeParams'];
+
+                    self.SupportColorPicker();
                 }
+            } else {
+                console.log(answ["error"]);
             }
         });
     }
@@ -901,7 +889,6 @@ FlightViewOptions.prototype.ShowParamListPaginated = function(pageNum, totalPage
                 paramsPaginated.empty();
                 paramsPaginated.append(data['bruTypeParams']);
 
-                self.ResizeFlightViewOptionsContainer();
                 self.SupportParamsChecking();
                 self.SupportColorPicker();
             } else {
@@ -960,13 +947,13 @@ FlightViewOptions.prototype.SupportColorPicker = function(){
     var self = this;
 
     $.colorpicker.regional['current'] = {
-            ok:                self.langStr.colorpickerOk,
-            cancel:            self.langStr.colorpickerCancel,
-            none:            self.langStr.colorpickerNone,
-            button:            self.langStr.colorpickerButton,
-            title:            self.langStr.colorpickerTitle,
-            transparent:    self.langStr.colorpickerTransparent
-        };
+        ok: I18n.t('colorpicker.ok'),
+        cancel: I18n.t('colorpicker.cancel'),
+        none: I18n.t('colorpicker.none'),
+        button: I18n.t('colorpicker.button'),
+        title: I18n.t('colorpicker.title'),
+        transparent: I18n.t('colorpicker.transparent')
+    };
 
     $('input.colorpicker-popup').on("click", function(e){
         var $this = $(this);
@@ -1392,51 +1379,45 @@ FlightViewOptions.prototype.ShowTempltList = function() {
         self.flightOptionsWorkspace.append(viewOptionsDataContainer);
         self.flightOptionsContent = $("div#flightOptionsContent");
 
-        var pV = {
+        $.ajax({
+            type: "POST",
+            data: {
                 action: "viewOptions/getBruTemplates",
                 data: {
                     flightId: flightId
                 }
-        };
-
-        $.ajax({
-            type: "POST",
-            data: pV,
+            },
             dataType: 'json',
             url: ENTRY_URL,
             async: true
         }).fail(function(msg){
             console.log(msg);
         }).done(function(answ) {
+            if (answ["status"] === "ok") {
+                var data = answ["data"];
+                var flightOptionsContent =
+                    document.getElementById(self.flightOptionsContent.attr('id'));
+                flightOptionsContent.innerHTML = data['bruTypeTpls'];
 
-            if($("#templatesLeftMenuRow").hasClass("LeftMenuRowSelected")){
-                if(answ["status"] == "ok") {
-                    var data = answ["data"],
-                    flightOptionsContent =
-                        document.getElementById(self.flightOptionsContent.attr('id'));
-                    flightOptionsContent.innerHTML = data['bruTypeTpls'];
+                var tplComment = $("#tplComment");
 
-                    self.ResizeFlightViewOptionsContainer();
+                tplComment.append(" ");
+                $.each($("#tplList option:selected"), function(index, item){
+                    var text = $(item).data('comment').replace(/\r?\n/g, '&#13;');
+                    tplComment.append(text);
+                });
 
-                    var tplComment = $("#tplComment");
+                $("#tplList").on("click", function(e){
+                    tplComment.empty();
                     tplComment.append(" ");
                     $.each($("#tplList option:selected"), function(index, item){
                         var text = $(item).data('comment').replace(/\r?\n/g, '&#13;');
                         tplComment.append(text);
                     });
+                });
 
-                    $("#tplList").on("click", function(e){
-                        tplComment.empty();
-                        tplComment.append(" ");
-                        $.each($("#tplList option:selected"), function(index, item){
-                            var text = $(item).data('comment').replace(/\r?\n/g, '&#13;');
-                            tplComment.append(text);
-                        });
-                    });
-
-                } else {
-                    console.log(answ["error"]);
-                }
+            } else {
+                console.log(answ["error"]);
             }
         });
     }

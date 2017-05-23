@@ -1,3 +1,5 @@
+import './flight-list-options.sass'
+
 import React from 'react';
 import { Translate } from 'react-redux-i18n';
 
@@ -26,7 +28,7 @@ export default class FlightListOptions extends React.Component {
 
     render() {
         return (
-            <nav className="navbar navbar-default">
+            <nav className="flight-list-options navbar navbar-default">
                 <div className="container-fluid">
                     <div className="navbar-header">
                       <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-expanded="false">

@@ -99,6 +99,14 @@ const translationsRu = {
             params: 'Параметры',
             templates: 'Шаблоны'
         },
+        colorpicker: {
+            ok: 'Принять',
+            cancel: 'Отменить',
+            none: 'Никакой',
+            button: 'Цвет',
+            title: 'Выбрать цвет',
+            transparent: 'Прозрачный',
+        },
         dataTable: {
             sLengthMenu: 'Показывать по _MENU_ записей на странице',
             sZeroRecords: 'Поиск не дал результата',

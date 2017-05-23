@@ -23,7 +23,7 @@ export default function authorization(state = {}, action) {
         case 'LOGIN_FAILED':
             return {
                 pending: false,
-                errorCode: action.payload.errorCode || 0;
+                errorCode: action.payload.errorCode || 0
             };
         default:
             return state;
