@@ -3,8 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 
-import redirectAction from 'actions/redirect';
-import setTemplateAction from 'actions/setTemplate';
+import redirect from 'actions/redirect';
+import setTemplate from 'actions/setTemplate';
 
 class ShowChartButton extends React.Component {
     buildButton() {
@@ -56,8 +56,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setTemplate: bindActionCreators(setTemplateAction, dispatch),
-        redirect: bindActionCreators(redirectAction, dispatch)
+        setTemplate: bindActionCreators(setTemplate, dispatch),
+        redirect: bindActionCreators(redirect, dispatch)
     }
 }
 

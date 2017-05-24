@@ -13,11 +13,12 @@ import { Translate, I18n } from 'react-redux-i18n';
 import ContentLoader from 'components/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'components/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'components/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
-import getFdrListAction from 'actions/getFdrList';
-import flightUploaerChangeFdrTypeAction from 'actions/flightUploaderChangeFdrType';
-import flightUploaderChangeCalibrationAction from 'actions/flightUploaderChangeCalibration';
-import flightUploaderChangePreviewNeedStateAction from 'actions/flightUploaderChangePreviewNeedState';
-import startEasyFlightUploadingAction from 'actions/startEasyFlightUploading';
+
+import getFdrList from 'actions/getFdrList';
+import flightUploaerChangeFdrType from 'actions/flightUploaderChangeFdrType';
+import flightUploaderChangeCalibration from 'actions/flightUploaderChangeCalibration';
+import flightUploaderChangePreviewNeedState from 'actions/flightUploaderChangePreviewNeedState';
+import startEasyFlightUploading from 'actions/startEasyFlightUploading';
 
 class FlightUploaderDropdown extends React.Component {
     constructor(props) {
@@ -163,11 +164,11 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFdrList: bindActionCreators(getFdrListAction, dispatch),
-        changeFdrType: bindActionCreators(flightUploaerChangeFdrTypeAction, dispatch),
-        changeCalibration: bindActionCreators(flightUploaderChangeCalibrationAction, dispatch),
-        changePreviewNeedState: bindActionCreators(flightUploaderChangePreviewNeedStateAction, dispatch),
-        startEasyUploading: bindActionCreators(startEasyFlightUploadingAction, dispatch)
+        getFdrList: bindActionCreators(getFdrList, dispatch),
+        changeFdrType: bindActionCreators(flightUploaerChangeFdrType, dispatch),
+        changeCalibration: bindActionCreators(flightUploaderChangeCalibration, dispatch),
+        changePreviewNeedState: bindActionCreators(flightUploaderChangePreviewNeedState, dispatch),
+        startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch)
     }
 }
 

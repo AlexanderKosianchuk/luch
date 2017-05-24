@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import MainPage from 'components/main-page/MainPage';
 import FlightParamsOptions from 'components/flight-params-options/FlightParamsOptions';
 
-import showPageAction from 'actions/showPage';
+import showPage from 'actions/showPage';
 
 class FlightParams extends React.Component {
     componentDidMount() {
@@ -31,7 +31,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        showPage: bindActionCreators(showPageAction, dispatch)
+        showPage: bindActionCreators(showPage, dispatch)
     }
 }
 

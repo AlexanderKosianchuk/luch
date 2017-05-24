@@ -165,9 +165,9 @@ class ChartController extends CController
 
         $workspace = "<div id='chartWorkspace' class='WorkSpace'>".
                         "<div id='graphContainer' class='GraphContainer'>" .
-                        "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
-                        "<div id='legend'></div>" .
-                            "</div>" .
+                            "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
+                            "<div id='legend'></div>" .
+                        "</div>" .
                         "<div id='loadingBox' class='LoadingBox'>" .
                             "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
                         "</div>".

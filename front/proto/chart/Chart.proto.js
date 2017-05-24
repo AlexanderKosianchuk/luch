@@ -1,20 +1,18 @@
-var Param = require("Param");
-var AxesWorker = require("AxesWorker");
-var Coordinate = require("Coordinate");
-var Exception = require("Exception");
-var Legend = require("Legend");
+import Param from 'Param';
+import AxesWorker from 'AxesWorker';
+import Coordinate from 'Coordinate';
+import Exception from 'Exception';
+import Legend from 'Legend';
 
 var LEGEND_CONTAINER_OUTER = 175,
     PARAM_TYPE_AP = "ap",
     PARAM_TYPE_BP = "bp";
 
-function Chart(langStr, isPrintPage)
+function Chart(isPrintPage)
 {
-    this.langStr = langStr;
     this.isPrintPage = isPrintPage || false;
 
     this.chartFactoryContainer = null;
-    this.chartTopMenu = null;
     this.chartWorkspace = null;
     this.chartContent = null;
 
@@ -77,7 +75,6 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
     }).done(function(answ) {
         if(answ["status"] == "ok") {
             var data = answ['data'];
-            PutTopMenu(self);
 
             self.chartFactoryContainer.append(data['workspace']);
 
@@ -104,73 +101,6 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             console.log(answ["error"]);
         }
     });
-
-    function PutTopMenu(self){
-        self.chartTopMenu = $("<div></div>")
-            .attr("id", 'topMenuChart')
-            .addClass('TopMenu')
-            .appendTo(self.chartFactoryContainer);
-
-        $("<label></label>")
-            .attr("id", 'figurePrint')
-            .addClass('TopLeftChartButt')
-            .appendTo(self.chartTopMenu)
-            .on("click", function(e){
-                if(self.plot != null) {
-                    var prms = self.Prm.apArr.concat(self.Prm.bpArr);
-                    PrintFile(self.flightId,
-                            self.plotAxes.xaxis.min, self.plotAxes.xaxis.max,
-                            prms);
-                }
-            }).append(
-                $("<span><span>")
-                    .addClass('TopLeftChartButtSpan')
-                    .text(self.langStr.chartPrintTable)
-            );
-
-        $("<label></label>")
-            .attr("id", 'chartPrint')
-            .addClass('TopMenuLeftSecondButt')
-            .appendTo(self.chartTopMenu)
-            .on("click", function(e){
-                if(self.plot != null) {
-                    OpenChartInNewWindow(self);
-                }
-            }).append(
-                $("<span><span>")
-                    .addClass('TopLeftChartButtSpan')
-                    .text(self.langStr.chartPrintInNewWindow)
-            );
-
-        $("<label></label>")
-            .attr("id", 'save-tpl')
-            .addClass('top-right-chart-btn')
-            .appendTo(self.chartTopMenu)
-            .on("click", function(e) {
-                var $saveTpl = $('#save-tpl');
-
-                if (self.flightId
-                    && self.tplName
-                    && !$saveTpl.hasClass('top-right-chart-btn--disabled')
-                ) {
-                    $saveTpl.addClass('top-right-chart-btn--disabled');
-                    var data = [
-                        self.flightId,
-                        self.tplName,
-                        function() {
-                            setTimeout(function() {
-                                $saveTpl.removeClass('top-right-chart-btn--disabled');
-                            }, 2000);
-                        }
-                    ];
-                    $(document).trigger("saveChartTpl", data);
-                }
-            }).append(
-                $("<span><span>")
-                    .addClass('top-right-chart-btn--span')
-                    .text(self.langStr.saveChartTpl)
-            );
-    }
 
     function PrintFile(flightId, fromTime, toTime, prms){
         var pV = {
@@ -218,23 +148,19 @@ Chart.prototype.ResizeChartContainer = function(e) {
     var self = this;
     if(self.chartWorkspace != null){
         self.chartWorkspace.css({
-            "left": 0,
-            "top" : $(window).height() * 2,
             "height": $(window).height(),
             "width": $(window).width()
         });
     }
 
     if((self.chartWorkspace != null) &&
-        (self.chartTopMenu != null) &&
-        (self.chartContent != null)){
-
+        (self.chartContent != null)
+    ){
         self.chartContent.css({
             "left": 0,
-            "top" : self.chartTopMenu.height(),
+            "top" : 50,
             "width" : $(window).width(),
-            "height": self.chartWorkspace.height() -
-                self.chartTopMenu.height()
+            "height": self.chartWorkspace.height() - 50 + 'px'
         });
     }
 

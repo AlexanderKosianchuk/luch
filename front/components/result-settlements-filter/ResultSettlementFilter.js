@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
 
-import changeSettlementItemCheckstateAction from 'actions/changeSettlementItemCheckstate';
-import applySettlementFilterAction from 'actions/applySettlementFilter';
 import SettlementsFilterItem from 'components/settlements-filter-item/SettlementsFilterItem';
 import ContentLoader from 'components/content-loader/ContentLoader';
+
+import changeSettlementItemCheckstate from 'actions/changeSettlementItemCheckstate';
+import applySettlementFilter from 'actions/applySettlementFilter';
 
 class ResultSettlementFilter extends React.Component {
     handleSubmit(event) {
@@ -96,8 +97,8 @@ function mapStateToProps (store) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCheckstate: bindActionCreators(changeSettlementItemCheckstateAction, dispatch),
-        applySettlementFilter: bindActionCreators(applySettlementFilterAction, dispatch)
+        changeCheckstate: bindActionCreators(changeSettlementItemCheckstate, dispatch),
+        applySettlementFilter: bindActionCreators(applySettlementFilter, dispatch)
     }
 }
 

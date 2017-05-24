@@ -1,8 +1,6 @@
 import './flight-events-options.sass'
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightViewOptionsSwitch from 'components/flight-view-options-switch/FlightViewOptionsSwitch';

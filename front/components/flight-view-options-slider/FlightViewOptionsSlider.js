@@ -8,9 +8,9 @@ import { I18n } from 'react-redux-i18n';
 
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
-import getFlightInfoAction from 'actions/getFlightInfo';
-import changeSelectedStartFrameAction from 'actions/changeSelectedStartFrame';
-import changeSelectedEndFrameAction from 'actions/changeSelectedEndFrame';
+import getFlightInfo from 'actions/getFlightInfo';
+import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
+import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
 
 class FlightViewOptionsSlider extends React.Component {
     componentWillMount()
@@ -125,9 +125,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightInfo: bindActionCreators(getFlightInfoAction, dispatch),
-        changeSelectedStartFrame: bindActionCreators(changeSelectedStartFrameAction, dispatch),
-        changeSelectedEndFrame: bindActionCreators(changeSelectedEndFrameAction, dispatch)
+        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
+        changeSelectedStartFrame: bindActionCreators(changeSelectedStartFrame, dispatch),
+        changeSelectedEndFrame: bindActionCreators(changeSelectedEndFrame, dispatch)
     }
 }
 

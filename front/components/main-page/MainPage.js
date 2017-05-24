@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import TopMenu from 'components/top-menu/TopMenu';
 import MainMenu from 'components/main-menu/MainMenu';
 
-import redirectAction from 'actions/redirect';
+import redirect from 'actions/redirect';
 
 class MainPage extends React.Component {
     constructor(props) {
@@ -48,7 +48,7 @@ class MainPage extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        redirect: bindActionCreators(redirectAction, dispatch),
+        redirect: bindActionCreators(redirect, dispatch),
     }
 }
 

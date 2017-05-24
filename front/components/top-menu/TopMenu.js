@@ -10,9 +10,9 @@ import FlightUploaderDropdown from 'components/flight-uploader-dropdown/FlightUp
 import FlightImporterDropdown from 'components/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'components/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
-import logoutAction from 'actions/logout';
-import changeLanguageAction from 'actions/changeLanguage';
-import redirectAction from 'actions/redirect';
+import logout from 'actions/logout';
+import changeLanguage from 'actions/changeLanguage';
+import redirect from 'actions/redirect';
 
 class TopMenu extends React.Component {
     changeLanguage(event) {
@@ -107,9 +107,9 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logout: bindActionCreators(logoutAction, dispatch),
-        changeLanguage: bindActionCreators(changeLanguageAction, dispatch),
-        redirect: bindActionCreators(redirectAction, dispatch),
+        logout: bindActionCreators(logout, dispatch),
+        changeLanguage: bindActionCreators(changeLanguage, dispatch),
+        redirect: bindActionCreators(redirect, dispatch),
     }
 }
 

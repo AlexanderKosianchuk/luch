@@ -9,9 +9,10 @@ import { Translate, I18n } from 'react-redux-i18n';
 import MainPage from 'components/main-page/MainPage';
 import ContentLoader from 'components/content-loader/ContentLoader';
 import UserOptionsItem from 'components/user-options-item/UserOptionsItem';
-import getUserOptionsAction from 'actions/getUserOptions';
-import changeUserOptionItemAction from 'actions/changeUserOptionItem';
-import setUserOptionsAction from 'actions/setUserOptions';
+
+import getUserOptions from 'actions/getUserOptions';
+import changeUserOptionItem from 'actions/changeUserOptionItem';
+import setUserOptions from 'actions/setUserOptions';
 
 class UserOptions extends React.Component {
     buildContent() {
@@ -73,9 +74,9 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getUserOptions: bindActionCreators(getUserOptionsAction, dispatch),
-        changeUserOptionItem: bindActionCreators(changeUserOptionItemAction, dispatch),
-        setUserOptions: bindActionCreators(setUserOptionsAction, dispatch)
+        getUserOptions: bindActionCreators(getUserOptions, dispatch),
+        changeUserOptionItem: bindActionCreators(changeUserOptionItem, dispatch),
+        setUserOptions: bindActionCreators(setUserOptions, dispatch)
     }
 }
 

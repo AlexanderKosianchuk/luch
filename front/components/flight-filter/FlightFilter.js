@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightFilterItem from 'components/flight-filter-item/FlightFilterItem';
-import applyFlightFilterAction from 'actions/applyFlightFilter';
-import changeFlightFilterItemAction from 'actions/changeFlightFilterItem';
+import applyFlightFilter from 'actions/applyFlightFilter';
+import changeFlightFilterItem from 'actions/changeFlightFilterItem';
 
 class FlightFilter extends React.Component {
     constructor(props) {
@@ -59,8 +59,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeFlightFilterItem: bindActionCreators(changeFlightFilterItemAction, dispatch),
-        applyFlightFilter: bindActionCreators(applyFlightFilterAction, dispatch)
+        changeFlightFilterItem: bindActionCreators(changeFlightFilterItem, dispatch),
+        applyFlightFilter: bindActionCreators(applyFlightFilter, dispatch)
     }
 }
 

@@ -1,23 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import MainPage from 'components/main-page/MainPage';
 import FlightTemplatesOptions from 'components/flight-templates-options/FlightTemplatesOptions';
-
-import showPageAction from 'actions/showPage';
+import FlightTemplatesList from 'components/flight-templates-list/FlightTemplatesList';
 
 class FlightTemplates extends React.Component {
-    componentDidMount() {
-        this.props.showPage('flightTemplates', [this.props.flightId]);
-    }
-
     render () {
         return (
             <div>
                 <MainPage/>
                 <FlightTemplatesOptions flightId={ this.props.flightId }/>
-                <div id='container'></div>
+                <FlightTemplatesList flightId={ this.props.flightId }/>
             </div>
         );
     }
@@ -29,10 +23,4 @@ function mapStateToProps(state, ownProps) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        showPage: bindActionCreators(showPageAction, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FlightTemplates);
+export default connect(mapStateToProps, () => { return{} })(FlightTemplates);

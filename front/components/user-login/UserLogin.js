@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 
-import loginAction from 'actions/login';
+import login from 'actions/login';
 
 function UserLogin (props) {
     let loginInput;
@@ -62,7 +62,7 @@ function UserLogin (props) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        login: bindActionCreators(loginAction, dispatch)
+        login: bindActionCreators(login, dispatch)
     }
 }
 

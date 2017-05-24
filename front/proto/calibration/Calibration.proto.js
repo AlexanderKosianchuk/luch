@@ -2,17 +2,14 @@
 /*global $, jQuery*/
 import 'chosen-js';
 import 'chosen-js/chosen.css';
+import { I18n } from 'react-redux-i18n';
 
-function Calibration(langStr) {
+function Calibration() {
     'use strict';
 
-    var userId = null,
-        calibrationWorkspace,
+    var calibrationWorkspace,
         calibrationOptions = null,
         calibrationFormContent = null;
-
-    this.userId = null;
-    this.task = null;
 
     this.resizeContainer = function(e)
     {
@@ -371,8 +368,8 @@ function Calibration(langStr) {
 
         return '<table v-align="top">'
             + '<tr>'
-            + '<td><label>'+langStr.calibration+'. ' + '</label></td>'
-            + '<td><label>'+langStr.calibrationForFDR+': ' + '</label></td>'
+            + '<td><label>'+I18n.t('calibration.title')+'. ' + '</label></td>'
+            + '<td><label>'+I18n.t('calibration.fdr')+': ' + '</label></td>'
             + '<td><div>'
                 + '<select id="fdr-calibration">'
                 + options
@@ -380,12 +377,12 @@ function Calibration(langStr) {
             + '</div></td>'
             + '<td><div>'
                 + '<button id="list-calibration" class="Button calibration-form-opitons-button">'
-                + langStr.calibrationList
+                + I18n.t('calibration.list')
                 + '</button>'
             + '</div></td>'
             + '<td><div>'
                 + '<button id="create-calibration" class="Button calibration-form-opitons-button">'
-                + langStr.calibrationCreate
+                + I18n.t('calibration.create')
                 + '</button>'
             + '</div></td>'
             + '</tr>'
@@ -395,17 +392,17 @@ function Calibration(langStr) {
     this.renderCalibrationList = function(fdr) {
         if (fdr['calibrations'].length === 0) {
             return '<div>'
-                + langStr.calibrationsUnexist
+                + I18n.t('calibration.unexist')
                 + '</div>';
         }
 
         var calibrations = fdr['calibrations'];
         var rows = this.renderCalibrationRow('#',
             '',
-            langStr.calibrationName,
-            langStr.calibrationDateCreation,
-            langStr.calibrationDateLastEdit,
-            langStr.calibrationControls,
+            I18n.t('calibration.name'),
+            I18n.t('calibration.dateCreation'),
+            I18n.t('calibration.dateLastEdit'),
+            I18n.t('calibration.controls'),
             true
         );
 
@@ -427,11 +424,11 @@ function Calibration(langStr) {
     this.renderCalibrationRow = function(num, id, name, dtCreated, dtUpdated, ctrls = null, header = false) {
         if (ctrls === null) {
             ctrls = '<span class="js-calibration-edit calibration_button calibration_button__small" '
-                        + 'data-calibration-id="'+id+'" title="'+langStr.calibrationEdit+'">'
+                        + 'data-calibration-id="'+id+'" title="'+I18n.t('calibration.edit')+'">'
                     +'<span class="icon ui-icon ui-icon-pencil"></span>'
                 +'</span>'
                 +'<span class="js-calibration-delete calibration_button calibration_button__small" '
-                        + 'data-calibration-id="'+id+'" title="'+langStr.calibrationDelete+'">'
+                        + 'data-calibration-id="'+id+'" title="'+I18n.t('calibration.delete')+'">'
                     +'<span class="icon ui-icon ui-icon-trash"></span>'
                 +'</span>';
         }
@@ -471,7 +468,7 @@ function Calibration(langStr) {
         if(calibrationId === null) {
             calibrationId = '';
             disabled = 'disabled';
-            title = 'title="'+langStr.calibrationInputName+'"';
+            title = 'title="'+I18n.t('calibration.inputName')+'"';
             paramsTable = this.renderCalibrationParam(fdr['calibratedParams']);
         } else {
             var calibration = this.getById(fdr['calibrations'], calibrationId);
@@ -482,14 +479,14 @@ function Calibration(langStr) {
         return '<div id="calibration-edit-form" '
                 +'data-fdr-id="'+fdr['id']+'">'
             + '<div class="row">'
-                + '<h3>'+langStr.calibrationCreationForm+'</h3>'
+                + '<h3>'+I18n.t('calibration.reationForm')+'</h3>'
             + '</div>'
             + '<div class="row">'
-                + '<h3>'+langStr.calibrationFor + ' ' + fdr.name + '</h3>'
+                + '<h3>'+I18n.t('calibration.for') + ' ' + fdr.name + '</h3>'
             + '</div>'
             + '<div class="row calibration-name">'
                 + '<label class="calibration-form_label">'
-                + langStr.calibrationName + " "
+                + I18n.t('calibration.name') + " "
                 + '<input id="calibration-name" value="'+calibrationName+'" class="calibration-form_input" />'
                 + "</label>"
             + '</div>'
@@ -502,7 +499,7 @@ function Calibration(langStr) {
                 + ' data-calibration-id="'+calibrationId+'" '
                 + disabled + ' '
                 + title + ' >'
-                + langStr.calibrationSave
+                + I18n.t('calibration.save')
                 + '</button>'
             + '</div>'
             + '</div>';
@@ -515,19 +512,19 @@ function Calibration(langStr) {
 
             paramsTable += '<div class="calibration-param-header fill">'
                     + '<div class="calibration-param-cell col-2 bold">'
-                    + langStr.calibrationParamName + ': '
+                    + I18n.t('calibration.paramName') + ': '
                     + '</div>'
                     + '<div class="calibration-param-cell col-3">'
                     + params[ii].name
                     + '</div>'
                     + '<div class="calibration-param-cell col-1 bold">'
-                    + langStr.calibrationParamCode + ': '
+                    + I18n.t('calibration.paramCode') + ': '
                     + '</div>'
                     + '<div class="calibration-param-cell col-1">'
                     + params[ii].code
                     + '</div>'
                     + '<div class="calibration-param-cell col-2 bold">'
-                    + langStr.calibrationParamChannels + ': '
+                    + I18n.t('calibration.paramChannels') + ': '
                     + '</div>'
                     + '<div class="calibration-param-cell col-3">'
                     + params[ii].channel
@@ -588,7 +585,7 @@ function Calibration(langStr) {
 
         calibrationTable += '<div class="add-calibration-item-row calibration-param-cell col-12 bold">'
                 + '<button class="add-calibration-item calibration_button calibration_button__full-width">'
-                + langStr.calibrationValueAdd
+                + I18n.t('calibration.valueAdd')
                 + "</button>"
             + "</div>";
 

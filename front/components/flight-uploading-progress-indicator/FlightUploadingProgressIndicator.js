@@ -1,7 +1,6 @@
 import './flight-uploader-progress-indicator.sass';
 
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import CircularProgressbar from 'react-circular-progressbar';
 import _constant from 'lodash.constant';

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import MainPage from 'components/main-page/MainPage';
 
-import showPageAction from 'actions/showPage';
+import showPage from 'actions/showPage';
 
 class FlightsSearch extends React.Component {
     componentDidMount() {
@@ -23,7 +23,7 @@ class FlightsSearch extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        showPage: bindActionCreators(showPageAction, dispatch)
+        showPage: bindActionCreators(showPage, dispatch)
     }
 }
 

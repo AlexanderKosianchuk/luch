@@ -1,8 +1,6 @@
 import './flight-importer-dropdown.sass';
 
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import FileInput from 'react-file-input';
 import { Translate, I18n } from 'react-redux-i18n';

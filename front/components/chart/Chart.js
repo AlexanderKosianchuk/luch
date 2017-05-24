@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import MainPage from 'components/main-page/MainPage';
 //import FlightListOptions from 'components/flight-list-options/FlightListOptions';
 
-import getTemplateAction from 'actions/getTemplate';
-import getFlightInfoAction from 'actions/getFlightInfo';
-import showPageAction from 'actions/showPage';
+import getTemplate from 'actions/getTemplate';
+import getFlightInfo from 'actions/getFlightInfo';
+import showPage from 'actions/showPage';
 
 class Chart extends React.Component {
     componentDidMount() {
@@ -55,9 +55,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        showPage: bindActionCreators(showPageAction, dispatch),
-        getTemplate: bindActionCreators(getTemplateAction, dispatch),
-        getFlightInfo: bindActionCreators(getFlightInfoAction, dispatch),
+        showPage: bindActionCreators(showPage, dispatch),
+        getTemplate: bindActionCreators(getTemplate, dispatch),
+        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
     }
 }
 

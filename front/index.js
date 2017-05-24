@@ -53,11 +53,9 @@ import { setLocale, loadTranslations, syncTranslationWithStore } from 'react-red
 import { UserAuthWrapper } from 'redux-auth-wrapper';
 
 // old prototypes
-import Language from 'Language';
 import FlightList from 'FlightList';
 import FlightUploader from 'FlightUploader';
 import FlightViewOptions from 'FlightViewOptions';
-import Fdr from 'Fdr';
 import ChartService from 'Chart';
 import User from 'User';
 import SearchFlight from 'SearchFlight';
@@ -77,9 +75,7 @@ import FlightParams from 'components/flight-params/FlightParams';
 import Chart from 'components/chart/Chart';
 import configureStore from 'store/configureStore';
 
-import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
-import startFlightUploadingAction from 'actions/startFlightUploading';
-import completeFlightUploadingAction from 'actions/completeFlightUploading';
+import startFlightUploading from 'actions/startFlightUploading';
 
 import translationsEn from 'translations/translationsEn';
 import translationsEs from 'translations/translationsEs';
@@ -93,15 +89,153 @@ const store = configureStore({}, routerMiddlewareInstance);
 store.dispatch(loadTranslations(translationsObject));
 store.dispatch(setLocale('ru'));
 
-$(document).ready(function () {
-    var userLang = $('html').attr('lang'),
-        LA = new Language(userLang),
-        FU = null,
-        F = null,
-        U = null,
-        SF = null,
-        CLB = null;
+let currentFlightUploadingStateValue;
+store.subscribe(() => {
+    function selectFlightUploadingState(state) {
+        return state.flightUploadingState.length;
+    }
 
+    let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
+     currentFlightUploadingStateValue = selectFlightUploadingState(store.getState())
+
+     if ((currentFlightUploadingStateValue === 0)
+        && (previousFlightUploadingStateValue > 0)
+     ) {
+        $(document).trigger('flightListShow', [
+            $('#container')
+        ]);
+     }
+});
+
+$(document).on('uploadWithPreview', function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
+    let FU = new FlightUploader(store);
+    FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
+});
+
+$(document).on('importItem', function (e, form) {
+    let dfd = $.Deferred();
+    let FU = new FlightUploader(store);
+    FU.Import(form, dfd);
+    dfd.promise();
+
+    dfd.then(
+        () => {
+            if ($('#container')) {
+                $(document).trigger('flightListShow', [
+                    $('#container')
+                ]);
+                return this;
+            }
+
+            location.reload();
+        }
+    );
+});
+
+$(document).on('startProccessing', function (e, uploadingUid) {
+    store.dispatch(startFlightUploading({
+        uploadingUid: uploadingUid
+    }));
+});
+
+$(document).on('endProccessing', function (e, uploadingUid) {
+    store.dispatch(() => () => {
+        dispatch({
+            type: 'FLIGHT_UPLOADING_COMPLETE',
+            payload: {
+                uploadingUid: uploadingUid
+            }
+        });
+    });
+});
+
+$(document).on('convertSelectedClicked', function (e) {
+    let FL = new FlightList(store);
+    FL.ShowFlightsByPath();
+});
+
+$(document).on('flightListShow', function (e, someshowcase) {
+    let FL = new FlightList(store);
+    FL.FillFactoryContaider(someshowcase);
+});
+
+$(document).on('flightEvents', function (e, someshowcase, flightId) {
+    let FO = new FlightViewOptions(store);
+    FO.task = 'getEventsList';
+    FO.flightId = flightId;
+    FO.FillFactoryContaider(someshowcase);
+});
+
+$(document).on('flightTemplates', function (e, someshowcase, flightId) {
+    let FO = new FlightViewOptions(store);
+    FO.task = 'getTemplates';
+    FO.flightId = flightId;
+    FO.FillFactoryContaider(someshowcase);
+});
+
+$(document).on('flightParams', function (e, someshowcase, flightId) {
+    let FO = new FlightViewOptions(store);
+    FO.task = 'getParamList';
+    FO.flightId = flightId;
+    FO.FillFactoryContaider(someshowcase);
+});
+
+$(document).on('chartShow', function (
+    e, showcase,
+    flightId, tplName,
+    stepLength, startCopyTime,
+    startFrame, endFrame,
+    apParams, bpParams
+) {
+    var C = new ChartService(store);
+    C.SetChartData(
+        flightId, tplName,
+        stepLength, startCopyTime,
+        startFrame, endFrame,
+        apParams, bpParams
+    );
+    C.FillFactoryContaider(showcase);
+});
+
+$(document).on('userShowList', function (e, showcase) {
+    let U = new User(store);
+    U.FillFactoryContaider(showcase);
+});
+
+$(document).on('flightSearchFormShow', function (e, showcase) {
+    let SF = new SearchFlight(store);
+    SF.FillFactoryContaider(showcase);
+});
+
+$(document).on('calibrationsShow', function (e, showcase) {
+    debugger;
+    let CLB = new Calibration(store);
+    CLB.FillFactoryContaider(showcase);
+});
+
+let topMenuService = {
+    changeLanguage: function(newLang) {
+        eventHandler.trigger('userChangeLanguage', [newLang]);
+    },
+    uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
+        eventHandler.trigger('uploadWithPreview', [form, uploadingUid, fdrId, fdrName, calibrationId]);
+    },
+    easyUploading: function(uploadingUid, fdrId, calibrationId) {
+        eventHandler.trigger('easyUploading', [uploadingUid, fdrId, calibrationId]);
+    },
+    importItem: function(form) {
+        eventHandler.trigger('importItem', [form]);
+    }
+};
+
+// Redirects to /login by default
+const UserIsAuthenticated = UserAuthWrapper({
+    authSelector: state => state.user, // how to get the user state
+    redirectAction: routerActions.replace, // the redux action to dispatch for redirect
+    wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
+});
+
+$(document).ready(function () {
     if (($('html').attr('login') !== '')
         && ($('html').attr('lang') !== '')
     ) {
@@ -114,194 +248,28 @@ $(document).ready(function () {
                 lang: lang
             }
         });
-        userLang = lang.toUpperCase();
         store.dispatch(setLocale(lang.toLowerCase()));
     }
 
-    LA.GetLanguage().done(function (data) {
-        var langStr = data;
-        FU = new FlightUploader(langStr);
-        F = new Fdr(langStr);
-        U = new User(langStr);
-        SF = new SearchFlight(langStr);
-        CLB = new Calibration(langStr);
-
-        let topMenuService = {
-            changeLanguage: function(newLang) {
-                eventHandler.trigger('userChangeLanguage', [newLang]);
-            },
-            uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
-                eventHandler.trigger('uploadWithPreview', [form, uploadingUid, fdrId, fdrName, calibrationId]);
-            },
-            easyUploading: function(uploadingUid, fdrId, calibrationId) {
-                eventHandler.trigger('easyUploading', [uploadingUid, fdrId, calibrationId]);
-            },
-            importItem: function(form) {
-                eventHandler.trigger('importItem', [form]);
-            }
-        };
-
-        // Redirects to /login by default
-        const UserIsAuthenticated = UserAuthWrapper({
-            authSelector: state => state.user, // how to get the user state
-            redirectAction: routerActions.replace, // the redux action to dispatch for redirect
-            wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
-        });
-
-        ReactDOM.render(
-            <Provider store={ store }>
-                <ConnectedRouter history={ history }>
-                  <div>
-                    <Route exact path='/login' component={ UserLogin } />
-                    <Route exact path='/' component={ UserIsAuthenticated(Flights) } />
-                    <Route exact path='/user-options' component={ UserIsAuthenticated(UserOptions) } />
-                    <Route exact path='/flights-search' component={ UserIsAuthenticated(FlightsSearch) } />
-                    <Route exact path='/results' component={ UserIsAuthenticated(Results) } />
-                    <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
-                    <Route exact path='/users' component={ UserIsAuthenticated(Users) } />
-                    <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
-                    <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
-                    <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
-                    <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
-                        component={ UserIsAuthenticated(Chart) } />
-                  </div>
-                </ConnectedRouter>
-            </Provider>,
-            document.getElementById('root')
-        );
-
-        let currentFlightUploadingStateValue;
-        function selectFlightUploadingState(state) {
-            return state.flightUploadingState.length;
-        }
-
-        store.subscribe(() => {
-            let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
-             currentFlightUploadingStateValue = selectFlightUploadingState(store.getState())
-
-             if ((currentFlightUploadingStateValue === 0)
-                && (previousFlightUploadingStateValue > 0)
-             ) {
-                $(document).trigger('flightListShow', [
-                    $('#container')
-                ]);
-             }
-        });
-    });
-
-    $(document).on('uploadWithPreview', function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
-        FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
-    });
-
-    $(document).on('importItem', function (e, form) {
-        let dfd = $.Deferred();
-        FU.Import(form, dfd);
-        dfd.promise();
-
-        dfd.then(
-            () => {
-                if ($('#container')) {
-                    $(document).trigger('flightListShow', [
-                        $('#container')
-                    ]);
-                    return this;
-                }
-
-                location.reload();
-            }
-        );
-    });
-
-    $(document).on('startProccessing', function (e, uploadingUid) {
-        store.dispatch(startFlightUploadingAction({
-            uploadingUid: uploadingUid
-        }));
-    });
-
-    $(document).on('endProccessing', function (e, uploadingUid) {
-        store.dispatch(() => () => {
-            dispatch({
-                type: 'FLIGHT_UPLOADING_COMPLETE',
-                payload: {
-                    uploadingUid: uploadingUid
-                }
-            });
-        });
-    });
-
-    $(document).on('convertSelectedClicked', function (e) {
-        let FL = new FlightList(store);
-        FL.ShowFlightsByPath();
-    });
-
-    $(document).on('flightListShow', function (e, someshowcase) {
-        let FL = new FlightList(store);
-        FL.FillFactoryContaider(someshowcase);
-    });
-
-    $(document).on('flightEvents', function (e, someshowcase, flightId) {
-        let FO = new FlightViewOptions(store);
-        FO.task = 'getEventsList';
-        FO.flightId = flightId;
-        FO.FillFactoryContaider(someshowcase);
-    });
-
-    $(document).on('flightTemplates', function (e, someshowcase, flightId) {
-        let FO = new FlightViewOptions(store);
-        FO.task = 'getTemplates';
-        FO.flightId = flightId;
-        FO.FillFactoryContaider(someshowcase);
-    });
-
-    $(document).on('flightParams', function (e, someshowcase, flightId) {
-        let FO = new FlightViewOptions(store);
-        FO.task = 'getParamList';
-        FO.flightId = flightId;
-        FO.FillFactoryContaider(someshowcase);
-    });
-
-    $(document).on('chartShow', function (
-        e, showcase,
-        flightId, tplName,
-        stepLength, startCopyTime,
-        startFrame, endFrame,
-        apParams, bpParams
-    ) {
-        var C = new ChartService(store);
-        C.SetChartData(
-            flightId, tplName,
-            stepLength, startCopyTime,
-            startFrame, endFrame,
-            apParams, bpParams
-        );
-        C.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('showBruTypeEditingForm', function (e, bruTypeId, task, showcase) {
-        if (bruTypeId !== null) {
-            F.bruTypeId = bruTypeId;
-        }
-
-        if (task !== null) {
-            F.task = task;
-        }
-
-        Fdr.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('userShowList', function (e, showcase) {
-        U.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('flightSearchFormShow', function (e, showcase) {
-        SF.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('calibrationFormShow', function (e, showcase) {
-        CLB.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('saveChartTpl', function (e, flightId, tplName, saveChartTplCb) {
-        Fdr.copyTemplate(flightId, tplName).then(saveChartTplCb);
-    });
+    ReactDOM.render(
+        <Provider store={ store }>
+            <ConnectedRouter history={ history }>
+              <div>
+                <Route exact path='/login' component={ UserLogin } />
+                <Route exact path='/' component={ UserIsAuthenticated(Flights) } />
+                <Route exact path='/user-options' component={ UserIsAuthenticated(UserOptions) } />
+                <Route exact path='/flights-search' component={ UserIsAuthenticated(FlightsSearch) } />
+                <Route exact path='/results' component={ UserIsAuthenticated(Results) } />
+                <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
+                <Route exact path='/users' component={ UserIsAuthenticated(Users) } />
+                <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
+                <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
+                <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
+                <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
+                    component={ UserIsAuthenticated(Chart) } />
+              </div>
+            </ConnectedRouter>
+        </Provider>,
+        document.getElementById('root')
+    );
 });

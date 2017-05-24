@@ -670,53 +670,6 @@ div#progressLabel {
     border-color:#FFF;
 }
 
-/* tell the SVG path to be a thin blue line without any area fill */
-.GraphContainer {
-    width:100%;
-    position: absolute;
-    box-sizing: border-box;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    border: 1px solid #ddd;
-    background: #fff;
-    background: linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-#placeholder {
-    font-size: 14px;
-    line-height: 1.2em;
-    overflow-x: hidden;
-    float:left;
-}
-
-.InfoFromRequest {
-    display: none;
-}
-
-#legend {
-    overflow-y:auto;
-    text-align:left;
-    font-family: Tahoma, Geneva, sans-serif;
-    font-size:12px;
-}
-
-.LoadingBox{
-    position: absolute;
-    top:300px;
-    width: 100%;
-    text-align: center;
-    z-index:1;
-}
-
 #tableContainer {
     display: none;
     position: relative;

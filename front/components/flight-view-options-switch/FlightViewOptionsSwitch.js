@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
-import redirectAction from 'actions/redirect';
+import redirect from 'actions/redirect';
 
 const views = [
     'events', 'params', 'templates'
@@ -45,7 +45,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        redirect: bindActionCreators(redirectAction, dispatch)
+        redirect: bindActionCreators(redirect, dispatch)
     }
 }
 
