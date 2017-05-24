@@ -7,12 +7,9 @@ import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightViewOptionsSwitch from 'components/flight-view-options-switch/FlightViewOptionsSwitch';
 import FlightViewOptionsSlider from 'components/flight-view-options-slider/FlightViewOptionsSlider';
+import ShowChartButton from 'components/show-chart-button/ShowChartButton';
 
 export default class FlightParamsOptions extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <nav className="flight-params-options navbar navbar-default">
@@ -32,6 +29,9 @@ export default class FlightParamsOptions extends React.Component {
                             flightId={ this.props.flightId }
                         />
                         <FlightViewOptionsSlider
+                            flightId={ this.props.flightId }
+                        />
+                        <ShowChartButton
                             flightId={ this.props.flightId }
                         />
                     </div>

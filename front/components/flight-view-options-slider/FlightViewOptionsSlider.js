@@ -13,6 +13,13 @@ import changeSelectedStartFrameAction from 'actions/changeSelectedStartFrame';
 import changeSelectedEndFrameAction from 'actions/changeSelectedEndFrame';
 
 class FlightViewOptionsSlider extends React.Component {
+    componentWillMount()
+    {
+        if (this.props.flightDuration === null) {
+            this.props.getFlightInfo({flightId: this.props.flightId});
+        }
+    }
+
     buildBody()
     {
         if (this.props.flightInfoPending === false) {
@@ -90,10 +97,6 @@ class FlightViewOptionsSlider extends React.Component {
 
     render()
     {
-        if (this.props.flightDuration === null) {
-            this.props.getFlightInfo({flightId: this.props.flightId});
-        }
-
         return (
             <ul className="flight-view-options-slider nav navbar-nav">
                 <li>

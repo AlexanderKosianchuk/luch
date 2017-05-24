@@ -58,7 +58,7 @@ import FlightList from 'FlightList';
 import FlightUploader from 'FlightUploader';
 import FlightViewOptions from 'FlightViewOptions';
 import Fdr from 'Fdr';
-import Chart from 'Chart';
+import ChartService from 'Chart';
 import User from 'User';
 import SearchFlight from 'SearchFlight';
 import Calibration from 'Calibration';
@@ -74,6 +74,7 @@ import Users from 'components/users/Users';
 import FlightEvents from 'components/flight-events/FlightEvents';
 import FlightTemplates from 'components/flight-templates/FlightTemplates';
 import FlightParams from 'components/flight-params/FlightParams';
+import Chart from 'components/chart/Chart';
 import configureStore from 'store/configureStore';
 
 import reportFlightUploadingProgressAction from 'actions/reportFlightUploadingProgress';
@@ -97,7 +98,6 @@ $(document).ready(function () {
         LA = new Language(userLang),
         FU = null,
         F = null,
-        C = null,
         U = null,
         SF = null,
         CLB = null;
@@ -122,7 +122,6 @@ $(document).ready(function () {
         var langStr = data;
         FU = new FlightUploader(langStr);
         F = new Fdr(langStr);
-        C = new Chart(langStr);
         U = new User(langStr);
         SF = new SearchFlight(langStr);
         CLB = new Calibration(langStr);
@@ -163,6 +162,8 @@ $(document).ready(function () {
                     <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
                     <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
                     <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
+                    <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
+                        component={ UserIsAuthenticated(Chart) } />
                   </div>
                 </ConnectedRouter>
             </Provider>,
@@ -228,32 +229,52 @@ $(document).ready(function () {
         });
     });
 
-    let FL = new FlightList(store);
     $(document).on('convertSelectedClicked', function (e) {
+        let FL = new FlightList(store);
         FL.ShowFlightsByPath();
     });
 
     $(document).on('flightListShow', function (e, someshowcase) {
+        let FL = new FlightList(store);
         FL.FillFactoryContaider(someshowcase);
     });
 
-    let FO = new FlightViewOptions(store);
     $(document).on('flightEvents', function (e, someshowcase, flightId) {
+        let FO = new FlightViewOptions(store);
         FO.task = 'getEventsList';
         FO.flightId = flightId;
         FO.FillFactoryContaider(someshowcase);
     });
 
     $(document).on('flightTemplates', function (e, someshowcase, flightId) {
+        let FO = new FlightViewOptions(store);
         FO.task = 'getTemplates';
         FO.flightId = flightId;
         FO.FillFactoryContaider(someshowcase);
     });
 
     $(document).on('flightParams', function (e, someshowcase, flightId) {
+        let FO = new FlightViewOptions(store);
         FO.task = 'getParamList';
         FO.flightId = flightId;
         FO.FillFactoryContaider(someshowcase);
+    });
+
+    $(document).on('chartShow', function (
+        e, showcase,
+        flightId, tplName,
+        stepLength, startCopyTime,
+        startFrame, endFrame,
+        apParams, bpParams
+    ) {
+        var C = new ChartService(store);
+        C.SetChartData(
+            flightId, tplName,
+            stepLength, startCopyTime,
+            startFrame, endFrame,
+            apParams, bpParams
+        );
+        C.FillFactoryContaider(showcase);
     });
 
     $(document).on('showBruTypeEditingForm', function (e, bruTypeId, task, showcase) {
@@ -278,20 +299,6 @@ $(document).ready(function () {
 
     $(document).on('calibrationFormShow', function (e, showcase) {
         CLB.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('showChart', function (e,
-            flightId, tplName,
-            stepLength, startCopyTime, startFrame, endFrame,
-            apParams, bpParams) {
-
-        if (C !== null) {
-            C.SetChartData(flightId, tplName,
-                    stepLength, startCopyTime, startFrame, endFrame,
-                    apParams, bpParams);
-
-            C.FillFactoryContaider();
-        }
     });
 
     $(document).on('saveChartTpl', function (e, flightId, tplName, saveChartTplCb) {

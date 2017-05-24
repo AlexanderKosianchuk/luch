@@ -433,13 +433,12 @@ class PSTempl
         return $minMax;
     }
 
-    public function CreateTplWithDistributedParams($extPSTListTableName, $extTemplateName, $extParamsWithType, $extUser)
-    {
-        $PSTTableName = $extPSTListTableName;
-        $tplName = $extTemplateName;
-        $paramsWithType = $extParamsWithType;
-        $username = $extUser;
-
+    public function CreateTplWithDistributedParams(
+        $PSTTableName,
+        $tplName,
+        $paramsWithType,
+        $username
+    ) {
         $apCount = count($paramsWithType[PARAM_TYPE_AP]);
 
         for($i = 0; $i < count($paramsWithType[PARAM_TYPE_AP]); $i++)

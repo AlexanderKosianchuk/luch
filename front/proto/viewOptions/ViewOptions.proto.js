@@ -1,9 +1,11 @@
 import { I18n }  from 'react-redux-i18n';
+import changeFlightParamCheckstateAction from 'actions/changeFlightParamCheckstate';
 
 function FlightViewOptions(store)
 {
     this.flightId = null;
     this.task = null;
+    this.store = store;
 
     this.flightOptionsFactoryContainer = null;
     this.flightOptionsTopMenu = null;
@@ -845,6 +847,16 @@ FlightViewOptions.prototype.ShowParamList = function() {
                 } else {
                     flightOptionsContent.innerHTML = data['bruTypeParams'];
 
+                    $('.flight-view-oprions-param').click(function(event) {
+                        let item = $(this);
+
+                        self.store.dispatch(changeFlightParamCheckstateAction({
+                            id: item.data('id'),
+                            type: item.data('type'),
+                            state: item.prop('checked')
+                        }));
+                    });
+
                     self.SupportColorPicker();
                 }
             } else {
@@ -1382,7 +1394,7 @@ FlightViewOptions.prototype.ShowTempltList = function() {
         $.ajax({
             type: "POST",
             data: {
-                action: "viewOptions/getBruTemplates",
+                action: "templates/getTemplates",
                 data: {
                     flightId: flightId
                 }

@@ -2,6 +2,7 @@ const initialState = {
     pending: null,
     duration: null,
     stepLength: null,
+    startFlightTime: null,
     selectedStartFrame: null,
     selectedEndFrame: null
 };
@@ -13,6 +14,7 @@ export default function flightInfo(state = initialState, action) {
                 pending: true,
                 duration: null,
                 stepLength: null,
+                startFlightTime: null,
                 selectedStartFrame: null,
                 selectedEndFrame: null
             };
@@ -21,6 +23,7 @@ export default function flightInfo(state = initialState, action) {
                 pending: false,
                 duration: action.payload.duration,
                 stepLength: action.payload.stepLength,
+                startFlightTime: action.payload.startFlightTime,
                 selectedStartFrame: 0,
                 selectedEndFrame: action.payload.duration
             };
@@ -29,6 +32,7 @@ export default function flightInfo(state = initialState, action) {
                 pending: false,
                 duration: null,
                 stepLength: null,
+                startFlightTime: null,
                 selectedStartFrame: null,
                 selectedEndFrame: null
             };

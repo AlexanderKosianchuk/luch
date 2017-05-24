@@ -6,12 +6,9 @@ import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightViewOptionsSwitch from 'components/flight-view-options-switch/FlightViewOptionsSwitch';
+import FlightViewOptionsSlider from 'components/flight-view-options-slider/FlightViewOptionsSlider';
 
 export default class FlightTemplatesOptions extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <nav className="flight-templates-options navbar navbar-default">
@@ -28,6 +25,9 @@ export default class FlightTemplatesOptions extends React.Component {
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">
                         <FlightViewOptionsSwitch
                             view={ 'templates' }
+                            flightId={ this.props.flightId }
+                        />
+                        <FlightViewOptionsSlider
                             flightId={ this.props.flightId }
                         />
                     </div>
