@@ -179,19 +179,19 @@ select.FlightUploadingInputs {
 }
 
 .Tree {
-    width:255px;
+    width: 255px;
     min-height: 500px;
     float:left;
     overflow-y:auto;
     overflow-x:scroll;
+    padding: 0 10px;
+    border-right: solid 1px #eee;
 }
 
 .TreeContent {
-    width:calc(100% - 290px);
-    margin:0px 5px 0px 10px;
+    width:calc(100% - 255px);
     padding:0px 5px 5px 10px;
     float:left;
-    border-left:solid 1px #bbb;
 }
 
 .JstreeContentItemFolder {

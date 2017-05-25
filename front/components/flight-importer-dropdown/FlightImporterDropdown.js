@@ -43,7 +43,7 @@ class FlightImporterDropdown extends React.Component {
                       <FileInput
                          className="btn btn-default"
                          name="flightFileArchive"
-                         placeholder={ I18n.t('flightUploaderDropdown.chooseFile') }
+                         placeholder={ I18n.t('flightImporterDropdown.chooseFile') }
                          value={ this.state.file }
                          onChange={ this.handleChange.bind(this) }
                        />

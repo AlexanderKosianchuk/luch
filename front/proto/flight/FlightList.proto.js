@@ -1,4 +1,5 @@
-// libs with export
+import 'stylesheets/pages/flight.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -240,36 +241,33 @@ FlightList.prototype.ShowFlightsTree = function() {
 
     self.flightListContent.slideUp(function(e){
         self.flightListContent.empty();
-                var pV = {
-                    action: "flights/flightListTree",
-                    data: {
-                        data: 'data'
-                    }
-                };
-
-                $.ajax({
-                    type: "POST",
-                    data: pV,
-                    url: ENTRY_URL,
-                    dataType: 'json',
-                    async: true,
-                    success: function(answ) {
-                        if(answ['status'] == 'ok'){
-                            var flightList = answ['data'];
-                            self.flightListContent.append(flightList);
-                            self.flightListContent.slideDown(function(e){
-                                self.SupportJsTree();
-                            });
-                        } else {
-                            console.log(answ);
-                            console.log(data['error']);
-                        }
-                    }
-                }).fail(function(msg){
-                    console.log(msg);
-                });
-            /*});
-        });*/
+        $.ajax({
+            type: "POST",
+            data: {
+                action: "flights/flightListTree",
+                data: {
+                    data: 'data'
+                }
+            },
+            url: ENTRY_URL,
+            dataType: 'json',
+            async: true,
+            success: function(answ) {
+                if(answ['status'] == 'ok'){
+                    var flightList = answ['data'];
+                    self.flightListContent.append(flightList);
+                    self.flightListContent.slideDown(function(e){
+                        self.SupportJsTree();
+                        self.SetMinHeightJsTree();
+                    });
+                } else {
+                    console.log(answ);
+                    console.log(data['error']);
+                }
+            }
+        }).fail(function(msg){
+            console.log(msg);
+        });
     });
 };
 
@@ -499,6 +497,12 @@ FlightList.prototype.SupportJsTree = function() {
                 };
             }
         }
+    });
+}
+
+FlightList.prototype.SetMinHeightJsTree = function() {
+    $('.Tree').css({
+        'min-height': ($(window).height() - 115) 
     });
 }
 

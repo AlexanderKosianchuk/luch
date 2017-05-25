@@ -1,3 +1,6 @@
+import 'stylesheets/pages/viewOptionsParams.css';
+import 'stylesheets/pages/viewOptionsEvents.css';
+
 import { I18n }  from 'react-redux-i18n';
 import changeFlightParamCheckstateAction from 'actions/changeFlightParamCheckstate';
 

@@ -1,5 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
+import 'stylesheets/pages/searchFlight.css';
 
 import { I18n } from 'react-redux-i18n';
 

@@ -1,3 +1,5 @@
+import 'stylesheets/pages/chart.css';
+
 import Param from 'Param';
 import AxesWorker from 'AxesWorker';
 import Coordinate from 'Coordinate';

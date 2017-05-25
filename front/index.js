@@ -8,37 +8,25 @@
 // libs
 import 'jquery';
 import 'jquery-ui';
-import 'jquery-ui/ui/widgets/dialog';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/menu';
 import 'colorpicker-amin';
-import 'blueimp-file-upload';
 import 'jstree';
 import 'flot-charts';
 import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.navigate';
 import 'flot-charts/jquery.flot.resize';
+import 'flot-charts/jquery.flot.crosshair';
 import 'datatables';
 import 'bootstrap-loader';
 
 // lib styles
 import 'jquery-ui/themes/base/all.css';
 import 'jstree/dist/themes/default/style.min.css';
-import 'blueimp-file-upload/css/jquery.fileupload.css';
-import 'blueimp-file-upload/css/jquery.fileupload-ui.css';
 import 'colorpicker-amin/jquery.colorpicker.css';
 
 //old styles
-import 'stylesheets/pages/bruTypeTemplates.css';
-import 'stylesheets/pages/viewOptionsParams.css';
-import 'stylesheets/pages/viewOptionsEvents.css';
-import 'stylesheets/pages/chart.css';
-import 'stylesheets/pages/user.css';
-import 'stylesheets/pages/flight.css';
-import 'stylesheets/pages/searchFlight.css';
-import 'stylesheets/pages/login.css';
-import 'stylesheets/pages/calibration.css';
 import 'stylesheets/style.css';
 
 // libs with export
@@ -72,6 +60,7 @@ import Users from 'components/users/Users';
 import FlightEvents from 'components/flight-events/FlightEvents';
 import FlightTemplates from 'components/flight-templates/FlightTemplates';
 import FlightParams from 'components/flight-params/FlightParams';
+import UploadingPreview from 'components/uploading-preview/UploadingPreview';
 import Chart from 'components/chart/Chart';
 import configureStore from 'store/configureStore';
 
@@ -93,7 +82,7 @@ function refreshFlightsList() {
     function getCurrentRoute(state) {
         return state.router.location.pathname;
     }
-    
+
     let currentLocation = getCurrentRoute(store.getState())
 
     if ((currentLocation === '/')
@@ -134,8 +123,7 @@ $(document).on('importItem', function (e, form) {
     FU.Import(form, dfd);
     dfd.promise();
 
-    dfd.then(
-        () => {
+    dfd.then(() => {
             if ($('#container')) {
                 refreshFlightsList();
                 return this;
@@ -284,6 +272,7 @@ $(document).ready(function () {
                 <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
                 <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
                 <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
+                <Route path='/uploading/:uploadingUid/fdr-id/:fdrId/calibration-id/:calibrationId' component={ UserIsAuthenticated(UploadingPreview) } />
                 <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
                     component={ UserIsAuthenticated(Chart) } />
               </div>

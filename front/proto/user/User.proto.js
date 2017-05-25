@@ -1,5 +1,8 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
+
+import 'stylesheets/pages/user.css';
+
 import { I18n }  from 'react-redux-i18n';
 
 function User(store) {

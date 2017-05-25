@@ -1,5 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
+import 'stylesheets/pages/calibration.css';
+
 import 'chosen-js';
 import 'chosen-js/chosen.css';
 import { I18n } from 'react-redux-i18n';
