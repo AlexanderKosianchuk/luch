@@ -37,7 +37,7 @@ function User(store) {
         }).done(function () {
             $('<form></form>')
                 .css({display: 'none'})
-                .attr('action', $(window).location.protocol + '//' + $(window).location.host)
+                .attr('action', window.location.protocol + '//' + window.location.host)
                 .attr('method', 'get')
                 .appendTo('body')
                 .submit();
@@ -45,23 +45,21 @@ function User(store) {
     };
 
     this.changeLanguage = function (lang) {
-        var pV = {
-            action : 'user/userChangeLanguage',
-            data : {
-                lang : lang
-            }
-        };
-
         $.ajax({
             type : "POST",
-            data : pV,
+            data : {
+                action : 'user/userChangeLanguage',
+                data : {
+                    lang : lang
+                }
+            },
             dataType : 'json',
             url : ENTRY_URL,
             async : true
         }).done(function () {
             $('<form></form>')
                 .css({display: 'none'})
-                .attr('action', $(window).location.protocol + '//' + $(window).location.host)
+                .attr('action', window.location.protocol + '//' + window.location.host)
                 .attr('method', 'get')
                 .appendTo('body')
                 .submit();

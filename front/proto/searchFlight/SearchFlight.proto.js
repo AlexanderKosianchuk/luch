@@ -1,6 +1,8 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
+import { I18n } from 'react-redux-i18n';
+
 function SearchFlight(store) {
     'use strict';
 

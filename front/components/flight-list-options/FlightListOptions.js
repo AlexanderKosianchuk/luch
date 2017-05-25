@@ -42,13 +42,9 @@ export default class FlightListOptions extends React.Component {
 
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">
 
-                      <FlightListTypeSwitch
-                        flightViewService= { this.props.flightViewService }
-                      />
+                      <FlightListTypeSwitch viewType={ this.props.viewType } />
 
-                      <FlightListMenuDropdown
-                        flightMenuService= { this.props.flightMenuService }
-                      />
+                      <FlightListMenuDropdown />
 
                       <ul className="nav navbar-nav navbar-right">
                         <li><a href="#">

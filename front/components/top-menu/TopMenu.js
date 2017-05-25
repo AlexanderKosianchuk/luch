@@ -13,13 +13,12 @@ import FlightUploadingProgressIndicator from 'components/flight-uploading-progre
 import logout from 'actions/logout';
 import changeLanguage from 'actions/changeLanguage';
 import redirect from 'actions/redirect';
+import trigger from 'actions/trigger';
 
 class TopMenu extends React.Component {
     changeLanguage(event) {
         let language = event.target.getAttribute('data-lang');
-        this.props.changeLanguage({
-            language: language.toLowerCase()
-        });
+        this.props.trigger('changeLanguage', [language.toLowerCase()])
     }
 
     buildLanguageMenu() {
@@ -110,6 +109,7 @@ function mapDispatchToProps(dispatch) {
         logout: bindActionCreators(logout, dispatch),
         changeLanguage: bindActionCreators(changeLanguage, dispatch),
         redirect: bindActionCreators(redirect, dispatch),
+        trigger: bindActionCreators(trigger, dispatch),
     }
 }
 

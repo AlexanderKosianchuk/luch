@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
+
+import trigger from 'actions/trigger';
 
 class FlightListMenuDropdown extends React.Component {
     buildMenu(type) {
@@ -59,12 +62,7 @@ class FlightListMenuDropdown extends React.Component {
 
     handleMenuClick(event) {
         let action = event.target.getAttribute("data-action")
-
-        if (!this.props.flightMenuService.hasOwnProperty(action)) {
-            throw new Error("Unknown flightMenuService action. Passed: " + action)
-        }
-
-        this.props.flightMenuService[action]();
+        this.props.trigger('flightMenuService:' + action);
     }
 
     render() {
@@ -88,4 +86,10 @@ function mapStateToProps (state) {
     return { ... state.chosenFlightListItems };
 }
 
-export default connect(mapStateToProps)(FlightListMenuDropdown);
+function mapDispatchToProps(dispatch) {
+    return {
+        trigger: bindActionCreators(trigger, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlightListMenuDropdown);

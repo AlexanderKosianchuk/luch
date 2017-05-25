@@ -89,27 +89,43 @@ const store = configureStore({}, routerMiddlewareInstance);
 store.dispatch(loadTranslations(translationsObject));
 store.dispatch(setLocale('ru'));
 
+function refreshFlightsList() {
+    function getCurrentRoute(state) {
+        return state.router.location.pathname;
+    }
+    
+    let currentLocation = getCurrentRoute(store.getState())
+
+    if ((currentLocation === '/')
+        || (currentLocation === '/#')
+        || (currentLocation.indexOf('flights/tree') > -1)
+    ) {
+        $(document).trigger('flightsTreeShow', [
+            $('#container')
+        ]);
+    }
+
+    if (currentLocation.indexOf('flights/table') > -1) {
+        $(document).trigger('flightsTableShow', [
+            $('#container')
+        ]);
+    }
+}
+
 let currentFlightUploadingStateValue;
 store.subscribe(() => {
-    function selectFlightUploadingState(state) {
+    function getUploadingState(state) {
         return state.flightUploadingState.length;
     }
 
     let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
-     currentFlightUploadingStateValue = selectFlightUploadingState(store.getState())
+     currentFlightUploadingStateValue = getUploadingState(store.getState())
 
-     if ((currentFlightUploadingStateValue === 0)
+    if ((currentFlightUploadingStateValue === 0)
         && (previousFlightUploadingStateValue > 0)
-     ) {
-        $(document).trigger('flightListShow', [
-            $('#container')
-        ]);
-     }
-});
-
-$(document).on('uploadWithPreview', function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
-    let FU = new FlightUploader(store);
-    FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
+    ) {
+        refreshFlightsList();
+    }
 });
 
 $(document).on('importItem', function (e, form) {
@@ -121,15 +137,16 @@ $(document).on('importItem', function (e, form) {
     dfd.then(
         () => {
             if ($('#container')) {
-                $(document).trigger('flightListShow', [
-                    $('#container')
-                ]);
+                refreshFlightsList();
                 return this;
             }
-
-            location.reload();
         }
     );
+});
+
+$(document).on('uploadWithPreview', function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
+    let FU = new FlightUploader(store);
+    FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
 });
 
 $(document).on('startProccessing', function (e, uploadingUid) {
@@ -154,8 +171,14 @@ $(document).on('convertSelectedClicked', function (e) {
     FL.ShowFlightsByPath();
 });
 
-$(document).on('flightListShow', function (e, someshowcase) {
+$(document).on('flightsTreeShow', function (e, someshowcase) {
     let FL = new FlightList(store);
+    FL.FillFactoryContaider(someshowcase);
+});
+
+$(document).on('flightsTableShow', function (e, someshowcase) {
+    let FL = new FlightList(store);
+    FL.setView('table');
     FL.FillFactoryContaider(someshowcase);
 });
 
@@ -202,6 +225,11 @@ $(document).on('userShowList', function (e, showcase) {
     U.FillFactoryContaider(showcase);
 });
 
+$(document).on('changeLanguage', function (e, newLanguage) {
+    let U = new User(store);
+    U.changeLanguage(newLanguage);
+});
+
 $(document).on('flightSearchFormShow', function (e, showcase) {
     let SF = new SearchFlight(store);
     SF.FillFactoryContaider(showcase);
@@ -213,18 +241,9 @@ $(document).on('calibrationsShow', function (e, showcase) {
 });
 
 let topMenuService = {
-    changeLanguage: function(newLang) {
-        eventHandler.trigger('userChangeLanguage', [newLang]);
-    },
     uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
         eventHandler.trigger('uploadWithPreview', [form, uploadingUid, fdrId, fdrName, calibrationId]);
     },
-    easyUploading: function(uploadingUid, fdrId, calibrationId) {
-        eventHandler.trigger('easyUploading', [uploadingUid, fdrId, calibrationId]);
-    },
-    importItem: function(form) {
-        eventHandler.trigger('importItem', [form]);
-    }
 };
 
 // Redirects to /login by default
@@ -256,6 +275,7 @@ $(document).ready(function () {
               <div>
                 <Route exact path='/login' component={ UserLogin } />
                 <Route exact path='/' component={ UserIsAuthenticated(Flights) } />
+                <Route exact path='/flights/:viewType' component={ UserIsAuthenticated(Flights) } />
                 <Route exact path='/user-options' component={ UserIsAuthenticated(UserOptions) } />
                 <Route exact path='/flights-search' component={ UserIsAuthenticated(FlightsSearch) } />
                 <Route exact path='/results' component={ UserIsAuthenticated(Results) } />

@@ -10,26 +10,29 @@ import redirectAction from 'actions/redirect';
 function FlightList(store) {
     this.store = store;
 
+    this.view = 'tree';
     this.flightListFactoryContainer = null;
     this.flightListWorkspace = null;
     this.flightListOptions = null;
     this.flightListContent = null;
 }
 
+FlightList.prototype.setView = function(view) {
+    this.view = view;
+}
+
 FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
     var self = this;
     self.flightListFactoryContainer = factoryContainer;
 
-    var pV = {
-        action: "flights/flightGeneralElements",
-        data: {
-            data: 'data'
-        }
-    };
-
     $.ajax({
         type: "POST",
-        data: pV,
+        data: {
+            action: "flights/flightGeneralElements",
+            data: {
+                data: 'data'
+            }
+        },
         dataType: 'json',
         url: ENTRY_URL,
         async: true
@@ -39,111 +42,52 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
         if(answ["status"] == "ok") {
             var data = answ['data'];
 
+            self.flightListFactoryContainer.empty();
             self.flightListFactoryContainer.append(data['fileUploadBlock']);
 
             self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
             self.flightListWorkspace = $("div#flightListWorkspace");
 
-            self.ShowFlightsListInitial();
+            self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function(event) {
+                let currentTarget = event.currentTarget;
+                let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
+                self.store.dispatch(redirectAction('/flight-events/' + flightId));
+                return false;
+            });
+
+            self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
+            self.flightListContent = $("div#flightListContent");
+
+            if (self.view === 'table') {
+                self.ShowFlightsTable();
+            } else {
+                self.ShowFlightsTree();
+            }
+
+            self.bindMenuEvents();
         } else {
             console.log(answ["error"]);
         }
     });
 }
 
-FlightList.prototype.ShowFlightViewOptions = function() {
-    var self = this;
+FlightList.prototype.bindMenuEvents = function() {
+    let flightMenuService = [
+        ['flightMenuService:openItem', this.openFolder.bind(this)],
+        ['flightMenuService:selectAll', this.selectAll.bind(this)],
+        ['flightMenuService:exportCoordinates', this.exportCoordinates.bind(this)],
+        ['flightMenuService:exportItem', this.export.bind(this)],
+        ['flightMenuService:processItem', this.process.bind(this)],
+        ['flightMenuService:deleteItem', this.delete.bind(this)],
+        ['flightMenuService:removeSelection', this.removeSelection.bind(this)],
+        ['flightMenuService:rename', this.rename.bind(this)]
+    ];
 
-    if(self.flightListWorkspace != null) {
-        self.flightListWorkspace.append("<div id='flightListOptions'></div>");
-        self.flightListOptions = $("div#flightListOptions");
-
-        let flightViewService = {
-            showTree: self.ShowFlightsTree.bind(this),
-            showTable: self.ShowFlightsTable.bind(this)
-        };
-
-        let flightMenuService = {
-            openItem: self.openFolder.bind(this),
-            selectAll: self.selectAll.bind(this),
-            exportCoordinates: self.exportCoordinates.bind(this),
-            exportItem: self.export.bind(this),
-            processItem: self.process.bind(this),
-            deleteItem: self.delete.bind(this),
-            removeSelection: self.removeSelection.bind(this),
-            rename: self.rename.bind(this)
-        };
-
-        ReactDOM.render(
-            <Provider store={ self.store }>
-
-            </Provider>,
-            self.flightListOptions.get(0)
-        );
-    }
+    flightMenuService.forEach((item, index) => {
+        $(document).off(item[0]);
+        $(document).on(item[0], item[1]);
+    });
 }
-
-/* ==================================================
- * INITIAL VIEW
- * ================================================== */
-
-FlightList.prototype.ShowFlightsListInitial = function() {
-    var self = this;
-
-    if(self.flightListWorkspace != null) {
-        self.flightListWorkspace.empty();
-
-        self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function(event) {
-            let currentTarget = event.currentTarget;
-            let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
-            self.store.dispatch(redirectAction('flight-events/' + flightId));
-            return false;
-        });
-
-        self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
-        self.flightListContent = $("div#flightListContent");
-
-        var pV = {
-            action: "flights/getLastView",
-            data: {
-                data: 'data'
-            }
-        };
-
-        $.ajax({
-            type: "POST",
-            data: pV,
-            url: ENTRY_URL,
-            dataType: 'json',
-            async: true,
-            success: function(answ) {
-                if(answ['status'] == 'ok'){
-                    var type = answ['type'];
-                    if (type == "flightListTree"){
-                        var flightList = answ['data'];
-
-                        self.flightListContent.append(flightList);
-                        self.SupportJsTree();
-                    } else if (type == "flightListTable"){
-                        var flightList = answ['data'],
-                            sortCol = answ['sortCol'],
-                            sortType = answ['sortType'];
-
-                        self.flightListContent.append(flightList);
-                        self.SupportDataTable(sortCol, sortType);
-                    }
-
-                } else {
-                    console.log(answ);
-                    console.log(data['error']);
-                }
-            }
-        }).fail(function(msg){
-            console.log(msg);
-        });
-    }
-};
-
 
 FlightList.prototype.ActionChangePath = function(senderType, sender, target) {
     var self = this;
@@ -280,7 +224,7 @@ FlightList.prototype.ExportItem = function(flightIds, folderDest) {
         async: true
     }).done(function(msg){
         if(msg['status'] === 'ok') {
-            $(window).location = msg['zipUrl'];
+            window.location = msg['zipUrl'];
         }
     }).fail(function(msg){
         console.log(msg);

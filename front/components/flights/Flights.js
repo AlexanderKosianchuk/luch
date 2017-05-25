@@ -8,19 +8,42 @@ import FlightListOptions from 'components/flight-list-options/FlightListOptions'
 import showPage from 'actions/showPage';
 
 class Flights extends React.Component {
-    componentDidMount() {
-        this.props.showPage('flightListShow');
+    componentDidMount()
+    {
+        this.callShowPage();
+    }
+
+    componentDidUpdate(prevProps, prevState)
+    {
+        if (prevProps.viewType !== this.props.viewType) {
+            this.callShowPage();
+        }
+    }
+
+    callShowPage()
+    {
+        if ((this.props.viewType === 'table')) {
+            this.props.showPage('flightsTableShow');
+        } else {
+            this.props.showPage('flightsTreeShow');
+        }
     }
 
     render () {
         return (
             <div>
                 <MainPage/>
-                <FlightListOptions/>
+                <FlightListOptions viewType={ this.props.viewType }/>
                 <div id='container'></div>
             </div>
         );
     }
+}
+
+function mapStateToProps(state, ownProps) {
+    return {
+        viewType: ownProps.match.params.viewType
+    };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -29,4 +52,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(() => { return {} }, mapDispatchToProps)(Flights);
+export default connect(mapStateToProps, mapDispatchToProps)(Flights);

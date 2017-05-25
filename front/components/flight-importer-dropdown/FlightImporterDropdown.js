@@ -1,9 +1,13 @@
 import './flight-importer-dropdown.sass';
 
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import FileInput from 'react-file-input';
 import { Translate, I18n } from 'react-redux-i18n';
+
+import trigger from 'actions/trigger';
 
 class FlightImporterDropdown extends React.Component {
     constructor(props) {
@@ -27,7 +31,7 @@ class FlightImporterDropdown extends React.Component {
     handleChange() {
         this.setState({ isShown: false });
         let form = new FormData(this.importFlightForm);
-        this.props.topMenuService.importItem(form);
+        this.props.trigger('importItem', [form]);
     }
 
     render() {
@@ -50,4 +54,10 @@ class FlightImporterDropdown extends React.Component {
     }
 }
 
-export default onClickOutside(FlightImporterDropdown);
+function mapDispatchToProps(dispatch) {
+    return {
+        trigger: bindActionCreators(trigger, dispatch),
+    }
+}
+
+export default connect(() => { return {} }, mapDispatchToProps)(onClickOutside(FlightImporterDropdown));

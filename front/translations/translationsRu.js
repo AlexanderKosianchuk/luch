@@ -130,6 +130,7 @@ const translationsRu = {
             applyAlgorithm: 'Найти'
         },
         user: {
+            actions: 'Действия',
             add: 'Создать',
             edit: 'Редактировать',
             delete: 'Удалить',
