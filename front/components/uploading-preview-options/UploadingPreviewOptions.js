@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
 import trigger from 'actions/redirect';

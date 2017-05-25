@@ -1094,7 +1094,6 @@ class UploaderController extends CController
         if (!isset($data['index'])
             || !isset($data['uploadingUid'])
             || !isset($data['fdrId'])
-            || !isset($data['file'])
         ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -1104,7 +1103,6 @@ class UploaderController extends CController
 
         $index = $data['index'];
         $fdrId = intval($data['fdrId']);
-        $filePath = strval($data['file']);
         $uploadingUid = strval($data['uploadingUid']);
 
         $calibrationId = null;
@@ -1114,8 +1112,15 @@ class UploaderController extends CController
         ) {
             $calibrationId = intval($data['calibrationId']);
         }
-        $uploadedFile = RuntimeManager::getUploadedFilePath($filePath);
-        $flightParamsSrt = $this->ShowFlightParams($index, $uploadingUid, $fdrId, $uploadedFile, $calibrationId);
+
+        $uploadedFile = RuntimeManager::getFilePathByIud($uploadingUid);
+        $flightParamsSrt = $this->ShowFlightParams(
+            $index,
+            $uploadingUid,
+            $fdrId,
+            $uploadedFile,
+            $calibrationId
+        );
 
         $answ["status"] = "ok";
         $answ["data"] = $flightParamsSrt;
@@ -1125,7 +1130,7 @@ class UploaderController extends CController
     public function flightUploaderPreview($data)
     {
         if (!isset($data['fdrId'])
-            || !isset($data['file'])
+            || !isset($data['uploadingUid'])
         ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -1135,10 +1140,10 @@ class UploaderController extends CController
         }
 
         $fdrId = intval($data['fdrId']);
-        $filePath = strval($data['file']);
+        $uploadingUid = strval($data['uploadingUid']);
 
-        $storedFilePath = RuntimeManager::getUploadedFilePath($filePath);
-        $resp = $this->CopyPreview($fdrId, $storedFilePath);
+        $uploadedFile = RuntimeManager::getFilePathByIud($uploadingUid);
+        $resp = $this->CopyPreview($fdrId, $uploadedFile);
 
         echo(json_encode($resp));
     }

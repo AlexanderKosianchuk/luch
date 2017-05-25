@@ -120,6 +120,20 @@ class RuntimeManager
         return $storedFileName;
     }
 
+    public static function getFilePathByIud($uid)
+    {
+        $runtimeDirectory = self::getRuntimeFolder();
+        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
+
+        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpf';
+
+        if (!file_exists($storedFilePath)) {
+            throw new Exception("Requested uploaded file unexist. Name ". $fileName, 1);
+        }
+
+        return $storedFilePath;
+    }
+
     public static function getUploadedFilePath($fileName)
     {
         $runtimeDirectory = self::getRuntimeFolder();

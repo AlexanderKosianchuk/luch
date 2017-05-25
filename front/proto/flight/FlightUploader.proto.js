@@ -17,91 +17,33 @@ function FlightUploader(store)
     this.plotRequestsClosed = 0;
 
     this.flightUploaderFactoryContainer = null;
-    this.flightUploaderTopMenu = null;
-    this.flightUploaderOptions = null;
     this.flightUploaderContent = null;
 }
 
 FlightUploader.prototype.FillFactoryContaider = function(
-    factoryContainer, form, uploadingUid, fdrId, fdrName, calibrationId
+    factoryContainer, uploadingUid, fdrId, calibrationId
 ) {
-    let self = this;
     this.flightUploaderFactoryContainer = factoryContainer;
-
-    this.flightUploaderFactoryContainer.append("<div id='flightUploaderTopMenu' class='TopMenu'>" +
-                "<label id='convertSelected' class='Up'>" +
-                    "<span style='position:absolute; margin-top:5px;'>&nbsp;" +
-                        I18n.t('flightUploader.upload') +
-                    "</span>" +
-                "</label>" +
-            "</div>");
-    this.flightUploaderFactoryContainer.append("<div id='flightUploaderOptions' class='OptionsMenuFullWidth' style='margin-top:5px;'></div>");
-    this.flightUploaderFactoryContainer.append("<div id='flightUploaderContent' class='ContentFullWidth' style='margin-top:5px;'></div>");
-
-    this.flightUploaderTopMenu = $("#flightUploaderTopMenu");
-    this.flightUploaderOptions = $("#flightUploaderOptions");
+    this.flightUploaderFactoryContainer.append("<div id='flightUploaderContent' class='ContentFullWidth'></div>");
     this.flightUploaderContent = $("#flightUploaderContent");
-
-    this.ShowFlightUploadingOptions();
-
     this.ResizeFlightUploader();
-    $(document).scrollTop(factoryContainer.data("index") * $(window).height());
-
-    this.UploadForPreview(form).done(function(data) {
-        self.GetFlightParams(0, uploadingUid, data.file, fdrId, calibrationId);
-    });
-};
-
-FlightUploader.prototype.UploadForPreview = function(form, uploadingUid) {
-    return $.ajax({
-        url: ENTRY_URL + "?action=uploader/copyToRuntime",
-        type: 'POST',
-        data: form,
-        processData: false,
-        contentType: false,
-        dataType: "json"
-    }).fail(function(msg){
-        console.log(msg);
-    });
+    this.GetFlightParams(0, uploadingUid, fdrId, calibrationId);
 };
 
 FlightUploader.prototype.ResizeFlightUploader = function(e) {
     var self = this;
 
-    if((self.flightUploaderOptions != null) &&
-            (self.flightUploaderFactoryContainer != null)
-    ){
-        self.flightUploaderOptions.css({
-            'width': self.flightUploaderFactoryContainer.width(),
-            'height': '50px'
-        });
-    }
-
-    if((self.flightUploaderTopMenu != null)
-        && (self.flightUploaderOptions != null)
-        && (self.flightUploaderFactoryContainer != null)
-    ){
+    if (self.flightUploaderFactoryContainer != null){
         self.flightUploaderContent.css({
             'width': self.flightUploaderFactoryContainer.width() - 10,
-            "height": $(window).height() - self.flightUploaderOptions.height() - self.flightUploaderTopMenu.height() - 35, //35 because padding and margin
+            "height": $(window).height() - 35, //35 because padding and margin
         });
-    }
-}
-
-FlightUploader.prototype.ShowFlightUploadingOptions = function()
-{
-    if(this.flightUploaderOptions != null){
-        var uploaderOptionsStr = "<table v-align='top'><tr><td>" +
-                "<label style='line-height: 35px;'>" + I18n.t('flightUploader.filesList') + "</label></td>" +
-                "</tr></table>";
-        this.flightUploaderOptions.append(uploaderOptionsStr);
     }
 }
 
 FlightUploader.prototype.GetFlightParams = function(
         index,
         uploadingUid,
-        file,
         fdrId,
         calibrationId = null
 ) {
@@ -110,21 +52,18 @@ FlightUploader.prototype.GetFlightParams = function(
 
     if(self.flightUploaderContent != null){
         //when file uploaded call fileProcessor to import it
-        var pV = {
-                action: "uploader/flightShowUploadingOptions",
-                data: {
-                    index: index,
-                    uploadingUid: uploadingUid,
-                    file: file,
-                    fdrId: fdrId,
-                    calibrationId: calibrationId
-                }
-            };
-
         if((index == 0) || (self.firstUploadedComplt == false)){
             $.ajax({
                 type: "POST",
-                data: pV,
+                data: {
+                    action: "uploader/flightShowUploadingOptions",
+                    data: {
+                        index: index,
+                        uploadingUid: uploadingUid,
+                        fdrId: fdrId,
+                        calibrationId: calibrationId
+                    }
+                },
                 dataType: 'json',
                 url: ENTRY_URL,
                 async: false
@@ -151,7 +90,7 @@ FlightUploader.prototype.GetFlightParams = function(
                         parentContainer,
                         previewParams,
                         index,
-                        file,
+                        uploadingUid,
                         fdrId,
                         chartWidth
                     );
@@ -192,7 +131,7 @@ FlightUploader.prototype.GetFlightParams = function(
                     self.PreviewChart(parentContainer,
                             previewParams,
                             index,
-                            file,
+                            uploadingUid,
                             fdrId,
                             chartWidth);
 
@@ -261,7 +200,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
                 parentContainer,
                 previewParams,
                 index,
-                file,
+                uploadingUid,
                 fdrId,
                 chartWidth
             );
@@ -278,7 +217,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
 FlightUploader.prototype.PreviewChart = function (parent,
         previewParams,
         index,
-        fileName,
+        uploadingUid,
         fdrId,
         chartWidth){
 
@@ -363,7 +302,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
             pV = {
                 action: "uploader/flightUploaderPreview",
                 data: {
-                    file: fileName,
+                    uploadingUid: uploadingUid,
                     fdrId: fdrId,
                 }
             };
