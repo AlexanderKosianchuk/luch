@@ -1,9 +1,9 @@
 import uuidV4 from 'uuid/v4';
 import 'flot-charts/jquery.flot.selection';
+import { I18n } from 'react-redux-i18n';
 
-function FlightUploader(langStr)
+function FlightUploader(store)
 {
-    this.langStr = langStr;
     this.firstUploadedComplt = false;
     this.updateLegendTimeout = false;
 
@@ -31,7 +31,7 @@ FlightUploader.prototype.FillFactoryContaider = function(
     this.flightUploaderFactoryContainer.append("<div id='flightUploaderTopMenu' class='TopMenu'>" +
                 "<label id='convertSelected' class='Up'>" +
                     "<span style='position:absolute; margin-top:5px;'>&nbsp;" +
-                    this.langStr.flightUploaderUpload +
+                        I18n.t('flightUploader.upload') +
                     "</span>" +
                 "</label>" +
             "</div>");
@@ -92,7 +92,7 @@ FlightUploader.prototype.ShowFlightUploadingOptions = function()
 {
     if(this.flightUploaderOptions != null){
         var uploaderOptionsStr = "<table v-align='top'><tr><td>" +
-                "<label style='line-height: 35px;'>" + this.langStr.flightFilesList + "</label></td>" +
+                "<label style='line-height: 35px;'>" + I18n.t('flightUploader.filesList') + "</label></td>" +
                 "</tr></table>";
         this.flightUploaderOptions.append(uploaderOptionsStr);
     }

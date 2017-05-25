@@ -208,7 +208,6 @@ $(document).on('flightSearchFormShow', function (e, showcase) {
 });
 
 $(document).on('calibrationsShow', function (e, showcase) {
-    debugger;
     let CLB = new Calibration(store);
     CLB.FillFactoryContaider(showcase);
 });

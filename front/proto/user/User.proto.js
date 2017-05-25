@@ -1,7 +1,8 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
+import { I18n }  from 'react-redux-i18n';
 
-function User(langStr) {
+function User(store) {
     'use strict';
 
     var userId = null,
@@ -104,15 +105,15 @@ function User(langStr) {
                             $('<td></td>')
                                 .append(
                                     $('<label></label>')
-                                        .append(langStr.userActions)
+                                        .append(I18n.t('user.actions'))
                                         .append(' - ')
                             )
                         )
-                        .append($('<td></td>').append(getButton('userOpitonsCreateButton', langStr.userAdd)))
-                        .append($('<td></td>').append(getButton('userOpitonsEditButton', langStr.userEdit)))
-                        .append($('<td></td>').append(getButton('userOpitonsDeleteButton', langStr.userDelete)))
-                        .append($('<td></td>').append(getButton('userOpitonsSaveButton', langStr.userSave)))
-                        .append($('<td></td>').append(getButton('userOpitonsCancelButton', langStr.userCancel)))
+                        .append($('<td></td>').append(getButton('userOpitonsCreateButton', I18n.t('user.add'))))
+                        .append($('<td></td>').append(getButton('userOpitonsEditButton', I18n.t('user.edit'))))
+                        .append($('<td></td>').append(getButton('userOpitonsDeleteButton', I18n.t('user.delete'))))
+                        .append($('<td></td>').append(getButton('userOpitonsSaveButton', I18n.t('user.save'))))
+                        .append($('<td></td>').append(getButton('userOpitonsCancelButton', I18n.t('user.cancel'))))
                     );
 
             self.userListOptions.append(userOptions);
@@ -268,7 +269,7 @@ function User(langStr) {
         });
 
         $('button#userOpitonsDeleteButton').on('click', function () {
-            if (confirm(langStr.confimUserDeletion)) {
+            if (confirm(I18n.t('user.confirmDeletion'))) {
                 var itemsChecked = $('.ItemsCheck:checked');
                 var userIds = [];
                 $.each(itemsChecked, function (index, item) {
@@ -329,7 +330,21 @@ function User(langStr) {
                     console.log(a);
                 });
             },
-            "oLanguage" : langStr.dataTable,
+            "oLanguage": {
+                sLengthMenu: I18n.t('dataTables.sLengthMenu'),
+                sZeroRecords: I18n.t('dataTables.sZeroRecords'),
+                sInfo: I18n.t('dataTables.sInfo'),
+                sInfoEmpty: I18n.t('dataTables.sInfoEmpty'),
+                sInfoFiltered: I18n.t('dataTables.sInfoFiltered'),
+                sSearch: I18n.t('dataTables.sSearch'),
+                sProcessing: I18n.t('dataTables.sProcessing'),
+                oPaginate: {
+                    sFirst: I18n.t('dataTables.oPaginate.sFirst'),
+                    sNext: I18n.t('dataTables.oPaginate.sNext'),
+                    sPrevious: I18n.t('dataTables.oPaginate.sPrevious'),
+                    sLast: I18n.t('dataTables.oPaginate.sLast'),
+                }
+            }
         });
 
         $("#tableCheckAllItems").on("click", function (e) {
@@ -433,7 +448,7 @@ function User(langStr) {
                         }
                     },
                     fail: function (a) {
-                        $('.user-creation-info').eq(0).find('p').text(langStr.userCreaitonFailServerError);
+                        $('.user-creation-info').eq(0).find('p').text(I18n.t('creaitonFailServerError'));
                     },
                 });
                 e.preventDefault();

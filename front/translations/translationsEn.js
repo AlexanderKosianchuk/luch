@@ -6,7 +6,7 @@ const translationsEn = {
             authorize: 'Log in',
             password: 'Password'
         },
-        flightsTopMenu: {
+        topMenu: {
             fileImport: 'Import',
             upload: 'Upload',
         },
@@ -121,6 +121,25 @@ const translationsEn = {
             delete: 'Delete',
             inputName: 'Please input name to save',
         },
+        flightUploader: {
+            upload: 'Upload',
+            filesList: 'Files list',
+        },
+        searchFlights: {
+            title: 'Search flights',
+            applyAlgorithm: 'Search'
+        },
+        user: {
+            actions: 'User Actions',
+            add: 'Add User',
+            edit: 'Edit User',
+            delete: 'Delete User',
+            list: 'User List',
+            save: 'Save Yser',
+            cancel: 'Cancel',
+            confimUserDeletion: 'Confirm',
+            creaitonFailServerError: 'Fail Server',
+        },
         colorpicker: {
             ok: 'Accept',
             cancel: 'Cancel',
@@ -144,137 +163,6 @@ const translationsEn = {
                 sLast: 'End'
             }
         },
-        application: {
-            "exit": "Exit",
-            "options": "Options",
-
-            "continueLabel": "Next",
-            "tplHasBeenAdded": "Template added. Demonstrate how changes to refresh the page (Shift + F5)",
-            "tplHasBeenDeleted": "Template deleted. To demonstrate how the changes refresh the page (Shift + F5)",
-            "tplHasBeenEdit": "Template changed. Demonstrate how changes to refresh the page (Shift + F5)",
-            "tplHasBeenSetAsDefault": "The default template set. Demonstrate how changes to refresh the page (Shift + F5)",
-
-            "notAllFieldsMatched": "Not all the fields are filled",
-            "waitAnswerText": "processing",
-            "completeText": "Completed. Automatic redirection",
-
-            "incorrectDataFormat": "Invalid date format",
-            "uploadingData": "Loading data",
-            "noData": "Data corresponding criteria are absent",
-
-            "errorFlightNotSelect":"Error. Flight is not selected",
-            "flightSelectedChooseSlice":"Полет выбран. Укажите срез.",
-
-            "apply": "Apply",
-            "cancelAction": "Cancel",
-            "closeLabel": "Close",
-
-            "passwordsAreNotTheSame": "Passwords are not the same",
-            "notAllFieldsMatched": "Not all the fields are filled",
-            "returnToMain": "Return to main",
-            "userCreatedSuccesfully": "Пользователь создан",
-            "userCreationFailed": "Не удалось Create пользователя",
-            "userAlreadyExist": "Пользователь с указанным User Nameом уже существует",
-
-            "newFolder" : "New Folder",
-
-            "flightFilesList": "Flight files for convertion",
-            "flightsConvertSelected": "Convert selected",
-
-            "flightUploadComplt": "Complete",
-            "flightImportSuccess": "Flight import success. Refresh page",
-            "flightImportFailed": "Flight import failed",
-
-            "flightViewOptionsTimeRange": "Time Range",
-            "saveParamsAsTpl": "Save as List",
-            "flightViewOptionsEditTpls": "Change",
-            "flightViewOptionsShow": "Graphics",
-
-            "viewOptionsNextPage": "Next Page",
-            "viewOptionsPrevPage": "Prev Page",
-            "viewOptionsFirstPage": "First Page",
-            "viewOptionsLastPage": "Last Page",
-            "viewOptionsOf": "Of",
-
-            "bruTypeGeneralInfoToList":"To List",
-            "bruTypeTplsToViewOptions":"Options",
-            "bruTypeLabel":"Registrator Type",
-            "bruTypeTplActions":"Actions",
-            "createType":"Create",
-            "copyType":"Copy",
-            "saveType":"Save",
-            "deleteType":"Delete",
-            "createTpl":"Create",
-            "applyEditingTpl":"Apply",
-            "defaultTpl":"Default",
-            "deleteTpl":"Delete",
-            "clearTplPatamsList":"Clear List",
-            "tplNameCantBeBlank":"Name List!",
-            "tplCantBeEmpty":"Empty!",
-
-            "serverCommunicationError": "Server Communication Error",
-            "loadingMessage": "Loading...",
-            "noDataAvailable": "No Data",
-            "addNewRecord": "Add",
-            "editRecord": "Change",
-            "areYouSure": "You Sure?",
-            "deleteConfirmation": "Delete запись?",
-            "save": "Save",
-            "saving": "Saving...",
-            "cancel": "Cancel",
-            "deleteText": "Delete",
-            "deleting": "Deleting...",
-            "error": "Error",
-            "close": "Close",
-            "cannotLoadOptionsFor": "Невозможно Upload варианты для поля {0}",
-            "pagingInfo": "Записи с {0} по {1} из {2}",
-            "canNotDeletedRecords": "Невозможно Delete записи: {0} из {1}!",
-            "deleteProggress": "Deleting {0} из {1} записей...",
-            "pageSizeChangeLabel": "Строк",
-            "gotoPageLabel": "На страницу",
-
-            "apTable": "Analog Parametrs Table",
-
-            "gradiTable": "Таблица градуировки",
-            "srcTable": "Скрипт расчета",
-            "editGradiTable": "Редактировать градуировку",
-            "editSrc": "Редактировать скрипт",
-            "gradiCode": "Code",
-            "gradiPh": "Физика",
-            "srcVal": "Скрипт",
-
-            "paramCode": "Code",
-            "paramName": "Имя",
-            "dim": "Разм.",
-            "paramType": "Тип",
-            "channels": "Каналы",
-            "koef": "Коэф.",
-            "minus": "Минус",
-            "mask": "Маска",
-            "shift": "Сдвиг",
-            "minVal": "Мин. зн.",
-            "maxVal": "Макс. зн.",
-            "prefix": "Префикс",
-
-            "userActions": "User Actions",
-            "userAdd" : "Add User",
-            "userEdit" : "Edit User",
-            "userDelete" : "Delete User",
-            "userList" : "User List",
-            "userSave" : "Save Yser",
-            "userCancel" : "Cancel",
-            "confimUserDeletion": "Confirm",
-            "userCreaitonFailServerError": "Fail Server",
-
-            "searchFlights": "Search by Flight",
-            "searchFlightsApplyAlg": "Search",
-
-            "chartPrintTable" : "Digital Table Excel",
-            "chartPrintInNewWindow" : "Print Chart",
-            "monochromeEventsPrint" : "Mono print",
-            "eventListSave" : "Report",
-            "saveChartTpl": "Мista snið-ð",
-        }
     }
 };
 

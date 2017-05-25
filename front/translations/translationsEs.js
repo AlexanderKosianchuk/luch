@@ -6,7 +6,7 @@ const translationsEs = {
             authorize: 'Log in',
             password: 'Password'
         },
-        flightsTopMenu: {
+        topMenu: {
             fileImport: 'Import',
             upload: 'Upload',
         },
@@ -121,6 +121,25 @@ const translationsEs = {
             delete: 'Delete',
             inputName: 'Please input name to save',
         },
+        flightUploader: {
+            upload: 'Upload',
+            filesList: 'Files list',
+        },
+        searchFlights: {
+            title: 'Search flights',
+            applyAlgorithm: 'Search'
+        },
+        user: {
+            actions: 'User Actions',
+            add: 'Add User',
+            edit: 'Edit User',
+            delete: 'Delete User',
+            list: 'User List',
+            save: 'Save Yser',
+            cancel: 'Cancel',
+            confimUserDeletion: 'Confirm',
+            creaitonFailServerError: 'Fail Server',
+        },
         colorpicker: {
             ok: 'Accept',
             cancel: 'Cancel',
@@ -144,146 +163,6 @@ const translationsEs = {
                 sLast: 'Final'
             }
         },
-        application: {
-            "flightUploading": "Flight uploading",
-            "exit": "Salida",
-            "options": "Opciones",
-
-            "continueLabel": "Además",
-            "tplHasBeenAdded": "Plantilla añadió. (Shift+F5)",
-            "tplHasBeenDeleted": "Plantilla eliminado. (Shift+F5)",
-            "tplHasBeenEdit": "Plantilla cambió. (Shift+F5)",
-            "tplHasBeenSetAsDefault": "La plantilla por defecto se establece. (Shift+F5)",
-
-            "colorpickerOk" : "Adoptar",
-            "colorpickerCancel" : "Cancelar",
-            "colorpickerNone" : "No",
-            "colorpickerButton" : "Color",
-            "colorpickerTitle" : "Seleccionar Color",
-            "colorpickerTransparent" : "Transparente",
-
-            "notAllFieldsMatched": "No se rellenan todos los campos",
-            "waitAnswerText": "Transformación",
-            "completeText": "Terminado",
-
-            "flights": "Vuelo",
-            "incorrectDataFormat": "Formato de fecha no válida",
-            "uploadingData": "la carga de datos",
-            "noData": "Datos no disponibles",
-
-            "errorFlightNotSelect":"Error. Volar no está seleccionada",
-            "flightSelectedChooseSlice":"Полет выбран. especificar срез.",
-
-            "apply": "Aplicar",
-            "cancelAction": "Cancelar",
-            "closeLabel": "Cerca",
-
-            "passwordsAreNotTheSame": "Las contraseñas no coinciden",
-            "notAllFieldsMatched": "No se rellenan todos los campos",
-            "returnToMain": "Volver al inicio",
-            "userCreatedSuccesfully": "Creado por el usuario",
-            "userCreationFailed": "No se pudo crear un usuario",
-            "userAlreadyExist": "Usuario con esta entrada ya existe",
-
-            "newFolder" : "El nuevo catálogo",
-
-            "flightFilesList": "La lista de archivos para convertir",
-            "flightsConvertSelected": "Convertir",
-
-            "flightUploadComplt": "Terminado",
-            "flightImportSuccess": "El vuelo se ha importado correctamente. Actualizar la página",
-            "flightImportFailed": "Error al importar el vuelo",
-
-            "flightViewOptionsTimeRange": "Intervalo",
-            "saveParamsAsTpl": "La plantilla",
-            "flightViewOptionsEditTpls": "Enmendar",
-            "flightUploaderUpload": "Descargar",
-            "flightViewOptionsShow": "Calendario",
-
-            "viewOptionsNextPage": "Página siguiente",
-            "viewOptionsPrevPage": "Anterior",
-            "viewOptionsFirstPage": "Página delantera",
-            "viewOptionsLastPage": "última página",
-            "viewOptionsOf": "De",
-
-            "bruTypeGeneralInfoToList":"a la lista",
-            "bruTypeTplsToViewOptions":"Opciones",
-            "bruTypeLabel":"Tipo de registro",
-            "bruTypeTplActions":"Acciones plantillas",
-            "createType":"Crear",
-            "copyType":"Copia",
-            "saveType":"Conservar",
-            "deleteType":"Borrar",
-            "createTpl":"Crear",
-            "applyEditingTpl":"Aplicar",
-            "defaultTpl":"Por defecto",
-            "deleteTpl":"Borrar",
-            "clearTplPatamsList":"Eliminar selección",
-            "tplNameCantBeBlank":"Introduzca un nombre para la plantilla!",
-            "tplCantBeEmpty":"Seleccione los parámetros de plantilla!",
-
-            "serverCommunicationError": "Error de comunicación",
-            "loadingMessage": "Carga...",
-            "noDataAvailable": "Datos no disponibles",
-            "addNewRecord": "Añadir",
-            "editRecord": "Enmendar",
-            "areYouSure": "Seguro?",
-            "deleteConfirmation": "Borrar registro?",
-            "saving": "Preservación...",
-            "cancel": "Cancelación",
-            "deleteText": "Borrar",
-            "deleting": "Eliminación...",
-            "error": "Error",
-            "close": "Cerca",
-            "cannotLoadOptionsFor": "Невозможно Descargar варианты для поля {0}",
-            "pagingInfo": "Записи с {0} по {1} из {2}",
-            "canNotDeletedRecords": "Невозможно Borrar записи: {0} из {1}!",
-            "deleteProggress": "Eliminación {0} из {1} записей...",
-            "pageSizeChangeLabel": "Строк",
-            "gotoPageLabel": "На страницу",
-
-            "apTable": "Mesa parámetros analógicos",
-
-            "gradiTable": "Mesa Graduación",
-            "srcTable": "Script de cálculo",
-            "editGradiTable": "Editar clasificación",
-            "editSrc": "Editar el script",
-            "gradiCode": "Código",
-            "gradiPh": "Física",
-            "srcVal": "Guión",
-
-            "paramCode": "Código",
-            "paramName": "Nombre",
-            "dim": "Dim.",
-            "paramType": "Tipo",
-            "channels": "Canales",
-            "koef": "Conv.",
-            "minus": "Menos",
-            "mask": "lugar",
-            "shift": "Cambio",
-            "minVal": "minVal",
-            "maxVal": "maxVal",
-            "prefix": "prefix",
-
-            "userActions": "Acciones sobre los usuarios",
-            "userAdd" : "Crear",
-            "userEdit" : "Editar",
-            "userDelete" : "Borrar",
-            "userList" : "Lista",
-            "userSave" : "Conservar",
-            "userCancel" : "Cancelar",
-            "confimUserDeletion": "Confirmar",
-            "userCreaitonFailServerError": "Error",
-
-            "searchFlights": "Búsqueda de vuelos",
-            "searchFlightsApplyAlg": "Encontrar",
-
-            "chartPrintTable" : "Pantalla Excel",
-            "chartPrintInNewWindow" : "Calendario Impresión",
-            "monochromeEventsPrint" : "Mono Impresión",
-            "eventListSave" : "Formulario",
-            "saveChartTpl": "Save tem-t",
-        }
     }
 }
 

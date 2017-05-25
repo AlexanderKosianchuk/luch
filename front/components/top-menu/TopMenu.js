@@ -54,7 +54,7 @@ class TopMenu extends React.Component {
                   <ul className='nav navbar-nav'>
                     <li className='dropdown'>
                       <a href='#' className='flight-importer-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
-                        { I18n.t('flightsTopMenu.fileImport') }
+                        { I18n.t('topMenu.fileImport') }
                       </a>
                       <FlightImporterDropdown/>
                     </li>
@@ -63,7 +63,7 @@ class TopMenu extends React.Component {
                   <ul className='nav navbar-nav'>
                     <li className='dropdown'>
                       <a href='#' className='flight-uploader-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
-                        { I18n.t('flightsTopMenu.upload') }
+                        { I18n.t('topMenu.upload') }
                       </a>
                       <FlightUploaderDropdown/>
                     </li>

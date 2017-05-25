@@ -6,7 +6,7 @@ const translationsRu = {
             authorize: 'Войти',
             password: 'Пароль'
         },
-        flightsTopMenu: {
+        topMenu: {
             fileImport: 'Импортировать',
             upload: 'Загрузить',
         },
@@ -99,7 +99,7 @@ const translationsRu = {
             params: 'Параметры',
             templates: 'Шаблоны'
         },
-        calibrations: {
+        calibration: {
             title: 'Градуировки',
             fdr: 'Тип регистратора',
             create: 'Создать',
@@ -120,6 +120,24 @@ const translationsRu = {
             edit: 'Редактировать',
             delete: 'Удалить',
             inputName: 'Введите название калибровки для сохранения',
+        },
+        flightUploader: {
+            upload: 'Загрузить',
+            filesList: 'Перечень файлов',
+        },
+        searchFlights: {
+            title: 'Поиск полетов',
+            applyAlgorithm: 'Найти'
+        },
+        user: {
+            add: 'Создать',
+            edit: 'Редактировать',
+            delete: 'Удалить',
+            list: 'Перечень',
+            save: 'Сохранить',
+            cancel: 'Отменить',
+            confimUserDeletion: 'Подтвердите удаление пользователей',
+            creaitonFailServerError: 'Ошибка связи при попытке создания пользователя. Попробуйте позже.',
         },
         colorpicker: {
             ok: 'Принять',
@@ -144,144 +162,6 @@ const translationsRu = {
                 sLast: 'Конец'
             }
         },
-        application: {
-            "exit": "Выход",
-            "options": "Настройки",
-
-            "continueLabel": "Далее",
-            "tplHasBeenAdded": "Шаблон добавлен. Для приминения изменений обновите страницу (Shift+F5)",
-            "tplHasBeenDeleted": "Шаблон удален. Для приминения изменений обновите страницу (Shift+F5)",
-            "tplHasBeenEdit": "Шаблон изменен. Для приминения изменений обновите страницу (Shift+F5)",
-            "tplHasBeenSetAsDefault": "Шаблон по умолчанию установлен. Для приминения изменений обновите страницу (Shift+F5)",
-
-            "colorpickerOk" : "Принять",
-            "colorpickerCancel" : "Отменить",
-            "colorpickerNone" : "Никакой",
-            "colorpickerButton" : "Цвет",
-            "colorpickerTitle" : "Выбрать цвет",
-            "colorpickerTransparent" : "Прозрачный",
-
-            "notAllFieldsMatched": "Не все поля заполнены",
-            "waitAnswerText": "обработка",
-            "completeText": "Завершено. Автоматическое перенаправление",
-
-            "flights": "Полеты",
-            "incorrectDataFormat": "Неверный формат даты",
-            "uploadingData": "Загрузка данных",
-            "noData": "Данные, соответствующие критериям отсутствуют",
-
-            "errorFlightNotSelect":"Ошибка. Полет не выбран",
-            "flightSelectedChooseSlice":"Полет выбран. Укажите срез.",
-
-            "apply": "Принять",
-            "cancelAction": "Отменить",
-            "closeLabel": "Закрыть",
-
-            "passwordsAreNotTheSame": "Парали не совпадают",
-            "notAllFieldsMatched": "Не все поля заполнены",
-            "returnToMain": "Вернуться на главную",
-            "userCreatedSuccesfully": "Пользователь создан",
-            "userCreationFailed": "Не удалось создать пользователя",
-            "userAlreadyExist": "Пользователь с указанным логином уже существует",
-
-            "newFolder" : "Новый каталог",
-
-            "flightFilesList": "Перечень файлов для конвертирования",
-            "flightsConvertSelected": "Конв. выбранное",
-
-            "flightUploadComplt": "Завершено",
-            "flightImportSuccess": "Полет успешно импортирован. Обновите страницу",
-            "flightImportFailed": "Ошибка при импортировании полета",
-
-            "flightViewOptionsTimeRange": "Интервал",
-            "saveParamsAsTpl": "В шаблон",
-            "flightViewOptionsEditTpls": "Изменить",
-            "flightViewOptionsShow": "График",
-
-            "viewOptionsNextPage": "Следующая страница",
-            "viewOptionsPrevPage": "Предыдущая страница",
-            "viewOptionsFirstPage": "Первая страница",
-            "viewOptionsLastPage": "Последняя страница",
-            "viewOptionsOf": "Из",
-
-            "bruTypeGeneralInfoToList":"К перечню",
-            "bruTypeTplsToViewOptions":"Опции",
-            "bruTypeLabel":"Тип регистратора",
-            "bruTypeTplActions":"Действия с шаблонами",
-            "createType":"Создать",
-            "copyType":"Копировать",
-            "saveType":"Сохранить",
-            "deleteType":"Удалить",
-            "createTpl":"Создать",
-            "applyEditingTpl":"Применить",
-            "defaultTpl":"По умолчанию",
-            "deleteTpl":"Удалить",
-            "clearTplPatamsList":"Снять выделения",
-            "tplNameCantBeBlank":"Введите название шаблона!",
-            "tplCantBeEmpty":"Выберите параметры шаблона!",
-
-            "serverCommunicationError": "Ошибка связи с сервером.",
-            "loadingMessage": "Загрузка...",
-            "noDataAvailable": "Данные отсутствуют",
-            "addNewRecord": "Добавить",
-            "editRecord": "Изменить",
-            "areYouSure": "Вы уверены?",
-            "deleteConfirmation": "Удалить запись?",
-            "saving": "Сохранение...",
-            "cancel": "Отмена",
-            "deleteText": "Удалить",
-            "deleting": "Удаление...",
-            "error": "Ошибка",
-            "close": "Закрыть",
-            "cannotLoadOptionsFor": "Невозможно загрузить варианты для поля {0}",
-            "pagingInfo": "Записи с {0} по {1} из {2}",
-            "canNotDeletedRecords": "Невозможно удалить записи: {0} из {1}!",
-            "deleteProggress": "Удаление {0} из {1} записей...",
-            "pageSizeChangeLabel": "Строк",
-            "gotoPageLabel": "На страницу",
-
-            "apTable": "Таблица аналоговых параметров",
-
-            "gradiTable": "Таблица градуировки",
-            "srcTable": "Скрипт расчета",
-            "editGradiTable": "Редактировать градуировку",
-            "editSrc": "Редактировать скрипт",
-            "gradiCode": "Код",
-            "gradiPh": "Физика",
-            "srcVal": "Скрипт",
-
-            "paramCode": "Код",
-            "paramName": "Имя",
-            "dim": "Разм.",
-            "paramType": "Тип",
-            "channels": "Каналы",
-            "koef": "Коэф.",
-            "minus": "Минус",
-            "mask": "Маска",
-            "shift": "Сдвиг",
-            "minVal": "Мин. зн.",
-            "maxVal": "Макс. зн.",
-            "prefix": "Префикс",
-
-            "userActions": "Действия над пользователями",
-            "userAdd" : "Создать",
-            "userEdit" : "Редактировать",
-            "userDelete" : "Удалить",
-            "userList" : "Перечень",
-            "userSave" : "Сохранить",
-            "userCancel" : "Отменить",
-            "confimUserDeletion": "Подтвердите удаление пользователей",
-            "userCreaitonFailServerError": "Ошибка связи при попытке создания пользователя. Попробуйте позже.",
-
-            "searchFlights": "Поиск по полетам",
-            "searchFlightsApplyAlg": "Найти",
-
-            "chartPrintTable" : "Экран в Excel",
-            "chartPrintInNewWindow" : "График на печать",
-            "monochromeEventsPrint" : "Ч/Б печать",
-            "eventListSave" : "Бланк",
-            "saveChartTpl": "Сохр. шаблон",
-        }
     }
 };
 

@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 
-function SearchFlight(langStr) {
+function SearchFlight(store) {
     'use strict';
 
     var userId = null,
@@ -49,11 +49,11 @@ function SearchFlight(langStr) {
                         $('<td></td>')
                             .append(
                                 $('<label></label>')
-                                    .append(langStr.searchFlights)
+                                    .append(I18n.t('searchFlights.title'))
                                     .append(' - ')
                         )
                     )
-                    .append($('<td></td>').append(getButton('searchFlightsButton', langStr.searchFlightsApplyAlg)))
+                    .append($('<td></td>').append(getButton('searchFlightsButton', I18n.t('searchFlights.applyAlgorithm'))))
                 );
 
         searchFlightsFormOptions.append(userOptions);
