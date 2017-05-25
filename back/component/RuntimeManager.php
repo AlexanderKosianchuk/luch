@@ -97,7 +97,7 @@ class RuntimeManager
         return $filePath;
     }
 
-    public static function storeUploadedFile($fileName)
+    public static function storeUploadedFile($fileName, $uid = null)
     {
         $runtimeDirectory = self::getRuntimeFolder();
         $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
@@ -106,7 +106,11 @@ class RuntimeManager
             mkdir($uploadedFilesDir, 0755, true);
         }
 
-        $storedFileName = uniqid() . '.tmpf';
+        if ($uid === null) {
+            $uid = uniqid() ;
+        }
+
+        $storedFileName = $uid . '.tmpf';
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
 
         if (!file_exists($storedFilePath)) {

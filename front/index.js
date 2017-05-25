@@ -124,17 +124,15 @@ $(document).on('importItem', function (e, form) {
     dfd.promise();
 
     dfd.then(() => {
-            if ($('#container')) {
-                refreshFlightsList();
-                return this;
-            }
+        if ($('#container')) {
+            refreshFlightsList();
         }
-    );
+    });
 });
 
-$(document).on('uploadWithPreview', function (e, form, uploadingUid, fdrId, fdrName, calibrationId) {
+$(document).on('uploadWithPreview', function (e, showcase, uploadingUid, fdrId, calibrationId) {
     let FU = new FlightUploader(store);
-    FU.FillFactoryContaider(showcase, form, uploadingUid, fdrId, fdrName, calibrationId);
+    FU.FillFactoryContaider(showcase, uploadingUid, fdrId, calibrationId);
 });
 
 $(document).on('startProccessing', function (e, uploadingUid) {
@@ -154,11 +152,6 @@ $(document).on('endProccessing', function (e, uploadingUid) {
     });
 });
 
-$(document).on('convertSelectedClicked', function (e) {
-    let FL = new FlightList(store);
-    FL.ShowFlightsByPath();
-});
-
 $(document).on('flightsTreeShow', function (e, someshowcase) {
     let FL = new FlightList(store);
     FL.FillFactoryContaider(someshowcase);
@@ -173,13 +166,6 @@ $(document).on('flightsTableShow', function (e, someshowcase) {
 $(document).on('flightEvents', function (e, someshowcase, flightId) {
     let FO = new FlightViewOptions(store);
     FO.task = 'getEventsList';
-    FO.flightId = flightId;
-    FO.FillFactoryContaider(someshowcase);
-});
-
-$(document).on('flightTemplates', function (e, someshowcase, flightId) {
-    let FO = new FlightViewOptions(store);
-    FO.task = 'getTemplates';
     FO.flightId = flightId;
     FO.FillFactoryContaider(someshowcase);
 });
@@ -272,9 +258,12 @@ $(document).ready(function () {
                 <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
                 <Route path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
                 <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
-                <Route path='/uploading/:uploadingUid/fdr-id/:fdrId/calibration-id/:calibrationId' component={ UserIsAuthenticated(UploadingPreview) } />
+                <Route path='/uploading/:uploadingUid/fdr-id/:fdrId' /*calibration-id/:calibrationId possible*/
+                    component={ UserIsAuthenticated(UploadingPreview) }
+                />
                 <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
-                    component={ UserIsAuthenticated(Chart) } />
+                    component={ UserIsAuthenticated(Chart) }
+                />
               </div>
             </ConnectedRouter>
         </Provider>,

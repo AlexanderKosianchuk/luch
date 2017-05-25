@@ -1606,4 +1606,25 @@ class UploaderController extends CController
             'file' => $storedName
         ]));
     }
+
+    public function storeFlightFile ($args)
+    {
+        if (!isset($_FILES['flightFile']['tmp_name'])) {
+            throw new Exception("Necessary param flightFile not passed.", 1);
+        }
+
+        if (!isset($_POST['uploadingUid'])) {
+            throw new Exception("Necessary param uploadingUid not passed.", 1);
+        }
+
+        $fileName = strval($_FILES['flightFile']['tmp_name']);
+        $uploadingUid = strval($_POST['uploadingUid']);
+        $userId = intval($this->_user->userInfo['id']);
+
+        $storedName = RuntimeManager::storeUploadedFile($fileName, $uploadingUid);
+
+        echo (json_encode([
+            'status' => 'ok'
+        ]));
+    }
 }

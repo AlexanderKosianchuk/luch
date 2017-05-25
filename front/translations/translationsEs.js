@@ -21,6 +21,9 @@ const translationsEs = {
             on: 'On',
             off: 'Off',
         },
+        uploadingPreviewOptions: {
+            preview: 'Preview'
+        },
         mainMenu: {
             flights: 'Flights',
             fdrs: 'FDRs',

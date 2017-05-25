@@ -3,37 +3,24 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import MainPage from 'components/main-page/MainPage';
-import FlightListOptions from 'components/flight-list-options/FlightListOptions';
+import UploadingPreviewOptions from 'components/uploading-preview-options/UploadingPreviewOptions';
 
 import showPage from 'actions/showPage';
 
 class UploadingPreview extends React.Component {
     componentDidMount()
     {
-        this.callShowPage();
+        this.props.showPage('uploadWithPreview',
+            [this.props.uploadingUid, this.props.fdrId, this.props.calibrationId]
+        );
     }
 
-    componentDidUpdate(prevProps, prevState)
+    render ()
     {
-        if (prevProps.viewType !== this.props.viewType) {
-            this.callShowPage();
-        }
-    }
-
-    callShowPage()
-    {
-        if ((this.props.viewType === 'table')) {
-            this.props.showPage('flightsTableShow');
-        } else {
-            this.props.showPage('flightsTreeShow');
-        }
-    }
-
-    render () {
         return (
             <div>
                 <MainPage/>
-                <UploadingPreviewOptions viewType={ this.props.viewType }/>
+                <UploadingPreviewOptions/>
                 <div id='container'></div>
             </div>
         );
@@ -42,7 +29,9 @@ class UploadingPreview extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        uploadingUid: ownProps.match.params.uploadingUid
+        uploadingUid: ownProps.match.params.uploadingUid,
+        fdrId: ownProps.match.params.fdrId,
+        calibrationId: ownProps.match.params.calibrationId
     };
 }
 

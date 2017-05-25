@@ -21,6 +21,9 @@ const translationsRu = {
             on: 'Вкл',
             off: 'Выкл',
         },
+        uploadingPreviewOptions: {
+            preview: 'Предпросмотр'
+        },
         mainMenu: {
             flights: 'Полеты',
             fdrs: 'Регистраторы',

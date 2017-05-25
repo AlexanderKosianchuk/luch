@@ -19,6 +19,8 @@ import flightUploaerChangeFdrType from 'actions/flightUploaderChangeFdrType';
 import flightUploaderChangeCalibration from 'actions/flightUploaderChangeCalibration';
 import flightUploaderChangePreviewNeedState from 'actions/flightUploaderChangePreviewNeedState';
 import startEasyFlightUploading from 'actions/startEasyFlightUploading';
+import sendFlightFile from 'actions/sendFlightFile';
+import redirect from 'actions/redirect';
 
 class FlightUploaderDropdown extends React.Component {
     constructor(props) {
@@ -79,20 +81,22 @@ class FlightUploaderDropdown extends React.Component {
     handleChange() {
         let form = new FormData(this.sendFlightForm);
         let uploadingUid = uuidV4();
+        let that = this;
+        form.append('uploadingUid', uploadingUid);
 
         if (this.props.previewState) {
-            this.props.topMenuService.uploadWithPreview(
-                form,
-                uploadingUid,
-                this.props.selectedFdrType.id,
-                this.props.selectedFdrType.name,
-                this.props.selectedCalibration.id
-            );
+            this.props.sendFlightFile(form).then(() => {
+                that.props.redirect('/uploading/' + uploadingUid
+                    + '/fdr-id/' + this.props.selectedFdrType.id
+                    + (this.props.selectedCalibration.id
+                        ? ('/calibration-id/' + this.props.selectedCalibration.id)
+                        : '')
+                );
+            });
         } else {
             form.append('fdrId', this.props.selectedFdrType.id);
             form.append('calibrationId', this.props.selectedCalibration.id);
-            /* just guid file name for progress reporting */
-            form.append('uploadingUid', uploadingUid);
+
             this.props.startEasyUploading({
                 form: form,
                 fdrId: this.props.selectedFdrType.id,
@@ -168,7 +172,9 @@ function mapDispatchToProps(dispatch) {
         changeFdrType: bindActionCreators(flightUploaerChangeFdrType, dispatch),
         changeCalibration: bindActionCreators(flightUploaderChangeCalibration, dispatch),
         changePreviewNeedState: bindActionCreators(flightUploaderChangePreviewNeedState, dispatch),
-        startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch)
+        startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch),
+        sendFlightFile: bindActionCreators(sendFlightFile, dispatch),
+        redirect: bindActionCreators(redirect, dispatch)
     }
 }
 
