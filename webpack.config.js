@@ -21,6 +21,7 @@ module.exports = {
         ],
         extensions: ['.js', '.jsx'],
         alias: {
+            'facade': path.join(__dirname, 'front/facade-to-prototypes.js'),
             'Calibration': path.join(__dirname, 'front/proto/calibration/Calibration.proto.js'),
             'AxesWorker': path.join(__dirname, 'front/proto/chart/AxesWorker.proto.js'),
             'Chart': path.join(__dirname, 'front/proto/chart/Chart.proto.js'),

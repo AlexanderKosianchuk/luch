@@ -1,52 +1,18 @@
 /*jslint browser: true*/
-/*global $, jQuery*/
-/*global Language, WindowFactory, FlightList, FlightUploader*/
-/*global FlightViewOptions, Fdr, Chart, User, SearchFlight*/
 
 'use strict';
 
-// libs
 import 'jquery';
-import 'jquery-ui';
-import 'jquery-ui/ui/widgets/button';
-import 'jquery-ui/ui/widgets/menu';
-import 'colorpicker-amin';
-import 'jstree';
-import 'flot-charts';
-import 'flot-charts/jquery.flot.time';
-import 'flot-charts/jquery.flot.symbol';
-import 'flot-charts/jquery.flot.navigate';
-import 'flot-charts/jquery.flot.resize';
-import 'flot-charts/jquery.flot.crosshair';
-import 'datatables';
-import 'bootstrap-loader';
-
-// lib styles
-import 'jquery-ui/themes/base/all.css';
-import 'jstree/dist/themes/default/style.min.css';
-import 'colorpicker-amin/jquery.colorpicker.css';
-
-//old styles
-import 'stylesheets/style.css';
-
+import facade from 'facade';
 // libs with export
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router';
 import createHistory from 'history/createBrowserHistory'
-import { ConnectedRouter, routerMiddleware, routerActions, goBack } from 'react-router-redux';
+import { ConnectedRouter, routerMiddleware, routerActions, push } from 'react-router-redux';
 import { setLocale, loadTranslations, syncTranslationWithStore } from 'react-redux-i18n';
 import { UserAuthWrapper } from 'redux-auth-wrapper';
-
-// old prototypes
-import FlightList from 'FlightList';
-import FlightUploader from 'FlightUploader';
-import FlightViewOptions from 'FlightViewOptions';
-import ChartService from 'Chart';
-import User from 'User';
-import SearchFlight from 'SearchFlight';
-import Calibration from 'Calibration';
 
 // react implementation
 import Results from 'components/results/Results';
@@ -63,8 +29,6 @@ import UploadingPreview from 'components/uploading-preview/UploadingPreview';
 import Chart from 'components/chart/Chart';
 import configureStore from 'store/configureStore';
 
-import startFlightUploading from 'actions/startFlightUploading';
-
 import translationsEn from 'translations/translationsEn';
 import translationsEs from 'translations/translationsEs';
 import translationsRu from 'translations/translationsRu';
@@ -77,149 +41,7 @@ const store = configureStore({}, routerMiddlewareInstance);
 store.dispatch(loadTranslations(translationsObject));
 store.dispatch(setLocale('ru'));
 
-function refreshFlightsList() {
-    function getCurrentRoute(state) {
-        return state.router.location.pathname;
-    }
-
-    let currentLocation = getCurrentRoute(store.getState())
-
-    if ((currentLocation === '/')
-        || (currentLocation === '/#')
-        || (currentLocation.indexOf('flights/tree') > -1)
-    ) {
-        $(document).trigger('flightsTreeShow', [
-            $('#container')
-        ]);
-    }
-
-    if (currentLocation.indexOf('flights/table') > -1) {
-        $(document).trigger('flightsTableShow', [
-            $('#container')
-        ]);
-    }
-}
-
-let currentFlightUploadingStateValue;
-store.subscribe(() => {
-    function getUploadingState(state) {
-        return state.flightUploadingState.length;
-    }
-
-    let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
-     currentFlightUploadingStateValue = getUploadingState(store.getState())
-
-    if ((currentFlightUploadingStateValue === 0)
-        && (previousFlightUploadingStateValue > 0)
-    ) {
-        refreshFlightsList();
-    }
-});
-
-$(document).on('importItem', function (e, form) {
-    let dfd = $.Deferred();
-    let FU = new FlightUploader(store);
-    FU.Import(form, dfd);
-    dfd.promise();
-
-    dfd.then(() => {
-        if ($('#container')) {
-            refreshFlightsList();
-        }
-    });
-});
-
-$(document).on('uploadWithPreview', function (e, showcase, uploadingUid, fdrId, calibrationId) {
-    let FU = new FlightUploader(store);
-    FU.FillFactoryContaider(showcase, uploadingUid, fdrId, calibrationId);
-});
-
-$(document).on('startProccessing', function (e, uploadingUid) {
-    store.dispatch(startFlightUploading({
-        uploadingUid: uploadingUid
-    }));
-});
-
-$(document).on('endProccessing', function (e, uploadingUid) {
-    store.dispatch(() => () => {
-        dispatch({
-            type: 'FLIGHT_UPLOADING_COMPLETE',
-            payload: {
-                uploadingUid: uploadingUid
-            }
-        });
-    });
-});
-
-$(document).on('flightsTreeShow', function (e, someshowcase) {
-    let FL = new FlightList(store);
-    FL.FillFactoryContaider(someshowcase);
-});
-
-$(document).on('flightsTableShow', function (e, someshowcase) {
-    let FL = new FlightList(store);
-    FL.setView('table');
-    FL.FillFactoryContaider(someshowcase);
-});
-
-$(document).on('flightEvents', function (e, someshowcase, flightId) {
-    let FO = new FlightViewOptions(store);
-    FO.task = 'getEventsList';
-    FO.flightId = flightId;
-    FO.FillFactoryContaider(someshowcase);
-});
-
-$(document).on('flightParams', function (e, someshowcase, flightId) {
-    let FO = new FlightViewOptions(store);
-    FO.task = 'getParamList';
-    FO.flightId = flightId;
-    FO.FillFactoryContaider(someshowcase);
-});
-
-$(document).on('chartShow', function (
-    e, showcase,
-    flightId, tplName,
-    stepLength, startCopyTime,
-    startFrame, endFrame,
-    apParams, bpParams
-) {
-    var C = new ChartService(store);
-    C.SetChartData(
-        flightId, tplName,
-        stepLength, startCopyTime,
-        startFrame, endFrame,
-        apParams, bpParams
-    );
-    C.FillFactoryContaider(showcase);
-});
-
-$(document).on('userShowList', function (e, showcase) {
-    let U = new User(store);
-    U.FillFactoryContaider(showcase);
-});
-
-$(document).on('changeLanguage', function (e, newLanguage) {
-    let U = new User(store);
-    U.changeLanguage(newLanguage);
-});
-
-$(document).on('flightSearchFormShow', function (e, showcase) {
-    let SF = new SearchFlight(store);
-    SF.FillFactoryContaider(showcase);
-});
-
-$(document).on('calibrationsShow', function (e, showcase) {
-    let CLB = new Calibration(store);
-    CLB.FillFactoryContaider(showcase);
-});
-
-$(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {
-    let FU = new FlightUploader(store);
-    FU.uploadPreviewed().then(() => {
-        store.dispatch(goBack());
-    });
-});
-
+facade(store);
 
 // Redirects to /login by default
 const UserIsAuthenticated = UserAuthWrapper({

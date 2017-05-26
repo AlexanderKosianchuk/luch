@@ -1,5 +1,12 @@
 import 'stylesheets/pages/chart.css';
 
+import 'flot-charts';
+import 'flot-charts/jquery.flot.time';
+import 'flot-charts/jquery.flot.symbol';
+import 'flot-charts/jquery.flot.navigate';
+import 'flot-charts/jquery.flot.resize';
+import 'flot-charts/jquery.flot.crosshair';
+
 import Param from 'Param';
 import AxesWorker from 'AxesWorker';
 import Coordinate from 'Coordinate';

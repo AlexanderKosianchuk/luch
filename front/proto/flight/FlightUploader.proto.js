@@ -1,5 +1,9 @@
 import uuidV4 from 'uuid/v4';
+
+import 'flot-charts';
+import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.selection';
+
 import { I18n } from 'react-redux-i18n';
 
 function FlightUploader(store)

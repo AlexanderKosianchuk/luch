@@ -1,5 +1,8 @@
 import 'stylesheets/pages/flight.css';
 
+import 'colorpicker-amin';
+import 'colorpicker-amin/jquery.colorpicker.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -502,7 +505,7 @@ FlightList.prototype.SupportJsTree = function() {
 
 FlightList.prototype.SetMinHeightJsTree = function() {
     $('.Tree').css({
-        'min-height': ($(window).height() - 115) 
+        'min-height': ($(window).height() - 115)
     });
 }
 
