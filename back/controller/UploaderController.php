@@ -412,19 +412,18 @@ class UploaderController extends CController
         return $data;
     }
 
-    public function CutCopy($fdrId, $filePath,
-            $startCopyTime, $endCopyTime,
-            $startSliceTime, $endSliceTime)
-    {
+    public function CutCopy (
+        $fdrId,
+        $newUid,
+        $filePath,
+        $startCopyTime,
+        $endCopyTime,
+        $startSliceTime,
+        $endSliceTime
+    ) {
         $fdrId = intval($fdrId);
 
-        $newFileName = $filePath;
-        $newFileAppendix = 'a';
-
-        do {
-            $newFileAppendix++;
-        } while(file_exists($newFileName . $newFileAppendix));
-        $newFileName = $newFileName . $newFileAppendix;
+        $newFileName = RuntimeManager::getFilePathByIud($newUid);
 
         $fdr = new Fdr;
         $fdrInfo = $fdr->getFdrInfo($fdrId);
@@ -478,18 +477,13 @@ class UploaderController extends CController
 
     public function CyclicSliceCopy(
         $fdrId,
+        $newUid,
         $filePath,
         $startCopyTime,
         $endCopyTime,
         $startSliceTime
     ) {
-        $newFileName = $filePath;
-        $newFileAppendix = 'a';
-
-        do {
-            $newFileAppendix++;
-        } while(file_exists($newFileName . $newFileAppendix));
-        $newFileName = $newFileName . $newFileAppendix;
+        $newFileName = RuntimeManager::getFilePathByIud($newUid);
 
         $fdr = new Fdr;
         $fdrInfo = $fdr->getFdrInfo($fdrId);
@@ -1176,9 +1170,16 @@ class UploaderController extends CController
         $startSliceTime = $data['startSliceTime'];
         $endSliceTime = $data['endSliceTime'];
 
-        $res = $this->CutCopy($fdrId, $filePath,
-            $startCopyTime, $endCopyTime,
-            $startSliceTime, $endSliceTime);
+        $res = $this->CutCopy(
+            $fdrId,
+            $newUid,
+            $filePath,
+            $startCopyTime,
+            $endCopyTime,
+            $startSliceTime,
+            $endSliceTime
+        );
+
         $res['newUid'] = $newUid;
         echo(json_encode($res));
     }
@@ -1210,6 +1211,7 @@ class UploaderController extends CController
 
         $resp = $this->CyclicSliceCopy(
                 $fdrId,
+                $newUid,
                 $filePath,
                 $startCopyTime,
                 $endCopyTime,

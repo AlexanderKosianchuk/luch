@@ -50,7 +50,7 @@ FlightUploader.prototype.GetFlightParams = function(
 
     var self = this;
 
-    if(self.flightUploaderContent != null){
+    if(self.flightUploaderContent != null) {
         //when file uploaded call fileProcessor to import it
         if((index == 0) || (self.firstUploadedComplt == false)){
             $.ajax({
@@ -95,7 +95,7 @@ FlightUploader.prototype.GetFlightParams = function(
                         chartWidth
                     );
 
-                    self.SliceFlightButtInitialSupport(parentContainer, previewParams);
+                    self.SliceFlightButtSupport(parentContainer, previewParams);
                     self.firstUploadedComplt = true;
                 } else {
                     console.log(answ["error"]);
@@ -135,7 +135,7 @@ FlightUploader.prototype.GetFlightParams = function(
                             fdrId,
                             chartWidth);
 
-                    self.SliceFlightButtInitialSupport(parentContainer, previewParams);
+                    self.SliceFlightButtSupport(parentContainer, previewParams);
 
                 } else {
                     console.log(answ["error"]);
@@ -179,9 +179,6 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
         console.log(msg);
     }).done(function(answ) {
         if(answ["status"] == "ok") {
-            //uppending answer
-            //mainContainer.append(answ["data"]);
-
             parentToAppentAfter.after(answ["data"]);
 
             var parentContainer = $("div#fileFlightInfo" + index),
@@ -205,7 +202,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
                 chartWidth
             );
 
-            self.SliceFlightButtDynamicCreatedSupport(parentContainer, previewParams);
+            self.SliceFlightButtSupport(parentContainer, previewParams);
 
         } else {
             console.log(answ["error"]);
@@ -444,204 +441,11 @@ FlightUploader.prototype.GetValue = function(previewParams, dataset, x) {
     return yArr;
 };
 
-///
-//SLICE FLIGHT BUTTON
-///
-FlightUploader.prototype.SliceFlightButtInitialSupport = function(parent, previewParams) {
+
+FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams) {
     var self = this;
 
-    ///
-    //UPLOAD SELECTED BUTTON
-    ///
-    var convertSelected = $("label#convertSelected");
-    convertSelected.click(function(event) {
-        event.preventDefault();
-
-        if(self.plotRequests == self.plotRequestsClosed){
-            var flightsContainers = $("div.MainContainerContentRows");
-
-            $.each(flightsContainers, function(counter, el){
-                var $el = $(el),
-                    fileName = $el.data("filename"),
-                    uploadingUid = $el.data("uploading-uid"),
-                    fdrId = $el.data("fdr-id"),
-                    calibrationId = $el.data("calibration-id"),
-                    index = $el.data("index"),
-                    ignoreDueUploading = $el.find("#ignoreDueUploading" + index),
-                    flightInfo = [],
-                    flightAditionalInfo = [],
-                    flightInfoCells = $el.find("input.FlightUploadingInputs"),
-                    flightAditionalInfoCells = $el.find("input.FlightUploadingInputsAditionalInfo");
-
-                if((ignoreDueUploading.prop('checked') == false) &&
-                        (!ignoreDueUploading.attr('checked'))) {
-                    $.each(flightInfoCells, function(j, subEl){
-                        var $subEl = $(subEl);
-                        if($subEl.attr('type') == 'checkbox'){
-                            if($subEl.prop('checked')){
-                                flightInfo.push($subEl.attr('id'));
-                                flightInfo.push(1);
-                            } else {
-                                flightInfo.push($subEl.attr('id'));
-                                flightInfo.push(0);
-                            }
-                        } else {
-                            flightInfo.push($subEl.attr('id'));
-                            flightInfo.push($subEl.val());
-                        }
-                    });
-
-                    $.each(flightAditionalInfoCells, function(j, subEl){
-                        var $subEl = $(subEl);
-                        flightAditionalInfo.push($subEl.attr('id'));
-                        flightAditionalInfo.push($subEl.val());
-                    });
-
-                    //if no aditional info set it to zero
-                    if(flightAditionalInfo.length == 0){
-                        flightAditionalInfo = 0;
-                    }
-
-                    var flightConvertionAction = "flightProcces",
-                        performProc = $el.find("input#execProc").prop('checked');
-
-                    if(performProc == true){
-                        flightConvertionAction = "flightProccesAndCheck";
-                    }
-
-                    var pV = {
-                        action: 'uploader/' + flightConvertionAction,
-                        data: {
-                            fdrId: fdrId,
-                            uploadingUid: uploadingUid,
-                            calibrationId: calibrationId,
-                            fileName: fileName,
-                            flightInfo: flightInfo,
-                            flightAditionalInfo : flightAditionalInfo
-                        }
-                    };
-
-                    self.InitiateFlightProccessing(pV);
-                }
-                $el.remove();
-            });
-
-            self.mainContainerOptions = $("div.MainContainerOptions");
-            //fire to index event to show flight list
-            self.mainContainerOptions.slideUp(function(e){
-                self.mainContainerOptions.empty();
-                $(document).trigger("convertSelectedClicked");
-            });
-        }
-
-        var counter = 0;
-
-        $(document).trigger("removeShowcase", [
-            self.flightUploaderFactoryContainer,
-            function() {
-                var interval = setInterval(function() {
-                    if (counter < 200) {
-                        $(document).scrollTop(0);
-                    } else {
-                        clearInterval(interval);
-                    }
-                }, 10);
-            }
-        ]);
-    });
-
-    ///
-    //SLICE FILE BUTTONS
-    ///
-    if((previewParams.length > 0) && (previewParams[0] != "")) {
-
-        var butEl = $("button.SliceFlightButt, button.SliceCyclicFlightButt");
-
-        $.each(butEl, function(counter, el){
-            var $el = $(el);
-            if($el.attr("role") == undefined){
-                var button = $el.button().first().css({
-                    'padding-top': '0px !important'
-                });
-            }
-        });
-
-        $(".SliceFlightButt, .SliceCyclicFlightButt").off("click");
-        $(".SliceFlightButt, .SliceCyclicFlightButt").on("click", function(e) {
-            e.preventDefault();
-
-            //if all charts ploted
-            if(self.plotRequests == self.plotRequestsClosed){
-
-                var el = $(e.currentTarget),
-                    curIndex = el.data("index"),
-                    fileName = el.data("file"),
-                    fdrId = el.data("fdr-id"),
-                    uploadingUid = el.data("uploading-uid"),
-                    newIndex = $("div.PreviewChartPlaceholder").length,
-                    action = "flightCutFile";
-
-                if((self.plotSelectedFromRangeStack[curIndex] != undefined) &&
-                        (self.plotSelectedToRangeStack[curIndex] != undefined)){
-
-                    $("input#ignoreDueUploading" + curIndex).prop('checked', true);
-
-                    if(el.hasClass('SliceFlightButt')){
-                        action = "flightCutFile";
-                    } else if(el.hasClass('SliceCyclicFlightButt')){
-                        action = "flightCyclicSliceFile";
-                    }
-
-                    var pV = {
-                            action: 'uploader/'+action,
-                            data: {
-                                uploadingUid: uploadingUid,
-                                newUid: uuidV4(),
-                                fdrId: fdrId,
-                                file: fileName,
-
-                                startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
-                                endCopyTime: self.plotAxesStack[curIndex].xaxis.max,
-                                startSliceTime: self.plotSelectedFromRangeStack[curIndex],
-                                endSliceTime:  self.plotSelectedToRangeStack[curIndex]
-                            }
-                        };
-
-                    $.ajax({
-                        type: "POST",
-                        data: pV,
-                        dataType: 'json',
-                        url: ENTRY_URL,
-                        async: true
-                    }).done(function(answ){
-                        if(answ["status"] == 'ok') {
-                            var newFileName = answ["data"];
-                            let newUid = answ["newUid"];
-
-                            self.GetSlicedFlightParams(newIndex,
-                                    newFileName,
-                                    newUid,
-                                    fdrId,
-                                    curIndex);
-                        } else {
-                            console.log(answ["error"]);
-                        }
-                    }).fail(function(mess){
-                        console.log(mess);
-                    });
-
-                }
-            }
-        });
-    }
-};
-
-FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent, previewParams) {
-
-    var self = this;
-
-    if((previewParams.length > 0) && (previewParams[0] != "")) {
-
+    if ((previewParams.length > 0) && (previewParams[0] != "")) {
         var appendedButt = parent.find("button.SliceFlightButt, button.SliceCyclicFlightButt");
 
         if(appendedButt.attr("role") == undefined){
@@ -650,12 +454,12 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
             });
         }
 
-        appendedButt.on("click", function(e) {
+        appendedButt.click(function(e) {
             event.preventDefault();
 
             //if all charts ploted
             if(self.plotRequests == self.plotRequestsClosed){
-                var el = $(e.target).parent(),
+                var el = $(this),
                     curIndex = el.data("index"),
                     fileName = el.data("file"),
                     fdrId = el.data("fdr-id"),
@@ -675,19 +479,19 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                     }
 
                     var pV = {
-                            action: 'uploader/'+action,
-                            data: {
-                                uploadingUid: uploadingUid,
-                                newUid: uuidV4(),
-                                fdrId: fdrId,
-                                file: fileName,
+                        action: 'uploader/'+action,
+                        data: {
+                            uploadingUid: uploadingUid,
+                            newUid: uuidV4(),
+                            fdrId: fdrId,
+                            file: fileName,
 
-                                startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
-                                endCopyTime: self.plotAxesStack[curIndex].xaxis.max,
-                                startSliceTime: self.plotSelectedFromRangeStack[curIndex],
-                                endSliceTime:  self.plotSelectedToRangeStack[curIndex]
-                            }
-                        };
+                            startCopyTime: self.plotAxesStack[curIndex].xaxis.min,
+                            endCopyTime: self.plotAxesStack[curIndex].xaxis.max,
+                            startSliceTime: self.plotSelectedFromRangeStack[curIndex],
+                            endSliceTime:  self.plotSelectedToRangeStack[curIndex]
+                        }
+                    };
 
                     $.ajax({
                         type: "POST",
@@ -700,11 +504,13 @@ FlightUploader.prototype.SliceFlightButtDynamicCreatedSupport = function(parent,
                             var newFileName = answ["data"];
                             let newUid = answ["newUid"];
 
-                            self.GetSlicedFlightParams(newIndex,
-                                    newFileName,
-                                    newUid,
-                                    fdrId,
-                                    curIndex);
+                            self.GetSlicedFlightParams(
+                                newIndex,
+                                newFileName,
+                                newUid,
+                                fdrId,
+                                curIndex
+                            );
                         } else {
                             console.log(answ["error"]);
                         }
@@ -759,6 +565,84 @@ FlightUploader.prototype.Import = function(form, dfd) {
     }).fail(function(mess){
         console.log(mess);
         dfd.reject();
+    });
+}
+
+FlightUploader.prototype.uploadPreviewed = function() {
+    let self = this;
+    let flightsContainers = $("div.MainContainerContentRows");
+    let count = flightsContainers.length;
+    let index = 0;
+    return new Promise((resolve, reject) => {
+        $.each(flightsContainers, function(counter, el){
+            var $el = $(el),
+                fileName = $el.data("filename"),
+                uploadingUid = $el.data("uploading-uid"),
+                fdrId = $el.data("fdr-id"),
+                calibrationId = $el.data("calibration-id"),
+                index = $el.data("index"),
+                ignoreDueUploading = $el.find("#ignoreDueUploading" + index),
+                flightInfo = [],
+                flightAditionalInfo = [],
+                flightInfoCells = $el.find("input.FlightUploadingInputs"),
+                flightAditionalInfoCells = $el.find("input.FlightUploadingInputsAditionalInfo");
+
+            if((ignoreDueUploading.prop('checked') == false) &&
+                    (!ignoreDueUploading.attr('checked'))) {
+                $.each(flightInfoCells, function(j, subEl){
+                    var $subEl = $(subEl);
+                    if($subEl.attr('type') == 'checkbox'){
+                        if($subEl.prop('checked')){
+                            flightInfo.push($subEl.attr('id'));
+                            flightInfo.push(1);
+                        } else {
+                            flightInfo.push($subEl.attr('id'));
+                            flightInfo.push(0);
+                        }
+                    } else {
+                        flightInfo.push($subEl.attr('id'));
+                        flightInfo.push($subEl.val());
+                    }
+                });
+
+                $.each(flightAditionalInfoCells, function(j, subEl){
+                    var $subEl = $(subEl);
+                    flightAditionalInfo.push($subEl.attr('id'));
+                    flightAditionalInfo.push($subEl.val());
+                });
+
+                //if no aditional info set it to zero
+                if (flightAditionalInfo.length == 0){
+                    flightAditionalInfo = 0;
+                }
+
+                var flightConvertionAction = "flightProcces",
+                    performProc = $el.find("input#execProc").prop('checked');
+
+                if (performProc == true){
+                    flightConvertionAction = "flightProccesAndCheck";
+                }
+
+                var pV = {
+                    action: 'uploader/' + flightConvertionAction,
+                    data: {
+                        fdrId: fdrId,
+                        uploadingUid: uploadingUid,
+                        calibrationId: calibrationId,
+                        fileName: fileName,
+                        flightInfo: flightInfo,
+                        flightAditionalInfo : flightAditionalInfo
+                    }
+                };
+
+                self.InitiateFlightProccessing(pV);
+                index++;
+
+                if (index === count) {
+                    resolve();
+                }
+            }
+        });
     });
 }
 

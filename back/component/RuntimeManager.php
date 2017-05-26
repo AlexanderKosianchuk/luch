@@ -127,10 +127,6 @@ class RuntimeManager
 
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpf';
 
-        if (!file_exists($storedFilePath)) {
-            throw new Exception("Requested uploaded file unexist. Name ". $fileName, 1);
-        }
-
         return $storedFilePath;
     }
 

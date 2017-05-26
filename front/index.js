@@ -34,9 +34,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router';
-import { ConnectedRouter } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory'
-import { routerMiddleware, routerActions } from 'react-router-redux';
+import { ConnectedRouter, routerMiddleware, routerActions, goBack } from 'react-router-redux';
 import { setLocale, loadTranslations, syncTranslationWithStore } from 'react-redux-i18n';
 import { UserAuthWrapper } from 'redux-auth-wrapper';
 
@@ -214,11 +213,13 @@ $(document).on('calibrationsShow', function (e, showcase) {
     CLB.FillFactoryContaider(showcase);
 });
 
-let topMenuService = {
-    uploadWithPreview: function(form, uploadingUid, fdrId, fdrName, calibrationId) {
-        eventHandler.trigger('uploadWithPreview', [form, uploadingUid, fdrId, fdrName, calibrationId]);
-    },
-};
+$(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {
+    let FU = new FlightUploader(store);
+    FU.uploadPreviewed().then(() => {
+        store.dispatch(goBack());
+    });
+});
+
 
 // Redirects to /login by default
 const UserIsAuthenticated = UserAuthWrapper({
