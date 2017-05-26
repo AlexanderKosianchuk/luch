@@ -356,4 +356,4 @@ FlightViewOptions.prototype.SupportColorPicker = function(){
     });
 }
 
-module.exports = FlightViewOptions;
+export default FlightViewOptions;

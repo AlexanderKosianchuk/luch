@@ -283,4 +283,4 @@ Param.prototype.GetBinaries = function(dataset, x){
     return bpPrasentArray;
 };
 
-module.exports = Param;
+export default Param;

@@ -183,4 +183,4 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
     }
 };
 
-module.exports = AxesWorker;
+export default AxesWorker;

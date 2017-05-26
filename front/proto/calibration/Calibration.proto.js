@@ -604,4 +604,4 @@ function Calibration() {
     }
 }
 
-module.exports = Calibration;
+export default Calibration;

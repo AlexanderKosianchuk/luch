@@ -856,5 +856,4 @@ FlightList.prototype.exportCoordinates = function(event) {
     }
 };
 
-
-module.exports = FlightList;
+export default FlightList;

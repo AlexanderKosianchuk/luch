@@ -15,11 +15,8 @@ export default function configureStore(initialState, routerMiddleware) {
     syncTranslationWithStore(store);
 
     if (module.hot) {
-        module.hot.accept('reducers', () => {
-            const nextRootReducer = require('reducers')
-            store.replaceReducer(nextRootReducer)
-        })
+        module.hot.accept('components/App', () => { render() });
     }
 
-    return store
+    return store;
 }

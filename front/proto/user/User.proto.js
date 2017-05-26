@@ -472,4 +472,4 @@ function User(store) {
     };
 }
 
-module.exports = User;
+export default User;

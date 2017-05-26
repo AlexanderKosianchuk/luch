@@ -95,4 +95,4 @@ Coordinate.prototype.ReceiveParams = function(){
     return apDataArray;
 };
 
-module.exports = Coordinate;
+export default Coordinate;

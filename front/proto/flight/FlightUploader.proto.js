@@ -659,4 +659,4 @@ function s4() {
 };
 //=============================================================
 
-module.exports = FlightUploader;
+export default FlightUploader;

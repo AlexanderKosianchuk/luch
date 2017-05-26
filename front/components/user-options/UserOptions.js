@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 import { Translate, I18n } from 'react-redux-i18n';
+import { goBack } from 'react-router-redux';
 
 import MainPage from 'components/main-page/MainPage';
 import ContentLoader from 'components/content-loader/ContentLoader';
@@ -47,6 +48,7 @@ class UserOptions extends React.Component {
 
     onClick() {
         this.props.setUserOptions(this.props.userOptions);
+        this.props.goBack();
     }
 
     render () {
@@ -76,7 +78,11 @@ function mapDispatchToProps(dispatch) {
     return {
         getUserOptions: bindActionCreators(getUserOptions, dispatch),
         changeUserOptionItem: bindActionCreators(changeUserOptionItem, dispatch),
-        setUserOptions: bindActionCreators(setUserOptions, dispatch)
+        setUserOptions: bindActionCreators(setUserOptions, dispatch),
+        goBack: bindActionCreators(
+            () => { return((dispatch) => { dispatch(goBack()) }) },
+            dispatch
+        ),
     }
 }
 

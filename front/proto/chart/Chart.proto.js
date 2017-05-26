@@ -805,4 +805,4 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
     return true;
 }
 
-module.exports = Chart;
+export default Chart;

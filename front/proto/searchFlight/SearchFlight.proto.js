@@ -214,4 +214,4 @@ function SearchFlight(store) {
 
 }
 
-module.exports = SearchFlight;
+export default SearchFlight;

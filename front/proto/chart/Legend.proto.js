@@ -1040,4 +1040,4 @@ Legend.prototype.toHHMMSS = function(UNIX_timestamp){
      return time;
 }
 
-module.exports = Legend;
+export default Legend;

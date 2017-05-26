@@ -769,4 +769,4 @@ function hexToRGBA(s, opacity) {
     return s;
 }
 
-module.exports = Exception;
+export default Exception;
