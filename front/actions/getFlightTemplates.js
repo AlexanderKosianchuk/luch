@@ -6,7 +6,7 @@ export default function getFlightTemplates(payload) {
             type: 'FLIGHT_TEMPLATES_RECEIVING'
         });
 
-        fetch('/entry.php?action=results/getSettlements&' + queryString.stringify(payload),
+        fetch('/entry.php?action=templates/getFlightTemplates&' + queryString.stringify(payload),
             { credentials: "same-origin" }
         ).then(response => response.json())
         .then(json => dispatch({

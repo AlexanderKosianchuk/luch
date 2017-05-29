@@ -4,13 +4,12 @@ namespace Model;
 
 class FlightException
 {
+    public static $TABLE_PREFIX = '_ex';
 
-    public function CreateFlightExceptionTable($extFlightId, $extFlightTablesGuid)
+    public function CreateFlightExceptionTable($flightId, $flightTablesGuid)
     {
-        $flightId = $extFlightId;
-
         $flightTablesGuid = $extFlightTablesGuid;
-        $flightExTableName = $flightTablesGuid . "_ex";
+        $flightExTableName = $flightTablesGuid . self::$TABLE_PREFIX;
 
         $c = new DataBaseConnector;
         $link = $c->Connect();

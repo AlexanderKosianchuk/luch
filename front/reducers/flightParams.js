@@ -17,9 +17,9 @@ export default function flightParams(state = initialState, action) {
             }
 
             let chosenParams = [];
-            if (action.payload.type === 'a') {
+            if (action.payload.paramType === 'a') {
                 chosenParams = state.chosenAnalogParams;
-            } else if (action.payload.type === 'b') {
+            } else if (action.payload.paramType === 'b') {
                 chosenParams = state.chosenBinaryParams;
             }
 
@@ -39,7 +39,7 @@ export default function flightParams(state = initialState, action) {
             ) {
                 chosenParams.push({
                     id: action.payload.id,
-                    type: action.payload.type
+                    paramType: action.payload.paramType
                 });
             }
 

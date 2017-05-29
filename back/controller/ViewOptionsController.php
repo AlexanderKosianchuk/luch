@@ -72,7 +72,7 @@ class ViewOptionsController extends CController
                     $flightApHeaders[$i]['color'],
                     $flightApHeaders[$i]['code'],
                     $flightApHeaders[$i]['id'],
-                    'a', // analog
+                    'ap', // analog
                     $flightApHeaders[$i]['name'],
                     $flightApHeaders[$i]['code']);
         }
@@ -92,7 +92,7 @@ class ViewOptionsController extends CController
                 $flightBpHeaders[$i]['color'],
                 $flightBpHeaders[$i]['code'],
                 $flightBpHeaders[$i]['id'],
-                'b', //binary
+                'bp', //binary
                 $flightBpHeaders[$i]['name'],
                 $flightBpHeaders[$i]['code']
             );

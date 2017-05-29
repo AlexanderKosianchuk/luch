@@ -53,18 +53,18 @@ class TemplatesController extends CController
         $paramsWithType = array();
         $Ch = new Channel;
 
-        for($i = 0; $i < count($params); $i++) {
+        for ($i = 0; $i < count($params); $i++) {
             if (!isset($params[$i]['id'])) {
                 continue;
             }
 
             $paramId = $params[$i]['id'];
-            $paramType = $params[$i]['type'];
+            $paramType = $params[$i]['paramType'];
             $paramInfo = [];
-            if ($paramType === 'a') {
+            if ($paramType === PARAM_TYPE_AP) {
                 $paramInfo = $fdr->GetParamInfoById($cycloApTableName, $paramId);
                 $paramInfo['paramType'] = PARAM_TYPE_AP;
-            } else if ($paramType === 'b') {
+            } else if ($paramType === PARAM_TYPE_BP) {
                 $paramInfo = $fdr->GetParamInfoById($cycloBpTableName, $paramId);
                 $paramInfo['paramType'] = PARAM_TYPE_BP;
             }
@@ -101,144 +101,6 @@ class TemplatesController extends CController
 
         unset($Ch);
         unset($PSTempl);
-    }
-
-    public function ShowTempltList($flightId)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo['apTableName'];
-        $bpTableName = $flightInfo['bpTableName'];
-        $exTableName = $flightInfo['exTableName'];
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-        $stepLength = $fdrInfo['stepLength'];
-        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
-
-        $Frame = new Frame;
-        $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
-        unset($Frame);
-
-        $PSTempl = new PSTempl;
-        //if no template table - create it
-        $PSTTableName = $paramSetTemplateListTableName;
-        if ($PSTTableName == "") {
-            $dummy = substr($cycloApTableName, 0, -3);
-            $paramSetTemplateListTableName = $dummy . "_pst";
-            $PSTTableName = $paramSetTemplateListTableName;
-            $PSTempl->CreatePSTTable($PSTTableName);
-            $PSTempl->AddPSTTable($fdrId, $PSTTableName);
-        }
-
-        //if isset excListTable create list to add template
-        $excEventsParamsList = array();
-        if($exTableName != "") {
-            $FEx = new FlightException;
-            $excEventsList = $FEx->GetFlightEventsParamsList($exTableName);
-            unset($FEx);
-        }
-
-        $flightTplsStr = "<select id='tplList' size='10' class='TplListSelect' multiple>";
-
-        //here builds template options list
-        $flightTplsStr .= $this->BuildTplOptionList($paramSetTemplateListTableName, $fdrId);
-
-        $foundedEventsTplName = $this->lang->foundedEventsTplName;
-
-        //if performed exception search and isset events
-        if(!(empty($excEventsList)))
-        {
-            $params    = "";
-            $paramsToAdd = array();
-            for($i = 0; $i < count($excEventsList); $i++)
-            {
-                $params .= $excEventsList[$i] . ", ";
-                $paramsToAdd[] = $excEventsList[$i];
-            }
-            $params = substr($params, 0, -2);
-
-            $paramNamesStr = $fdr->GetParamNames($fdrId, $paramsToAdd);
-
-            $flightTplsStr .= "<option id='tplOption' " .
-                    "name='".EVENTS_TPL_NAME."'  " .
-                    "data-comment='".$paramNamesStr."'  " .
-                    "data-params='".$params."'  " .
-                    "data-defaulttpl='true'  " .
-                    "selected> " .
-                    $foundedEventsTplName . " - ".$params."</option>";
-
-            $this->CreateTemplate($flightId, $paramsToAdd, EVENTS_TPL_NAME);
-        }
-
-        unset($fdr);
-        unset($PSTempl);
-
-        $flightTplsStr .= "</select><br><br>
-            <textarea id='tplComment' class='TplListTextareaComment'
-                rows='10' readonly/></textarea>";
-
-        return $flightTplsStr;
-    }
-
-    private function BuildTplOptionList($paramSetTemplateListTableName, $fdrId)
-    {
-        $fdrId = intval($fdrId);
-
-        $PSTempl = new PSTempl;
-        $PSTList = $PSTempl->GetPSTList($paramSetTemplateListTableName, $this->_user->username);
-        $defaultPSTName = $PSTempl->GetDefaultPST($paramSetTemplateListTableName, $this->_user->username);
-        unset($PSTempl);
-
-        $optionsStr = "";
-
-        $fdr = new Fdr;
-        for($i = 0; $i < count($PSTList); $i++) {
-            $PSTRow = $PSTList[$i];
-            $paramsArr = $PSTRow[1];
-            $params = implode(", ", $paramsArr);
-
-            $paramNamesStr = $fdr->GetParamNames($fdrId, $paramsArr);
-
-            if($PSTRow[0] == $defaultPSTName) {
-                $optionsStr .= "<option id='tplOption' " .
-                        "name='".$PSTRow[0]."'  " .
-                        "title='".$params."' " .
-                        "data-comment='".$paramNamesStr."'  " .
-                        "data-params='".$params."'  " .
-                        "data-defaulttpl='true'  " .
-                        "selected> " .
-                        "(".$this->lang->defaultTpl.") " . $PSTRow[0] . " - ".$params."</option>";
-            } else if($PSTRow[0] == PARAMS_TPL_NAME) {
-                $optionsStr .= "<option id='tplOption' " .
-                        "name='".$PSTRow[0]."'  " .
-                        "title='".$params."' " .
-                        "data-comment='".$paramNamesStr."'  " .
-                        "data-params='".$params."'  " .
-                        "data-defaulttpl='true'  " .
-                        "selected> " .
-                        $this->lang->lastTpl." - ".$params."</option>";
-            } else {
-                if($PSTRow[0] != EVENTS_TPL_NAME) {
-                    $optionsStr .= "<option id='tplOption' " .
-                        "name='".$PSTRow[0]."'  " .
-                        "title='".$params."' " .
-                        "data-comment='".$paramNamesStr."'  " .
-                        "data-params='".$params."'  " .
-                        "data-defaulttpl='true'  " .
-                        "selected> " .
-                        $PSTRow[0] . " - ".$params."</option>";
-                }
-            }
-        }
-        unset($fdr);
-
-        return $optionsStr;
     }
 
     public function GetDefaultTplParams($extFlightId)
@@ -335,28 +197,6 @@ class TemplatesController extends CController
         }
     }
 
-    public function getTemplates($data)
-    {
-        if (!isset($data['flightId'])) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page ViewOptionsController.php";
-            echo(json_encode($answ));
-            exit;
-        }
-
-        $flightId = intval($data['flightId']);
-        $fdrTpls = $this->ShowTempltList($flightId);
-
-        $data = array(
-            'bruTypeTpls' => $fdrTpls
-        );
-        $answ["status"] = "ok";
-        $answ["data"] = $data;
-
-        echo json_encode($answ);
-    }
-
     public function setTemplate($data)
     {
         if(!isset($data['flightId'])
@@ -400,5 +240,125 @@ class TemplatesController extends CController
             'a' => $params['ap'],
             'b' => $params['bp']
         ]);
+    }
+
+    public function getFlightTemplates($args)
+    {
+        if (!isset($args['flightId'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page TemplatesController.php";
+            echo(json_encode($answ));
+        }
+
+        $flightId = intval($args['flightId']);
+        $userId = intval($this->_user->userInfo['id']);
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $fdrCode = $fdrInfo['code'];
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $exTableName = $fdrCode . FlightException::$TABLE_PREFIX;
+        $templatesTable = $fdrInfo['paramSetTemplateListTableName'];
+
+        $PSTempl = new PSTempl;
+        //if no template table - create it
+        if ($templatesTable == "") {
+            $templatesTable = $fdrCode . "_pst";
+            $PSTempl->CreatePSTTable($templatesTable);
+            $PSTempl->AddPSTTable($fdrId, $templatesTable);
+        }
+
+        //if isset excListTable create list to add template
+        $excEventsList = array();
+        if ($exTableName !== "") {
+            $FEx = new FlightException;
+            $excEventsList = $FEx->GetFlightEventsParamsList($exTableName);
+            unset($FEx);
+        }
+
+        $templatesList = $PSTempl->GetPSTList($templatesTable, $this->_user->username);
+        $templatesToSend = [];
+
+        for ($i = 0; $i < count($templatesList); $i++) {
+            $template = $templatesList[$i];
+            $templateName = $template['name'];
+            $templateParamCodesArr = $template['params'];
+            $isDefault = $template['isDefault'];
+            $params = [];
+
+            foreach ($templateParamCodesArr as $code) {
+                $params[] =  $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code);
+            }
+
+            if ($templateName === PSTempl::$EVENTS_TPL_NAME) {
+                continue;
+            }
+
+            if ($templateName === PSTempl::$LAST_TPL_NAME) {
+                $templatesToSend[] = [
+                    'name' => $templateName,
+                    'paramCodes' => $templateParamCodesArr,
+                    'params' => $params,
+                    'servicePurpose' => [
+                        'isLast' => true
+                    ]
+                ];
+                continue;
+            }
+
+            if ($isDefault) {
+                $templatesToSend[] = [
+                    'name' => $templateName,
+                    'paramCodes' => $templateParamCodesArr,
+                    'params' => $params,
+                    'servicePurpose' => [
+                        'isDefault' => true
+                    ]
+                ];
+                continue;
+            }
+
+            $templatesToSend[] = [
+                'name' => $templateName,
+                'paramCodes' => $templateParamCodesArr,
+                'params' => $params
+            ];
+        }
+
+        //if performed exception search and isset events
+        if (!(empty($excEventsList))) {
+            $templateParamCodesArr = [];
+            for ($i = 0; $i < count($excEventsList); $i++) {
+                $templateParamCodesArr[] = $excEventsList[$i];
+            }
+
+            $params = [];
+            foreach ($templateParamCodesArr as $code) {
+                $params[] =  $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code);
+            }
+
+            $templatesToSend[] = [
+                'name' => $templateName,
+                'paramCodes' => $templateParamCodesArr,
+                'params' => $params,
+                'servicePurpose' => [
+                    'isEvents' => true
+                ]
+            ];
+
+            $this->CreateTemplate($flightId, $params, PSTempl::$EVENTS_TPL_NAME);
+        }
+
+        unset($fdr);
+        unset($PSTempl);
+
+        echo json_encode($templatesToSend);
     }
 }

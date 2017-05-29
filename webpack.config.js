@@ -105,8 +105,8 @@ module.exports = {
             'window.jQuery': 'jquery'
         }),
         new WebpackCleanupPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin()
+        /*new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin()*/
     ],
 
 };

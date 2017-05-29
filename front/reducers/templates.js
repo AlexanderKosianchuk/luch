@@ -1,14 +1,25 @@
 const initialState = {
     pending: null,
-    activeTemplate: null // DO NOT POPULATE TMP SOLUTION UNTILL IS NOT REACT COMPONENT
+    list: {},
+    activeTemplate: null
 };
 
 export default function templates(state = initialState, action) {
     switch (action.type) {
-        case 'GETTING_TEMPLATE_COMPLETE':
+        case 'FLIGHT_TEMPLATES_RECEIVING':
+            return {
+                ...state,
+                ... { pending: true }
+            };
+        case 'FLIGHT_TEMPLATES_FETCHED':
             return {
                 pending: false,
-                activeTemplate: action.payload
+                list: action.payload
+            };
+        case 'GETTING_TEMPLATE_COMPLETE':
+            return {
+                ...state,
+                ... { pending: false, activeTemplate: action.payload }
             };
         default:
             return state;

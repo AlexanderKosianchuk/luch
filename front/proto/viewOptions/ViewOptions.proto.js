@@ -294,7 +294,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
 
                         self.store.dispatch(changeFlightParamCheckstateAction({
                             id: item.data('id'),
-                            type: item.data('type'),
+                            paramType: item.data('type'),
                             state: item.prop('checked')
                         }));
                     });

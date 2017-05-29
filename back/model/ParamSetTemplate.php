@@ -4,6 +4,10 @@ namespace Model;
 
 class PSTempl
 {
+    public static $LAST_TPL_NAME = 'last';
+    public static $EVENTS_TPL_NAME = 'events';
+    public static $TPL_DEFAULT =  'default';
+
     public function CreatePSTTable($extPSTTableName)
     {
         $PSTTableName = $extPSTTableName;
@@ -58,23 +62,29 @@ class PSTempl
 
         $query = "SELECT DISTINCT `name` FROM `".$PSTListTableName."` WHERE `user` = '".$user."';";
         $result = $link->query($query);
-        while($row = $result->fetch_array())
-        {
-            $query = "SELECT `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ?) AND (`user` = ?);";
+        while ($row = $result->fetch_array()) {
+            $templateName = $row['name'];
+            $query = "SELECT `isDefault`, `paramCode` FROM `".$PSTListTableName."` WHERE (`name` = ?) AND (`user` = ?);";
             $stmt = $link2->prepare($query);
             $stmt->bind_param('ss', $templateName, $user);
-            $templateName = $row['name'];
+
             $stmt->execute();
-            $stmt->bind_result($paramCode);
-            $PSTRow = array();
+            $stmt->bind_result($isDefault, $paramCode);
             $paramCodeList = array();
-            while ($stmt->fetch())
-            {
+            while ($stmt->fetch()) {
                 array_push($paramCodeList, $paramCode);
             }
-            $PSTRow = array($templateName, $paramCodeList);
+            $PSTRow = [
+                0 => $templateName,
+                1 => $paramCodeList,
+                2 => boolval($isDefault),
+                'name' => $templateName,
+                'params' => $paramCodeList,
+                'isDefault' => boolval($isDefault)
+            ];
             array_push($PSTList, $PSTRow);
         }
+
         $c->Disconnect();
         unset($c);
 

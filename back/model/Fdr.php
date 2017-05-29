@@ -1364,28 +1364,22 @@ class Fdr
         $cycloBpTableName = $row['gradiBpTableName'];
         $result->free();
 
-        $names = "";
-
         $query = "SELECT `code`, `name`, `dim` FROM `".$cycloApTableName."` WHERE `code` ".
                 "IN (".$paramCodeArrImploded.") " .
                 "ORDER BY `code`;";
         $result = $link->query($query);
-        while($row = $result->fetch_array()) {
-            $names .= $row['code'] . " : " . $row['name'] . "(" . $row['dim'] . ") \n ";
-        }
+        $params = $result->fetch_all();
 
         $query = "SELECT `code`, `name` FROM `".$cycloBpTableName."` WHERE `code` ".
                 "IN (".$paramCodeArrImploded.") " .
                 "ORDER BY `code`;";
         $result = $link->query($query);
-        while($row = $result->fetch_array()) {
-            $names .= $row['code'] . " : " . $row['name'] ."\n ";
-        }
+        $params = array_merge($params, $result->fetch_array());
 
         $c->Disconnect();
         unset($c);
 
-        return $names;
+        return $params;
     }
 
     public function UpdateParamColor($extParamTable, $extParamCode, $extColor)
