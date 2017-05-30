@@ -1,111 +1,89 @@
 const translationsRu = {
     ru: {
-        userLogin: {
+        login: {
             userName: 'Логин пользователя',
             loginForm: 'Форма авторизации',
             authorize: 'Войти',
             password: 'Пароль'
         },
-        topMenu: {
-            fileImport: 'Импортировать',
-            upload: 'Загрузить',
+        flights: {
+            apply: 'Принять',
+            options: {
+                flightList: 'Перечень полетов'
+            },
+            typeSwitch : {
+                treeView: 'Дерево',
+                tableView: 'Таблица',
+            },
+            menuDropdown: {
+                fileMenu: 'Меню',
+                deleteItem: 'Удалить',
+                exportItem: 'Экспортировать',
+                processItem: 'Обработать',
+                removeSelection: 'Отменить выделение',
+                selectAll: 'Выбрать все',
+                exportCoordinates: 'Выгрузить маршрут',
+                syncFlightHeaders: 'Синхронизировать опознавательные данные',
+            },
+            tree: {
+                create: 'Создать',
+                rename: 'Переименовать',
+                remove: 'Удалить'
+            },
         },
-        flightImporterDropdown: {
-            fileImport: 'Импортировать',
-            chooseFile: 'Выбрать файл',
+        uploadingPreview: {
+            toolbar: {
+                preview: 'Предпросмотр'
+            }
         },
-        flightUploaderDropdown: {
-            flightUploading: 'Загрузка полета',
-            chooseFile: 'Выбрать файл',
-            preview: 'Предпросмотр',
-            on: 'Вкл',
-            off: 'Выкл',
-        },
-        uploadingPreviewOptions: {
-            preview: 'Предпросмотр'
-        },
-        mainMenu: {
-            flights: 'Полеты',
-            fdrs: 'Регистраторы',
-            calibration: 'Градуировки',
-            users: 'Пользователи',
-            results: 'Результаты',
-            search: 'Поиск',
-        },
-        userOptions: {
+        settings: {
             options: 'Пользовательские настройки',
             save: 'Сохранить',
             printTableStep: 'Шаг цифропечати',
             mainChartColor: 'Заливка графика',
-            lineWidth: 'Толщина линий на графике',
+            lineWidth: 'Толщина линий на графике'
         },
-        resultsToolbar: {
-            aggregatedStatistics: 'Агрегированая статистика',
+        results: {
+            toolbar: {
+                aggregatedStatistics: 'Агрегированая статистика',
+            },
+            flightFilter: {
+                flightInfoFilter: 'Фильтр по полетным данным',
+                apply: 'Принять',
+                fdrType: 'Тип регистратора',
+                bort: 'Номер борта',
+                voyage: 'Рейс',
+                departureAirport: 'Аэропорт вылета',
+                arrivalAirport: 'Аэропорт посадки',
+                departureFromDate: 'От даты отправления',
+                departureToDate: 'До даты отправления'
+            },
+            settlementFilter: {
+                apply: 'Принять',
+                putFlightFilter: 'Задайте параметры фильтра',
+                noMonitoredParamsOnSpecifyedFilter: 'Нет отслеживаемых параметров по указанному фильтру',
+                monitoredParameters: 'Отслеживаемые параметры',
+            },
+            settlementsReport: {
+                settlementsReport: 'Результаты',
+                setParamsForReportGenerating: 'Задайте параметры для формирования результатов',
+                noDataToGenerateReport: 'Нет данных для формирования результатов',
+            },
+            settlementsReportRow: {
+                title: 'Параметр',
+                count: 'Количество',
+                min: 'Мин',
+                avg: 'Среднее',
+                sum: 'Сумма',
+                max: 'Макс',
+            },
         },
-        flightFilter: {
-            flightInfoFilter: 'Фильтр по полетным данным',
-            apply: 'Принять',
-            fdrType: 'Тип регистратора',
-            bort: 'Номер борта',
-            voyage: 'Рейс',
-            departureAirport: 'Аэропорт вылета',
-            arrivalAirport: 'Аэропорт посадки',
-            departureFromDate: 'От даты отправления',
-            departureToDate: 'До даты отправления'
-        },
-        resultSettlementFilter: {
-            apply: 'Принять',
-            putFlightFilter: 'Задайте параметры фильтра',
-            noMonitoredParamsOnSpecifyedFilter: 'Нет отслеживаемых параметров по указанному фильтру',
-            monitoredParameters: 'Отслеживаемые параметры',
-        },
-        settlementsReport: {
-            settlementsReport: 'Результаты',
-            setParamsForReportGenerating: 'Задайте параметры для формирования результатов',
-            noDataToGenerateReport: 'Нет данных для формирования результатов',
-        },
-        settlementsReportRow: {
-            title: 'Параметр',
-            count: 'Количество',
-            min: 'Мин',
-            avg: 'Среднее',
-            sum: 'Сумма',
-            max: 'Макс',
-        },
-        flightList: {
-            apply: 'Принять',
-        },
-        flightListOptions: {
-            flightList: 'Перечень полетов'
-        },
-        flightListTypeSwitch : {
-            treeView: 'Дерево',
-            tableView: 'Таблица',
-        },
-        flightListMenuDropdown: {
-            fileMenu: 'Меню',
-            deleteItem: 'Удалить',
-            exportItem: 'Экспортировать',
-            processItem: 'Обработать',
-            removeSelection: 'Отменить выделение',
-            selectAll: 'Выбрать все',
-            exportCoordinates: 'Выгрузить маршрут',
-            syncFlightHeaders: 'Синхронизировать опознавательные данные',
-        },
-        flightListTree: {
-            create: 'Создать',
-            rename: 'Переименовать',
-            remove: 'Удалить'
-        },
-        flightViewOptionsSwitch: {
-            events: 'События',
-            params: 'Параметры',
-            templates: 'Шаблоны'
-        },
-        flightTemplatesItem: {
-            events: 'События',
-            default: 'По умолчанию',
-            last: 'Крайний обзор'
+        flightTemplates: {
+            item: {
+                events: 'События',
+                default: 'По умолчанию',
+                last: 'Крайний обзор'
+            }
         },
         calibration: {
             title: 'Градуировки',
@@ -127,7 +105,7 @@ const translationsRu = {
             controls: 'Управление',
             edit: 'Редактировать',
             delete: 'Удалить',
-            inputName: 'Введите название калибровки для сохранения',
+            inputName: 'Введите название калибровки для сохранения'
         },
         flightUploader: {
             upload: 'Загрузить',
@@ -147,6 +125,34 @@ const translationsRu = {
             cancel: 'Отменить',
             confimUserDeletion: 'Подтвердите удаление пользователей',
             creaitonFailServerError: 'Ошибка связи при попытке создания пользователя. Попробуйте позже.',
+        },
+        topMenu: {
+            fileImport: 'Импортировать',
+            upload: 'Загрузить',
+        },
+        flightImporterDropdown: {
+            fileImport: 'Импортировать',
+            chooseFile: 'Выбрать файл',
+        },
+        flightUploaderDropdown: {
+            flightUploading: 'Загрузка полета',
+            chooseFile: 'Выбрать файл',
+            preview: 'Предпросмотр',
+            on: 'Вкл',
+            off: 'Выкл',
+        },
+        mainMenu: {
+            flights: 'Полеты',
+            fdrs: 'Регистраторы',
+            calibration: 'Градуировки',
+            users: 'Пользователи',
+            results: 'Результаты',
+            search: 'Поиск',
+        },
+        flightViewOptionsSwitch: {
+            events: 'События',
+            params: 'Параметры',
+            templates: 'Шаблоны'
         },
         colorpicker: {
             ok: 'Принять',

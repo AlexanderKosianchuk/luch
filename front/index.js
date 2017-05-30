@@ -13,7 +13,7 @@ import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
 import { setLocale, loadTranslations } from 'react-redux-i18n';
 
-import App from 'components/App'
+import App from 'containers/App'
 
 import configureStore from 'store/configureStore';
 

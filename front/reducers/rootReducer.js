@@ -11,7 +11,7 @@ import flightInfo from 'reducers/flightInfo';
 import flightParams from 'reducers/flightParams';
 import flightUploader from 'reducers/flightUploader';
 import flightUploadingState from 'reducers/flightUploadingState';
-import userOptions from 'reducers/userOptions';
+import settings from 'reducers/settings';
 import templates from 'reducers/templates';
 import chosenTemplates from 'reducers/chosenTemplates';
 import userReducer from 'reducers/userReducer'
@@ -28,7 +28,7 @@ export default combineReducers({
     settlementFilter,
     settlementsReport,
     chosenFlightListItems,
-    userOptions,
+    settings,
     router: routerReducer,
     i18n: i18nReducer,
     user: userReducer

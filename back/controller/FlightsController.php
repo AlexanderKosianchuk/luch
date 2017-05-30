@@ -1637,13 +1637,15 @@ class FlightsController extends CController
 
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
         $flightTiming = $this->GetFlightTiming($flightId);
         unset($Fl);
 
         echo json_encode(array_merge($flightInfo, [
             'duration' => $flightTiming['duration'],
             'startFlightTime' => $flightTiming['startCopyTime'],
-            'stepLength' => $flightTiming['stepLength']
+            'stepLength' => $flightTiming['stepLength'],
+            'fdrId' => $fdrId
         ]));
     }
 }

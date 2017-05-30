@@ -1,111 +1,89 @@
 const translationsEn = {
     en: {
-        userLogin: {
+        login: {
             userName: 'User name',
             loginForm: 'Login form',
             authorize: 'Log in',
             password: 'Password'
         },
-        topMenu: {
-            fileImport: 'Import',
-            upload: 'Upload',
+        flights: {
+            apply: 'Apply',
+            options: {
+                flightList: 'Flights list'
+            },
+            typeSwitch : {
+                treeView: 'Tree',
+                tableView: 'Table',
+            },
+            menuDropdown: {
+                fileMenu: 'Menu',
+                deleteItem: 'Delete',
+                exportItem: 'Export',
+                processItem: 'Process',
+                removeSelection: 'Cancel selection',
+                selectAll: 'Select all',
+                exportCoordinates: 'Export coordinates',
+                syncFlightHeaders: 'Sync Headers',
+            },
+            tree: {
+                create: 'Create',
+                rename: 'Rename',
+                remove: 'Remove'
+            },
         },
-        flightImporterDropdown: {
-            fileImport: 'Import',
-            chooseFile: 'Choose file',
+        uploadingPreview: {
+            toolbar: {
+                preview: 'Preview'
+            }
         },
-        flightUploaderDropdown: {
-            flightUploading: 'Flight uploading',
-            chooseFile: 'Choose file',
-            preview: 'Preview',
-            on: 'On',
-            off: 'Off',
-        },
-        uploadingPreviewOptions: {
-            preview: 'Preview'
-        },
-        mainMenu: {
-            flights: 'Flights',
-            fdrs: 'FDRs',
-            calibration: 'Calibration',
-            users: 'Users',
-            results: 'Results',
-            search: 'Search',
-        },
-        userOptions: {
+        settings: {
             options: 'User options',
             save: 'Save',
             printTableStep: 'Print table step',
             mainChartColor: 'Main chart background color',
-            lineWidth: 'Сhart lines width',
+            lineWidth: 'Сhart lines width'
         },
-        resultsToolbar: {
-            aggregatedStatistics: 'Aggregated statistics',
+        results: {
+            toolbar: {
+                aggregatedStatistics: 'Aggregated statistics',
+            },
+            flightFilter: {
+                flightInfoFilter: 'Filter by flight info',
+                apply: 'Apply',
+                fdrType: 'FDR type',
+                bort:'A/C',
+                voyage:'Flight',
+                departureFromDate:'Departure from date',
+                departureToDate:'Departure to date',
+                departureAirport: 'Departure Airport',
+                arrivalAirport: 'Arrival Airport',
+            },
+            settlementFilter: {
+                apply: 'Apply',
+                putFlightFilter: 'Put flight filter',
+                noMonitoredParamsOnSpecifyedFilter: 'No monitored params on specifyed filter',
+                monitoredParameters: 'Monitored parameters',
+            },
+            settlementsReport: {
+                settlementsReport: 'Report',
+                setParamsForReportGenerating: 'Set params for report generating',
+                noDataToGenerateReport: 'No data to generate report',
+            },
+            settlementsReportRow: {
+                title: 'Param',
+                count: 'Count',
+                min: 'Min',
+                avg: 'Avg',
+                sum: 'Sum',
+                max: 'Max',
+            },
         },
-        flightFilter: {
-            flightInfoFilter: 'Filter by flight info',
-            apply: 'Apply',
-            fdrType: 'FDR type',
-            bort:'A/C',
-            voyage:'Flight',
-            departureFromDate:'Departure from date',
-            departureToDate:'Departure to date',
-            departureAirport: 'Departure Airport',
-            arrivalAirport: 'Arrival Airport',
-        },
-        resultSettlementFilter: {
-            apply: 'Apply',
-            putFlightFilter: 'Put flight filter',
-            noMonitoredParamsOnSpecifyedFilter: 'No monitored params on specifyed filter',
-            monitoredParameters: 'Monitored parameters',
-        },
-        settlementsReport: {
-            settlementsReport: 'Report',
-            setParamsForReportGenerating: 'Set params for report generating',
-            noDataToGenerateReport: 'No data to generate report',
-        },
-        settlementsReportRow: {
-            title: 'Param',
-            count: 'Count',
-            min: 'Min',
-            avg: 'Avg',
-            sum: 'Sum',
-            max: 'Max',
-        },
-        flightList: {
-            apply: 'Apply',
-        },
-        flightListOptions: {
-            flightList: 'Flights list'
-        },
-        flightListTypeSwitch : {
-            treeView: 'Tree',
-            tableView: 'Table',
-        },
-        flightListMenuDropdown: {
-            fileMenu: 'Menu',
-            deleteItem: 'Delete',
-            exportItem: 'Export',
-            processItem: 'Process',
-            removeSelection: 'Cancel selection',
-            selectAll: 'Select all',
-            exportCoordinates: 'Export coordinates',
-            syncFlightHeaders: 'Sync Headers',
-        },
-        flightListTree: {
-            create: 'Create',
-            rename: 'Rename',
-            remove: 'Remove'
-        },
-        flightViewOptionsSwitch: {
-            events: 'Events',
-            params: 'Parameters',
-            templates: 'Templates'
-        },
-        flightTemplatesItem: {
-            events: 'Events',
-            default: 'Default',
-            last: 'Last viewed'
+        flightTemplates: {
+            item: {
+                events: 'Events',
+                default: 'Default',
+                last: 'Last viewed'
+            }
         },
         calibration: {
             title: 'Calibration',
@@ -127,7 +105,7 @@ const translationsEn = {
             controls: 'Controls',
             edit: 'Edit',
             delete: 'Delete',
-            inputName: 'Please input name to save',
+            inputName: 'Please input name to save'
         },
         flightUploader: {
             upload: 'Upload',
@@ -146,7 +124,35 @@ const translationsEn = {
             save: 'Save Yser',
             cancel: 'Cancel',
             confimUserDeletion: 'Confirm',
-            creaitonFailServerError: 'Fail Server',
+            creaitonFailServerError: 'Fail Server'
+        },
+        topMenu: {
+            fileImport: 'Import',
+            upload: 'Upload',
+        },
+        flightImporterDropdown: {
+            fileImport: 'Import',
+            chooseFile: 'Choose file',
+        },
+        flightUploaderDropdown: {
+            flightUploading: 'Flight uploading',
+            chooseFile: 'Choose file',
+            preview: 'Preview',
+            on: 'On',
+            off: 'Off',
+        },
+        mainMenu: {
+            flights: 'Flights',
+            fdrs: 'FDRs',
+            calibration: 'Calibration',
+            users: 'Users',
+            results: 'Results',
+            search: 'Search',
+        },
+        flightViewOptionsSwitch: {
+            events: 'Events',
+            params: 'Parameters',
+            templates: 'Templates'
         },
         colorpicker: {
             ok: 'Accept',
