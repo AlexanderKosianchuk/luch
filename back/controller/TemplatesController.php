@@ -6,7 +6,7 @@ use Model\Language;
 use Model\Flight;
 use Model\Fdr;
 use Model\Frame;
-use Model\PSTempl;
+use Model\FlightTemplate;
 use Model\FlightException;
 use Model\FlightComments;
 use Model\Channel;
@@ -95,12 +95,12 @@ class TemplatesController extends CController
         }
         unset($fdr);
 
-        $PSTempl = new PSTempl;
-        $PSTempl->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
-        $PSTempl->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
+        $flightTemplate = new FlightTemplate;
+        $flightTemplate->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
+        $flightTemplate->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
 
         unset($Ch);
-        unset($PSTempl);
+        unset($flightTemplate);
     }
 
     public function GetDefaultTplParams($extFlightId)
@@ -118,9 +118,9 @@ class TemplatesController extends CController
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $PSTempl = new PSTempl;
-        $params = $PSTempl->GetDefaultTemplateParams($paramSetTemplateListTableName, $this->_user->username);
-        unset($PSTempl);
+        $flightTemplate = new FlightTemplate;
+        $params = $flightTemplate->GetDefaultTemplateParams($paramSetTemplateListTableName, $this->_user->username);
+        unset($flightTemplate);
 
         $apParams = array();
         $bpParams = array();
@@ -152,9 +152,9 @@ class TemplatesController extends CController
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        $PSTempl = new PSTempl;
-        $params = $PSTempl->GetPSTByName($paramSetTemplateListTableName, $tplName, $this->_user->username);
-        unset($PSTempl);
+        $flightTemplate = new FlightTemplate;
+        $params = $flightTemplate->GetPSTByName($paramSetTemplateListTableName, $tplName, $this->_user->username);
+        unset($flightTemplate);
 
         $apParams = array();
         $bpParams = array();
@@ -220,6 +220,51 @@ class TemplatesController extends CController
         echo json_encode(['status' => 'ok']);
     }
 
+    public function mergeTemplates($args)
+    {
+        if (!isset($args['flightId'])
+            || !isset($args['resultTemplateName'])
+            || !isset($args['templatesToMerge'])
+        ) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page TemplatesController.php";
+            echo(json_encode($answ));
+        }
+
+        $flightId = intval($args['flightId']);
+        $resultTemplateName = $args['resultTemplateName'];
+        $templatesToMerge = $args['templatesToMerge'];
+        $username = $this->_user->username;
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $tableName = $fdrInfo['paramSetTemplateListTableName'];
+
+        $templatesParams = [];
+
+        $flightTemplate = new FlightTemplate;
+        foreach ($templatesToMerge as $templateName) {
+            $params = $flightTemplate->GetPSTByName($tableName, $templateName, $username);
+
+            for ($i = 0; $i < count($params); $i++) {
+                $paramCode = $params[$i];
+                $templatesParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+            }
+        }
+
+        $this->CreateTemplate($flightId, $templatesParams, $resultTemplateName);
+
+        echo json_encode(['status'=> 'ok']);
+    }
+
     public function getTemplate($args)
     {
         if (!isset($args['flightId'])
@@ -267,12 +312,12 @@ class TemplatesController extends CController
         $exTableName = $fdrCode . FlightException::$TABLE_PREFIX;
         $templatesTable = $fdrInfo['paramSetTemplateListTableName'];
 
-        $PSTempl = new PSTempl;
+        $flightTemplate = new FlightTemplate;
         //if no template table - create it
         if ($templatesTable == "") {
             $templatesTable = $fdrCode . "_pst";
-            $PSTempl->CreatePSTTable($templatesTable);
-            $PSTempl->AddPSTTable($fdrId, $templatesTable);
+            $flightTemplate->CreatePSTTable($templatesTable);
+            $flightTemplate->AddPSTTable($fdrId, $templatesTable);
         }
 
         //if isset excListTable create list to add template
@@ -283,7 +328,7 @@ class TemplatesController extends CController
             unset($FEx);
         }
 
-        $templatesList = $PSTempl->GetPSTList($templatesTable, $this->_user->username);
+        $templatesList = $flightTemplate->GetPSTList($templatesTable, $this->_user->username);
         $templatesToSend = [];
 
         for ($i = 0; $i < count($templatesList); $i++) {
@@ -297,11 +342,11 @@ class TemplatesController extends CController
                 $params[] =  $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code);
             }
 
-            if ($templateName === PSTempl::$EVENTS_TPL_NAME) {
+            if ($templateName === FlightTemplate::$EVENTS_TPL_NAME) {
                 continue;
             }
 
-            if ($templateName === PSTempl::$LAST_TPL_NAME) {
+            if ($templateName === FlightTemplate::$LAST_TPL_NAME) {
                 $templatesToSend[] = [
                     'name' => $templateName,
                     'paramCodes' => $templateParamCodesArr,
@@ -345,7 +390,7 @@ class TemplatesController extends CController
             }
 
             $templatesToSend[] = [
-                'name' => $templateName,
+                'name' => FlightTemplate::$EVENTS_TPL_NAME,
                 'paramCodes' => $templateParamCodesArr,
                 'params' => $params,
                 'servicePurpose' => [
@@ -353,11 +398,11 @@ class TemplatesController extends CController
                 ]
             ];
 
-            $this->CreateTemplate($flightId, $params, PSTempl::$EVENTS_TPL_NAME);
+            $this->CreateTemplate($flightId, $params, FlightTemplate::$EVENTS_TPL_NAME);
         }
 
         unset($fdr);
-        unset($PSTempl);
+        unset($flightTemplate);
 
         echo json_encode($templatesToSend);
     }

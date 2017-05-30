@@ -48,7 +48,7 @@ class UserOptions extends React.Component {
 
     onClick() {
         this.props.setUserOptions(this.props.userOptions);
-        this.props.go(-2);
+        this.props.goBack(-2); // -2 because # in url
     }
 
     render () {

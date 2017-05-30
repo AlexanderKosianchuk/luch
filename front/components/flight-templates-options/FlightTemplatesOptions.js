@@ -1,12 +1,17 @@
 import './flight-templates-options.sass'
 
 import React from 'react';
-import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightViewOptionsSwitch from 'components/flight-view-options-switch/FlightViewOptionsSwitch';
 import FlightViewOptionsSlider from 'components/flight-view-options-slider/FlightViewOptionsSlider';
+import ShowChartByTemplates from 'components/show-chart-by-templates/ShowChartByTemplates';
 
 export default class FlightTemplatesOptions extends React.Component {
+    createTemplate()
+    {
+
+    }
+
     render() {
         return (
             <nav className="flight-templates-options navbar navbar-default">
@@ -28,6 +33,20 @@ export default class FlightTemplatesOptions extends React.Component {
                         <FlightViewOptionsSlider
                             flightId={ this.props.flightId }
                         />
+
+                        <ShowChartByTemplates
+                            flightId={ this.props.flightId }
+                        />
+
+                        <ul className="nav navbar-nav navbar-right">
+                            <li><a href="#">
+                                <span
+                                    onClick={ this.createTemplate.bind(this) }
+                                    className="glyphicon glyphicon-plus"
+                                    aria-hidden="true">
+                                </span>
+                            </a></li>
+                        </ul>
                     </div>
                 </div>
             </nav>

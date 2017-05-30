@@ -845,8 +845,8 @@
     },
     {
         "name": "symfony/yaml",
-        "version": "v2.8.20",
-        "version_normalized": "2.8.20.0",
+        "version": "v2.8.21",
+        "version_normalized": "2.8.21.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/yaml.git",
@@ -896,17 +896,17 @@
     },
     {
         "name": "symfony/console",
-        "version": "v2.8.20",
-        "version_normalized": "2.8.20.0",
+        "version": "v2.8.21",
+        "version_normalized": "2.8.21.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/console.git",
-            "reference": "2cfcbced8e39e2313ed4da8896fc8c59a56c0d7e"
+            "reference": "efa4d466b67c2fc9bf9419a981e683e1f99fa029"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/console/zipball/2cfcbced8e39e2313ed4da8896fc8c59a56c0d7e",
-            "reference": "2cfcbced8e39e2313ed4da8896fc8c59a56c0d7e",
+            "url": "https://api.github.com/repos/symfony/console/zipball/efa4d466b67c2fc9bf9419a981e683e1f99fa029",
+            "reference": "efa4d466b67c2fc9bf9419a981e683e1f99fa029",
             "shasum": ""
         },
         "require": {
@@ -924,7 +924,7 @@
             "symfony/event-dispatcher": "",
             "symfony/process": ""
         },
-        "time": "2017-04-26T01:38:53+00:00",
+        "time": "2017-05-28T14:07:33+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -959,27 +959,27 @@
     },
     {
         "name": "symfony/filesystem",
-        "version": "v3.2.8",
-        "version_normalized": "3.2.8.0",
+        "version": "v3.3.0",
+        "version_normalized": "3.3.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/filesystem.git",
-            "reference": "040651db13cf061827a460cc10f6e36a445c45b4"
+            "reference": "c709670bf64721202ddbe4162846f250735842c0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/filesystem/zipball/040651db13cf061827a460cc10f6e36a445c45b4",
-            "reference": "040651db13cf061827a460cc10f6e36a445c45b4",
+            "url": "https://api.github.com/repos/symfony/filesystem/zipball/c709670bf64721202ddbe4162846f250735842c0",
+            "reference": "c709670bf64721202ddbe4162846f250735842c0",
             "shasum": ""
         },
         "require": {
             "php": ">=5.5.9"
         },
-        "time": "2017-04-12T14:13:17+00:00",
+        "time": "2017-05-28T14:08:56+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "3.2-dev"
+                "dev-master": "3.3-dev"
             }
         },
         "installation-source": "dist",
@@ -1010,34 +1010,38 @@
     },
     {
         "name": "symfony/config",
-        "version": "v3.2.8",
-        "version_normalized": "3.2.8.0",
+        "version": "v3.3.0",
+        "version_normalized": "3.3.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/config.git",
-            "reference": "e5533fcc0b3dd377626153b2852707878f363728"
+            "reference": "79f86253ba482ca7f17718e886e6d164e5ba6d45"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/config/zipball/e5533fcc0b3dd377626153b2852707878f363728",
-            "reference": "e5533fcc0b3dd377626153b2852707878f363728",
+            "url": "https://api.github.com/repos/symfony/config/zipball/79f86253ba482ca7f17718e886e6d164e5ba6d45",
+            "reference": "79f86253ba482ca7f17718e886e6d164e5ba6d45",
             "shasum": ""
         },
         "require": {
             "php": ">=5.5.9",
             "symfony/filesystem": "~2.8|~3.0"
         },
+        "conflict": {
+            "symfony/dependency-injection": "<3.3"
+        },
         "require-dev": {
+            "symfony/dependency-injection": "~3.3",
             "symfony/yaml": "~3.0"
         },
         "suggest": {
             "symfony/yaml": "To use the yaml reference dumper"
         },
-        "time": "2017-04-12T14:13:17+00:00",
+        "time": "2017-05-29T18:41:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "3.2-dev"
+                "dev-master": "3.3-dev"
             }
         },
         "installation-source": "dist",

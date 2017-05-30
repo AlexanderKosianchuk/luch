@@ -6,7 +6,6 @@ use Model\Language;
 use Model\Flight;
 use Model\Fdr;
 use Model\Frame;
-use Model\PSTempl;
 use Model\FlightException;
 use Model\FlightComments;
 use Model\Channel;

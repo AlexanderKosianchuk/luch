@@ -3,7 +3,7 @@
 namespace Controller;
 
 use Model\Language;
-use Model\PSTempl;
+use Model\FlightTemplate;
 use Model\Channel;
 use Model\Fdr;
 use Model\Flight;

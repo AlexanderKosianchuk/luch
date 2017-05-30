@@ -102,6 +102,11 @@ const translationsEs = {
             params: 'Parameters',
             templates: 'Templates'
         },
+        flightTemplatesItem: {
+            events: 'Events',
+            default: 'Default',
+            last: 'Last viewed'
+        },
         calibration: {
             title: 'Calibration',
             fdr: 'FDR',

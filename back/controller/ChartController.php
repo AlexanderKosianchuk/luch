@@ -5,7 +5,7 @@ namespace Controller;
 use Model\Flight;
 use Model\Fdr;
 use Model\Language;
-use Model\PSTempl;
+use Model\FlightTemplate;
 use Model\UserOptions;
 use Model\Frame;
 use Model\Channel;
@@ -110,7 +110,7 @@ class ChartController extends CController
                 $PSTListTableName = $fdrInfo['paramSetTemplateListTableName'];
                 $apCycloTable = $fdrInfo['gradiApTableName'];
                 $bpCycloTable = $fdrInfo['gradiBpTableName'];
-                $Tpl = new PSTempl();
+                $Tpl = new FlightTemplate;
                 $params = $Tpl->GetPSTParams($PSTListTableName, $tplName, $this->_user->username);
                 unset($Tpl);
 
@@ -391,10 +391,10 @@ class ChartController extends CController
         $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
         unset($fdr);
 
-        $PSTempl = new PSTempl;
-        $minMax = $PSTempl->GetParamMinMax($PSTTableName, $tplName,
+        $flightTemplate = new FlightTemplate;
+        $minMax = $flightTemplate->GetParamMinMax($PSTTableName, $tplName,
                 $paramCode, $user);
-        unset($PSTempl);
+        unset($flightTemplate);
 
         if ($minMax == '') {
             $minMax = array(
@@ -425,9 +425,9 @@ class ChartController extends CController
         $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
         unset($fdr);
 
-        $PSTempl = new PSTempl;
-        $PSTempl->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
-        unset($PSTempl);
+        $flightTemplate = new FlightTemplate;
+        $flightTemplate->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
+        unset($flightTemplate);
 
         return "ok";
     }

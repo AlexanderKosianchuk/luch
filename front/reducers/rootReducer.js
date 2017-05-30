@@ -13,6 +13,7 @@ import flightUploader from 'reducers/flightUploader';
 import flightUploadingState from 'reducers/flightUploadingState';
 import userOptions from 'reducers/userOptions';
 import templates from 'reducers/templates';
+import chosenTemplates from 'reducers/chosenTemplates';
 import userReducer from 'reducers/userReducer'
 
 export default combineReducers({
@@ -23,6 +24,7 @@ export default combineReducers({
     flightUploadingState,
     flightFilter,
     templates,
+    chosenTemplates,
     settlementFilter,
     settlementsReport,
     chosenFlightListItems,

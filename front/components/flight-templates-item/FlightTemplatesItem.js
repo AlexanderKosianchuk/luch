@@ -4,22 +4,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Collapse } from 'react-collapse';
+import { I18n } from 'react-redux-i18n';
 
 import FlightTemplatesItemControls from 'components/flight-templates-item-controls/FlightTemplatesItemControls';
+import FlightTemplatesItemCheckbox from 'components/flight-templates-item-checkbox/FlightTemplatesItemCheckbox';
 import FlightTemplatesItemDescription from 'components/flight-templates-item-description/FlightTemplatesItemDescription';
-import redirect from 'actions/redirect';
 
-class FlightTemplatesItem extends React.Component {
+export default class FlightTemplatesItem extends React.Component {
     constructor(props)
     {
         super(props);
-        this.state = {
-            isOpened: false
-        };
+        this.state = { isOpened: false };
     }
 
     checkServicePurpose(servicePurpose)
     {
+        if (!servicePurpose) {
+            return '';
+        }
+
         let glyphicon = '';
         if (servicePurpose.isDefault) {
             glyphicon = 'glyphicon-home';
@@ -41,8 +44,19 @@ class FlightTemplatesItem extends React.Component {
                         { this.checkServicePurpose(this.props.servicePurpose) }
                     </div>
 
+                    <div className='col-sm-1'>
+                        <FlightTemplatesItemCheckbox name={ this.props.name }/>
+                    </div>
+
                     <div className='col-sm-2'>
-                        <span className='flight-templates-item__title'>{ this.props.name }</span>
+                        <span className='flight-templates-item__title'>
+                            { I18n.t('flightTemplatesItem.'
+                                + ((this.props.servicePurpose && this.props.servicePurpose.isDefault)
+                                    ? 'default'
+                                    : this.props.name
+                                )
+                            ) }
+                        </span>
                     </div>
 
                     <div className='col-sm-2'>
@@ -53,7 +67,7 @@ class FlightTemplatesItem extends React.Component {
                         />
                     </div>
 
-                    <div className='col-sm-6'>
+                    <div className='col-sm-5'>
                         <span className='flight-templates-item__body'>{ this.props.paramCodes }</span>
                     </div>
 
@@ -80,15 +94,3 @@ class FlightTemplatesItem extends React.Component {
         );
     }
 }
-
-function mapStateToProps(state) {
-    return {};
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FlightTemplatesItem);

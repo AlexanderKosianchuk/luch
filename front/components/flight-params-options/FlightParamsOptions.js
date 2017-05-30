@@ -1,13 +1,10 @@
 import './flight-params-options.sass'
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightViewOptionsSwitch from 'components/flight-view-options-switch/FlightViewOptionsSwitch';
 import FlightViewOptionsSlider from 'components/flight-view-options-slider/FlightViewOptionsSlider';
-import ShowChartButton from 'components/show-chart-button/ShowChartButton';
+import ShowChartByParams from 'components/show-chart-by-params/ShowChartByParams';
 
 export default class FlightParamsOptions extends React.Component {
     render() {
@@ -31,7 +28,7 @@ export default class FlightParamsOptions extends React.Component {
                         <FlightViewOptionsSlider
                             flightId={ this.props.flightId }
                         />
-                        <ShowChartButton
+                        <ShowChartByParams
                             flightId={ this.props.flightId }
                         />
                     </div>

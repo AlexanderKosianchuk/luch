@@ -102,6 +102,11 @@ const translationsRu = {
             params: 'Параметры',
             templates: 'Шаблоны'
         },
+        flightTemplatesItem: {
+            events: 'События',
+            default: 'По умолчанию',
+            last: 'Крайний обзор'
+        },
         calibration: {
             title: 'Градуировки',
             fdr: 'Тип регистратора',

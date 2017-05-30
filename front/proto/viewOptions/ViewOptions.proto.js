@@ -2,7 +2,7 @@ import 'stylesheets/pages/viewOptionsParams.css';
 import 'stylesheets/pages/viewOptionsEvents.css';
 
 import { I18n }  from 'react-redux-i18n';
-import changeFlightParamCheckstateAction from 'actions/changeFlightParamCheckstate';
+import changeFlightParamCheckstate from 'actions/changeFlightParamCheckstate';
 
 function FlightViewOptions(store)
 {
@@ -292,7 +292,7 @@ FlightViewOptions.prototype.ShowParamList = function() {
                     $('.flight-view-oprions-param').click(function(event) {
                         let item = $(this);
 
-                        self.store.dispatch(changeFlightParamCheckstateAction({
+                        self.store.dispatch(changeFlightParamCheckstate({
                             id: item.data('id'),
                             paramType: item.data('type'),
                             state: item.prop('checked')

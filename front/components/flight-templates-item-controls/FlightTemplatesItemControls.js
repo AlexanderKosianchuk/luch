@@ -37,7 +37,9 @@ class FlightTemplatesItemControls extends React.Component {
             <span className='glyphicon glyphicon-trash flight-templates-item-controls__button-glyphicon'></span>
         </button>;
 
-        if (this.props.servicePurpose.isEvents || this.props.servicePurpose.isLast) {
+        if (!this.props.servicePurpose) {
+            controls = Array(pictureButton, duplicateButton, pencilButton, trashButton);
+        } else if (this.props.servicePurpose.isEvents || this.props.servicePurpose.isLast) {
             controls = Array(pictureButton, duplicateButton);
         } else if (this.props.servicePurpose.isDefault) {
             controls = Array(pictureButton, duplicateButton, pencilButton);
