@@ -18,7 +18,7 @@ class Item extends React.Component {
     select(event)
     {
         if (!event.target.classList.contains('cyclo-params-item__colorbox')) {
-            event.currentTarget.classList.toggle('is-chosen');
+            event.currentTarget.parentElement.classList.toggle('is-chosen');
         }
     }
 
