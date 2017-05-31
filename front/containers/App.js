@@ -37,7 +37,7 @@ const App = ({ history }) => (
             <Route path='/users' component={ UserIsAuthenticated(Users) } />
             <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
             <Route exact path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
-            <Route path='/flight-templates/fdr-id/:fdrId/create' component={ UserIsAuthenticated(CreateFlightTemplate) } />
+            <Route path='/flight-templates/flight-id/:flightId/fdr-id/:fdrId/create' component={ UserIsAuthenticated(CreateFlightTemplate) } />
             <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
             <Route path='/uploading/:uploadingUid/fdr-id/:fdrId' /*calibration-id/:calibrationId possible*/
                 component={ UserIsAuthenticated(UploadingPreview) }

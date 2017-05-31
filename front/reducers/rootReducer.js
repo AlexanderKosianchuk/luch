@@ -8,7 +8,7 @@ import settlementsReport from 'reducers/settlementsReport';
 import chosenFlightListItems from 'reducers/chosenFlightListItems';
 import fdrTypesList from 'reducers/fdrTypesList';
 import flightInfo from 'reducers/flightInfo';
-import flightParams from 'reducers/flightParams';
+import fdrCyclo from 'reducers/fdrCyclo';
 import flightUploader from 'reducers/flightUploader';
 import flightUploadingState from 'reducers/flightUploadingState';
 import settings from 'reducers/settings';
@@ -19,7 +19,7 @@ import userReducer from 'reducers/userReducer'
 export default combineReducers({
     fdrTypesList,
     flightInfo,
-    flightParams,
+    fdrCyclo,
     flightUploader,
     flightUploadingState,
     flightFilter,

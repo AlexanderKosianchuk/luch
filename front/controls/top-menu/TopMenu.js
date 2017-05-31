@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
 import { push } from 'react-router-redux'
 
-import FlightUploaderDropdown from 'controls/flight-uploader-dropdown/FlightUploaderDropdown';
-import FlightImporterDropdown from 'controls/flight-importer-dropdown/FlightImporterDropdown';
-import FlightUploadingProgressIndicator from 'controls/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
+import FlightUploaderDropdown from 'controls/top-menu/flight-uploader-dropdown/FlightUploaderDropdown';
+import FlightImporterDropdown from 'controls/top-menu/flight-importer-dropdown/FlightImporterDropdown';
+import FlightUploadingProgressIndicator from 'controls/top-menu/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
 import logout from 'actions/logout';
 import changeLanguage from 'actions/changeLanguage';

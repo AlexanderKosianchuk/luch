@@ -121,4 +121,26 @@ class FdrController extends CController
         echo json_encode($fdrsAndCalibrations);
     }
 
+    public function getCyclo($args)
+    {
+        if (!isset($args['fdrId'])) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FdrController.php";
+            echo(json_encode($answ));
+        }
+
+        $fdrId = intval($args['fdrId']);
+
+        $fdr = new Fdr;
+        $flightApHeaders = $fdr->GetBruApHeaders($fdrId);
+        $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
+        unset($fdr);
+
+        echo json_encode([
+            'analogParams' => $flightApHeaders,
+            'binaryParams' => $flightBpHeaders
+        ]);
+    }
+
 }

@@ -29,9 +29,9 @@ class ItemControls extends React.Component {
             <span className='glyphicon glyphicon-pencil flight-templates-item-controls__button-glyphicon'></span>
         </button>;
 
-        let duplicateButton = <button key={ 'duplicate' } className='btn btn-default flight-templates-item-controls__button'>
+        let duplicateButton = '';/*<button key={ 'duplicate' } className='btn btn-default flight-templates-item-controls__button'>
             <span className='glyphicon glyphicon-duplicate flight-templates-item-controls__button-glyphicon'></span>
-        </button>;
+        </button>;*/
 
         let trashButton = <button key={ 'trash' } className='btn btn-default flight-templates-item-controls__button'>
             <span className='glyphicon glyphicon-trash flight-templates-item-controls__button-glyphicon'></span>

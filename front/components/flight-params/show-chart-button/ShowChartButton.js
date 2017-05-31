@@ -8,7 +8,7 @@ import setTemplate from 'actions/setTemplate';
 
 class ShowChartButton extends React.Component {
     buildButton() {
-        if (_isEmpty(this.props.flightParams.chosenAnalogParams)) {
+        if (_isEmpty(this.props.fdrCyclo.chosenAnalogParams)) {
             return '';
         }
 
@@ -24,8 +24,8 @@ class ShowChartButton extends React.Component {
         Promise.resolve(this.props.setTemplate({
             flightId: this.props.flightId,
             templateName: templateName,
-            analogParams: this.props.flightParams.chosenAnalogParams,
-            binaryParams: this.props.flightParams.chosenBinaryParams
+            analogParams: this.props.fdrCyclo.chosenAnalogParams,
+            binaryParams: this.props.fdrCyclo.chosenBinaryParams
         })).then(() => {
             this.props.redirect('/chart/'
                 + 'flight-id/'+ this.props.flightId + '/'
@@ -47,7 +47,7 @@ class ShowChartButton extends React.Component {
 
 function mapStateToProps (state) {
     return {
-        flightParams: state.flightParams,
+        fdrCyclo: state.fdrCyclo,
         startFrame: state.flightInfo.selectedStartFrame,
         endFrame: state.flightInfo.selectedEndFrame
     }

@@ -3,7 +3,7 @@ import './toolbar.sass'
 import React from 'react';
 
 import FlightViewOptionsSwitch from 'controls/flight-view-options-switch/FlightViewOptionsSwitch';
-import FlightViewOptionsSlider from 'controls/flight-view-options-slider/FlightViewOptionsSlider';
+import FlightRangeSlider from 'controls/flight-range-slider/FlightRangeSlider';
 import ShowChartButton from 'components/flight-params/show-chart-button/ShowChartButton';
 
 export default class Toolbar extends React.Component {
@@ -25,7 +25,7 @@ export default class Toolbar extends React.Component {
                             view={ 'params' }
                             flightId={ this.props.flightId }
                         />
-                        <FlightViewOptionsSlider
+                        <FlightRangeSlider
                             flightId={ this.props.flightId }
                         />
                         <ShowChartButton

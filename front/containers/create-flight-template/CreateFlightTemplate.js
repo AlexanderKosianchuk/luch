@@ -2,16 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import MainPage from 'controls/main-page/MainPage';
-//import FlightTemplatesOptions from 'components/flight-templates-options/FlightTemplatesOptions';
-//import FlightTemplatesList from 'components/flight-templates-list/FlightTemplatesList';
+import Toolbar from 'components/create-flight-template/toolbar/Toolbar';
+import CycloParams from 'controls/cyclo-params/CycloParams';
 
 class CreateFlightTemplate extends React.Component {
     render () {
         return (
             <div>
                 <MainPage/>
-                /*<Options flightId={ this.props.flightId }/>*/
-                /*<List flightId={ this.props.flightId }/>*/
+                <Toolbar flightId={ this.props.flightId } />
+                <CycloParams fdrId={ this.props.fdrId } />
             </div>
         );
     }
@@ -19,7 +19,8 @@ class CreateFlightTemplate extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        flightId: ownProps.match.params.id
+        flightId: ownProps.match.params.flightId,
+        fdrId: ownProps.match.params.fdrId
     };
 }
 

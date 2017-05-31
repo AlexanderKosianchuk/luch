@@ -85,6 +85,11 @@ const translationsRu = {
                 last: 'Крайний обзор'
             }
         },
+        createFlightTemplate: {
+            toolbar: {
+                templates: 'Шаблоны'
+            },
+        },
         calibration: {
             title: 'Градуировки',
             fdr: 'Тип регистратора',
@@ -129,17 +134,23 @@ const translationsRu = {
         topMenu: {
             fileImport: 'Импортировать',
             upload: 'Загрузить',
+            flightImporterDropdown: {
+                fileImport: 'Импортировать',
+                chooseFile: 'Выбрать файл',
+            },
+            flightUploaderDropdown: {
+                flightUploading: 'Загрузка полета',
+                chooseFile: 'Выбрать файл',
+                preview: 'Предпросмотр',
+                on: 'Вкл',
+                off: 'Выкл',
+            }
         },
-        flightImporterDropdown: {
-            fileImport: 'Импортировать',
-            chooseFile: 'Выбрать файл',
-        },
-        flightUploaderDropdown: {
-            flightUploading: 'Загрузка полета',
-            chooseFile: 'Выбрать файл',
-            preview: 'Предпросмотр',
-            on: 'Вкл',
-            off: 'Выкл',
+        cycloParams: {
+            colorPicker: {
+                cancel: 'Отменить',
+                save: 'Сохранить'
+            }
         },
         mainMenu: {
             flights: 'Полеты',

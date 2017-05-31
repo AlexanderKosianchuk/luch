@@ -9,6 +9,7 @@ class CreateButton extends React.Component {
     handleClick()
     {
         this.props.redirect('/flight-templates/'
+            + 'flight-id/'+ this.props.flightId + '/'
             + 'fdr-id/'+ this.props.fdrId + '/'
             + 'create'
         );

@@ -87,6 +87,11 @@ const translationsEs = {
                 last: 'Last viewed'
             }
         },
+        createFlightTemplate: {
+            toolbar: {
+                templates: 'Templates'
+            },
+        },
         calibration: {
             title: 'Calibration',
             fdr: 'FDR',
@@ -131,17 +136,23 @@ const translationsEs = {
         topMenu: {
             fileImport: 'Import',
             upload: 'Upload',
+            flightImporterDropdown: {
+                fileImport: 'Import',
+                chooseFile: 'Choose file',
+            },
+            flightUploaderDropdown: {
+                flightUploading: 'Flight uploading',
+                chooseFile: 'Choose file',
+                preview: 'Preview',
+                on: 'On',
+                off: 'Off',
+            }
         },
-        flightImporterDropdown: {
-            fileImport: 'Import',
-            chooseFile: 'Choose file',
-        },
-        flightUploaderDropdown: {
-            flightUploading: 'Flight uploading',
-            chooseFile: 'Choose file',
-            preview: 'Preview',
-            on: 'On',
-            off: 'Off',
+        cycloParams: {
+            colorPicker: {
+                cancel: 'Cancel',
+                save: 'Save'
+            }
         },
         mainMenu: {
             flights: 'Flights',
