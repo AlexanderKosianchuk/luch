@@ -677,29 +677,6 @@ class ViewOptionsController extends CController
         $args['userComment']);
     }
 
-    public function UpdateParamColor($flightId, $paramCode, $color)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-
-        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-
-        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-            $fdr->UpdateParamColor($cycloApTableName, $paramCode, $color);
-        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
-            $fdr->UpdateParamColor($cycloBpTableName, $paramCode, $color);
-        }
-
-        unset($fdr);
-    }
-
     public function UpdateExceptionComment($flightId, $excId, $text)
     {
         $Fl = new Flight;

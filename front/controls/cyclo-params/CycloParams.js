@@ -1,3 +1,5 @@
+import './cyclo-params.sass'
+
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -20,6 +22,7 @@ class CycloParams extends React.Component {
             return <Tile
                 analogParams={ this.props.fdrCyclo.analogParams }
                 binaryParams={ this.props.fdrCyclo.binaryParams }
+                fdrId={ this.props.fdrId }
             />
         }
     }

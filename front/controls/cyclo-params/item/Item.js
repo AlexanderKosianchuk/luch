@@ -5,13 +5,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
 
+import setParamColor from 'actions/setParamColor';
+
 class Item extends React.Component {
     constructor(props)
     {
         super(props);
 
         this.state = {
-            colorpickerShown: false
+            colorpickerShown: false,
+            paramColor: '#' + props.param.color
         }
     }
 
@@ -20,6 +23,20 @@ class Item extends React.Component {
         if (!event.target.classList.contains('cyclo-params-item__colorbox')) {
             event.currentTarget.parentElement.classList.toggle('is-chosen');
         }
+    }
+
+    applyColor(color)
+    {
+        this.props.setParamColor({
+            fdrId: this.props.fdrId,
+            paramCode: this.props.param.code,
+            color: color.replace(/#/g, '')
+        }).then(() => {
+            this.setState({
+                colorpickerShown: !this.state.colorpickerShown,
+                paramColor: color
+            });
+        });
     }
 
     toggleColorpicker()
@@ -33,7 +50,7 @@ class Item extends React.Component {
         return <div className='cyclo-params-item'>
             <div className='cyclo-params-item__box' onClick={ this.select.bind(this) }>
                 <div className='cyclo-params-item__colorbox'
-                    style={{ backgroundColor: '#'+this.props.param.color }}
+                    style={{ backgroundColor: this.state.paramColor }}
                     onClick={ this.toggleColorpicker.bind(this) }
                 >
                 </div>
@@ -47,20 +64,20 @@ class Item extends React.Component {
                 </div>
             </div>
             <ColorPicker
+                isDisabled={ false }
                 isShown={ this.state.colorpickerShown }
-                color={ this.props.param.color }
+                color={ this.state.paramColor }
                 toggleColorPicker={ this.toggleColorpicker.bind(this) }
+                applyColor={ this.applyColor.bind(this) }
             />
         </div>;
     }
 }
 
-function mapStateToProps (state) {
-    return {}
-}
-
 function mapDispatchToProps(dispatch) {
-    return {}
+    return {
+        setParamColor: bindActionCreators(setParamColor, dispatch)
+    }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Item);
+export default connect(() => { return {}; }, mapDispatchToProps)(Item);

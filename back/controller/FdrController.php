@@ -128,6 +128,7 @@ class FdrController extends CController
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
             echo(json_encode($answ));
+            exit;
         }
 
         $fdrId = intval($args['fdrId']);
@@ -141,6 +142,41 @@ class FdrController extends CController
             'analogParams' => $flightApHeaders,
             'binaryParams' => $flightBpHeaders
         ]);
+    }
+
+    public function setParamColor($args)
+    {
+        if (!isset($args['fdrId'])
+            || !isset($args['paramCode'])
+            || !isset($args['color'])
+        ) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FdrController.php";
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $fdrId = intval($args['fdrId']);
+        $paramCode = $args['paramCode'];
+        $color = $args['color'];
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+
+        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+
+        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
+            $fdr->UpdateParamColor($cycloApTableName, $paramCode, $color);
+        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
+            $fdr->UpdateParamColor($cycloBpTableName, $paramCode, $color);
+        }
+
+        unset($fdr);
+
+        echo json_encode(['status' => 'ok']);
     }
 
 }

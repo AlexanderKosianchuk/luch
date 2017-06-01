@@ -1382,21 +1382,16 @@ class Fdr
         return $params;
     }
 
-    public function UpdateParamColor($extParamTable, $extParamCode, $extColor)
+    public function UpdateParamColor($paramTable, $paramCode, $color)
     {
-        $paramTable = $extParamTable;
-        $paramCode = $extParamCode;
-        $color = $extColor;
-
         $query = "UPDATE `".$paramTable."` SET `color` = '".$color."' WHERE `code` = '".$paramCode."';";
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
         $stmt = $link->prepare($query);
 
-        if (!$stmt->execute())
-        {
-            echo('Error during query execution while setting etalonTable name into slice table' . $query);
+        if (!$stmt->execute()) {
+            throw new Error('Query execution failed. ' . $query);
         }
         $stmt->close();
         $c->Disconnect();
