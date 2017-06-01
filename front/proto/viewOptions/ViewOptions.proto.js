@@ -1,4 +1,3 @@
-import 'stylesheets/pages/viewOptionsParams.css';
 import 'stylesheets/pages/viewOptionsEvents.css';
 
 import { I18n }  from 'react-redux-i18n';
@@ -45,13 +44,7 @@ FlightViewOptions.prototype.FillFactoryContaider = function(factoryContainer) {
             self.flightOptionsFactoryContainer.append(data['workspace']);
             self.flightOptionsWorkspace = $('div#flightOptionsWorkspace');
 
-            if (self.task == null){
-                self.ShowFlightViewEvents();
-            } else if(self.task === 'getEventsList'){
-                self.ShowFlightViewEvents();
-            } else if(self.task === 'getParamList'){
-                self.ShowFlightViewParamsList();
-            }
+            self.ShowFlightViewEvents();
         } else {
             console.log(answ["error"]);
         }
@@ -65,14 +58,6 @@ FlightViewOptions.prototype.ShowFlightViewEvents = function() {
 
     this.ShowEventsList();
     this.SupportUserComment();
-}
-
-FlightViewOptions.prototype.ShowFlightViewParamsList = function() {
-    if(this.flightOptionsWorkspace.html() != ''){
-        this.flightOptionsWorkspace.empty();
-    }
-
-    this.ShowParamList();
 }
 
 ///====================================================
@@ -250,108 +235,6 @@ FlightViewOptions.prototype.SupportUserComment = function() {
 
             $(document).click(removeTextarea);
             $(document).keypress(removeTextarea);
-        }
-    });
-}
-
-///====================================================
-//PARAM LIST
-///====================================================
-
-FlightViewOptions.prototype.ShowParamList = function() {
-    var self = this,
-        flightId = self.flightId,
-        viewOptionsDataContainer = "<div id='flightOptionsContent' class='Content'></div>";
-
-    if(flightId != null){
-        self.flightOptionsWorkspace.append(viewOptionsDataContainer);
-        self.flightOptionsContent = $("div#flightOptionsContent");
-
-        $.ajax({
-            type: "POST",
-            data: {
-                action: "viewOptions/getParamListGivenQuantity",
-                data: {
-                    flightId: flightId
-                }
-            },
-            dataType: 'json',
-            url: ENTRY_URL,
-            async: true
-        }).fail(function(msg){
-            console.log(msg);
-        }).done(function(answ) {
-            if (answ["status"] === "ok") {
-                var data = answ["data"];
-                let flightOptionsContent =
-                        document.getElementById(self.flightOptionsContent.attr('id')),
-                    flightOptionsContent$ = $("#" + self.flightOptionsContent.attr('id'));
-
-                    flightOptionsContent.innerHTML = data['bruTypeParams'];
-
-                    $('.flight-view-oprions-param').click(function(event) {
-                        let item = $(this);
-
-                        self.store.dispatch(changeFlightParamCheckstate({
-                            id: item.data('id'),
-                            paramType: item.data('type'),
-                            state: item.prop('checked')
-                        }));
-                    });
-
-                    self.SupportColorPicker();
-            } else {
-                console.log(answ["error"]);
-            }
-        });
-    }
-
-    return false;
-}
-
-FlightViewOptions.prototype.SupportColorPicker = function(){
-    var self = this;
-
-    $.colorpicker.regional['current'] = {
-        ok: I18n.t('colorpicker.ok'),
-        cancel: I18n.t('colorpicker.cancel'),
-        none: I18n.t('colorpicker.none'),
-        button: I18n.t('colorpicker.button'),
-        title: I18n.t('colorpicker.title'),
-        transparent: I18n.t('colorpicker.transparent')
-    };
-
-    $('input.colorpicker-popup').on("click", function(e){
-        var $this = $(this);
-        if($this.data("colorpicker") == false) {
-            $this.colorpicker({
-                regional: 'current',
-                ok: function(event, color) {
-                    var pV = {
-                        action: "viewOptions/changeParamColor",
-                        data: {
-                            flightId : self.flightId,
-                            paramCode : $this.data("paramcode"),
-                            color: color.formatted
-                        }
-                    };
-
-                    $this.css({
-                        'background-color': '#' + color.formatted,
-                        'color': '#' + color.formatted
-                    });
-
-                    $.ajax({
-                        dataType : "json",
-                        type: "POST",
-                        url : ENTRY_URL,
-                        data : pV,
-                    });
-                }
-            })
-
-            $this.data("colorpicker", 'true');
-            $this.colorpicker('open');
         }
     });
 }

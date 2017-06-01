@@ -3,7 +3,7 @@ import React from 'react';
 import Item from 'controls/cyclo-params/item/Item';
 
 export default function Tile(props){
-    function buildParams(params)
+    function buildParams(params, colorPickerEnabled)
     {
         let items = [];
 
@@ -15,6 +15,7 @@ export default function Tile(props){
                     key={ index }
                     param={ item }
                     fdrId={ props.fdrId }
+                    colorPickerEnabled={ colorPickerEnabled }
                 />);
             });
         }
@@ -25,10 +26,10 @@ export default function Tile(props){
     return <div className='cyclo-params-tile container-fluid'>
         <div className='row'>
             <div className='col-xs-6'>
-                { buildParams(props.analogParams) }
+                { buildParams(props.analogParams, props.colorPickerEnabled) }
             </div>
             <div className='col-xs-6'>
-                { buildParams(props.binaryParams) }
+                { buildParams(props.binaryParams, props.colorPickerEnabled) }
             </div>
         </div>
     </div>;

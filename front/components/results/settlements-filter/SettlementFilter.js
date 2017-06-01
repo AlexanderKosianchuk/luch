@@ -30,7 +30,7 @@ class SettlementFilter extends React.Component {
 
     buildSettlements(settlements) {
         return settlements.map((settlement) => {
-            let label = I18n.t('result.settlementFilter.' + settlement.text);
+            let label = I18n.t('results.settlementFilter.' + settlement.text);
 
             return (
                 <SettlementsFilterItem
@@ -52,7 +52,7 @@ class SettlementFilter extends React.Component {
     }
 
     render() {
-        let body = I18n.t('result.settlementFilter.putFlightFilter');
+        let body = I18n.t('results.settlementFilter.putFlightFilter');
         let button ='';
         let settlementFilter  = this.props.settlementFilter;
 
@@ -60,7 +60,7 @@ class SettlementFilter extends React.Component {
             && settlementFilter
             && (settlementFilter.pending === false)
         ) {
-            body = I18n.t('result.settlementFilter.noMonitoredParamsOnSpecifyedFilter');
+            body = I18n.t('results.settlementFilter.noMonitoredParamsOnSpecifyedFilter');
         }
 
         if (settlementFilter && settlementFilter.pending) {
@@ -80,7 +80,7 @@ class SettlementFilter extends React.Component {
 
         return (
             <form onSubmit={this.handleSubmit.bind(this)}>
-                <p><b><Translate value='result.settlementFilter.monitoredParameters' /></b></p>
+                <p><b><Translate value='results.settlementFilter.monitoredParameters' /></b></p>
                 { body }
                 { button }
             </form>

@@ -11,7 +11,21 @@ import getFdrCyclo from 'actions/getFdrCyclo';
 class CycloParams extends React.Component {
     componentWillMount()
     {
-        this.props.getFdrCyclo({ fdrId: this.props.fdrId });
+        if (this.props.fdrId) {
+            this.props.getFdrCyclo({ fdrId: this.props.fdrId });
+        }
+
+        if (!this.props.fdrId
+            && this.props.flightId
+        ) {
+            this.props.getFdrCyclo({ flightId: this.props.flightId });
+        }
+
+        if (!this.props.fdrId
+            && !this.props.flightId
+        ) {
+            throw new Error('Invalid component configuretion. Neither fdrId nor flightId passed.')
+        }
     }
 
     buildBody()
@@ -23,6 +37,7 @@ class CycloParams extends React.Component {
                 analogParams={ this.props.fdrCyclo.analogParams }
                 binaryParams={ this.props.fdrCyclo.binaryParams }
                 fdrId={ this.props.fdrId }
+                colorPickerEnabled={ this.props.colorPickerEnabled }
             />
         }
     }

@@ -856,8 +856,7 @@ class Fdr
         $query = "SELECT * FROM `".$cycloApTableName."` WHERE 1;";
         $result = $link->query($query);
 
-        while($row = $result->fetch_array())
-        {
+        while($row = $result->fetch_array()) {
             $paramInfo = array("id" => $row['id'],
                 "channel" => $row['channel'],
                 "code" => $row['code'],
@@ -865,7 +864,9 @@ class Fdr
                 "dim" => $row['dim'],
                 "minValue" => $row['minValue'],
                 "maxValue" => $row['maxValue'],
-                "color" => $row['color']);
+                "color" => $row['color'],
+                "type" => 'ap'
+            );
             array_push($apHeader, $paramInfo);
         }
 
@@ -988,8 +989,7 @@ class Fdr
         $query = "SELECT * FROM `".$cycloBpTableName."` WHERE 1;";
         $result = $link->query($query);
 
-        while($row = $result->fetch_array())
-        {
+        while ($row = $result->fetch_array()) {
             $paramInfo = array("id" => $row['id'],
                 "code" => $row['code'],
                 "channel" => $row['channel'],
@@ -997,7 +997,9 @@ class Fdr
                 "type" => $row['type'],
                 "mask" => $row['mask'],
                 "basis" => $row['basis'],
-                "color" => $row['color']);
+                "color" => $row['color'],
+                "type" => 'bp'
+            );
             array_push($bpHeader, $paramInfo);
         }
 

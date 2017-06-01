@@ -121,14 +121,6 @@ export default function facade(store) {
 
     $(document).on('flightEvents', function (e, someshowcase, flightId) {
         let FO = new FlightViewOptions(store);
-        FO.task = 'getEventsList';
-        FO.flightId = flightId;
-        FO.FillFactoryContaider(someshowcase);
-    });
-
-    $(document).on('flightParams', function (e, someshowcase, flightId) {
-        let FO = new FlightViewOptions(store);
-        FO.task = 'getParamList';
         FO.flightId = flightId;
         FO.FillFactoryContaider(someshowcase);
     });

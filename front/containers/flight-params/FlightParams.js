@@ -4,20 +4,17 @@ import { bindActionCreators } from 'redux';
 
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/flight-params/toolbar/Toolbar';
+import CycloParams from 'controls/cyclo-params/CycloParams';
 
 import showPage from 'actions/showPage';
 
 class FlightParams extends React.Component {
-    componentDidMount() {
-        this.props.showPage('flightParams', [this.props.flightId]);
-    }
-
     render () {
         return (
             <div>
                 <MainPage/>
                 <Toolbar flightId={ this.props.flightId }/>
-                <div id='container'></div>
+                <CycloParams flightId={ this.props.flightId }/>
             </div>
         );
     }

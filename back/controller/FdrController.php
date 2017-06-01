@@ -123,7 +123,9 @@ class FdrController extends CController
 
     public function getCyclo($args)
     {
-        if (!isset($args['fdrId'])) {
+        if (!isset($args['fdrId'])
+            && !isset($args['flightId'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                     json_encode($_POST) . ". Page FdrController.php";
@@ -131,7 +133,18 @@ class FdrController extends CController
             exit;
         }
 
-        $fdrId = intval($args['fdrId']);
+        $fdrId = null;
+
+        if (!isset($args['fdrId'])) {
+            $flightId = intval($args['flightId']);
+
+            $Fl = new Flight;
+            $flightInfo = $Fl->GetFlightInfo($flightId);
+            $fdrId = intval($flightInfo['id_fdr']);
+            unset($Fl);
+        } else {
+            $fdrId = intval($args['fdrId']);
+        }
 
         $fdr = new Fdr;
         $flightApHeaders = $fdr->GetBruApHeaders($fdrId);

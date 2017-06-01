@@ -25,7 +25,7 @@ export default class Results extends React.Component {
                             <FlightFilter/>
                         </div>
                         <div className="col-sm-3">
-                            <ResultSettlementFilter/>
+                            <SettlementFilter/>
                         </div>
                         <div className="col-sm-6">
                             <SettlementsReport/>

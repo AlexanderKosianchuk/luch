@@ -8,7 +8,7 @@ import SettlementsReportRow from 'components/results/settlements-report-row/Sett
 class SettlementsReport extends React.Component {
     buildReport(pending, report) {
         if (pending === null) {
-            return I18n.t('settlementsReport.setParamsForReportGenerating');
+            return I18n.t('results.settlementsReport.setParamsForReportGenerating');
         }
 
         if (pending) {
@@ -51,7 +51,7 @@ class SettlementsReport extends React.Component {
         let body = this.buildReport(this.props.pending, this.props.report);
         return (
             <div>
-                <p><b><Translate value='settlementsReport.settlementsReport' /></b></p>
+                <p><b><Translate value='results.settlementsReport.settlementsReport' /></b></p>
                 { body }
             </div>
         );

@@ -17,7 +17,7 @@ export default function ColorPicker(props) {
     }
 
     function render() {
-        if (props.isDisabled) {
+        if (props.isEnabled === false) {
             return null;
         }
 

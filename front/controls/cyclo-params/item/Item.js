@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
 
 import setParamColor from 'actions/setParamColor';
+import changeFlightParamCheckstate from 'actions/changeFlightParamCheckstate';
 
 class Item extends React.Component {
     constructor(props)
@@ -21,7 +22,14 @@ class Item extends React.Component {
     select(event)
     {
         if (!event.target.classList.contains('cyclo-params-item__colorbox')) {
+            let checkstate = !event.currentTarget.parentElement.classList.contains('is-chosen');
             event.currentTarget.parentElement.classList.toggle('is-chosen');
+
+            this.props.changeFlightParamCheckstate({
+                id: this.props.param.id,
+                paramType: this.props.param.type,
+                state: checkstate
+            });
         }
     }
 
@@ -64,7 +72,7 @@ class Item extends React.Component {
                 </div>
             </div>
             <ColorPicker
-                isDisabled={ false }
+                isEnabled={ this.props.colorPickerEnabled }
                 isShown={ this.state.colorpickerShown }
                 color={ this.state.paramColor }
                 toggleColorPicker={ this.toggleColorpicker.bind(this) }
@@ -76,7 +84,8 @@ class Item extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setParamColor: bindActionCreators(setParamColor, dispatch)
+        setParamColor: bindActionCreators(setParamColor, dispatch),
+        changeFlightParamCheckstate: bindActionCreators(changeFlightParamCheckstate, dispatch)
     }
 }
 
