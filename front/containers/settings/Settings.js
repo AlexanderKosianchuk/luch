@@ -14,6 +14,7 @@ import Item from 'components/settings/item/Item';
 import getSettings from 'actions/getSettings';
 import changeSettingsItem from 'actions/changeSettingsItem';
 import setSettings from 'actions/setSettings';
+import redirect from 'actions/redirect';
 
 class Settings extends React.Component {
     buildContent() {
@@ -48,7 +49,7 @@ class Settings extends React.Component {
 
     onClick() {
         this.props.setSettings(this.props.settings);
-        this.props.goBack(-2); // -2 because # in url
+        this.props.redirect('/');
     }
 
     render () {
@@ -79,10 +80,7 @@ function mapDispatchToProps(dispatch) {
         getSettings: bindActionCreators(getSettings, dispatch),
         changeSettingsItem: bindActionCreators(changeSettingsItem, dispatch),
         setSettings: bindActionCreators(setSettings, dispatch),
-        goBack: bindActionCreators(
-            () => { return((dispatch) => { dispatch(goBack()) }) },
-            dispatch
-        ),
+        redirect: bindActionCreators(redirect, dispatch)
     }
 }
 

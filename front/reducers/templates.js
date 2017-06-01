@@ -9,7 +9,7 @@ export default function templates(state = initialState, action) {
         case 'FLIGHT_TEMPLATES_RECEIVING':
             return {
                 ...state,
-                ... { pending: true }
+                ...{ pending: true }
             };
         case 'FLIGHT_TEMPLATES_FETCHED':
             return {
@@ -19,8 +19,10 @@ export default function templates(state = initialState, action) {
         case 'GETTING_TEMPLATE_COMPLETE':
             return {
                 ...state,
-                ... { pending: false, activeTemplate: action.payload }
+                ...{ pending: false, activeTemplate: action.payload }
             };
+        case 'REMOVE_TEMPLATE_FROM_LIST':
+            return state;
         default:
             return state;
     }

@@ -277,13 +277,37 @@ class TemplatesController extends CController
         }
 
         $flightId = intval($args['flightId']);
+
+        $flight = new Flight;
+        $flightInfo = $flight->getFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($flight);
+
         $templateName = $args['templateName'];
 
         $params = $this->GetTplParamCodes($flightId, $templateName);
 
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $cycloApTableName = $fdrInfo['gradiApTableName'];
+        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+
+        $analogParams = [];
+        $binaryParams = [];
+
+        foreach ($params['ap'] as $code) {
+            $analogParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_AP);
+        }
+
+        foreach ($params['bp'] as $code) {
+            $binaryParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_BP);
+        }
+
+        unset($fdr);
+
         echo json_encode([
-            'a' => $params['ap'],
-            'b' => $params['bp']
+            'ap' => $analogParams,
+            'bp' => $binaryParams
         ]);
     }
 

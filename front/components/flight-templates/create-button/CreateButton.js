@@ -8,10 +8,9 @@ import redirect from 'actions/redirect';
 class CreateButton extends React.Component {
     handleClick()
     {
-        this.props.redirect('/flight-templates/'
+        this.props.redirect('/flight-template-edit/create/'
             + 'flight-id/'+ this.props.flightId + '/'
-            + 'fdr-id/'+ this.props.fdrId + '/'
-            + 'create'
+            + 'fdr-id/'+ this.props.fdrId
         );
     }
 

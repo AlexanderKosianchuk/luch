@@ -65,7 +65,6 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "chosen-js": "^1.7.0",
-    "colorpicker-amin": "^1.2.1",
     "datatables": "^1.10.13",
     "flot-charts": "^0.8.3",
     "history": "^4.6.1",

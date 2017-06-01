@@ -56,6 +56,14 @@ export default function fdrCyclo(state = initialState, action) {
             }
 
             return { ...state };
+        case 'SET_CHECKED_FLIGHT_PARAMS':
+            return {
+                ...state,
+                ...{
+                    chosenAnalogParams: action.payload.ap,
+                    chosenBinaryParams: action.payload.bp
+                }
+            };
         default:
             return state;
     }

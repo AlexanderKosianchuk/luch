@@ -10,8 +10,8 @@ export default function setTemplate(payload) {
         return new Promise((resolve, reject) => {
             fetch('/entry.php?action=templates/setTemplate', {
                 method: 'post',
-                credentials: "same-origin",
-                headers: { "Content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
+                credentials: 'same-origin',
+                headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8' },
                 body: queryString.stringify({
                     data: JSON.stringify(payload)
                 })

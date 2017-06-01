@@ -12,7 +12,8 @@ import Calibrations from 'containers/calibrations/Calibrations';
 import Users from 'containers/users/Users';
 import FlightEvents from 'containers/flight-events/FlightEvents';
 import FlightTemplates from 'containers/flight-templates/FlightTemplates';
-import CreateFlightTemplate from 'containers/create-flight-template/CreateFlightTemplate';
+import FlightTemplateCreate from 'containers/flight-template-create/FlightTemplateCreate';
+import FlightTemplateUpdate from 'containers/flight-template-update/FlightTemplateUpdate';
 import FlightParams from 'containers/flight-params/FlightParams';
 import UploadingPreview from 'containers/uploading-preview/UploadingPreview';
 import Chart from 'containers/chart/Chart';
@@ -35,14 +36,15 @@ const App = ({ history }) => (
             <Route path='/results' component={ UserIsAuthenticated(Results) } />
             <Route path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
             <Route path='/users' component={ UserIsAuthenticated(Users) } />
-            <Route path='/flight-events/:id' component={ UserIsAuthenticated(FlightEvents) } />
-            <Route exact path='/flight-templates/:id' component={ UserIsAuthenticated(FlightTemplates) } />
-            <Route path='/flight-templates/flight-id/:flightId/fdr-id/:fdrId/create' component={ UserIsAuthenticated(CreateFlightTemplate) } />
+            <Route path='/flight-events/:flightId' component={ UserIsAuthenticated(FlightEvents) } />
+            <Route exact path='/flight-templates/:flightId' component={ UserIsAuthenticated(FlightTemplates) } />
+            <Route path='/flight-template-edit/create/flight-id/:flightId/' component={ UserIsAuthenticated(FlightTemplateCreate) } />
+            <Route path='/flight-template-edit/update/flight-id/:flightId/template-name/:templateName' component={ UserIsAuthenticated(FlightTemplateUpdate) } />
             <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
             <Route path='/uploading/:uploadingUid/fdr-id/:fdrId' /*calibration-id/:calibrationId possible*/
                 component={ UserIsAuthenticated(UploadingPreview) }
             />
-            <Route path='/chart/flight-id/:id/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
+            <Route path='/chart/flight-id/:flightId/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame'
                 component={ UserIsAuthenticated(Chart) }
             />
           </div>

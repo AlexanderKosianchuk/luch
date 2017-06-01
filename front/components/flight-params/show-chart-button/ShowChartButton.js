@@ -13,8 +13,8 @@ class ShowChartButton extends React.Component {
         }
 
         return <span
-            className="glyphicon glyphicon-picture"
-            aria-hidden="true">
+            className='glyphicon glyphicon-picture'
+            aria-hidden='true'>
         </span>;
     }
 
@@ -37,8 +37,8 @@ class ShowChartButton extends React.Component {
     }
 
     render() {
-        return <ul className="nav navbar-nav navbar-right">
-          <li><a href="#" onClick={ this.showChart.bind(this) }>
+        return <ul className='nav navbar-nav navbar-right'>
+          <li><a href='#' onClick={ this.showChart.bind(this) }>
               { this.buildButton() }
           </a></li>
         </ul>;

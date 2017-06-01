@@ -36,7 +36,7 @@ class Item extends React.Component {
     applyColor(color)
     {
         this.props.setParamColor({
-            fdrId: this.props.fdrId,
+            flightId: this.props.flightId,
             paramCode: this.props.param.code,
             color: color.replace(/#/g, '')
         }).then(() => {
@@ -55,7 +55,7 @@ class Item extends React.Component {
     }
 
     render() {
-        return <div className='cyclo-params-item'>
+        return <div className={ 'cyclo-params-item' + (this.props.isChosen ? ' is-chosen' : '') }>
             <div className='cyclo-params-item__box' onClick={ this.select.bind(this) }>
                 <div className='cyclo-params-item__colorbox'
                     style={{ backgroundColor: this.state.paramColor }}

@@ -159,7 +159,7 @@ class FdrController extends CController
 
     public function setParamColor($args)
     {
-        if (!isset($args['fdrId'])
+        if ((!isset($args['fdrId']) && !isset($args['flightId']))
             || !isset($args['paramCode'])
             || !isset($args['color'])
         ) {
@@ -170,7 +170,19 @@ class FdrController extends CController
             exit;
         }
 
-        $fdrId = intval($args['fdrId']);
+        $fdrId = null;
+
+        if (!isset($args['fdrId'])) {
+            $flightId = intval($args['flightId']);
+
+            $Fl = new Flight;
+            $flightInfo = $Fl->GetFlightInfo($flightId);
+            $fdrId = intval($flightInfo['id_fdr']);
+            unset($Fl);
+        } else {
+            $fdrId = intval($args['fdrId']);
+        }
+
         $paramCode = $args['paramCode'];
         $color = $args['color'];
 

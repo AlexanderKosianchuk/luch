@@ -25,7 +25,7 @@ class FlightEvents extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        flightId: ownProps.match.params.id
+        flightId: ownProps.match.params.flightId
     };
 }
 

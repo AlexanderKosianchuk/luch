@@ -85,11 +85,6 @@ const translationsRu = {
                 last: 'Крайний обзор'
             }
         },
-        createFlightTemplate: {
-            toolbar: {
-                templates: 'Шаблоны'
-            },
-        },
         calibration: {
             title: 'Градуировки',
             fdr: 'Тип регистратора',
@@ -165,13 +160,13 @@ const translationsRu = {
             params: 'Параметры',
             templates: 'Шаблоны'
         },
-        colorpicker: {
-            ok: 'Принять',
-            cancel: 'Отменить',
-            none: 'Никакой',
-            button: 'Цвет',
-            title: 'Выбрать цвет',
-            transparent: 'Прозрачный',
+        flightTemplateEdit: {
+            toolbar: {
+                templates: 'Шаблоны'
+            },
+            saveForm: {
+                templateName: 'Название шаблона'
+            }
         },
         dataTable: {
             sLengthMenu: 'Показывать по _MENU_ записей на странице',

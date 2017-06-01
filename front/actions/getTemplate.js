@@ -16,7 +16,7 @@ export default function getTemplate(payload) {
                         type: 'GETTING_TEMPLATE_COMPLETE',
                         payload: json
                     });
-                    resolve();
+                    resolve(json);
                 },
                 () => reject()
             )

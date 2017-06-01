@@ -10,17 +10,20 @@ class ItemCheckbox extends React.Component {
     constructor(props)
     {
         super(props);
+
         this.state = {
-            checkstate: 'checked'
+            checkstate: props.checkstate || ''
         };
     }
 
     componentDidMount()
     {
-        this.props.chooseFlightTemplate({
-            checkstate: this.state.checkstate,
-            name: this.props.name
-        });
+        if (this.state.checkstate === 'checked') {
+            this.props.chooseFlightTemplate({
+                checkstate: this.state.checkstate,
+                name: this.props.name
+            });
+        }
     }
 
     changeCheckState()

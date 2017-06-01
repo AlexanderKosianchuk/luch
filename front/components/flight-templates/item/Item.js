@@ -35,6 +35,15 @@ export default class Item extends React.Component {
         return <span className={ 'glyphicon flight-templates-item__glyphicon ' + glyphicon }></span>;
     }
 
+    getCheckstate(servicePurpose)
+    {
+        if (servicePurpose && servicePurpose.isDefault) {
+            return 'checked';
+        }
+
+        return '';
+    }
+
     render ()
     {
         return (
@@ -45,7 +54,10 @@ export default class Item extends React.Component {
                     </div>
 
                     <div className='col-sm-1'>
-                        <ItemCheckbox name={ this.props.name }/>
+                        <ItemCheckbox
+                            name={ this.props.name }
+                            checkstate={ this.getCheckstate(this.props.servicePurpose) }
+                        />
                     </div>
 
                     <div className='col-sm-2'>

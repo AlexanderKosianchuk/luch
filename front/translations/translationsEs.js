@@ -87,11 +87,6 @@ const translationsEs = {
                 last: 'Last viewed'
             }
         },
-        createFlightTemplate: {
-            toolbar: {
-                templates: 'Templates'
-            },
-        },
         calibration: {
             title: 'Calibration',
             fdr: 'FDR',
@@ -167,13 +162,13 @@ const translationsEs = {
             params: 'Parameters',
             templates: 'Templates'
         },
-        colorpicker: {
-            ok: 'Accept',
-            cancel: 'Cancel',
-            none: 'No',
-            button: 'Color',
-            title: 'Select Color',
-            transparent: 'Transparent',
+        flightTemplateEdit: {
+            toolbar: {
+                templates: 'Templates'
+            },
+            saveForm: {
+                templateName: 'Template Name'
+            }
         },
         dataTable: {
             sLengthMenu: 'Visualización _MENU_ registros por página',

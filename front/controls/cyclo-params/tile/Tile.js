@@ -2,7 +2,18 @@ import React from 'react';
 
 import Item from 'controls/cyclo-params/item/Item';
 
-export default function Tile(props){
+export default function Tile(props) {
+    let checkedAnalogParamIds = [];
+    let checkedBinaryParamIds = [];
+
+    props.checkedAnalogParams.forEach((item) => {
+        checkedAnalogParamIds.push(item.id);
+    });
+
+    props.checkedBinaryParams.forEach((item) => {
+        checkedBinaryParamIds.push(item.id);
+    });
+
     function buildParams(params, colorPickerEnabled)
     {
         let items = [];
@@ -11,10 +22,20 @@ export default function Tile(props){
             && (params.length > 0)
         ) {
             params.forEach((item, index) => {
+                let isChosen = false;
+                if (((item.type === 'ap')
+                    && (checkedAnalogParamIds.indexOf(item.id) >= 0))
+                    || ((item.type === 'bp')
+                    && (checkedBinaryParamIds.indexOf(item.id) >= 0))
+                ) {
+                    isChosen = true;
+                }
+
                 items.push(<Item
-                    key={ index }
+                    key={ index + item.type }
                     param={ item }
-                    fdrId={ props.fdrId }
+                    isChosen={ isChosen }
+                    flightId={ props.flightId }
                     colorPickerEnabled={ colorPickerEnabled }
                 />);
             });
