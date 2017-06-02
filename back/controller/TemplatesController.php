@@ -306,9 +306,42 @@ class TemplatesController extends CController
         unset($fdr);
 
         echo json_encode([
+            'name' => $templateName,
             'ap' => $analogParams,
             'bp' => $binaryParams
         ]);
+    }
+
+    public function removeTemplate($args)
+    {
+        if (!isset($args['flightId'])
+            || !isset($args['templateName'])
+        ) {
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page TemplatesController.php";
+            echo(json_encode($answ));
+        }
+
+        $flightId = intval($args['flightId']);
+        $templateName = $args['templateName'];
+        $username = $this->_user->username;
+
+        $flight = new Flight;
+        $flightInfo = $flight->getFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        unset($flight);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $templateTable = $fdrInfo['paramSetTemplateListTableName'];
+        unset($fdr);
+
+        $template = new FlightTemplate;
+        $template->DeleteTemplate($templateTable, $templateName, $username);
+        unset($template);
+
+        echo json_encode(['status' => 'ok']);
     }
 
     public function getFlightTemplates($args)

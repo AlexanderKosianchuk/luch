@@ -26,7 +26,7 @@ class List extends React.Component {
     buildTemplatesList()
     {
         let list = [];
-        this.props.templates.forEach((item, index) => {
+        this.props.templatesList.forEach((item, index) => {
             list.push(<Item
                 key={ index }
                 name={ item.name }
@@ -61,8 +61,8 @@ class List extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        templatesFetching: state.templates.pending,
-        templates: state.templates.list,
+        templatesFetching: state.templatesList.pending,
+        templatesList: state.templatesList.items,
     };
 }
 

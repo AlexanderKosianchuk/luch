@@ -62,7 +62,7 @@ class Params extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        pending: state.templates.pending
+        pending: state.templatesList.pending
     };
 }
 

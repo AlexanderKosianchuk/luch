@@ -18,8 +18,8 @@ class Chart extends React.Component {
             }),
             this.props.getFlightInfo({ flightId: this.props.flightId })
         ]).then(() => {
-            let analogParams = this.props.activeTemplate.ap || [];
-            let binaryParams = this.props.activeTemplate.bp || [];
+            let analogParams = this.props.templateAnalogParams || [];
+            let binaryParams = this.props.templateBinaryParams || [];
 
             let analogParamsCodes = [];
             let binaryParamsCodes = [];
@@ -61,7 +61,8 @@ function mapStateToProps(state, ownProps) {
         templateName: ownProps.match.params.templateName,
         fromFrame: ownProps.match.params.fromFrame,
         toFrame: ownProps.match.params.toFrame,
-        activeTemplate: state.templates.activeTemplate,
+        templateAnalogParams: state.templateInfo.ap,
+        templateBinaryParams: state.templateInfo.bp,
         stepLength: state.flightInfo.stepLength,
         startFlightTime: state.flightInfo.startFlightTime,
     };

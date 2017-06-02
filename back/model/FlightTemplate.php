@@ -275,16 +275,12 @@ class FlightTemplate
         return $paramCodeList;
     }
 
-    public function DeleteTemplate($extPSTListTableName, $extTemplateName, $extUser)
+    public function DeleteTemplate($tableName, $tplName, $user)
     {
-        $PSTListTableName = $extPSTListTableName;
-        $tplName = $extTemplateName;
-        $user = $extUser;
-
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $query = "DELETE FROM `".$PSTListTableName."` WHERE `name` = '".$tplName."' AND `user` = '".$user."';";
+        $query = "DELETE FROM `".$tableName."` WHERE `name` = '".$tplName."' AND `user` = '".$user."';";
         $link->query($query);
         $c->Disconnect();
         unset($c);
