@@ -103,7 +103,6 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
             });
 
             self.ResizeChartContainer();
-            $(document).scrollTop(factoryContainer.data("index") * $(window).height());
 
             self.LoadFlotChart();
         } else {
@@ -157,8 +156,8 @@ Chart.prototype.ResizeChartContainer = function(e) {
     var self = this;
     if(self.chartWorkspace != null){
         self.chartWorkspace.css({
-            "height": $(window).height(),
-            "width": $(window).width()
+            "width": $(window).width(),
+            "height": $(window).height() - 52 + 'px'
         });
     }
 
@@ -169,7 +168,7 @@ Chart.prototype.ResizeChartContainer = function(e) {
             "left": 0,
             "top" : 50,
             "width" : $(window).width(),
-            "height": self.chartWorkspace.height() - 50 + 'px'
+            "height": self.chartWorkspace.height()
         });
     }
 

@@ -785,6 +785,7 @@ Legend.prototype.RemoveHorizont = function(horizont) {
 //
 Legend.prototype.ShowSeriesNames = function() {
     var displayNamesState = this.displayNeed ? 'block' : 'none';
+    let legndLabls = this.legndCont.find(".legendLabel");
     //if cursor in placeholder
     if(this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
     //if series name bar not build, and titles already received then do it
@@ -873,6 +874,7 @@ Legend.prototype.ShowSeriesNames = function() {
 //
 Legend.prototype.ShowSeriesLabels = function(paramValues) {
     var displayNamesState = this.showSeriesLabelsNeed ? 'block' : 'none';
+    let legndLabls = this.legndCont.find(".legendLabel");
 
     //if series name bar not build, and titles already received then do it
     if((!(this.seriesLeftLabelsContainersArr.length > 0)) &&

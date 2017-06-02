@@ -8,7 +8,6 @@ class FlightException
 
     public function CreateFlightExceptionTable($flightId, $flightTablesGuid)
     {
-        $flightTablesGuid = $extFlightTablesGuid;
         $flightExTableName = $flightTablesGuid . self::$TABLE_PREFIX;
 
         $c = new DataBaseConnector;

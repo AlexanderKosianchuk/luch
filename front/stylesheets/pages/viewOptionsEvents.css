@@ -1,16 +1,3 @@
-.SliderRangeTD {
-    width:250px;
-    padding:6px 15px 0px 10px;
-}
-
-#sliderRange {
-    font-size:14px;
-}
-
-.OptionsMenuTableTD {
-    padding-top:4px;
-}
-
 .exceptions-accordion-title {
     text-align: left;
     font-size: 18px;
@@ -134,4 +121,10 @@
 
 .comments_row {
     width: 100%;
+}
+
+.container__events-header {
+    text-align:center;
+    padding: 5px 45px;
+    font-weight: bold;
 }

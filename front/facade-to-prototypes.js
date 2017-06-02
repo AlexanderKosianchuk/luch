@@ -31,6 +31,7 @@ import User from 'User';
 import SearchFlight from 'SearchFlight';
 import Calibration from 'Calibration';
 
+import { push } from 'react-router-redux'
 import startFlightUploading from 'actions/startFlightUploading';
 
 export default function facade(store) {

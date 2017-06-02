@@ -683,7 +683,7 @@ Exception.prototype.GetValue = function(dataset, x) {
             p1[1] = Number(p1[1]);
             p2[0] = Number(p2[0]);
             p2[1] = Number(p2[1]);
-            posX = Number(x);
+            let posX = Number(x);
             y = p1[1] + (p2[1] - p1[1]) *
                 (posX - p1[0]) / (p2[0] - p1[0]);
         } else {
