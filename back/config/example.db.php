@@ -1,12 +1,20 @@
 <?php
 return [
-    "host" => "localhost",
-    "dbname" => "db5",
-    "user" => "dbUserdb5",
-    "pass" => "124578dbUser",
-    "password" => "124578dbUser",
-    "type" => "mysqli",
-    "dbName" => "db5",
     "driver" => "pdo_mysql",
+    "adapter" => "mysql",
+    "type" => "mysqli",
+
+    "host" => "localhost",
+
+    "user" => "USER",
+
+    "pass" => "PASS",
+    "password" => "PASS",
+
+    "name" => "DB",
+    "dbName" => "DB",
+    "dbname" => "DB",
+
+    "port" => "3306",
     "charset" => "utf8"
 ];

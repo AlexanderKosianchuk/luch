@@ -1,9 +1,0 @@
-ALTER TABLE `flights` ADD `id_fdr` INT NOT NULL AFTER `bruType`, ADD INDEX (`id_fdr`);
-
-UPDATE `flights`
-LEFT JOIN `fdrs` ON `flights`.`bruType`= `fdrs`.`name` COLLATE utf8_unicode_ci
-SET `flights`.`id_fdr`  = `fdrs`.`id`;
-
-ALTER TABLE `flights` ADD `guid` VARCHAR(20) NOT NULL AFTER `fileName`;
-
-UPDATE `flights` SET `guid`=REPLACE(`apTableName`, '_ap', '') WHERE 1;

@@ -30,7 +30,7 @@ phpunit.phar
 /phpunit.xml
 
 #config
-/config/db.json
+/back/config/db.php
 
 #log
 /log
