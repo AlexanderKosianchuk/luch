@@ -43,7 +43,7 @@ module.exports = {
             'FlightList': path.join(__dirname, 'front/proto/flight/FlightList.proto.js'),
             'SearchFlight': path.join(__dirname, 'front/proto/searchFlight/SearchFlight.proto.js'),
             'User': path.join(__dirname, 'front/proto/user/User.proto.js'),
-            'FlightViewOptions': path.join(__dirname, 'front/proto/viewOptions/ViewOptions.proto.js'),
+            'FlightEvents': path.join(__dirname, 'front/proto/flightEvents/FlightEvents.proto.js'),
         },
     },
     watch: NODE_ENV == 'dev',

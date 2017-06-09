@@ -20,12 +20,6 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 <body>
     <div id='root'><div>
 
-    <?php
-        $c->PutMessageBox();
-        $c->PutHelpDialog();
-        $c->PutExportLink();
-
-        $c->PutScripts();
-    ?>
+    <?php $c->PutScripts(); ?>
 </body>
 </html>

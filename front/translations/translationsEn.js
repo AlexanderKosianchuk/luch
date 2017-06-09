@@ -85,6 +85,11 @@ const translationsEn = {
                 last: 'Last viewed'
             }
         },
+        flightEvents: {
+            formPrint: {
+                grayscale: 'Grayscale'
+            }
+        },
         calibration: {
             title: 'Calibration',
             fdr: 'FDR',

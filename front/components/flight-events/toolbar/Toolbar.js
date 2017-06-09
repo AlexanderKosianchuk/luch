@@ -3,6 +3,7 @@ import './toolbar.sass'
 import React from 'react';
 
 import FlightViewOptionsSwitch from 'controls/flight-view-options-switch/FlightViewOptionsSwitch';
+import FormPrint from 'components/flight-events/form-print/FormPrint';
 
 export default class Toolbar extends React.Component {
     constructor(props) {
@@ -25,6 +26,9 @@ export default class Toolbar extends React.Component {
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">
                         <FlightViewOptionsSwitch
                             view={ 'events' }
+                            flightId={ this.props.flightId }
+                        />
+                        <FormPrint
                             flightId={ this.props.flightId }
                         />
                     </div>

@@ -29,13 +29,6 @@ class IndexController extends CController
         return $this->_user->username;
     }
 
-    public function PutMessageBox()
-    {
-        printf("<div id='dialog' title='%s'>
-                <p></p>
-                </div>", $this->lang->message);
-    }
-
     public function PutHelpDialog()
     {
         $version = '1.01';
@@ -91,12 +84,7 @@ class IndexController extends CController
                 <p>
                 Версия: %s
                 </p>
-                </div>", $this->lang->helpTitle, $version);
-    }
-
-    public function PutExportLink()
-    {
-        printf("<div id='exportLink'></div>");
+                </div>", 'title', $version);
     }
 
     public function PutScripts()

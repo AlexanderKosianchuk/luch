@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
 /*global Language, WindowFactory, FlightList, FlightUploader*/
-/*global FlightViewOptions, Fdr, Chart, User, SearchFlight*/
+/*global FlightEvents, Fdr, Chart, User, SearchFlight*/
 
 'use strict';
 
@@ -25,7 +25,7 @@ import 'stylesheets/style.css';
 // old prototypes
 import FlightList from 'FlightList';
 import FlightUploader from 'FlightUploader';
-import FlightViewOptions from 'FlightViewOptions';
+import FlightEvents from 'FlightEvents';
 import ChartService from 'Chart';
 import User from 'User';
 import SearchFlight from 'SearchFlight';
@@ -121,7 +121,7 @@ export default function facade(store) {
     });
 
     $(document).on('flightEvents', function (e, someshowcase, flightId) {
-        let FO = new FlightViewOptions(store);
+        let FO = new FlightEvents(store);
         FO.flightId = flightId;
         FO.FillFactoryContaider(someshowcase);
     });

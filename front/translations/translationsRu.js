@@ -85,6 +85,11 @@ const translationsRu = {
                 last: 'Крайний обзор'
             }
         },
+        flightEvents: {
+            formPrint: {
+                grayscale: 'Ч/Б'
+            }
+        },
         calibration: {
             title: 'Градуировки',
             fdr: 'Тип регистратора',
