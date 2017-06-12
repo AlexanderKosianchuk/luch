@@ -4,8 +4,11 @@ import 'flot-charts';
 import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.navigate';
-import 'flot-charts/jquery.flot.resize';
 import 'flot-charts/jquery.flot.crosshair';
+import 'flot-charts/jquery.flot.resize';
+
+import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
+import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
 
 import Param from 'Param';
 import AxesWorker from 'AxesWorker';
@@ -13,14 +16,12 @@ import Coordinate from 'Coordinate';
 import Exception from 'Exception';
 import Legend from 'Legend';
 
-var LEGEND_CONTAINER_OUTER = 175,
-    PARAM_TYPE_AP = "ap",
-    PARAM_TYPE_BP = "bp";
+var PARAM_TYPE_AP = "ap";
+var PARAM_TYPE_BP = "bp";
 
-function Chart(isPrintPage)
+function Chart(store)
 {
-    this.isPrintPage = isPrintPage || false;
-
+    this.store = store;
     this.chartFactoryContainer = null;
     this.chartWorkspace = null;
     this.chartContent = null;
@@ -28,6 +29,7 @@ function Chart(isPrintPage)
     this.legend = null;
     this.placeholder = null;
     this.plot = null;
+    this.plotOptions = {};
     this.Prm = null;
     this.plotYaxArr = null;
     this.plotAxes = null;
@@ -61,7 +63,9 @@ function Chart(isPrintPage)
     this.endFrameTime = null;
     this.mouseInChat = false;
 
-    this.isPrintPage = !!$('body').data('isprintpage');
+    $(document).on('chart:hideParamsList', this.hideParamsList.bind(this) );
+    $(document).on('chart:showParamsList', this.showParamsList.bind(this) );
+    $(document).on('chart:fullSize', this.fullSize.bind(this) );
 }
 
 Chart.prototype.FillFactoryContaider = function(factoryContainer) {
@@ -102,107 +106,115 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
                 self.mouseInChat = false;
             });
 
-            self.ResizeChartContainer();
+            self.ResizeChart();
 
             self.LoadFlotChart();
+
+            self.chartWorkspace
+                .resizable({
+                    stop: (event, ui) => {
+                        self.ResizeChart.apply(self, [ event, ui.size ]);
+                        self.PlotRedraw.bind(self);
+                    }
+                });
         } else {
             console.log(answ["error"]);
         }
     });
-
-    function PrintFile(flightId, fromTime, toTime, prms){
-        var pV = {
-                action: "chart/figurePrint",
-                data: {
-                    flightId: flightId,
-                    fromTime: fromTime,
-                    toTime: toTime,
-                    prms: prms
-                }
-        };
-
-        $.ajax({
-            type: "POST",
-            data: pV,
-            dataType: 'json',
-            url: ENTRY_URL,
-            async: true
-        }).fail(function(msg){
-            console.log(msg);
-        }).done(function(answ) {
-            if(answ["status"] == "ok") {
-                var url = answ["data"];
-                location.href = url;
-            }
-        });
-    }
-
-    function OpenChartInNewWindow(self){
-        if (typeof location.origin === 'undefined')
-            location.origin = location.protocol + '//' + location.host;
-
-        var getParams = '/chart.php?flightId=' + self.flightId + "&" +
-            "action=" + "putChartInNewWindow" + "&" +
-            "tplName=" + self.tplName + "&" +
-            "stepLength=" + self.stepLength + "&" +
-            "startCopyTime=" + self.startCopyTime + "&" +
-            "startFrame=" + self.startFrame + "&" +
-            "endFrame=" + self.endFrame;
-        $(window).open(location.origin + getParams, '_blank');
-    }
 }
 
-Chart.prototype.ResizeChartContainer = function(e) {
+Chart.prototype.PlotRedraw = function() {
+    this.plot.resize();
+    this.plot.setupGrid();
+    this.plot.draw();
+    this.plot.pan(0);
+}
+
+Chart.prototype.hideParamsList = function() {
+    this.legend.addClass('is-hidden');
+
+    this.placeholder.css({
+        width: ((this.chartContent.width() - 30 +
+            (this.apParams.length + this.bpParams.length) * 18) + 'px')
+    });
+
+    this.PlotRedraw();
+};
+
+Chart.prototype.showParamsList = function() {
+    this.legend.removeClass('is-hidden');
+
+    this.placeholder.css({
+        width: ((this.chartContent.width() - (this.legend.width() + 30) +
+            (this.apParams.length + this.bpParams.length) * 18) + 'px')
+    });
+
+    this.PlotRedraw();
+};
+
+Chart.prototype.fullSize = function() {
+    this.ResizeChart(
+        null, {
+            height: $(window).height() - 105,
+            width: $(window).width()
+        }
+    );
+
+    this.PlotRedraw();
+}
+
+Chart.prototype.ResizeChart = function(e, size = null) {
     var self = this;
-    if(self.chartWorkspace != null){
+
+    let baseHeight = $(window).height() - 105;
+    let baseWidth = $(window).width();
+
+    if (size && size.height && size.width) {
+        baseHeight = size.height;
+        baseWidth = size.width;
+    }
+
+    if (self.chartWorkspace != null) {
         self.chartWorkspace.css({
-            "width": $(window).width(),
-            "height": $(window).height() - 52 + 'px'
+            height: baseHeight + 'px',
+            width: baseWidth + 'px'
         });
     }
 
-    if((self.chartWorkspace != null) &&
+    if ((self.chartWorkspace != null) &&
         (self.chartContent != null)
-    ){
+    ) {
         self.chartContent.css({
-            "left": 0,
-            "top" : 50,
-            "width" : $(window).width(),
-            "height": self.chartWorkspace.height()
+            'height': self.chartWorkspace.height(),
+            'width': self.chartWorkspace.width()
         });
     }
 
-    if((self.chartContent != null) &&
+    if ((self.chartContent != null) &&
             (self.placeholder != null) &&
             (self.legend != null) &&
             (self.apParams != null) &&
-            (self.bpParams != null)){
-
-        self.placeholder.css({
-            "margin-top": '30px',
-            "width": $(window).width() - LEGEND_CONTAINER_OUTER + 'px',
-            "height": self.chartContent.height() - 35 + 'px'
-            });
+            (self.bpParams != null)
+    ) {
         self.legend.css({
-            "margin-top": '35px',
-            "width": LEGEND_CONTAINER_OUTER + "px",
-            "height": self.placeholder.height() - 25 + 'px'
+            'height': self.chartContent.height() - 35 + 'px',
         });
 
-        self.placeholder.css("width",  ($(window).width() - (self.legend.width() + 30) +
-            (self.apParams.length + self.bpParams.length) * 18) + "px");
+        self.placeholder.css({
+            height: self.chartContent.height() - 35 + 'px',
+            width: ((self.chartContent.width() - (self.legend.width() + 30) +
+                (self.apParams.length + self.bpParams.length) * 18) + 'px')
+        });
 
         if((self.apParams.length == 1) && (self.bpParams.length == 0)){
-            self.placeholder.css("margin-left",  "-7px");
+            self.placeholder.css('margin-left',  '-7px');
         } else {
-            self.placeholder.css("margin-left",  "-" +
-                ((self.apParams.length + self.bpParams.length - 1) * 18) + "px");
+            self.placeholder.css('margin-left',  '-' +
+                ((self.apParams.length + self.bpParams.length - 1) * 18) + 'px');
         }
     }
 
-    $(document).trigger("resizeShowcase");
-
-    return false;
+    return;
 }
 
 Chart.prototype.SetChartData = function(flightId, tplName,
@@ -227,8 +239,8 @@ Chart.prototype.SetChartData = function(flightId, tplName,
 Chart.prototype.LoadFlotChart = function() {
     //flot options
     var self = this;
-    var bg = self.isPrintPage ? "#fff" : "#"+self.placeholder.data('bgcolor');
-    var options = {
+    var bg = "#"+self.placeholder.data('bgcolor');
+    self.plotOptions = {
             xaxis: {
                 mode: "time",
                 timezone: "browser",
@@ -277,14 +289,14 @@ Chart.prototype.LoadFlotChart = function() {
 
     self.Prm = new Param(self.flightId,
             self.startFrame, self.endFrame,
-            self.apParams, self.bpParams, self.isPrintPage);
+            self.apParams, self.bpParams, true);
 
     var lineWidth = self.placeholder.data('linewidth');
 
     $.when(self.Prm.ReceiveParams(lineWidth)).then(
         function(status) {
             self.loadingBox.fadeOut();
-            self.plot = $.plot(self.placeholder, self.Prm.data, options);
+            self.plot = $.plot(self.placeholder, self.Prm.data, self.plotOptions);
 
             //distribute y axes
             self.plotYaxArr = self.plot.getYAxes();
@@ -447,9 +459,11 @@ Chart.prototype.SupportPlotEvents = function(e) {
         self.Exc.UpdateExcSupportTools();
         self.Legnd.UpdateBarContainersPos();
 
-        if(self.Legnd.showSeriesLabelsNeed){
+        if (self.Legnd.showSeriesLabelsNeed){
             self.Legnd.ShowSeriesLabels();
         }
+
+        self.dispatchIntervalChange();
     });
 
     self.placeholder.on("plotzoom", function (event, currPlot) {
@@ -457,12 +471,35 @@ Chart.prototype.SupportPlotEvents = function(e) {
         self.Exc.UpdateExcSupportTools();
         self.Legnd.UpdateBarContainersPos();
 
-        if(self.Legnd.showSeriesLabelsNeed){
+        if (self.Legnd.showSeriesLabelsNeed) {
             self.Legnd.ShowSeriesLabels();
         }
+
+        self.dispatchIntervalChange();
     });
 }
 
+Chart.prototype.dispatchIntervalChange = function () {
+    var self = this;
+    var currXmin = self.plotAxes.xaxis.min / 1000, // to unix timestamp
+        currXmax = self.plotAxes.xaxis.max / 1000;
+
+    self.store.dispatch(changeSelectedStartFrame(
+        Math.min (self.endFrame,
+            Math.max (0,
+                Math.round((currXmin - self.startCopyTime) / self.stepLength)
+            )
+        )
+    ));
+
+    self.store.dispatch(changeSelectedEndFrame(
+        Math.min (self.endFrame,
+            Math.max (0,
+                Math.floor((currXmax - self.startCopyTime) / self.stepLength)
+            )
+        )
+    ));
+}
 //=============================================================
 
 //=============================================================

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import MainPage from 'controls/main-page/MainPage';
-//import FlightListOptions from 'components/flight-list-options/FlightListOptions';
+import Toolbar from 'components/chart/toolbar/Toolbar';
 
 import getTemplate from 'actions/getTemplate';
 import getFlightInfo from 'actions/getFlightInfo';
@@ -49,6 +49,7 @@ class Chart extends React.Component {
         return (
             <div>
                 <MainPage/>
+                <Toolbar flightId={ this.props.flightId } />
                 <div id='container'></div>
             </div>
         );

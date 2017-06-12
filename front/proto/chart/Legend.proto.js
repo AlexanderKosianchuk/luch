@@ -386,6 +386,8 @@ Legend.prototype.CreateBarContainer = function(id, refParam, time, value, conten
 
     var isDragging = false;
     var startCoordinate = null;
+    var offsetCoordinate = { x: 0, y: 0 };
+    var prevCoordinate = { x: 0, y: 0 };
     var deltaX = null;
     var deltaY = null;
     barLabel.mousedown(function(e) {

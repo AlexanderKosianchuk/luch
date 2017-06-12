@@ -10,6 +10,7 @@ import 'jquery';
 import 'jquery-ui';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/menu';
+import 'jquery-ui/ui/widgets/resizable';
 
 import 'jstree';
 import 'datatables';
@@ -18,6 +19,7 @@ import 'bootstrap-loader';
 // lib styles
 import 'jquery-ui/themes/base/all.css';
 import 'jstree/dist/themes/default/style.min.css';
+import 'jquery-resizable/resizable.css';
 
 //old styles
 import 'stylesheets/style.css';

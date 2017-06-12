@@ -27,72 +27,8 @@ class ChartController extends CController
         unset($L);
     }
 
-    public function PutCharset()
-    {
-        printf("<!DOCTYPE html>
-            <html lang='%s'>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>",
-                $this->userLang);
-    }
-
-    public function PutTitle()
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($this->data['flightId']);
-        unset($Fl);
-
-        $bort = $flightInfo['bort'];
-        $voyage = $flightInfo['voyage'];
-        $copyDate = date('H:i:s d-m-Y', $flightInfo['startCopyTime']);
-        $departureAirport = $flightInfo['departureAirport'];
-        $arrivalAirport = $flightInfo['arrivalAirport'];
-
-        printf("<title>%s: %s. %s: %s. %s: %s. %s - %s</title>",
-        $this->lang->bort, $bort,
-        $this->lang->flightDate, $copyDate,
-        $this->lang->voyage, $voyage,
-        $departureAirport, $arrivalAirport);
-    }
-
-    public function PutStyleSheets()
-    {
-        printf("<link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />");
-    }
-
-    public function PutHeader()
-    {
-        printf("</head><body data-isprintpage='true'>");
-    }
-
-    public function EventHandler()
-    {
-        printf("<div id='eventHandler'></div>");
-    }
-
-    public function PutScripts()
-    {
-        $files = scandir ('public/');
-        $scriptName = '';
-        foreach ($files as $item) {
-            $fileParts = pathinfo($item);
-            if ((strpos($item, 'chart') !== false)
-                && ($fileParts['extension'] === 'js')
-            ) {
-                $scriptName = $item;
-            }
-        }
-        printf("<script type='text/javascript' src='public/".$scriptName."'></script>");
-    }
-
-    public function PutFooter()
-    {
-        printf("</body></html>");
-    }
-
     public function PrintInfoFromRequest()
     {
-
         foreach ($this->data as $key => $val)
         {
             if(($key == 'tplName') && isset($this->data['flightId']))
@@ -132,26 +68,6 @@ class ChartController extends CController
 
             printf("<div id='%s' class='InfoFromRequest'>%s</div>", $key, $val);
         }
-    }
-
-    public function PrintWorkspace()
-    {
-        $userId = $this->_user->GetUserIdByName($this->_user->username);
-
-        $O = new UserOptions();
-        $mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
-        $lineWidth = $O->GetOptionValue($userId, 'lineWidth');
-        unset($O);
-
-        printf("<div id='chartWorkspace' class='WorkSpace'>".
-                "<div id='graphContainer' class='GraphContainer'>" .
-                "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
-                "<div id='legend'></div>" .
-                "</div>" .
-                "<div id='loadingBox' class='LoadingBox'>" .
-                "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
-                "</div>".
-                "</div>");
     }
 
     public function PutWorkspace()
@@ -483,13 +399,13 @@ class ChartController extends CController
 
     }
 
-    public function GetTableRawData($extFlightId, $extParams, $extFromTime, $extToTime)
-    {
-        $flightId = $extFlightId;
-        $paramCodeArr = $extParams;
-        $fromTime = $extFromTime;
-        $toTime = $extToTime;
-
+    public function GetTableRawData(
+        $flightId,
+        $analogParams,
+        $binaryarams,
+        $startFrame,
+        $endFrame
+    ) {
         $Fl = new Flight();
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $fdrId = intval($flightInfo['id_fdr']);
@@ -506,12 +422,10 @@ class ChartController extends CController
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
 
-        if ($fromTime < $startCopyTime) {
-            $fromTime = $startCopyTime;
+        if ($startFrame < 0) {
+            $fromTime = 0;
         }
 
-        $startFrame = floor(($fromTime - $startCopyTime) / $stepLength);
-        $endFrame = ceil(($toTime - $startCopyTime) / $stepLength);
         $framesCount = $endFrame - $startFrame;
 
         $Ch = new Channel();
@@ -520,28 +434,24 @@ class ChartController extends CController
         $globalRawParamArr = array();
         array_push($globalRawParamArr, $normParam);
 
-        for ($i = 0; $i < count($paramCodeArr); $i++) {
-            $paramType = $fdr->GetParamType($paramCodeArr[$i],
-                $cycloApTableName, $cycloBpTableName);
+        for ($i = 0; $i < count($analogParams); $i++) {
+            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, '',
+                    $analogParams[$i], PARAM_TYPE_AP);
 
-            if ($paramType == PARAM_TYPE_AP) {
-                $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, '',
-                        $paramCodeArr[$i], PARAM_TYPE_AP);
+            $normParam = $Ch->GetNormalizedApParam($apTableName,
+                $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
+                $startFrame, $endFrame);
 
-                $normParam = $Ch->GetNormalizedApParam($apTableName,
+            array_push($globalRawParamArr, $normParam);
+        }
+
+        for ($i = 0; $i < count($binaryParams); $i++) {
+            $paramInfo = $fdr->GetParamInfoByCode('', $cycloBpTableName,
+                    $binaryParams[$i], PARAM_TYPE_BP);
+            $normParam = $Ch->GetNormalizedBpParam($bpTableName,
                     $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
                     $startFrame, $endFrame);
-
-                array_push($globalRawParamArr, $normParam);
-            } else if($paramType == PARAM_TYPE_BP) {
-                $paramInfo = $fdr->GetParamInfoByCode('', $cycloBpTableName,
-                        $paramCodeArr[$i], PARAM_TYPE_BP);
-                $normParam = $Ch->GetNormalizedBpParam($bpTableName,
-                        $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
-                        $startFrame, $endFrame);
-                array_push($globalRawParamArr, $normParam);
-
-            }
+            array_push($globalRawParamArr, $normParam);
         }
 
         unset($Ch);
@@ -809,105 +719,87 @@ class ChartController extends CController
 
     public function figurePrint($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['fromTime']) &&
-            isset($data['toTime']) &&
-            isset($data['prms']))
-        {
-            $flightId = $data['flightId'];
-            $fromTime = $data['fromTime'] / 1000; //to cast js to php timestamps
-            $toTime = $data['toTime'] / 1000;
-            $prms = $data['prms'];
-
-            $step = $this->GetTableStep($flightId);
-
-            $globalRawParamArr = $this->GetTableRawData($flightId, $prms, $fromTime, $toTime);
-            $totalRecords = count($globalRawParamArr[1]); // 0 is time and may be lager than data
-
-            $exportFileInfo = $this->GetExportFileName($flightId);
-            $exportedFileName = $exportFileInfo["name"];
-            $exportedFilePath = $exportFileInfo["path"];
-
-            $exportedFileDesc = fopen($exportedFilePath, "w");
-
-            $figPrRow = "time;";
-            for($i = 0; $i < count($prms); $i++) {
-                $paramInfo = $this->GetParamInfo($flightId, $prms[$i]);
-
-                $paramName = str_replace(["\n","\r\n","\r", ";", PHP_EOL], '', $paramInfo['name']);
-
-                if (($this->_user->userInfo['lang'] === 'ru')
-                    && OSdetectionComponent::isWindows()
-                ) {
-                    $figPrRow .= iconv('utf-8', 'windows-1251', $paramName) . ";";
-                } else {
-                    $figPrRow .= $paramName . ";";
-                }
-            }
-
-            $figPrRow = substr($figPrRow, 0, -1);
-            $figPrRow .= PHP_EOL;
-
-            $figPrRow .= "T;";
-            for($i = 0; $i < count($prms); $i++)
-            {
-                $paramInfo = $this->GetParamInfo($flightId, $prms[$i]);
-                $figPrRow .= $prms[$i] . ";";
-            }
-
-            $figPrRow = substr($figPrRow, 0, -1);
-            $figPrRow .= PHP_EOL;
-            fwrite ($exportedFileDesc , $figPrRow);
-
-            $curStep = 0;
-            for($i = 0; $i < $totalRecords; $i++)
-            {
-                $figPrRow = "";
-                  for($j = 0; $j < count($globalRawParamArr); $j++)
-                  {
-                      $figPrRow .= $globalRawParamArr[$j][$i] . ";";
-                  }
-
-                  $figPrRow = substr($figPrRow, 0, -1);
-                  $figPrRow .= PHP_EOL;
-
-                  if($curStep == 0) {
-                      fwrite ($exportedFileDesc , $figPrRow);
-                  }
-
-                  $curStep++;
-
-                  if($curStep >= $step) {
-                      $curStep = 0;
-                  }
-            }
-
-            fclose($exportedFileDesc);
-
-            $href = 'http';
-            if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on"))
-            {
-                $href .= "s";
-            }
-            $href .= "://";
-            if ($_SERVER["SERVER_PORT"] != "80") {
-                $href .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
-            }
-            else
-            {
-                $href .= $_SERVER["SERVER_NAME"];
-            }
-            $href .= "/fileUploader/files/exported/" . $exportedFileName;
-
-            $answ["status"] = "ok";
-            $answ["data"] = $href;
-
-            echo json_encode($answ);
-        } else {
+        if (!isset($data['flightId'])
+            || !isset($data['startFrame'])
+            || !isset($data['endFrame'])
+            || !isset($data['analogParams'])
+            || !isset($data['binaryParams'])
+        ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
                 json_encode($_POST) . ". Page ChartController.php";
             echo(json_encode($answ));
         }
+
+        $flightId = $data['flightId'];
+        $startFrame = $data['startFrame'];
+        $endFrame = $data['endFrame'];
+        $analogParams = $data['analogParams'];
+        $binaryParams = $data['binaryParams'];
+
+        $step = $this->GetTableStep($flightId);
+
+        $globalRawParamArr = $this->GetTableRawData(
+            $flightId,
+            $analogParams,
+            $binaryParams,
+            $startFrame,
+            $endFrame
+        );
+        $totalRecords = count($globalRawParamArr[1]); // 0 is time and may be lager than data
+
+        $prms = array_merge($analogParams, $binaryParams);
+
+        $figPrRow = "time;";
+        for($i = 0; $i < count($prms); $i++) {
+            $paramInfo = $this->GetParamInfo($flightId, $prms[$i]);
+
+            $paramName = str_replace(["\n","\r\n","\r", ";", PHP_EOL], '', $paramInfo['name']);
+
+            if (($this->_user->userInfo['lang'] === 'ru')
+                && OSdetectionComponent::isWindows()
+            ) {
+                $figPrRow .= iconv('utf-8', 'windows-1251', $paramName) . ";";
+            } else {
+                $figPrRow .= $paramName . ";";
+            }
+        }
+
+        $figPrRow = substr($figPrRow, 0, -1);
+        $figPrRow .= PHP_EOL;
+
+        $figPrRow .= "T;";
+        for($i = 0; $i < count($prms); $i++)
+        {
+            $paramInfo = $this->GetParamInfo($flightId, $prms[$i]);
+            $figPrRow .= $prms[$i] . ";";
+        }
+
+        $figPrRow = substr($figPrRow, 0, -1);
+        $figPrRow .= PHP_EOL;
+        echo $figPrRow;
+
+        $curStep = 0;
+        for($i = 0; $i < $totalRecords; $i++) {
+            $figPrRow = "";
+              for ($j = 0; $j < count($globalRawParamArr); $j++) {
+                  $figPrRow .= $globalRawParamArr[$j][$i] . ";";
+              }
+
+              $figPrRow = substr($figPrRow, 0, -1);
+              $figPrRow .= PHP_EOL;
+
+              if ($curStep == 0) {
+                  echo $figPrRow;
+              }
+
+              $curStep++;
+
+              if ($curStep >= $step) {
+                  $curStep = 0;
+              }
+        }
+
+        exit;
     }
 }

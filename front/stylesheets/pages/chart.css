@@ -1,7 +1,13 @@
+#chartWorkspace {
+    position: relative;
+    overflow: hidden;
+}
+
 /* tell the SVG path to be a thin blue line without any area fill */
 .GraphContainer {
-    width:100%;
+    width: calc(100% - 5px);
     position: absolute;
+    left: 0;
     box-sizing: border-box;
     overflow-y: hidden;
     overflow-x: hidden;
@@ -19,11 +25,35 @@
     -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
+@media print
+{
+    .GraphContainer {
+        border: none;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    #placeholder {
+        background: #fff;
+    }
+
+    .title-for-print {
+        display: block;
+    }
+}
+
 #placeholder {
+    margin-top: 30px;
     font-size: 14px;
     line-height: 1.2em;
     overflow-x: hidden;
     float:left;
+    width: 100%;
+}
+
+.title-for-print {
+    display: none;
+    margin: 10px auto;
 }
 
 .InfoFromRequest {
@@ -31,10 +61,16 @@
 }
 
 #legend {
+    margin-top: 35px;
     overflow-y:auto;
     text-align:left;
     font-family: Tahoma, Geneva, sans-serif;
     font-size:12px;
+    width: 175px;
+}
+
+#legend.is-hidden {
+    width: 0px;
 }
 
 .LoadingBox{
