@@ -1,7 +1,7 @@
 <?php
 return [
     "params" => [
-        "runtimeDirectory" =>  @$_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "runtime",
+        "runtimeDirectory" =>  @$_SERVER['DOCUMENT_ROOT'] . "runtime",
     ],
     "db" => include('db.php'),
     "dbDoctrine" => include('db.php'),

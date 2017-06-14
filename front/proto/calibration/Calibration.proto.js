@@ -481,7 +481,7 @@ function Calibration() {
         return '<div id="calibration-edit-form" '
                 +'data-fdr-id="'+fdr['id']+'">'
             + '<div class="row">'
-                + '<h3>'+I18n.t('calibration.reationForm')+'</h3>'
+                + '<h3>'+I18n.t('calibration.creationForm')+'</h3>'
             + '</div>'
             + '<div class="row">'
                 + '<h3>'+I18n.t('calibration.for') + ' ' + fdr.name + '</h3>'

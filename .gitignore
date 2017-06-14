@@ -16,6 +16,7 @@ Thumbs.db
 # composer vendor dir
 # /vendor
 /node_modules
+package-lock.json
 
 # composer itself is not needed
 composer.phar
@@ -34,8 +35,6 @@ phpunit.phar
 
 #log
 /log
-/www/log
-/www/php_errors.log
 npm-debug.log
 
 #uploads
