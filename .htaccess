@@ -1,10 +1,21 @@
-RewriteEngine On
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
-RewriteRule ^ - [L]
-RewriteRule ^ /index.php [L]
-#RewriteLog %{DOCUMENT_ROOT}%/log/rewrite.log
-#RewriteLogLevel 3
+#ServerName PREFIX_luch15.com
+#ServerAlias www.PREFIX_luch15.com
+
+#ServerAdmin webmaster@localhost
+#DocumentRoot PATH/PREFIX_luch15/
+
+#DirectoryIndex index.php
+#SetEnv APPLICATION_ENVIRONMENT 'dev'
+
+#ErrorLog PATH/PREFIX_luch15/log/error.log
+#CustomLog PATH/PREFIX_luch15/log/access.log combi$
+#LogLevel alert rewrite:trace5
+
+#RewriteEngine On
+#RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+#RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+#RewriteRule ^ - [L]
+#RewriteRule ^ /index.php [L]
 
 Options Indexes Includes
 AllowOverride All

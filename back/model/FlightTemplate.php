@@ -8,6 +8,8 @@ class FlightTemplate
     public static $EVENTS_TPL_NAME = 'events';
     public static $TPL_DEFAULT =  'default';
 
+    public static $TABLE_PREFIX = '_pst';
+
     public function CreatePSTTable($PSTTableName)
     {
         $query = "SHOW TABLES LIKE '".$PSTTableName."';";

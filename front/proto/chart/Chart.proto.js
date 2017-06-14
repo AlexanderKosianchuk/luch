@@ -6,6 +6,7 @@ import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.navigate';
 import 'flot-charts/jquery.flot.crosshair';
 import 'flot-charts/jquery.flot.resize';
+import 'jquery-ui/ui/widgets/resizable';
 
 import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
 import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
@@ -114,7 +115,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
                 .resizable({
                     stop: (event, ui) => {
                         self.ResizeChart.apply(self, [ event, ui.size ]);
-                        self.PlotRedraw.bind(self);
+                        self.PlotRedraw.call(self);
                     }
                 });
         } else {
@@ -190,11 +191,11 @@ Chart.prototype.ResizeChart = function(e, size = null) {
         });
     }
 
-    if ((self.chartContent != null) &&
-            (self.placeholder != null) &&
-            (self.legend != null) &&
-            (self.apParams != null) &&
-            (self.bpParams != null)
+    if ((self.chartContent != null)
+        && (self.placeholder != null)
+        && (self.legend != null)
+        && (self.apParams != null)
+        && (self.bpParams != null)
     ) {
         self.legend.css({
             'height': self.chartContent.height() - 35 + 'px',
@@ -206,7 +207,7 @@ Chart.prototype.ResizeChart = function(e, size = null) {
                 (self.apParams.length + self.bpParams.length) * 18) + 'px')
         });
 
-        if((self.apParams.length == 1) && (self.bpParams.length == 0)){
+        if ((self.apParams.length == 1) && (self.bpParams.length == 0)){
             self.placeholder.css('margin-left',  '-7px');
         } else {
             self.placeholder.css('margin-left',  '-' +

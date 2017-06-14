@@ -435,8 +435,11 @@ class ChartController extends CController
         array_push($globalRawParamArr, $normParam);
 
         for ($i = 0; $i < count($analogParams); $i++) {
-            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, '',
-                    $analogParams[$i], PARAM_TYPE_AP);
+            $paramInfo = $fdr->GetParamInfoByCode(
+                $cycloApTableName, '',
+                $analogParams[$i],
+                PARAM_TYPE_AP
+            );
 
             $normParam = $Ch->GetNormalizedApParam($apTableName,
                 $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],

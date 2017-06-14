@@ -96,6 +96,15 @@ class TemplatesController extends CController
         unset($fdr);
 
         $flightTemplate = new FlightTemplate;
+        $fdrCode = $fdrInfo['code'];
+        $templatesTable = $fdrInfo['paramSetTemplateListTableName'];
+
+        //if no template table - create it
+        if ($templatesTable == "") {
+            $templatesTable = $fdrCode . FlightTemplate::$TABLE_PREFIX;
+            $flightTemplate->CreatePSTTable($templatesTable);
+            $flightTemplate->AddPSTTable($fdrId, $templatesTable);
+        }
         $flightTemplate->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
         $flightTemplate->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
 
@@ -372,7 +381,7 @@ class TemplatesController extends CController
         $flightTemplate = new FlightTemplate;
         //if no template table - create it
         if ($templatesTable == "") {
-            $templatesTable = $fdrCode . "_pst";
+            $templatesTable = $fdrCode . FlightTemplate::$TABLE_PREFIX;
             $flightTemplate->CreatePSTTable($templatesTable);
             $flightTemplate->AddPSTTable($fdrId, $templatesTable);
         }

@@ -876,7 +876,7 @@ class UploaderController extends CController
                 }
             });
 
-            $emitter->on('EventProcessing:end', function ($progress, $total) use ($tempFilePath, $tmpStatus) {
+            $emitter->on('EventProcessing:end', function () use ($tempFilePath, $tmpStatus) {
                 $tmpStatus = 100;
                 $this->writeStatus ($tempFilePath, $tmpStatus);
             });
