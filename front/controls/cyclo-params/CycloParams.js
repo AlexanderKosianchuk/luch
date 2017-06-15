@@ -26,8 +26,8 @@ class CycloParams extends React.Component {
             return <Tile
                 analogParams={ this.props.fdrCyclo.analogParams }
                 binaryParams={ this.props.fdrCyclo.binaryParams }
-                checkedAnalogParams={ this.props.checkedAnalogParams || [] }
-                checkedBinaryParams={ this.props.checkedBinaryParams || [] }
+                chosenAnalogParams={ this.props.fdrCyclo.chosenAnalogParams || [] }
+                chosenBinaryParams={ this.props.fdrCyclo.chosenBinaryParams || [] }
                 flightId={ this.props.flightId }
                 colorPickerEnabled={ this.props.colorPickerEnabled }
             />

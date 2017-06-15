@@ -213,11 +213,16 @@ class Channel
         return json_decode($transmitStr);
     }
 
-    public function GetNormalizedApParam($apTableName,
-            $stepDivider, $code, $steps, $extPefix,
-            $startFrame, $endFrame)
-    {
-        $tableName = $apTableName . "_" . $extPefix;
+    public function GetNormalizedApParam(
+        $apTableName,
+        $stepDivider,
+        $code,
+        $steps,
+        $pefix,
+        $startFrame,
+        $endFrame
+    ) {
+        $tableName = $apTableName . "_" . $pefix;
         $duplication = $stepDivider / $steps;
 
         $c = new DataBaseConnector;
@@ -230,11 +235,9 @@ class Channel
         $result = $link->query($query);
 
         $normArr = array();
-        while($row = $result->fetch_array())
-        {
+        while ($row = $result->fetch_array()) {
             array_push($normArr, $row[$code]);
-            for($i = 1; $i < $duplication; $i++)
-            {
+            for ($i = 1; $i < $duplication; $i++) {
                 array_push($normArr, $row[$code]);
             }
         }

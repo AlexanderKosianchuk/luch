@@ -30,14 +30,14 @@ export default function flightDataTablePrint(payload) {
         payload.analogParams.forEach((item) => {
             let analogParamsInput = document.createElement('input');
             analogParamsInput.name = 'analogParams[]';
-            analogParamsInput.value = item;
+            analogParamsInput.value = item.code || '';
             form.appendChild(analogParamsInput);
         });
 
         payload.binaryParams.forEach((item) => {
             let binaryParamsInput = document.createElement('input');
             binaryParamsInput.name = 'binaryParams[]';
-            binaryParamsInput.value = item;
+            binaryParamsInput.value = item.code || '';
             form.appendChild(binaryParamsInput);
         });
 

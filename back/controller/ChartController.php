@@ -402,7 +402,7 @@ class ChartController extends CController
     public function GetTableRawData(
         $flightId,
         $analogParams,
-        $binaryarams,
+        $binaryParams,
         $startFrame,
         $endFrame
     ) {
@@ -441,9 +441,15 @@ class ChartController extends CController
                 PARAM_TYPE_AP
             );
 
-            $normParam = $Ch->GetNormalizedApParam($apTableName,
-                $stepDivider, $paramInfo["code"], $paramInfo["freq"], $paramInfo["prefix"],
-                $startFrame, $endFrame);
+            $normParam = $Ch->GetNormalizedApParam(
+                $apTableName,
+                $stepDivider,
+                $paramInfo["code"],
+                $paramInfo["freq"],
+                $paramInfo["prefix"],
+                $startFrame,
+                $endFrame
+            );
 
             array_push($globalRawParamArr, $normParam);
         }
@@ -461,32 +467,6 @@ class ChartController extends CController
         unset($fdr);
 
         return $globalRawParamArr;
-    }
-
-    public function GetExportFileName($extFlightId)
-    {
-        $flightId = $extFlightId;
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        unset($Fl);
-
-        $fileGuid = uniqid();
-
-        $exportedFileDir = $_SERVER['DOCUMENT_ROOT'] . "/fileUploader/files/exported/";
-
-        if (!file_exists($exportedFileDir)) {
-            mkdir($exportedFileDir, 0755);
-        }
-
-        $exportedFileName = $flightInfo['bort'] . "_" .
-                date("Y-m-d", $flightInfo['startCopyTime'])  . "_" .
-                $flightInfo['voyage'] . "_" . $fileGuid  . "_" . $this->_user->username . ".csv";
-
-        return array(
-            'name' => $exportedFileName,
-            'path' => $exportedFileDir . $exportedFileName
-        );
     }
 
     public function GetTableStep($flightId)
@@ -726,7 +706,6 @@ class ChartController extends CController
             || !isset($data['startFrame'])
             || !isset($data['endFrame'])
             || !isset($data['analogParams'])
-            || !isset($data['binaryParams'])
         ) {
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -738,7 +717,7 @@ class ChartController extends CController
         $startFrame = $data['startFrame'];
         $endFrame = $data['endFrame'];
         $analogParams = $data['analogParams'];
-        $binaryParams = $data['binaryParams'];
+        $binaryParams = isset($data['binaryParams']) ? $data['binaryParams'] : [];
 
         $step = $this->GetTableStep($flightId);
 
@@ -777,6 +756,20 @@ class ChartController extends CController
             $paramInfo = $this->GetParamInfo($flightId, $prms[$i]);
             $figPrRow .= $prms[$i] . ";";
         }
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        unset($Fl);
+
+        $fileGuid = uniqid();
+
+        $fileName = $flightInfo['bort'] . "_" .
+            date("Y-m-d", $flightInfo['startCopyTime'])  . "_" .
+            $flightInfo['voyage'] . "_" . $fileGuid  . "_" . $this->_user->username . ".csv";
+
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename=' . $fileName);
+        header('Pragma: no-cache');
 
         $figPrRow = substr($figPrRow, 0, -1);
         $figPrRow .= PHP_EOL;
