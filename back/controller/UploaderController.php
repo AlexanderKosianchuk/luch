@@ -233,15 +233,17 @@ class UploaderController extends CController
         $frameSyncroCode = $fdrInfo['frameSyncroCode'];
         unset($fdr);
 
-        if(($headerScr != '') || ($headerScr != null))
-        {
+        $flightInfo = [];
+
+        if (($headerScr != '') || ($headerScr != null)) {
             $headerScr = str_replace('Frame', '\Model\Frame', $headerScr);
             eval($headerScr);
 
-            unset($Fl);
+            if (isset($Fl)) {
+                unset($Fl);
+            }
 
-            if(isset($flightInfo['startCopyTime']))
-            {
+            if (isset($flightInfo['startCopyTime'])) {
                 $startCopyTime = $flightInfo['startCopyTime'];
                 $flightInfo['startCopyTime'] = date('H:i:s Y-m-d', $startCopyTime);
                 $flightInfo['copyCreationTime'] = date('H:i:s', $startCopyTime);
@@ -249,25 +251,21 @@ class UploaderController extends CController
             }
 
             $airport = new Airport;
-            if(isset($flightInfo['takeOffLat']) && isset($flightInfo['takeOffLong']))
-            {
+            if (isset($flightInfo['takeOffLat']) && isset($flightInfo['takeOffLong'])) {
                 $lat = $flightInfo['takeOffLat'];
                 $long = $flightInfo['takeOffLong'];
                 $landingAirport = $airport->getAirportByLatAndLong($lat, $long);
-                if(!empty($landingAirport))
-                {
+                if (!empty($landingAirport)) {
                     $flightInfo['departureAirport'] = $landingAirport['ICAO'];
                     $flightInfo['departureAirportName'] = $landingAirport['name'];
                 }
             }
 
-            if(isset($flightInfo['landingLat']) && isset($flightInfo['landingLong']))
-            {
+            if (isset($flightInfo['landingLat']) && isset($flightInfo['landingLong'])) {
                 $lat = $flightInfo['landingLat'];
                 $long = $flightInfo['landingLong'];
                 $landingAirport = $airport->getAirportByLatAndLong($lat, $long);
-                if(!empty($landingAirport))
-                {
+                if(!empty($landingAirport)) {
                     $flightInfo['arrivalAirport'] = $landingAirport['ICAO'];
                     $flightInfo['arrivalAirportName'] = $landingAirport['name'];
                 }
@@ -551,7 +549,7 @@ class UploaderController extends CController
             $departureAirport,
             $arrivalAirport,
             $aditionalInfo,
-            $uploadedFile,
+            $fileName,
             $totalPersentage,
             $calibrationId = null
     ) {
@@ -574,17 +572,24 @@ class UploaderController extends CController
         $fdrCode = $fdrInfo['code'];
 
         $Fl = new Flight;
-        $flightId = $Fl->InsertNewFlight($bort, $voyage,
-                $startCopyTime, $fdrId,
-                $fdrCode, $performer,
-                $departureAirport, $arrivalAirport,
-                $uploadedFile, $aditionalInfo, $userId);
+        $flightId = $Fl->InsertNewFlight(
+            $bort,
+            $voyage,
+            $startCopyTime,
+            $fdrId,
+            $fdrCode,
+            $performer,
+            $departureAirport,
+            $arrivalAirport,
+            $fileName,
+            $aditionalInfo,
+            $userId
+        );
 
         $flightInfo = $Fl->GetFlightInfo($flightId);
         $tableNameAp = $flightInfo['apTableName'];
         $tableNameBp = $flightInfo['bpTableName'];
         $flightId = $flightInfo['id'];
-        $fileName = $flightInfo['fileName'];
 
         $frameLength = $fdrInfo['frameLength'];
         $stepLength = $fdrInfo['stepLength'];
@@ -632,7 +637,7 @@ class UploaderController extends CController
 
         $fileNameApArr = array();
         $fileNameApDescArr = array();
-        foreach($cycloApByPrefixes as $prefix => $item) {
+        foreach ($cycloApByPrefixes as $prefix => $item) {
             $fileNameAp = $tmpProccStatusFilesDir . "/" . $tableNameAp . "_".$prefix.".tbl";
             $fileNameApArr[$prefix] = $fileNameAp;
             $fileNameApDesc = fopen($fileNameAp, "w");
@@ -641,8 +646,7 @@ class UploaderController extends CController
 
         $fileNameBpArr = array();
         $fileNameBpDescArr = array();
-        foreach($cycloBpByPrefixes as $prefix => $item)
-        {
+        foreach ($cycloBpByPrefixes as $prefix => $item) {
             $fileNameBp = $tmpProccStatusFilesDir . "/" . $tableNameBp . "_".$prefix.".tbl";
             $fileNameBpArr[$prefix] = $fileNameBp;
             $fileNameBpDesc = fopen($fileNameBp, "w");
@@ -661,7 +665,7 @@ class UploaderController extends CController
         $newStatus = 0;
         $this->writeStatus ($tempFilePath, $tmpStatus);
 
-        if($frameSyncroCode != '') {
+        if ($frameSyncroCode != '') {
             while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
             //while(($frameNum < 20) && ($curOffset < $fileSize))
             {

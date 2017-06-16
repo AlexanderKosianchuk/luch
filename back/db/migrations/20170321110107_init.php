@@ -188,7 +188,8 @@ class Init extends AbstractMigration
             echo $q . PHP_EOL . PHP_EOL;
         }
 
-        $hasColumn = $flightsTable->hasColumn('id_user');
+        $usersTable = $this->table('user_personal');
+        $hasColumn = $usersTable->hasColumn('id_user');
         if (!$hasColumn) {
             $q = "UPDATE `user_personal`
                 SET `author` = '';";
@@ -197,6 +198,26 @@ class Init extends AbstractMigration
 
             $q = "ALTER TABLE `user_personal`
                 CHANGE `author` `id_user` INT NULL;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $hasColumn = $usersTable->hasColumn('role');
+        if (!$hasColumn) {
+            $q = "ALTER TABLE `user_personal`
+                ADD `role` VARCHAR(20) NOT NULL AFTER `lang`;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        if (!$hasColumn) {
+            $q = "ALTER TABLE `flights`
+                ADD `guid` VARCHAR(20) NOT NULL AFTER `fileName`;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+
+            $q = "UPDATE `flights`
+                SET `guid`=REPLACE(`apTableName`, '_ap', '') WHERE 1;";
             $this->execute($q);
             echo $q . PHP_EOL . PHP_EOL;
         }

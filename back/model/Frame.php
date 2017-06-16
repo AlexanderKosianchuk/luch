@@ -14,13 +14,9 @@ class Frame
         $timeY = date("Y-m-d");
         $timeH = date("H-i-s");
         $uploadedFile = $uploadedFilesDir.$timeY."_".$timeH."_".$fileName;
-        if($filePath != NULL)
-        {
+        if ($filePath != NULL) {
             $moveUploadedFile = move_uploaded_file(@$filePath, $uploadedFile);
-        }
-        else
-        {
-            //log
+        } else {
             error_log("filePath - " . $filePath. " No file assignment during file uploading. Frame.php");
         }
 
@@ -2191,6 +2187,11 @@ class Frame
     {
         $c = new DataBaseConnector;
         $link = $c->Connect();
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $file = str_replace('\\\\', '/', $file);
+            $file = str_replace('\\', '/', $file);
+        }
 
         $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$tableName."` FIELDS TERMINATED BY ',' LINES TERMINATED BY ';';";
         $link->query($query);

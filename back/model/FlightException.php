@@ -491,23 +491,26 @@ class FlightException
         $link = $c->Connect();
         $result = $link->query($query);
 
-        $excEventsList = array();
-        while($row = $result->fetch_array())
-        {
-            $ex = array("id" => $row['id'],
-                "frameNum" => $row['frameNum'],
-                "startTime" => $row['startTime'],
-                "endFrameNum" => $row['endFrameNum'],
-                "endTime" => $row['endTime'],
-                "refParam" => $row['refParam'],
-                "code" => $row['code'],
-                "excAditionalInfo" => $row['excAditionalInfo'],
-                "falseAlarm" => $row['falseAlarm'],
-                "userComment" => $row['userComment']);
-            array_push($excEventsList, $ex);
+        $excEventsList = [];
+
+        if ($result) {
+            while ($row = $result->fetch_array()) {
+                $ex = array("id" => $row['id'],
+                    "frameNum" => $row['frameNum'],
+                    "startTime" => $row['startTime'],
+                    "endFrameNum" => $row['endFrameNum'],
+                    "endTime" => $row['endTime'],
+                    "refParam" => $row['refParam'],
+                    "code" => $row['code'],
+                    "excAditionalInfo" => $row['excAditionalInfo'],
+                    "falseAlarm" => $row['falseAlarm'],
+                    "userComment" => $row['userComment']);
+                array_push($excEventsList, $ex);
+            }
+
+            $result->free();
         }
 
-        $result->free();
         $c->Disconnect();
 
         unset($c);
@@ -525,11 +528,13 @@ class FlightException
         $result = $link->query($query);
 
         $excEventsCodesList = array();
-        while($row = $result->fetch_array()) {
-            array_push($excEventsCodesList, $row['refParam']);
-        }
+        if ($result) {
+            while ($row = $result->fetch_array()) {
+                array_push($excEventsCodesList, $row['refParam']);
+            }
 
-        $result->free();
+            $result->free();
+        }
         $c->Disconnect();
 
         unset($c);

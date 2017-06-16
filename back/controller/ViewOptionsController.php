@@ -82,8 +82,10 @@ class ViewOptionsController extends CController
             && ($flightInfo['flightAditionalInfo'] !== null)
         ) {
             $aditionalInfoArr = json_decode($flightInfo['flightAditionalInfo'], true);
-            foreach ( $aditionalInfoArr as $name => $val) {
-                $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+            if (is_array($aditionalInfoArr)) {
+                foreach ( $aditionalInfoArr as $name => $val) {
+                    $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+                }
             }
         }
 

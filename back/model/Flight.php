@@ -54,6 +54,8 @@ class Flight
             foreach ($row as $key => $value) {
                 if(($key === 'flightAditionalInfo')
                     && ($value !== null)
+                    && !empty($value)
+                    && is_array(json_decode($value, true))
                 ) {
                     $flightInfo = array_merge($flightInfo,
                         json_decode($value, true)
