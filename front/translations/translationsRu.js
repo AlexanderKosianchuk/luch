@@ -8,7 +8,7 @@ const translationsRu = {
         },
         flights: {
             apply: 'Принять',
-            options: {
+            toolbar: {
                 flightList: 'Перечень полетов'
             },
             typeSwitch : {
@@ -25,10 +25,18 @@ const translationsRu = {
                 exportCoordinates: 'Выгрузить маршрут',
                 syncFlightHeaders: 'Синхронизировать опознавательные данные',
             },
-            tree: {
-                create: 'Создать',
-                rename: 'Переименовать',
-                remove: 'Удалить'
+            flightTitle: {
+                bort: 'Борт',
+                voyage: 'Рейс',
+                startCopyTime: 'Начало полета',
+                departureAirport: 'Аэропорт вылета',
+                arrivalAirport: 'Аэропорт посадки',
+            },
+            flightControls: {
+                confirm: 'Подтвердите удаление полета',
+            },
+            folderControls: {
+                confirm: 'Подтвердите удаление каталога',
             },
         },
         uploadingPreview: {
@@ -41,7 +49,8 @@ const translationsRu = {
             save: 'Сохранить',
             printTableStep: 'Шаг цифропечати',
             mainChartColor: 'Заливка графика',
-            lineWidth: 'Толщина линий на графике'
+            lineWidth: 'Толщина линий на графике',
+            flightShowAction: 'Действие с полетом по умолчанию'
         },
         results: {
             toolbar: {

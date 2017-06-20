@@ -11,8 +11,7 @@ export default function  ContentLoader (props) {
         return {};
     }
 
-    function getSize()
-    {
+    function getSize() {
         if (props.size) {
             return {
                 width: props.size + 'px',

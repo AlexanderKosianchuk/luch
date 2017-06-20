@@ -40,11 +40,26 @@ class Folder
      *
      * @Column(name="userId", type="integer", nullable=true)
      */
-    private $userid;
+    private $userId;
 
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => intval($this->id),
+            'name' => $this->name,
+            'path' => $this->path,
+            'userId' => $this->userId,
+        ];
     }
 
 }

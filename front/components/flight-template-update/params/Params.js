@@ -9,8 +9,7 @@ import getTemplate from 'actions/getTemplate';
 import setCheckedFlightParams from 'actions/setCheckedFlightParams';
 
 class Params extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -21,8 +20,7 @@ class Params extends React.Component {
         this.templateBinaryParams = [];
     }
 
-    componentWillMount()
-    {
+    componentWillMount() {
         this.props.getTemplate({
             flightId: this.props.flightId,
             templateName: this.props.templateName
@@ -37,8 +35,7 @@ class Params extends React.Component {
         });
     }
 
-    buildBody()
-    {
+    buildBody() {
         if (this.state.isReady === true) {
             return <CycloParams
                 flightId={ this.props.flightId }

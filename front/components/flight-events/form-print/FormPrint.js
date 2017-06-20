@@ -8,8 +8,7 @@ import { Translate } from 'react-redux-i18n';
 import eventsFormPrint from 'actions/eventsFormPrint';
 
 class FormPrint extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -17,8 +16,7 @@ class FormPrint extends React.Component {
         };
     }
 
-    handleClick(event)
-    {
+    handleClick(event) {
         this.props.eventsFormPrint({
             flightId: this.props.flightId,
             grayscale: (this.state.checkstate === 'checked') ? true : false,
@@ -26,8 +24,7 @@ class FormPrint extends React.Component {
         });
     }
 
-    changeCheckState(event)
-    {
+    changeCheckState(event) {
         let newCheckstate = 'checked';
         if (this.state.checkstate === 'checked') {
             newCheckstate = '';

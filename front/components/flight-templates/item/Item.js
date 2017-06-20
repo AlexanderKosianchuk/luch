@@ -11,14 +11,12 @@ import ItemCheckbox from 'components/flight-templates/item-checkbox/ItemCheckbox
 import ItemDescription from 'components/flight-templates/item-description/ItemDescription';
 
 export default class Item extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = { isOpened: false };
     }
 
-    checkServicePurpose(servicePurpose)
-    {
+    checkServicePurpose(servicePurpose) {
         if (!servicePurpose) {
             return '';
         }
@@ -35,8 +33,7 @@ export default class Item extends React.Component {
         return <span className={ 'glyphicon flight-templates-item__glyphicon ' + glyphicon }></span>;
     }
 
-    getCheckstate(servicePurpose)
-    {
+    getCheckstate(servicePurpose) {
         if (servicePurpose && servicePurpose.isDefault) {
             return 'checked';
         }
@@ -44,8 +41,7 @@ export default class Item extends React.Component {
         return '';
     }
 
-    render ()
-    {
+    render () {
         return (
             <div className='flight-templates-item'>
                 <div className='row'>

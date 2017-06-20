@@ -14,8 +14,7 @@ export default function Tile(props) {
         chosenBinaryParamIds.push(item.id);
     });
 
-    function buildParams(params, colorPickerEnabled)
-    {
+    function buildParams(params, colorPickerEnabled) {
         let items = [];
 
         if (params

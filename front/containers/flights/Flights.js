@@ -4,28 +4,28 @@ import { bindActionCreators } from 'redux';
 
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/flights/toolbar/Toolbar';
+import Tree from 'components/flights/tree/Tree';
 
 import showPage from 'actions/showPage';
 
 class Flights extends React.Component {
-    componentDidMount()
-    {
-        this.callShowPage();
+    componentDidMount() {
+        if ((this.props.viewType === 'table')) {
+            this.props.showPage('flightsTableShow');
+        }
     }
 
-    componentDidUpdate(prevProps, prevState)
-    {
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.viewType !== this.props.viewType) {
             this.callShowPage();
         }
     }
 
-    callShowPage()
-    {
+    buildFlightView() {
         if ((this.props.viewType === 'table')) {
-            this.props.showPage('flightsTableShow');
+            return <div id='container'></div>;
         } else {
-            this.props.showPage('flightsTreeShow');
+            return <Tree/>;
         }
     }
 
@@ -34,7 +34,7 @@ class Flights extends React.Component {
             <div>
                 <MainPage/>
                 <Toolbar viewType={ this.props.viewType }/>
-                <div id='container'></div>
+                { this.buildFlightView() }
             </div>
         );
     }

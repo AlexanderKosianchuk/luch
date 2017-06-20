@@ -7,7 +7,8 @@ export default class Item extends React.Component {
 
     changeHandle(event) {
         this.props.changeValue({
-            [this.props.id]: this.textInput.value || ''
+            key: this.props.id,
+            value: this.textInput.value || ''
         });
     }
 

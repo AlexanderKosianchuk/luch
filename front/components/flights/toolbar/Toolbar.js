@@ -37,7 +37,7 @@ export default class Toolbar extends React.Component {
                         <span className="icon-bar"></span>
                         <span className="icon-bar"></span>
                       </button>
-                      <a className="navbar-brand" href="#"><Translate value='flights.options.flightList' /></a>
+                      <a className="navbar-brand" href="#"><Translate value='flights.toolbar.flightList' /></a>
                     </div>
 
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">

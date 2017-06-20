@@ -6,8 +6,7 @@ import mergeTemplates from 'actions/mergeTemplates';
 import redirect from 'actions/redirect';
 
 class CreateButton extends React.Component {
-    handleClick()
-    {
+    handleClick() {
         this.props.redirect('/flight-template-edit/create/'
             + 'flight-id/'+ this.props.flightId + '/'
             + 'fdr-id/'+ this.props.fdrId

@@ -8,15 +8,13 @@ import Toolbar from 'components/uploading-preview/toolbar/Toolbar';
 import showPage from 'actions/showPage';
 
 class UploadingPreview extends React.Component {
-    componentDidMount()
-    {
+    componentDidMount() {
         this.props.showPage('uploadWithPreview',
             [this.props.uploadingUid, this.props.fdrId, this.props.calibrationId]
         );
     }
 
-    render ()
-    {
+    render () {
         return (
             <div>
                 <MainPage/>

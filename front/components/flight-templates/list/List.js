@@ -10,21 +10,18 @@ import Item from 'components/flight-templates/item/Item';
 import getFlightTemplates from 'actions/getFlightTemplates';
 
 class List extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {
             isOpened: false
         };
     }
 
-    componentWillMount()
-    {
+    componentWillMount() {
         this.props.getFlightTemplates({ flightId: this.props.flightId });
     }
 
-    buildTemplatesList()
-    {
+    buildTemplatesList() {
         let list = [];
         this.props.templatesList.forEach((item, index) => {
             list.push(<Item
@@ -40,8 +37,7 @@ class List extends React.Component {
         return list;
     }
 
-    buildBody()
-    {
+    buildBody() {
         if (this.props.templatesFetching !== false) {
             return <ContentLoader/>
         } else {
@@ -49,8 +45,7 @@ class List extends React.Component {
         }
     }
 
-    render ()
-    {
+    render () {
         return (
             <div className='flight-templates-list container-fluid'>
                 { this.buildBody() }

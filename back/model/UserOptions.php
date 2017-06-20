@@ -11,6 +11,7 @@ class UserOptions
             'printTableStep' => 1,
             'mainChartColor' => 'fff',
             'lineWidth' => 1,
+            'flightShowAction' => 'events',
     ];
 
     public function CreateUserOptionssTables()
@@ -82,12 +83,40 @@ class UserOptions
         $c->Disconnect();
         unset($c);
 
-        if(count($arr) == 0) {
+        if (count($arr) == 0) {
             $this->InsertDefaultOptions($userId);
             $arr = self::$defaultOptions;
         }
 
+        if (count($arr) !== self::$defaultOptions) {
+            foreach (self::$defaultOptions as $key => $value) {
+                if (!$this->checkOptionExist($userId, $key)) {
+                    $this->InsertOption($key, $value, $userId);
+                }
+            }
+        }
+
         return $arr;
+    }
+
+    public function checkOptionExist($userId, $optionName)
+    {
+        $c = new DataBaseConnector;
+        $link = $c->Connect();
+
+        $result = $link->query("SELECT `value` FROM `user_settings` WHERE `user_id`=".$userId." AND `name`='".$optionName."' LIMIT 1;");
+
+        $value = null;
+        if($row = $result->fetch_array()) {
+            $value = true;
+        } else {
+            $value = false;
+        }
+
+        $c->Disconnect();
+        unset($c);
+
+        return $value;
     }
 
     public function GetOptionValue($userId, $optionName)

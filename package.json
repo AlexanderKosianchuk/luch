@@ -1,6 +1,6 @@
 {
   "name": "luch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Flight data processor. Initialy was developed for An 148, but got wide spread for many other aircrafts",
   "main": "index.js",
   "scripts": {
@@ -86,6 +86,7 @@
     "react-motion": "^0.5.0",
     "react-redux-i18n": "^1.8.0",
     "react-router-redux": "^5.0.0-alpha.6",
+    "react-sortable-tree": "^0.1.19",
     "redux-auth-wrapper": "^1.1.0",
     "uuid": "^3.0.1"
   }

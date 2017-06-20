@@ -8,16 +8,14 @@ import redirect from 'actions/redirect';
 import removeTemplateFromList from 'actions/removeTemplateFromList';
 
 class ItemControls extends React.Component {
-    handlePencilClick ()
-    {
+    handlePencilClick () {
         this.props.redirect('/flight-template-edit/update/'
             + 'flight-id/'+ this.props.flightId + '/'
             + 'template-name/'+ this.props.templateName
         );
     }
 
-    handlePictureClick ()
-    {
+    handlePictureClick () {
         this.props.redirect('/chart/'
             + 'flight-id/'+ this.props.flightId + '/'
             + 'template-name/'+ this.props.templateName + '/'
@@ -26,16 +24,14 @@ class ItemControls extends React.Component {
         );
     }
 
-    handleTrashClick ()
-    {
+    handleTrashClick () {
         this.props.removeTemplateFromList({
             flightId: this.props.flightId,
             templateName: this.props.templateName
         });
     }
 
-    render ()
-    {
+    render () {
         let controls = [];
 
         let pictureButton = <button key={ 'picture' } onClick={ this.handlePictureClick.bind(this) }

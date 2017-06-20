@@ -7,14 +7,12 @@ import trigger from 'actions/trigger';
 import redirect from 'actions/redirect';
 
 class Toolbar extends React.Component {
-    handleUploadClick()
-    {
+    handleUploadClick() {
         this.props.trigger('uploadPreviewedFlight');
         this.props.redirect('/');
     }
 
-    render()
-    {
+    render() {
         return (
             <nav className="navbar navbar-default">
                 <div className="container-fluid">

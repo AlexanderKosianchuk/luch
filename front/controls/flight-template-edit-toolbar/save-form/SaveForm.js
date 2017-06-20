@@ -10,8 +10,7 @@ import redirect from 'actions/redirect';
 import setTemplate from 'actions/setTemplate';
 
 class SaveForm extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -19,8 +18,7 @@ class SaveForm extends React.Component {
         }
     }
 
-    saveTemplate()
-    {
+    saveTemplate() {
         Promise.resolve(this.props.setTemplate({
             flightId: this.props.flightId,
             templateName: this.state.inputValue,
@@ -48,8 +46,7 @@ class SaveForm extends React.Component {
         );
     }
 
-    handleChange(event)
-    {
+    handleChange(event) {
         this.setState({
             inputValue: event.target.value
         });

@@ -9,8 +9,7 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import getFdrCyclo from 'actions/getFdrCyclo';
 
 class CycloParams extends React.Component {
-    componentWillMount()
-    {
+    componentWillMount() {
         if (this.props.flightId) {
             this.props.getFdrCyclo({ flightId: this.props.flightId });
         } else {
@@ -18,8 +17,7 @@ class CycloParams extends React.Component {
         }
     }
 
-    buildBody()
-    {
+    buildBody() {
         if (this.props.cycloFetching !== false) {
             return <ContentLoader/>
         } else {

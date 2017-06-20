@@ -9,8 +9,7 @@ import setParamColor from 'actions/setParamColor';
 import changeFlightParamCheckstate from 'actions/changeFlightParamCheckstate';
 
 class Item extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -19,8 +18,7 @@ class Item extends React.Component {
         }
     }
 
-    select(event)
-    {
+    select(event) {
         if (!event.target.classList.contains('cyclo-params-item__colorbox')) {
             let checkstate = !event.currentTarget.parentElement.classList.contains('is-chosen');
             event.currentTarget.parentElement.classList.toggle('is-chosen');
@@ -33,8 +31,7 @@ class Item extends React.Component {
         }
     }
 
-    applyColor(color)
-    {
+    applyColor(color) {
         this.props.setParamColor({
             flightId: this.props.flightId,
             paramCode: this.props.param.code,
@@ -47,8 +44,7 @@ class Item extends React.Component {
         });
     }
 
-    toggleColorpicker()
-    {
+    toggleColorpicker() {
         this.setState({
             colorpickerShown: !this.state.colorpickerShown
         });

@@ -8,8 +8,7 @@ import { Translate } from 'react-redux-i18n';
 import flightDataTablePrint from 'actions/flightDataTablePrint';
 
 class Print extends React.Component {
-    handleClick(event)
-    {
+    handleClick(event) {
         this.props.flightDataTablePrint({
             flightId: this.props.flightId,
             startFrame: this.props.startFrame,

@@ -13,14 +13,12 @@ function Calibration() {
         calibrationOptions = null,
         calibrationFormContent = null;
 
-    this.resizeContainer = function(e)
-    {
+    this.resizeContainer = function(e) {
         $(document).trigger("resizeShowcase");
         return this;
     };
 
-    this.FillFactoryContaider = function(calibrationWorkspace)
-    {
+    this.FillFactoryContaider = function(calibrationWorkspace) {
         var that = this;
         this.calibrationWorkspace = calibrationWorkspace;
         this.calibrationWorkspace.empty();
@@ -36,8 +34,7 @@ function Calibration() {
         dfd.then(buildCalibrationForm);
     };
 
-    this.calibrationFormOptions = function()
-    {
+    this.calibrationFormOptions = function() {
         this.calibrationWorkspace
             .append("<div id='calibrationFormOptions' class='OptionsMenu'></div>");
         this.calibrationOptions = $("div#calibrationFormOptions");
@@ -56,8 +53,7 @@ function Calibration() {
         return dfd.promise();
     };
 
-    this.buildCalibrationOptions = function(avaliableFDRs, selectedFdrId = null)
-    {
+    this.buildCalibrationOptions = function(avaliableFDRs, selectedFdrId = null) {
         var that = this;
         this.calibrationOptions.empty();
         this.calibrationOptions.append(that.renderCalibrationMenu(avaliableFDRs, selectedFdrId));
@@ -92,8 +88,7 @@ function Calibration() {
         return that.getById(avaliableFDRs, $fdrCalibrationSelect.val());
     };
 
-    this.calibrationList = function(selectedFDR)
-    {
+    this.calibrationList = function(selectedFDR) {
         this.calibrationFormContent.empty();
         this.calibrationFormContent.append(
             this.renderCalibrationList(selectedFDR)
@@ -102,8 +97,7 @@ function Calibration() {
         this.resizeContainer();
     }
 
-    this.calibrationEditForm = function(selectedFDR, calibrationId = null)
-    {
+    this.calibrationEditForm = function(selectedFDR, calibrationId = null) {
         this.calibrationFormContent.empty();
         this.calibrationFormContent.append(
             this.renderCalibrationEditForm(selectedFDR, calibrationId)
@@ -112,8 +106,7 @@ function Calibration() {
         this.resizeContainer();
     }
 
-    this.getAvaliableFDRs = function()
-    {
+    this.getAvaliableFDRs = function() {
         return $.ajax({
             type : "POST",
             data : {
@@ -131,8 +124,7 @@ function Calibration() {
         });
     }
 
-    this.deleteCalibration = function(calibrationId)
-    {
+    this.deleteCalibration = function(calibrationId) {
         return $.ajax({
             type : "POST",
             data : {
@@ -150,8 +142,7 @@ function Calibration() {
         });
     }
 
-    this.postCalibration = function(fdrId, name, calibrations, calibrationId = null)
-    {
+    this.postCalibration = function(fdrId, name, calibrations, calibrationId = null) {
         return $.ajax({
             type : "POST",
             data : {
@@ -173,8 +164,7 @@ function Calibration() {
     }
 
 
-    this.getById = function(array, id)
-    {
+    this.getById = function(array, id) {
         var result;
         for (var ii = 0; ii < array.length; ii++) {
             if(array[ii]['id'] === parseInt(id)) {
@@ -594,8 +584,7 @@ function Calibration() {
         return calibrationTable;
     }
 
-    this.compareSecondColumn = function(a, b)
-    {
+    this.compareSecondColumn = function(a, b) {
         if (a[1] === b[1]) {
             return 0;
         } else {

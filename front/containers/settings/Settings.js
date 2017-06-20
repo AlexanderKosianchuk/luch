@@ -17,13 +17,16 @@ import setSettings from 'actions/setSettings';
 import redirect from 'actions/redirect';
 
 class Settings extends React.Component {
+    componentDidMount() {
+        this.props.getSettings();
+    }
+
     buildContent() {
-        let settings = this.props.settings;
-        if (_isEmpty(settings)) {
-            this.props.getSettings();
+        if (this.props.pending !== false) {
             return <ContentLoader/>;
         }
 
+        let settings = this.props.settings.items;
         let options = Object.keys(settings).map((objectKey, index) => {
             let label = I18n.t('settings.' + objectKey);
 
@@ -48,13 +51,11 @@ class Settings extends React.Component {
     }
 
     onClick() {
-        this.props.setSettings(this.props.settings);
+        this.props.setSettings(this.props.settings.items);
         this.props.redirect('/');
     }
 
     render () {
-        let content = this.buildContent();
-
         return (
             <div>
                 <MainPage />
@@ -62,7 +63,7 @@ class Settings extends React.Component {
                     <h4 className='settings__header'>
                         <Translate value='settings.options'/>
                     </h4>
-                    { content }
+                    { this.buildContent() }
                 </div>
             </div>
         );
@@ -71,6 +72,7 @@ class Settings extends React.Component {
 
 function mapStateToProps (state) {
     return {
+        pending: state.settings.pending,
         settings: state.settings
     };
 }

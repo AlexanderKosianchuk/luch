@@ -18,8 +18,7 @@ class ShowChartByTemplates extends React.Component {
         </span>;
     }
 
-    showChart()
-    {
+    showChart() {
         if (this.props.chosenTemplates.list.length === 1) {
             this.props.redirect('/chart/'
                 + 'flight-id/'+ this.props.flightId + '/'

@@ -11,8 +11,7 @@ export default function ColorPicker(props) {
         color = event.hex;
     }
 
-    function handleClick()
-    {
+    function handleClick() {
         props.applyColor(color);
     }
 

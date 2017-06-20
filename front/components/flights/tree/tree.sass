@@ -1,0 +1,42 @@
+.flights-tree
+    width: 100%
+    overflow-y: auto
+
+    & .rst__node
+        height: 42px
+
+    & .rst__rowContents
+        border: 1px solid #eee
+        box-shadow: none
+
+    & .rst__collapseButton, & .rst__expandButton
+        border-radius: 10%
+        box-shadow: 0 0 0 1px #7d7d7d
+
+    & .rst__rowCancelPad:before, & .rst__rowLandingPad:befor
+        border: 1px dashed #fff
+
+    & .rst__rowCancelPad:before
+        background-color: #ffc2c2
+
+    & .rst__rowLandingPad:before
+        background-color: #adccd6
+
+    & .rst__rowWrapper
+        padding: 2px 10px 2px 0
+
+    & .rst__loadingHandle
+        background-color: #111
+
+    & .rst__moveHandle
+        width: 10px
+        background: none
+        border-radius: 4px 0 0 4px
+        border: 1px solid #eee
+        box-shadow: none
+
+    & &__flight .rst__moveHandle
+        background-color: #063a5c
+
+    & &__folder .rst__moveHandle
+        background-color: #fbe368

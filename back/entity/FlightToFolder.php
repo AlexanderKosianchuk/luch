@@ -40,5 +40,25 @@ class FlightToFolder
      */
     private $userId;
 
+    /**
+     * Many FlightToFolder has One Flight.
+     * @ManyToOne(targetEntity="Flight")
+     * @JoinColumn(name="flightId", referencedColumnName="id")
+     */
+    private $flight;
 
+    public function getFlight()
+    {
+        return $this->flight;
+    }
+
+    public function getFlightId()
+    {
+        return $this->flightId;
+    }
+
+    public function getFolderId()
+    {
+        return $this->folderId;
+    }
 }

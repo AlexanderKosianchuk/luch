@@ -12,6 +12,7 @@ use Model\FlightComments;
 use Model\FlightException;
 use Model\DataBaseConnector;
 
+use Component\EntityManagerComponent as EM;
 use Component\FlightComponent;
 use Component\EventProcessingComponent;
 use Component\RuntimeManager;
@@ -34,204 +35,6 @@ class FlightsController extends CController
        if(isset($get['action']) && ($get['action'] != '')) {
            $this->getAction = $get['action'];
        }
-   }
-
-   public function PutTopMenu()
-   {
-      $this->_user->username = $this->_user->username . "";
-      $this->_user->usernameLen = strlen($this->_user->username);
-      $styleFontSize = 24 - $this->_user->usernameLen / 2.2;
-      $styleWidth = 20 + $this->_user->usernameLen * $styleFontSize / 2;
-      $styleTop = 8 + $this->_user->usernameLen / 3;
-
-      $topMenu = sprintf("<div id='topMenuFlightList' class='TopMenu'>
-
-            <label id='logo' class='Logo' style='background-image:url(/front/stylesheets/basicImg/logo.png)'>
-               <span style='position:absolute; margin-top:8px;'>Luch</span>
-            </label>
-
-            <img class='Separator'></img>
-
-            <label id='currentUploadingTopButt' class='CurrentUploadingTopButt' style='background-image:url(/front/stylesheets/basicImg/add.png)'>
-            </label>
-
-            <label id='uploadTopButt' class='UploadButt'>
-               <span style='position:absolute; margin-top:8px;'>%s</span>
-            </label>
-
-            <label id='userTopButt' class='UserButt' style='background-image:url(/front/stylesheets/basicImg/userPreferences.png); " .
-            "width:%spx; font-size:%spx;'
-               data-username='%s'>
-               <span style='position:absolute; margin-top:%spx;'>%s</span>
-            </label>
-
-            <div id='view' style='display:none;'><img class='Separator2'></img>
-               <label class='ViewItem' style='background-image:url(/front/stylesheets/basicImg/view.png);'>
-               <span style='position:absolute; margin-top:8px;'>%s</span>
-            </label></div>
-
-            </div>", $this->lang->upload,
-            $styleWidth,
-            $styleFontSize,
-            $this->_user->username,
-            $styleTop,
-            $this->_user->username,
-            $this->lang->viewItem);
-
-      return $topMenu;
-   }
-
-   public function PutLeftMenu()
-   {
-       $leftMenu = sprintf("<div id='leftMenuFlightList' class='LeftMenu'>");
-       $leftMenu .= sprintf("<input class='SearchBox' value='' size='24' style='visibility: hidden;'></input>");
-
-     $leftMenu .= sprintf("<div id='flightLeftMenuRow' class='LeftMenuRow LeftMenuRowSelected' data-selected='true'>
-           <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/flight.png'></img>
-           %s&nbsp;
-           </div>", $this->lang->flightsItem);
-
-     $leftMenu .= sprintf("<div id='searchLeftMenuRow' class='LeftMenuRow'>
-           <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/search.png'></img>
-           %s&nbsp;
-           </div>", $this->lang->searchItem);
-
-      $leftMenu .= sprintf("<div id='resultsLeftMenuRow' class='LeftMenuRow'>
-          <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/gear.png'></img>
-          %s&nbsp;
-          </div>", $this->lang->resultsItem);
-
-      /*$leftMenu .= sprintf("<div id='fdrLeftMenuRow' class='LeftMenuRow'>
-         <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/fdr.png'></img>
-         %s&nbsp;
-         </div>", $this->lang->bruTypesItem);*/
-
-      $leftMenu .= sprintf("<div id='calibrationLeftMenuRow' class='LeftMenuRow'>
-        <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/compass.png'></img>
-        %s&nbsp;
-        </div>", $this->lang->calibrationItem);
-
-      $role = $this->_user->userInfo['role'];
-      if(User::isAdmin($role) || User::isModerator($role)) {
-         $leftMenu .= sprintf("<div id='usersLeftMenuRow' class='LeftMenuRow'>
-               <img class='LeftMenuRowIcon' src='/front/stylesheets/basicImg/user.png'></img>
-               %s&nbsp;
-               </div>", $this->lang->usersItem);
-      }
-
-      $leftMenu .= sprintf("</div>");
-
-      return $leftMenu;
-   }
-
-
-    public function FileUploadBlock()
-    {
-        $userId = intval($this->_user->userInfo['id']);
-        $avalibleFdrIds = $this->_user->getAvailableFdrs($userId);
-
-        $fdr = new Fdr;
-        $fdrList = $fdr->getFdrList($avalibleFdrIds);
-        unset($fdr);
-
-        $optionString = "";
-        $firstFdrId = null;
-        $first = true;
-        foreach($fdrList as $fdrInfo) {
-            if ($first) {
-                $firstFdrId = intval($fdrInfo['id']);
-                $first = false;
-            }
-            $optionString .="<option data-id='".$fdrInfo['id']."' value='".$fdrInfo['id']."'>"
-                .$fdrInfo['name']
-            ."</option>";
-        }
-
-        $calibration = new Calibration;
-        $fdrCalibrations = $calibration->getCalibrationsForFdrs($avalibleFdrIds, $userId);
-
-        $calibrationSelects = "";
-        foreach ($fdrCalibrations as $fdrId => $calibrations) {
-            $style = '';
-            if ($firstFdrId === $fdrId) {
-                $style = 'style="display:block;"';
-            }
-
-            $calibrationSelects .= "<select class='fdr-calibration' ".$style." data-fdr-id='".$fdrId."'>";
-            foreach ($calibrations as $item) {
-                $calibrationSelects .= "<option value='".$item['id']."'>".$item['name']."</option>";
-            }
-            $calibrationSelects .= "</select>";
-        }
-
-        $fileUploadBlock = sprintf("<div id='fileUploadDialog' class='OptionBlock' title='%s'><br>", $this->lang->flightUpload);
-
-        $fileUploadBlock .= sprintf("<div id='importConvertRadio'>
-            <input type='radio' id='convertFl' name='radio' checked='checked'><label for='convertFl'>%s</label>
-            <input type='radio' id='importFl' name='radio'><label for='importFl'>%s</label>
-         </div>", $this->lang->fileConvert, $this->lang->fileImport);
-        $fileUploadBlock .= "<br>";
-
-        $fileUploadBlock .= sprintf("<div id='previewCheckBoxDiv' class='FlightUploadingInputs'>
-            <label>
-                <input checked='checked' id='previewCheckBox' type='checkbox'>
-                %s
-            </label>
-        </div>", $this->lang->filePreview);
-
-        $fileUploadBlock .= sprintf("<div id='bruTypeSelectForUploadingDiv'>
-            <select id='bruTypeSelectForUploading' name='bruType' class='FlightUploadingInputs'>%s</select>
-         </div>", $optionString);
-
-        $fileUploadBlock .= "<div class='calibrations-for-ubloading'>";
-        $fileUploadBlock .= $calibrationSelects;
-        $fileUploadBlock .= "</div>";
-
-        $fileUploadBlock .= sprintf("<div id='progress' class='progress'>
-               <div class='progress-bar progress-bar-success'></div>
-            </div>
-         <div id='files' class='files'></div>");
-        $fileUploadBlock .= "<br>";
-
-        $fileUploadBlock .= sprintf("<span class='btn btn-success fileinput-button choose-file-btn'>
-             <input id='chooseFileBut' type='file' name='files[]' multiple>
-         </span>");
-
-        $fileUploadBlock .= sprintf("</div>");
-
-        return $fileUploadBlock;
-    }
-
-   private function GetFlightsByPath($folderId)
-   {
-      $userId = $this->_user->GetUserIdByName($this->_user->username);
-
-      $Fl = new Flight;
-      $Fd = new Folder;
-      $flightIdsArr = $Fd->GetFlightsByFolder($folderId, $userId);
-
-      $flightsInfoArr = [];
-      foreach ($flightIdsArr as $id) {
-         $flightsInfoArr[] = $Fl->GetFlightInfo($id);
-      }
-
-      unset($Fd);
-      unset($Fl);
-
-      return $flightsInfoArr;
-   }
-
-   private function GetFoldersByPath($folderId)
-   {
-      $userId = $this->_user->userInfo['id'];
-      $subFoldersArr = [];
-      $Fd = new Folder;
-
-      $subFoldersArr = $Fd->GetSubfoldersByFolder($folderId, $userId);
-
-      unset($Fd);
-
-      return $subFoldersArr;
    }
 
    public function CreateNewFolder($extName, $extPath)
@@ -415,122 +218,6 @@ class FlightsController extends CController
          $msg = "Incorrect input data. ProcessFlight id - " . json_encode($flightId) . ". Page FlightsController.php";
          throw new Exception($msg, 1);
       }
-   }
-
-   public function GetLastViewType()
-   {
-      $viewTypes = [
-         "flightListTree",
-         "flightListTable"
-     ];
-
-      $userId = $this->_user->userInfo['id'];
-      $lastView = $this->_user->GetLastActionFromRange($userId, $viewTypes);
-
-      return $lastView;
-   }
-
-   public function GetLastViewedFolder()
-   {
-      $viewType = "showFolderContent";
-
-      $userId = $this->_user->userInfo['id'];
-      $actionsInfo = $this->_user->GetLastAction($userId, $viewType);
-
-      return $actionsInfo;
-   }
-
-   public function BuildFlightsInTree($extFolder)
-   {
-      $shownFolderId = $extFolder;
-
-      $flightColumn = "";
-
-      $userId = $this->_user->userInfo['id'];
-
-      $Fd = new Folder;
-      $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
-      $shownFolder = $shownFolderInfo['name'];
-      unset($Fd);
-
-      $flightColumn .= "<div class='FlightsListTileView'>" .
-            "<div id='jstree' class='Tree'></div>".
-            "<div id='jstreeContent' class='TreeContent'></div>".
-            "</div>";
-
-      return $flightColumn;
-   }
-
-   public function PrepareTree($shownFolderId)
-   {
-      $userId = $this->_user->userInfo['id'];
-
-      $Fd = new Folder;
-      $content = $Fd->GetAvailableContent($shownFolderId, $userId);
-      unset($Fd);
-
-      $relatedNodes = false;
-      if(count($content) > 0) {
-         $relatedNodes = $this->makeRecursive($content);
-      }
-
-      return $relatedNodes;
-   }
-
-   public function BuildSelectedFolderContent($shownFolderId)
-   {
-      $flightColumn = "";
-
-      $Fd = new Folder;
-      $flightsInPath = $this->GetFlightsByPath($shownFolderId);
-      $subFolders = (array)$this->GetFoldersByPath($shownFolderId);
-      $shownFolderInfo = $Fd->GetFolderInfo($shownFolderId);
-      $shownFolder = $shownFolderInfo['name'];
-      unset($Fd);
-
-      foreach($subFolders as $key => $val)
-      {
-         $input = '<input class="ItemsCheck" type="checkbox" data-type="folder" data-folderpath="'.$shownFolderId.'" data-folderdestination="'.$val['id'].'">';
-         $flightColumn .= "<div class='JstreeContentItemFolder'><label>" . $input . " " . $val['name']."</label></div>";
-      }
-
-      $Fc = new FlightComments;
-      foreach($flightsInPath as $key => $val)
-      {
-         $flightComment = $Fc->getComment(intval($val['id']));
-         $name = $val['bort'] . ", " .  $val['voyage']  . ", " . date('d/m/y H:i', $val['startCopyTime'])  .
-         ", " . $val['bruType']  . ", " . $val['departureAirport']  . "-" . $val['arrivalAirport'] ;
-
-         $isAnalyzed = 'is-analyzed';
-         if (!isset($flightComment['id'])) {
-             $isAnalyzed = '';
-         }
-         $input = '<input class="ItemsCheck" type="checkbox" data-type="flight" data-folderpath="'.$shownFolderId.'" data-flightid="'.$val['id'].'">';
-         $flightColumn .= "<div class='JstreeContentItemFlight ".$isAnalyzed."'><label>" . $input . " " . $name . "</label></div>";
-      }
-
-      if((count($flightsInPath) == 0) && (count($subFolders) == 0))
-      {
-         $flightColumn = "<div>" . $this->lang->noContent . "</div>";
-      }
-
-      $result = array(
-         'folderName' => $shownFolder,
-         'content' => $flightColumn
-      );
-
-      return $result;
-   }
-
-   private function makeRecursive($d, $r = 0, $pk = 'parent', $k = 'id', $c = 'children') {
-      $m = array();
-      foreach ($d as $e) {
-         isset($m[$e[$pk]]) ?: $m[$e[$pk]] = array();
-         isset($m[$e[$k]]) ?: $m[$e[$k]] = array();
-         $m[$e[$pk]][] = array_merge($e, array($c => &$m[$e[$k]]));
-      }
-
-      return $m[$r];//[0]; // remove [0] if there could be more than one root nodes
    }
 
    private function recursiveCollectChildren($branch, $parentId, &$childIds)
@@ -1001,196 +688,76 @@ class FlightsController extends CController
    * REAL ACTIONS
    * ==========================================
    */
-   public function flightGeneralElements($data)
-   {
-       $topMenu = $this->PutTopMenu();
-       $leftMenu = $this->PutLeftMenu();
-       $fileUploadBlock = $this->FileUploadBlock();
 
-       $answ = array(
-               'status' => 'ok',
-               'data' => array(
-                   'topMenu' => $topMenu,
-                   'leftMenu' => $leftMenu,
-                   'fileUploadBlock' => $fileUploadBlock
-               )
-       );
+    public function getFlights($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
 
-       echo json_encode($answ);
-   }
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId used in getFlights FlightsController." . $userId, 1);
+        }
 
-   public function getLastView($data)
-   {
-       $lastViewType = $this->GetLastViewType();
-       $answ = array();
+        $em = EM::get();
+        $Fl = new Flight;
+        $fdr = new Fdr;
+        $Frame = new Frame;
 
-       if ($lastViewType == null) {
-               $targetId = 0;
-               $targetName = 'root';
-               $viewAction = "flightListTree";
-               $flightsListTileView = $this->BuildFlightsInTree($targetId);
-               $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
+        $items = [];
+        $flightsToFolders = $em->getRepository('Entity\FlightToFolder')
+            ->findBy(['userId' => $userId]);
 
-               $answ["status"] = "ok";
-               $answ["type"] = $viewAction;
-               $answ["lastViewedFolder"] = $targetId;
-               $answ["data"] = $flightsListTileView;
-       } else {
-           $flightsListByPath = "";
-           $viewAction = $lastViewType["action"];
-           if($viewAction === "flightListTree") {
-               $actionsInfo = $this->GetLastViewedFolder();
-               $targetId = 0;
-               if($actionsInfo == null) {
-                   $targetName = 'root';
-                   $flightsListTileView = $this->BuildFlightsInTree($targetId);
-                   $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
-               } else {
-                   $targetId = $actionsInfo['targetId'];
-                   $targetName = $actionsInfo['targetName'];
+        foreach ($flightsToFolders as $flightToFolders) {
+            $flightInfo = $Fl->GetFlightInfo($flightToFolders->getFlightId());
+            $fdrInfo = $fdr->getFdrInfo(intval($flightInfo['id_fdr']));
+            $prefixArr = $fdr->GetBruApCycloPrefixes(intval($flightInfo['id_fdr']));
+            $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]);
 
-                   $Fd = new Folder();
-                   $folderInfo = $Fd->GetFolderInfo($targetId);
-                   unset($Fd);
+            $items[] = array_merge(
+                $flightToFolders->getFlight()->get(),
+                [
+                    'noChildren' => true,
+                    'type' => 'flight',
+                    'parentId' => $flightToFolders->getFolderId(),
+                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime()),
+                    'framesCount' => $framesCount
+                ]
+            );
+        }
 
-                   if(empty($folderInfo))
-                   {
-                       $targetId = 0;
-                       $targetName = 'root';
-                   }
+        unset($Fl);
+        unset($fdr);
+        unset($Frame);
 
-                   $flightsListTileView = $this->BuildFlightsInTree($targetId);
-                   $this->RegisterActionExecution($viewAction, "executed", 0, 'treeViewPath', $targetId, $targetName);
-               }
+        echo json_encode($items);
+    }
 
-               $answ["status"] = "ok";
-               $answ["type"] = $viewAction;
-               $answ["lastViewedFolder"] = $targetId;
-               $answ["data"] = $flightsListTileView;
+    public function getFolders($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
 
-           } else if($viewAction === "flightListTable") {
-               $action = "flightListTable";
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId used in getFolders FlightsController." . $userId, 1);
+        }
 
-               $table = $this->BuildTable();
-               $this->RegisterActionExecution($action, "executed", 0, 'tableView', '', '');
-               $actionsInfo = $this->GetLastSortTableType();
+        $em = EM::get();
 
-               if (empty($actionsInfo)) {
-                   $actionsInfo['senderId'] = 3; // colunm 3 - start copy time
-                   $actionsInfo['targetName'] = 'desc';
-               }
+        $folders = $em->getRepository('Entity\Folder')
+            ->findBy(['userId' => $userId]);
 
-               $answ["status"] = "ok";
-               $answ["type"] = $viewAction;
-               $answ["data"] = $table;
-               $answ["sortCol"] = $actionsInfo['senderId'];
-               $answ["sortType"] = $actionsInfo['targetName'];
-           }
-       }
+        $items = [];
+        foreach ($folders as $folder) {
+            $items[] = array_merge(
+                $folder->get(),
+                [
+                    'type' => 'folder',
+                    'parentId' => intval($folder->getPath())
+                ]
+            );
+        }
 
-       echo json_encode($answ);
-   }
+        echo json_encode($items);
+    }
 
-   public function flightListTree()
-   {
-       $flightsListTile = "";
-
-       $actionsInfo = $this->GetLastViewedFolder();
-       $targetId = 0;
-
-       if ($actionsInfo == null) {
-           $targetName = 'root';
-           $flightsListTileView = $this->BuildFlightsInTree($targetId);
-           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
-       } else {
-           $targetId = $actionsInfo['targetId'];
-           $targetName = $actionsInfo['targetName'];
-
-           $Fd = new Folder();
-           $folderInfo = $Fd->GetFolderInfo($targetId);
-           unset($Fd);
-
-           if (empty($folderInfo)) {
-               $targetId = 0;
-               $targetName = 'root';
-           }
-
-           $flightsListTileView = $this->BuildFlightsInTree($targetId);
-           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
-       }
-
-       $answ["status"] = "ok";
-       $answ["lastViewedFolder"] = $targetId;
-       $answ["data"] = $flightsListTileView;
-
-       echo json_encode($answ);
-   }
-
-   public function receiveTree($data)
-   {
-       if(isset($data['data']))
-       {
-           $folderid = 0;
-           $folderName = $this->lang->root;
-
-           $relatedNodes = "";
-           $actionsInfo = $this->GetLastViewedFolder();
-
-           if($actionsInfo == null)
-           {
-               $targetId = $folderid;
-               $targetName = 'root';
-               $relatedNodes = $this->PrepareTree($targetId);
-               $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
-           }
-           else
-           {
-               $targetId = $actionsInfo['targetId'];
-               $targetName = $actionsInfo['targetName'];
-
-               $Fd = new Folder();
-               $folderInfo = $Fd->GetFolderInfo($targetId);
-               unset($Fd);
-
-               if(empty($folderInfo))
-               {
-                   $targetId = 0;
-                   $targetName = 'root';
-               }
-
-               $relatedNodes = $this->PrepareTree($targetId);
-               $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
-           }
-
-           $tree[] = array(
-                   "id" => (string)$folderid,
-                   "text" => $folderName,
-                   'type' => 'folder',
-                   'state' =>  array(
-                           "opened" => true
-                   ),
-                   'children' => $relatedNodes
-           );
-
-           if(($actionsInfo == null) || ($actionsInfo['targetId'] == 0))
-           {
-               $tree[0]["state"] =  array(
-                       "opened" => true,
-                       "selected" => true
-               );
-           }
-
-           echo json_encode($tree);
-       }
-       else
-       {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
 
    public function flightListTable($data)
    {
@@ -1298,35 +865,6 @@ class FlightsController extends CController
            $aaData["aaData"] = $tableSegment;
 
            echo(json_encode($aaData));
-       }
-       else
-       {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
-
-   public function showFolderContent($data)
-   {
-       if(isset($data['folderId']))
-       {
-           $folderid = intval($this->data['folderId']);
-           $result = $this->BuildSelectedFolderContent($folderid);
-
-           $folderContent = $result['content'];
-           $targetId = $folderid;
-           $targetName = $result['folderName'];
-           $this->RegisterActionExecution($this->action, "executed", 0, 'treeViewPath', $targetId, $targetName);
-
-           $answ = array(
-               'status' => 'ok',
-               'data' => $folderContent
-           );
-
-           echo json_encode($answ);
        }
        else
        {

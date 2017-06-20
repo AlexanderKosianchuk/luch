@@ -3,8 +3,7 @@ import './item-description.sass'
 import React from 'react';
 
 export default function ItemDescription(props) {
-    function buildParamDesctiption(params)
-    {
+    function buildParamDesctiption(params) {
         let description = [];
         params.forEach((item, index) => {
             description.push(
@@ -20,7 +19,7 @@ export default function ItemDescription(props) {
         return description;
     }
 
-    return(
+    return (
         <div className='flight-templates-item-description'>
             { buildParamDesctiption(props.params) }
         </div>

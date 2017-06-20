@@ -5,13 +5,11 @@ import { connect } from 'react-redux';
 import trigger from 'actions/trigger';
 
 class Print extends React.Component {
-    handleClick(event)
-    {
+    handleClick(event) {
         this.props.trigger('chart:fullSize');
     }
 
-    render()
-    {
+    render() {
         return (
             <ul className="nav navbar-nav navbar-right">
                 <li><a href="#" onClick={ this.handleClick.bind(this) }>

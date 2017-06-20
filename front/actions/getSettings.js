@@ -5,7 +5,7 @@ export default function getSettings (payload) {
         });
 
         fetch('/entry.php?action=user/getUserOptions',
-            { credentials: "same-origin" }
+            { credentials: 'same-origin' }
         ).then(response => response.json())
         .then(json => dispatch({
             type: 'SETTINGS_RECEIVED',

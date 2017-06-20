@@ -13,15 +13,13 @@ import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
 import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
 
 class FlightRangeSlider extends React.Component {
-    componentWillMount()
-    {
+    componentWillMount() {
         if (this.props.flightDuration === null) {
             this.props.getFlightInfo({flightId: this.props.flightId});
         }
     }
 
-    buildBody()
-    {
+    buildBody() {
         if (this.props.flightInfoPending === false) {
             return this.buildSlider();
         }
@@ -29,8 +27,7 @@ class FlightRangeSlider extends React.Component {
         return '';
     }
 
-    buildSlider()
-    {
+    buildSlider() {
         return <ReactBootstrapSlider
             value={ [
                 this.props.selectedStartFrame,
@@ -47,8 +44,7 @@ class FlightRangeSlider extends React.Component {
          />;
     }
 
-    changeSlider(event)
-    {
+    changeSlider(event) {
         if (event.target.value[0] !== this.props.selectedStartFrame) {
             this.props.changeSelectedStartFrame(event.target.value[0]);
         }
@@ -58,8 +54,7 @@ class FlightRangeSlider extends React.Component {
         }
     }
 
-    setStartTime()
-    {
+    setStartTime() {
         if (this.props.selectedStartFrame === null) {
             return '';
         }
@@ -69,8 +64,7 @@ class FlightRangeSlider extends React.Component {
         </a>;
     }
 
-    setEndTime()
-    {
+    setEndTime() {
         if (this.props.selectedEndFrame === null) {
             return '';
         }
@@ -80,8 +74,7 @@ class FlightRangeSlider extends React.Component {
         </a>;
     }
 
-    framesToTime(frames, stepLength)
-    {
+    framesToTime(frames, stepLength) {
         let value = frames * stepLength;
         var secNum = parseInt(value, 10);
         var hours = Math.floor(secNum / 3600);
@@ -95,8 +88,7 @@ class FlightRangeSlider extends React.Component {
         return time;
     }
 
-    render()
-    {
+    render() {
         return (
             <ul className='flight-range-slider nav navbar-nav'>
                 <li>

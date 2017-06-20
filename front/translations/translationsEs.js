@@ -8,7 +8,7 @@ const translationsEs = {
         },
         flights: {
             apply: 'Aplicar',
-            options: {
+            toolbar: {
                 flightList: 'lista de los vuelos'
             },
             typeSwitch : {
@@ -25,10 +25,18 @@ const translationsEs = {
                 exportCoordinates: 'Export coordinates',
                 syncFlightHeaders: 'Sincronizar los datos de identificación',
             },
-            tree: {
-                create: 'Create',
-                rename: 'Rename',
-                remove: 'Remove'
+            flightTitle: {
+                bort: 'Bort',
+                voyage: 'Flight',
+                startCopyTime: 'Flight start time',
+                departureAirport: 'Departure airport',
+                arrivalAirport: 'Arrival airport',
+            },
+            flightControls: {
+                confirm: 'Confirm flight deleting',
+            },
+            folderControls: {
+                confirm: 'Confirm folder deleting',
             },
         },
         uploadingPreview: {
@@ -43,6 +51,7 @@ const translationsEs = {
                 printTableStep: 'Paso mesa de impresión',
                 mainChartColor: 'Color principal fondo de la carta',
                 lineWidth: 'Сhart líneas de ancho',
+                flightShowAction: 'Flight show action'
             }
         },
         results: {

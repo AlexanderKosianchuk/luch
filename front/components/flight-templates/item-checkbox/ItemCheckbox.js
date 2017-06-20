@@ -7,8 +7,7 @@ import { bindActionCreators } from 'redux';
 import chooseFlightTemplate from 'actions/chooseFlightTemplate';
 
 class ItemCheckbox extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -16,8 +15,7 @@ class ItemCheckbox extends React.Component {
         };
     }
 
-    componentDidMount()
-    {
+    componentDidMount() {
         if (this.state.checkstate === 'checked') {
             this.props.chooseFlightTemplate({
                 checkstate: this.state.checkstate,
@@ -26,8 +24,7 @@ class ItemCheckbox extends React.Component {
         }
     }
 
-    changeCheckState()
-    {
+    changeCheckState() {
         let newCheckstate = 'checked';
         if (this.state.checkstate === 'checked') {
             newCheckstate = '';
@@ -41,8 +38,7 @@ class ItemCheckbox extends React.Component {
         this.setState({ checkstate: newCheckstate });
     }
 
-    render ()
-    {
+    render () {
         return (
             <section className='flight-templates-item-checkbox'>
                 <div className='flight-templates-item-checkbox__container'>

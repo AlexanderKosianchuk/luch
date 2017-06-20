@@ -16,8 +16,7 @@ class FlightViewOptionsSwitch extends React.Component {
         this.props.redirect('/flight-' + viewState + '/' + this.props.flightId);
     }
 
-    buildMenu()
-    {
+    buildMenu() {
         let menu = [];
         let that = this;
         views.forEach(function(item) {

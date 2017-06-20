@@ -7,8 +7,7 @@ import { connect } from 'react-redux';
 import trigger from 'actions/trigger';
 
 class ParamsToggle extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -17,8 +16,7 @@ class ParamsToggle extends React.Component {
     }
 
 
-    handleClick(event)
-    {
+    handleClick(event) {
         this.props.trigger(this.state.isShown ? 'chart:hideParamsList' : 'chart:showParamsList');
         this.setState({
             isShown: !this.state.isShown
