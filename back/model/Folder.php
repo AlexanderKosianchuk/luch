@@ -431,44 +431,28 @@ class Folder
         return $available;
     }
 
-    public function GetAvailableContent($folderId, $uId, $role = false)
+    public function getContent($userId, $role = false)
     {
         $c = new DataBaseConnector;
         $link = $c->Connect();
         $link2 = $c->Connect();
 
-        $query = "SELECT * FROM `folders` WHERE `userId` = '".$uId."';";
+        $query = "SELECT * FROM `folders` WHERE `userId` = '".$userId."';";
 
         $result = $link->query($query);
         $available = array();
-        while($row = $result->fetch_array())
-        {
-            if($folderId == $row['id'])
-            {
-                $available[] = array(
-                        'id' => $row['id'],
-                        'text' => $row['name'],
-                        'type' => 'folder',
-                        'parent' => $row['path'],
-                        "state" => array(
-                                "opened" => true,
-                                "selected" => true
-                        )
-                );
-            } else {
-                $available[] = array(
-                        'id' => $row['id'],
-                        'text' => $row['name'],
-                        'type' => 'folder',
-                        'parent' => $row['path']
-                );
-            }
+        while ($row = $result->fetch_array()) {
+            $available[] = array(
+                'id' => $row['id'],
+                'text' => $row['name'],
+                'type' => 'folder',
+                'parent' => $row['path']
+            );
         }
 
-        $flightsInFolders = $this->GetAllFlightsInFolders($uId);
+        $flightsInFolders = $this->GetAllFlightsInFolders($userId);
 
-        foreach ($flightsInFolders as $item)
-        {
+        foreach ($flightsInFolders as $item) {
             $query = "SELECT `id`, `bort`, `voyage`, `startCopyTime`, `bruType`, `departureAirport`, `arrivalAirport` ".
                 "FROM `flights` WHERE `id` = '".$item['flightId']."';";
 
@@ -494,69 +478,29 @@ class Folder
         return $available;
     }
 
-    public function FormFakeContent($folderId, $flights)
+    public function DeleteFolder($folderId, $userId)
     {
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $available = [];
-
-        foreach ($flights as $flightId)
-        {
-            $query = "SELECT `id`, `bort`, `voyage`, `startCopyTime`, `bruType`, `departureAirport`, `arrivalAirport` ".
-                "FROM `flights` WHERE `id` = '".$flightId."';";
-
-            $result = $link->query($query);
-            $name = '';
-
-            if($row = $result->fetch_array())
-            {
-                $name = $row['bort'] . ", " .  $row['voyage']  . ", " . date('d/m/y H:i', $row['startCopyTime'])  .
-                    ", " . $row['bruType']  . ", " . $row['departureAirport']  . "-" . $row['arrivalAirport'] ;
-
-                $available[] = array(
-                        'id' => $row['id'],
-                        'text' => $name,
-                        'type' => 'flight',
-                        'parent' => $folderId
-                );
-            }
-        }
-        $c->Disconnect();
-        unset($c);
-
-        return $available;
-    }
-
-    public function DeleteFolder($extFolderId, $extUserId)
-    {
-        if(is_int($extFolderId) && is_int($extUserId))
-        {
-            $userId = $extUserId;
-            $folderId = $extFolderId;
-
-            $query = "DELETE FROM `folders` WHERE (`id` = '".$folderId."') " .
-                "AND (`userId` = '".$userId."');";
-
-            $c = new DataBaseConnector;
-            $link = $c->Connect();
-            $stmt = $link->prepare($query);
-            $result['status'] = $stmt->execute();
-            $result['query'] = $query;
-            $stmt->close();
-            $c->Disconnect();
-            unset($c);
-
-            return $result;
-        }
-        else
-        {
+        if(!is_int($folderId) || !is_int($userId)) {
             error_log("Incorrect input data. " .
-                "DeleteFolder id - " . json_encode($extFolderId) . ". " .
-                "UserId id - " . json_encode($extUserId) . ". " .
+                "DeleteFolder id - " . json_encode($folderId) . ". " .
+                "UserId id - " . json_encode($userId) . ". " .
                 "FolderController");
             return false;
         }
+
+        $query = "DELETE FROM `folders` WHERE (`id` = '".$folderId."') " .
+            "AND (`userId` = '".$userId."');";
+
+        $c = new DataBaseConnector;
+        $link = $c->Connect();
+        $stmt = $link->prepare($query);
+        $result['status'] = $stmt->execute();
+        $result['query'] = $query;
+        $stmt->close();
+        $c->Disconnect();
+        unset($c);
+
+        return $result;
     }
 
     public function GetMaxFolderId()
@@ -576,4 +520,52 @@ class Folder
         return $maxId;
     }
 
+    public function getSubitems ($folderId, $userId)
+    {
+        $content = $this->getContent($userId);
+        $tree = $this->buildTree($content);
+
+        $searchedBranch = [];
+        $this->getBranch($tree, $folderId, $searchedBranch);
+        $leafes = [ $searchedBranch ];
+        $this->getBranchItems($searchedBranch['children'], $leafes);
+
+        return $leafes;
+    }
+
+    private function buildTree($d, $r = 0, $pk = 'parent', $k = 'id', $c = 'children')
+    {
+        $m = array();
+        foreach ($d as $e) {
+            isset($m[$e[$pk]]) ?: $m[$e[$pk]] = array();
+            isset($m[$e[$k]]) ?: $m[$e[$k]] = array();
+            $m[$e[$pk]][] = array_merge($e, array($c => &$m[$e[$k]]));
+        }
+        return $m[$r];// add [0] if there couldnot be more than one root node
+    }
+
+    private function getBranch($tree, $branchId, &$searchedBranch)
+    {
+        foreach ($tree as $branch) {
+            if (intval($branch['id']) === intval($branchId)) {
+                $searchedBranch = $branch;
+                break;
+            }
+
+            if (count($branch['children']) > 0) {
+                $this->getBranch($branch['children'], $branchId, $searchedBranch);
+            }
+        }
+    }
+
+    private function getBranchItems($branch, &$items)
+    {
+        foreach ($branch as $leaf) {
+            $items[] = $leaf;
+
+            if (count($leaf['children']) > 0) {
+                $this->getBranchItems($leaf['children'], $items);
+            }
+        }
+    }
 }

@@ -24,37 +24,73 @@ use ZipArchive;
 
 class FlightsController extends CController
 {
-   public $curPage = 'flightsPage';
+    public $curPage = 'flightsPage';
 
-   function __construct()
+    function __construct()
+    {
+        $this->IsAppLoggedIn();
+        $this->setAttributes();
+
+        $get = $_GET;
+        if(isset($get['action']) && ($get['action'] != '')) {
+            $this->getAction = $get['action'];
+        }
+    }
+
+    public function changeFlightPath($data)
+    {
+        if (!isset($data['id'])
+            || !isset($data['parentId'])
+            || !is_int(intval($data['id']))
+            || !is_int(intval($data['parentId']))
+        ) {
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".
+                    json_encode($_POST) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+        $sender = intval($data['id']);
+        $target = intval($data['parentId']);
+
+        $Fd = new Folder;
+        $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
+        unset($Fd);
+
+        echo (json_encode([
+            'id' => $sender,
+            'parentId' => $target
+        ]));
+        exit;
+    }
+
+   public function deleteFlight($flightId)
    {
-       $this->IsAppLoggedIn();
-       $this->setAttributes();
-
-       $get = $_GET;
-       if(isset($get['action']) && ($get['action'] != '')) {
-           $this->getAction = $get['action'];
+       if (!isset($data['id'])
+           || !is_int(intval($data['id']))
+       ) {
+           header("Status: 400 Bad Request");
+           $answ["status"] = "err";
+           $answ["error"] = "Not all nessesary params sent. Post: ".
+                   json_encode($_POST) . ". Page FlightController";
+           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+           echo(json_encode($answ));
+           exit;
        }
-   }
 
-   public function ChangeFlightPath($sender, $target)
-   {
-      $userId = intval($this->_user->userInfo['id']);
+       $flightId = intval($data['id']);
+       $userId = intval($this->_user->userInfo['id']);
 
-      $Fd = new Folder;
-      $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-      unset($Fd);
-
-      return $result;
-   }
-
-   public function DeleteFlight($flightId)
-   {
        $FC = new FlightComponent;
-       $result = $FC->DeleteFlight($flightId, intval($this->_user->userInfo['id']));
+       $FC->DeleteFlight($flightId, $userId);
        unset($FC);
 
-       return $result;
+       echo(json_encode('ok'));
+       exit;
    }
 
     public function ProcessFlight($data)
@@ -741,56 +777,6 @@ class FlightsController extends CController
                $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
            }
            echo json_encode($answ);
-       } else {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
-
-   public function itemDelete($data)
-   {
-       if(isset($data['type'])
-           && isset($data['id'])
-       ) {
-           $type = $data['type'];
-           $id = intval($data['id']);
-
-           if($type == 'folder') {
-               $result = $this->DeleteFolderWithAllChildren($id);
-
-               $answ = array();
-               if ($result)
-               {
-                   $answ['status'] = 'ok';
-                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
-               } else {
-                   $answ['status'] = 'err';
-                   $answ['data']['error'] = 'Error during folder deleting.';
-                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-               }
-               echo json_encode($answ);
-           } else if($type == 'flight') {
-               $result = $this->DeleteFlight($id);
-
-               $answ = array();
-               if($result) {
-                   $answ['status'] = 'ok';
-                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
-               } else {
-                   $answ['status'] = 'err';
-                   $answ['data']['error'] = 'Error during flight deleting.';
-                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-               }
-               echo json_encode($answ);
-           } else {
-               $answ["status"] = "err";
-               $answ["error"] = "Incorect type. Post: ".
-                       json_encode($_POST) . ". Page flights.php";
-               echo(json_encode($answ));
-           }
        } else {
            $answ["status"] = "err";
            $answ["error"] = "Not all nessesary params sent. Post: ".

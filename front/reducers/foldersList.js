@@ -3,6 +3,23 @@ const initialState = {
     items: []
 };
 
+function findItemIndex(items, searchIndex) {
+    let itemIndex = null;
+
+    if (items
+        && Array.isArray(items)
+        && (items.length > 0)
+    ) {
+        items.forEach((item, index) => {
+            if (item.id === searchIndex) {
+                itemIndex = index;
+            }
+        });
+    }
+
+    return itemIndex;
+}
+
 export default function foldersList(state = initialState, action) {
     switch (action.type) {
         case 'GET_FOLDERS':
@@ -14,24 +31,29 @@ export default function foldersList(state = initialState, action) {
                 pending: false,
                 items: action.payload
             };
-        case 'FOLDER_DELETED':
+        case 'FOLDER_DELETED': {
             let folderId = action.payload.id;
+            let index = findItemIndex(state.items, folderId);
 
-            if (state.items
-                && Array.isArray(state.items)
-                && (state.items.length > 0)
-            ) {
-                state.items.forEach((item, index) => {
-                    if (item.id === folderId) {
-                        state.items.splice(index, 1);
-                    }
-                });
+            if (index) {
+                state.items.splice(index, 1);
             }
 
             return { ...state, ...{ items: state.items }};
+        }
         case 'CREATING_FOLDER_COMPLETE':
             state.items.push(action.payload)
             return { ...state };
+        case 'MOVING_FOLDER_COMPLETE': {
+            let folderId = action.payload.id;
+            let index = findItemIndex(state.items, folderId);
+
+            if (index) {
+                state.items[index].parentId = action.payload.parentId
+            }
+
+            return { ...state, ...{ items: state.items }};
+        }
         default:
             return state;
     }

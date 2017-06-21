@@ -770,7 +770,7 @@ class UploaderController extends CController
 
         //not need any more
         $Fr->CloseFile($fileDesc);
-        unlink($uploadedFile);
+        unlink($fileName);
 
         foreach($fileNameApArr as $prefix => $fileNameAp) {
             fclose($fileNameApDescArr[$prefix]);

@@ -9,21 +9,22 @@ use Model\Flight;
 use Entity\Folder as FolderEntity;
 
 use Component\EntityManagerComponent as EM;
+use Component\FlightComponent;
 
 class FolderController extends CController
 {
-   public $curPage = 'folderPage';
+    public $curPage = 'folderPage';
 
-   function __construct()
-   {
-       $this->IsAppLoggedIn();
-       $this->setAttributes();
+    function __construct()
+    {
+        $this->IsAppLoggedIn();
+        $this->setAttributes();
 
-       $get = $_GET;
-       if(isset($get['action']) && ($get['action'] != '')) {
-           $this->getAction = $get['action'];
-       }
-   }
+        $get = $_GET;
+        if(isset($get['action']) && ($get['action'] != '')) {
+            $this->getAction = $get['action'];
+        }
+    }
 
     public function createFolder($data)
     {
@@ -31,7 +32,7 @@ class FolderController extends CController
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page flights.php";
+                    json_encode($_POST) . ". Page FolderController";
             $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
             echo(json_encode($answ));
             exit;
@@ -64,187 +65,120 @@ class FolderController extends CController
        ));
 
        exit;
-   }
+    }
 
-   public function getFolders($args)
-   {
-       $userId = intval($this->_user->userInfo['id']);
+    public function getFolders($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
 
-       if (!is_int($userId)) {
-           throw new Exception("Incorrect userId used in getFolders FlightsController." . $userId, 1);
-       }
+        if (!is_int($userId)) {
+            throw new Exception("Incorrect userId used in getFolders FlightsController." . $userId, 1);
+        }
 
-       $em = EM::get();
+        $em = EM::get();
 
-       $folders = $em->getRepository('Entity\Folder')
-           ->findBy(['userId' => $userId]);
+        $folders = $em->getRepository('Entity\Folder')
+            ->findBy(['userId' => $userId]);
 
-       $items = [];
-       foreach ($folders as $folder) {
-           $items[] = array_merge(
-               $folder->get(),
-               [
-                   'type' => 'folder',
-                   'parentId' => intval($folder->getPath())
-               ]
-           );
-       }
-
-       echo json_encode($items);
-   }
-
-   public function ChangeFlightPath($sender, $target)
-   {
-      $userId = intval($this->_user->userInfo['id']);
-
-      $Fd = new Folder;
-      $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-      unset($Fd);
-
-      return $result;
-   }
-
-   public function ChangeFolderPath($sender, $target)
-   {
-      $userId = intval($this->_user->userInfo['id']);
-
-      $Fd = new Folder;
-      $result = $Fd->ChangeFolderPath($sender, $target, $userId);
-      unset($Fd);
-
-      return $result;
-   }
-
-   public function RenameFolder($extFolderId, $extFolderName)
-   {
-      $folderId = $extFolderId;
-      $folderName = $extFolderName;
-
-      $userId = $this->_user->GetUserIdByName($this->_user->username);
-
-      $Fd = new Folder;
-      $result = $Fd->RenameFolder($folderId, $folderName, $userId);
-      unset($Fd);
-
-      return $result;
-   }
-
-   public function DeleteFolderWithAllChildren($extId)
-   {
-      if(is_int($extId))
-      {
-         $id = $extId;
-
-         $userId = intval($this->_user->GetUserIdByName($this->_user->username));
-
-         $Fd = new Folder;
-         $availableFolders = $Fd->GetAvailableFolders($userId);
-         $result = array();
-
-         if(in_array($id, $availableFolders))
-         {
-            $nodeTree = $this->PrepareTree(0); // here PrepareTree argument is not important
-            $children = $nodeTree[0]['children'];
-            $matches = array(
-               0 => $id
+        $items = [];
+        foreach ($folders as $folder) {
+            $items[] = array_merge(
+                $folder->get(),
+                [
+                    'type' => 'folder',
+                    'parentId' => intval($folder->getPath())
+                ]
             );
-            $this->recursiveCollectChildren($children, $id, $matches);
+        }
 
-            $Fl = new Flight;
-            foreach ($matches as $id)
-            {
-               $id = intval($id);
-               $flightInfo = $Fl->GetFlightInfo($id);
-               if(!empty($flightInfo))
-               {
-                  $this->DeleteFlight($id);
-               }
+        echo json_encode($items);
+    }
 
-               if(in_array($id, $availableFolders))
-               {
-                  $folderInfo = $Fd->GetFolderInfo($id);
-                  if(!empty($folderInfo))
-                  {
-                     $result[] = $Fd->DeleteFolder($id, $userId);
-                  }
-               }
-            }
+    public function deleteFolder($data)
+    {
+        if (!isset($data['id'])
+            || !is_int(intval($data['id']))
+        ) {
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $id = $data['id'];
+        $userId = intval($this->_user->userInfo['id']);
+        $userInfo = $this->_user->userInfo;
+
+        $Fd = new Folder;
+        $availableFolders = $Fd->GetAvailableFolders($userId);
+        $result = array();
+
+        if (!in_array($id, $availableFolders)) {
             unset($Fd);
-            $result['status'] = true;
-            return $result;
-         }
-         else
-         {
-            unset($Fd);
+            header("Status: 403 Forbidden");
             $dat = "Not available for current user. DeleteFolder id - " . $id . ". " .
                "Username - " . $this->_user->username . ". Page FlightsController.php";
-            error_log($dat);
-            $result['status'] = false;
             $result['data'] = $dat;
-            return $result;
-         }
-      }
-      else
-      {
-         error_log("Incorrect input data. DeleteFolder id - " . json_encode($extId) . ". Page FlightsController.php");
-         $result['status'] = false;
-         return $result;
-      }
-   }
+            echo(json_encode($answ));
+            exit;
+        }
 
-   private function recursiveCollectChildren($branch, $parentId, &$childIds)
-   {
-      foreach ($branch as $childBranch)
-      {
-         if($childBranch['parent'] == $parentId)
-         {
-            $childIds[] = $childBranch['id'];
-            if(!empty($childBranch['children']))
-            {
-               $searchedNewParentId = $childBranch['id'];
-               $searchedNewBranch = $childBranch['children'];
-               $this->recursiveCollectChildren($searchedNewBranch, $searchedNewParentId, $childIds);
+        $Fd = new Folder;
+        $subitems = $Fd->getSubitems($id, $userId);
+
+        foreach ($subitems as $item) {
+            $id = intval($item['id']);
+            if ($item['type'] === 'folder') {
+                 $Fd->DeleteFolder($id, $userId);
+            } else if ($item['type'] === 'flight') {
+                if (User::isAdmin($userInfo['role'])
+                    || User::isModerator($userInfo['role'])
+                ) {
+                    $FC = new FlightComponent;
+                    $result = $FC->DeleteFlight($id, $userId);
+                    unset($FC);
+                }
             }
-         }
-         else
-         {
-            if(!empty($childBranch['children']))
-            {
-               $searchedNewBranch = $childBranch['children'];
-               $this->recursiveCollectChildren($searchedNewBranch, $parentId, $childIds);
-            }
-         }
-      }
-   }
+        }
+        unset($Fd);
 
-   public function folderChangePath($data)
-   {
-       if(isset($data['sender'])
-           && isset($data['target'])
-       ) {
-           $sender = $data['sender'];
-           $target = $data['target'];
+        echo(json_encode('ok'));
+        exit;
+    }
 
-           $result = $this->ChangeFolderPath($sender, $target);
-           $this->RegisterActionExecution($this->action, "executed", $sender, 'folderId', $target, "newPath");
+    public function ChangeFolderPath($data)
+    {
+        if (!isset($data['id'])
+            || !isset($data['parentId'])
+            || !is_int(intval($data['id']))
+            || !is_int(intval($data['parentId']))
+        ) {
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".
+                    json_encode($_POST) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
 
-           $answ = array();
-           if($result) {
-               $answ['status'] = 'ok';
-           } else {
-               $answ['status'] = 'err';
-               $answ['error'] = 'Error during folder change path.';
-               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           }
-           echo json_encode($answ);
-       } else {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
+        $userId = intval($this->_user->userInfo['id']);
+        $sender = intval($data['id']);
+        $target = intval($data['parentId']);
+
+        $Fd = new Folder;
+        $result = $Fd->ChangeFolderPath($sender, $target, $userId);
+        unset($Fd);
+
+        echo (json_encode([
+            'id' => $sender,
+            'parentId' => $target
+        ]));
+        exit;
+    }
 
    public function folderRename($data)
    {
@@ -254,7 +188,12 @@ class FolderController extends CController
            $folderId = $data['folderId'];
            $folderName = $data['folderName'];
 
-           $result = $this->RenameFolder($folderId, $folderName);
+           $userId = $this->_user->GetUserIdByName($this->_user->username);
+
+           $Fd = new Folder;
+           $result = $Fd->RenameFolder($folderId, $folderName, $userId);
+           unset($Fd);
+
            $this->RegisterActionExecution($this->action, "executed", $folderId, 'folderId', $folderName, "newName");
 
            $answ = array();
@@ -269,57 +208,7 @@ class FolderController extends CController
        } else {
            $answ["status"] = "err";
            $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
-
-   public function itemDelete($data)
-   {
-       if(isset($data['type'])
-           && isset($data['id'])
-       ) {
-           $type = $data['type'];
-           $id = intval($data['id']);
-
-           if($type == 'folder') {
-               $result = $this->DeleteFolderWithAllChildren($id);
-
-               $answ = array();
-               if ($result)
-               {
-                   $answ['status'] = 'ok';
-                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
-               } else {
-                   $answ['status'] = 'err';
-                   $answ['data']['error'] = 'Error during folder deleting.';
-                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-               }
-               echo json_encode($answ);
-           } else if($type == 'flight') {
-               $result = $this->DeleteFlight($id);
-
-               $answ = array();
-               if($result) {
-                   $answ['status'] = 'ok';
-                   $this->RegisterActionExecution($this->action, "executed", $id, "itemId", $type, 'typeDeletedItem');
-               } else {
-                   $answ['status'] = 'err';
-                   $answ['data']['error'] = 'Error during flight deleting.';
-                   $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-               }
-               echo json_encode($answ);
-           } else {
-               $answ["status"] = "err";
-               $answ["error"] = "Incorect type. Post: ".
-                       json_encode($_POST) . ". Page flights.php";
-               echo(json_encode($answ));
-           }
-       } else {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
+                   json_encode($_POST) . ". Page FolderController";
            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
            echo(json_encode($answ));
        }

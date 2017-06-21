@@ -16,6 +16,8 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import getFlightsList from 'actions/getFlightsList';
 import getFoldersList from 'actions/getFoldersList';
 import getSettings from 'actions/getSettings';
+import moveFlight from 'actions/moveFlight';
+import moveFolder from 'actions/moveFolder';
 
 const MAX_DEPTH = 5;
 const FLIGHT_TYPE = 'flight';
@@ -38,11 +40,13 @@ class Tree extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            treeData: getTreeFromFlatData({
-                flatData: this.prepareTreeData(nextProps.list)
-            })
-        })
+        if (nextProps.list.length !== this.props.list.length) {
+            this.setState({
+                treeData: getTreeFromFlatData({
+                    flatData: this.prepareTreeData(nextProps.list)
+                })
+            });
+        }
     }
 
     componentDidMount() {
@@ -79,22 +83,48 @@ class Tree extends Component {
         return flatData;
     }
 
-    updateTreeData(treeData) {
-        console.log(treeData);
+    updateTreeData (treeData) {
         this.setState({ treeData });
     }
 
-    buildTree() {
+    moveNodeHandler ({ node, treeIndex, path }) {
+        let treeData = this.state.treeData;
+        let id = node.id;
+        let parent = { id: 0 }; // if not found than moved to root
+
+        this.findParent(treeData, id, (found) => { parent = found });
+        let data = { id: id, parentId: parent.id };
+
+        if (node.type === FLIGHT_TYPE) {
+            this.props.moveFlight(data);
+        } else if (node.type === FOLDER_TYPE) {
+            this.props.moveFolder(data);
+        }
+    }
+
+    findParent (treeData, id, save) {
+        treeData.forEach((item) => {
+            let itemId = item.id;
+            let children = item.children || [];
+
+            children.forEach((childItem) => {
+                if (childItem.id === id) {
+                    save(item)
+                } else {
+                    this.findParent(children, id, save);
+                }
+            });
+        });
+    }
+
+    buildTree () {
         return (<SortableTree
             rowHeight={ 50 }
             scaffoldBlockPxWidth={ 40 }
             maxDepth={ MAX_DEPTH }
             treeData={ this.state.treeData }
             onChange={ this.updateTreeData.bind(this) }
-            onMoveNode={({ node, treeIndex, path }) => {
-                console.log(node);
-                console.log(path);
-            }}
+            onMoveNode={ this.moveNodeHandler.bind(this) }
             canDrop={({ nextParent }) => !nextParent || !nextParent.noChildren}
             isVirtualized={ false }
             generateNodeProps={
@@ -115,7 +145,7 @@ class Tree extends Component {
        />);
     }
 
-    buildBody() {
+    buildBody () {
         if (this.props.pending !== false) {
             return <ContentLoader/>
         } else {
@@ -123,7 +153,7 @@ class Tree extends Component {
         }
     }
 
-    render() {
+    render () {
         return (
             <div className='flights-tree'
                 ref={(container) => { this.container = container; }}
@@ -134,7 +164,7 @@ class Tree extends Component {
     }
 }
 
-function merge(flightsListItems, foldersListItems) {
+function merge (flightsListItems, foldersListItems) {
     if (Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
         return foldersListItems.concat(flightsListItems);
     } else if (!Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
@@ -165,6 +195,8 @@ function mapDispatchToProps(dispatch) {
         getFlightsList: bindActionCreators(getFlightsList, dispatch),
         getFoldersList: bindActionCreators(getFoldersList, dispatch),
         getSettings: bindActionCreators(getSettings, dispatch),
+        moveFlight: bindActionCreators(moveFlight, dispatch),
+        moveFolder: bindActionCreators(moveFolder, dispatch),
     }
 }
 

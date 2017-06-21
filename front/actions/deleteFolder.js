@@ -8,7 +8,7 @@ export default function deleteFolder(payload) {
         });
 
         return new Promise((resolve, reject) => {
-            fetch('/entry.php?action=flights/deleteFolder&' + queryString.stringify(payload),
+            fetch('/entry.php?action=folder/deleteFolder&' + queryString.stringify(payload),
                 { credentials: "same-origin" }
             ).then(response => response.json())
             .then(json => {
