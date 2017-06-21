@@ -5,7 +5,7 @@ export default function getFoldersList(payload) {
             type: 'GET_FOLDERS'
         });
 
-        fetch('/entry.php?action=flights/getFolders',
+        fetch('/entry.php?action=folder/getFolders',
             { credentials: 'same-origin' }
         ).then(response => response.json())
         .then(json => dispatch({

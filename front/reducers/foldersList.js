@@ -1,6 +1,6 @@
 const initialState = {
     pending: null,
-    items: null
+    items: []
 };
 
 export default function foldersList(state = initialState, action) {
@@ -29,6 +29,9 @@ export default function foldersList(state = initialState, action) {
             }
 
             return { ...state, ...{ items: state.items }};
+        case 'CREATING_FOLDER_COMPLETE':
+            state.items.push(action.payload)
+            return { ...state };
         default:
             return state;
     }

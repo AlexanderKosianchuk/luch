@@ -37,14 +37,6 @@ class Tree extends Component {
         }
     }
 
-    componentWillMount() {
-        if (this.props.pending !== false) {
-            this.props.getFlightsList();
-            this.props.getFoldersList();
-            this.props.getSettings();
-        }
-    }
-
     componentWillReceiveProps(nextProps) {
         this.setState({
             treeData: getTreeFromFlatData({
@@ -55,6 +47,12 @@ class Tree extends Component {
 
     componentDidMount() {
         this.resize();
+
+        if (this.props.pending !== false) {
+            this.props.getFlightsList();
+            this.props.getFoldersList();
+            this.props.getSettings();
+        }
     }
 
     componentDidUpdate() {

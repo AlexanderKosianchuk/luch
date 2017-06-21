@@ -26,50 +26,26 @@ FlightList.prototype.FillFactoryContaider = function(factoryContainer) {
     var self = this;
     self.flightListFactoryContainer = factoryContainer;
 
-    $.ajax({
-        type: "POST",
-        data: {
-            action: "flights/flightGeneralElements",
-            data: {
-                data: 'data'
-            }
-        },
-        dataType: 'json',
-        url: ENTRY_URL,
-        async: true
-    }).fail(function(msg){
-        console.log(msg);
-    }).done(function(answ) {
-        if(answ["status"] == "ok") {
-            var data = answ['data'];
+    self.flightListFactoryContainer.empty();
 
-            self.flightListFactoryContainer.empty();
-            self.flightListFactoryContainer.append(data['fileUploadBlock']);
+    self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
+    self.flightListWorkspace = $("div#flightListWorkspace");
 
-            self.flightListFactoryContainer.append("<div id='flightListWorkspace' class='WorkSpace'></div>");
-            self.flightListWorkspace = $("div#flightListWorkspace");
-
-            self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function(event) {
-                let currentTarget = event.currentTarget;
-                let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
-                self.store.dispatch(redirectAction('/flight-events/' + flightId));
-                return false;
-            });
-
-            self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
-            self.flightListContent = $("div#flightListContent");
-
-            if (self.view === 'table') {
-                self.ShowFlightsTable();
-            } else {
-                self.ShowFlightsTree();
-            }
-
-            self.bindMenuEvents();
-        } else {
-            console.log(answ["error"]);
-        }
+    self.flightListWorkspace.on("dblclick", ".JstreeContentItemFlight", function(event) {
+        let currentTarget = event.currentTarget;
+        let flightId = $(currentTarget).find("[data-flightid]").data("flightid");
+        self.store.dispatch(redirectAction('/flight-events/' + flightId));
+        return false;
     });
+
+    self.flightListWorkspace.append("<div id='flightListContent' class='Content'></div>");
+    self.flightListContent = $("div#flightListContent");
+
+    if (self.view === 'table') {
+        self.ShowFlightsTable();
+    }
+
+    self.bindMenuEvents();
 }
 
 FlightList.prototype.bindMenuEvents = function() {

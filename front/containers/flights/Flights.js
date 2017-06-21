@@ -16,8 +16,8 @@ class Flights extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.viewType !== this.props.viewType) {
-            this.callShowPage();
+        if ((this.props.viewType === 'table')) {
+            this.props.showPage('flightsTableShow');
         }
     }
 
@@ -42,7 +42,7 @@ class Flights extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        viewType: ownProps.match.params.viewType
+        viewType: ownProps.match.params.viewType || 'tree'
     };
 }
 

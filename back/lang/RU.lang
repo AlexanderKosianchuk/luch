@@ -1,6 +1,7 @@
 {
 "indexPage":{},
 "bruTypesPage":{},
+"folderPage":{},
 "flightsPage":{
     "upload": "Загрузить",
     "flightsItem": "Полеты",

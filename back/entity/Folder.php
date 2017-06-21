@@ -62,4 +62,12 @@ class Folder
         ];
     }
 
+    public function set($obj)
+    {
+        $this->name = $obj['name'];
+        $this->path = $obj['path'];
+        $this->userId = $obj['userId'];
+    }
+
+
 }
