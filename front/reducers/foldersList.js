@@ -32,11 +32,10 @@ export default function foldersList(state = initialState, action) {
                 items: action.payload
             };
         case 'FOLDER_DELETED': {
-            let folderId = action.payload.id;
-            let index = findItemIndex(state.items, folderId);
+            let deletedIndex = findItemIndex(state.items, action.payload.id);
 
-            if (index) {
-                state.items.splice(index, 1);
+            if (deletedIndex !== null) {
+                state.items.splice(deletedIndex, 1);
             }
 
             return { ...state, ...{ items: state.items }};
@@ -45,15 +44,23 @@ export default function foldersList(state = initialState, action) {
             state.items.push(action.payload)
             return { ...state };
         case 'MOVING_FOLDER_COMPLETE': {
-            let folderId = action.payload.id;
-            let index = findItemIndex(state.items, folderId);
+            let movedIndex = findItemIndex(state.items, action.payload.id);
 
-            if (index) {
-                state.items[index].parentId = action.payload.parentId
+            if (movedIndex !== null) {
+                state.items[movedIndex].parentId = action.payload.parentId
             }
 
             return { ...state, ...{ items: state.items }};
         }
+        case 'TOGGLING_FOLDER_EXPANDING_COMPLETE':
+            let toggledExpandingItem = findItemIndex(state.items, action.payload.id);
+
+            if (toggledExpandingItem !== null) {
+                state.items[toggledExpandingItem].expanded
+                    = (action.payload.expanded === true);
+            }
+
+            return { ...state, ...{ items: state.items }};
         default:
             return state;
     }

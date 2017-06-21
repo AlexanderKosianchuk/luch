@@ -18,6 +18,7 @@ import getFoldersList from 'actions/getFoldersList';
 import getSettings from 'actions/getSettings';
 import moveFlight from 'actions/moveFlight';
 import moveFolder from 'actions/moveFolder';
+import toggleFolderExpanding from 'actions/toggleFolderExpanding';
 
 const MAX_DEPTH = 5;
 const FLIGHT_TYPE = 'flight';
@@ -40,13 +41,11 @@ class Tree extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.list.length !== this.props.list.length) {
-            this.setState({
-                treeData: getTreeFromFlatData({
-                    flatData: this.prepareTreeData(nextProps.list)
-                })
-            });
-        }
+        this.setState({
+            treeData: getTreeFromFlatData({
+                flatData: this.prepareTreeData(nextProps.list)
+            })
+        });
     }
 
     componentDidMount() {
@@ -102,6 +101,13 @@ class Tree extends Component {
         }
     }
 
+    expandHandler({ treeData, node, expanded }) {
+        this.props.toggleFolderExpanding({
+            id: node.id,
+            expanded: expanded
+        });
+    }
+
     findParent (treeData, id, save) {
         treeData.forEach((item) => {
             let itemId = item.id;
@@ -125,6 +131,7 @@ class Tree extends Component {
             treeData={ this.state.treeData }
             onChange={ this.updateTreeData.bind(this) }
             onMoveNode={ this.moveNodeHandler.bind(this) }
+            onVisibilityToggle={ this.expandHandler.bind(this) }
             canDrop={({ nextParent }) => !nextParent || !nextParent.noChildren}
             isVirtualized={ false }
             generateNodeProps={
@@ -197,6 +204,7 @@ function mapDispatchToProps(dispatch) {
         getSettings: bindActionCreators(getSettings, dispatch),
         moveFlight: bindActionCreators(moveFlight, dispatch),
         moveFolder: bindActionCreators(moveFolder, dispatch),
+        toggleFolderExpanding: bindActionCreators(toggleFolderExpanding, dispatch),
     }
 }
 

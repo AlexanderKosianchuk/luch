@@ -32,21 +32,19 @@ export default function flightsList(state = initialState, action) {
                 items: action.payload
             };
         case 'FLIGHT_DELETED': {
-            let flightId = action.payload.id;
-            let index = findItemIndex(state.items, flightId);
+            let deletedIndex = findItemIndex(state.items, action.payload.id);
 
-            if (index) {
-                state.items.splice(index, 1);
+            if (deletedIndex !== null) {
+                state.items.splice(deletedIndex, 1);
             }
 
             return { ...state, ...{ items: state.items }};
         }
         case 'MOVING_FLIGHT_COMPLETE': {
-            let flightId = action.payload.id;
-            let index = findItemIndex(state.items, flightId);
+            let movedIndex = findItemIndex(state.items, action.payload.id);
 
-            if (index) {
-                state.items[index].parentId = action.payload.parentId
+            if (movedIndex !== null) {
+                state.items[movedIndex].parentId = action.payload.parentId
             }
 
             return { ...state, ...{ items: state.items }};

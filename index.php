@@ -14,7 +14,7 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
 >
 <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-    <title>Luch</title>
+    <title>Luche</title>
     <link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
 </head>
 <body>

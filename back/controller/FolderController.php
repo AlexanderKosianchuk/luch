@@ -86,12 +86,55 @@ class FolderController extends CController
                 $folder->get(),
                 [
                     'type' => 'folder',
-                    'parentId' => intval($folder->getPath())
+                    'parentId' => intval($folder->getPath()),
+                    'expanded' => boolval($folder->getIsExpanded())
                 ]
             );
         }
 
         echo json_encode($items);
+    }
+
+    public function toggleFolderExpanding($data)
+    {
+        if (!isset($data['id'])
+            || !is_int(intval($data['id']))
+            || !isset($data['expanded'])
+        ) {
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $id = intval($data['id']);
+        $userId = intval($this->_user->userInfo['id']);
+        $expanded = ($data['expanded'] === 'true') ? true : false;
+
+        $em = EM::get();
+
+        $folders = $em->find('Entity\Folder', $id);
+
+        if ($folders === null) {
+            header("Status: 404 Not Found");
+            $msg = "Requested folder not found. Id: ". $id;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $folders->setExpanded(intval($expanded));
+
+        $em->flush();
+
+        echo(json_encode([
+            'id' => $id,
+            'expanded' => $expanded
+        ]));
+        exit;
     }
 
     public function deleteFolder($data)

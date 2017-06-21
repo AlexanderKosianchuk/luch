@@ -38,7 +38,14 @@ class Folder
     /**
      * @var integer
      *
-     * @Column(name="userId", type="integer", nullable=true)
+     * @Column(name="is_expanded", type="boolean", nullable=false)
+     */
+    private $isExpanded;
+
+    /**
+     * @var integer
+     *
+     * @Column(name="id_user", type="integer", nullable=true)
      */
     private $userId;
 
@@ -52,6 +59,11 @@ class Folder
         return $this->path;
     }
 
+    public function getIsExpanded()
+    {
+        return $this->isExpanded;
+    }
+
     public function get()
     {
         return [
@@ -59,6 +71,7 @@ class Folder
             'name' => $this->name,
             'path' => $this->path,
             'userId' => $this->userId,
+            'isExpanded' => $this->isExpanded
         ];
     }
 
@@ -67,7 +80,11 @@ class Folder
         $this->name = $obj['name'];
         $this->path = $obj['path'];
         $this->userId = $obj['userId'];
+        $this->isExpanded = isset($obj['isExpanded']) ? $obj['isExpanded'] : 0;
     }
 
-
+    public function setExpanded($isExpanded)
+    {
+        $this->isExpanded = $isExpanded;
+    }
 }

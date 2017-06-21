@@ -8,75 +8,24 @@ class Folder
 {
     const ROOT_FOLDER_ID = 0;
 
-    public function CreateFolderTable()
+    public function CreateFolder($name, $path, $userId)
     {
-        $query = "SHOW TABLES LIKE 'folders';";
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `folders` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(200),
-                `path` INT(11) DEFAULT 0,
-                `userId` INT(11),
-                PRIMARY KEY (`id`)) " .
-                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-        $query = "SHOW TABLES LIKE 'folders';";
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `flight_to_folder` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `flightId` INT(11),
-                `folderId` INT(11) DEFAULT 0,
-                `userId` INT(11),
-                PRIMARY KEY (`id`)) " .
-                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-    }
-
-    public function CreateFolder($extName, $extPath, $extUserId)
-    {
-        $name = $extName;
-        $path = $extPath;
-        $userId = $extUserId;
-
         $id = $this->GetMaxFolderId();
 
         $res = array();
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        if($id == 0)
-        {
+        if ($id == 0) {
             $id = FOLDER_START_ID;
-            $query = "INSERT INTO `folders` (`id`,`name`, `path`, `userId`) " .
-                    "VALUES ('".$id."', '".$name."', ".$path.", '".$userId."');";
+            $query = "INSERT INTO `folders` (`id`,`name`, `path`, `id_user`, `is_expanded`) " .
+                    "VALUES ('".$id."', '".$name."', ".$path.", '".$userId."', 0);";
             $stmt = $link->prepare($query);
             $res['data'] = $stmt->execute();
             $stmt->close();
-        }
-        else
-        {
-            $query = "INSERT INTO `folders` (`name`, `path`, `userId`) " .
-                    "VALUES ('".$name."', ".$path.", '".$userId."');";
+        } else {
+            $query = "INSERT INTO `folders` (`name`, `path`, `id_user`) " .
+                    "VALUES ('".$name."', ".$path.", '".$userId."', 0);";
 
             $stmt = $link->prepare($query);
             $res['data'] = $stmt->execute();
@@ -354,7 +303,7 @@ class Folder
         $link = $c->Connect();
 
         $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
-            "AND (`userId` = '".$userId."'));";;
+            "AND (`id_user` = '".$userId."'));";;
 
         $result = $link->query($query);
         $subfolders = array();
@@ -383,10 +332,10 @@ class Folder
         } else if(is_array($userId)) {
             $userIds = implode("','", $userId);
             $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
-                "AND `userId` IN ('".$userId."'));";
+                "AND `id_user` IN ('".$userId."'));";
         } else {
             $query = "SELECT * FROM `folders` WHERE ((`path` = ".$id.") " .
-                "AND (`userId` = '".$userId."'));";;
+                "AND (`id_user` = '".$userId."'));";;
         }
 
         $result = $link->query($query);
@@ -414,9 +363,9 @@ class Folder
             $query = "SELECT `id` FROM `folders` WHERE 1;";
         } else if(is_array($userId)) {
             $userIds = implode("','", $userId);
-            $query = "SELECT `id` FROM `folders` WHERE  `userId` IN ('".$userIds."');";
+            $query = "SELECT `id` FROM `folders` WHERE  `id_user` IN ('".$userIds."');";
         } else {
-            $query = "SELECT `id` FROM `folders` WHERE `userId` = '".$userId."';";
+            $query = "SELECT `id` FROM `folders` WHERE `id_user` = '".$userId."';";
         }
 
         $result = $link->query($query);
@@ -437,7 +386,7 @@ class Folder
         $link = $c->Connect();
         $link2 = $c->Connect();
 
-        $query = "SELECT * FROM `folders` WHERE `userId` = '".$userId."';";
+        $query = "SELECT * FROM `folders` WHERE `id_user` = '".$userId."';";
 
         $result = $link->query($query);
         $available = array();
@@ -489,7 +438,7 @@ class Folder
         }
 
         $query = "DELETE FROM `folders` WHERE (`id` = '".$folderId."') " .
-            "AND (`userId` = '".$userId."');";
+            "AND (`id_user` = '".$userId."');";
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
