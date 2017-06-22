@@ -42,9 +42,13 @@ class Tree extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            treeData: getTreeFromFlatData({
-                flatData: this.prepareTreeData(nextProps.list)
-            })
+            treeData: this.getTreeData(nextProps.list)
+        });
+    }
+
+    getTreeData(list) {
+        return getTreeFromFlatData({
+            flatData: this.prepareTreeData(list)
         });
     }
 

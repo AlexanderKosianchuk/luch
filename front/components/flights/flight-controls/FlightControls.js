@@ -81,7 +81,7 @@ class FlightControls extends Component {
                         + 'glyphicon '
                         + 'glyphicon-trash'
                     }
-                    onClick={ this.handleClickTrash }
+                    onClick={ this.handleClickTrash.bind(this) }
                 ></span>
             </div>
         );

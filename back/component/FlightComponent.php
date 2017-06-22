@@ -6,6 +6,7 @@ use Model\User;
 use Model\Flight;
 use Model\Fdr;
 use Model\Folder;
+use Model\Frame;
 
 use Entity\FlightEvent;
 use Entity\FlightSettlement;
@@ -125,5 +126,38 @@ class FlightComponent
         }
 
         return $allFlightSettlements;
+    }
+
+    public static function getTreeItem($flightId, $userId)
+    {
+        $em = EM::get();
+        $Fl = new Flight;
+        $fdr = new Fdr;
+        $Frame = new Frame;
+
+        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        $flightInfo = $Fl->GetFlightInfo($flightToFolders->getFlightId());
+        $fdrInfo = $fdr->getFdrInfo(intval($flightInfo['id_fdr']));
+        $prefixArr = $fdr->GetBruApCycloPrefixes(intval($flightInfo['id_fdr']));
+        $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]);
+
+        $item = array_merge(
+            $flightToFolders->getFlight()->get(),
+            [
+                'noChildren' => true,
+                'type' => 'flight',
+                'parentId' => $flightToFolders->getFolderId(),
+                'startCopyTimeFormated' => date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime()),
+                'framesCount' => $framesCount
+            ]
+        );
+
+        unset($Fl);
+        unset($fdr);
+        unset($Frame);
+
+        return $item;
     }
 }

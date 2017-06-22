@@ -1244,6 +1244,7 @@ class UploaderController extends CController
 
         $fdrId = intval($data['fdrId']);
         $uploadedFile = $data['fileName'];
+        $userId = intval($this->_user->userInfo['id']);
 
         $uploadingUid = $data['uploadingUid'];
         $receivedFlightInfo = $data['flightInfo'];
@@ -1309,7 +1310,8 @@ class UploaderController extends CController
 
         $answ = array(
                 "status" => "ok",
-                "data" => $uploadedFile
+                "data" => $uploadedFile,
+                "item" => FlightComponent::getTreeItem($flightId, $userId)
         );
         echo(json_encode($answ));
     }
@@ -1345,6 +1347,8 @@ class UploaderController extends CController
         ) {
             $calibrationId = intval($data['calibrationId']);
         }
+
+        $userId = intval($this->_user->userInfo['id']);
 
         //in such way it was passed in js because of imposible to do it by usual aasoc arr
         for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
@@ -1392,7 +1396,8 @@ class UploaderController extends CController
             $calibrationId
         );
 
-        $this->ProccesFlightException($flightId,
+        $this->ProccesFlightException(
+            $flightId,
             $progressFilePath
         );
 
@@ -1400,7 +1405,8 @@ class UploaderController extends CController
 
         echo(json_encode([
             "status" => "complete",
-            "uploadingUid" => $uploadingUid
+            "uploadingUid" => $uploadingUid,
+            "item" => FlightComponent::getTreeItem($flightId, $userId)
         ]));
 
         exit;
@@ -1508,7 +1514,8 @@ class UploaderController extends CController
 
         echo(json_encode([
             "status" => "complete",
-            "uploadingUid" => $uploadingUid
+            "uploadingUid" => $uploadingUid,
+            "item" => FlightComponent::getTreeItem($flightId, $userId)
         ]));
         exit;
     }

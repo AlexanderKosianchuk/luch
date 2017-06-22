@@ -20,9 +20,6 @@ class MenuDropdown extends React.Component {
                 "removeSelection"
             ],
             oneFolder: [
-                /*"openItem",
-                "renameItem",
-                "moveItem",*/
                 "deleteItem",
                 "selectAll",
                 "removeSelection"

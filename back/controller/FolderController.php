@@ -29,6 +29,7 @@ class FolderController extends CController
     public function createFolder($data)
     {
         if (!isset($data['name']) ) {
+            http_response_code(400);
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -101,6 +102,7 @@ class FolderController extends CController
             || !is_int(intval($data['id']))
             || !isset($data['expanded'])
         ) {
+            http_response_code(400);
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -119,6 +121,7 @@ class FolderController extends CController
         $folders = $em->find('Entity\Folder', $id);
 
         if ($folders === null) {
+            http_response_code(404);
             header("Status: 404 Not Found");
             $msg = "Requested folder not found. Id: ". $id;
             $this->RegisterActionReject($this->action, "rejected", 0, $msg);
@@ -142,6 +145,7 @@ class FolderController extends CController
         if (!isset($data['id'])
             || !is_int(intval($data['id']))
         ) {
+            http_response_code(400);
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -161,6 +165,7 @@ class FolderController extends CController
 
         if (!in_array($id, $availableFolders)) {
             unset($Fd);
+            http_response_code(403);
             header("Status: 403 Forbidden");
             $dat = "Not available for current user. DeleteFolder id - " . $id . ". " .
                "Username - " . $this->_user->username . ". Page FlightsController.php";
@@ -199,6 +204,7 @@ class FolderController extends CController
             || !is_int(intval($data['id']))
             || !is_int(intval($data['parentId']))
         ) {
+            http_response_code(400);
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".

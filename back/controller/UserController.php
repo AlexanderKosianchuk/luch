@@ -859,6 +859,7 @@ class UserController extends CController
             || !(isset($args['login']))
             || !(isset($args['pass']))
         ) {
+            http_response_code(401);
             header('HTTP/1.0 401 Unauthorized');
             echo json_encode([
                 'error' => 'Not all necessary fields passed',
@@ -888,6 +889,7 @@ class UserController extends CController
                 ]);
                 exit;
             } else {
+                http_response_code(401);
                 header('HTTP/1.0 401 Unauthorized');
                 echo json_encode([
                     'error' => 'Incorrect login or password',
@@ -896,6 +898,7 @@ class UserController extends CController
                 exit;
             }
         } else {
+            http_response_code(401);
             header('HTTP/1.0 401 Unauthorized');
             echo json_encode([
                 'error' => 'Incorrect login or password',

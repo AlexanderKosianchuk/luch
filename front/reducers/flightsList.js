@@ -38,7 +38,7 @@ export default function flightsList(state = initialState, action) {
                 state.items.splice(deletedIndex, 1);
             }
 
-            return { ...state, ...{ items: state.items }};
+            return { ...state };
         }
         case 'MOVING_FLIGHT_COMPLETE': {
             let movedIndex = findItemIndex(state.items, action.payload.id);
@@ -47,8 +47,15 @@ export default function flightsList(state = initialState, action) {
                 state.items[movedIndex].parentId = action.payload.parentId
             }
 
-            return { ...state, ...{ items: state.items }};
+            return { ...state };
         }
+        case 'FLIGHT_UPLOADING_COMPLETE':
+            if (typeof action.payload.item === 'object') {
+                state.items.push(action.payload.item);
+                return { ...state };
+            }
+
+            return state;
         default:
             return state;
     }

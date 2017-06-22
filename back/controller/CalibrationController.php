@@ -37,6 +37,7 @@ class CalibrationController extends CController
         $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
 
         if (!$isAvaliable) {
+            http_response_code(403);
             header('HTTP/1.0 403 Forbidden');
             echo 'FDR is not avaliable for current user.';
             exit;
@@ -80,6 +81,7 @@ class CalibrationController extends CController
         $calibrationInfo = $calibration->getCalibrationById ($calibrationId, $userId);
 
         if (empty($calibrationInfo)) {
+            http_response_code(404);
             header('HTTP/1.0 404 Not Found');
             echo 'Calibration unexist.';
             exit;
@@ -91,6 +93,7 @@ class CalibrationController extends CController
         $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
 
         if (!$isAvaliable) {
+            http_response_code(403);
             header('HTTP/1.0 403 Forbidden');
             echo 'Trying to remove calibration for FDR that is not avaliable for current user.';
             exit;

@@ -8,16 +8,58 @@ import { I18n } from 'react-redux-i18n';
 import deleteFolder from 'actions/deleteFolder';
 
 class FolderControls extends Component {
-    handleClickTrash() {
+    constructor (props) {
+        super (props);
+
+        this.state = {
+            isFormHidden: true,
+            name: props.folderInfo.name
+        };
+    }
+
+    handleClickTrash () {
         if (confirm(I18n.t('flights.folderControls.confirm'))) {
             this.props.deleteFolder({ id: this.props.folderInfo.id });
         }
     }
 
+    handleClickRename () {
+        this.resize ();
+        this.setState({
+            isFormHidden: false
+        });
+    }
+
+    handleSubmit () {
+        this.setState({
+            isFormHidden: true
+        });
+        return false;
+    }
+
+    resize () {
+        console.log(this.form);
+    }
+
     render () {
         return (
             <div className='flights-folder-controls'>
-                <span className='flights-folder-controls__glyphicon glyphicon glyphicon-pencil'></span>
+                <form ref={ (form) => { this.form = form }}
+                    className={
+                        'flights-folder-controls__form '
+                        + (this.state.isFormHidden ? 'is-hidden' : '')
+                    }
+                    onSubmit={ this.handleSubmit.bind(this) }
+                >
+                    <input className='form-control' type='text' />
+                </form>
+                <span
+                    className={ 'flights-folder-controls__glyphicon '
+                        + 'glyphicon glyphicon-pencil'
+                    }
+                    onClick={ this.handleClickRename.bind(this) }
+                >
+                </span>
                 <span
                     className={
                         'flights-folder-controls__glyphicon '

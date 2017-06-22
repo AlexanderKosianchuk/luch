@@ -32,14 +32,9 @@ export default function startEasyFlightUploading(payload) {
                         }
                     });
                     setTimeout(checkProgress, 1000);
-                } else if (json.status === 'complete') {
-                    dispatch({
-                        type: 'FLIGHT_UPLOADING_COMPLETE',
-                        payload: {
-                            uploadingUid: payload.uploadingUid
-                        }
-                    });
-                } else {
+                }
+
+                if (json.status !== 'complete') {
                     setTimeout(checkProgress, 1000);
                 }
             });
@@ -52,13 +47,14 @@ export default function startEasyFlightUploading(payload) {
             body: payload.form,
             credentials: "same-origin"
         }).then((response) => {
-            response.json();
+            return response.json();
         })
         .then(json => {
             dispatch({
                 type: 'FLIGHT_UPLOADING_COMPLETE',
                 payload: {
-                    uploadingUid: payload.uploadingUid
+                    uploadingUid: payload.uploadingUid,
+                    item: json.item
                 }
             });
         });

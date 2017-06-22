@@ -28,9 +28,8 @@ class Toolbar extends React.Component {
 
                     <div className="collapse navbar-collapse" id="bs-navbar-collapse">
                       <ul className="nav navbar-nav navbar-right">
-                        <li><a href="#">
+                        <li><a href="#" onClick={ this.handleUploadClick.bind(this) }>
                             <span
-                                onClick={ this.handleUploadClick.bind(this) }
                                 className={ "glyphicon glyphicon-upload" }
                                 aria-hidden="true">
                             </span>

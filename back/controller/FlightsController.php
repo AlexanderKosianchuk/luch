@@ -44,6 +44,7 @@ class FlightsController extends CController
             || !is_int(intval($data['id']))
             || !is_int(intval($data['parentId']))
         ) {
+            http_response_code(400);
             header("Status: 400 Bad Request");
             $answ["status"] = "err";
             $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".
@@ -68,11 +69,12 @@ class FlightsController extends CController
         exit;
     }
 
-   public function deleteFlight($flightId)
+   public function deleteFlight($data)
    {
        if (!isset($data['id'])
            || !is_int(intval($data['id']))
        ) {
+           http_response_code(400);
            header("Status: 400 Bad Request");
            $answ["status"] = "err";
            $answ["error"] = "Not all nessesary params sent. Post: ".
@@ -375,64 +377,6 @@ class FlightsController extends CController
       return $actionsInfo;
    }
 
-   public function GetResults()
-   {
-       $c = new DataBaseConnector;
-       $link = $this->Connect();
-       $list = [];
-
-       $query = "SELECT * FROM `results` WHERE 1;";
-       $result = $link->query($query);
-
-       $firstRow = true;
-
-       if(!$result) {
-           $this->Disconnect();
-           unset($c);
-           return $list;
-       }
-
-       while($row = $result->fetch_array())
-       {
-           if ($firstRow) {
-               $firstRow = false;
-
-               $plainRow = [];
-               foreach ($row as $key => $val) {
-                   if (gettype($key) === 'string') {
-                       $plainRow[] = $key;
-                   }
-               }
-               array_push($list, $plainRow);
-
-               $plainRow = [];
-               foreach ($row as $key => $val) {
-                   if (gettype($key) !== 'string') {
-                       $plainRow[] = $val;
-                   }
-               }
-
-               array_push($list, $plainRow);
-           } else {
-               $plainRow = [];
-               foreach ($row as $key => $val) {
-                   if (gettype($key) !== 'string') {
-                       $plainRow[] = $val;
-                   }
-               }
-
-               array_push($list, $plainRow);
-           }
-       }
-
-       $result->free();
-       $this->Disconnect();
-
-       unset($c);
-
-       return $list;
-   }
-
    public function GetEvents()
    {
        $list = [];
@@ -607,35 +551,14 @@ class FlightsController extends CController
         }
 
         $em = EM::get();
-        $Fl = new Flight;
-        $fdr = new Fdr;
-        $Frame = new Frame;
 
         $items = [];
         $flightsToFolders = $em->getRepository('Entity\FlightToFolder')
             ->findBy(['userId' => $userId]);
 
         foreach ($flightsToFolders as $flightToFolders) {
-            $flightInfo = $Fl->GetFlightInfo($flightToFolders->getFlightId());
-            $fdrInfo = $fdr->getFdrInfo(intval($flightInfo['id_fdr']));
-            $prefixArr = $fdr->GetBruApCycloPrefixes(intval($flightInfo['id_fdr']));
-            $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]);
-
-            $items[] = array_merge(
-                $flightToFolders->getFlight()->get(),
-                [
-                    'noChildren' => true,
-                    'type' => 'flight',
-                    'parentId' => $flightToFolders->getFolderId(),
-                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime()),
-                    'framesCount' => $framesCount
-                ]
-            );
+            $items[] = FlightComponent::getTreeItem($flightToFolders->getFlightId(), $userId);
         }
-
-        unset($Fl);
-        unset($fdr);
-        unset($Frame);
 
         echo json_encode($items);
     }

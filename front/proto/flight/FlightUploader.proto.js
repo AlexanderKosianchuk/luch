@@ -538,7 +538,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
         url: ENTRY_URL,
         async: true
     }).done(function(answ){
-        $(document).trigger("endProccessing", [uploadingUid]);
+        $(document).trigger("endProccessing", [uploadingUid, answ.item]);
     }).fail(function(mess){
         console.log(mess);
     });

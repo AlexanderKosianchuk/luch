@@ -35,45 +35,6 @@ import { push } from 'react-router-redux'
 import startFlightUploading from 'actions/startFlightUploading';
 
 export default function facade(store) {
-    function refreshFlightsList() {
-        function getCurrentRoute(state) {
-            return state.router.location.pathname;
-        }
-
-        let currentLocation = getCurrentRoute(store.getState())
-
-        if ((currentLocation === '/')
-            || (currentLocation === '/#')
-            || (currentLocation.indexOf('flights/tree') > -1)
-        ) {
-            $(document).trigger('flightsTreeShow', [
-                $('#container')
-            ]);
-        }
-
-        if (currentLocation.indexOf('flights/table') > -1) {
-            $(document).trigger('flightsTableShow', [
-                $('#container')
-            ]);
-        }
-    }
-
-    let currentFlightUploadingStateValue;
-    store.subscribe(() => {
-        function getUploadingState(state) {
-            return state.flightUploadingState.length;
-        }
-
-        let previousFlightUploadingStateValue = currentFlightUploadingStateValue;
-         currentFlightUploadingStateValue = getUploadingState(store.getState())
-
-        if ((currentFlightUploadingStateValue === 0)
-            && (previousFlightUploadingStateValue > 0)
-        ) {
-            refreshFlightsList();
-        }
-    });
-
     $(document).on('importItem', function (e, form) {
         let dfd = $.Deferred();
         let FU = new FlightUploader(store);
@@ -81,9 +42,7 @@ export default function facade(store) {
         dfd.promise();
 
         dfd.then(() => {
-            if ($('#container')) {
-                refreshFlightsList();
-            }
+            // TODO add item to redux flightsList
         });
     });
 
@@ -98,20 +57,14 @@ export default function facade(store) {
         }));
     });
 
-    $(document).on('endProccessing', function (e, uploadingUid) {
-        store.dispatch(() => () => {
-            dispatch({
-                type: 'FLIGHT_UPLOADING_COMPLETE',
-                payload: {
-                    uploadingUid: uploadingUid
-                }
-            });
+    $(document).on('endProccessing', function (e, uploadingUid, item) {
+        store.dispatch({
+            type: 'FLIGHT_UPLOADING_COMPLETE',
+            payload: {
+                uploadingUid: uploadingUid,
+                item: item
+            }
         });
-    });
-
-    $(document).on('flightsTreeShow', function (e, someshowcase) {
-        let FL = new FlightList(store);
-        FL.FillFactoryContaider(someshowcase);
     });
 
     $(document).on('flightsTableShow', function (e, someshowcase) {
