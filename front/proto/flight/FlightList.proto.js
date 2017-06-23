@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { I18n } from 'react-redux-i18n';
 
-import flightListChangeCheckstateAction from 'actions/flightListChangeCheckstate';
 import redirectAction from 'actions/redirect';
 
 function FlightList(store) {
@@ -233,11 +232,9 @@ FlightList.prototype.SupportDataTable = function(sortColumn, sortType) {
                 "success": fnCallback
             }).done(function(a){
                 let selectedItems = self.getFlightListSelectedItems();
-                self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 
                 $(".ItemsCheck").on("change", function(e){
                     let selectedItems = self.getFlightListSelectedItems();
-                    self.store.dispatch(flightListChangeCheckstateAction(selectedItems));
                 });
             }).fail(function(a){
                 console.log(a);
@@ -280,7 +277,6 @@ FlightList.prototype.selectAll = function(e){
         var el = $(el).prop('checked', true);
     });
     let selectedItems = this.getFlightListSelectedItems();
-    this.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 };
 
 FlightList.prototype.rename = function(e){
@@ -317,7 +313,6 @@ FlightList.prototype.removeSelection = function(e){
         var el = $(el).prop('checked', false);
     });
     let selectedItems = this.getFlightListSelectedItems();
-    this.store.dispatch(flightListChangeCheckstateAction(selectedItems));
 };
 
 FlightList.prototype.delete = function(e){

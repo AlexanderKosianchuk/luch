@@ -1,3 +1,11 @@
+@keyframes chooseAnimation
+    from
+        color: #333
+        background-color: #fcfcfc
+    to
+        color: #eee
+        background-color: #063a5c
+
 .flights-tree
     width: 100%
     overflow-y: auto
@@ -6,8 +14,17 @@
         height: 42px
 
     & .rst__rowContents
-        border: 1px solid #eee
         box-shadow: none
+        color: #333
+        background-color: #fcfcfc
+        border: 1px solid #eee
+
+    & .flights-tree__item.is-chosen .rst__rowContents
+        color: #eee
+        background: #063a5c
+        border: 1px solid #efefef
+        animation-name: chooseAnimation
+        animation-duration: 0.5s
 
     & .rst__collapseButton, & .rst__expandButton
         border-radius: 10%
@@ -37,6 +54,9 @@
 
     & &__flight .rst__moveHandle
         background-color: #063a5c
+
+    & &__flight.is-chosen .rst__moveHandle
+        background-color: #525252
 
     & &__folder .rst__moveHandle
         background-color: #fbe368

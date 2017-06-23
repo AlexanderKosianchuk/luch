@@ -5,7 +5,7 @@ import { Translate } from 'react-redux-i18n';
 
 export default function FlightTitle(props) {
     return (
-        <div className='flights-flight-title'>
+        <div className='flights-flight-title' data-flight-id={ props.flightInfo.id }>
             <Translate value='flights.flightTitle.bort' />
             &nbsp;-&nbsp;
             { props.flightInfo.bort },&nbsp;

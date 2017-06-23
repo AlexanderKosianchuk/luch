@@ -19,6 +19,7 @@ import getSettings from 'actions/getSettings';
 import moveFlight from 'actions/moveFlight';
 import moveFolder from 'actions/moveFolder';
 import toggleFolderExpanding from 'actions/toggleFolderExpanding';
+import flightListChoiceToggle from 'actions/flightListChoiceToggle';
 
 const MAX_DEPTH = 5;
 const FLIGHT_TYPE = 'flight';
@@ -62,8 +63,50 @@ class Tree extends Component {
         }
     }
 
+    componentWillUnmount() {
+
+    }
+
     componentDidUpdate() {
         this.resize();
+
+        function addEventListenerByClass(className, event, fn) {
+            var list = document.getElementsByClassName(className);
+            for (var ii = 0, len = list.length; ii < len; ii++) {
+                list[ii][event] = fn;
+            }
+        }
+
+        addEventListenerByClass(
+            'rst__rowContents',
+            'onclick' ,
+            this.handleItemClick.bind(this)
+        );
+    }
+
+    handleItemClick(event) {
+        let currentTarget = event.currentTarget;
+
+        function findAncestor (el, cls) {
+            while ((el = el.parentElement) && !el.classList.contains(cls));
+            return el;
+        }
+
+        let flightRow = findAncestor(currentTarget, 'flights-tree__flight');
+
+        // not a flight. Maybe folder
+        if (!flightRow) {
+            return;
+        }
+
+        let title = flightRow.getElementsByClassName('flights-flight-title');
+        let flightId = parseInt(title[0].getAttribute('data-flight-id'));
+
+        flightRow.classList.toggle('is-chosen');
+        this.props.flightListChoiceToggle({
+            id: flightId,
+            checkstate: flightRow.classList.contains('is-chosen')
+        });
     }
 
     resize() {
@@ -86,11 +129,11 @@ class Tree extends Component {
         return flatData;
     }
 
-    updateTreeData (treeData) {
+    updateTreeData(treeData) {
         this.setState({ treeData });
     }
 
-    moveNodeHandler ({ node, treeIndex, path }) {
+    moveNodeHandler({ node, treeIndex, path }) {
         let treeData = this.state.treeData;
         let id = node.id;
         let parent = { id: 0 }; // if not found than moved to root
@@ -112,7 +155,7 @@ class Tree extends Component {
         });
     }
 
-    findParent (treeData, id, save) {
+    findParent(treeData, id, save) {
         treeData.forEach((item) => {
             let itemId = item.id;
             let children = item.children || [];
@@ -127,7 +170,7 @@ class Tree extends Component {
         });
     }
 
-    buildTree () {
+    buildTree() {
         return (<SortableTree
             rowHeight={ 50 }
             scaffoldBlockPxWidth={ 40 }
@@ -143,12 +186,12 @@ class Tree extends Component {
                     if (rowInfo.node.type === FLIGHT_TYPE) {
                         return {
                             buttons: [ <FlightControls flightInfo={ rowInfo.node }/> ],
-                            className: 'flights-tree__flight'
+                            className: 'flights-tree__item flights-tree__flight',
                         }
                     } else if (rowInfo.node.type === FOLDER_TYPE) {
                         return {
                             buttons: [ <FolderControls folderInfo={ rowInfo.node }/> ],
-                            className: 'flights-tree__folder'
+                            className: 'flights-tree__item flights-tree__folder',
                         }
                     }
                 }
@@ -156,7 +199,7 @@ class Tree extends Component {
        />);
     }
 
-    buildBody () {
+    buildBody() {
         if (this.props.pending !== false) {
             return <ContentLoader/>
         } else {
@@ -164,7 +207,7 @@ class Tree extends Component {
         }
     }
 
-    render () {
+    render() {
         return (
             <div className='flights-tree'
                 ref={(container) => { this.container = container; }}
@@ -175,7 +218,7 @@ class Tree extends Component {
     }
 }
 
-function merge (flightsListItems, foldersListItems) {
+function merge(flightsListItems, foldersListItems) {
     if (Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
         return foldersListItems.concat(flightsListItems);
     } else if (!Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
@@ -194,7 +237,7 @@ function isPending(flightsListPending, foldersListPending, settingsPending) {
     );
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         pending: isPending(state.flightsList.pending, state.foldersList.pending, state.settings.pending),
         list: merge(state.flightsList.items, state.foldersList.items)
@@ -209,6 +252,7 @@ function mapDispatchToProps(dispatch) {
         moveFlight: bindActionCreators(moveFlight, dispatch),
         moveFolder: bindActionCreators(moveFolder, dispatch),
         toggleFolderExpanding: bindActionCreators(toggleFolderExpanding, dispatch),
+        flightListChoiceToggle: bindActionCreators(flightListChoiceToggle, dispatch),
     }
 }
 

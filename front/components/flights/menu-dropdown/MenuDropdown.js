@@ -19,11 +19,6 @@ class MenuDropdown extends React.Component {
                 "exportCoordinates",
                 "removeSelection"
             ],
-            oneFolder: [
-                "deleteItem",
-                "selectAll",
-                "removeSelection"
-            ],
             manyItems: [
                 "deleteItem",
                 "selectAll",
@@ -43,17 +38,14 @@ class MenuDropdown extends React.Component {
     }
 
     setMenu() {
-        let flightsCount = this.props.selectedFlights.length;
-        let foldersCount = this.props.selectedFolders.length;
+        let flightsCount = this.props.chosenItems.length;
 
         this.menu = this.buildMenu("manyItems");
 
-        if ((flightsCount === 0) && (foldersCount === 0)) {
+        if (flightsCount === 0) {
             this.menu = this.buildMenu("noSelection");
-        } else if ((flightsCount === 1) && (foldersCount === 0)) {
+        } else if (flightsCount === 1) {
             this.menu = this.buildMenu("oneFlight");
-        } else if((flightsCount === 0) && (foldersCount === 1)) {
-            this.menu = this.buildMenu("oneFolder");
         }
     }
 
@@ -80,7 +72,9 @@ class MenuDropdown extends React.Component {
 }
 
 function mapStateToProps (state) {
-    return { ... state.chosenFlightListItems };
+    return {
+         chosenItems: state.flightsList.chosenItems
+     };
 }
 
 function mapDispatchToProps(dispatch) {

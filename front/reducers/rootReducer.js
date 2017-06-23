@@ -5,7 +5,6 @@ import { i18nReducer } from 'react-redux-i18n';
 import flightFilter from 'reducers/flightFilter';
 import settlementFilter from 'reducers/settlementFilter';
 import settlementsReport from 'reducers/settlementsReport';
-import chosenFlightListItems from 'reducers/chosenFlightListItems';
 import fdrTypesList from 'reducers/fdrTypesList';
 import flightsList from 'reducers/flightsList';
 import foldersList from 'reducers/foldersList';
@@ -35,7 +34,6 @@ export default combineReducers({
     chosenTemplates,
     settlementFilter,
     settlementsReport,
-    chosenFlightListItems,
     settings,
     router: routerReducer,
     i18n: i18nReducer,
