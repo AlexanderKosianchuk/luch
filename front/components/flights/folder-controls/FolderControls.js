@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
 import deleteFolder from 'actions/deleteFolder';
+import renameFolder from 'actions/renameFolder';
 
 class FolderControls extends Component {
     constructor (props) {
@@ -24,21 +25,55 @@ class FolderControls extends Component {
     }
 
     handleClickRename () {
-        this.resize ();
-        this.setState({
-            isFormHidden: false
-        });
+        if (this.state.isFormHidden === true) {
+            this.resize ();
+            this.setState({
+                isFormHidden: false
+            });
+        } else if ((this.state.isFormHidden === false)
+            && (this.input && this.input.value.length >= 3)) {
+            this.setState({
+                isFormHidden: true
+            });
+
+            this.props.renameFolder({
+                id: this.props.folderInfo.id,
+                name: this.state.name
+            });
+        }
     }
 
-    handleSubmit () {
+    handleSubmit (event) {
         this.setState({
             isFormHidden: true
         });
+
+        this.props.renameFolder({
+            id: this.props.folderInfo.id,
+            name: this.state.name
+        });
+
+        event.preventDefault();
         return false;
     }
 
+    handleChange () {
+        this.setState({
+            name: this.input.value
+        });
+    }
+
     resize () {
-        console.log(this.form);
+        function findAncestor (el, cls) {
+            while ((el = el.parentElement) && !el.classList.contains(cls));
+            return el;
+        }
+
+        let row = findAncestor(this.form, 'rst__rowContents')
+
+        if (row) {
+            this.form.style.width = row.clientWidth - 55 + 'px';
+        }
     }
 
     render () {
@@ -51,11 +86,17 @@ class FolderControls extends Component {
                     }
                     onSubmit={ this.handleSubmit.bind(this) }
                 >
-                    <input className='form-control' type='text' />
+                    <input className='form-control' type='text'
+                        value={ this.state.name }
+                        ref={ (input) => { this.input = input }}
+                        onChange={ this.handleChange.bind(this) }
+                    />
                 </form>
                 <span
                     className={ 'flights-folder-controls__glyphicon '
-                        + 'glyphicon glyphicon-pencil'
+                        + 'glyphicon '
+                        + (this.state.isFormHidden
+                            ? 'glyphicon-pencil' : 'glyphicon-floppy-disk')
                     }
                     onClick={ this.handleClickRename.bind(this) }
                 >
@@ -77,6 +118,7 @@ class FolderControls extends Component {
 function mapDispatchToProps(dispatch) {
     return {
         deleteFolder: bindActionCreators(deleteFolder, dispatch),
+        renameFolder: bindActionCreators(renameFolder, dispatch), 
     }
 }
 

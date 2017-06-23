@@ -229,37 +229,30 @@ class FolderController extends CController
         exit;
     }
 
-   public function folderRename($data)
+   public function renameFolder($data)
    {
-       if(isset($data['folderId'])
-           && isset($data['folderName'])
+       if(!isset($data['id'])
+           || !isset($data['name'])
        ) {
-           $folderId = $data['folderId'];
-           $folderName = $data['folderName'];
-
-           $userId = $this->_user->GetUserIdByName($this->_user->username);
-
-           $Fd = new Folder;
-           $result = $Fd->RenameFolder($folderId, $folderName, $userId);
-           unset($Fd);
-
-           $this->RegisterActionExecution($this->action, "executed", $folderId, 'folderId', $folderName, "newName");
-
-           $answ = array();
-           if($result) {
-               $answ['status'] = 'ok';
-           } else {
-               $answ['status'] = 'err';
-               $answ['error'] = 'Error during folder rename.';
-               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           }
-           echo json_encode($answ);
-       } else {
            $answ["status"] = "err";
            $answ["error"] = "Not all nessesary params sent. Post: ".
                    json_encode($_POST) . ". Page FolderController";
            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
            echo(json_encode($answ));
+           exit;
        }
+
+       $folderId = $data['id'];
+       $folderName = $data['name'];
+
+       $userId = intval($this->_user->userInfo['id']);
+
+       $Fd = new Folder;
+       $Fd->RenameFolder($folderId, $folderName, $userId);
+       unset($Fd);
+
+       $this->RegisterActionExecution($this->action, "executed", $folderId, 'folderId', $folderName, "newName");
+
+       echo json_encode('ok');
    }
 }

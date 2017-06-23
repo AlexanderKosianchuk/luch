@@ -38,7 +38,7 @@ export default function foldersList(state = initialState, action) {
                 state.items.splice(deletedIndex, 1);
             }
 
-            return { ...state, ...{ items: state.items }};
+            return { ...state };
         }
         case 'CREATING_FOLDER_COMPLETE':
             state.items.push(action.payload)
@@ -50,7 +50,7 @@ export default function foldersList(state = initialState, action) {
                 state.items[movedIndex].parentId = action.payload.parentId
             }
 
-            return { ...state, ...{ items: state.items }};
+            return { ...state };
         }
         case 'TOGGLING_FOLDER_EXPANDING_COMPLETE':
             let toggledExpandingItem = findItemIndex(state.items, action.payload.id);
@@ -60,7 +60,15 @@ export default function foldersList(state = initialState, action) {
                     = (action.payload.expanded === true);
             }
 
-            return { ...state, ...{ items: state.items }};
+            return { ...state };
+        case 'FOLDER_RENAMED':
+            let renamingItem = findItemIndex(state.items, action.payload.id);
+
+            if (renamingItem !== null) {
+                state.items[renamingItem].name = action.payload.name;
+            }
+
+            return { ...state };
         default:
             return state;
     }
