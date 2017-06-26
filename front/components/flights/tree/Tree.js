@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
-import SortableTree, { getTreeFromFlatData, getNodeAtPath } from 'react-sortable-tree';
+import SortableTree, { getTreeFromFlatData, toggleExpandedForAll } from 'react-sortable-tree';
 
 import FlightTitle from 'components/flights/flight-title/FlightTitle';
 import FolderTitle from 'components/flights/folder-title/FolderTitle';
@@ -30,9 +30,7 @@ class Tree extends Component {
     constructor(props) {
         super(props);
 
-        if (props.list
-            && (props.list.length > 0)
-        ) {
+        if (props.list) {
             this.state = {
                 treeData: getTreeFromFlatData({
                     flatData: this.prepareTreeData(props.list)
@@ -42,14 +40,25 @@ class Tree extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            treeData: this.getTreeData(nextProps.list)
-        });
-    }
+        var middleware = (data) => data;
 
-    getTreeData(list) {
-        return getTreeFromFlatData({
-            flatData: this.prepareTreeData(list)
+        if ((this.props.expanded !== nextProps.expanded)
+            && (typeof nextProps.expanded === 'boolean')
+        ) {
+            middleware = (data) => {
+                return toggleExpandedForAll({
+                    treeData: data,
+                    expanded: nextProps.expanded
+                });
+            }
+        }
+
+        this.setState({
+            treeData: middleware(
+                getTreeFromFlatData({
+                    flatData: this.prepareTreeData(nextProps.list)
+                })
+            )
         });
     }
 
@@ -60,16 +69,59 @@ class Tree extends Component {
             this.props.getFlightsList();
             this.props.getFoldersList();
             this.props.getSettings();
+        } else {
+            this.checkChosen();
+            this.flightClickEventListenerAdd();
         }
     }
 
-    componentWillUnmount() {
+    checkChosen() {
+        let rows = document.getElementsByClassName('flights-tree__item');
+        for (var ii = 0; ii < rows.length; ii++) {
+            rows[ii].classList.remove('is-chosen');
+        }
 
+        let flights = document.getElementsByClassName('flights-tree__flight');
+        this.props.chosenFlights.forEach((chosenFlight) => {
+            for (var ii = 0; ii < flights.length; ii++) {
+                let flightRow = flights[ii];
+                let title = flightRow.getElementsByClassName('flights-flight-title');
+                let flightId = parseInt(title[0].getAttribute('data-flight-id'));
+
+                if (chosenFlight.id === flightId) {
+                    flightRow.classList.add('is-chosen');
+                }
+            };
+        });
+    }
+
+    componentWillUnmount() {
+        function removeEventListenerByClass(className, event, fn) {
+            var list = document.getElementsByClassName(className);
+            for (var ii = 0, len = list.length; ii < len; ii++) {
+                list[ii][event] = '';
+            }
+        }
+
+        removeEventListenerByClass(
+            'rst__rowContents',
+            'onclick'
+        );
     }
 
     componentDidUpdate() {
         this.resize();
 
+        this.flightClickEventListenerAdd();
+
+        let chosen = document.getElementsByClassName('is-chosen');
+        if (this.props.chosenFlights.length !== chosen.length) {
+            this.checkChosen();
+        }
+    }
+
+    flightClickEventListenerAdd()
+    {
         function addEventListenerByClass(className, event, fn) {
             var list = document.getElementsByClassName(className);
             for (var ii = 0, len = list.length; ii < len; ii++) {
@@ -79,17 +131,24 @@ class Tree extends Component {
 
         addEventListenerByClass(
             'rst__rowContents',
-            'onclick' ,
+            'onclick',
             this.handleItemClick.bind(this)
         );
     }
 
     handleItemClick(event) {
         let currentTarget = event.currentTarget;
+        let target = event.target;
 
         function findAncestor (el, cls) {
             while ((el = el.parentElement) && !el.classList.contains(cls));
             return el;
+        }
+
+        if (target.classList.contains('flights-flight-controls')
+            || findAncestor(target, 'flights-flight-controls')
+        ) {
+            return;
         }
 
         let flightRow = findAncestor(currentTarget, 'flights-tree__flight');
@@ -240,7 +299,9 @@ function isPending(flightsListPending, foldersListPending, settingsPending) {
 function mapStateToProps(state) {
     return {
         pending: isPending(state.flightsList.pending, state.foldersList.pending, state.settings.pending),
-        list: merge(state.flightsList.items, state.foldersList.items)
+        list: merge(state.flightsList.items, state.foldersList.items),
+        chosenFlights: state.flightsList.chosenItems,
+        expanded: state.foldersList.expanded
     };
 }
 

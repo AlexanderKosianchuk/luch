@@ -72,7 +72,7 @@ class FlightsController extends CController
    public function deleteFlight($data)
    {
        if (!isset($data['id'])
-           || !is_int(intval($data['id']))
+           || !(is_int(intval($data['id'])) || is_array($data['id']))
        ) {
            http_response_code(400);
            header("Status: 400 Bad Request");
@@ -84,76 +84,92 @@ class FlightsController extends CController
            exit;
        }
 
-       $flightId = intval($data['id']);
+       $flights = $data['id'];
+       if (!is_array($data['id'])) {
+           $flights = [];
+           $flights[] = intval($data['id']);
+       }
+
        $userId = intval($this->_user->userInfo['id']);
 
        $FC = new FlightComponent;
-       $FC->DeleteFlight($flightId, $userId);
+       foreach ($flights as $flightId) {
+           $FC->DeleteFlight(intval($flightId), $userId);
+       }
+
        unset($FC);
 
        echo(json_encode('ok'));
        exit;
    }
 
-    public function ProcessFlight($data)
+    public function processFlight($data)
     {
+        if (!isset($data['id'])
+            || !(is_int(intval($data['id'])))
+        ) {
+            http_response_code(400);
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent. Post: ".
+                    json_encode($_POST) . ". Page FlightController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
         $flightId = intval($data['id']);
 
-        if (is_int($flightId)) {
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            $apTableName = $flightInfo["apTableName"];
-            $bpTableName = $flightInfo["bpTableName"];
-            $excEventsTableName = $flightInfo["exTableName"];
-            $startCopyTime = $flightInfo["startCopyTime"];
-            $tableGuid = substr($apTableName, 0, 14);
-            unset($Fl);
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $apTableName = $flightInfo["apTableName"];
+        $bpTableName = $flightInfo["bpTableName"];
+        $excEventsTableName = $flightInfo["exTableName"];
+        $startCopyTime = $flightInfo["startCopyTime"];
+        $tableGuid = substr($apTableName, 0, 14);
+        unset($Fl);
 
-            $fdr = new Fdr;
-            $fdrInfo = $fdr->getFdrInfo(intval($flightInfo["id_fdr"]));
-            $excListTableName = $fdrInfo["excListTableName"];
-            $apGradiTableName = $fdrInfo["gradiApTableName"];
-            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-            $stepLength = $fdrInfo["stepLength"];
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo(intval($flightInfo["id_fdr"]));
+        $excListTableName = $fdrInfo["excListTableName"];
+        $apGradiTableName = $fdrInfo["gradiApTableName"];
+        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+        $stepLength = $fdrInfo["stepLength"];
 
-            if ($excListTableName != "") {
-               $excListTableName = $fdrInfo["excListTableName"];
-               $apGradiTableName = $fdrInfo["gradiApTableName"];
-               $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+        if ($excListTableName != "") {
+           $excListTableName = $fdrInfo["excListTableName"];
+           $apGradiTableName = $fdrInfo["gradiApTableName"];
+           $bpGradiTableName = $fdrInfo["gradiBpTableName"];
 
-               $FEx = new FlightException;
-               $FEx->DropFlightExceptionTable($excEventsTableName);
-               $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
-               //Get exc refParam list
-               $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
+           $FEx = new FlightException;
+           $FEx->DropFlightExceptionTable($excEventsTableName);
+           $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
+           //Get exc refParam list
+           $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
 
-               $exList = $FEx->GetFlightExceptionTable($excListTableName);
+           $exList = $FEx->GetFlightExceptionTable($excListTableName);
 
-               //file can be accesed by ajax what can cause warning
-               error_reporting(E_ALL ^ E_WARNING);
-               set_time_limit (0);
+           //file can be accesed by ajax what can cause warning
+           error_reporting(E_ALL ^ E_WARNING);
+           set_time_limit (0);
 
-               //perform proc be cached table
-               for($i = 0; $i < count($exList); $i++)
-               {
-                  $curExList = $exList[$i];
-                  $FEx->PerformProcessingByExceptions($curExList,
-                        $flightInfo, $flightExTableName,
-                        $apTableName, $bpTableName,
-                        $startCopyTime, $stepLength);
-               }
+           //perform proc be cached table
+           for($i = 0; $i < count($exList); $i++)
+           {
+              $curExList = $exList[$i];
+              $FEx->PerformProcessingByExceptions($curExList,
+                    $flightInfo, $flightExTableName,
+                    $apTableName, $bpTableName,
+                    $startCopyTime, $stepLength);
+           }
 
-               EventProcessingComponent::processEvents($flightId, new EventEmitter);
+           EventProcessingComponent::processEvents($flightId, new EventEmitter);
 
-               error_reporting(E_ALL);
-            }
+           error_reporting(E_ALL);
+        }
 
-            unset($fdr);
-            echo json_encode(['status' => 'ok']);
-      } else {
-         $msg = "Incorrect input data. ProcessFlight id - " . json_encode($flightId) . ". Page FlightsController.php";
-         throw new Exception($msg, 1);
-      }
+        unset($fdr);
+        echo json_encode(['status' => 'ok']);
    }
 
    public function BuildTable()
@@ -331,7 +347,7 @@ class FlightsController extends CController
 
       for ($i = 0; $i < count($exportedFiles); $i++) {
          if(file_exists($exportedFiles[$i]['root'])) {
-            unlink($exportedFiles[$i]['root']);
+            //unlink($exportedFiles[$i]['root']);
          }
       }
 
@@ -711,7 +727,7 @@ class FlightsController extends CController
 
    public function itemExport($data)
    {
-       if (!isset($data['flightIds']) && !isset($data['folderDest'])) {
+       if (!isset($data['id']) && !isset($data['folderDest'])) {
            $answ["status"] = "err";
            $answ["error"] = "Not all nessesary params sent. Post: ".
                    json_encode($_POST) . ". Page FlightsController.php";
@@ -722,11 +738,11 @@ class FlightsController extends CController
 
        $flightIds = [];
        $folderDest = [];
-       if (isset($data['flightIds'])) {
-           if(is_array($data['flightIds'])) {
-               $flightIds = array_merge($flightIds, $data['flightIds']);
+       if (isset($data['id'])) {
+           if(is_array($data['id'])) {
+               $flightIds = array_merge($flightIds, $data['id']);
            } else {
-               $flightIds[] = $data['flightIds'];
+               $flightIds[] = $data['id'];
            }
        }
 

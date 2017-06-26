@@ -11,15 +11,24 @@ export default function  ContentLoader (props) {
         return {};
     }
 
-    function getSize() {
+    function getStyle() {
+        let style = {};
+
         if (props.size) {
-            return {
+            style = { ...style, ...{
                 width: props.size + 'px',
                 height: props.size + 'px'
-            };
+            }};
         }
 
-        return {};
+        if (props.border) {
+            style = { ...style, ...{
+                borderWidth: props.border + 'px',
+                borderTopWidth: props.border + 'px'
+            }};
+        }
+
+        return style;
     }
 
     return (
@@ -27,7 +36,7 @@ export default function  ContentLoader (props) {
             style={ getMargin() }
         >
             <div className="content-loader__loading"
-                style={ getSize() }
+                style={ getStyle() }
             ></div>
         </div>
     );

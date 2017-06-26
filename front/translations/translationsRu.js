@@ -17,13 +17,16 @@ const translationsRu = {
             },
             menuDropdown: {
                 fileMenu: 'Меню',
-                deleteItem: 'Удалить',
-                exportItem: 'Экспортировать',
-                processItem: 'Обработать',
+                expand: 'Развернуть',
+                collapse: 'Свернуть',
+                delete: 'Удалить',
+                export: 'Экспортировать',
+                process: 'Обработать',
                 removeSelection: 'Отменить выделение',
-                selectAll: 'Выбрать все',
                 exportCoordinates: 'Выгрузить маршрут',
-                syncFlightHeaders: 'Синхронизировать опознавательные данные',
+                events: 'События',
+                params: 'Параметры',
+                templates: 'Шаблоны'
             },
             flightTitle: {
                 bort: 'Борт',

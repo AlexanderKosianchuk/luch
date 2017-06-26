@@ -17,13 +17,16 @@ const translationsEs = {
             },
             menuDropdown: {
                 fileMenu: 'Menú',
-                deleteItem: 'Borrar',
-                exportItem: 'Exportación',
-                processItem: 'Editar',
+                expand: 'Expand',
+                collapse: 'Collapse',
+                delete: 'Borrar',
+                export: 'Exportación',
+                process: 'Editar',
                 removeSelection: 'Cancelar asignación',
-                selectAll: 'Seleccionar todo',
                 exportCoordinates: 'Export coordinates',
-                syncFlightHeaders: 'Sincronizar los datos de identificación',
+                events: 'Events',
+                params: 'Parameters',
+                templates: 'Templates'
             },
             flightTitle: {
                 bort: 'Bort',

@@ -1,5 +1,3 @@
-import queryString from 'query-string';
-
 export default function eventsFormPrint(payload) {
     return function(dispatch) {
         let form = document.createElement('form');

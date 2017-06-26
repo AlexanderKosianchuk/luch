@@ -41,6 +41,12 @@ export default function flightsList(state = initialState, action) {
                 state.items.splice(deletedIndex, 1);
             }
 
+            deletedIndex = findItemIndex(state.chosenItems, action.payload.id);
+
+            if (deletedIndex !== null) {
+                state.chosenItems.splice(deletedIndex, 1);
+            }
+
             return { ...state };
         }
         case 'MOVING_FLIGHT_COMPLETE': {
@@ -90,6 +96,9 @@ export default function flightsList(state = initialState, action) {
             }
 
             return state;
+            case 'FLIGHT_LIST_UNCHOOSE_ALL':
+                state.chosenItems = [];
+                return { ...state };
         default:
             return state;
     }

@@ -1,6 +1,7 @@
 const initialState = {
     pending: null,
-    items: []
+    items: [],
+    expanded: null
 };
 
 function findItemIndex(items, searchIndex) {
@@ -27,9 +28,10 @@ export default function foldersList(state = initialState, action) {
                 ...{ pending: true }
             };
         case 'FOLDERS_RECEIVED':
-            return {
-                pending: false,
-                items: action.payload
+            return { ...state, ...{
+                    pending: false,
+                    items: action.payload
+                }
             };
         case 'FOLDER_DELETED': {
             let deletedIndex = findItemIndex(state.items, action.payload.id);
@@ -69,6 +71,18 @@ export default function foldersList(state = initialState, action) {
             }
 
             return { ...state };
+        case 'FOLDER_LIST_EXPANDING_TOGGLE':
+            if (typeof action.payload.expanded === 'boolean') {
+
+                state.items.forEach((item, index) => {
+                    item.expanded = action.payload.expanded;
+                });
+
+                state.expanded = action.payload.expanded;
+                return { ...state };
+            }
+
+            return state;
         default:
             return state;
     }

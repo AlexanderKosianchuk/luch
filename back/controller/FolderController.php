@@ -50,7 +50,8 @@ class FolderController extends CController
         $folder->set([
             'name' => $folderName,
             'path' => $fullpath,
-            'userId' => $userId
+            'userId' => $userId,
+            'isExpanded' => 1
         ]);
         $em->persist($folder);
         $em->flush();
