@@ -5,7 +5,8 @@ import { ConnectedRouter, routerActions } from 'react-router-redux';
 
 import Login from 'containers/login/Login';
 import Results from 'containers/results/Results';
-import Flights from 'containers/flights/Flights';
+import FlightsTree from 'containers/flights-tree/FlightsTree';
+import FlightsTable from 'containers/flights-table/FlightsTable';
 import Settings from 'containers/settings/Settings';
 import FlightsSearch from 'containers/flights-search/FlightsSearch';
 import Calibrations from 'containers/calibrations/Calibrations';
@@ -29,8 +30,9 @@ const App = ({ history }) => (
     <ConnectedRouter history={ history }>
           <div>
             <Route path='/login' component={ Login } />
-            <Route exact path='/' component={ UserIsAuthenticated(Flights) } />
-            <Route path='/flights/:viewType' component={ UserIsAuthenticated(Flights) } />
+            <Route exact path='/' component={ UserIsAuthenticated(FlightsTree) } />
+            <Route path='/flights/tree' component={ UserIsAuthenticated(FlightsTree) } />
+            <Route path='/flights/table' component={ UserIsAuthenticated(FlightsTable) } />
             <Route path='/user-options' component={ UserIsAuthenticated(Settings) } />
             <Route path='/flights-search' component={ UserIsAuthenticated(FlightsSearch) } />
             <Route path='/results' component={ UserIsAuthenticated(Results) } />

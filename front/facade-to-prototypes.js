@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
-/*global Language, WindowFactory, FlightList, FlightUploader*/
+/*global Language, WindowFactory, FlightUploader*/
 /*global FlightEvents, Fdr, Chart, User, SearchFlight*/
 
 'use strict';
@@ -11,19 +11,16 @@ import 'jquery-ui';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/menu';
 
-import 'jstree';
 import 'datatables';
 import 'bootstrap-loader';
 
 // lib styles
 import 'jquery-ui/themes/base/all.css';
-import 'jstree/dist/themes/default/style.min.css';
 
 //old styles
 import 'stylesheets/style.css';
 
 // old prototypes
-import FlightList from 'FlightList';
 import FlightUploader from 'FlightUploader';
 import FlightEvents from 'FlightEvents';
 import ChartService from 'Chart';
@@ -65,12 +62,6 @@ export default function facade(store) {
                 item: item
             }
         });
-    });
-
-    $(document).on('flightsTableShow', function (e, someshowcase) {
-        let FL = new FlightList(store);
-        FL.setView('table');
-        FL.FillFactoryContaider(someshowcase);
     });
 
     $(document).on('flightEvents', function (e, someshowcase, flightId) {

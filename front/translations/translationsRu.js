@@ -6,14 +6,10 @@ const translationsRu = {
             authorize: 'Войти',
             password: 'Пароль'
         },
-        flights: {
+        flightsTree: {
             apply: 'Принять',
             toolbar: {
                 flightList: 'Перечень полетов'
-            },
-            typeSwitch : {
-                treeView: 'Дерево',
-                tableView: 'Таблица',
             },
             menuDropdown: {
                 fileMenu: 'Меню',
@@ -40,6 +36,19 @@ const translationsRu = {
             },
             folderControls: {
                 confirm: 'Подтвердите удаление каталога',
+            },
+        },
+        flightsTable: {
+            toolbar: {
+                flightList: 'Перечень полетов'
+            },
+            table: {
+                bort: 'Борт',
+                voyage: 'Рейс',
+                performer: 'Исполнитель',
+                startCopyTime: 'Начало полета',
+                departureAirport: 'Аэропорт вылета',
+                arrivalAirport: 'Аэропорт посадки',
             },
         },
         uploadingPreview: {
@@ -128,10 +137,6 @@ const translationsRu = {
             upload: 'Загрузить',
             filesList: 'Перечень файлов',
         },
-        searchFlights: {
-            title: 'Поиск полетов',
-            applyAlgorithm: 'Найти'
-        },
         user: {
             actions: 'Действия',
             add: 'Создать',
@@ -176,6 +181,10 @@ const translationsRu = {
             events: 'События',
             params: 'Параметры',
             templates: 'Шаблоны'
+        },
+        flightListViewSwitch : {
+            treeView: 'Дерево',
+            tableView: 'Таблица',
         },
         flightTemplateEdit: {
             toolbar: {

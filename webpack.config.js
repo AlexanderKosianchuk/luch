@@ -40,8 +40,6 @@ module.exports = {
             'Legend': path.join(__dirname, 'front/proto/chart/Legend.proto.js'),
             'Param': path.join(__dirname, 'front/proto/chart/Param.proto.js'),
             'FlightUploader': path.join(__dirname, 'front/proto/flight/FlightUploader.proto.js'),
-            'FlightList': path.join(__dirname, 'front/proto/flight/FlightList.proto.js'),
-            'SearchFlight': path.join(__dirname, 'front/proto/searchFlight/SearchFlight.proto.js'),
             'User': path.join(__dirname, 'front/proto/user/User.proto.js'),
             'FlightEvents': path.join(__dirname, 'front/proto/flightEvents/FlightEvents.proto.js'),
         },

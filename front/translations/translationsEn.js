@@ -6,14 +6,10 @@ const translationsEn = {
             authorize: 'Log in',
             password: 'Password'
         },
-        flights: {
+        flightsTree: {
             apply: 'Apply',
             toolbar: {
                 flightList: 'Flights list'
-            },
-            typeSwitch : {
-                treeView: 'Tree',
-                tableView: 'Table',
             },
             menuDropdown: {
                 fileMenu: 'Menu',
@@ -31,6 +27,7 @@ const translationsEn = {
             flightTitle: {
                 bort: 'Bort',
                 voyage: 'Flight',
+                performer: 'Performer',
                 startCopyTime: 'Flight start time',
                 departureAirport: 'Departure airport',
                 arrivalAirport: 'Arrival airport',
@@ -40,6 +37,18 @@ const translationsEn = {
             },
             folderControls: {
                 confirm: 'Confirm folder deleting',
+            },
+        },
+        flightsTable: {
+            toolbar: {
+                flightList: 'Flights list'
+            },
+            table: {
+                bort: 'Bort',
+                voyage: 'Flight',
+                startCopyTime: 'Flight start time',
+                departureAirport: 'Departure airport',
+                arrivalAirport: 'Arrival airport',
             },
         },
         uploadingPreview: {
@@ -128,10 +137,6 @@ const translationsEn = {
             upload: 'Upload',
             filesList: 'Files list',
         },
-        searchFlights: {
-            title: 'Search flights',
-            applyAlgorithm: 'Search'
-        },
         user: {
             actions: 'User Actions',
             add: 'Add User',
@@ -176,6 +181,10 @@ const translationsEn = {
             events: 'Events',
             params: 'Parameters',
             templates: 'Templates'
+        },
+        flightListViewSwitch : {
+            treeView: 'Tree',
+            tableView: 'Table',
         },
         flightTemplateEdit: {
             toolbar: {
