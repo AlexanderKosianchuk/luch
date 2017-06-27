@@ -76,12 +76,12 @@ class Tree extends Component {
     }
 
     checkChosen() {
-        let rows = document.getElementsByClassName('flights-tree__item');
+        let rows = document.getElementsByClassName('flights-tree-tree__item');
         for (var ii = 0; ii < rows.length; ii++) {
             rows[ii].classList.remove('is-chosen');
         }
 
-        let flights = document.getElementsByClassName('flights-tree__flight');
+        let flights = document.getElementsByClassName('flights-tree-tree__flight');
         this.props.chosenFlights.forEach((chosenFlight) => {
             for (var ii = 0; ii < flights.length; ii++) {
                 let flightRow = flights[ii];

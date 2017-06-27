@@ -26,13 +26,7 @@ class MenuDropdown extends React.Component {
 
     buildMenuItems(type) {
         const menuItems = {
-            noSelection: [
-                'expand',
-                'collapse'
-            ],
             oneFlight: [
-                'expand',
-                'collapse',
                 'delete',
                 'export',
                 'process',
@@ -43,8 +37,6 @@ class MenuDropdown extends React.Component {
                 'templates'
             ],
             manyItems: [
-                'expand',
-                'collapse',
                 'export',
                 'delete',
                 'removeSelection'
@@ -61,7 +53,7 @@ class MenuDropdown extends React.Component {
             if (typeof this['handle' + ucFirst(item)] === 'function') {
                 return <li key={ item } >
                     <a onClick={ this['handle' + ucFirst(item)].bind(this) }
-                        href='#'>{ I18n.t('flightsTree.menuDropdown.'+item) }
+                        href='#'>{ I18n.t('flightsTable.menuDropdown.'+item) }
                     </a>
                 </li>;
             }
@@ -72,20 +64,24 @@ class MenuDropdown extends React.Component {
         let flightsCount = this.props.flightsList.chosenItems.length;
 
         if (flightsCount === 0) {
-            return this.buildMenuItems('noSelection');
-        } else if (flightsCount === 1) {
-            return this.buildMenuItems('oneFlight');
+            return '';
         }
 
-        return this.buildMenuItems('manyItems');
-    }
+        let type = 'manyItems';
+        if (flightsCount === 1) {
+            type = 'oneFlight';
+        }
 
-    handleExpand(event) {
-        this.props.folderListExpandingToggle({ expanded: true });
-    }
-
-    handleCollapse(event) {
-        this.props.folderListExpandingToggle({ expanded: false });
+        return(
+            <li className='dropdown'>
+                <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+                    <Translate value='flightsTable.menuDropdown.fileMenu' /><span className='caret'></span>
+                </a>
+                <ul className='dropdown-menu'>
+                    { this.buildMenuItems(type) }
+                </ul>
+            </li>
+        );
     }
 
     handleDelete() {
@@ -161,14 +157,7 @@ class MenuDropdown extends React.Component {
     render() {
         return (
             <ul className='flights-tree-menu-dropdown nav navbar-nav'>
-                <li className='dropdown'>
-                  <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
-                    <Translate value='flightsTree.menuDropdown.fileMenu' /><span className='caret'></span>
-                  </a>
-                  <ul className='dropdown-menu'>
-                    { this.buildMenu() }
-                  </ul>
-                </li>
+                { this.buildMenu() }
                 { this.buildLoader() }
             </ul>
         );

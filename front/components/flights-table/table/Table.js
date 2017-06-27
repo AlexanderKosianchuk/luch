@@ -55,11 +55,50 @@ class Table extends Component {
         this.container.style.height = window.innerHeight - TOP_CONTROLS_HEIGHT + 'px';
     }
 
+    handleGetTrProps(state, rowInfo, column, instance) {
+        return {
+            className: (() => {
+                if (!rowInfo || !this.props.flightsList.chosenItems) {
+                    return '';
+                }
+
+                let flightId = rowInfo.original.id;
+
+                let isChosen = this.props.flightsList.chosenItems.some((element) => {
+                    return element.id === flightId
+                });
+
+                return isChosen ? 'is-chosen' : '';
+            })(),
+            onClick: event => {
+                let target = event.currentTarget;
+                target.classList.toggle('is-chosen');
+
+                let flightId = rowInfo.original.id;
+                this.props.flightListChoiceToggle({
+                    id: flightId,
+                    checkstate: target.classList.contains('is-chosen')
+                });
+            }
+        }
+    }
+
     buildTable() {
+        //copying array 
+        var data = this.props.flightsList.items.slice();
+
         return (<ReactTable
-            data={ this.props.flightsList.items }
+            data={ data }
             columns={ this.columns }
             className='flights-table-table__table'
+            getTrProps={ this.handleGetTrProps.bind(this) }
+            previousText={ I18n.t('flightsTable.table.previous') }
+            nextText={ I18n.t('flightsTable.table.next') }
+            loadingText={ I18n.t('flightsTable.table.loading') }
+            noDataText={ I18n.t('flightsTable.table.noRowsFound') }
+            pageText={ I18n.t('flightsTable.table.page') }
+            ofText={ I18n.t('flightsTable.table.of') }
+            rowsText={ I18n.t('flightsTable.table.rows') }
         />);
     }
 

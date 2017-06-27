@@ -1,4 +1,4 @@
-@keyframes chooseAnimation
+@keyframes chooseTableRowAnimation
     from
         color: #333
         background-color: #fcfcfc
@@ -18,3 +18,9 @@
 
     & .rt-tr.-even
         background-color: #f7f7f7
+
+    & .rt-tr.is-chosen
+        color: #eee
+        background: #063a5c
+        animation-name: chooseTableRowAnimation
+        animation-duration: 0.5s

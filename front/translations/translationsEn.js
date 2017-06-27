@@ -31,6 +31,13 @@ const translationsEn = {
                 startCopyTime: 'Flight start time',
                 departureAirport: 'Departure airport',
                 arrivalAirport: 'Arrival airport',
+                previous: 'Previous',
+                next: 'Next',
+                loading: 'Loading...',
+                noRowsFound: 'No rows found',
+                page: 'Page',
+                of: 'of',
+                rows: 'rows',
             },
             flightControls: {
                 confirm: 'Confirm flight deleting',
@@ -42,6 +49,17 @@ const translationsEn = {
         flightsTable: {
             toolbar: {
                 flightList: 'Flights list'
+            },
+            menuDropdown: {
+                fileMenu: 'Menu',
+                delete: 'Delete',
+                export: 'Export',
+                process: 'Process',
+                removeSelection: 'Cancel selection',
+                exportCoordinates: 'Export coordinates',
+                events: 'Events',
+                params: 'Parameters',
+                templates: 'Templates'
             },
             table: {
                 bort: 'Bort',

@@ -42,6 +42,17 @@ const translationsRu = {
             toolbar: {
                 flightList: 'Перечень полетов'
             },
+            menuDropdown: {
+                fileMenu: 'Меню',
+                delete: 'Удалить',
+                export: 'Экспортировать',
+                process: 'Обработать',
+                removeSelection: 'Отменить выделение',
+                exportCoordinates: 'Выгрузить маршрут',
+                events: 'События',
+                params: 'Параметры',
+                templates: 'Шаблоны'
+            },
             table: {
                 bort: 'Борт',
                 voyage: 'Рейс',
@@ -49,6 +60,13 @@ const translationsRu = {
                 startCopyTime: 'Начало полета',
                 departureAirport: 'Аэропорт вылета',
                 arrivalAirport: 'Аэропорт посадки',
+                previous: 'Предыдущий',
+                next: 'Следующий',
+                loading: 'Загрузка...',
+                noRowsFound: 'Элементы не найдены',
+                page: 'Страница',
+                of: 'из',
+                rows: 'строк',
             },
         },
         uploadingPreview: {

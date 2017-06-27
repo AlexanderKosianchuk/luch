@@ -42,6 +42,17 @@ const translationsEs = {
             toolbar: {
                 flightList: 'lista de los vuelos'
             },
+            menuDropdown: {
+                fileMenu: 'Menú',
+                delete: 'Borrar',
+                export: 'Exportación',
+                process: 'Editar',
+                removeSelection: 'Cancelar asignación',
+                exportCoordinates: 'Export coordinates',
+                events: 'Events',
+                params: 'Parameters',
+                templates: 'Templates'
+            },
             table: {
                 bort: 'Bort',
                 voyage: 'Flight',
@@ -49,6 +60,13 @@ const translationsEs = {
                 startCopyTime: 'Flight start time',
                 departureAirport: 'Departure airport',
                 arrivalAirport: 'Arrival airport',
+                previous: 'Previous',
+                next: 'Next',
+                loading: 'Loading...',
+                noRowsFound: 'No rows found',
+                page: 'Page',
+                of: 'of',
+                rows: 'rows',
             },
         },
         uploadingPreview: {

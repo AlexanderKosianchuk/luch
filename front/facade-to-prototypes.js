@@ -25,7 +25,6 @@ import FlightUploader from 'FlightUploader';
 import FlightEvents from 'FlightEvents';
 import ChartService from 'Chart';
 import User from 'User';
-import SearchFlight from 'SearchFlight';
 import Calibration from 'Calibration';
 
 import { push } from 'react-router-redux'

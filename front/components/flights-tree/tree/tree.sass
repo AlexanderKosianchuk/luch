@@ -1,4 +1,4 @@
-@keyframes chooseAnimation
+@keyframes chooseTreeItemAnimation
     from
         color: #333
         background-color: #fcfcfc
@@ -19,11 +19,11 @@
         background-color: #fcfcfc
         border: 1px solid #eee
 
-    & .flights-tree-tree__item.is-chosen .rst__rowContents
+    & &__item.is-chosen .rst__rowContents
         color: #eee
         background: #063a5c
         border: 1px solid #efefef
-        animation-name: chooseAnimation
+        animation-name: chooseTreeItemAnimation
         animation-duration: 0.5s
 
     & .rst__collapseButton, & .rst__expandButton

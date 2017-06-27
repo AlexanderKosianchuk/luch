@@ -4,8 +4,7 @@ import React from 'react';
 import { Translate } from 'react-redux-i18n';
 
 import FlightListViewSwitch from 'controls/flight-list-view-switch/FlightListViewSwitch';
-import MenuDropdown from 'components/flights-tree/menu-dropdown/MenuDropdown';
-import CreateFolder from 'components/flights-tree/create-folder/CreateFolder';
+import MenuDropdown from 'components/flights-table/menu-dropdown/MenuDropdown';
 
 export default function Toolbar (props) {
     return (
