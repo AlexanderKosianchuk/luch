@@ -127,6 +127,22 @@ const translationsEn = {
         flightEvents: {
             formPrint: {
                 grayscale: 'Grayscale'
+            },
+            title: {
+                fdrName: 'FDR',
+                bort: 'A/C',
+                voyage: 'Flight',
+                startCopyTime: 'The time and date of the flight',
+                departureAirport: 'Departure Airport',
+                arrivalAirport: 'Arrival Airport',
+                centringto: 'Center of Gravity Takeoff',
+                centringlndg: 'Center of Gravity Landing',
+                weightto: 'Weight Takeoff',
+                weightlndg: 'Weight Landing',
+                tto: 'Тemperature Takeoff',
+                capitan: 'F/O',
+                route: 'Route',
+                centring: 'Center of Gravity',
             }
         },
         calibration: {

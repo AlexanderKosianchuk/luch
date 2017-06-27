@@ -1,7 +1,5 @@
 /*jslint browser: true*/
-/*global $, jQuery*/
-/*global Language, WindowFactory, FlightUploader*/
-/*global FlightEvents, Fdr, Chart, User, SearchFlight*/
+/*global $, jQuery, FlightUploader, Chart, User*/
 
 'use strict';
 
@@ -22,7 +20,6 @@ import 'stylesheets/style.css';
 
 // old prototypes
 import FlightUploader from 'FlightUploader';
-import FlightEvents from 'FlightEvents';
 import ChartService from 'Chart';
 import User from 'User';
 import Calibration from 'Calibration';
@@ -63,12 +60,6 @@ export default function facade(store) {
         });
     });
 
-    $(document).on('flightEvents', function (e, someshowcase, flightId) {
-        let FO = new FlightEvents(store);
-        FO.flightId = flightId;
-        FO.FillFactoryContaider(someshowcase);
-    });
-
     $(document).on('chartShow', function (
         e, showcase,
         flightId, tplName,
@@ -94,11 +85,6 @@ export default function facade(store) {
     $(document).on('changeLanguage', function (e, newLanguage) {
         let U = new User(store);
         U.changeLanguage(newLanguage);
-    });
-
-    $(document).on('flightSearchFormShow', function (e, showcase) {
-        let SF = new SearchFlight(store);
-        SF.FillFactoryContaider(showcase);
     });
 
     $(document).on('calibrationsShow', function (e, showcase) {

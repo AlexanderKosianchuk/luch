@@ -4,6 +4,16 @@ import React, { Component } from 'react';
 import { Translate } from 'react-redux-i18n';
 
 export default function FlightTitle(props) {
+    if (!props.flightInfo
+        || !props.flightInfo.bort
+        || !props.flightInfo.voyage
+        || !props.flightInfo.departureAirport
+        || !props.flightInfo.arrivalAirport
+        || !props.flightInfo.startCopyTimeFormated
+    ) {
+        return null
+    }
+
     return (
         <div className='flights-tree-flight-title' data-flight-id={ props.flightInfo.id }>
             <Translate value='flightsTree.flightTitle.bort' />

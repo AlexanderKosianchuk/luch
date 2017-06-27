@@ -37,11 +37,18 @@ class FlightTemplateEditToolbar extends React.Component {
                         <SaveForm
                             flightId={ this.props.flightId }
                             templateName={ this.props.templateName }
+                            servisePurpose={ this.props.servisePurpose }
                         />
                     </div>
                 </div>
             </nav>
         );
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+        servisePurpose: state.templateInfo.servisePurpose
     }
 }
 
@@ -51,4 +58,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(() => { return {}; }, mapDispatchToProps)(FlightTemplateEditToolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(FlightTemplateEditToolbar);

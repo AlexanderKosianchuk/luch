@@ -127,6 +127,22 @@ const translationsRu = {
         flightEvents: {
             formPrint: {
                 grayscale: 'Ч/Б'
+            },
+            title: {
+                fdrName: 'Тип регистратора',
+                bort: 'Борт',
+                voyage: 'Рейс',
+                startCopyTime: 'Начало копии полета',
+                departureAirport: 'Аэропорт вылета',
+                arrivalAirport: 'Аэропорт посадки',
+                centringto: 'Центровка на взлёте',
+                centringlndg: 'Центровка на посадке',
+                weightto: 'Вес на взлете',
+                weightlndg: 'Вес на посадке',
+                tto: 'Тнв на взлете',
+                capitan: 'КВС',
+                route: 'Маршрут',
+                centring: 'Центровка',
             }
         },
         calibration: {

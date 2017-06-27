@@ -52,6 +52,10 @@ class SaveForm extends React.Component {
         });
     }
 
+    isDisabled() {
+        return this.props.servisePurpose && this.props.servisePurpose.isDefault;
+    }
+
     render() {
         return (
             <form className='flight-template-edit-save-form form-inline'>
@@ -59,6 +63,7 @@ class SaveForm extends React.Component {
                     type='text'
                     placeholder={ I18n.t('flightTemplateEdit.saveForm.templateName') }
                     value={ this.state.inputValue }
+                    disabled={ this.isDisabled()   }
                     onChange={ this.handleChange.bind(this) }
                 />
                 <span className='flight-template-edit-save-form__button-container'>

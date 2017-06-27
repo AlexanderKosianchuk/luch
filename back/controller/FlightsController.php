@@ -12,6 +12,8 @@ use Model\FlightComments;
 use Model\FlightException;
 use Model\DataBaseConnector;
 
+use Entity\Flight as FlightEntity;
+
 use Component\EntityManagerComponent as EM;
 use Component\FlightComponent;
 use Component\EventProcessingComponent;
@@ -658,25 +660,46 @@ class FlightsController extends CController
     public function getFlightInfo($data)
     {
         if (!isset($data['flightId'])) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FlightsController.php";
+            http_response_code(400);
+            header("Status: 400 Bad Request");
+            $answ = "Not all nessesary params sent. Post: ".
+                    json_encode($data) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ);
             echo(json_encode($answ));
+            exit;
         }
 
         $flightId = intval($data['flightId']);
 
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $flightTiming = $this->GetFlightTiming($flightId);
-        unset($Fl);
+        $em = EM::get();
 
-        echo json_encode(array_merge($flightInfo, [
+        $items = [];
+        $flight = $em->getRepository('Entity\Flight')
+            ->findOneBy(['id' => $flightId]);
+
+        if (!$flight) {
+            http_response_code(404);
+            header("Status: 404 Not Found");
+            $msg = "Requested flight not found. Id: ". $id;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $flightTiming = $this->GetFlightTiming($flightId);
+
+        echo json_encode([
+            'data' => array_merge(
+                $flight->get(),
+                [
+                    'fdrId' => $flight->getFdr()->getName(),
+                    'fdrName' => $flight->getFdr()->getName(),
+                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
+                ]
+            ),
             'duration' => $flightTiming['duration'],
             'startFlightTime' => $flightTiming['startCopyTime'],
             'stepLength' => $flightTiming['stepLength'],
-            'fdrId' => $fdrId
-        ]));
+        ]);
     }
 }
