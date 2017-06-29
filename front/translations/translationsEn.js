@@ -143,6 +143,16 @@ const translationsEn = {
                 capitan: 'F/O',
                 route: 'Route',
                 centring: 'Center of Gravity',
+            },
+            list: {
+                processingNotPerformed: 'Processing not performed',
+                noEvents: 'Events not found'
+            },
+            collapse: {
+                eventCodeMask000: "Technological posts",
+                eventCodeMask001: "Piloting equipment control",
+                eventCodeMask002: "Health control",
+                eventCodeMask003: "Information messages",
             }
         },
         calibration: {

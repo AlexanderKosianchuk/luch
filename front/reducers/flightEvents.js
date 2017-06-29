@@ -1,5 +1,8 @@
 const initialState = {
+    pending: null,
     expandedSections: [],
+    items: null,
+    isProcessed: false
 };
 
 export default function flightEvents(state = initialState, action) {
@@ -23,6 +26,18 @@ export default function flightEvents(state = initialState, action) {
             }
 
             return state;
+        case 'FLIGHT_EVENTS_FETCHING':
+            return { ...state,
+                ...{ pending: true }
+            };
+        case 'FLIGHT_EVENTS_FETCHED':
+            return { ...state,
+                ...{
+                    pending: false,
+                    isProcessed: action.payload.isProcessed,
+                    items: action.payload.items
+                }
+            };
         default:
             return state;
     }

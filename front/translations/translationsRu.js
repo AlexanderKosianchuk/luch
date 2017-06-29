@@ -143,6 +143,16 @@ const translationsRu = {
                 capitan: 'КВС',
                 route: 'Маршрут',
                 centring: 'Центровка',
+            },
+            list: {
+                processingNotPerformed: 'Обработка не выполнена',
+                noEvents: 'События не зафиксированы'
+            },
+            collapse: {
+                eventCodeMask000: 'Технологические сообщения',
+                eventCodeMask001: 'Контроль техники пилотирования',
+                eventCodeMask002: 'Контроль работоспособности',
+                eventCodeMask003: 'Информационные сообщения',
             }
         },
         calibration: {

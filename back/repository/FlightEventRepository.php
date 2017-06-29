@@ -64,17 +64,8 @@ class FlightEventRepository extends EntityRepository
                 $formatedSettlements[] = $settlement['eventSettlement']['text'] . ' = ' . $settlement['value'];
             }
 
-            $reliability = "checked";
-            //converting false alarm to reliability
-            if($flightEvent['falseAlarm'] == 0) {
-                $reliability = "checked";
-            } else {
-                $reliability = "";
-            }
-
             $formated[] = [
                 'id' => $flightEvent['id'],
-                'style' => $this->getRowStyle($flightEvent['event']['status']),
                 'refParam' => $flightEvent['event']['refParam'],
                 'frameNum' => (intval(substr($flightEvent['startTime'], 0, -3)) - $startCopyTime) * $stepLength,
                 'endFrameNum' => (intval(substr($flightEvent['endTime'], 0, -3)) - $startCopyTime) * $stepLength,
@@ -88,8 +79,8 @@ class FlightEventRepository extends EntityRepository
                 'code' => $flightEvent['event']['code'],
                 'comment' => $flightEvent['event']['comment'],
                 'algText' => $flightEvent['event']['algText'],
-                'excAditionalInfo' => implode(';<br>', $formatedSettlements),
-                'reliability' => $reliability,
+                'excAditionalInfo' => $formatedSettlements,
+                'reliability' => ($flightEvent['falseAlarm'] === 0),
                 'isDisabled' => $isDisabled,
                 'userComment' => '',
                 'eventType' => 2
@@ -97,19 +88,5 @@ class FlightEventRepository extends EntityRepository
         }
 
         return $formated;
-    }
-
-    private static $statusColor = [
-        "C" => "LightCoral",
-        "D" => "LightYellow",
-        "E" => "LightGreen",
-    ];
-    private function getRowStyle($status)
-    {
-        if (isset(self::$statusColor[$status])) {
-            return "background-color:" . self::$statusColor[$status];
-        } else {
-            return "background-color:none;";
-        }
     }
 }

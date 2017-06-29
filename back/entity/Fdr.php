@@ -75,56 +75,56 @@ class Fdr
      *
      * @Column(name="stepDivider", type="integer", nullable=false)
      */
-    private $stepdivider;
+    private $stepDivider;
 
     /**
      * @var integer
      *
      * @Column(name="frameLength", type="integer", nullable=false)
      */
-    private $framelength;
+    private $frameLength;
 
     /**
      * @var integer
      *
      * @Column(name="wordLength", type="integer", nullable=false)
      */
-    private $wordlength;
+    private $wordLength;
 
     /**
      * @var string
      *
      * @Column(name="aditionalInfo", type="text", length=65535, nullable=false)
      */
-    private $aditionalinfo;
+    private $aditionalInfo;
 
     /**
      * @var integer
      *
      * @Column(name="headerLength", type="integer", nullable=false)
      */
-    private $headerlength;
+    private $headerLength;
 
     /**
      * @var string
      *
      * @Column(name="headerScr", type="text", length=65535, nullable=false)
      */
-    private $headerscr;
+    private $headerScr;
 
     /**
      * @var string
      *
      * @Column(name="frameSyncroCode", type="string", length=8, nullable=false)
      */
-    private $framesyncrocode;
+    private $frameSyncroCode;
 
     /**
      * @var string
      *
      * @Column(name="previewParams", type="string", length=255, nullable=false)
      */
-    private $previewparams;
+    private $previewParams;
 
     /**
      * @var string
@@ -139,13 +139,6 @@ class Fdr
      * @Column(name="kml_export_script", type="text", length=65535, nullable=false)
      */
     private $kmlExportScript;
-
-    /**
-     * @var string
-     *
-     * @Column(name="avaliablePerspectives", type="string", length=255, nullable=false)
-     */
-    private $avaliableperspectives;
 
     /**
      * One Fdr has Many EventToFdrs.
@@ -185,8 +178,37 @@ class Fdr
         return $this->stepLength;
     }
 
+    public function getFrameLength()
+    {
+        return $this->frameLength;
+    }
+
     public function getEventsToFdr()
     {
         return $this->eventsToFdr;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'code' => $this->code,
+            'gradiApTableName' => $this->gradiApTableName,
+            'gradiBpTableName' => $this->gradiBpTableName,
+            'excListTableName' => $this->excListTableName,
+            'paramSetTemplateListTableName' => $this->paramSetTemplateListTableName,
+            'stepLength' => $this->stepLength,
+            'stepDivider' => $this->stepDivider,
+            'frameLength' => $this->frameLength,
+            'wordLength' => $this->wordLength,
+            'aditionalInfo' => $this->aditionalInfo,
+            'headerLength' => $this->headerLength,
+            'headerScr' => $this->headerScr,
+            'frameSyncroCode' => $this->frameSyncroCode,
+            'previewParams' => $this->previewParams,
+            'author' => $this->author,
+            'kmlExportScript' => $this->kmlExportScript
+        ];
     }
 }

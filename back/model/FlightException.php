@@ -6,9 +6,14 @@ class FlightException
 {
     public static $TABLE_PREFIX = '_ex';
 
+    public static function getTableName($guid)
+    {
+        return $guid . self::$TABLE_PREFIX;
+    }
+
     public function CreateFlightExceptionTable($flightId, $flightTablesGuid)
     {
-        $flightExTableName = $flightTablesGuid . self::$TABLE_PREFIX;
+        $flightExTableName = self::getTableName($flightTablesGuid);
 
         $c = new DataBaseConnector;
         $link = $c->Connect();

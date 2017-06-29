@@ -1,4 +1,5 @@
 import './list.sass'
+import 'rc-collapse/assets/index.css';
 
 import React from 'react';
 import { bindActionCreators } from 'redux';
@@ -6,28 +7,43 @@ import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 
 import Title from 'components/flight-events/title/Title';
-
+import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import getFlightInfo from 'actions/getFlightInfo';
+import getFlightEvents from 'actions/getFlightEvents';
 
 class List extends React.Component {
     componentDidMount() {
-        if (this.props.pending !== false) {
+        if (this.props.flightInfoPending !== false) {
             this.props.getFlightInfo({ flightId: this.props.flightId });
+        }
+
+        if (this.props.flightEventsPending !== false) {
+            this.props.getFlightEvents({ flightId: this.props.flightId });
         }
     }
 
     buildList() {
-        return <div>1</div>
+        if (this.props.flightEventsPending !== false) {
+            return <ContentLoader/>
+        }
+
+        if (this.props.isProcessed === false) {
+            return <div className='flight-events-list__not-processed'>
+                <Translate value='flightEvents.list.processingNotPerformed'/>
+            </div>;
+        }
+
+        return <Accordion items={ this.props.flightEvents.items }/>;
     }
 
     buildBody() {
-        if (this.props.pending !== false) {
+        if (this.props.flightInfoPending !== false) {
             return <ContentLoader/>
-        } else {
-            return this.buildList();
         }
+
+        return this.buildList();
     }
 
     render() {
@@ -42,15 +58,18 @@ class List extends React.Component {
 
 function mapStateToProps (state) {
     return {
-        pending: state.flightInfo.pending,
+        flightInfoPending: state.flightInfo.pending,
         flightInfo: state.flightInfo,
+        flightEventsPending: state.flightEvents.pending,
+        isProcessed: state.flightEvents.isProcessed,
         flightEvents: state.flightEvents
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightInfo: bindActionCreators(getFlightInfo, dispatch)
+        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
+        getFlightEvents: bindActionCreators(getFlightEvents, dispatch),
     };
 }
 
