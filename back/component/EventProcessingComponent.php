@@ -334,7 +334,9 @@ class EventProcessingComponent
     private static function substituteFlightInfo($alg, $flightInfo)
     {
         foreach ($flightInfo as $flightInfoKey => $flightInfoVal) {
-            $alg = str_replace("[".$flightInfoKey."]", $flightInfoVal, $alg);
+            if (is_string($flightInfoVal)) {
+                $alg = str_replace("[".$flightInfoKey."]", $flightInfoVal, $alg);
+            }
         }
 
         return $alg;

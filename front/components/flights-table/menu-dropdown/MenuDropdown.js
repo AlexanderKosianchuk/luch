@@ -164,7 +164,7 @@ class MenuDropdown extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
          flightsList: state.flightsList
      };

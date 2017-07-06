@@ -389,7 +389,7 @@ class FlightEventsController extends CController
                 $excEventsList[$ii],
                 [
                     'start' => date("H:i:s", $excEventsList[$ii]['startTime'] / 1000),
-                    'reliability' => ($excEventsList[$ii]['falseAlarm'] === 0),
+                    'reliability' => (intval($excEventsList[$ii]['falseAlarm']) === 0),
                     'end' => date("H:i:s", $excEventsList[$ii]['endTime'] / 1000),
                     'duration' => $Frame->TimeStampToDuration($excEventsList[$ii]['endTime'] - $excEventsList[$ii]['startTime']),
                     'eventType' => 1,
@@ -429,5 +429,71 @@ class FlightEventsController extends CController
             'isProcessed' => true
         ]);
         exit;
+    }
+
+    public function changeReliability($args)
+    {
+        if (!isset($args['flightId'])
+            || !is_int(intval($args['flightId']))
+            || !isset($args['eventId'])
+            || !is_int(intval($args['eventId']))
+            || !isset($args['eventType'])
+            || !is_int(intval($args['eventType']))
+            || !in_array(intval($args['eventType']), [1, 2])
+            || !isset($args['reliability'])
+            || !in_array($args['reliability'], ['true', 'false'])
+        ) {
+            http_response_code(400);
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent or incorrect param types. Received: ".
+                    json_encode($args) . ". ";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+        $flightId = intval($args['flightId']);
+        $eventId = intval($args['eventId']);
+        $eventType = intval($args['eventType']);
+        $reliability = ($args['reliability'] === 'true') ? true : false;
+        $em = EM::get();
+
+        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        if ($flightToFolders === null) {
+            http_response_code(403);
+            header("Status: 403 Forbidden");
+            $msg = "Requested flight not avaliable for current user. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $flight = $em->getRepository('Entity\Flight')->findOneById($flightId);
+
+        if ($flight === null) {
+            http_response_code(404);
+            header("Status: 404 Not Found");
+            $msg = "Requested flight not found. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        if ($eventType === 1) {
+            $FEx = new FlightException;
+            $extExcTableName = $FEx->getTableName($flight->getGuid());
+            $FEx->UpdateFalseAlarmState($extExcTableName, $eventId, $reliability);
+        }
+
+        if ($eventType === 2) {
+            $val = $em->getRepository('Entity\FlightEvent')
+                ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
+        }
+
+        echo(json_encode(['status' => 'ok']));
     }
 }

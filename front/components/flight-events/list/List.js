@@ -4,6 +4,7 @@ import 'rc-collapse/assets/index.css';
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Translate } from 'react-redux-i18n';
 
 import Title from 'components/flight-events/title/Title';
@@ -35,7 +36,10 @@ class List extends React.Component {
             </div>;
         }
 
-        return <Accordion items={ this.props.flightEvents.items }/>;
+        return <Accordion
+            items={ this.props.flightEvents.items }
+            flightId= { this.props.flightId }
+        />;
     }
 
     buildBody() {
@@ -56,7 +60,23 @@ class List extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+List.propTypes = {
+    flightId: PropTypes.number.isRequired,
+    flightInfo:  PropTypes.shape({
+        fdrName: PropTypes.string,
+        bort: PropTypes.string,
+        voyage: PropTypes.string,
+        departureAirport: PropTypes.string,
+        arrivalAirport: PropTypes.string,
+        startCopyTimeFormated: PropTypes.string,
+        fdrName: PropTypes.string,
+        aditionalInfo: PropTypes.object
+    }).isRequired,
+    flightInfoPending: PropTypes.oneOf([true, false, null]),
+    isProcessed: PropTypes.oneOf([true, false, null])
+};
+
+function mapStateToProps(state) {
     return {
         flightInfoPending: state.flightInfo.pending,
         flightInfo: state.flightInfo,

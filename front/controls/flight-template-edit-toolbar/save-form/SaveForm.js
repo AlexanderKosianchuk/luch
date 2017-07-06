@@ -74,7 +74,7 @@ class SaveForm extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         fdrCyclo: state.fdrCyclo
     }

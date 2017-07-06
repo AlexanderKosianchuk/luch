@@ -96,7 +96,7 @@ class TopMenu extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         userLogin: state.user.login,
         userLang: state.user.lang,

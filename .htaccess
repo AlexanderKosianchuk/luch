@@ -5,23 +5,22 @@
 #DocumentRoot PATH/PREFIX_luch15/
 
 #DirectoryIndex index.php
-#SetEnv APPLICATION_ENVIRONMENT 'dev'
+SetEnv APPLICATION_ENVIRONMENT 'dev'
 
 #ErrorLog PATH/PREFIX_luch15/log/error.log
-#CustomLog PATH/PREFIX_luch15/log/access.log combi$
+#LogFormat "%h %l %u %t \"%r\" %>s %b" common
+#CustomLog PATH/PREFIX_luch15/log/access.log common
 #LogLevel alert rewrite:trace5
 
-#RewriteEngine On
-#RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
-#RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
-#RewriteRule ^ - [L]
-#RewriteRule ^ /index.php [L]
-
-Options Indexes Includes
-AllowOverride All
-Order allow,deny
-Allow from all
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^ /index.php [L]
+</IfModule>
 
 php_value upload_max_filesize 64M
 php_value post_max_size 64M
 php_value max_execution_time 400
+php_value short_open_tag 1

@@ -13,7 +13,6 @@ const titleStructure = [
     { label: 'arrivalAirport', key: 'arrivalAirport'}
 ];
 
-
 export default class Title extends Component {
     buildMainTitle() {
         return titleStructure.map((item) => {
@@ -55,7 +54,7 @@ export default class Title extends Component {
 }
 
 Title.propTypes = {
-    flightInfo:  PropTypes.shape({
+    flightInfo: PropTypes.shape({
         fdrName: PropTypes.string,
         bort: PropTypes.string,
         voyage: PropTypes.string,
@@ -64,5 +63,5 @@ Title.propTypes = {
         startCopyTimeFormated: PropTypes.string,
         fdrName: PropTypes.string,
         aditionalInfo: PropTypes.object
-    })
+    }).isRequired
 };

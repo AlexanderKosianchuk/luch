@@ -79,8 +79,9 @@ class FlightEventRepository extends EntityRepository
                 'code' => $flightEvent['event']['code'],
                 'comment' => $flightEvent['event']['comment'],
                 'algText' => $flightEvent['event']['algText'],
+                'status' => $flightEvent['event']['status'],
                 'excAditionalInfo' => $formatedSettlements,
-                'reliability' => ($flightEvent['falseAlarm'] === 0),
+                'reliability' => (intval($flightEvent['falseAlarm']) === 0),
                 'isDisabled' => $isDisabled,
                 'userComment' => '',
                 'eventType' => 2
@@ -88,5 +89,41 @@ class FlightEventRepository extends EntityRepository
         }
 
         return $formated;
+    }
+
+    public function updateFalseAlarm($flightGuid, $eventId, $value)
+    {
+        if (!is_string($flightGuid)) {
+            throw new Exception("Incorrect flightGuid passed. String is required. Passed: "
+                . json_encode($flightGuid), 1);
+        }
+
+        if (!is_int($eventId)) {
+            throw new Exception("Incorrect eventId passed. Integer is required. Passed: "
+                . json_encode($eventId), 1);
+        }
+
+        if (!is_bool($value)) {
+            throw new Exception("Incorrect false alarm value passed. Boolean is required. Passed: "
+                . json_encode($value), 1);
+        }
+
+        $em = $this->getEntityManager();
+
+        $link = LinkFactory::create();
+        $flightEventTable = FlightEvent::getTable($link, $flightGuid);
+        LinkFactory::destroy($link);
+
+        if ($flightEventTable === null) {
+            return null;
+        }
+
+        $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+
+        $flightEvent = $this->findOneBy(['id' => $eventId]);
+
+        $flightEvent->setFalseAlarm($value);
+        $em->persist($flightEvent);
+        $em->flush();
     }
 }

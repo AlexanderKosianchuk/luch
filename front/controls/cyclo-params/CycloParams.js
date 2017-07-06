@@ -39,7 +39,7 @@ class CycloParams extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         cycloFetching: state.fdrCyclo.pending,
         fdrCyclo: state.fdrCyclo

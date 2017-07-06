@@ -66,7 +66,7 @@ class FlightUploadingProgressIndicator extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         flightUploads: state.flightUploadingState
     }

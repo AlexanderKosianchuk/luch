@@ -153,6 +153,17 @@ const translationsRu = {
                 eventCodeMask001: 'Контроль техники пилотирования',
                 eventCodeMask002: 'Контроль работоспособности',
                 eventCodeMask003: 'Информационные сообщения',
+            },
+            contentHeader: {
+                start: 'Начало',
+                end: 'Конец',
+                duration: 'Длительность',
+                code: 'Код',
+                eventName: 'Название',
+                algorithm: 'Алгоритм',
+                aditionalInfo: 'Доп. инф.',
+                reliability: 'Достов.',
+                comment: 'Комментарий',
             }
         },
         calibration: {

@@ -579,11 +579,11 @@ class FlightException
         return $excInfo;
     }
 
-    public function UpdateFalseAlarmState($extExcTableName, $extExcId, $extFalseAlarmState)
+    public function UpdateFalseAlarmState($excTableName, $excId, $falseAlarmState)
     {
-        $excTableName = $extExcTableName;
-        $excId = $extExcId;
-        $falseAlarmState = $extFalseAlarmState;
+        if (is_bool($falseAlarmState)) {
+            $falseAlarmState = intval(!$falseAlarmState);
+        }
 
         $c = new DataBaseConnector;
         $link = $c->Connect();

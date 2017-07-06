@@ -1,15 +1,12 @@
 import './toolbar.sass'
 
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import FlightViewOptionsSwitch from 'controls/flight-view-options-switch/FlightViewOptionsSwitch';
 import FormPrint from 'components/flight-events/form-print/FormPrint';
 
-export default class Toolbar extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
+export default class Toolbar extends Component {
     render() {
         return (
             <nav className="flight-events-toolbar navbar navbar-default">
@@ -37,3 +34,7 @@ export default class Toolbar extends React.Component {
         );
     }
 }
+
+Toolbar.propTypes = {
+    flightId: PropTypes.number.isRequired
+};

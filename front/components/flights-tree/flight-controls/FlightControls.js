@@ -88,7 +88,7 @@ class FlightControls extends Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         pending: state.settings.pending,
         settings: state.settings.items

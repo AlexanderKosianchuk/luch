@@ -25,7 +25,7 @@ class CreateButton extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         fdrId: state.flightInfo.data.fdrId
     }

@@ -1,30 +1,13 @@
-import './content.sass'
-
 import React from 'react';
-import { I18n } from 'react-redux-i18n';
 
-export default function Content (props) {
-    const columns = [
-        { value: I18n.t('flightEvents.contentHeader.start'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.end'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.duration'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.code'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.eventName'), style: 'col-xs-2' },
-        { value: I18n.t('flightEvents.contentHeader.algorithm'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.aditionalInfo'), style: 'col-xs-2' },
-        { value: I18n.t('flightEvents.contentHeader.reliability'), style: 'col-xs-1' },
-        { value: I18n.t('flightEvents.contentHeader.comment'), style: 'col-xs-2' },
-    ];
+import Row from 'components/flight-events/row/Row';
 
-    return <div className='flight-events-content row'>
-        {
+export default function Content(props) {
+    return (
+        <div className='flight-events-content'>{
             props.rows.map((item, index) => {
-                return columns.map((col, colIndex) => {
-                    return <div key={ colIndex } className={ col.style }>
-                        { col.value }
-                    </div>
-                })
+                return (<Row key={ index } item={ item } flightId={ props.flightId }/>);
             })
-        }
-    </div>;
+        }</div>
+    );
 }

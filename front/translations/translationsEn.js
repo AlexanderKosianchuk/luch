@@ -153,6 +153,17 @@ const translationsEn = {
                 eventCodeMask001: "Piloting equipment control",
                 eventCodeMask002: "Health control",
                 eventCodeMask003: "Information messages",
+            },
+            contentHeader: {
+                start: 'Start',
+                end: 'End',
+                duration: 'Duration',
+                code: 'Code',
+                eventName: 'Name',
+                algorithm: 'Algorithm',
+                aditionalInfo: 'Aditional info',
+                reliability: 'Reliability',
+                comment: 'Comment',
             }
         },
         calibration: {

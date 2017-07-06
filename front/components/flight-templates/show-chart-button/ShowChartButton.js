@@ -8,7 +8,7 @@ import redirect from 'actions/redirect';
 
 class ShowChartByTemplates extends React.Component {
     buildButton() {
-        if (_isEmpty(this.props.chosenTemplates.list)) {
+        if (_isEmpty(this.props.templatesList.chosenItems)) {
             return '';
         }
 
@@ -19,19 +19,19 @@ class ShowChartByTemplates extends React.Component {
     }
 
     showChart() {
-        if (this.props.chosenTemplates.list.length === 1) {
+        if (this.props.templatesList.chosenItems.length === 1) {
             this.props.redirect('/chart/'
                 + 'flight-id/'+ this.props.flightId + '/'
-                + 'template-name/'+ this.props.chosenTemplates.list[0] + '/'
+                + 'template-name/'+ this.props.templatesList.chosenItems[0] + '/'
                 + 'from-frame/'+ this.props.startFrame + '/'
                 + 'to-frame/'+ this.props.endFrame
             );
-        } else if (this.props.chosenTemplates.list.length > 1) {
+        } else if (this.props.templatesList.chosenItems.length > 1) {
             let templateName = 'last';
             Promise.resolve(this.props.mergeTemplates({
                 flightId: this.props.flightId,
                 resultTemplateName: templateName,
-                templatesToMerge: this.props.chosenTemplates.list
+                templatesToMerge: this.props.templatesList.chosenItems
             })).then(() => {
                 this.props.redirect('/chart/'
                     + 'flight-id/'+ this.props.flightId + '/'
@@ -52,9 +52,9 @@ class ShowChartByTemplates extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
-        chosenTemplates: state.chosenTemplates,
+        templatesList: state.templatesList,
         startFrame: state.flightInfo.selectedStartFrame,
         endFrame: state.flightInfo.selectedEndFrame
     }

@@ -16,7 +16,6 @@ import settings from 'reducers/settings';
 import templateInfo from 'reducers/templateInfo';
 import templatesList from 'reducers/templatesList';
 import flightEvents from 'reducers/flightEvents';
-import chosenTemplates from 'reducers/chosenTemplates';
 import userReducer from 'reducers/userReducer'
 
 export default combineReducers({
@@ -31,7 +30,6 @@ export default combineReducers({
     templateInfo,
     templatesList,
     flightEvents,
-    chosenTemplates,
     settlementFilter,
     settlementsReport,
     settings,

@@ -1,9 +1,10 @@
-import './form-print.sass'
-
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Translate } from 'react-redux-i18n';
+
+import Checkbox from 'controls/checkbox/Checkbox';
 
 import eventsFormPrint from 'actions/eventsFormPrint';
 
@@ -35,19 +36,12 @@ class FormPrint extends React.Component {
 
     render() {
         return (
-            <ul className="flight-events-form-print nav navbar-nav navbar-right">
-                <li><section className='flight-events-form-print'>
-                    <div className='flight-events-form-print__container'>
-                      <input id={ 'flight-events-form-print__input' }
-                          type='checkbox'
-                          value='None'
-                          name='check'
-                          checked={ this.state.checkstate }
-                          onChange={ this.changeCheckState.bind(this) }
-                       />
-                      <label htmlFor={ 'flight-events-form-print__input' }></label>
-                    </div>
-                  </section>
+            <ul className="nav navbar-nav navbar-right">
+                <li>
+                    <Checkbox
+                        checkstate={ this.state.checkstate }
+                        changeCheckState={ this.changeCheckState.bind(this) }
+                    />
                 </li>
                 <li><a href="#"
                       onClick={ this.changeCheckState.bind(this) }
@@ -64,7 +58,11 @@ class FormPrint extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+FormPrint.propTypes = {
+    flightId: PropTypes.number.isRequired
+};
+
+function mapStateToProps(state) {
     return {
         flightEvents: state.flightEvents
     };

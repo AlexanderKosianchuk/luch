@@ -156,7 +156,7 @@ class FlightUploaderDropdown extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         fdrTypesListPending: state.fdrTypesList.pending,
         fdrTypesList: state.fdrTypesList.items,
