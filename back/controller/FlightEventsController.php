@@ -9,6 +9,8 @@ use Model\FlightException;
 use Model\User;
 use Component\RuntimeManager;
 
+use Component\EntityManagerComponent as EM;
+
 use TCPDF;
 
 require_once (SITE_ROOT_DIR."/tcpdf/tcpdf.php");
@@ -293,5 +295,205 @@ class FlightEventsController extends CController
         $this->ConstructFlightEventsList($flightId, $sections, !$grayscale);
 
         $this->RegisterActionExecution($this->action, 'executed');
+    }
+
+    private static $exceptionTypeOther = 'other';
+    private static $exceptionTypes = [
+        '000', '001', '002', '003', 'other'
+    ];
+
+    public function getFlightEvents($data)
+    {
+        if (!isset($data['flightId'])
+            || !is_int(intval($data['flightId']))
+        ) {
+            http_response_code(400);
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent or incorrect param types. Received: ".
+                    json_encode($data) . ". ";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $flightId = intval($data['flightId']);
+        $userId = intval($this->_user->userInfo['id']);
+
+        $em = EM::get();
+
+        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        if ($flightToFolders === null) {
+            http_response_code(403);
+            header("Status: 403 Forbidden");
+            $msg = "Requested flight not avaliable for current user. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $flight = $em->find('Entity\Flight', $flightId);
+
+        if ($flight === null) {
+            http_response_code(404);
+            header("Status: 404 Not Found");
+            $msg = "Requested flight not found. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $flightInfo = $flight->get();
+        $fdr = $flight->getFdr();
+
+        $exTableName = FlightException::getTableName($flight->getGuid());
+        $excListTableName = FlightException::getTableName($fdr->getCode());
+
+        $role = $this->_user->userInfo['role'];
+        $isDisabled = true;
+        if (User::isAdmin($role) || User::isModerator($role)) {
+            $isDisabled = false;
+        }
+
+        $startCopyTime = $flight->getStartCopyTime();
+        $frameLength = $fdr->getFrameLength();
+        $flightEvents = $em->getRepository('Entity\FlightEvent')
+            ->getFormatedFlightEvents($flight->getGuid(), $isDisabled, $startCopyTime, $frameLength);
+
+        if (($exTableName === "") && ($flightEvents === null)) {
+            echo json_encode([
+                'items' => [],
+                'isProcessed' => false
+            ]);
+            exit;
+        }
+
+        $FEx = new FlightException;
+        $excEventsList = $FEx->GetFlightEventsList($exTableName);
+
+        if (empty($excEventsList) && (count($flightEvents) === 0)) {
+            $analisysStatuts = false;
+            echo json_encode([
+                'items' => [],
+                'isProcessed' => true
+            ]);
+            exit;
+        }
+
+        $Frame = new Frame;
+        //change frame num to time
+        for ($ii = 0; $ii < count($excEventsList); $ii++) {
+            $flightEvents[] = array_merge(
+                $excEventsList[$ii],
+                [
+                    'start' => date("H:i:s", $excEventsList[$ii]['startTime'] / 1000),
+                    'reliability' => (intval($excEventsList[$ii]['falseAlarm']) === 0),
+                    'end' => date("H:i:s", $excEventsList[$ii]['endTime'] / 1000),
+                    'duration' => $Frame->TimeStampToDuration($excEventsList[$ii]['endTime'] - $excEventsList[$ii]['startTime']),
+                    'eventType' => 1,
+                    'isDisabled' => $isDisabled
+                ],
+                $FEx->GetExcInfo(
+                    $excListTableName,
+                    $excEventsList[$ii]['refParam'],
+                    $excEventsList[$ii]['code']
+                )
+            );
+        }
+        unset($Frame);
+
+        $accordion = [];
+
+        for($ii = 0; $ii < count($flightEvents); $ii++) {
+            $codePrefix = substr($flightEvents[$ii]['code'], 0, 3);
+
+            if (in_array($codePrefix, self::$exceptionTypes)) {
+                if (!isset($accordion[$codePrefix])) {
+                    $accordion[$codePrefix] = [];
+                }
+                $accordion[$codePrefix][] = $flightEvents[$ii];
+            } else {
+                if (!isset($accordion[self::$exceptionTypeOther])) {
+                    $accordion[self::$exceptionTypeOther] = [];
+                }
+                $accordion[self::$exceptionTypeOther][] = $flightEvents[$ii];
+            }
+        }
+
+        unset($FEx);
+
+        echo json_encode([
+            'items' => $accordion,
+            'isProcessed' => true
+        ]);
+        exit;
+    }
+
+    public function changeReliability($args)
+    {
+        if (!isset($args['flightId'])
+            || !is_int(intval($args['flightId']))
+            || !isset($args['eventId'])
+            || !is_int(intval($args['eventId']))
+            || !isset($args['eventType'])
+            || !is_int(intval($args['eventType']))
+            || !in_array(intval($args['eventType']), [1, 2])
+            || !isset($args['reliability'])
+            || !in_array($args['reliability'], ['true', 'false'])
+        ) {
+            http_response_code(400);
+            header("Status: 400 Bad Request");
+            $answ["status"] = "err";
+            $answ["error"] = "Not all nessesary params sent or incorrect param types. Received: ".
+                    json_encode($args) . ". ";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            echo(json_encode($answ));
+            exit;
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+        $flightId = intval($args['flightId']);
+        $eventId = intval($args['eventId']);
+        $eventType = intval($args['eventType']);
+        $reliability = ($args['reliability'] === 'true') ? true : false;
+        $em = EM::get();
+
+        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        if ($flightToFolders === null) {
+            http_response_code(403);
+            header("Status: 403 Forbidden");
+            $msg = "Requested flight not avaliable for current user. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        $flight = $em->getRepository('Entity\Flight')->findOneById($flightId);
+
+        if ($flight === null) {
+            http_response_code(404);
+            header("Status: 404 Not Found");
+            $msg = "Requested flight not found. Id: ". $flightId;
+            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
+            echo(json_encode($msg));
+            exit;
+        }
+
+        if ($eventType === 1) {
+            $FEx = new FlightException;
+            $extExcTableName = $FEx->getTableName($flight->getGuid());
+            $FEx->UpdateFalseAlarmState($extExcTableName, $eventId, $reliability);
+        }
+
+        if ($eventType === 2) {
+            $val = $em->getRepository('Entity\FlightEvent')
+                ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
+        }
+
+        echo(json_encode(['status' => 'ok']));
     }
 }

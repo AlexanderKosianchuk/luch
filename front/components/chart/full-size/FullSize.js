@@ -23,7 +23,7 @@ class Print extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {};
 }
 

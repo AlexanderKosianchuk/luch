@@ -31,10 +31,9 @@ class FolderController extends CController
         if (!isset($data['name']) ) {
             http_response_code(400);
             header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
+            $answ = "Not all nessesary params sent. Post: ".
+                    json_encode($data) . ". Page FolderController";
+            $this->RegisterActionReject($this->action, "rejected", 0, $answ);
             echo(json_encode($answ));
             exit;
         }

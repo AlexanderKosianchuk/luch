@@ -159,12 +159,15 @@ class Flight
            'departureAirport' => $this->departureAirport,
            'arrivalAirport' => $this->arrivalAirport,
            'filename' => $this->filename,
-           'guid' => $this->guid
-       ];
+           'guid' => $this->guid,
+           'aditionalInfo' => []
+        ];
 
-        $flightInfo = array_merge($flightInfo,
-            json_decode($this->flightAditionalInfo, true)
-        );
+        if (is_array(json_decode($this->flightAditionalInfo, true))) {
+            $aditionalInfo = json_decode($this->flightAditionalInfo, true);
+            $flightInfo = array_merge($flightInfo, $aditionalInfo);
+            $flightInfo['aditionalInfo'] = $aditionalInfo;
+        }
 
         return $flightInfo;
     }

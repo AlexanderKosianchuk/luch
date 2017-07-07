@@ -51,7 +51,7 @@ class FlightFilter extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         flightFilter: state.flightFilter
     }

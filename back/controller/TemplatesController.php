@@ -300,6 +300,7 @@ class TemplatesController extends CController
         $fdrInfo = $fdr->getFdrInfo($fdrId);
         $cycloApTableName = $fdrInfo['gradiApTableName'];
         $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
 
         $analogParams = [];
         $binaryParams = [];
@@ -314,10 +315,19 @@ class TemplatesController extends CController
 
         unset($fdr);
 
+        $user = $this->_user->userInfo['login'];
+        $ft = new FlightTemplate;
+        $defaultName = $ft->GetDefaultPST($paramSetTemplateListTableName, $user);
+        unset($ft);
+
         echo json_encode([
             'name' => $templateName,
             'ap' => $analogParams,
-            'bp' => $binaryParams
+            'bp' => $binaryParams,
+            'servisePurpose' => (($defaultName === $templateName)
+                ? ['isDefault' => true]
+                : false
+            )
         ]);
     }
 

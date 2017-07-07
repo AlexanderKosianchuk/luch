@@ -58,7 +58,7 @@ class SettlementsReport extends React.Component {
     }
 }
 
-function mapStateToProps (store) {
+function mapStateToProps(store) {
     return {
         pending: store.settlementsReport.pending,
         report: store.settlementsReport.report

@@ -70,7 +70,7 @@ class Settings extends React.Component {
     }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         pending: state.settings.pending,
         settings: state.settings

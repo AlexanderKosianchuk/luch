@@ -24,17 +24,6 @@ class Init extends AbstractMigration
             echo $q . PHP_EOL . PHP_EOL;
         }
 
-        if (!$this->hasTable('event_settlements')) {
-            $q = "CREATE TABLE `event_settlements` (
-              `id` int(11) NOT NULL,
-              `id_event` int(11) NOT NULL,
-              `text` varchar(255) NOT NULL,
-              `alg` text NOT NULL
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $this->execute($q);
-            echo $q . PHP_EOL . PHP_EOL;
-        }
-
         if ($this->hasTable('user_avaliability')) {
             $q = "DELETE FROM `user_avaliability`
                 WHERE `type` != 'brutype';";
@@ -146,8 +135,8 @@ class Init extends AbstractMigration
             echo $q . PHP_EOL . PHP_EOL;
         }
 
-        if (!$this->hasTable('event_settlement')) {
-            $q = "CREATE TABLE `event_settlement` (
+        if (!$this->hasTable('event_settlements')) {
+            $q = "CREATE TABLE `event_settlements` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_event` INT NOT NULL,
                 `text` varchar(255) NOT NULL,

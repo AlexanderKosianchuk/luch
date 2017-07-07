@@ -10,7 +10,9 @@ class FlightTemplateCreate extends React.Component {
         return (
             <div>
                 <MainPage/>
-                <FlightTemplateEditToolbar flightId={ this.props.flightId }/>
+                <FlightTemplateEditToolbar
+                    flightId={ this.props.flightId }
+                />
                 <CycloParams
                     flightId={ this.props.flightId }
                     colorPickerEnabled={ false }

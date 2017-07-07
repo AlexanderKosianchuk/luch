@@ -1,44 +1,32 @@
 const initialState = {
     pending: null,
     duration: null,
-    fdrId: null,
     stepLength: null,
     startFlightTime: null,
     selectedStartFrame: null,
-    selectedEndFrame: null
+    selectedEndFrame: null,
+    data: {}
 };
 
 export default function flightInfo(state = initialState, action) {
     switch (action.type) {
         case 'FLIGHT_INFO_PENDING':
-            return {
-                pending: true,
-                duration: null,
-                fdrId: null,
-                stepLength: null,
-                startFlightTime: null,
-                selectedStartFrame: null,
-                selectedEndFrame: null
+            return { ...state,
+                ...{ pending: true }
             };
         case 'FLIGHT_INFO_RECEIVED':
             return {
                 pending: false,
                 duration: action.payload.duration,
-                fdrId: action.payload.fdrId,
                 stepLength: action.payload.stepLength,
                 startFlightTime: action.payload.startFlightTime,
                 selectedStartFrame: 0,
-                selectedEndFrame: action.payload.duration
+                selectedEndFrame: action.payload.duration,
+                data: action.payload.data,
             };
         case 'FLIGHT_INFO_RECEIVING_FAILED':
             return {
-                pending: false,
-                duration: null,
-                fdrId: null,
-                stepLength: null,
-                startFlightTime: null,
-                selectedStartFrame: null,
-                selectedEndFrame: null
+                ...initialState
             };
         case 'CHANGE_SELECTED_START_FRAME':
             return { ...state,

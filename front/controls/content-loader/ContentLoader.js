@@ -2,7 +2,7 @@ import './content-loader.sass';
 
 import React from 'react';
 
-export default function  ContentLoader (props) {
+export default function ContentLoader (props) {
     function getMargin() {
         if (props.margin) {
             return { margin: props.margin + 'px'};

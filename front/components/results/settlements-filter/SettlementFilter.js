@@ -88,7 +88,7 @@ class SettlementFilter extends React.Component {
     }
 }
 
-function mapStateToProps (store) {
+function mapStateToProps(store) {
     return {
         settlementFilter: store.settlementFilter,
         flightFilter: store.flightFilter

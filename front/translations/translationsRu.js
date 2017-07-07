@@ -127,6 +127,43 @@ const translationsRu = {
         flightEvents: {
             formPrint: {
                 grayscale: 'Ч/Б'
+            },
+            title: {
+                fdrName: 'Тип регистратора',
+                bort: 'Борт',
+                voyage: 'Рейс',
+                startCopyTime: 'Начало копии полета',
+                departureAirport: 'Аэропорт вылета',
+                arrivalAirport: 'Аэропорт посадки',
+                centringto: 'Центровка на взлёте',
+                centringlndg: 'Центровка на посадке',
+                weightto: 'Вес на взлете',
+                weightlndg: 'Вес на посадке',
+                tto: 'Тнв на взлете',
+                capitan: 'КВС',
+                route: 'Маршрут',
+                centring: 'Центровка',
+            },
+            list: {
+                processingNotPerformed: 'Обработка не выполнена',
+                noEvents: 'События не зафиксированы'
+            },
+            collapse: {
+                eventCodeMask000: 'Технологические сообщения',
+                eventCodeMask001: 'Контроль техники пилотирования',
+                eventCodeMask002: 'Контроль работоспособности',
+                eventCodeMask003: 'Информационные сообщения',
+            },
+            contentHeader: {
+                start: 'Начало',
+                end: 'Конец',
+                duration: 'Длительность',
+                code: 'Код',
+                eventName: 'Название',
+                algorithm: 'Алгоритм',
+                aditionalInfo: 'Доп. инф.',
+                reliability: 'Достов.',
+                comment: 'Комментарий',
             }
         },
         calibration: {

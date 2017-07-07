@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { syncTranslationWithStore} from 'react-redux-i18n';
+import { syncTranslationWithStore } from 'react-redux-i18n';
 
 import rootReducer from 'reducers/rootReducer';
 
