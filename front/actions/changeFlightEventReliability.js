@@ -12,7 +12,7 @@ export default function changeFlightEventReliability(payload) {
         }).then(response => response.json())
         .then(json => dispatch({
             type: 'TOGGLING_EVENT_RELIABILITY_COMPLETE',
-            payload: json
+            payload: payload
         }));
     }
 };
