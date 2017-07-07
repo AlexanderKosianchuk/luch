@@ -1,3 +1,5 @@
+import './print-form.sass';
+
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -36,7 +38,7 @@ class FormPrint extends React.Component {
 
     render() {
         return (
-            <ul className="nav navbar-nav navbar-right">
+            <ul className="flight-events-print-form nav navbar-nav navbar-right">
                 <li>
                     <Checkbox
                         checkstate={ this.state.checkstate }

@@ -23,6 +23,24 @@ export default function flightEvents(state = initialState, action) {
                     items: action.payload.items
                 }
             };
+        case 'TOGGLING_EVENT_RELIABILITY_COMPLETE':
+            let flatItems = [];
+
+            Object.keys(state.items).forEach((key) => {
+                flatItems = flatItems.concat(state.items[key]);
+            });
+
+            flatItems.forEach((event) => {
+                if (event.id === action.payload.eventId) {
+                    event.reliability = action.payload.reliability
+                }
+            });
+
+            return { ...state,
+                ...{
+                    items: state.items
+                }
+            };
         default:
             return state;
     }
