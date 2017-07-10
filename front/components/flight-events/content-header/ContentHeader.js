@@ -16,13 +16,26 @@ export default function ContentHeader (props) {
         { value: I18n.t('flightEvents.contentHeader.comment'), style: 'col-sm-2' },
     ];
 
+    const columnsShort = [
+        { value: I18n.t('flightEvents.contentHeader.start')
+            + ' / ' + I18n.t('flightEvents.contentHeader.end') , style: 'col-sm-2'
+        },
+        { value: I18n.t('flightEvents.contentHeader.duration'), style: 'col-sm-2' },
+        { value: I18n.t('flightEvents.contentHeader.code'), style: 'col-sm-2' },
+        { value: I18n.t('flightEvents.contentHeader.eventName'), style: 'col-sm-3' },
+        { value: I18n.t('flightEvents.contentHeader.aditionalInfo'), style: 'col-sm-3' },
+    ];
+
+    function buildBody() {
+        let columnsToBuild = props.isShort ? columnsShort : columns;
+        return columnsToBuild.map((item, index) => {
+            return <div key={ index } className={ 'flight-events-content-header__cell ' + item.style }>
+                { item.value }
+            </div>
+        })
+    }
+
     return <div className='flight-events-content-header row'>
-        {
-            columns.map((item, index) => {
-                return <div key={ index } className={ 'flight-events-content-header__cell ' + item.style }>
-                    { item.value }
-                </div>
-            })
-        }
+        { buildBody() }
     </div>;
 }

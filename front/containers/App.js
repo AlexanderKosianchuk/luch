@@ -8,7 +8,6 @@ import Results from 'containers/results/Results';
 import FlightsTree from 'containers/flights-tree/FlightsTree';
 import FlightsTable from 'containers/flights-table/FlightsTable';
 import Settings from 'containers/settings/Settings';
-import FlightsSearch from 'containers/flights-search/FlightsSearch';
 import Calibrations from 'containers/calibrations/Calibrations';
 import Users from 'containers/users/Users';
 import FlightEvents from 'containers/flight-events/FlightEvents';
@@ -34,7 +33,6 @@ const App = ({ history }) => (
             <Route path='/flights/tree' component={ UserIsAuthenticated(FlightsTree) } />
             <Route path='/flights/table' component={ UserIsAuthenticated(FlightsTable) } />
             <Route path='/user-options' component={ UserIsAuthenticated(Settings) } />
-            <Route path='/flights-search' component={ UserIsAuthenticated(FlightsSearch) } />
             <Route path='/results' component={ UserIsAuthenticated(Results) } />
             <Route path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
             <Route path='/users' component={ UserIsAuthenticated(Users) } />

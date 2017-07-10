@@ -168,7 +168,7 @@ class Tree extends Component {
         });
     }
 
-    resize() {
+    resize(event) {
         this.container.style.height = window.innerHeight - TOP_CONTROLS_HEIGHT + 'px';
     }
 

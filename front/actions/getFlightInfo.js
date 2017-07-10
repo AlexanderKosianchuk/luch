@@ -3,7 +3,8 @@ import queryString from 'query-string';
 export default function getFlightInfo(payload) {
     return function(dispatch) {
         dispatch({
-            type: 'FLIGHT_INFO_PENDING'
+            type: 'FLIGHT_INFO_PENDING',
+            payload: payload
         });
 
         return new Promise((resolve, reject) => {

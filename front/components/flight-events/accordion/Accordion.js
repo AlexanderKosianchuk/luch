@@ -37,10 +37,13 @@ class Accordion extends Component {
                             key={ code }
                             className='container-fluid flight-events-accordion__container'
                         >
-                            <ContentHeader />
+                            <ContentHeader
+                                isShort={ this.props.isShort || false }
+                            />
                             <Content
                                 rows={ this.props.items[code] }
                                 flightId={ this.props.flightId }
+                                isShort={ this.props.isShort || false }
                             />
                         </Panel>
                     );
@@ -52,7 +55,8 @@ class Accordion extends Component {
 
 Accordion.propTypes = {
     flightId: PropTypes.number.isRequired,
-    items: PropTypes.object.isRequired
+    items: PropTypes.object.isRequired,
+    isShort:  PropTypes.bool
 };
 
 function mapStateToProps(state) {
