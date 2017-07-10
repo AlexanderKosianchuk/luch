@@ -1,5 +1,6 @@
 const initialState = {
     pending: null,
+    flightId: null,
     expandedSections: [],
     items: null,
     isProcessed: false
@@ -12,8 +13,11 @@ export default function flightEvents(state = initialState, action) {
                 ...{ expandedSections: action.payload.expandedSections }
             };
         case 'FLIGHT_EVENTS_FETCHING':
-            return { ...state,
-                ...{ pending: true }
+            return { ...initialState,
+                ...{
+                    pending: true,
+                    flightId: action.payload.flightId
+                }
             };
         case 'FLIGHT_EVENTS_FETCHED':
             return { ...state,

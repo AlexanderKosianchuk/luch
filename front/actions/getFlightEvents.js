@@ -3,7 +3,8 @@ import queryString from 'query-string';
 export default function getFlightEvents(payload) {
     return function(dispatch) {
         dispatch({
-            type: 'FLIGHT_EVENTS_FETCHING'
+            type: 'FLIGHT_EVENTS_FETCHING',
+            payload: payload
         });
 
         fetch('/entry.php?action=flightEvents/getFlightEvents&' + queryString.stringify(payload),

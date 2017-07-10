@@ -1,17 +1,16 @@
 import React from 'react';
+import ReactResizeDetector from 'react-resize-detector';
 
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/flights-tree/toolbar/Toolbar';
-import Tree from 'components/flights-tree/tree/Tree';
+import View from 'components/flights-tree/view/View';
 
-import showPage from 'actions/showPage';
-
-export default function FlightsTree (props) {
+export default function FlightsTree () {
     return (
         <div>
             <MainPage/>
             <Toolbar viewType='tree'/>
-            <Tree/>
+            <View/>
         </div>
     );
 }
