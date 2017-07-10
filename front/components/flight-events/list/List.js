@@ -16,23 +16,39 @@ import getFlightEvents from 'actions/getFlightEvents';
 
 class List extends React.Component {
     componentDidMount() {
-        if (this.props.flightInfoPending !== false) {
+        if ((this.props.flightInfoPending === null)
+            || ((this.props.flightInfoPending === false)
+                && (this.props.flightInfo.id !== this.props.flightId)
+            )
+        ) {
             this.props.getFlightInfo({ flightId: this.props.flightId });
         }
 
-        if (this.props.flightEventsPending !== false) {
+        if ((this.props.flightEventsPending === null)
+            || ((this.props.flightEventsPending === false)
+                && (this.props.flightEvents.id !== this.props.flightId)
+            )
+        ) {
             this.props.getFlightEvents({ flightId: this.props.flightId });
         }
     }
 
     buildList() {
-        if (this.props.flightEventsPending !== false) {
+        if ((this.props.flightEventsPending !== false)
+            || (this.props.flightEvents.id === this.props.flightId)
+        ) {
             return <ContentLoader/>
         }
 
         if (this.props.isProcessed === false) {
             return <div className='flight-events-list__not-processed'>
                 <Translate value='flightEvents.list.processingNotPerformed'/>
+            </div>;
+        }
+
+        if (Object.keys(this.props.flightEvents.items).length === 0) {
+            return <div className='flight-events-list__not-processed'>
+                <Translate value='flightEvents.list.noEvents'/>
             </div>;
         }
 
@@ -50,10 +66,18 @@ class List extends React.Component {
         return this.buildList();
     }
 
+    bulidTitle() {
+        if (this.props.flightInfo.id === this.props.flightId) {
+            return <Title flightInfo={ this.props.flightInfo.data }/>;
+        }
+
+        return '';
+    }
+
     render() {
         return (
             <div className='flight-events-list'>
-                <Title flightInfo={ this.props.flightInfo.data }/>
+                { this.bulidTitle() }
                 { this.buildBody() }
             </div>
         );

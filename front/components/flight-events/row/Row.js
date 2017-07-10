@@ -21,6 +21,14 @@ const columns = [
     { attribute: 'userComment', style: 'col-sm-2' },
 ];
 
+const columnsShort = [
+    { attribute: 'sample', style: 'col-sm-2' },
+    { attribute: 'duration', style: 'col-sm-2' },
+    { attribute: 'code', style: 'col-sm-2' },
+    { attribute: 'comment', style: 'col-sm-3' },
+    { attribute: 'excAditionalInfo', style: 'col-sm-3' },
+];
+
 const coloredStatuses = ['c', 'd', 'e'];
 
 class Row extends Component {
@@ -29,6 +37,8 @@ class Row extends Component {
         this.state = {
             isChecked: props.item.reliability ? 'checked' : ''
         }
+
+        this.isShort = props.isShort || false
     }
 
     handleClick(eventId, eventType) {
@@ -60,11 +70,19 @@ class Row extends Component {
             return this.buildCheckbox(item);
         }
 
+        if (attribute === 'sample') {
+            return <div>
+                <div>{ item.start } </div>
+                <div>{ item.end } </div>
+            </div>
+        }
+
         return <span>{ item[attribute] }</span>
     }
 
     buildCells(item) {
-        return columns.map((col, colIndex) => {
+        let columnsToBuild = this.isShort ? columnsShort : columns;
+        return columnsToBuild.map((col, colIndex) => {
             return (
                 <div key={ colIndex } className={ 'flight-events-row__cell ' + col.style }>
                     { this.buildCellContent(item, col.attribute) }
@@ -98,7 +116,9 @@ class Row extends Component {
 
 Row.propTypes = {
     flightId: PropTypes.number.isRequired,
-    item: PropTypes.object.isRequired
+    item: PropTypes.object.isRequired,
+    columns: PropTypes.array,
+    isShort:  PropTypes.bool
 };
 
 function mapStateToProps() {
