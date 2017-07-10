@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactResizeDetector from 'react-resize-detector';
 
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/flights-tree/toolbar/Toolbar';
