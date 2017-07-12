@@ -60,13 +60,6 @@ const translationsEs = {
                 startCopyTime: 'Flight start time',
                 departureAirport: 'Departure airport',
                 arrivalAirport: 'Arrival airport',
-                previous: 'Previous',
-                next: 'Next',
-                loading: 'Loading...',
-                noRowsFound: 'No rows found',
-                page: 'Page',
-                of: 'of',
-                rows: 'rows',
             },
         },
         uploadingPreview: {
@@ -75,7 +68,7 @@ const translationsEs = {
             }
         },
         settings: {
-            settings: {
+            list: {
                 options: 'Conservar',
                 save: 'Save',
                 printTableStep: 'Paso mesa de impresión',
@@ -250,6 +243,15 @@ const translationsEs = {
             saveForm: {
                 templateName: 'Template Name'
             }
+        },
+        table: {
+            previous: 'Previous',
+            next: 'Next',
+            loading: 'Loading...',
+            noRowsFound: 'No rows found',
+            page: 'Page',
+            of: 'of',
+            rows: 'rows',
         },
         dataTable: {
             sLengthMenu: 'Visualización _MENU_ registros por página',

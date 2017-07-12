@@ -36,13 +36,6 @@ class User
     /**
      * @var string
      *
-     * @Column(name="privilege", type="text", length=16777215, nullable=false)
-     */
-    private $privilege;
-
-    /**
-     * @var string
-     *
      * @Column(name="lang", type="string", length=10, nullable=false)
      */
     private $lang;

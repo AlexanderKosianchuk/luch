@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import redirect from 'actions/redirect';
-import removeTemplateFromList from 'actions/removeTemplateFromList';
+import removeTemplateFromList from 'actions/particular/removeTemplateFromList';
 
 class ItemControls extends React.Component {
     handlePencilClick () {
@@ -69,8 +69,8 @@ class ItemControls extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        startFrame: state.flightInfo.selectedStartFrame,
-        endFrame: state.flightInfo.selectedEndFrame
+        startFrame: state.flight.selectedStartFrame,
+        endFrame: state.flight.selectedEndFrame
     };
 }
 

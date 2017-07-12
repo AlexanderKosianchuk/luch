@@ -7,19 +7,19 @@ import 'react-select2-wrapper/css/select2.min.css';
 
 export default function FlightUploaderFdrSelector(props) {
     let selectFdrType = null;
-    let fdrTypesList = props.fdrTypesList;
+    let fdrs = props.fdrs;
 
     function buildList() {
-        if (!fdrTypesList || fdrTypesList.length === 0) {
+        if (!fdrs || fdrs.length === 0) {
             return [];
         }
 
         let list = [];
-        for (var num in fdrTypesList) {
-            if (fdrTypesList.hasOwnProperty(num)) {
+        for (var num in fdrs) {
+            if (fdrs.hasOwnProperty(num)) {
                 list.push({
-                    text: fdrTypesList[num].name,
-                    id: fdrTypesList[num].id
+                    text: fdrs[num].name,
+                    id: fdrs[num].id
                 });
             }
         }
@@ -34,11 +34,11 @@ export default function FlightUploaderFdrSelector(props) {
         let el = selectFdrType.el[0];
         let val = parseInt(el.options[el.selectedIndex].value);
 
-        for (var num in fdrTypesList) {
-            if (fdrTypesList.hasOwnProperty(num)
-                && (fdrTypesList[num].id === val)
+        for (var num in fdrs) {
+            if (fdrs.hasOwnProperty(num)
+                && (fdrs[num].id === val)
             ) {
-                props.changeFdrType(fdrTypesList[num]);
+                props.changeFdrType(fdrs[num]);
             }
         }
     }

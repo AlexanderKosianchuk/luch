@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 
 import redirect from 'actions/redirect';
-import setTemplate from 'actions/setTemplate';
+import setTemplate from 'actions/particular/setTemplate';
 
 class ShowChartButton extends React.Component {
     buildButton() {
@@ -47,8 +47,8 @@ class ShowChartButton extends React.Component {
 function mapStateToProps(state) {
     return {
         fdrCyclo: state.fdrCyclo,
-        startFrame: state.flightInfo.selectedStartFrame,
-        endFrame: state.flightInfo.selectedEndFrame
+        startFrame: state.flight.selectedStartFrame,
+        endFrame: state.flight.selectedEndFrame
     }
 }
 

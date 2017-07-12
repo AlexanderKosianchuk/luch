@@ -7,8 +7,6 @@ use Model\Language;
 
 class IndexController extends CController
 {
-    public $curPage = 'indexPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();

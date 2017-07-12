@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import Checkbox from 'controls/checkbox/Checkbox';
 
-import changeFlightEventReliability from 'actions/changeFlightEventReliability';
+import changeFlightEventReliability from 'actions/particular/changeFlightEventReliability';
 
 const columns = [
     { attribute: 'start', style: 'col-sm-1' },

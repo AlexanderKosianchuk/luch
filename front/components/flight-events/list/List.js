@@ -11,17 +11,20 @@ import Title from 'components/flight-events/title/Title';
 import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import getFlightInfo from 'actions/getFlightInfo';
-import getFlightEvents from 'actions/getFlightEvents';
+import get from 'actions/get';
 
 class List extends React.Component {
     componentDidMount() {
-        if ((this.props.flightInfoPending === null)
-            || ((this.props.flightInfoPending === false)
-                && (this.props.flightInfo.id !== this.props.flightId)
+        if ((this.props.pending === null)
+            || ((this.props.pending === false)
+                && (this.props.flight.id !== this.props.flightId)
             )
         ) {
-            this.props.getFlightInfo({ flightId: this.props.flightId });
+            this.props.get(
+                'flights/getFlightInfo',
+                'FLIGHT',
+                { flightId: this.props.flightId }
+            );
         }
 
         if ((this.props.flightEventsPending === null)
@@ -29,7 +32,11 @@ class List extends React.Component {
                 && (this.props.flightEvents.id !== this.props.flightId)
             )
         ) {
-            this.props.getFlightEvents({ flightId: this.props.flightId });
+            this.props.get(
+                'flightEvents/getFlightEvents',
+                'FLIGHT_EVENTS',
+                { flightId: this.props.flightId }
+            );
         }
     }
 
@@ -59,7 +66,7 @@ class List extends React.Component {
     }
 
     buildBody() {
-        if (this.props.flightInfoPending !== false) {
+        if (this.props.pending !== false) {
             return <ContentLoader/>
         }
 
@@ -67,8 +74,8 @@ class List extends React.Component {
     }
 
     bulidTitle() {
-        if (this.props.flightInfo.id === this.props.flightId) {
-            return <Title flightInfo={ this.props.flightInfo.data }/>;
+        if (this.props.flight.id === this.props.flightId) {
+            return <Title flight={ this.props.flight.data }/>;
         }
 
         return '';
@@ -86,7 +93,7 @@ class List extends React.Component {
 
 List.propTypes = {
     flightId: PropTypes.number.isRequired,
-    flightInfo:  PropTypes.shape({
+    flight:  PropTypes.shape({
         fdrName: PropTypes.string,
         bort: PropTypes.string,
         voyage: PropTypes.string,
@@ -96,14 +103,15 @@ List.propTypes = {
         fdrName: PropTypes.string,
         aditionalInfo: PropTypes.object
     }).isRequired,
-    flightInfoPending: PropTypes.oneOf([true, false, null]),
+    pending: PropTypes.oneOf([true, false, null]),
+    flightEventsPending: PropTypes.oneOf([true, false, null]),
     isProcessed: PropTypes.oneOf([true, false, null])
 };
 
 function mapStateToProps(state) {
     return {
-        flightInfoPending: state.flightInfo.pending,
-        flightInfo: state.flightInfo,
+        pending: state.flight.pending,
+        flight: state.flight,
         flightEventsPending: state.flightEvents.pending,
         isProcessed: state.flightEvents.isProcessed,
         flightEvents: state.flightEvents
@@ -112,8 +120,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
-        getFlightEvents: bindActionCreators(getFlightEvents, dispatch),
+        get: bindActionCreators(get, dispatch)
     };
 }
 

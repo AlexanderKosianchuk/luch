@@ -11,7 +11,7 @@ import Collapse, { Panel } from 'rc-collapse';
 import ContentHeader from 'components/flight-events/content-header/ContentHeader';
 import Content from 'components/flight-events/content/Content';
 
-import toggleEventsSection from 'actions/toggleEventsSection';
+import transmit from 'actions/transmit';
 
 class Accordion extends Component {
     constructor(props) {
@@ -20,7 +20,10 @@ class Accordion extends Component {
     }
 
     handleClick(expandedSections) {
-        this.props.toggleEventsSection({ expandedSections: expandedSections });
+        this.props.transmit(
+            'TOGGLE_EVENTS_SECTION',
+            { expandedSections: expandedSections }
+        );
     }
 
     render() {
@@ -65,7 +68,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        toggleEventsSection: bindActionCreators(toggleEventsSection, dispatch)
+        transmit: bindActionCreators(transmit, dispatch)
     };
 }
 

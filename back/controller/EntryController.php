@@ -6,14 +6,12 @@ use Exception;
 
 class EntryController extends CController
 {
-    public $curPage = 'indexPage';
-
     function __construct()
     {
         $this->setAttributes();
 
         if (!$this->IsAppLoggedIn()
-            && ($this->action !== 'user/login')
+            && ($this->action !== 'users/login')
         ) {
             echo (json_encode('Auth failed'));
             exit;

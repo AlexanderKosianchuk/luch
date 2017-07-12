@@ -3,12 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 
-import mergeTemplates from 'actions/mergeTemplates';
+import mergeTemplates from 'actions/particular/mergeTemplates';
 import redirect from 'actions/redirect';
 
 class ShowChartByTemplates extends React.Component {
     buildButton() {
-        if (_isEmpty(this.props.templatesList.chosenItems)) {
+        if (_isEmpty(this.props.flightTemplates.chosenItems)) {
             return '';
         }
 
@@ -19,19 +19,19 @@ class ShowChartByTemplates extends React.Component {
     }
 
     showChart() {
-        if (this.props.templatesList.chosenItems.length === 1) {
+        if (this.props.flightTemplates.chosenItems.length === 1) {
             this.props.redirect('/chart/'
                 + 'flight-id/'+ this.props.flightId + '/'
-                + 'template-name/'+ this.props.templatesList.chosenItems[0] + '/'
+                + 'template-name/'+ this.props.flightTemplates.chosenItems[0] + '/'
                 + 'from-frame/'+ this.props.startFrame + '/'
                 + 'to-frame/'+ this.props.endFrame
             );
-        } else if (this.props.templatesList.chosenItems.length > 1) {
+        } else if (this.props.flightTemplates.chosenItems.length > 1) {
             let templateName = 'last';
             Promise.resolve(this.props.mergeTemplates({
                 flightId: this.props.flightId,
                 resultTemplateName: templateName,
-                templatesToMerge: this.props.templatesList.chosenItems
+                templatesToMerge: this.props.flightTemplates.chosenItems
             })).then(() => {
                 this.props.redirect('/chart/'
                     + 'flight-id/'+ this.props.flightId + '/'
@@ -54,9 +54,9 @@ class ShowChartByTemplates extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        templatesList: state.templatesList,
-        startFrame: state.flightInfo.selectedStartFrame,
-        endFrame: state.flightInfo.selectedEndFrame
+        flightTemplates: state.flightTemplates,
+        startFrame: state.flight.selectedStartFrame,
+        endFrame: state.flight.selectedEndFrame
     }
 }
 

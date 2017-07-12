@@ -15,7 +15,6 @@ use Component\OSdetectionComponent;
 
 class ChartController extends CController
 {
-    public $curPage = 'chartPage';
     private $title = 'Title';
 
     function __construct()

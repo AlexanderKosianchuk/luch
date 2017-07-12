@@ -14,8 +14,6 @@ use \ReflectionMethod;
 
 class ResultsController extends CController
 {
-    public $curPage = 'resultsPage';
-
     private static $flightFilterArgs = [
         "fdr-type" => "",
         "bort" => "",

@@ -14,12 +14,11 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'controls/top-menu/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'controls/top-menu/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
 
-import getFdrList from 'actions/getFdrList';
-import flightUploaerChangeFdrType from 'actions/flightUploaderChangeFdrType';
-import flightUploaderChangeCalibration from 'actions/flightUploaderChangeCalibration';
-import flightUploaderChangePreviewNeedState from 'actions/flightUploaderChangePreviewNeedState';
-import startEasyFlightUploading from 'actions/startEasyFlightUploading';
-import sendFlightFile from 'actions/sendFlightFile';
+import get from 'actions/get';
+import transmit from 'actions/transmit';
+
+import startEasyFlightUploading from 'actions/particular/startEasyFlightUploading';
+import sendFlightFile from 'actions/particular/sendFlightFile';
 import redirect from 'actions/redirect';
 
 class FlightUploaderDropdown extends React.Component {
@@ -33,8 +32,11 @@ class FlightUploaderDropdown extends React.Component {
     }
 
     componentWillMount() {
-        if (!this.props.fdrTypesList) {
-            this.props.getFdrList();
+        if (this.props.fdrsPending !== false) {
+            this.props.get(
+                'fdr/getFdrs',
+                'FDRS'
+            );
         }
     }
 
@@ -49,33 +51,49 @@ class FlightUploaderDropdown extends React.Component {
     }
 
     putFdrList() {
-        if (this.props.fdrTypesList
-            && (this.props.fdrTypesList.length > 0)
-            && this.props.selectedFdrType
+        if (this.props.fdrs
+            && (this.props.fdrs.items.length > 0)
+            && this.props.chosenFdr
         ) {
             return <FlightUploaderFdrSelector
-                defaultFdr={ this.props.selectedFdrType }
-                fdrTypesList={ this.props.fdrTypesList }
-                changeFdrType={ this.props.changeFdrType.bind(this) }
+                defaultFdr={ this.props.chosenFdr }
+                fdrs={ this.props.fdrs.items }
+                changeFdrType={ this.changeFdrType.bind(this) }
             />;
         }
 
         return '';
     }
 
+    changeFdrType(payload) {
+        this.props.transmit('CHOOSE_FDR', payload);
+
+        if (payload.calibrations
+            && (payload.calibrations.length > 0)
+        ) {
+            this.props.transmit('CHOOSE_CALIBRATION', payload.calibrations[0]);
+        }
+
+    }
+
     putCalibrationList() {
-        if (this.props.selectedFdrType
-            && this.props.selectedFdrType.calibrations
-            && (this.props.selectedFdrType.calibrations.length > 0)
+        if ((typeof this.props.chosenFdr === 'object')
+            && (typeof this.props.chosenCalibration === 'object')
+            && this.props.chosenFdr.calibrations
+            && (this.props.chosenFdr.calibrations.length > 0)
         ) {
             return <FlightUploaderCalibrationSelector
-                defaultCalibration={ this.props.selectedCalibration }
-                calibrations={ this.props.selectedFdrType.calibrations }
-                changeCalibration={ this.props.changeCalibration.bind(this) }
+                defaultCalibration={ this.props.chosenCalibration }
+                calibrations={ this.props.chosenFdr.calibrations }
+                changeCalibration={ this.changeCalibration.bind(this) }
             />;
         }
 
         return '';
+    }
+
+    changeCalibration(payload) {
+        this.props.transmit('CHOOSE_CALIBRATION', payload);
     }
 
     handleChange() {
@@ -87,20 +105,20 @@ class FlightUploaderDropdown extends React.Component {
         if (this.props.previewState) {
             this.props.sendFlightFile(form).then(() => {
                 that.props.redirect('/uploading/' + uploadingUid
-                    + '/fdr-id/' + this.props.selectedFdrType.id
-                    + (this.props.selectedCalibration.id
-                        ? ('/calibration-id/' + this.props.selectedCalibration.id)
+                    + '/fdr-id/' + this.props.chosenFdr.id
+                    + (this.props.chosenCalibration.id
+                        ? ('/calibration-id/' + this.props.chosenCalibration.id)
                         : '')
                 );
             });
         } else {
-            form.append('fdrId', this.props.selectedFdrType.id);
-            form.append('calibrationId', this.props.selectedCalibration.id);
+            form.append('fdrId', this.props.chosenFdr.id);
+            form.append('calibrationId', this.props.chosenCalibration.id);
 
             this.props.startEasyUploading({
                 form: form,
-                fdrId: this.props.selectedFdrType.id,
-                calibrationId: this.props.selectedCalibration.id,
+                fdrId: this.props.chosenFdr.id,
+                calibrationId: this.props.chosenCalibration.id,
                 uploadingUid: uploadingUid
             });
         }
@@ -112,11 +130,11 @@ class FlightUploaderDropdown extends React.Component {
     }
 
     handleSwitchChange(event, state) {
-        this.props.changePreviewNeedState(state);
+        this.props.transmit('CHANGE_PREVIEW_NEED_STATE', state);
     }
 
     buildBody() {
-        if (!this.props.fdrTypesListPending) {
+        if (this.props.fdrsPending === false) {
             return <ul className={ "flight-uploader-dropdown dropdown-menu " + ( this.state.isShown ? 'is-shown' : '' ) }>
                 <li><a href="#"><b><Translate value='topMenu.flightUploaderDropdown.flightUploading'/></b></a></li>
                 { this.putFdrList() }
@@ -158,20 +176,18 @@ class FlightUploaderDropdown extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        fdrTypesListPending: state.fdrTypesList.pending,
-        fdrTypesList: state.fdrTypesList.items,
-        selectedFdrType: state.flightUploader.selectedFdrType,
-        selectedCalibration: state.flightUploader.selectedCalibration,
+        fdrsPending: state.fdrs.pending,
+        fdrs: state.fdrs,
+        chosenFdr: state.fdrs.chosen,
+        chosenCalibration: state.fdrs.chosenCalibration,
         previewState: state.flightUploader.preview
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFdrList: bindActionCreators(getFdrList, dispatch),
-        changeFdrType: bindActionCreators(flightUploaerChangeFdrType, dispatch),
-        changeCalibration: bindActionCreators(flightUploaderChangeCalibration, dispatch),
-        changePreviewNeedState: bindActionCreators(flightUploaderChangePreviewNeedState, dispatch),
+        get: bindActionCreators(get, dispatch),
+        transmit: bindActionCreators(transmit, dispatch),
         startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch),
         sendFlightFile: bindActionCreators(sendFlightFile, dispatch),
         redirect: bindActionCreators(redirect, dispatch)

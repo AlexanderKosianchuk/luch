@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux';
 import ContentLoader from 'controls/content-loader/ContentLoader'
 import CycloParams from 'controls/cyclo-params/CycloParams';
 
-import getTemplate from 'actions/getTemplate';
-import setCheckedFlightParams from 'actions/setCheckedFlightParams';
+import get from 'actions/get';
+import transmit from 'actions/transmit';
 
 class Params extends React.Component {
     constructor(props) {
@@ -21,16 +21,23 @@ class Params extends React.Component {
     }
 
     componentWillMount() {
-        this.props.getTemplate({
-            flightId: this.props.flightId,
-            templateName: this.props.templateName
-        }).then((responce) => {
+        this.props.get(
+            'templates/getTemplate',
+            'TEMPLATE',
+            {
+                flightId: this.props.flightId,
+                templateName: this.props.templateName
+            }
+        ).then((responce) => {
             this.templateAnalogParams = responce.ap || [];
             this.templateBinaryParams = responce.bp || [];
-            this.props.setCheckedFlightParams({
-                ap: this.templateAnalogParams,
-                bp: this.templateBinaryParams
-            });
+            this.props.transmit(
+                'SET_CHECKED_FLIGHT_PARAMS',
+                {
+                    ap: this.templateAnalogParams,
+                    bp: this.templateBinaryParams
+                }
+            );
             this.setState({isReady: true})
         });
     }
@@ -59,14 +66,14 @@ class Params extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        pending: state.templatesList.pending
+        pending: state.flightTemplates.pending
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getTemplate: bindActionCreators(getTemplate, dispatch),
-        setCheckedFlightParams: bindActionCreators(setCheckedFlightParams, dispatch)
+        get: bindActionCreators(get, dispatch),
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

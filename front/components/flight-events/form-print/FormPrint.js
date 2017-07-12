@@ -8,7 +8,7 @@ import { Translate } from 'react-redux-i18n';
 
 import Checkbox from 'controls/checkbox/Checkbox';
 
-import eventsFormPrint from 'actions/eventsFormPrint';
+import eventsFormPrint from 'actions/particular/eventsFormPrint';
 
 class FormPrint extends React.Component {
     constructor(props) {

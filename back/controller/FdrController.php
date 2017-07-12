@@ -15,8 +15,6 @@ use \Exception;
 
 class FdrController extends CController
 {
-    public $curPage = 'bruTypesPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -113,7 +111,7 @@ class FdrController extends CController
         echo json_encode($answ);
     }
 
-    public function getFdrTypes($args)
+    public function getFdrs($args)
     {
         $userId = intval($this->_user->userInfo['id']);
         $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);

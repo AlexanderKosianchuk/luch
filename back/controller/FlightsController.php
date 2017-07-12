@@ -26,8 +26,6 @@ use ZipArchive;
 
 class FlightsController extends CController
 {
-    public $curPage = 'flightsPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();

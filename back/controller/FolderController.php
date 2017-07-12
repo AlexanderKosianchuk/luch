@@ -13,8 +13,6 @@ use Component\FlightComponent;
 
 class FolderController extends CController
 {
-    public $curPage = 'folderPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();

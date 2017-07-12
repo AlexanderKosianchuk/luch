@@ -6,12 +6,17 @@ import { connect } from 'react-redux';
 
 import Tile from 'controls/cyclo-params/tile/Tile';
 import ContentLoader from 'controls/content-loader/ContentLoader';
-import getFdrCyclo from 'actions/getFdrCyclo';
+
+import get from 'actions/get';
 
 class CycloParams extends React.Component {
     componentWillMount() {
         if (this.props.flightId) {
-            this.props.getFdrCyclo({ flightId: this.props.flightId });
+            this.props.get(
+                'fdr/getCyclo',
+                'FDR_CYCLO',
+                { flightId: this.props.flightId }
+            );
         } else {
             throw new Error('Invalid component configuretion. flightId not passed.')
         }
@@ -48,7 +53,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFdrCyclo: bindActionCreators(getFdrCyclo, dispatch)
+        get: bindActionCreators(get, dispatch)
     }
 }
 

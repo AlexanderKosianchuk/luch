@@ -8,8 +8,7 @@ import 'flot-charts/jquery.flot.crosshair';
 import 'flot-charts/jquery.flot.resize';
 import 'jquery-ui/ui/widgets/resizable';
 
-import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
-import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
+import transmit from 'actions/transmit';
 
 import Param from 'Param';
 import AxesWorker from 'AxesWorker';
@@ -485,20 +484,22 @@ Chart.prototype.dispatchIntervalChange = function () {
     var currXmin = self.plotAxes.xaxis.min / 1000, // to unix timestamp
         currXmax = self.plotAxes.xaxis.max / 1000;
 
-    self.store.dispatch(changeSelectedStartFrame(
-        Math.min (self.endFrame,
-            Math.max (0,
-                Math.round((currXmin - self.startCopyTime) / self.stepLength)
-            )
-        )
+    self.store.dispatch(transmit(
+        'CHANGE_SELECTED_START_FRAME',
+         Math.min (self.endFrame,
+             Math.max (0,
+                 Math.round((currXmin - self.startCopyTime) / self.stepLength)
+             )
+         )
     ));
 
-    self.store.dispatch(changeSelectedEndFrame(
-        Math.min (self.endFrame,
-            Math.max (0,
-                Math.floor((currXmax - self.startCopyTime) / self.stepLength)
-            )
-        )
+    self.store.dispatch(transmit(
+        'CHANGE_SELECTED_END_FRAME',
+         Math.min (self.endFrame,
+             Math.max (0,
+                 Math.floor((currXmax - self.startCopyTime) / self.stepLength)
+             )
+         )
     ));
 }
 //=============================================================

@@ -11,8 +11,7 @@ import Title from 'components/flight-events/title/Title';
 import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import getFlightInfo from 'actions/getFlightInfo';
-import getFlightEvents from 'actions/getFlightEvents';
+import get from 'actions/get';
 
 const TOP_CONTROLS_HEIGHT = 105;
 
@@ -26,17 +25,21 @@ class ShortEvents extends React.Component {
     }
 
     checkFlightEvents() {
-        if (this.props.flightsList.chosenItems.length !== 1) {
+        if (this.props.flights.chosenItems.length !== 1) {
             return;
         }
 
-        let chosenFlight = this.props.flightsList.chosenItems[0];
+        let chosenFlight = this.props.flights.chosenItems[0];
         if ((this.props.flightEventsPending === null)
             || ((this.props.flightEventsPending === false)
                 && (this.props.flightEvents.flightId !== chosenFlight.id)
             )
         ) {
-            this.props.getFlightEvents({ flightId: chosenFlight.id });
+            this.props.get(
+                'flightEvents/getFlightEvents',
+                'FLIGHT_EVENTS',
+                { flightId: chosenFlight.id }
+            );
         }
 
         this.resize();
@@ -49,8 +52,8 @@ class ShortEvents extends React.Component {
     eventsAvaliable() {
         if (this.props.flightEvents.items
             && (Object.keys(this.props.flightEvents.items).length > 0)
-            && (this.props.flightsList.chosenItems.length === 1)
-            && (this.props.flightsList.chosenItems[0].id === this.props.flightEvents.flightId)
+            && (this.props.flights.chosenItems.length === 1)
+            && (this.props.flights.chosenItems[0].id === this.props.flightEvents.flightId)
         ) {
             return true;
         }
@@ -63,7 +66,7 @@ class ShortEvents extends React.Component {
             return '';
         }
 
-        let chosenFlight = this.props.flightsList.chosenItems[0];
+        let chosenFlight = this.props.flights.chosenItems[0];
         return <Accordion
             items={ this.props.flightEvents.items }
             flightId={ chosenFlight.id }
@@ -73,7 +76,7 @@ class ShortEvents extends React.Component {
 
     render() {
         return (
-            <div className={ 'flights-tree-short-events ' + (this.eventsAvaliable() ? '' : 'is-hidden') }
+            <div className={ 'flights-tree-short-events ' + (this.eventsAvaliable() ? 'is-shown' : '') }
                 ref={(container) => { this.container = container; }}
             >
                 { this.buildBody() }
@@ -83,18 +86,18 @@ class ShortEvents extends React.Component {
 }
 
 ShortEvents.propTypes = {
-    flightsList: PropTypes.shape({
+    flights: PropTypes.shape({
         chosenItems: PropTypes.array
     }).isRequired,
     flightEvents: PropTypes.shape({
         items: PropTypes.object
     }).isRequired,
-    flightInfoPending: PropTypes.oneOf([true, false, null])
+    flightEventsPending: PropTypes.oneOf([true, false, null])
 };
 
 function mapStateToProps(state) {
     return {
-        flightsList: state.flightsList,
+        flights: state.flights,
         flightEventsPending: state.flightEvents.pending,
         flightEvents: state.flightEvents
     };
@@ -102,7 +105,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightEvents: bindActionCreators(getFlightEvents, dispatch),
+        get: bindActionCreators(get, dispatch),
     };
 }
 

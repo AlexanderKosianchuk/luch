@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
-import deleteFolder from 'actions/deleteFolder';
-import renameFolder from 'actions/renameFolder';
+import deleteFolder from 'actions/particular/deleteFolder';
+import renameFolder from 'actions/particular/renameFolder';
 
 class FolderControls extends Component {
     constructor (props) {

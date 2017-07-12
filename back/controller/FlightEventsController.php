@@ -18,8 +18,6 @@ require_once (SITE_ROOT_DIR."/tcpdf/config/tcpdf_config.php");
 
 class FlightEventsController extends CController
 {
-    public $curPage = 'flightEventsPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();

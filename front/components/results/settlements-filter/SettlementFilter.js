@@ -6,8 +6,8 @@ import { Translate, I18n } from 'react-redux-i18n';
 import SettlementsFilterItem from 'components/results/settlements-filter-item/SettlementsFilterItem';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import changeSettlementItemCheckstate from 'actions/changeSettlementItemCheckstate';
-import applySettlementFilter from 'actions/applySettlementFilter';
+import transmit from 'actions/transmit';
+import applySettlementFilter from 'actions/particular/applySettlementFilter';
 
 class SettlementFilter extends React.Component {
     handleSubmit(event) {
@@ -34,13 +34,20 @@ class SettlementFilter extends React.Component {
 
             return (
                 <SettlementsFilterItem
-                    key={settlement.id}
-                    id={settlement.id}
-                    label={label}
-                    changeCheckstate={this.props.changeCheckstate}
+                    key={ settlement.id }
+                    id={ settlement.id }
+                    label={ label }
+                    changeCheckstate={ this.changeCheckstate.bind(this) }
                 />
             );
         });
+    }
+
+    changeCheckstate (payload) {
+        this.props.transmit(
+            'CHANGE_SETTLEMENT_ITEM_CHECKSTATE',
+            payload
+        );
     }
 
     allEmpty (obj) {
@@ -97,7 +104,7 @@ function mapStateToProps(store) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCheckstate: bindActionCreators(changeSettlementItemCheckstate, dispatch),
+        changeCheckstate: bindActionCreators(transmit, dispatch),
         applySettlementFilter: bindActionCreators(applySettlementFilter, dispatch)
     }
 }

@@ -59,15 +59,8 @@ const translationsRu = {
                 performer: 'Исполнитель',
                 startCopyTime: 'Начало полета',
                 departureAirport: 'Аэропорт вылета',
-                arrivalAirport: 'Аэропорт посадки',
-                previous: 'Предыдущий',
-                next: 'Следующий',
-                loading: 'Загрузка...',
-                noRowsFound: 'Элементы не найдены',
-                page: 'Страница',
-                of: 'из',
-                rows: 'строк',
-            },
+                arrivalAirport: 'Аэропорт посадки'
+            }
         },
         uploadingPreview: {
             toolbar: {
@@ -75,12 +68,14 @@ const translationsRu = {
             }
         },
         settings: {
-            options: 'Пользовательские настройки',
-            save: 'Сохранить',
-            printTableStep: 'Шаг цифропечати',
-            mainChartColor: 'Заливка графика',
-            lineWidth: 'Толщина линий на графике',
-            flightShowAction: 'Действие с полетом по умолчанию'
+            list: {
+                options: 'Пользовательские настройки',
+                save: 'Сохранить',
+                printTableStep: 'Шаг цифропечати',
+                mainChartColor: 'Заливка графика',
+                lineWidth: 'Толщина линий на графике',
+                flightShowAction: 'Действие с полетом по умолчанию'
+            }
         },
         results: {
             toolbar: {
@@ -248,6 +243,15 @@ const translationsRu = {
             saveForm: {
                 templateName: 'Название шаблона'
             }
+        },
+        table: {
+            previous: 'Предыдущий',
+            next: 'Следующий',
+            loading: 'Загрузка...',
+            noRowsFound: 'Элементы не найдены',
+            page: 'Страница',
+            of: 'из',
+            rows: 'строк',
         },
         dataTable: {
             sLengthMenu: 'Показывать по _MENU_ записей на странице',

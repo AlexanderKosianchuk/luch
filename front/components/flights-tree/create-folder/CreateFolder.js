@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import CreateFolderButton from 'components/flights-tree/create-folder-button/CreateFolderButton'
 import CreateFolderForm from 'components/flights-tree/create-folder-form/CreateFolderForm'
 
-import createFolder from 'actions/createFolder';
+import createFolder from 'actions/particular/createFolder';
 
 class CreateFolder extends Component {
     constructor(props) {

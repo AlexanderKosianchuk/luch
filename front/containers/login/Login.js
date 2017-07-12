@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 
-import login from 'actions/login';
+import login from 'actions/particular/login';
 
 function UserLogin (props) {
     let loginInput;

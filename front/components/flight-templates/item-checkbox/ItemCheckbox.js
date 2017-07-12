@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import chooseFlightTemplate from 'actions/chooseFlightTemplate';
+import transmit from 'actions/transmit';
 
 class ItemCheckbox extends React.Component {
     constructor(props) {
@@ -17,10 +17,10 @@ class ItemCheckbox extends React.Component {
 
     componentDidMount() {
         if (this.state.checkstate === 'checked') {
-            this.props.chooseFlightTemplate({
-                checkstate: this.state.checkstate,
-                name: this.props.name
-            });
+            this.props.transmit(
+                'TEMPLATE_CHOSEN',
+                { name: this.props.name }
+            );
         }
     }
 
@@ -28,12 +28,18 @@ class ItemCheckbox extends React.Component {
         let newCheckstate = 'checked';
         if (this.state.checkstate === 'checked') {
             newCheckstate = '';
+            this.props.transmit(
+                'TEMPLATE_UNCHOSEN',
+                { name: this.props.name }
+            );
+        } else {
+            this.props.transmit(
+                'TEMPLATE_CHOSEN',
+                { name: this.props.name }
+            );
         }
 
-        this.props.chooseFlightTemplate({
-            checkstate: newCheckstate,
-            name: this.props.name
-        });
+
 
         this.setState({ checkstate: newCheckstate });
     }
@@ -62,7 +68,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        chooseFlightTemplate: bindActionCreators(chooseFlightTemplate, dispatch)
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

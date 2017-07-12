@@ -22,16 +22,10 @@ use Exception;
 
 class TemplatesController extends CController
 {
-    public $curPage = 'viewOptionsPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
         $this->setAttributes();
-
-        $L = new Language;
-        $this->lang = $L->GetLanguage($this->curPage);
-        unset($L);
     }
 
     private function CreateTemplate($flightId, $params, $tplName)

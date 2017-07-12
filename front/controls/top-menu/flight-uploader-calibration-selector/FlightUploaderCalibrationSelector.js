@@ -31,7 +31,13 @@ export default function FlightUploaderCalibrationSelector(props) {
         }
 
         let el = selectedCalibration.el[0];
-        props.changeCalibration(el.options[el.selectedIndex].value);
+        let chosenCalibrationId = parseInt(el.options[el.selectedIndex].value);
+        let chosenCalibration = null;
+        props.calibrations.forEach((item) => {
+            if (item.id === chosenCalibrationId) {
+                props.changeCalibration(item);
+            }
+        });
     }
 
     return (

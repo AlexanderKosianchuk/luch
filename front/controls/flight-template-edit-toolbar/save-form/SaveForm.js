@@ -7,7 +7,7 @@ import { I18n } from 'react-redux-i18n';
 import _isEmpty from 'lodash.isempty';
 
 import redirect from 'actions/redirect';
-import setTemplate from 'actions/setTemplate';
+import setTemplate from 'actions/particular/setTemplate';
 
 class SaveForm extends React.Component {
     constructor(props) {

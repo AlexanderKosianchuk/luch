@@ -8,19 +8,22 @@ import { I18n } from 'react-redux-i18n';
 
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
-import getFlightInfo from 'actions/getFlightInfo';
-import changeSelectedStartFrame from 'actions/changeSelectedStartFrame';
-import changeSelectedEndFrame from 'actions/changeSelectedEndFrame';
+import get from 'actions/get';
+import transmit from 'actions/transmit';
 
 class FlightRangeSlider extends React.Component {
     componentWillMount() {
         if (this.props.flightDuration === null) {
-            this.props.getFlightInfo({flightId: this.props.flightId});
+            this.props.get(
+                'flights/getFlightInfo',
+                'FLIGHT',
+                { flightId: this.props.flightId }
+            );
         }
     }
 
     buildBody() {
-        if (this.props.flightInfoPending === false) {
+        if (this.props.pending === false) {
             return this.buildSlider();
         }
 
@@ -46,11 +49,17 @@ class FlightRangeSlider extends React.Component {
 
     changeSlider(event) {
         if (event.target.value[0] !== this.props.selectedStartFrame) {
-            this.props.changeSelectedStartFrame(event.target.value[0]);
+            this.props.transmit(
+                'CHANGE_SELECTED_START_FRAME',
+                event.target.value[0]
+            );
         }
 
         if (event.target.value[1] !== this.props.selectedEndFrame) {
-            this.props.changeSelectedEndFrame(event.target.value[1]);
+            this.props.transmit(
+                'CHANGE_SELECTED_END_FRAME',
+                event.target.value[1]
+            );
         }
     }
 
@@ -107,19 +116,18 @@ class FlightRangeSlider extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        flightInfoPending: state.flightInfo.pending,
-        flightDuration: state.flightInfo.duration,
-        stepLength: state.flightInfo.stepLength,
-        selectedStartFrame: state.flightInfo.selectedStartFrame,
-        selectedEndFrame: state.flightInfo.selectedEndFrame
+        pending: state.flight.pending,
+        flightDuration: state.flight.duration,
+        stepLength: state.flight.stepLength,
+        selectedStartFrame: state.flight.selectedStartFrame,
+        selectedEndFrame: state.flight.selectedEndFrame
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
-        changeSelectedStartFrame: bindActionCreators(changeSelectedStartFrame, dispatch),
-        changeSelectedEndFrame: bindActionCreators(changeSelectedEndFrame, dispatch)
+        get: bindActionCreators(get, dispatch),
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

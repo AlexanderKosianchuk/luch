@@ -6,15 +6,14 @@ const initialState = {
 
 export default function settlementFilter(state = initialState, action) {
     switch (action.type) {
-        case 'APPLY_FLIGHT_FILTER':
-            state.pending = true;
-            return { ...state };
-        case 'SETTLEMENTS_FETCHED':
-            return { ... Object.assign(state, {
+        case 'GET_SETTLEMENTS_START':
+            return { ...state, ...{ pending: true } };
+        case 'GET_SETTLEMENTS_COMPLETE':
+            return { ...state, ...{
                 pending: false,
-                avaliableSettlements: action.payload.slice(), // copy array
-                chosenSettlements: action.payload.slice()
-            })};
+                avaliableSettlements: action.payload.response.slice(), // copy array
+                chosenSettlements: action.payload.response.slice()
+            }};
         case 'CHANGE_SETTLEMENT_ITEM_CHECKSTATE':
             let getIndexById = function (id, array) {
                 let itemIndex = null;

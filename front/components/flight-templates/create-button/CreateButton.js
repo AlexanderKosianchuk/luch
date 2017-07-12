@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import mergeTemplates from 'actions/mergeTemplates';
+import mergeTemplates from 'actions/particular/mergeTemplates';
 import redirect from 'actions/redirect';
 
 class CreateButton extends React.Component {
@@ -27,7 +27,7 @@ class CreateButton extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        fdrId: state.flightInfo.data.fdrId
+        fdrId: state.flight.data.fdrId
     }
 }
 

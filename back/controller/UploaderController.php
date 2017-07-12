@@ -26,8 +26,6 @@ use \Exception;
 
 class UploaderController extends CController
 {
-    public $curPage = 'uploaderPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -168,11 +166,9 @@ class UploaderController extends CController
             }
         }
 
-        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege)) {
-            $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
-                "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
-                </tr>";
-        }
+        $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
+            "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
+            </tr>";
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->ignoreDueUploading . "</td>" .
                 "<td><input id='ignoreDueUploading".$index."' type='checkbox' class='FlightUploadingInputs'/></td>

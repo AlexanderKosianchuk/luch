@@ -7,8 +7,6 @@ use Model\Language;
 
 class CController
 {
-    protected $curPage = null;
-
     public $action;
     public $data;
 
@@ -51,7 +49,7 @@ class CController
         } else {
             $msg = "Incorect input. Data: " . json_encode(isset($post['data']) ? $post['data'] : '') .
                 " . Action: " . json_encode(isset($post['action']) ? $post['action'] : '') .
-                " . Page: " . $this->curPage. ".";
+                " . Class: " . get_class($this). ".";
             echo($msg);
             error_log($msg);
             return;
@@ -76,10 +74,13 @@ class CController
             $success = true;
         }
 
+        $className = get_class($this);
+        $page = substr($className, strpos($className, "\\") + 1);
+
         $L = new Language();
         $L->SetLanguageName($this->userLang);
         $this->userLang = $L->GetLanguageName();
-        $this->lang = $L->GetLanguage($this->curPage);
+        $this->lang = $L->GetLanguage($page);
         unset($L);
 
         return $success;

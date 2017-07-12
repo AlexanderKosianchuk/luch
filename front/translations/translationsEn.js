@@ -67,7 +67,7 @@ const translationsEn = {
                 startCopyTime: 'Flight start time',
                 departureAirport: 'Departure airport',
                 arrivalAirport: 'Arrival airport',
-            },
+            }
         },
         uploadingPreview: {
             toolbar: {
@@ -75,12 +75,14 @@ const translationsEn = {
             }
         },
         settings: {
-            options: 'User options',
-            save: 'Save',
-            printTableStep: 'Print table step',
-            mainChartColor: 'Main chart background color',
-            lineWidth: 'Сhart lines width',
-            flightShowAction: 'Flight show action'
+            list: {
+                options: 'User options',
+                save: 'Save',
+                printTableStep: 'Print table step',
+                mainChartColor: 'Main chart background color',
+                lineWidth: 'Сhart lines width',
+                flightShowAction: 'Flight show action'
+            }
         },
         results: {
             toolbar: {
@@ -248,6 +250,15 @@ const translationsEn = {
             saveForm: {
                 templateName: 'Template Name'
             }
+        },
+        table: {
+            previous: 'Previous',
+            next: 'Next',
+            loading: 'Loading...',
+            noRowsFound: 'No rows found',
+            page: 'Page',
+            of: 'of',
+            rows: 'rows',
         },
         dataTable: {
             sLengthMenu: 'Show by _MENU_ rows on page',

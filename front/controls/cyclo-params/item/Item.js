@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
 
-import setParamColor from 'actions/setParamColor';
-import changeFlightParamCheckstate from 'actions/changeFlightParamCheckstate';
+import transmit from 'actions/transmit';
+import setParamColor from 'actions/particular/setParamColor';
 
 class Item extends React.Component {
     constructor(props) {
@@ -23,11 +23,14 @@ class Item extends React.Component {
             let checkstate = !event.currentTarget.parentElement.classList.contains('is-chosen');
             event.currentTarget.parentElement.classList.toggle('is-chosen');
 
-            this.props.changeFlightParamCheckstate({
-                id: this.props.param.id,
-                paramType: this.props.param.type,
-                state: checkstate
-            });
+            this.props.transmit(
+                'CHANGE_FLIGHT_PARAM_CHECKSTATE',
+                {
+                    id: this.props.param.id,
+                    paramType: this.props.param.type,
+                    state: checkstate
+                }
+            );
         }
     }
 
@@ -81,7 +84,7 @@ class Item extends React.Component {
 function mapDispatchToProps(dispatch) {
     return {
         setParamColor: bindActionCreators(setParamColor, dispatch),
-        changeFlightParamCheckstate: bindActionCreators(changeFlightParamCheckstate, dispatch)
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

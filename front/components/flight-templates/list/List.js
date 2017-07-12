@@ -7,7 +7,8 @@ import { Collapse } from 'react-collapse';
 
 import ContentLoader from 'controls/content-loader/ContentLoader';
 import Item from 'components/flight-templates/item/Item';
-import getFlightTemplates from 'actions/getFlightTemplates';
+
+import get from 'actions/get';
 
 class List extends React.Component {
     constructor(props) {
@@ -18,12 +19,16 @@ class List extends React.Component {
     }
 
     componentWillMount() {
-        this.props.getFlightTemplates({ flightId: this.props.flightId });
+        this.props.get(
+            'templates/getFlightTemplates',
+            'FLIGHT_TEMPLATES',
+            { flightId: this.props.flightId }
+        );
     }
 
     buildTemplatesList() {
         let list = [];
-        this.props.templatesList.forEach((item, index) => {
+        this.props.flightTemplates.items.forEach((item, index) => {
             list.push(<Item
                 key={ index }
                 name={ item.name }
@@ -38,7 +43,7 @@ class List extends React.Component {
     }
 
     buildBody() {
-        if (this.props.templatesFetching !== false) {
+        if (this.props.pending !== false) {
             return <ContentLoader/>
         } else {
             return this.buildTemplatesList();
@@ -56,14 +61,14 @@ class List extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        templatesFetching: state.templatesList.pending,
-        templatesList: state.templatesList.items,
+        pending: state.flightTemplates.pending,
+        flightTemplates: state.flightTemplates,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightTemplates: bindActionCreators(getFlightTemplates, dispatch)
+        get: bindActionCreators(get, dispatch)
     }
 }
 

@@ -9,8 +9,6 @@ use Component\FdrComponent;
 
 class CalibrationController extends CController
 {
-    public $curPage = 'calibrationPage';
-
     public function getAvaliableFdrs($data)
     {
         $userId = intval($this->_user->userInfo['id']);
