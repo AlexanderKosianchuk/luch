@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import ContentLoader from 'controls/content-loader/ContentLoader'
 import CycloParams from 'controls/cyclo-params/CycloParams';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class Params extends React.Component {
@@ -21,9 +21,10 @@ class Params extends React.Component {
     }
 
     componentWillMount() {
-        this.props.get(
-            'templates/getTemplate',
+        this.props.request(
+            ['templates', 'getTemplate'],
             'TEMPLATE',
+            'get',
             {
                 flightId: this.props.flightId,
                 templateName: this.props.templateName
@@ -72,7 +73,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch)
     }
 }

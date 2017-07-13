@@ -111,6 +111,7 @@ class FlightComponent
         }
 
         if ($flightGuid === '') {
+            $em = EM::get();
             $flight = $em->find('Entity\Flight', $flightId);
             $flightGuid = $flight->getGuid();
         }

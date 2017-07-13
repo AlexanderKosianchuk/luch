@@ -10,14 +10,18 @@ import { goBack } from 'react-router-redux';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 import Item from 'components/settings/item/Item';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 import setSettings from 'actions/particular/setSettings';
 import redirect from 'actions/redirect';
 
 class List extends React.Component {
     componentDidMount() {
-        this.props.getSettings();
+        this.props.request(
+            ['users', 'getUserSettings'],
+            'USER_SETTINGS',
+            'get'
+        );
     }
 
     buildContent() {
@@ -82,7 +86,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
         setSettings: bindActionCreators(setSettings, dispatch),
         redirect: bindActionCreators(redirect, dispatch)

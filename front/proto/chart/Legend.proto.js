@@ -157,20 +157,16 @@ Legend.prototype.HighlightLegend = function(seriesIndex)
 Legend.prototype.ReceiveLegend = function(){
     var legndLabls = this.legndCont.find(".legendLabel"),
         self = this;
-    if(this.legendTitlesNotReceived) {
-        var paramCodes = self.apArr.concat(self.bpArr),
-        pV = {
-            action: "chart/rcvLegend",
-            data:{
-                flightId: self.flightId,
-                paramCodes: paramCodes
-            }
-        };
+    if (this.legendTitlesNotReceived) {
+        var paramCodes = self.apArr.concat(self.bpArr);
 
         $.ajax({
-            data: pV,
+            data: {
+                flightId: self.flightId,
+                paramCodes: paramCodes
+            },
             type: "POST",
-            url: ENTRY_URL,
+            url: ENTRY_URL + "?action=chart/rcvLegend",
             dataType: 'json',
             success: function(inData){
                 self.dfr.resolve;

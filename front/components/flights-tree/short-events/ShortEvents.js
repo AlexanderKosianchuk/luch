@@ -11,7 +11,7 @@ import Title from 'components/flight-events/title/Title';
 import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import get from 'actions/get';
+import request from 'actions/request';
 
 const TOP_CONTROLS_HEIGHT = 105;
 
@@ -35,9 +35,10 @@ class ShortEvents extends React.Component {
                 && (this.props.flightEvents.flightId !== chosenFlight.id)
             )
         ) {
-            this.props.get(
-                'flightEvents/getFlightEvents',
+            this.props.request(
+                ['flightEvents', 'getFlightEvents'],
                 'FLIGHT_EVENTS',
+                'get',
                 { flightId: chosenFlight.id }
             );
         }
@@ -105,7 +106,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
     };
 }
 

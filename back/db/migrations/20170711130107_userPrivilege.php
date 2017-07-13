@@ -8,9 +8,50 @@ class UserPrivilege extends AbstractMigration
     {
         $usersTable = $this->table('user_personal');
         $hasColumn = $usersTable->hasColumn('privilege');
-        if (!$hasColumn) {
+        if ($hasColumn) {
             $q = "ALTER TABLE `user_personal`
                 DROP `privilege`;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $userActivityTable = $this->table('user_activity');
+        $hasColumn = $userActivityTable->hasColumn('senderId');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_activity`
+                DROP `senderId`;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $hasColumn = $userActivityTable->hasColumn('senderName');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_activity`
+                DROP `senderName`;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $hasColumn = $userActivityTable->hasColumn('targetId');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_activity`
+                CHANGE COLUMN `targetId` `code` INT NOT NULL;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $hasColumn = $userActivityTable->hasColumn('targetName');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_activity`
+                CHANGE COLUMN `targetName` `message` VARCHAR (255) NOT NULL;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
+        $hasColumn = $userActivityTable->hasColumn('userId');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_activity`
+                CHANGE COLUMN `userId` `id_user` INT NOT NULL;";
             $this->execute($q);
             echo $q . PHP_EOL . PHP_EOL;
         }

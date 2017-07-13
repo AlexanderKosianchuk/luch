@@ -8,15 +8,16 @@ import { I18n } from 'react-redux-i18n';
 
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class FlightRangeSlider extends React.Component {
     componentWillMount() {
         if (this.props.flightDuration === null) {
-            this.props.get(
-                'flights/getFlightInfo',
+            this.props.request(
+                ['flights', 'getFlightInfo'],
                 'FLIGHT',
+                'get',
                 { flightId: this.props.flightId }
             );
         }
@@ -126,7 +127,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch)
     }
 }

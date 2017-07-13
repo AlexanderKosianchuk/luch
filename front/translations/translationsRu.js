@@ -4,7 +4,8 @@ const translationsRu = {
             userName: 'Логин пользователя',
             loginForm: 'Форма авторизации',
             authorize: 'Войти',
-            password: 'Пароль'
+            password: 'Пароль',
+            userUnexist: 'Пользователь с указанными данными не найден'
         },
         flightsTree: {
             apply: 'Принять',

@@ -36,6 +36,20 @@ class UserActivity
     private $status;
 
     /**
+     * @var integer
+     *
+     * @Column(name="code", type="integer", nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string
+     *
+     * @Column(name="message", type="string", length=255, nullable=false)
+     */
+    private $message;
+
+    /**
      * @var \DateTime
      *
      * @Column(name="date", type="datetime", nullable=false)
@@ -45,37 +59,16 @@ class UserActivity
     /**
      * @var integer
      *
-     * @Column(name="userId", type="integer", nullable=false)
+     * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $userid;
+    private $userId;
 
-    /**
-     * @var integer
-     *
-     * @Column(name="senderId", type="integer", nullable=false)
-     */
-    private $senderid;
-
-    /**
-     * @var string
-     *
-     * @Column(name="senderName", type="text", length=65535, nullable=false)
-     */
-    private $sendername;
-
-    /**
-     * @var integer
-     *
-     * @Column(name="targetId", type="integer", nullable=false)
-     */
-    private $targetid;
-
-    /**
-     * @var string
-     *
-     * @Column(name="targetName", type="text", length=65535, nullable=false)
-     */
-    private $targetname;
-
-
+    public function setAttributes($data)
+    {
+        $this->action = $data['action'];
+        $this->status = $data['status'];
+        $this->code = $data['code'];
+        $this->message = $data['message'];
+        $this->userId = $data['userId'];
+    }
 }

@@ -5,7 +5,7 @@ import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightFilterItem from 'components/results/flight-filter-item/FlightFilterItem';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class FlightFilter extends React.Component {
@@ -43,9 +43,10 @@ class FlightFilter extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.get(
-            'results/getSettlements',
+        this.props.request(
+            ['results', 'getSettlements'],
             'SETTLEMENTS',
+            'get',
             this.props.flightFilter
         );
     }
@@ -71,7 +72,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch)
     }
 }

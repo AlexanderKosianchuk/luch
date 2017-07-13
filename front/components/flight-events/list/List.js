@@ -11,7 +11,7 @@ import Title from 'components/flight-events/title/Title';
 import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import get from 'actions/get';
+import request from 'actions/request';
 
 class List extends React.Component {
     componentDidMount() {
@@ -20,9 +20,10 @@ class List extends React.Component {
                 && (this.props.flight.id !== this.props.flightId)
             )
         ) {
-            this.props.get(
-                'flights/getFlightInfo',
+            this.props.request(
+                ['flights', 'getFlightInfo'],
                 'FLIGHT',
+                'get',
                 { flightId: this.props.flightId }
             );
         }
@@ -32,9 +33,10 @@ class List extends React.Component {
                 && (this.props.flightEvents.id !== this.props.flightId)
             )
         ) {
-            this.props.get(
-                'flightEvents/getFlightEvents',
+            this.props.request(
+                ['flightEvents', 'getFlightEvents'],
                 'FLIGHT_EVENTS',
+                'get',
                 { flightId: this.props.flightId }
             );
         }
@@ -120,7 +122,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch)
+        request: bindActionCreators(request, dispatch)
     };
 }
 

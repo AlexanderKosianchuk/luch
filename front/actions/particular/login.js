@@ -8,36 +8,40 @@ export default function login(payload) {
             type: 'LOGIN_PENDING'
         });
 
-        fetch('/entry.php?action=users/login&' + queryString.stringify(payload),
-            { credentials: "same-origin" }
-        ).then((response) => {
-                response
-                    .json()
-                    .then(json => {
-                        if (json.status === 'ok') {
-                            dispatch({
-                                type: 'USER_LOGGED_IN',
-                                payload: json
-                            });
+        return new Promise((resolve, reject) => {
+            fetch('/entry.php?action=users/login&' + queryString.stringify(payload),
+                { credentials: "same-origin" }
+            ).then((response) => {
+                    response
+                        .json()
+                        .then(json => {
+                            if (json.status === 'ok') {
+                                dispatch({
+                                    type: 'USER_LOGGED_IN',
+                                    payload: json
+                                });
 
-                            if (json.lang && json.lang.length === 2) {
-                                dispatch(setLocale(json.lang.toLowerCase()));
+                                if (json.lang && json.lang.length === 2) {
+                                    dispatch(setLocale(json.lang.toLowerCase()));
+                                }
+                                dispatch(push('/'));
+                                resolve(json);
+                            } else {
+                                dispatch({
+                                    type: 'LOGIN_FAILED',
+                                    payload: json
+                                });
+                                reject(json);
                             }
-
-                            dispatch(push('/'));
-                        } else {
-                            dispatch({
-                                type: 'LOGIN_FAILED',
-                                payload: json
-                            });
-                        }
+                        });
+                }, (response) => {
+                    dispatch({
+                        type: 'LOGIN_FAILED',
+                        payload: response
                     });
-            }, (response) => {
-                dispatch({
-                    type: 'LOGIN_FAILED',
-                    payload: response
-                });
-            }
-        );
+                    reject(json);
+                }
+            );
+        });
     }
 };

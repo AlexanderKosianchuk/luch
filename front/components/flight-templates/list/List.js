@@ -8,7 +8,7 @@ import { Collapse } from 'react-collapse';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 import Item from 'components/flight-templates/item/Item';
 
-import get from 'actions/get';
+import request from 'actions/request';
 
 class List extends React.Component {
     constructor(props) {
@@ -19,9 +19,10 @@ class List extends React.Component {
     }
 
     componentWillMount() {
-        this.props.get(
-            'templates/getFlightTemplates',
+        this.props.request(
+            ['templates', 'getFlightTemplates'],
             'FLIGHT_TEMPLATES',
+            'get',
             { flightId: this.props.flightId }
         );
     }
@@ -68,7 +69,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

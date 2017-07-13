@@ -4,7 +4,8 @@ const translationsEs = {
             userName: 'User name',
             loginForm: 'Login form',
             authorize: 'Log in',
-            password: 'Password'
+            password: 'Password',
+            userUnexist: 'User unexist'
         },
         flightsTree: {
             apply: 'Aplicar',

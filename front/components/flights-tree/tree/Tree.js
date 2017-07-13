@@ -13,7 +13,7 @@ import FolderControls from 'components/flights-tree/folder-controls/FolderContro
 
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 import moveFlight from 'actions/particular/moveFlight';
 import moveFolder from 'actions/particular/moveFolder';
@@ -64,17 +64,20 @@ class Tree extends Component {
         this.resize();
 
         if (this.props.pending !== false) {
-            this.props.get(
-                'folder/getFolders',
-                'FOLDERS'
+            this.props.request(
+                ['folder', 'getFolders'],
+                'FOLDERS',
+                'get'
             );
-            this.props.get(
-                'flights/getFlights',
-                'FLIGHTS'
+            this.props.request(
+                ['flights', 'getFlights'],
+                'FLIGHTS',
+                'get'
             );
-            this.props.get(
-                'users/getUserSettings',
-                'USER_SETTINGS'
+            this.props.request(
+                ['users', 'getUserSettings'],
+                'USER_SETTINGS',
+                'get'
             );
         } else {
             this.checkChosen();
@@ -317,7 +320,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
         moveFlight: bindActionCreators(moveFlight, dispatch),
         moveFolder: bindActionCreators(moveFolder, dispatch),

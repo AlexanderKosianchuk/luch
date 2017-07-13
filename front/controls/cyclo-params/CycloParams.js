@@ -7,14 +7,15 @@ import { connect } from 'react-redux';
 import Tile from 'controls/cyclo-params/tile/Tile';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import get from 'actions/get';
+import request from 'actions/request';
 
 class CycloParams extends React.Component {
     componentWillMount() {
         if (this.props.flightId) {
-            this.props.get(
-                'fdr/getCyclo',
+            this.props.request(
+                ['fdr', 'getCyclo'],
                 'FDR_CYCLO',
+                'get',
                 { flightId: this.props.flightId }
             );
         } else {
@@ -53,7 +54,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

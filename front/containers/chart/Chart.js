@@ -5,23 +5,25 @@ import { bindActionCreators } from 'redux';
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/chart/toolbar/Toolbar';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import showPage from 'actions/showPage';
 
 class Chart extends React.Component {
     componentDidMount() {
         Promise.all([
-            this.props.get(
-                'templates/getTemplate',
+            this.props.request(
+                ['templates', 'getTemplate'],
                 'TEMPLATE',
+                'get',
                 {
                     flightId: this.props.flightId,
                     templateName: this.props.templateName
                 }
             ),
-            this.props.get(
-                'flights/getFlightInfo',
+            this.props.request(
+                ['flights', 'getFlightInfo'],
                 'FLIGHT',
+                'get',
                 { flightId: this.props.flightId }
             )
         ]).then(() => {
@@ -78,7 +80,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         showPage: bindActionCreators(showPage, dispatch)
     }
 }

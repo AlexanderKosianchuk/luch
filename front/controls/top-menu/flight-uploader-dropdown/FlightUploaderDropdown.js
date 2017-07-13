@@ -14,7 +14,7 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'controls/top-menu/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'controls/top-menu/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 import startEasyFlightUploading from 'actions/particular/startEasyFlightUploading';
@@ -33,9 +33,10 @@ class FlightUploaderDropdown extends React.Component {
 
     componentWillMount() {
         if (this.props.fdrsPending !== false) {
-            this.props.get(
-                'fdr/getFdrs',
-                'FDRS'
+            this.props.request(
+                ['fdr', 'getFdrs'],
+                'FDRS',
+                'get'
             );
         }
     }
@@ -186,7 +187,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
         startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch),
         sendFlightFile: bindActionCreators(sendFlightFile, dispatch),

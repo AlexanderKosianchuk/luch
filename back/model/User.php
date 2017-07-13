@@ -261,33 +261,12 @@ class User
         return $userInfo;
     }
 
-    public function GetLastActionByActionName($extUserId, $extActionName)
-    {
-        $userId = $extUserId;
-        $actionName = $extActionName;
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $result = $link->query("SELECT `*` FROM `user_activity` WHERE `userId`='".$userId."' AND `acton` = '".$actionName."' ORDER BY `id` ASC LIMIT 1;");
-
-        $answer = array();
-        $row = $result->fetch_array();
-        foreach($row as $key => $val)
-        {
-            $answer[$key] = $val;
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $answer;
-    }
-
     public function GetUsersInfo($username)
     {
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
+        $userInfo = [];
         $result = $link->query("SELECT * FROM `user_personal` WHERE
                 `login` = '".$username."';");
 
@@ -430,18 +409,6 @@ class User
     /** ------------------------
      *  GET AVALIABLE
      */
-
-    public function GetAvailableBruTypes($userIdentity)
-    {
-        $userId = $userIdentity;
-        if(is_string($userIdentity)) {
-            $userId = $this->GetIdByUsername($userIdentity);
-        }
-
-        $availableItems = $this->getAvailableFdrs($userId);
-
-        return $availableItems;
-    }
 
     public function getAvailableFdrs($userId)
     {
@@ -703,86 +670,5 @@ class User
         unset($c);
 
         return $userIds;
-    }
-
-    public function GetLastAction($userId, $action)
-    {
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `user_activity` WHERE `action` = '".$action."' AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
-        $result = $link->query($query);
-
-        $lastAction = null;
-
-        if($row = $result->fetch_array())
-        {
-            $lastAction = array();
-            foreach ($row as $key => $val)
-            {
-                $lastAction[$key] = $val;
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $lastAction;
-    }
-
-    public function GetLastActionFromRange($extUserId, $extActionsRange)
-    {
-        $userId = $extUserId;
-        $actionsRange = implode("','", $extActionsRange);
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `user_activity` WHERE `action` IN ('".$actionsRange."') AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
-        $result = $link->query($query);
-
-        $lastAction = null;
-
-        if($row = $result->fetch_array())
-        {
-            $lastAction = array();
-            foreach ($row as $key => $val)
-            {
-                $lastAction[$key] = $val;
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $lastAction;
-    }
-
-    public function RegisterUserAction($extAction, $extStatus, $extUserId,
-            $extSenderId, $extSenderName, $extTargetId, $extTargetName)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $userId = $extUserId;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "INSERT INTO `user_activity` (`action`,`status`, `userId`, `senderId`, `senderName`, `targetId`, `targetName`)
-                VALUES ('".$action."', '".$status."', '".$userId."', " .
-                        "'".$senderId."','".$senderName."','".$targetId."', '".$targetName."');";
-
-        $stmt = $link->prepare($query);
-        $executionStatus = $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-
-        return $executionStatus;
     }
 }

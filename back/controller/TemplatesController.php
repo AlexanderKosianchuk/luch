@@ -18,6 +18,11 @@ use Entity\FlightSettlement;
 use Component\EntityManagerComponent as EM;
 use Component\RealConnectionFactory as LinkFactory;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use Exception;
 
 class TemplatesController extends CController
@@ -179,25 +184,22 @@ class TemplatesController extends CController
 
     public function getDefaultTemplateParamCodes($data)
     {
-        if(isset($data['flightId'])) {
-            $flightId = intval($data['flightId']);
-
-            $params = $this->GetDefaultTplParams($flightId);
-
-            $data = array(
-                    'ap' => $params['ap'],
-                    'bp' => $params['bp']
-            );
-            $answ["status"] = "ok";
-            $answ["data"] = $data;
-
-            echo json_encode($answ);
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ViewOptionsController.php";
-            echo(json_encode($answ));
+        if (!isset($data['flightId'])) {
+            throw new BadRequestException(json_encode($data));
         }
+
+        $flightId = intval($data['flightId']);
+
+        $params = $this->GetDefaultTplParams($flightId);
+
+        $data = array(
+                'ap' => $params['ap'],
+                'bp' => $params['bp']
+        );
+        $answ["status"] = "ok";
+        $answ["data"] = $data;
+
+        return json_encode($answ);
     }
 
     public function setTemplate($data)
@@ -207,10 +209,7 @@ class TemplatesController extends CController
             || !isset($data['analogParams'])
             || !isset($data['binaryParams'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page TemplatesController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = intval($data['flightId']);
@@ -220,7 +219,7 @@ class TemplatesController extends CController
 
         $this->CreateTemplate($flightId, array_merge($analogParams, $binaryParams), $templateName);
 
-        echo json_encode(['status' => 'ok']);
+        return json_encode('ok');
     }
 
     public function mergeTemplates($args)
@@ -229,10 +228,7 @@ class TemplatesController extends CController
             || !isset($args['resultTemplateName'])
             || !isset($args['templatesToMerge'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page TemplatesController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($args));
         }
 
         $flightId = intval($args['flightId']);
@@ -265,7 +261,7 @@ class TemplatesController extends CController
 
         $this->CreateTemplate($flightId, $templatesParams, $resultTemplateName);
 
-        echo json_encode(['status'=> 'ok']);
+        return json_encode('ok');
     }
 
     public function getTemplate($args)
@@ -273,10 +269,7 @@ class TemplatesController extends CController
         if (!isset($args['flightId'])
             || !isset($args['templateName'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page TemplatesController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($args));
         }
 
         $flightId = intval($args['flightId']);
@@ -314,7 +307,7 @@ class TemplatesController extends CController
         $defaultName = $ft->GetDefaultPST($paramSetTemplateListTableName, $user);
         unset($ft);
 
-        echo json_encode([
+        return json_encode([
             'name' => $templateName,
             'ap' => $analogParams,
             'bp' => $binaryParams,
@@ -330,10 +323,7 @@ class TemplatesController extends CController
         if (!isset($args['flightId'])
             || !isset($args['templateName'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page TemplatesController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($args));
         }
 
         $flightId = intval($args['flightId']);
@@ -354,16 +344,13 @@ class TemplatesController extends CController
         $template->DeleteTemplate($templateTable, $templateName, $username);
         unset($template);
 
-        echo json_encode(['status' => 'ok']);
+        return json_encode('ok');
     }
 
     public function getFlightTemplates($args)
     {
         if (!isset($args['flightId'])) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page TemplatesController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($args));
         }
 
         $flightId = intval($args['flightId']);
@@ -474,6 +461,6 @@ class TemplatesController extends CController
         unset($fdr);
         unset($flightTemplate);
 
-        echo json_encode($templatesToSend);
+        return json_encode($templatesToSend);
     }
 }

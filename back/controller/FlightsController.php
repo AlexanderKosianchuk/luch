@@ -21,6 +21,11 @@ use Component\RuntimeManager;
 
 use Evenement\EventEmitter;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use Exception;
 use ZipArchive;
 
@@ -44,14 +49,7 @@ class FlightsController extends CController
             || !is_int(intval($data['id']))
             || !is_int(intval($data['parentId']))
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".
-                    json_encode($_POST) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $userId = intval($this->_user->userInfo['id']);
@@ -62,11 +60,10 @@ class FlightsController extends CController
         $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
         unset($Fd);
 
-        echo (json_encode([
+        return json_encode([
             'id' => $sender,
             'parentId' => $target
-        ]));
-        exit;
+        ]);
     }
 
    public function deleteFlight($data)
@@ -74,14 +71,7 @@ class FlightsController extends CController
        if (!isset($data['id'])
            || !(is_int(intval($data['id'])) || is_array($data['id']))
        ) {
-           http_response_code(400);
-           header("Status: 400 Bad Request");
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page FlightController";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-           exit;
+           throw new BadRequestException(json_encode($data));
        }
 
        $flights = $data['id'];
@@ -99,8 +89,7 @@ class FlightsController extends CController
 
        unset($FC);
 
-       echo(json_encode('ok'));
-       exit;
+       return json_encode('ok');
    }
 
     public function processFlight($data)
@@ -108,14 +97,7 @@ class FlightsController extends CController
         if (!isset($data['id'])
             || !(is_int(intval($data['id'])))
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FlightController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = intval($data['id']);
@@ -169,7 +151,7 @@ class FlightsController extends CController
         }
 
         unset($fdr);
-        echo json_encode(['status' => 'ok']);
+        return json_encode('ok');
    }
 
    public function ExportFlightsAndFolders($flightIds, $folderDest)
@@ -383,7 +365,7 @@ class FlightsController extends CController
 
    public function GetCoordinates($flightId)
    {
-       if(!is_int(intval($flightId))) {
+       if (!is_int(intval($flightId))) {
            throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
        }
 
@@ -477,18 +459,12 @@ class FlightsController extends CController
        return $flightTiming;
    }
 
-   /*
-   * ==========================================
-   * REAL ACTIONS
-   * ==========================================
-   */
-
     public function getFlights($args)
     {
         $userId = intval($this->_user->userInfo['id']);
 
         if (!is_int($userId)) {
-            throw new Exception("Incorrect userId used in getFlights FlightsController." . $userId, 1);
+            throw new UnauthorizedException(json_encode($userId));
         }
 
         $em = EM::get();
@@ -501,47 +477,13 @@ class FlightsController extends CController
             $items[] = FlightComponent::getTreeItem($flightToFolders->getFlightId(), $userId);
         }
 
-        echo json_encode($items);
+        return json_encode($items);
     }
-
-   public function flightChangePath($data)
-   {
-       if(isset($data['sender'])
-           && isset($data['target'])
-       ) {
-           $sender = $data['sender'];
-           $target = $data['target'];
-
-           $result = $this->ChangeFlightPath($sender, $target);
-           $this->RegisterActionExecution($this->action, "executed", $sender, 'flightId', $target, "newPath");
-
-           $answ = array();
-           if($result) {
-               $answ['status'] = 'ok';
-           } else {
-               $answ['status'] = 'err';
-               $answ['error'] = 'Error during flight change path.';
-               $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           }
-           echo json_encode($answ);
-       } else {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page flights.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-       }
-   }
 
    public function itemExport($data)
    {
        if (!isset($data['id']) && !isset($data['folderDest'])) {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page FlightsController.php";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-           exit;
+           throw new BadRequestException(json_encode($data));
        }
 
        $flightIds = [];
@@ -570,25 +512,19 @@ class FlightsController extends CController
                'zipUrl' => $zipUrl
            ];
 
-           $this->RegisterActionExecution($this->action, "executed", json_encode(array_merge($flightIds, $flightIds)), "itemId");
-       } else {
            $answ = [
                'status' => 'empty',
                'info' => 'No flights to export'
            ];
        }
 
-       echo json_encode($answ);
-       exit;
+       return json_encode($answ);
     }
 
     public function getFlightFdrId($data)
     {
         if (!isset($data['flightId'])) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FlightsController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = intval($data['flightId']);
@@ -609,13 +545,13 @@ class FlightsController extends CController
         $answ["status"] = "ok";
         $answ["data"] = $data;
 
-        echo json_encode($answ);
+        json_encode($answ);
     }
 
     public function coordinates($data)
     {
         if (!isset($data['id'])) {
-            echo 'error';
+            throw new BadRequestException(json_encode($data));
         }
 
         header("Content-Type: text/comma-separated-values; charset=utf-8");
@@ -651,20 +587,14 @@ class FlightsController extends CController
             .'</Placemark>' . PHP_EOL
             .'</kml>';
 
-        echo $figPrRow;
         unset($U);
+        return $figPrRow;
     }
 
     public function getFlightInfo($data)
     {
         if (!isset($data['flightId'])) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ = "Not all nessesary params sent. Post: ".
-                    json_encode($data) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = intval($data['flightId']);
@@ -676,17 +606,12 @@ class FlightsController extends CController
             ->findOneBy(['id' => $flightId]);
 
         if (!$flight) {
-            http_response_code(404);
-            header("Status: 404 Not Found");
-            $msg = "Requested flight not found. Id: ". $id;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
         $flightTiming = $this->GetFlightTiming($flightId);
 
-        echo json_encode([
+        return json_encode([
             'data' => array_merge(
                 $flight->get(),
                 [

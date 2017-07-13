@@ -181,8 +181,7 @@ class ResultsController extends CController
         $flights = self::getFlightsByFilter($args, $userId);
 
         if ($flights === null) {
-            echo json_encode([]);
-            exit;
+            return json_encode([]);
         }
 
         $flightSettlements = [];
@@ -207,8 +206,7 @@ class ResultsController extends CController
             ];
         }
 
-        echo json_encode($resp);
-        exit;
+        return json_encode($resp);
     }
 
     public function getReport($args)
@@ -259,7 +257,6 @@ class ResultsController extends CController
             $resp[] = $item;
         }
 
-        echo json_encode($resp);
-        exit;
+        return json_encode($resp);
     }
 }

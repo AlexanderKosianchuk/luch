@@ -8,7 +8,7 @@ import { I18n } from 'react-redux-i18n';
 import TableControl from 'controls/table/Table';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import get from 'actions/get';
+import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 const TOP_CONTROLS_HEIGHT = 105;
@@ -39,9 +39,10 @@ class Table extends Component {
         this.resize();
 
         if (this.props.pending !== false) {
-            this.props.getAll(
-                'users/getList',
-                'USERS_LIST'
+            this.props.request(
+                ['users', 'getList'],
+                'USERS',
+                'get'
             );
         }
     }
@@ -123,7 +124,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get: bindActionCreators(get, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
     }
 }
