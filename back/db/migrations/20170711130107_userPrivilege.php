@@ -42,8 +42,8 @@ class UserPrivilege extends AbstractMigration
 
         $hasColumn = $userActivityTable->hasColumn('targetName');
         if ($hasColumn) {
-            $q = "ALTER TABLE `user_activity`
-                CHANGE COLUMN `targetName` `message` VARCHAR (255) NOT NULL;";
+            $q = 'ALTER TABLE `user_activity` CHANGE `targetName` `message`
+                TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;';
             $this->execute($q);
             echo $q . PHP_EOL . PHP_EOL;
         }

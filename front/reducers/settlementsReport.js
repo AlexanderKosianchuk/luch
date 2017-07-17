@@ -5,13 +5,13 @@ const initialState = {
 
 export default function settlementsReport(state = initialState, action) {
     switch (action.type) {
-        case 'APPLY_SETTLEMENTS_FILTER':
+        case 'GET_SETTLEMENTS_REPORT_START':
             state.pending = true;
             return { ...state };
-        case 'REPORT_FETCHED':
+        case 'GET_SETTLEMENTS_REPORT_COMPLETE':
             return { ... Object.assign(state, {
                 pending: false,
-                report: action.payload
+                report: action.payload.response
             })};
         default:
             return state;

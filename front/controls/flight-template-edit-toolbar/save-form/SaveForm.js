@@ -7,7 +7,7 @@ import { I18n } from 'react-redux-i18n';
 import _isEmpty from 'lodash.isempty';
 
 import redirect from 'actions/redirect';
-import setTemplate from 'actions/particular/setTemplate';
+import request from 'actions/request';
 
 class SaveForm extends React.Component {
     constructor(props) {
@@ -19,12 +19,17 @@ class SaveForm extends React.Component {
     }
 
     saveTemplate() {
-        Promise.resolve(this.props.setTemplate({
-            flightId: this.props.flightId,
-            templateName: this.state.inputValue,
-            analogParams: this.props.fdrCyclo.chosenAnalogParams,
-            binaryParams: this.props.fdrCyclo.chosenBinaryParams
-        })).then(() => {
+        this.props.request(
+            ['templates', 'setTemplate'],
+            'TEMPLATE',
+            'post',
+            {
+                flightId: this.props.flightId,
+                templateName: this.state.inputValue,
+                analogParams: this.props.fdrCyclo.chosenAnalogParams,
+                binaryParams: this.props.fdrCyclo.chosenBinaryParams
+            }
+        ).then(() => {
             this.props.redirect('/flight-templates/' + this.props.flightId);
         });
     }
@@ -82,7 +87,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setTemplate: bindActionCreators(setTemplate, dispatch),
+        request: bindActionCreators(request, dispatch),
         redirect: bindActionCreators(redirect, dispatch)
     }
 }

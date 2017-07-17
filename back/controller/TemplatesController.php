@@ -204,7 +204,7 @@ class TemplatesController extends CController
 
     public function setTemplate($data)
     {
-        if(!isset($data['flightId'])
+        if (!isset($data['flightId'])
             || !isset($data['templateName'])
             || !isset($data['analogParams'])
             || !isset($data['binaryParams'])
@@ -216,6 +216,7 @@ class TemplatesController extends CController
         $templateName = $data['templateName'];
         $analogParams = $data['analogParams'];
         $binaryParams = $data['binaryParams'];
+
 
         $this->CreateTemplate($flightId, array_merge($analogParams, $binaryParams), $templateName);
 
@@ -233,7 +234,7 @@ class TemplatesController extends CController
 
         $flightId = intval($args['flightId']);
         $resultTemplateName = $args['resultTemplateName'];
-        $templatesToMerge = $args['templatesToMerge'];
+        $templatesToMerge = json_decode(html_entity_decode($args['templatesToMerge']));
         $username = $this->_user->username;
 
         $Fl = new Flight;

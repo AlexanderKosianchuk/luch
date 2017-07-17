@@ -3,13 +3,13 @@ import { setLocale } from 'react-redux-i18n';
 export default function changeLanguage(payload) {
     return function(dispatch) {
         dispatch({
-            type: 'CHANGE_LANGUAGE_PENDING'
+            type: 'PUT_LANGUAGE_START'
         });
 
         dispatch(setLocale(payload.language));
 
         dispatch({
-            type: 'LANGUAGE_CHANGED',
+            type: 'PUT_LANGUAGE_COMPLETE',
             payload: {
                 lang: payload.language
             }

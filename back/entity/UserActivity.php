@@ -45,7 +45,7 @@ class UserActivity
     /**
      * @var string
      *
-     * @Column(name="message", type="string", length=255, nullable=false)
+     * @Column(name="message", type="string", length=5000, nullable=false)
      */
     private $message;
 

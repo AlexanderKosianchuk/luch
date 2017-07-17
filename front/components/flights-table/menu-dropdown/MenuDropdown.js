@@ -8,7 +8,7 @@ import { Translate, I18n } from 'react-redux-i18n';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import transmit from 'actions/transmit';
-import deleteFlight from 'actions/particular/deleteFlight';
+import request from 'actions/request';
 import exportFlight from 'actions/particular/exportFlight';
 import exportFlightCoordinates from 'actions/particular/exportFlightCoordinates';
 import processFlight from 'actions/particular/processFlight';
@@ -86,7 +86,12 @@ class MenuDropdown extends React.Component {
     handleDelete() {
         for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
             let item = this.props.flights.chosenItems[ii];
-            this.props.deleteFlight({ id: item.id});
+            this.props.request(
+                ['flights', 'deleteFlight'],
+                'FLIGHT',
+                'delete',
+                { id: item.id }
+            );
         }
     }
 
@@ -172,7 +177,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         transmit: bindActionCreators(transmit, dispatch),
-        deleteFlight: bindActionCreators(deleteFlight, dispatch),
+        request: bindActionCreators(request, dispatch),
         exportFlight: bindActionCreators(exportFlight, dispatch),
         exportFlightCoordinates: bindActionCreators(exportFlightCoordinates, dispatch),
         processFlight: bindActionCreators(processFlight, dispatch),

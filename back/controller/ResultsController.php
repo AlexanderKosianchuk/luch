@@ -10,6 +10,8 @@ use Entity\Flight;
 use Entity\Fdr;
 use Entity\FlightSettlement;
 
+use Exception\BadRequestException;
+
 use \ReflectionMethod;
 
 class ResultsController extends CController
@@ -211,9 +213,17 @@ class ResultsController extends CController
 
     public function getReport($args)
     {
-        $settlements = $args['settlements'];
+        if (!isset($args['chosenSettlements'])
+            || !isset($args['flightFilter'])
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $settlements = json_decode(html_entity_decode($args['chosenSettlements']), true);
+        $flightFilter = json_decode(html_entity_decode($args['flightFilter']), true);
+
         $userId = intval($this->_user->userInfo['id']);
-        $flights = self::getFlightsByFilter($args, $userId);
+        $flights = self::getFlightsByFilter($flightFilter, $userId);
         $report = [];
         $em = EM::get();
 

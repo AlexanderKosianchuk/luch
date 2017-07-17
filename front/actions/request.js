@@ -1,4 +1,4 @@
-import objectToFormData from 'object-to-formdata';
+import formurlencoded from 'form-urlencoded';
 import queryString from 'query-string';
 
 export default function request(
@@ -22,7 +22,13 @@ export default function request(
             url += '&' + queryString.stringify(payload)
         } else {
             options.method = 'post';// until backend do not support REST methods
-            options.body = isFormData(payload) ? payload : objectToFormData(payload);
+
+            if (isFormData(payload)) {
+                options.body = payload;
+            } else {
+                options.headers = { "Content-Type" : "application/x-www-form-urlencoded; utf-8" };
+                options.body = isFormData(payload) ? payload : formurlencoded(payload);
+            }
         }
 
         return new Promise((resolve, reject) => {

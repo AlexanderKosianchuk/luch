@@ -33,8 +33,8 @@ export default function folders(state = initialState, action) {
                     items: action.payload.response
                 }
             };
-        case 'FOLDER_DELETED': {
-            let deletedIndex = findItemIndex(state.items, action.payload.id);
+        case 'DELETE_FOLDER_COMPLETE': {
+            let deletedIndex = findItemIndex(state.items, action.payload.request.id);
 
             if (deletedIndex !== null) {
                 state.items.splice(deletedIndex, 1);
@@ -42,32 +42,32 @@ export default function folders(state = initialState, action) {
 
             return { ...state };
         }
-        case 'CREATING_FOLDER_COMPLETE':
-            state.items.push(action.payload)
+        case 'POST_FOLDER_COMPLETE':
+            state.items.push(action.payload.response)
             return { ...state };
-        case 'MOVING_FOLDER_COMPLETE': {
-            let movedIndex = findItemIndex(state.items, action.payload.id);
+        case 'PUT_FOLDER_PATH_COMPLETE': {
+            let movedIndex = findItemIndex(state.items, action.payload.request.id);
 
             if (movedIndex !== null) {
-                state.items[movedIndex].parentId = action.payload.parentId
+                state.items[movedIndex].parentId = action.payload.request.parentId
             }
 
             return { ...state };
         }
-        case 'TOGGLING_FOLDER_EXPANDING_COMPLETE':
-            let toggledExpandingItem = findItemIndex(state.items, action.payload.id);
+        case 'PUT_FOLDER_EXPANDING_COMPLETE':
+            let toggledExpandingItem = findItemIndex(state.items, action.payload.request.id);
 
             if (toggledExpandingItem !== null) {
                 state.items[toggledExpandingItem].expanded
-                    = (action.payload.expanded === true);
+                    = (action.payload.request.expanded === true);
             }
 
             return { ...state };
-        case 'FOLDER_RENAMED':
-            let renamingItem = findItemIndex(state.items, action.payload.id);
+        case 'PUT_FOLDER_RENAME_COMPLETE':
+            let renamingItem = findItemIndex(state.items, action.payload.request.id);
 
             if (renamingItem !== null) {
-                state.items[renamingItem].name = action.payload.name;
+                state.items[renamingItem].name = action.payload.request.name;
             }
 
             return { ...state };

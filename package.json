@@ -67,6 +67,7 @@
     "chosen-js": "^1.7.0",
     "datatables": "^1.10.13",
     "flot-charts": "^0.8.3",
+    "form-urlencoded": "^2.0.0",
     "has-flag": "^2.0.0",
     "history": "^4.6.1",
     "is-utf8": "^0.2.1",

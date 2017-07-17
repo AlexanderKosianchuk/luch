@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
 import redirect from 'actions/redirect';
-import deleteFlight from 'actions/particular/deleteFlight';
+import request from 'actions/request';
 
 let buttons = [
     { key: 'events', classModifyer: 'glyphicon-flag', handler: 'handleClickShowFlightEvents' },
@@ -18,7 +18,12 @@ let buttons = [
 class FlightControls extends Component {
     handleClickTrash() {
         if (confirm(I18n.t('flightsTree.flightControls.confirm'))) {
-            this.props.deleteFlight({ id: this.props.flight.id });
+            this.props.request(
+                ['flights', 'deleteFlight'],
+                'FLIGHT',
+                'delete',
+                { id: this.props.flight.id }
+            );
         }
     }
 
@@ -98,7 +103,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         redirect: bindActionCreators(redirect, dispatch),
-        deleteFlight: bindActionCreators(deleteFlight, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

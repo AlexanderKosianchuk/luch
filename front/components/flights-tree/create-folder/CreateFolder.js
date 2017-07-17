@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import CreateFolderButton from 'components/flights-tree/create-folder-button/CreateFolderButton'
 import CreateFolderForm from 'components/flights-tree/create-folder-form/CreateFolderForm'
 
-import createFolder from 'actions/particular/createFolder';
+import request from 'actions/request';
 
 class CreateFolder extends Component {
     constructor(props) {
@@ -22,9 +22,12 @@ class CreateFolder extends Component {
             isInputShown: false
         });
 
-        this.props.createFolder({
-            name: folderName
-        });
+        this.props.request(
+            ['folder', 'createFolder'],
+            'FOLDER',
+            'post',
+            { name: folderName }
+        );
     }
 
     handleCreateFolderClick () {
@@ -42,7 +45,7 @@ class CreateFolder extends Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        createFolder: bindActionCreators(createFolder, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

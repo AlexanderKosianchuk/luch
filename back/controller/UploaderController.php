@@ -1532,7 +1532,7 @@ class UploaderController extends CController
                     "status" => "busy",
                     "progress" => -1,
                     "uploadingUid" => $uploadingUid
-                ]));
+                ]);
             }
 
             $val = preg_replace("/[^0-9]/","",$val);
@@ -1542,7 +1542,7 @@ class UploaderController extends CController
                     "status" => "busy",
                     "progress" => -1,
                     "uploadingUid" => $uploadingUid
-                ]));
+                ]);
             }
 
             $val = intval($val);
@@ -1559,7 +1559,7 @@ class UploaderController extends CController
                 "status" => "complete",
                 "progress" => 101,
                 "uploadingUid" => $uploadingUid
-            ]));
+            ]);
         }
     }
 

@@ -27,7 +27,7 @@ export default function flightEvents(state = initialState, action) {
                     items: action.payload.response.items
                 }
             };
-        case 'TOGGLING_EVENT_RELIABILITY_COMPLETE':
+        case 'POST_CHANGE_EVENT_RELIABILITY_COMPLETE':
             let flatItems = [];
 
             Object.keys(state.items).forEach((key) => {
@@ -35,8 +35,8 @@ export default function flightEvents(state = initialState, action) {
             });
 
             flatItems.forEach((event) => {
-                if (event.id === action.payload.eventId) {
-                    event.reliability = action.payload.reliability
+                if (event.id === action.payload.request.eventId) {
+                    event.reliability = action.payload.request.reliability
                 }
             });
 

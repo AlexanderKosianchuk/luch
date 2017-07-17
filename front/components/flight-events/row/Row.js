@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import Checkbox from 'controls/checkbox/Checkbox';
 
-import changeFlightEventReliability from 'actions/particular/changeFlightEventReliability';
+import request from 'actions/request';
 
 const columns = [
     { attribute: 'start', style: 'col-sm-1' },
@@ -47,12 +47,17 @@ class Row extends Component {
             isChecked: boolValue ? 'checked' : ''
         });
 
-        this.props.changeReliability({
-            flightId: this.props.flightId,
-            eventId: eventId,
-            eventType: eventType,
-            reliability: boolValue
-        });
+        this.props.request(
+            ['flightEvents', 'changeReliability'],
+            'CHANGE_EVENT_RELIABILITY',
+            'post',
+            {
+                flightId: this.props.flightId,
+                eventId: eventId,
+                eventType: eventType,
+                reliability: boolValue
+            }
+        );
     }
 
     buildCheckbox(item) {
@@ -127,7 +132,7 @@ function mapStateToProps() {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeReliability: bindActionCreators(changeFlightEventReliability, dispatch)
+        request: bindActionCreators(request, dispatch)
     };
 }
 

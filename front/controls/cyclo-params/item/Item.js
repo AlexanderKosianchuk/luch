@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
 
 import transmit from 'actions/transmit';
-import setParamColor from 'actions/particular/setParamColor';
+import request from 'actions/request';
 
 class Item extends React.Component {
     constructor(props) {
@@ -35,11 +35,16 @@ class Item extends React.Component {
     }
 
     applyColor(color) {
-        this.props.setParamColor({
-            flightId: this.props.flightId,
-            paramCode: this.props.param.code,
-            color: color.replace(/#/g, '')
-        }).then(() => {
+        this.props.request(
+            ['fdr', 'setParamColor'],
+            'CYCLO_PARAM_COLOR',
+            'put',
+            {
+                flightId: this.props.flightId,
+                paramCode: this.props.param.code,
+                color: color.replace(/#/g, '')
+            }
+        ).then(() => {
             this.setState({
                 colorpickerShown: !this.state.colorpickerShown,
                 paramColor: color
@@ -83,7 +88,7 @@ class Item extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setParamColor: bindActionCreators(setParamColor, dispatch),
+        request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch)
     }
 }

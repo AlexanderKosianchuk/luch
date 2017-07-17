@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import redirect from 'actions/redirect';
-import removeTemplateFromList from 'actions/particular/removeTemplateFromList';
+import request from 'actions/request';
 
 class ItemControls extends React.Component {
     handlePencilClick () {
@@ -25,10 +25,15 @@ class ItemControls extends React.Component {
     }
 
     handleTrashClick () {
-        this.props.removeTemplateFromList({
-            flightId: this.props.flightId,
-            templateName: this.props.templateName
-        });
+        this.props.request(
+            ['templates', 'removeTemplate'],
+            'TEMPLATE',
+            'delete',
+            {
+                flightId: this.props.flightId,
+                templateName: this.props.templateName
+            }
+        );
     }
 
     render () {
@@ -77,7 +82,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         redirect: bindActionCreators(redirect, dispatch),
-        removeTemplateFromList: bindActionCreators(removeTemplateFromList, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

@@ -7,7 +7,7 @@ import SettlementsFilterItem from 'components/results/settlements-filter-item/Se
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import transmit from 'actions/transmit';
-import applySettlementFilter from 'actions/particular/applySettlementFilter';
+import request from 'actions/request';
 
 class SettlementFilter extends React.Component {
     handleSubmit(event) {
@@ -20,10 +20,15 @@ class SettlementFilter extends React.Component {
             && (settlementFilter.chosenSettlements.length > 0)
         ) {
             let chosenSettlements = settlementFilter.chosenSettlements.map((item) => item.id);
-            this.props.applySettlementFilter({
-                chosenSettlements: chosenSettlements,
-                flightFilter: flightFilter
-            });
+            this.props.request(
+                ['results', 'getReport'],
+                'SETTLEMENTS_REPORT',
+                'get',
+                {
+                    chosenSettlements: JSON.stringify(chosenSettlements),
+                    flightFilter: JSON.stringify(flightFilter)
+                }
+            );
         }
         event.preventDefault();
     }
@@ -105,7 +110,7 @@ function mapStateToProps(store) {
 function mapDispatchToProps(dispatch) {
     return {
         changeCheckstate: bindActionCreators(transmit, dispatch),
-        applySettlementFilter: bindActionCreators(applySettlementFilter, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

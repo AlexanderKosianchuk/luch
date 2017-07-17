@@ -17,15 +17,15 @@ export default function flightTemplates(state = initialState, action) {
                     pending: false,
                     items: action.payload.response
             }};
-        case 'REMOVING_TEMPLATE_FROM_LIST':
+        case 'DELETE_TEMPLATE_START':
             return {
                 ...state,
                 ...{ pending: true }
             };
-        case 'TEMPLATE_REMOVED_FROM_LIST':
+        case 'DELETE_TEMPLATE_COMPLETE':
             let newItems = [];
             state.items.forEach((item) => {
-                if (item.name !== action.payload.templateName) {
+                if (item.name !== action.payload.request.templateName) {
                     newItems.push(item);
                 }
             });

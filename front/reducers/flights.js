@@ -34,14 +34,14 @@ export default function flights(state = initialState, action) {
                     items: action.payload.response
                 }
             };
-        case 'FLIGHT_DELETED': {
-            let deletedIndex = findItemIndex(state.items, action.payload.id);
+        case 'DELETE_FLIGHT_COMPLETE': {
+            let deletedIndex = findItemIndex(state.items, action.payload.request.id);
 
             if (deletedIndex !== null) {
                 state.items.splice(deletedIndex, 1);
             }
 
-            deletedIndex = findItemIndex(state.chosenItems, action.payload.id);
+            deletedIndex = findItemIndex(state.chosenItems, action.payload.request.id);
 
             if (deletedIndex !== null) {
                 state.chosenItems.splice(deletedIndex, 1);
@@ -49,11 +49,11 @@ export default function flights(state = initialState, action) {
 
             return { ...state };
         }
-        case 'MOVING_FLIGHT_COMPLETE': {
-            let movedIndex = findItemIndex(state.items, action.payload.id);
+        case 'PUT_FLIGHT_PATH_COMPLETE': {
+            let movedIndex = findItemIndex(state.items, action.payload.request.id);
 
             if (movedIndex !== null) {
-                state.items[movedIndex].parentId = action.payload.parentId
+                state.items[movedIndex].parentId = action.payload.request.parentId
             }
 
             return { ...state };

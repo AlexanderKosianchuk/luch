@@ -2,7 +2,6 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import mergeTemplates from 'actions/particular/mergeTemplates';
 import redirect from 'actions/redirect';
 
 class CreateButton extends React.Component {

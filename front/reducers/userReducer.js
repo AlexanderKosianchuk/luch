@@ -11,7 +11,7 @@ export default function userReducer(state = {}, action) {
                 return {};
             }
         }
-        case 'LANGUAGE_CHANGED': {
+        case 'PUT_LANGUAGE_COMPLETE': {
             let pl = action.payload;
             if (pl.lang && state.lang !== pl.lang) {
                 return {

@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 
-import mergeTemplates from 'actions/particular/mergeTemplates';
+import request from 'actions/request';
 import redirect from 'actions/redirect';
 
 class ShowChartByTemplates extends React.Component {
@@ -28,11 +28,16 @@ class ShowChartByTemplates extends React.Component {
             );
         } else if (this.props.flightTemplates.chosenItems.length > 1) {
             let templateName = 'last';
-            Promise.resolve(this.props.mergeTemplates({
-                flightId: this.props.flightId,
-                resultTemplateName: templateName,
-                templatesToMerge: this.props.flightTemplates.chosenItems
-            })).then(() => {
+            Promise.resolve(this.props.request(
+                ['templates', 'mergeTemplates'],
+                'TEMPLATES_MERGE',
+                'post',
+                {
+                    flightId: this.props.flightId,
+                    resultTemplateName: templateName,
+                    templatesToMerge: JSON.stringify(this.props.flightTemplates.chosenItems)
+                }
+            )).then(() => {
                 this.props.redirect('/chart/'
                     + 'flight-id/'+ this.props.flightId + '/'
                     + 'template-name/'+ templateName + '/'
@@ -62,7 +67,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        mergeTemplates: bindActionCreators(mergeTemplates, dispatch),
+        request: bindActionCreators(request, dispatch),
         redirect: bindActionCreators(redirect, dispatch)
     }
 }

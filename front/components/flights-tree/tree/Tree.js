@@ -15,9 +15,6 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
 import transmit from 'actions/transmit';
-import moveFlight from 'actions/particular/moveFlight';
-import moveFolder from 'actions/particular/moveFolder';
-import toggleFolderExpanding from 'actions/particular/toggleFolderExpanding';
 
 const MAX_DEPTH = 5;
 const FLIGHT_TYPE = 'flight';
@@ -214,17 +211,32 @@ class Tree extends Component {
         let data = { id: id, parentId: parent.id };
 
         if (node.type === FLIGHT_TYPE) {
-            this.props.moveFlight(data);
+            this.props.request(
+                ['flights', 'changeFlightPath'],
+                'FLIGHT_PATH',
+                'put',
+                data
+            );
         } else if (node.type === FOLDER_TYPE) {
-            this.props.moveFolder(data);
+            this.props.request(
+                ['folder', 'changeFolderPath'],
+                'FOLDER_PATH',
+                'put',
+                data
+            );
         }
     }
 
     expandHandler({ treeData, node, expanded }) {
-        this.props.toggleFolderExpanding({
-            id: node.id,
-            expanded: expanded
-        });
+        this.props.request(
+            ['folder', 'toggleFolderExpanding'],
+            'FOLDER_EXPANDING',
+            'put',
+            {
+                id: node.id,
+                expanded: expanded
+            }
+        );
     }
 
     findParent(treeData, id, save) {
@@ -322,9 +334,6 @@ function mapDispatchToProps(dispatch) {
     return {
         request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
-        moveFlight: bindActionCreators(moveFlight, dispatch),
-        moveFolder: bindActionCreators(moveFolder, dispatch),
-        toggleFolderExpanding: bindActionCreators(toggleFolderExpanding, dispatch),
     }
 }
 

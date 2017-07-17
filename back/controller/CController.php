@@ -27,13 +27,19 @@ class CController
                 . "POST: " . json_encode($post), 1);
         }
 
-        if (empty($post)) {
-            $post = [];
+        $this->action = $get['action'];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            unset($get['action']);
+            $this->data = $get;
+            return;
         }
 
-        $this->action = $get['action'];
-        $this->data = array_merge($get, $post);
+        if (($_SERVER['REQUEST_METHOD'] === 'POST') && empty($post)) {
+            throw new Exception('Empty POST data', 1);
+        }
 
+        $this->data = $post;
         return;
     }
 

@@ -108,11 +108,9 @@ function Calibration() {
 
     this.getAvaliableFDRs = function() {
         return $.ajax({
-            type : "POST",
-            data : {},
-            dataType : 'json',
-            url : ENTRY_URL + '?action=calibration/getAvaliableFdrs',
-            async : true
+            type: "GET",
+            dataType: 'json',
+            url: ENTRY_URL + '?action=calibration/getAvaliableFdrs',
         })
         .fail(function(msg) {
             console.log(msg);
@@ -126,8 +124,8 @@ function Calibration() {
                 calibrationId: calibrationId
             },
             dataType : 'json',
+            contentType: 'application/json',
             url : ENTRY_URL + '?action=calibration/deleteCalibration',
-            async : true
         })
         .fail(function(msg) {
             console.log(msg);
@@ -144,8 +142,7 @@ function Calibration() {
                 calibrations: calibrations
             },
             dataType : 'json',
-            url : ENTRY_URL + '?action=calibration/saveCalibration',
-            async : true
+            url : ENTRY_URL + '?action=calibration/saveCalibration'
         })
         .fail(function(msg) {
             console.log(msg);

@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
-import deleteFolder from 'actions/particular/deleteFolder';
-import renameFolder from 'actions/particular/renameFolder';
+import request from 'actions/request';
 
 class FolderControls extends Component {
     constructor (props) {
@@ -20,7 +19,12 @@ class FolderControls extends Component {
 
     handleClickTrash () {
         if (confirm(I18n.t('flightsTree.folderControls.confirm'))) {
-            this.props.deleteFolder({ id: this.props.folderInfo.id });
+            this.props.request(
+                ['folder', 'deleteFolder'],
+                'FOLDER',
+                'delete',
+                { id: this.props.folderInfo.id }
+            );
         }
     }
 
@@ -36,10 +40,15 @@ class FolderControls extends Component {
                 isFormHidden: true
             });
 
-            this.props.renameFolder({
-                id: this.props.folderInfo.id,
-                name: this.state.name
-            });
+            this.props.request(
+                ['folder', 'renameFolder'],
+                'FOLDER_RENAME',
+                'put',
+                {
+                    id: this.props.folderInfo.id,
+                    name: this.state.name
+                }
+            );
         }
     }
 
@@ -48,10 +57,15 @@ class FolderControls extends Component {
             isFormHidden: true
         });
 
-        this.props.renameFolder({
-            id: this.props.folderInfo.id,
-            name: this.state.name
-        });
+        this.props.request(
+            ['folder', 'renameFolder'],
+            'FOLDER_RENAME',
+            'put',
+            {
+                id: this.props.folderInfo.id,
+                name: this.state.name
+            }
+        );
 
         event.preventDefault();
         return false;
@@ -117,8 +131,7 @@ class FolderControls extends Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        deleteFolder: bindActionCreators(deleteFolder, dispatch),
-        renameFolder: bindActionCreators(renameFolder, dispatch),
+        request: bindActionCreators(request, dispatch)
     }
 }
 

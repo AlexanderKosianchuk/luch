@@ -12,7 +12,6 @@ import Item from 'components/settings/item/Item';
 
 import request from 'actions/request';
 import transmit from 'actions/transmit';
-import setSettings from 'actions/particular/setSettings';
 import redirect from 'actions/redirect';
 
 class List extends React.Component {
@@ -61,8 +60,12 @@ class List extends React.Component {
     }
 
     onClick() {
-        this.props.setSettings(this.props.settings.items);
-        this.props.redirect('/');
+        this.props.request(
+            ['users', 'setUserSettings'],
+            'USER_SETTINGS',
+            'put',
+            this.props.settings.items
+        ).then(() => this.props.redirect('/'));
     }
 
     render () {
@@ -88,7 +91,6 @@ function mapDispatchToProps(dispatch) {
     return {
         request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
-        setSettings: bindActionCreators(setSettings, dispatch),
         redirect: bindActionCreators(redirect, dispatch)
     }
 }
