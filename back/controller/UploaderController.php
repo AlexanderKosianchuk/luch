@@ -63,9 +63,9 @@ class UploaderController extends CController
             "align='left'>" .
             "</br>" .
              //left column for flight info - right for preview
-            "<tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
+            "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
 
-            "" .
+            "<table border='0' style='margin-bottom:15px;'>" .
             "<tr>" .
             "<td>" . $this->lang->bruType . "</td>";
 
