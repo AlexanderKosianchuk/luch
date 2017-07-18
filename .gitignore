@@ -38,9 +38,6 @@ phpunit.phar
 /log
 npm-debug.log
 
-#uploads
-/back/fileUploader/files/*
-
 #server
 .bash_history
 .config
