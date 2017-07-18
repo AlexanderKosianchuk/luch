@@ -170,7 +170,7 @@ class Tree extends Component {
 
         flightRow.classList.toggle('is-chosen');
         this.props.transmit(
-            'FLIGHT_LIST_CHOISE_TOGGLE',
+            'FLIGHTS_CHOISE_TOGGLE',
             {
                 id: flightId,
                 checkstate: flightRow.classList.contains('is-chosen')

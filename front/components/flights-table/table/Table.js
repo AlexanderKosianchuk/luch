@@ -65,10 +65,8 @@ class Table extends Component {
                     return '';
                 }
 
-                let flightId = rowInfo.original.id;
-
                 let isChosen = this.props.flights.chosenItems.some((element) => {
-                    return element.id === flightId
+                    return element.id === rowInfo.original.id
                 });
 
                 return isChosen ? 'is-chosen' : '';
@@ -76,12 +74,12 @@ class Table extends Component {
             onClick: event => {
                 let target = event.currentTarget;
                 target.classList.toggle('is-chosen');
+                debugger;
 
-                let flightId = rowInfo.original.id;
                 this.props.transmit(
-                    'FLIGHT_LIST_CHOISE_TOGGLE',
+                    'FLIGHTS_CHOISE_TOGGLE',
                     {
-                        id: flightId,
+                        id: rowInfo.original.id,
                         checkstate: target.classList.contains('is-chosen')
                     }
                 );

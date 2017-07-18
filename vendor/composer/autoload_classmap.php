@@ -41,7 +41,6 @@ return array(
     'Entity\\FlightSettlement' => $baseDir . '/back/entity/FlightSettlement.php',
     'Entity\\FlightToFolder' => $baseDir . '/back/entity/FlightToFolder.php',
     'Entity\\Folder' => $baseDir . '/back/entity/Folder.php',
-    'Entity\\SearchFlightsQuery' => $baseDir . '/back/entity/SearchFlightsQuery.php',
     'Entity\\User' => $baseDir . '/back/entity/User.php',
     'Entity\\UserActivity' => $baseDir . '/back/entity/UserActivity.php',
     'Entity\\UserAuth' => $baseDir . '/back/entity/UserAuth.php',
@@ -68,4 +67,5 @@ return array(
     'Model\\User' => $baseDir . '/back/model/User.php',
     'Model\\UserOptions' => $baseDir . '/back/model/UserOptions.php',
     'Repository\\FlightEventRepository' => $baseDir . '/back/repository/FlightEventRepository.php',
+    'Repository\\UserRepository' => $baseDir . '/back/repository/UserRepository.php',
 );

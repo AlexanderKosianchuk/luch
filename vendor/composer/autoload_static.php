@@ -149,7 +149,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Entity\\FlightSettlement' => __DIR__ . '/../..' . '/back/entity/FlightSettlement.php',
         'Entity\\FlightToFolder' => __DIR__ . '/../..' . '/back/entity/FlightToFolder.php',
         'Entity\\Folder' => __DIR__ . '/../..' . '/back/entity/Folder.php',
-        'Entity\\SearchFlightsQuery' => __DIR__ . '/../..' . '/back/entity/SearchFlightsQuery.php',
         'Entity\\User' => __DIR__ . '/../..' . '/back/entity/User.php',
         'Entity\\UserActivity' => __DIR__ . '/../..' . '/back/entity/UserActivity.php',
         'Entity\\UserAuth' => __DIR__ . '/../..' . '/back/entity/UserAuth.php',
@@ -176,6 +175,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\User' => __DIR__ . '/../..' . '/back/model/User.php',
         'Model\\UserOptions' => __DIR__ . '/../..' . '/back/model/UserOptions.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
+        'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

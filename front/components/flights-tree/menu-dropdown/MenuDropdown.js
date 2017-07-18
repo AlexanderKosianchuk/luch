@@ -131,7 +131,7 @@ class MenuDropdown extends React.Component {
     }
 
     handleRemoveSelection() {
-        this.props.transmit('FLIGHT_LIST_UNCHOOSE_ALL');
+        this.props.transmit('FLIGHTS_UNCHOOSE_ALL');
     }
 
     handleEvents() {

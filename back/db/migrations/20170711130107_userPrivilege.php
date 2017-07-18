@@ -15,6 +15,14 @@ class UserPrivilege extends AbstractMigration
             echo $q . PHP_EOL . PHP_EOL;
         }
 
+        $hasColumn = $usersTable->hasColumn('id_user');
+        if ($hasColumn) {
+            $q = "ALTER TABLE `user_personal`
+                CHANGE COLUMN `id_user` `id_creator` INT NOT NULL;";
+            $this->execute($q);
+            echo $q . PHP_EOL . PHP_EOL;
+        }
+
         $userActivityTable = $this->table('user_activity');
         $hasColumn = $userActivityTable->hasColumn('senderId');
         if ($hasColumn) {

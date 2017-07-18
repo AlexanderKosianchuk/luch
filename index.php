@@ -13,8 +13,8 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
     login='<?= $c->getUserLogin(); ?>'
 >
 <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
     <title>Luche</title>
     <link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
 </head>

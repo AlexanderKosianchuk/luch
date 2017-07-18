@@ -1,25 +1,10 @@
+import findItemIndex from 'helpers/findItemIndex';
+
 const initialState = {
     pending: null,
     items: [],
     expanded: null
 };
-
-function findItemIndex(items, searchIndex) {
-    let itemIndex = null;
-
-    if (items
-        && Array.isArray(items)
-        && (items.length > 0)
-    ) {
-        items.forEach((item, index) => {
-            if (item.id === searchIndex) {
-                itemIndex = index;
-            }
-        });
-    }
-
-    return itemIndex;
-}
 
 export default function folders(state = initialState, action) {
     switch (action.type) {

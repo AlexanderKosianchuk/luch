@@ -84,7 +84,7 @@ class Graphviz extends AbstractVisitor
     private function createTableLabel(Table $table)
     {
         // Start the table
-        $label = '<<TABLE CELLSPACING="0" BORDER="1" ALIGN="LEFT">';
+        $label = '<';
 
         // The title
         $label .= '<TR><TD BORDER="1" COLSPAN="3" ALIGN="CENTER" BGCOLOR="#fcaf3e"><FONT COLOR="#2e3436" FACE="Helvetica" POINT-SIZE="12">' . $table->getName() . '</FONT></TD></TR>';

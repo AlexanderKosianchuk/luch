@@ -1,25 +1,10 @@
+import findItemIndex from 'helpers/findItemIndex';
+
 const initialState = {
     pending: null,
     items: [],
     chosenItems: []
 };
-
-function findItemIndex(items, searchIndex) {
-    let itemIndex = null;
-
-    if (items
-        && Array.isArray(items)
-        && (items.length > 0)
-    ) {
-        items.forEach((item, index) => {
-            if (item.id === searchIndex) {
-                itemIndex = index;
-            }
-        });
-    }
-
-    return itemIndex;
-}
 
 export default function flights(state = initialState, action) {
     switch (action.type) {
@@ -65,7 +50,7 @@ export default function flights(state = initialState, action) {
             }
 
             return state;
-        case 'FLIGHT_LIST_CHOISE_TOGGLE':
+        case 'FLIGHTS_CHOISE_TOGGLE':
             let chosenIndex = findItemIndex(state.items, action.payload.id);
             let chosenItemsIndex = findItemIndex(state.chosenItems, action.payload.id);
 
@@ -96,9 +81,9 @@ export default function flights(state = initialState, action) {
             }
 
             return state;
-            case 'FLIGHT_LIST_UNCHOOSE_ALL':
-                state.chosenItems = [];
-                return { ...state };
+        case 'FLIGHTS_UNCHOOSE_ALL':
+            state.chosenItems = [];
+            return { ...state };
         default:
             return state;
     }

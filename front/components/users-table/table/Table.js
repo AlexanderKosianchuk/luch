@@ -1,3 +1,4 @@
+import './table.sass'
 import 'react-table/react-table.css'
 
 import React, { Component } from 'react';
@@ -22,7 +23,7 @@ class Table extends Component {
             accessor: 'login'
         }, {
             Header: I18n.t('users.table.organization'),
-            accessor: 'organization',
+            accessor: 'company',
         }, {
             Header: I18n.t('users.table.lang'),
             accessor: 'lang',
@@ -31,7 +32,15 @@ class Table extends Component {
             accessor: 'role'
         }, {
             Header: I18n.t('users.table.logo'),
-            accessor: 'logo'
+            accessor: 'logo',
+            Cell: props => {
+                return(
+                    <div className='users-table-table__logo'
+                        style={{ content: 'url('+ENTRY_URL+'?'+props.value+')' }}
+                    >
+                    </div>
+                );
+            }
         }];
     }
 
@@ -40,7 +49,7 @@ class Table extends Component {
 
         if (this.props.pending !== false) {
             this.props.request(
-                ['users', 'getList'],
+                ['users', 'getUsers'],
                 'USERS',
                 'get'
             );
@@ -58,14 +67,12 @@ class Table extends Component {
     handleGetTrProps(state, rowInfo, column, instance) {
         return {
             className: (() => {
-                if (!rowInfo || !this.props.usersList.chosenItems) {
+                if (!rowInfo || !this.props.users.chosenItems) {
                     return '';
                 }
 
-                let flightId = rowInfo.original.id;
-
-                let isChosen = this.props.usersList.chosenItems.some((element) => {
-                    return element.id === flightId
+                let isChosen = this.props.users.chosenItems.some((element) => {
+                    return element.id === rowInfo.original.id
                 });
 
                 return isChosen ? 'is-chosen' : '';
@@ -74,11 +81,10 @@ class Table extends Component {
                 let target = event.currentTarget;
                 target.classList.toggle('is-chosen');
 
-                let flightId = rowInfo.original.id;
                 this.props.transmit(
-                    'FLIGHT_LIST_CHOISE_TOGGLE',
+                    'USERS_CHOISE_TOGGLE',
                     {
-                        id: flightId,
+                        id: rowInfo.original.id,
                         checkstate: target.classList.contains('is-chosen')
                     }
                 );
@@ -88,9 +94,9 @@ class Table extends Component {
 
     buildTable() {
         //copying array
-        var data = this.props.usersList.items.slice();
+        var data = this.props.users.items.slice();
 
-        return (<Table
+        return (<TableControl
             data={ data }
             columns={ this.columns }
             getTrProps={ this.handleGetTrProps.bind(this) }
@@ -98,7 +104,7 @@ class Table extends Component {
     }
 
     buildBody() {
-        if (this.props.usersList.pending !== false) {
+        if (this.props.pending !== false) {
             return <ContentLoader/>
         } else {
             return this.buildTable();
@@ -118,7 +124,8 @@ class Table extends Component {
 
 function mapStateToProps(state) {
     return {
-        usersList: state.usersList,
+        pending: state.users.pending,
+        users: state.users
     };
 }
 

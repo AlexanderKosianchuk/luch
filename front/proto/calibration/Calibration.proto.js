@@ -344,7 +344,7 @@ function Calibration() {
             }
         }
 
-        return '<table v-align="top">'
+        return ''
             + '<tr>'
             + '<td><label>'+I18n.t('calibration.title')+'. ' + '</label></td>'
             + '<td><label>'+I18n.t('calibration.fdr')+': ' + '</label></td>'

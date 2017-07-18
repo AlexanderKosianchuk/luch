@@ -7,7 +7,12 @@ use Model\Language;
 use Model\Fdr;
 use Model\UserOptions;
 
+use Repository\UserRepository;
+
+use Component\EntityManagerComponent as EM;
+
 use Exception\UnauthorizedException;
+use Exception\NotFoundException;
 
 class UsersController extends CController
 {
@@ -120,6 +125,51 @@ class UsersController extends CController
         $this->_user->SetUserLanguage($this->_user->username, $lang);
 
         return json_encode('ok');
+    }
+
+    public function getUsers()
+    {
+        if (!isset($this->_user->userInfo)) {
+            throw new ForbiddenException('user is not authorized');
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+
+        $em = EM::get();
+        $users = $em->getRepository('Entity\User')->getUsers($userId);
+
+        return json_encode($users);
+    }
+
+    public function getLogo($args)
+    {
+        if (!isset($args)
+            || !isset($args['id'])
+        ) {
+            throw new BadRequestException(json_encode($data));
+        }
+
+        if (!isset($this->_user->userInfo)) {
+            throw new ForbiddenException('user is not authorized');
+        }
+
+        $creatorId = intval($this->_user->userInfo['id']);
+        $userId = intval($args['id']);
+
+        $em = EM::get();
+
+        $user = $em->getRepository('Entity\User')->findOneBy(['id' => $userId]);
+        if (!$user) {
+            throw new NotFoundException("requested user not found. Id: ". $userId);
+        }
+
+        if (!$em->getRepository('Entity\User')->isAvaliable($userId, $creatorId)) {
+            throw new ForbiddenException('user is not authorized');
+        }
+
+        header('Content-type:image/png');
+
+        return stream_get_contents($user->getLogo());
     }
 
     public function CreateUserByForm($form, $file)

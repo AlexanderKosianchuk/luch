@@ -2,11 +2,13 @@
 
 namespace Entity;
 
+use Doctrine\ORM\EntityRepository;
+
 /**
  * UserPersonal
  *
  * @Table(name="user_personal", uniqueConstraints={@UniqueConstraint(name="login", columns={"login"})}, indexes={@Index(name="login_2", columns={"login"})})
- * @Entity
+ * @Entity(repositoryClass="Repository\UserRepository")
  */
 class User
 {
@@ -64,9 +66,22 @@ class User
     /**
      * @var integer
      *
-     * @Column(name="id_user", type="integer", nullable=true)
+     * @Column(name="id_creator", type="integer", nullable=true)
      */
-    private $idUser;
+    private $creatorId;
 
+    public function getRole()
+    {
+        return $this->role;
+    }
 
+    public function getLogo()
+    {
+        return $this->logo;
+    }
+
+    public function getCreatorId()
+    {
+        return $this->creatorId;
+    }
 }

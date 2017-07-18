@@ -12,6 +12,7 @@ use Exception\ForbiddenException;
 use Doctrine\DBAL\Exception\DriverException;
 
 use Exception;
+use ReflectionClass;
 
 class EntryController extends CController
 {
@@ -57,8 +58,22 @@ class EntryController extends CController
                         ResponseRegistrator::faultResponse($userId, $fullAction, 403, $exception->message);
                     } catch (DriverException $exception) {
                         ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->getMessage());
+                    } catch (BadMethodCallException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->getMessage());
                     } catch (Exception $exception) {
-                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->message);
+                        $message = 'Unknown error';
+
+                        $class = new ReflectionClass($exception);
+                        $property = $class->getProperty('message');
+
+                        if (property_exists($exception, 'message')
+                        && $property->isPublic()) {
+                            $message = $exception->message;
+                        } else if (method_exists($exception, 'getMessage')) {
+                            $message = $exception->getMessage();
+                        }
+
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $message);
                     }
                 } else {
                     ResponseRegistrator::faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);
