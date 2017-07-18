@@ -51,15 +51,15 @@ class FlightSettlement
     private $value;
 
     /**
-     * One FlightSettlement have One FlightEvent.
-     * @OneToOne(targetEntity="FlightEvent", inversedBy="flightSettlements")
+     * Many FlightSettlements have One FlightEvent.
+     * @ManyToOne(targetEntity="FlightEvent", inversedBy="flightSettlements")
      * @JoinColumn(name="id_flight_event", referencedColumnName="id")
      */
     private $flightEvent;
 
     /**
-     * One FlightSettlement has One EventSettlement.
-     * @OneToOne(targetEntity="EventSettlement", inversedBy="flightSettlements")
+     * Many FlightSettlements have One EventSettlement.
+     * @ManyToOne(targetEntity="EventSettlement", inversedBy="flightSettlements")
      * @JoinColumn(name="id_settlement", referencedColumnName="id")
      */
     private $eventSettlement;

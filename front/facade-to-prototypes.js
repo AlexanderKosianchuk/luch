@@ -25,7 +25,7 @@ import User from 'User';
 import Calibration from 'Calibration';
 
 import { push } from 'react-router-redux'
-import startFlightUploading from 'actions/startFlightUploading';
+import startFlightUploading from 'actions/particular/startFlightUploading';
 
 export default function facade(store) {
     $(document).on('importItem', function (e, form) {
@@ -75,11 +75,6 @@ export default function facade(store) {
             apParams, bpParams
         );
         C.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('userShowList', function (e, showcase) {
-        let U = new User(store);
-        U.FillFactoryContaider(showcase);
     });
 
     $(document).on('changeLanguage', function (e, newLanguage) {

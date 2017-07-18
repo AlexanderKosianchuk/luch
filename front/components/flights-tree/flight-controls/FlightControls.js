@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 
 import redirect from 'actions/redirect';
-import deleteFlight from 'actions/deleteFlight';
+import request from 'actions/request';
 
 let buttons = [
     { key: 'events', classModifyer: 'glyphicon-flag', handler: 'handleClickShowFlightEvents' },
@@ -18,28 +18,33 @@ let buttons = [
 class FlightControls extends Component {
     handleClickTrash() {
         if (confirm(I18n.t('flightsTree.flightControls.confirm'))) {
-            this.props.deleteFlight({ id: this.props.flightInfo.id });
+            this.props.request(
+                ['flights', 'deleteFlight'],
+                'FLIGHT',
+                'delete',
+                { id: this.props.flight.id }
+            );
         }
     }
 
     handleClickShowFlightEvents() {
-        this.props.redirect('/flight-events/' + this.props.flightInfo.id);
+        this.props.redirect('/flight-events/' + this.props.flight.id);
     }
 
     handleClickShowFlightTemplates() {
-        this.props.redirect('/flight-templates/' + this.props.flightInfo.id);
+        this.props.redirect('/flight-templates/' + this.props.flight.id);
     }
 
     handleClickShowFlightParams() {
-        this.props.redirect('/flight-params/' + this.props.flightInfo.id);
+        this.props.redirect('/flight-params/' + this.props.flight.id);
     }
 
     handleClickShowChart() {
         this.props.redirect('/chart'
-            + '/flight-id/' + this.props.flightInfo.id
+            + '/flight-id/' + this.props.flight.id
             +'/template-name/default'
             + '/from-frame/0'
-            + '/to-frame/' + this.props.flightInfo.framesCount);
+            + '/to-frame/' + this.props.flight.framesCount);
     }
 
     buildButtons() {
@@ -98,7 +103,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         redirect: bindActionCreators(redirect, dispatch),
-        deleteFlight: bindActionCreators(deleteFlight, dispatch)
+        request: bindActionCreators(request, dispatch)
     }
 }
 

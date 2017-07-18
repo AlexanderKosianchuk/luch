@@ -13,13 +13,8 @@ import FolderControls from 'components/flights-tree/folder-controls/FolderContro
 
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import getFlightsList from 'actions/getFlightsList';
-import getFoldersList from 'actions/getFoldersList';
-import getSettings from 'actions/getSettings';
-import moveFlight from 'actions/moveFlight';
-import moveFolder from 'actions/moveFolder';
-import toggleFolderExpanding from 'actions/toggleFolderExpanding';
-import flightListChoiceToggle from 'actions/flightListChoiceToggle';
+import request from 'actions/request';
+import transmit from 'actions/transmit';
 
 const MAX_DEPTH = 5;
 const FLIGHT_TYPE = 'flight';
@@ -66,9 +61,21 @@ class Tree extends Component {
         this.resize();
 
         if (this.props.pending !== false) {
-            this.props.getFlightsList();
-            this.props.getFoldersList();
-            this.props.getSettings();
+            this.props.request(
+                ['folder', 'getFolders'],
+                'FOLDERS',
+                'get'
+            );
+            this.props.request(
+                ['flights', 'getFlights'],
+                'FLIGHTS',
+                'get'
+            );
+            this.props.request(
+                ['users', 'getUserSettings'],
+                'USER_SETTINGS',
+                'get'
+            );
         } else {
             this.checkChosen();
             this.flightClickEventListenerAdd();
@@ -162,10 +169,13 @@ class Tree extends Component {
         let flightId = parseInt(title[0].getAttribute('data-flight-id'));
 
         flightRow.classList.toggle('is-chosen');
-        this.props.flightListChoiceToggle({
-            id: flightId,
-            checkstate: flightRow.classList.contains('is-chosen')
-        });
+        this.props.transmit(
+            'FLIGHTS_CHOISE_TOGGLE',
+            {
+                id: flightId,
+                checkstate: flightRow.classList.contains('is-chosen')
+            }
+        );
     }
 
     resize(event) {
@@ -179,7 +189,7 @@ class Tree extends Component {
 
         flatData.forEach((item) => {
             if (item.type === FLIGHT_TYPE) {
-                item.title = <FlightTitle flightInfo={ item }/>;
+                item.title = <FlightTitle flight={ item }/>;
             } else if (item.type === FOLDER_TYPE) {
                 item.title = <FolderTitle folderInfo={ item }/>;
             }
@@ -201,17 +211,32 @@ class Tree extends Component {
         let data = { id: id, parentId: parent.id };
 
         if (node.type === FLIGHT_TYPE) {
-            this.props.moveFlight(data);
+            this.props.request(
+                ['flights', 'changeFlightPath'],
+                'FLIGHT_PATH',
+                'put',
+                data
+            );
         } else if (node.type === FOLDER_TYPE) {
-            this.props.moveFolder(data);
+            this.props.request(
+                ['folder', 'changeFolderPath'],
+                'FOLDER_PATH',
+                'put',
+                data
+            );
         }
     }
 
     expandHandler({ treeData, node, expanded }) {
-        this.props.toggleFolderExpanding({
-            id: node.id,
-            expanded: expanded
-        });
+        this.props.request(
+            ['folder', 'toggleFolderExpanding'],
+            'FOLDER_EXPANDING',
+            'put',
+            {
+                id: node.id,
+                expanded: expanded
+            }
+        );
     }
 
     findParent(treeData, id, save) {
@@ -244,7 +269,7 @@ class Tree extends Component {
                 rowInfo => {
                     if (rowInfo.node.type === FLIGHT_TYPE) {
                         return {
-                            buttons: [ <FlightControls flightInfo={ rowInfo.node }/> ],
+                            buttons: [ <FlightControls flight={ rowInfo.node }/> ],
                             className: 'flights-tree-tree__item flights-tree-tree__flight',
                         }
                     } else if (rowInfo.node.type === FOLDER_TYPE) {
@@ -277,43 +302,38 @@ class Tree extends Component {
     }
 }
 
-function merge(flightsListItems, foldersListItems) {
-    if (Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
-        return foldersListItems.concat(flightsListItems);
-    } else if (!Array.isArray(flightsListItems) && Array.isArray(foldersListItems)) {
-        return foldersListItems;
-    } else if (Array.isArray(flightsListItems) && !Array.isArray(foldersListItems)) {
-        return flightsListItems;
+function merge(flights, folders) {
+    if (Array.isArray(flights) && Array.isArray(folders)) {
+        return folders.concat(flights);
+    } else if (!Array.isArray(flights) && Array.isArray(folders)) {
+        return folders;
+    } else if (Array.isArray(flights) && !Array.isArray(folders)) {
+        return flights;
     } else {
         return [];
     }
 }
 
-function isPending(flightsListPending, foldersListPending, settingsPending) {
-    return !((flightsListPending === false)
-        && (foldersListPending === false)
+function isPending(flightsPending, foldersPending, settingsPending) {
+    return !((flightsPending === false)
+        && (foldersPending === false)
         && (settingsPending === false)
     );
 }
 
 function mapStateToProps(state) {
     return {
-        pending: isPending(state.flightsList.pending, state.foldersList.pending, state.settings.pending),
-        list: merge(state.flightsList.items, state.foldersList.items),
-        chosenFlights: state.flightsList.chosenItems,
-        expanded: state.foldersList.expanded
+        pending: isPending(state.flights.pending, state.folders.pending, state.settings.pending),
+        list: merge(state.flights.items, state.folders.items),
+        chosenFlights: state.flights.chosenItems,
+        expanded: state.folders.expanded
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightsList: bindActionCreators(getFlightsList, dispatch),
-        getFoldersList: bindActionCreators(getFoldersList, dispatch),
-        getSettings: bindActionCreators(getSettings, dispatch),
-        moveFlight: bindActionCreators(moveFlight, dispatch),
-        moveFolder: bindActionCreators(moveFolder, dispatch),
-        toggleFolderExpanding: bindActionCreators(toggleFolderExpanding, dispatch),
-        flightListChoiceToggle: bindActionCreators(flightListChoiceToggle, dispatch),
+        request: bindActionCreators(request, dispatch),
+        transmit: bindActionCreators(transmit, dispatch),
     }
 }
 

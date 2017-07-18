@@ -5,12 +5,12 @@ const initialState = {
 
 export default function settings(state = initialState, action) {
     switch (action.type) {
-        case 'GET_SETTINGS':
+        case 'GET_USER_SETTINGS_START':
             return { ...state, ...{ pending: true }};
-        case 'SETTINGS_RECEIVED':
+        case 'GET_USER_SETTINGS_COMPLETE':
             return {
                 pending: false,
-                items: action.payload
+                items: action.payload.response
             };
         case 'CHANGE_SETTINGS_ITEM':
             let items = state.items;
@@ -23,7 +23,7 @@ export default function settings(state = initialState, action) {
 
             return { ...state };
         case 'SET_SETTINGS':
-            return state;
+            return { ...state };
         default:
             return state;
     }

@@ -11,12 +11,15 @@ use Model\Flight;
 use Component\EntityManagerComponent as EM;
 use Component\FdrComponent;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use \Exception;
 
 class FdrController extends CController
 {
-    public $curPage = 'bruTypesPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -26,11 +29,23 @@ class FdrController extends CController
         unset($L);
     }
 
+    public function getFdrs($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
+
+        return json_encode($fdrsAndCalibrations);
+    }
+
     public function ShowParamList($fdrId)
     {
         if (!is_int($fdrId)) {
-            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
-                . json_encode($fdrId), 1);
+            throw new BadRequestException(json_encode($args));
         }
 
         $fdr = new Fdr;
@@ -90,47 +105,13 @@ class FdrController extends CController
         return $randomString;
     }
 
-    /*
-    * ==========================================
-    * REAL ACTIONS
-    * ==========================================
-    */
-
-    public function putBruTypeContainer($data)
-    {
-        $topMenu = $this->PutTopMenu();
-        $leftMenu = $this->PutLeftMenu();
-        $workspace = $this->PutWorkspace();
-        $this->RegisterActionExecution($this->action, "executed");
-
-        $answ = [
-            'status' => 'ok',
-            'data' => [
-                'workspace' => $workspace,
-            ]
-        ];
-
-        echo json_encode($answ);
-    }
-
-    public function getFdrTypes($args)
-    {
-        $userId = intval($this->_user->userInfo['id']);
-        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
-
-        echo json_encode($fdrsAndCalibrations);
-    }
 
     public function getCyclo($args)
     {
         if (!isset($args['fdrId'])
             && !isset($args['flightId'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FdrController.php";
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($args));
         }
 
         $fdrId = null;
@@ -151,7 +132,7 @@ class FdrController extends CController
         $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
         unset($fdr);
 
-        echo json_encode([
+        return json_encode([
             'analogParams' => $flightApHeaders,
             'binaryParams' => $flightBpHeaders
         ]);
@@ -163,11 +144,7 @@ class FdrController extends CController
             || !isset($args['paramCode'])
             || !isset($args['color'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FdrController.php";
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($args));
         }
 
         $fdrId = null;
@@ -201,7 +178,7 @@ class FdrController extends CController
 
         unset($fdr);
 
-        echo json_encode(['status' => 'ok']);
+        return json_encode('ok');
     }
 
 }

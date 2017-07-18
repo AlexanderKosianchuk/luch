@@ -41,19 +41,14 @@ Exception.prototype.ReceiveExcepions = function(){
 
     var self = this;
     for(var i = 0; i < this.paramCount; i++){
-        var refParam = this.refParamArr[i],
-            pV = {
-                action: 'chart/getFlightExceptionsAction',
-                data:{
-                    flightId: self.flightId,
-                    refParam: refParam
-                }
-            };
-
+        var refParam = this.refParamArr[i];
         $.ajax({
-            data: pV,
+            data: {
+                flightId: self.flightId,
+                refParam: refParam
+            },
             type: "POST",
-            url: ENTRY_URL,
+            url: ENTRY_URL + '?action=chart/getFlightExceptionsAction',
             dataType: 'json',
             success: function(inData) { return inData; },
             async: false,

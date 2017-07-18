@@ -119,19 +119,16 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
     for(var i = 0; i < paramsArr.length; i++)
     {
         var pV = {
-            action: "chart/getParamMinmaxAction",
-            data:{
-                flightId: flightId,
-                paramCode: paramsArr[i],
-                tplName: tplName,
-            }
+            flightId: flightId,
+            paramCode: paramsArr[i],
+            tplName: tplName,
         };
 
         $.ajax({
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: ENTRY_URL,
+            url: ENTRY_URL + "?action=chart/getParamMinmaxAction",
             async: false
         }).done(function(receivedMinMax){
             var minMax = receivedMinMax;
@@ -156,24 +153,18 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
     if(self.distributionProc == 0) {
         self.distributionProc = paramsArr.length;
 
-        for(var i = 0; i < paramsArr.length; i++)
-        {
-            var pV = {
-                action: "chart/setParamMinmaxAction",
-                data:{
+        for (var i = 0; i < paramsArr.length; i++) {
+            $.ajax({
+                type: "POST",
+                data: {
                     flightId: flightId,
                     paramCode: paramsArr[i],
                     tplName: tplName,
                     max: yAxArr[i].max,
                     min: yAxArr[i].min,
                     username: this.user
-                }
-            };
-
-            $.ajax({
-                type: "POST",
-                data: pV,
-                url: ENTRY_URL,
+                },
+                url: ENTRY_URL + "?action=chart/setParamMinmaxAction",
             }).done(function(e){
                 self.distributionProc--;
             }).fail(function(e){

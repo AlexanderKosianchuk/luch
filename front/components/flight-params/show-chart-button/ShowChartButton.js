@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _isEmpty from 'lodash.isempty';
 
 import redirect from 'actions/redirect';
-import setTemplate from 'actions/setTemplate';
+import request from 'actions/request';
 
 class ShowChartButton extends React.Component {
     buildButton() {
@@ -20,12 +20,17 @@ class ShowChartButton extends React.Component {
 
     showChart() {
         let templateName = 'last';
-        Promise.resolve(this.props.setTemplate({
-            flightId: this.props.flightId,
-            templateName: templateName,
-            analogParams: this.props.fdrCyclo.chosenAnalogParams,
-            binaryParams: this.props.fdrCyclo.chosenBinaryParams
-        })).then(() => {
+        this.props.request(
+            ['templates', 'setTemplate'],
+            'TEMPLATE',
+            'post',
+            {
+                flightId: this.props.flightId,
+                templateName: templateName,
+                analogParams: this.props.fdrCyclo.chosenAnalogParams,
+                binaryParams: this.props.fdrCyclo.chosenBinaryParams
+            }
+        ).then(() => {
             this.props.redirect('/chart/'
                 + 'flight-id/'+ this.props.flightId + '/'
                 + 'template-name/'+ templateName + '/'
@@ -47,14 +52,14 @@ class ShowChartButton extends React.Component {
 function mapStateToProps(state) {
     return {
         fdrCyclo: state.fdrCyclo,
-        startFrame: state.flightInfo.selectedStartFrame,
-        endFrame: state.flightInfo.selectedEndFrame
+        startFrame: state.flight.selectedStartFrame,
+        endFrame: state.flight.selectedEndFrame
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        setTemplate: bindActionCreators(setTemplate, dispatch),
+        request: bindActionCreators(request, dispatch),
         redirect: bindActionCreators(redirect, dispatch)
     }
 }

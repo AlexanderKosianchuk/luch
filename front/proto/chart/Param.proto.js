@@ -78,38 +78,32 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
     var self = this,
         apDataArray = Array(),
         pV = {
-            action: 'chart/getApParamValueAction',
-            data:{
-                flightId: self.flightId,
-                paramApCode: paramCode,
-                totalSeriesCount: self.apCount,
-                startFrame: self.startFrame,
-                endFrame: self.endFrame,
-                isPrintPage: self.isPrintPage
-            }
+            flightId: self.flightId,
+            paramApCode: paramCode,
+            totalSeriesCount: self.apCount,
+            startFrame: self.startFrame,
+            endFrame: self.endFrame,
+            isPrintPage: self.isPrintPage
         };
 
     $.ajax({
         data: pV,
         type: "POST",
         dataType: "json",
-        url: ENTRY_URL,
+        url: ENTRY_URL + '?action=chart/getApParamValueAction',
         async: true
     }).done(function(receivedParamPoints){
         apDataArray = receivedParamPoints;
         var pV = {
-                action: 'chart/getParamInfoAction',
-                data: {
-                    flightId: self.flightId,
-                    paramCode: paramCode
-                }
+            flightId: self.flightId,
+            paramCode: paramCode
         };
 
         $.ajax({
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: ENTRY_URL,
+            url: ENTRY_URL + '?action=chart/getParamInfoAction',
             async: true
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],
@@ -148,35 +142,29 @@ Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
         bpDataArray = Array(),
         color = String(),
         pV = {
-            action: 'chart/getBpParamValueAction',
-            data:{
-                flightId: self.flightId,
-                paramBpCode: paramCode
-            }
+            flightId: self.flightId,
+            paramBpCode: paramCode
         };
 
     $.ajax({
         type: "POST",
         data: pV,
         dataType: 'json',
-        url: ENTRY_URL,
+        url: ENTRY_URL + '?action=chart/getBpParamValueAction',
         async: true
     }).done(function(receivedParamPoints){
         bpDataArray = receivedParamPoints;
 
         var pV = {
-                action: 'chart/getParamInfoAction',
-                data: {
-                    flightId: self.flightId,
-                    paramCode: paramCode
-                }
+            flightId: self.flightId,
+            paramCode: paramCode
         };
 
         $.ajax({
             type: "POST",
             data: pV,
             dataType: 'json',
-            url: ENTRY_URL,
+            url: ENTRY_URL + '?action=chart/getParamInfoAction',
             async: true
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],

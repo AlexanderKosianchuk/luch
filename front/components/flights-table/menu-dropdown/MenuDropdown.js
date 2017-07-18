@@ -7,12 +7,11 @@ import { Translate, I18n } from 'react-redux-i18n';
 
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import folderListExpandingToggle from 'actions/folderListExpandingToggle';
-import flightListUnchooseAll from 'actions/flightListUnchooseAll';
-import deleteFlight from 'actions/deleteFlight';
-import exportFlight from 'actions/exportFlight';
-import exportFlightCoordinates from 'actions/exportFlightCoordinates';
-import processFlight from 'actions/processFlight';
+import transmit from 'actions/transmit';
+import request from 'actions/request';
+import exportFlight from 'actions/particular/exportFlight';
+import exportFlightCoordinates from 'actions/particular/exportFlightCoordinates';
+import processFlight from 'actions/particular/processFlight';
 import redirect from 'actions/redirect';
 
 class MenuDropdown extends React.Component {
@@ -61,7 +60,7 @@ class MenuDropdown extends React.Component {
     }
 
     buildMenu() {
-        let flightsCount = this.props.flightsList.chosenItems.length;
+        let flightsCount = this.props.flights.chosenItems.length;
 
         if (flightsCount === 0) {
             return '';
@@ -85,27 +84,32 @@ class MenuDropdown extends React.Component {
     }
 
     handleDelete() {
-        for (var ii = 0; ii < this.props.flightsList.chosenItems.length; ii++) {
-            let item = this.props.flightsList.chosenItems[ii];
-            this.props.deleteFlight({ id: item.id});
+        for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
+            let item = this.props.flights.chosenItems[ii];
+            this.props.request(
+                ['flights', 'deleteFlight'],
+                'FLIGHT',
+                'delete',
+                { id: item.id }
+            );
         }
     }
 
     handleExport() {
         let items = [];
 
-        for (var ii = 0; ii < this.props.flightsList.chosenItems.length; ii++) {
-            items.push(this.props.flightsList.chosenItems[ii].id);
+        for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
+            items.push(this.props.flights.chosenItems[ii].id);
         }
 
         this.props.exportFlight(items);
     }
 
     handleProcess() {
-        if (this.props.flightsList.chosenItems.length === 1) {
+        if (this.props.flights.chosenItems.length === 1) {
             this.setState({ isLoaderShown: true });
             this.props.processFlight({
-                id: this.props.flightsList.chosenItems[0].id
+                id: this.props.flights.chosenItems[0].id
             }).then(() => {
                 this.setState({ isLoaderShown: false });
             });
@@ -113,32 +117,32 @@ class MenuDropdown extends React.Component {
     }
 
     handleExportCoordinates() {
-        if (this.props.flightsList.chosenItems.length === 1) {
+        if (this.props.flights.chosenItems.length === 1) {
             this.props.exportFlightCoordinates({
-                id: this.props.flightsList.chosenItems[0].id
+                id: this.props.flights.chosenItems[0].id
             });
         }
     }
 
     handleRemoveSelection() {
-        this.props.flightListUnchooseAll();
+        this.props.transmit('FLIGHTS_UNCHOOSE_ALL');
     }
 
     handleEvents() {
-        if (this.props.flightsList.chosenItems.length === 1) {
-            this.props.redirect('/flight-events/' + this.props.flightsList.chosenItems[0].id);
+        if (this.props.flights.chosenItems.length === 1) {
+            this.props.redirect('/flight-events/' + this.props.flights.chosenItems[0].id);
         }
     }
 
     handleParams() {
-        if (this.props.flightsList.chosenItems.length === 1) {
-            this.props.redirect('/flight-params/' + this.props.flightsList.chosenItems[0].id);
+        if (this.props.flights.chosenItems.length === 1) {
+            this.props.redirect('/flight-params/' + this.props.flights.chosenItems[0].id);
         }
     }
 
     handleTemplates() {
-        if (this.props.flightsList.chosenItems.length === 1) {
-            this.props.redirect('/flight-templates/' + this.props.flightsList.chosenItems[0].id);
+        if (this.props.flights.chosenItems.length === 1) {
+            this.props.redirect('/flight-templates/' + this.props.flights.chosenItems[0].id);
         }
     }
 
@@ -166,15 +170,14 @@ class MenuDropdown extends React.Component {
 
 function mapStateToProps(state) {
     return {
-         flightsList: state.flightsList
+         flights: state.flights
      };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        folderListExpandingToggle: bindActionCreators(folderListExpandingToggle, dispatch),
-        flightListUnchooseAll: bindActionCreators(flightListUnchooseAll, dispatch),
-        deleteFlight: bindActionCreators(deleteFlight, dispatch),
+        transmit: bindActionCreators(transmit, dispatch),
+        request: bindActionCreators(request, dispatch),
         exportFlight: bindActionCreators(exportFlight, dispatch),
         exportFlightCoordinates: bindActionCreators(exportFlightCoordinates, dispatch),
         processFlight: bindActionCreators(processFlight, dispatch),

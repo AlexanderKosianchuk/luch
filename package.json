@@ -1,6 +1,6 @@
 {
   "name": "luche",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Flight data processor. Initialy was developed for An 148, but got wide spread for many other aircrafts",
   "main": "index.js",
   "scripts": {
@@ -67,6 +67,7 @@
     "chosen-js": "^1.7.0",
     "datatables": "^1.10.13",
     "flot-charts": "^0.8.3",
+    "form-urlencoded": "^2.0.0",
     "has-flag": "^2.0.0",
     "history": "^4.6.1",
     "is-utf8": "^0.2.1",
@@ -78,6 +79,7 @@
     "lodash.constant": "^3.0.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isinteger": "^4.0.4",
+    "object-to-formdata": "^1.0.12",
     "prop-types": "^15.5.10",
     "rc-collapse": "^1.7.6",
     "react": "^15.6.1",

@@ -10,8 +10,8 @@ import FlightUploaderDropdown from 'controls/top-menu/flight-uploader-dropdown/F
 import FlightImporterDropdown from 'controls/top-menu/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'controls/top-menu/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
-import logout from 'actions/logout';
-import changeLanguage from 'actions/changeLanguage';
+import logout from 'actions/particular/logout';
+import changeLanguage from 'actions/particular/changeLanguage';
 import redirect from 'actions/redirect';
 import trigger from 'actions/trigger';
 

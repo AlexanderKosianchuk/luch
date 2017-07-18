@@ -22,7 +22,8 @@
             "back/entity/",
             "back/model/",
             "back/controller/",
-            "back/component/"
+            "back/component/",
+            "back/exception/"
         ]
     }
 }

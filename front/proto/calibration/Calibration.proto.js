@@ -108,16 +108,9 @@ function Calibration() {
 
     this.getAvaliableFDRs = function() {
         return $.ajax({
-            type : "POST",
-            data : {
-                action : 'calibration/getAvaliableFdrs',
-                data : {
-                    dummy : 'data'
-                }
-            },
-            dataType : 'json',
-            url : ENTRY_URL,
-            async : true
+            type: "GET",
+            dataType: 'json',
+            url: ENTRY_URL + '?action=calibration/getAvaliableFdrs',
         })
         .fail(function(msg) {
             console.log(msg);
@@ -128,14 +121,11 @@ function Calibration() {
         return $.ajax({
             type : "POST",
             data : {
-                action : 'calibration/deleteCalibration',
-                data : {
-                    calibrationId: calibrationId
-                }
+                calibrationId: calibrationId
             },
             dataType : 'json',
-            url : ENTRY_URL,
-            async : true
+            contentType: 'application/json',
+            url : ENTRY_URL + '?action=calibration/deleteCalibration',
         })
         .fail(function(msg) {
             console.log(msg);
@@ -146,17 +136,13 @@ function Calibration() {
         return $.ajax({
             type : "POST",
             data : {
-                action : 'calibration/saveCalibration',
-                data : {
-                    fdrId: fdrId,
-                    calibrationId: calibrationId,
-                    name: name,
-                    calibrations: calibrations
-                }
+                fdrId: fdrId,
+                calibrationId: calibrationId,
+                name: name,
+                calibrations: calibrations
             },
             dataType : 'json',
-            url : ENTRY_URL,
-            async : true
+            url : ENTRY_URL + '?action=calibration/saveCalibration'
         })
         .fail(function(msg) {
             console.log(msg);
@@ -358,7 +344,7 @@ function Calibration() {
             }
         }
 
-        return '<table v-align="top">'
+        return ''
             + '<tr>'
             + '<td><label>'+I18n.t('calibration.title')+'. ' + '</label></td>'
             + '<td><label>'+I18n.t('calibration.fdr')+': ' + '</label></td>'

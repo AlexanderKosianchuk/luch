@@ -5,18 +5,27 @@ import { bindActionCreators } from 'redux';
 import MainPage from 'controls/main-page/MainPage';
 import Toolbar from 'components/chart/toolbar/Toolbar';
 
-import getTemplate from 'actions/getTemplate';
-import getFlightInfo from 'actions/getFlightInfo';
+import request from 'actions/request';
 import showPage from 'actions/showPage';
 
 class Chart extends React.Component {
     componentDidMount() {
         Promise.all([
-            this.props.getTemplate({
-                flightId: this.props.flightId,
-                templateName: this.props.templateName
-            }),
-            this.props.getFlightInfo({ flightId: this.props.flightId })
+            this.props.request(
+                ['templates', 'getTemplate'],
+                'TEMPLATE',
+                'get',
+                {
+                    flightId: this.props.flightId,
+                    templateName: this.props.templateName
+                }
+            ),
+            this.props.request(
+                ['flights', 'getFlightInfo'],
+                'FLIGHT',
+                'get',
+                { flightId: this.props.flightId }
+            )
         ]).then(() => {
             let analogParams = this.props.templateAnalogParams || [];
             let binaryParams = this.props.templateBinaryParams || [];
@@ -62,18 +71,17 @@ function mapStateToProps(state, ownProps) {
         templateName: ownProps.match.params.templateName,
         fromFrame: ownProps.match.params.fromFrame,
         toFrame: ownProps.match.params.toFrame,
-        templateAnalogParams: state.templateInfo.ap,
-        templateBinaryParams: state.templateInfo.bp,
-        stepLength: state.flightInfo.stepLength,
-        startFlightTime: state.flightInfo.startFlightTime,
+        templateAnalogParams: state.template.ap,
+        templateBinaryParams: state.template.bp,
+        stepLength: state.flight.stepLength,
+        startFlightTime: state.flight.startFlightTime,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        showPage: bindActionCreators(showPage, dispatch),
-        getTemplate: bindActionCreators(getTemplate, dispatch),
-        getFlightInfo: bindActionCreators(getFlightInfo, dispatch),
+        request: bindActionCreators(request, dispatch),
+        showPage: bindActionCreators(showPage, dispatch)
     }
 }
 

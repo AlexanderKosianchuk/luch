@@ -11,11 +11,15 @@ use Model\Frame;
 use Model\Channel;
 use Model\FlightException;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use Component\OSdetectionComponent;
 
 class ChartController extends CController
 {
-    public $curPage = 'chartPage';
     private $title = 'Title';
 
     function __construct()
@@ -27,68 +31,29 @@ class ChartController extends CController
         unset($L);
     }
 
-    public function PrintInfoFromRequest()
+    public function putChartContainer($data)
     {
-        foreach ($this->data as $key => $val)
-        {
-            if(($key == 'tplName') && isset($this->data['flightId']))
-            {
-                $tplName = $val;
-                $flightId = $this->data['flightId'];
-
-                $Fl = new Flight();
-                $flightInfo = $Fl->GetFlightInfo($flightId);
-                $fdrId = intval($flightInfo['id_fdr']);
-                unset($Fl);
-
-                $fdr = new Fdr;
-                $fdrInfo = $fdr->getFdrInfo($fdrId);
-                $PSTListTableName = $fdrInfo['paramSetTemplateListTableName'];
-                $apCycloTable = $fdrInfo['gradiApTableName'];
-                $bpCycloTable = $fdrInfo['gradiBpTableName'];
-                $Tpl = new FlightTemplate;
-                $params = $Tpl->GetPSTParams($PSTListTableName, $tplName, $this->_user->username);
-                unset($Tpl);
-
-                $apParams = array();
-                $bpParams = array();
-                foreach ($params as $item) {
-                    $type = $fdr->GetParamType($item, $apCycloTable, $bpCycloTable);
-                    if ($type == PARAM_TYPE_AP) {
-                        $apParams[] = $item;
-                    } else if($type == PARAM_TYPE_BP) {
-                        $bpParams[] = $item;
-                    }
-                }
-
-                unset($fdr);
-                printf("<div id='%s' class='InfoFromRequest'>%s</div>", 'apParams', implode(",", $apParams));
-                printf("<div id='%s' class='InfoFromRequest'>%s</div>", 'bpParams', implode(",", $bpParams));
-            }
-
-            printf("<div id='%s' class='InfoFromRequest'>%s</div>", $key, $val);
-        }
-    }
-
-    public function PutWorkspace()
-    {
-        $userId = $this->_user->GetUserIdByName($this->_user->username);
-
+        $userId = $this->_user->userInfo['id'];
         $O = new UserOptions();
         $mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
         $lineWidth = $O->GetOptionValue($userId, 'lineWidth');
         unset($O);
-
         $workspace = "<div id='chartWorkspace' class='WorkSpace'>".
-                        "<div id='graphContainer' class='GraphContainer'>" .
-                            "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
-                            "<div id='legend'></div>" .
-                        "</div>" .
-                        "<div id='loadingBox' class='LoadingBox'>" .
-                            "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
-                        "</div>".
-                    "</div>";
-        return $workspace;
+            "<div id='graphContainer' class='GraphContainer'>" .
+                "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
+                    "<div id='legend'></div>" .
+                "</div>" .
+             "<div id='loadingBox' class='LoadingBox'>" .
+                "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
+             "</div>".
+        "</div>";
+
+        return json_encode([
+            'status' => 'ok',
+            'data' => [
+                'workspace' => $workspace
+            ]
+        ]);
     }
 
     public function GetApParamValue(
@@ -495,209 +460,157 @@ class ChartController extends CController
         return $step;
     }
 
-    /*
-    * ==========================================
-    * REAL ACTIONS
-    * ==========================================
-    */
-
-    public function putChartContainer($data)
-    {
-        $workspace = $this->PutWorkspace();
-
-        $data = array(
-            'workspace' => $workspace
-        );
-
-        $answ["status"] = "ok";
-        $answ["data"] = $data;
-
-        echo json_encode($answ);
-    }
-
     public function getApParamValueAction($data)
     {
-        if(isset($data['flightId']) &&
-                isset($data['paramApCode']) &&
-                isset($data['totalSeriesCount']) &&
-                isset($data['startFrame']) &&
-                isset($data['endFrame']))
-        {
-            $isPrintPage = ChartController::getBoolean($data['isPrintPage']);
-
-            $flightId = $data['flightId'];
-            $paramApCode = $data['paramApCode'];
-            $totalSeriesCount = intval($data['totalSeriesCount']);
-            $startFrame = intval($data['startFrame']);
-            $endFrame = intval($data['endFrame']);
-
-            $paramData = $this->GetApParamValue($flightId,
-                $startFrame, $endFrame, $totalSeriesCount,
-                $paramApCode, $isPrintPage);
-
-            echo json_encode($paramData);
+        if(!isset($data['flightId'])
+            || !isset($data['paramApCode'])
+            || !isset($data['totalSeriesCount'])
+            || !isset($data['startFrame'])
+            || !isset($data['endFrame'])
+        ) {
+            throw new BadRequestException(json_encode($data));
         }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
-        }
+
+        $isPrintPage = ChartController::getBoolean($data['isPrintPage']);
+
+        $flightId = $data['flightId'];
+        $paramApCode = $data['paramApCode'];
+        $totalSeriesCount = intval($data['totalSeriesCount']);
+        $startFrame = intval($data['startFrame']);
+        $endFrame = intval($data['endFrame']);
+
+        $paramData = $this->GetApParamValue($flightId,
+            $startFrame, $endFrame, $totalSeriesCount,
+            $paramApCode, $isPrintPage);
+
+        return json_encode($paramData);
     }
 
     public function getBpParamValueAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['paramBpCode']))
-        {
-            $flightId = $data['flightId'];
-            $paramCode = $data['paramBpCode'];
-
-            $paramData = [];
-            if(!empty($paramCode)) {
-                $paramData = $this->GetBpParamValue($flightId, $paramCode);
-            }
-
-            echo json_encode($paramData);
+        if (!isset($data['flightId'])
+            || !isset($data['paramBpCode'])
+        ) {
+            throw new BadRequestException(json_encode($data));
         }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+
+        $flightId = intval($data['flightId']);
+        $paramCode = $data['paramBpCode'];
+
+        $paramData = [];
+        if(!empty($paramCode)) {
+            $paramData = $this->GetBpParamValue($flightId, $paramCode);
         }
+
+        echo json_encode($paramData);
     }
 
     public function rcvLegend($data)
     {
-        if(isset($data['flightId']) &&
-                isset($data['paramCodes']))
+        if (!isset($data['flightId'])
+            || !isset($data['paramCodes']))
         {
-            $flightId = $data['flightId'];
-            $paramCodes = $data['paramCodes'];
-
-            $legend = $this->GetLegend($flightId, $paramCodes);
-
-            echo json_encode($legend);
+            throw new BadRequestException(json_encode($data));
         }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
-        }
+
+        $flightId = intval($data['flightId']);
+        $paramCodes = $data['paramCodes'];
+
+        $legend = $this->GetLegend($flightId, $paramCodes);
+
+        return json_encode($legend);
     }
 
     public function getParamMinmaxAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['paramCode']) &&
-            isset($data['tplName']))
-        {
-            $flightId = $data['flightId'];
-            $paramCode = $data['paramCode'];
-            $tplName = $data['tplName'];
-
-            $minmax = $this->GetParamMinmax($flightId, $paramCode, $tplName);
-
-            echo json_encode($minmax);
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+        if (!isset($data['flightId'])
+            || !isset($data['paramCode'])
+            || !isset($data['tplName'])
+        ) {
+            throw new BadRequestException(json_encode($data));
         }
+
+        $flightId = intval($data['flightId']);
+        $paramCode = $data['paramCode'];
+        $tplName = $data['tplName'];
+
+        $minmax = $this->GetParamMinmax($flightId, $paramCode, $tplName);
+
+        return json_encode($minmax);
     }
 
     public function setParamMinmaxAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['paramCode']) &&
-            isset($data['tplName']) &&
-            isset($data['min']) &&
-            isset($data['max']))
-        {
-            $flightId = $data['flightId'];
-            $paramCode = $data['paramCode'];
-            $tplName = $data['tplName'];
-            $min = $data['min'];
-            $max = $data['max'];
-
-            $status = $this->SetParamMinmax($flightId, $paramCode, $tplName, $min, $max);
-
-            $answ["status"] = $status;
-            echo json_encode($answ);
+        if (!isset($data['flightId'])
+            || !isset($data['paramCode'])
+            || !isset($data['tplName'])
+            || !isset($data['min'])
+            || !isset($data['max'])
+        ) {
+            throw new BadRequestException(json_encode($data));
         }
-        else
-        {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
-        }
+
+        $flightId = intval($data['flightId']);
+        $paramCode = $data['paramCode'];
+        $tplName = $data['tplName'];
+        $min = $data['min'];
+        $max = $data['max'];
+
+        $status = $this->SetParamMinmax($flightId, $paramCode, $tplName, $min, $max);
+
+        $answ["status"] = $status;
+        return json_encode($answ);
     }
 
     public function getParamColorAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['paramCode']))
-        {
-            $flightId = $data['flightId'];
-            $paramCode = $data['paramCode'];
-
-            $color = $this->GetParamColor($flightId, $paramCode);
-
-            echo json_encode($color);
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+        if(!isset($data['flightId'])
+            || !isset($data['paramCode'])
+        ) {
+            throw new BadRequestException(json_encode($data));
         }
+
+        $flightId = $data['flightId'];
+        $paramCode = $data['paramCode'];
+
+        $color = $this->GetParamColor($flightId, $paramCode);
+
+        return json_encode($color);
     }
 
     public function getParamInfoAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['paramCode']))
+        if (!isset($data['flightId'])
+            || !isset($data['paramCode']))
         {
-            $flightId = $data['flightId'];
-            $paramCode = $data['paramCode'];
-
-            $info = [];
-            if(!empty($paramCode)) {
-                $info = $this->GetParamInfo($flightId, $paramCode);
-            }
-
-            echo json_encode($info);
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
+
+        $flightId = intval($data['flightId']);
+        $paramCode = $data['paramCode'];
+
+        $info = [];
+        if (!empty($paramCode)) {
+            $info = $this->GetParamInfo($flightId, $paramCode);
+        }
+
+        echo json_encode($info);
     }
 
     public function getFlightExceptionsAction($data)
     {
-        if(isset($data['flightId']) &&
-            isset($data['refParam']))
+        if (!isset($data['flightId'])
+            || !isset($data['refParam']))
         {
-            $flightId = $data['flightId'];
-            $paramCode = $data['refParam'];
-
-            $exceptions = $this->GetFlightExceptions($flightId, $paramCode);
-
-            echo json_encode($exceptions);
-        } else {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
+
+        $flightId = intval($data['flightId']);
+        $paramCode = $data['refParam'];
+
+        $exceptions = $this->GetFlightExceptions($flightId, $paramCode);
+
+        return json_encode($exceptions);
     }
 
     public function figurePrint($data)
@@ -707,10 +620,7 @@ class ChartController extends CController
             || !isset($data['endFrame'])
             || !isset($data['analogParams'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page ChartController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = $data['flightId'];

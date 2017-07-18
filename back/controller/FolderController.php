@@ -11,10 +11,13 @@ use Entity\Folder as FolderEntity;
 use Component\EntityManagerComponent as EM;
 use Component\FlightComponent;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 class FolderController extends CController
 {
-    public $curPage = 'folderPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -29,13 +32,7 @@ class FolderController extends CController
     public function createFolder($data)
     {
         if (!isset($data['name']) ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ = "Not all nessesary params sent. Post: ".
-                    json_encode($data) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $folderName = $data['name'];
@@ -55,17 +52,13 @@ class FolderController extends CController
         $em->persist($folder);
         $em->flush();
 
-       $this->RegisterActionExecution($this->action, "executed", 0, 'folderCreation', $fullpath, $folderName);
-
-       echo json_encode(array_merge(
+       return json_encode(array_merge(
            $folder->get(),
            [
                'type' => 'folder',
                'parentId' => intval($folder->getPath())
            ]
        ));
-
-       exit;
     }
 
     public function getFolders($args)
@@ -93,7 +86,7 @@ class FolderController extends CController
             );
         }
 
-        echo json_encode($items);
+        return json_encode($items);
     }
 
     public function toggleFolderExpanding($data)
@@ -102,14 +95,7 @@ class FolderController extends CController
             || !is_int(intval($data['id']))
             || !isset($data['expanded'])
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $id = intval($data['id']);
@@ -121,23 +107,16 @@ class FolderController extends CController
         $folders = $em->find('Entity\Folder', $id);
 
         if ($folders === null) {
-            http_response_code(404);
-            header("Status: 404 Not Found");
-            $msg = "Requested folder not found. Id: ". $id;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new NotFoundException("requested filder not found. Folder id: ". $id);
         }
 
         $folders->setExpanded(intval($expanded));
-
         $em->flush();
 
-        echo(json_encode([
+        return json_encode([
             'id' => $id,
             'expanded' => $expanded
-        ]));
-        exit;
+        ]);
     }
 
     public function deleteFolder($data)
@@ -145,14 +124,7 @@ class FolderController extends CController
         if (!isset($data['id'])
             || !is_int(intval($data['id']))
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                    json_encode($_POST) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $id = $data['id'];
@@ -164,14 +136,7 @@ class FolderController extends CController
         $result = array();
 
         if (!in_array($id, $availableFolders)) {
-            unset($Fd);
-            http_response_code(403);
-            header("Status: 403 Forbidden");
-            $dat = "Not available for current user. DeleteFolder id - " . $id . ". " .
-               "Username - " . $this->_user->username . ". Page FlightsController.php";
-            $result['data'] = $dat;
-            echo(json_encode($answ));
-            exit;
+            throw new ForbiddenException('requested folder not avaliable for current user. Folder id: '. $flightId);
         }
 
         $Fd = new Folder;
@@ -193,8 +158,7 @@ class FolderController extends CController
         }
         unset($Fd);
 
-        echo(json_encode('ok'));
-        exit;
+        return json_encode('ok');
     }
 
     public function ChangeFolderPath($data)
@@ -204,14 +168,7 @@ class FolderController extends CController
             || !is_int(intval($data['id']))
             || !is_int(intval($data['parentId']))
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent or incorrect param types. Post: ".
-                    json_encode($_POST) . ". Page FolderController";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $userId = intval($this->_user->userInfo['id']);
@@ -222,11 +179,10 @@ class FolderController extends CController
         $result = $Fd->ChangeFolderPath($sender, $target, $userId);
         unset($Fd);
 
-        echo (json_encode([
+        return json_encode([
             'id' => $sender,
             'parentId' => $target
-        ]));
-        exit;
+        ]);
     }
 
    public function renameFolder($data)
@@ -234,12 +190,7 @@ class FolderController extends CController
        if(!isset($data['id'])
            || !isset($data['name'])
        ) {
-           $answ["status"] = "err";
-           $answ["error"] = "Not all nessesary params sent. Post: ".
-                   json_encode($_POST) . ". Page FolderController";
-           $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-           echo(json_encode($answ));
-           exit;
+           throw new BadRequestException(json_encode($data));
        }
 
        $folderId = $data['id'];
@@ -251,8 +202,6 @@ class FolderController extends CController
        $Fd->RenameFolder($folderId, $folderName, $userId);
        unset($Fd);
 
-       $this->RegisterActionExecution($this->action, "executed", $folderId, 'folderId', $folderName, "newName");
-
-       echo json_encode('ok');
+       return json_encode('ok');
    }
 }

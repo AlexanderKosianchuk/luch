@@ -8,14 +8,14 @@ const initialState = {
 
 export default function fdrCyclo(state = initialState, action) {
     switch (action.type) {
-        case 'FDR_CYCLO_PENDING':
+        case 'GET_FDR_CYCLO_START':
             return { ...state, ...{ pending: true }};
-        case 'FDR_CYCLO_RECEIVED':
+        case 'GET_FDR_CYCLO_COMPLETE':
             return { ...state,
                 ...{
                     pending: false,
-                    analogParams: action.payload.analogParams,
-                    binaryParams: action.payload.binaryParams,
+                    analogParams: action.payload.response.analogParams,
+                    binaryParams: action.payload.response.binaryParams,
                 }
             };
         case 'CHANGE_FLIGHT_PARAM_CHECKSTATE':

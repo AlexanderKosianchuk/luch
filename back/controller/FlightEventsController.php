@@ -9,6 +9,11 @@ use Model\FlightException;
 use Model\User;
 use Component\RuntimeManager;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use Component\EntityManagerComponent as EM;
 
 use TCPDF;
@@ -18,8 +23,6 @@ require_once (SITE_ROOT_DIR."/tcpdf/config/tcpdf_config.php");
 
 class FlightEventsController extends CController
 {
-    public $curPage = 'flightEventsPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -214,7 +217,7 @@ class FlightEventsController extends CController
                 $pdf->SetFont ( 'dejavusans', '', 9, '', true );
 
                 $strStyle = 'style="text-align:center; font-weight: bold; background-color:#708090; color:#FFF"';
-                $str = '<p><table border="1" cellpadding="1" cellspacing="1">' . '<tr ' . $strStyle . '><td width="70"> ' . $this->lang->start . '</td>' . '<td width="70">' . $this->lang->end . '</td>' . '<td width="70">' . $this->lang->duration . '</td>' . '<td width="70">' . $this->lang->code . '</td>' . '<td width="260">' . $this->lang->eventName . '</td>' . '<td width="110">' . $this->lang->algText . '</td>' . '<td width="180">' . $this->lang->aditionalInfo . '</td>' . '<td width="110">' . $this->lang->comment . '</td></tr>';
+                $str = '<p>' . '<tr ' . $strStyle . '><td width="70"> ' . $this->lang->start . '</td>' . '<td width="70">' . $this->lang->end . '</td>' . '<td width="70">' . $this->lang->duration . '</td>' . '<td width="70">' . $this->lang->code . '</td>' . '<td width="260">' . $this->lang->eventName . '</td>' . '<td width="110">' . $this->lang->algText . '</td>' . '<td width="180">' . $this->lang->aditionalInfo . '</td>' . '<td width="110">' . $this->lang->comment . '</td></tr>';
 
                 for ($i = 0; $i < count ( $excEventsList ); $i ++) {
                     $event = $excEventsList [$i];
@@ -279,12 +282,11 @@ class FlightEventsController extends CController
 
     public function printBlank($args)
     {
-        if (!isset($args['flightId'])) {
-            $answ['status'] = 'err';
-            $answ['error'] = 'Not all nessesary params sent. Post: '.
-                    json_encode($_POST) . '. Page PrinterController.php';
-            $this->RegisterActionReject($this->action, 'rejected', 0, $answ['error']);
-            echo(json_encode($answ));
+        if (!isset($args['flightId'])
+            || empty($args['flightId'])
+            || !is_int(intval($data['flightId']))
+        ) {
+            throw new BadRequestException(json_encode($args));
         }
 
         $flightId = intval($args['flightId']);
@@ -293,8 +295,6 @@ class FlightEventsController extends CController
             ? true : false;
 
         $this->ConstructFlightEventsList($flightId, $sections, !$grayscale);
-
-        $this->RegisterActionExecution($this->action, 'executed');
     }
 
     private static $exceptionTypeOther = 'other';
@@ -307,14 +307,7 @@ class FlightEventsController extends CController
         if (!isset($data['flightId'])
             || !is_int(intval($data['flightId']))
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent or incorrect param types. Received: ".
-                    json_encode($data) . ". ";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($data));
         }
 
         $flightId = intval($data['flightId']);
@@ -326,23 +319,13 @@ class FlightEventsController extends CController
             ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
 
         if ($flightToFolders === null) {
-            http_response_code(403);
-            header("Status: 403 Forbidden");
-            $msg = "Requested flight not avaliable for current user. Id: ". $flightId;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
         }
 
         $flight = $em->find('Entity\Flight', $flightId);
 
         if ($flight === null) {
-            http_response_code(404);
-            header("Status: 404 Not Found");
-            $msg = "Requested flight not found. Id: ". $flightId;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
         $flightInfo = $flight->get();
@@ -363,11 +346,10 @@ class FlightEventsController extends CController
             ->getFormatedFlightEvents($flight->getGuid(), $isDisabled, $startCopyTime, $frameLength);
 
         if (($exTableName === "") && ($flightEvents === null)) {
-            echo json_encode([
+            return json_encode([
                 'items' => [],
                 'isProcessed' => false
             ]);
-            exit;
         }
 
         $FEx = new FlightException;
@@ -375,11 +357,10 @@ class FlightEventsController extends CController
 
         if (empty($excEventsList) && (count($flightEvents) === 0)) {
             $analisysStatuts = false;
-            echo json_encode([
+            return json_encode([
                 'items' => [],
                 'isProcessed' => true
             ]);
-            exit;
         }
 
         $Frame = new Frame;
@@ -424,11 +405,10 @@ class FlightEventsController extends CController
 
         unset($FEx);
 
-        echo json_encode([
+        return json_encode([
             'items' => $accordion,
             'isProcessed' => true
         ]);
-        exit;
     }
 
     public function changeReliability($args)
@@ -443,14 +423,7 @@ class FlightEventsController extends CController
             || !isset($args['reliability'])
             || !in_array($args['reliability'], ['true', 'false'])
         ) {
-            http_response_code(400);
-            header("Status: 400 Bad Request");
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent or incorrect param types. Received: ".
-                    json_encode($args) . ". ";
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ["error"]);
-            echo(json_encode($answ));
-            exit;
+            throw new BadRequestException(json_encode($args));
         }
 
         $userId = intval($this->_user->userInfo['id']);
@@ -464,23 +437,13 @@ class FlightEventsController extends CController
             ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
 
         if ($flightToFolders === null) {
-            http_response_code(403);
-            header("Status: 403 Forbidden");
-            $msg = "Requested flight not avaliable for current user. Id: ". $flightId;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
         }
 
         $flight = $em->getRepository('Entity\Flight')->findOneById($flightId);
 
         if ($flight === null) {
-            http_response_code(404);
-            header("Status: 404 Not Found");
-            $msg = "Requested flight not found. Id: ". $flightId;
-            $this->RegisterActionReject($this->action, "rejected", 0, $msg);
-            echo(json_encode($msg));
-            exit;
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
         if ($eventType === 1) {
@@ -494,6 +457,6 @@ class FlightEventsController extends CController
                 ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
         }
 
-        echo(json_encode(['status' => 'ok']));
+        return json_encode('ok');
     }
 }

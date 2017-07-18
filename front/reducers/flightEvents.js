@@ -12,22 +12,22 @@ export default function flightEvents(state = initialState, action) {
             return { ...state,
                 ...{ expandedSections: action.payload.expandedSections }
             };
-        case 'FLIGHT_EVENTS_FETCHING':
+        case 'GET_FLIGHT_EVENTS_START':
             return { ...initialState,
                 ...{
                     pending: true,
                     flightId: action.payload.flightId
                 }
             };
-        case 'FLIGHT_EVENTS_FETCHED':
+        case 'GET_FLIGHT_EVENTS_COMPLETE':
             return { ...state,
                 ...{
                     pending: false,
-                    isProcessed: action.payload.isProcessed,
-                    items: action.payload.items
+                    isProcessed: action.payload.response.isProcessed,
+                    items: action.payload.response.items
                 }
             };
-        case 'TOGGLING_EVENT_RELIABILITY_COMPLETE':
+        case 'POST_CHANGE_EVENT_RELIABILITY_COMPLETE':
             let flatItems = [];
 
             Object.keys(state.items).forEach((key) => {
@@ -35,8 +35,8 @@ export default function flightEvents(state = initialState, action) {
             });
 
             flatItems.forEach((event) => {
-                if (event.id === action.payload.eventId) {
-                    event.reliability = action.payload.reliability
+                if (event.id === action.payload.request.eventId) {
+                    event.reliability = action.payload.request.reliability
                 }
             });
 

@@ -4,33 +4,33 @@ import React, { Component } from 'react';
 import { Translate } from 'react-redux-i18n';
 
 export default function FlightTitle(props) {
-    if (!props.flightInfo
-        || !props.flightInfo.bort
-        || !props.flightInfo.voyage
-        || !props.flightInfo.departureAirport
-        || !props.flightInfo.arrivalAirport
-        || !props.flightInfo.startCopyTimeFormated
+    if (!props.flight
+        || !props.flight.bort
+        || !props.flight.voyage
+        || !props.flight.departureAirport
+        || !props.flight.arrivalAirport
+        || !props.flight.startCopyTimeFormated
     ) {
         return null
     }
 
     return (
-        <div className='flights-tree-flight-title' data-flight-id={ props.flightInfo.id }>
+        <div className='flights-tree-flight-title' data-flight-id={ props.flight.id }>
             <Translate value='flightsTree.flightTitle.bort' />
             &nbsp;-&nbsp;
-            { props.flightInfo.bort },&nbsp;
+            { props.flight.bort },&nbsp;
             <Translate value='flightsTree.flightTitle.voyage' />
             &nbsp;-&nbsp;
-            { props.flightInfo.voyage },&nbsp;
+            { props.flight.voyage },&nbsp;
             <Translate value='flightsTree.flightTitle.startCopyTime' />
             &nbsp;-&nbsp;
-            { props.flightInfo.startCopyTimeFormated },&nbsp;
+            { props.flight.startCopyTimeFormated },&nbsp;
             <Translate value='flightsTree.flightTitle.departureAirport' />
             &nbsp;-&nbsp;
-            { props.flightInfo.departureAirport },&nbsp;
+            { props.flight.departureAirport },&nbsp;
             <Translate value='flightsTree.flightTitle.arrivalAirport' />
             &nbsp;-&nbsp;
-            { props.flightInfo.arrivalAirport }
+            { props.flight.arrivalAirport }
         </div>
     );
 }

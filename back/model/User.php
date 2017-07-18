@@ -4,20 +4,10 @@ namespace Model;
 
 use Exception;
 
-//User privilege
-//------------
-
-/*
-viewFlight,shareFlight,addFlight,editFlight,delFlight,followFlight,tuneFlight,
-viewBruType,shareBruType,addBruType,editBruType,delBruType,
-optionsUsers,viewUsers,shareUsers,addUser,delUser,editUser
-*/
-
 class User
 {
     public $username;
     public $userInfo;
-    public $privilege = [];
 
     public static $role = [
         'admin' => 'admin',
@@ -58,231 +48,6 @@ class User
         return false;
     }
 
-    public static $PRIVILEGE_VIEW_FLIGHTS = 'viewFlight';
-    public static $PRIVILEGE_SHARE_FLIGHTS = 'shareFlight';
-    public static $PRIVILEGE_ADD_FLIGHTS = 'addFlight';
-    public static $PRIVILEGE_EDIT_FLIGHTS = 'editFlight';
-    public static $PRIVILEGE_DEL_FLIGHTS = 'delFlight';
-    public static $PRIVILEGE_FOLLOW_FLIGHTS = 'followFlight';
-    public static $PRIVILEGE_TUNE_FLIGHTS = 'tuneFlight';
-
-    public static $PRIVILEGE_VIEW_BRUTYPES = 'viewBruType';
-    public static $PRIVILEGE_SHARE_BRUTYPES = 'shareBruType';
-    public static $PRIVILEGE_ADD_BRUTYPES = 'addBruType';
-    public static $PRIVILEGE_EDIT_BRUTYPES = 'editBruType';
-    public static $PRIVILEGE_DEL_BRUTYPES = 'delBruType';
-
-    public static $PRIVILEGE_OPTIONS_USERS = 'optionsUsers';
-    public static $PRIVILEGE_VIEW_USERS = 'viewUsers';
-    public static $PRIVILEGE_SHARE_USERS = 'shareUsers';
-    public static $PRIVILEGE_ADD_USERS = 'addUser';
-    public static $PRIVILEGE_DEL_USERS = 'delUser';
-    public static $PRIVILEGE_EDIT_USERS = 'editUser';
-
-    public $allPrivilegeArray;
-    public $flightPrivilegeArr;
-    public $bruTypesPrivilegeArr;
-    public $userPrivilegeArr;
-
-    public function  __construct()
-    {
-        $this->SetAllPrivilegeArr();
-        $this->SetFlightPrivilegeArr();
-        $this->SetBruTypesPrivilegeArr();
-        $this->SetUserPrivilegeArr();
-    }
-
-    private function SetAllPrivilegeArr()
-    {
-        $this->allPrivilegeArray = array(
-            $this::$PRIVILEGE_VIEW_FLIGHTS,
-            $this::$PRIVILEGE_SHARE_FLIGHTS,
-            $this::$PRIVILEGE_ADD_FLIGHTS,
-            $this::$PRIVILEGE_EDIT_FLIGHTS,
-            $this::$PRIVILEGE_DEL_FLIGHTS,
-            $this::$PRIVILEGE_FOLLOW_FLIGHTS,
-            $this::$PRIVILEGE_TUNE_FLIGHTS,
-
-            $this::$PRIVILEGE_VIEW_BRUTYPES,
-            $this::$PRIVILEGE_SHARE_BRUTYPES,
-            $this::$PRIVILEGE_ADD_BRUTYPES,
-            $this::$PRIVILEGE_EDIT_BRUTYPES,
-            $this::$PRIVILEGE_DEL_BRUTYPES,
-
-            $this::$PRIVILEGE_OPTIONS_USERS,
-            $this::$PRIVILEGE_VIEW_USERS,
-            $this::$PRIVILEGE_SHARE_USERS,
-            $this::$PRIVILEGE_ADD_USERS,
-            $this::$PRIVILEGE_DEL_USERS,
-            $this::$PRIVILEGE_EDIT_USERS
-
-            );
-    }
-
-    private function SetFlightPrivilegeArr()
-    {
-        $this->flightPrivilegeArr = array(
-                $this::$PRIVILEGE_VIEW_FLIGHTS,
-                $this::$PRIVILEGE_SHARE_FLIGHTS,
-                $this::$PRIVILEGE_ADD_FLIGHTS,
-                $this::$PRIVILEGE_EDIT_FLIGHTS,
-                $this::$PRIVILEGE_DEL_FLIGHTS,
-                $this::$PRIVILEGE_FOLLOW_FLIGHTS,
-                $this::$PRIVILEGE_TUNE_FLIGHTS);
-    }
-
-    private function SetBruTypesPrivilegeArr()
-    {
-        $this->bruTypesPrivilegeArr = array(
-                $this::$PRIVILEGE_VIEW_BRUTYPES,
-                $this::$PRIVILEGE_SHARE_BRUTYPES,
-                $this::$PRIVILEGE_ADD_BRUTYPES,
-                $this::$PRIVILEGE_EDIT_BRUTYPES,
-                $this::$PRIVILEGE_DEL_BRUTYPES);
-    }
-
-    private function SetUserPrivilegeArr()
-    {
-        $this->userPrivilegeArr = array(
-            $this::$PRIVILEGE_OPTIONS_USERS,
-            $this::$PRIVILEGE_VIEW_USERS,
-            $this::$PRIVILEGE_SHARE_USERS,
-            $this::$PRIVILEGE_ADD_USERS,
-            $this::$PRIVILEGE_DEL_USERS,
-            $this::$PRIVILEGE_EDIT_USERS);
-    }
-
-    public function CheckPrivilege($extInputPrivilege)
-    {
-        $inputPrivilege = $extInputPrivilege;
-
-        $privilegeString = "";
-        if(count($inputPrivilege) == count($this->allPrivilegeArr))
-        {
-            $privilegeString = "AllGrant";
-        }
-        else
-        {
-            if(count(array_intersect($inputPrivilege, $this->flightPrivilegeArr)) == count($this->flightPrivilegeArr))
-            {
-                $privilegeString .= "FlightGrant";
-                $inputPrivilege = array_diff($inputPrivilege, $this->flightPrivilegeArr);
-            }
-
-            if(count(array_intersect($inputPrivilege, $this->bruTypesPrivilegeArr)) == count($this->bruTypesPrivilegeArr))
-            {
-                $privilegeString .= "; BruTypesGrant";
-                $inputPrivilege = array_diff($inputPrivilege, $this->bruTypesPrivilegeArr);
-            }
-
-            if(count(array_intersect($inputPrivilege, $this->userPrivilegeArr)) == count($this->userPrivilegeArr))
-            {
-                $privilegeString .= "; UsersGrant";
-                $inputPrivilege = array_diff($inputPrivilege, $this->userPrivilegeArr);
-            }
-
-            if(!empty($inputPrivilege))
-            {
-                if(strlen($privilegeString) > 0)
-                {
-                    $privilegeString .= "; ";
-                }
-
-                $privilegeString .= implode(", ", $inputPrivilege);
-            }
-        }
-
-        return $privilegeString;
-    }
-
-    public function CreateUsersTables()
-    {
-        $query = "SHOW TABLES LIKE 'user_personal';";
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `user_personal` (
-                `id` BIGINT NOT NULL AUTO_INCREMENT,
-                `login` VARCHAR(200),
-                `privilege` TINYTEXT,
-                `options` TEXT,
-                `role` VARCHAR(255),
-                `author` VARCHAR(200) DEFAULT ' ',
-                `logo` MEDIUMBLOB,
-                PRIMARY KEY (`id`));";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-        $query = "SHOW TABLES LIKE 'fdr_to_user';";
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `fdr_to_user` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `type` VARCHAR(100),
-                `userId` INT(11),
-                `targetId` INT(11),
-                `allowedBy` VARCHER(255),
-                PRIMARY KEY (`id`));";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-        $query = "SHOW TABLES LIKE 'user_activity';";
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `user_activity` (`id` BIGINT NOT NULL AUTO_INCREMENT,
-                `userId` INT(11),
-                `acton` VARCHAR(255),
-                `target` VARCHAR(255),
-                `sender` VARCHAR(255),
-                `timestamp` VARCHAR(100),
-                `comment` VARCHAR(255),
-                PRIMARY KEY (`id`));";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-
-        $query = "SHOW TABLES LIKE 'user_auth';";
-        $result = $link->query($query);
-        if(!$result->fetch_array())
-        {
-            $query = "CREATE TABLE `user_auth` (
-                  `id` int(11) NOT NULL,
-                  `id_user` int(11) NOT NULL,
-                  `token` varchar(45) NOT NULL,
-                  `exp` datetime NOT NULL,
-                  `dt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute())
-            {
-                echo('Error during query execution ' . $query);
-                error_log('Error during query execution ' . $query);
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-    }
-
     public function tryAuth($post, $session, $cookie)
     {
         $token = isset($session['token']) ? $session['token'] : null;
@@ -317,7 +82,6 @@ class User
             session_write_close();
 
             $this->username = $this->userInfo['login'];
-            $this->privilege = $this->GetUserPrivilege($this->username);
         }
 
         if (!$userId
@@ -497,33 +261,12 @@ class User
         return $userInfo;
     }
 
-    public function GetLastActionByActionName($extUserId, $extActionName)
-    {
-        $userId = $extUserId;
-        $actionName = $extActionName;
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $result = $link->query("SELECT `*` FROM `user_activity` WHERE `userId`='".$userId."' AND `acton` = '".$actionName."' ORDER BY `id` ASC LIMIT 1;");
-
-        $answer = array();
-        $row = $result->fetch_array();
-        foreach($row as $key => $val)
-        {
-            $answer[$key] = $val;
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $answer;
-    }
-
     public function GetUsersInfo($username)
     {
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
+        $userInfo = [];
         $result = $link->query("SELECT * FROM `user_personal` WHERE
                 `login` = '".$username."';");
 
@@ -539,42 +282,13 @@ class User
         return $userInfo;
     }
 
-    public function GetUserPrivilege($extUsername)
+    public function CreateUserPersonal($login, $pwd, $company, $role, $logo, $authorId = null)
     {
-        $username = $extUsername;
-
-        if($username != '') {
-            $c = new DataBaseConnector;
-            $link = $c->Connect();
-
-            $result = $link->query("SELECT `privilege` FROM `user_personal` WHERE `login`='".$username."' LIMIT 1;");
-
-            $userInfo = array();
-            $row = $result->fetch_array();
-            $privilege = $row['privilege'];
-            $privilege = explode(',', $privilege);
-
-            $c->Disconnect();
-            unset($c);
-
-            return $privilege;
-        } else {
-            return [];
-        }
-    }
-
-    public function CreateUserPersonal($login, $pwd, $privilege, $company, $role, $logo, $authorId = null)
-    {
-        if(is_array($privilege)) {
-            $privilege = implode(',', $privilege);
-        }
-
         $query = "INSERT INTO `user_personal` ("
-        ."`login`,`pass`,`privilege`,`company`,`lang`,`role`,`logo`,`id_user`"
+        ."`login`,`pass`, `company`,`lang`,`role`,`logo`,`id_user`"
         .") VALUES ("
             ."'".$login."',"
             ."'".md5($pwd)."',"
-            ."'".$privilege."',"
             ."'".$company."',"
             ."'en',"
             ."'".$role."',"
@@ -695,18 +409,6 @@ class User
     /** ------------------------
      *  GET AVALIABLE
      */
-
-    public function GetAvailableBruTypes($userIdentity)
-    {
-        $userId = $userIdentity;
-        if(is_string($userIdentity)) {
-            $userId = $this->GetIdByUsername($userIdentity);
-        }
-
-        $availableItems = $this->getAvailableFdrs($userId);
-
-        return $availableItems;
-    }
 
     public function getAvailableFdrs($userId)
     {
@@ -968,86 +670,5 @@ class User
         unset($c);
 
         return $userIds;
-    }
-
-    public function GetLastAction($userId, $action)
-    {
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `user_activity` WHERE `action` = '".$action."' AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
-        $result = $link->query($query);
-
-        $lastAction = null;
-
-        if($row = $result->fetch_array())
-        {
-            $lastAction = array();
-            foreach ($row as $key => $val)
-            {
-                $lastAction[$key] = $val;
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $lastAction;
-    }
-
-    public function GetLastActionFromRange($extUserId, $extActionsRange)
-    {
-        $userId = $extUserId;
-        $actionsRange = implode("','", $extActionsRange);
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT * FROM `user_activity` WHERE `action` IN ('".$actionsRange."') AND `userId` = '".$userId."' ORDER BY `id` DESC LIMIT 1;";
-        $result = $link->query($query);
-
-        $lastAction = null;
-
-        if($row = $result->fetch_array())
-        {
-            $lastAction = array();
-            foreach ($row as $key => $val)
-            {
-                $lastAction[$key] = $val;
-            }
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $lastAction;
-    }
-
-    public function RegisterUserAction($extAction, $extStatus, $extUserId,
-            $extSenderId, $extSenderName, $extTargetId, $extTargetName)
-    {
-        $action = $extAction;
-        $status = $extStatus;
-        $userId = $extUserId;
-        $senderId = $extSenderId;
-        $senderName = $extSenderName;
-        $targetId = $extTargetId;
-        $targetName = $extTargetName;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "INSERT INTO `user_activity` (`action`,`status`, `userId`, `senderId`, `senderName`, `targetId`, `targetName`)
-                VALUES ('".$action."', '".$status."', '".$userId."', " .
-                        "'".$senderId."','".$senderName."','".$targetId."', '".$targetName."');";
-
-        $stmt = $link->prepare($query);
-        $executionStatus = $stmt->execute();
-        $stmt->close();
-
-        $c->Disconnect();
-        unset($c);
-
-        return $executionStatus;
     }
 }

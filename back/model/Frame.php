@@ -2471,7 +2471,7 @@ class Frame
         $cellCount = count($frame) / $stepDivider;
         $tableWidth = $cellCount * 180 + 180;
 
-        printf("<table border=\"1\" width=\"%s px\">", $tableWidth);
+        printf("", $tableWidth);
         for($i = 0; $i < $stepDivider; $i++)
         {
             printf("<tr><td class=\"VievTableCell\" style=\"text-align:center; \">%s.%s</td>",

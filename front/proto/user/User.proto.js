@@ -98,7 +98,7 @@ function User(store) {
                     );
             };
 
-            var userOptions = $('<table></table')
+            var userOptions = $('</table')
                 .attr('v-align', 'top')
                 .append(
                     $('<tr></tr>')

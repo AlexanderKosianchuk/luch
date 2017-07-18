@@ -444,7 +444,7 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
         switch ($class->generatorType) {
             case ClassMetadata::GENERATOR_TYPE_IDENTITY:
                 // For PostgreSQL IDENTITY (SERIAL) we need a sequence name. It defaults to
-                // <table>_<column>_seq in PostgreSQL for SERIAL columns.
+                // _<column>_seq in PostgreSQL for SERIAL columns.
                 // Not pretty but necessary and the simplest solution that currently works.
                 $sequenceName = null;
                 $fieldName    = $class->identifier ? $class->getSingleIdentifierFieldName() : null;

@@ -5,10 +5,10 @@ namespace Controller;
 use Model\User;
 use Model\Language;
 
+use Exception;
+
 class CController
 {
-    protected $curPage = null;
-
     public $action;
     public $data;
 
@@ -18,44 +18,29 @@ class CController
 
     protected function setAttributes()
     {
-        $post = $_POST;
-        $get = $_GET;
+        $get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-        if((isset($post['action']) && ($post['action'] != '')) &&
-            (isset($post['data']) && ($post['data'] != ''))
-        ) {
-            $this->action = $post['action'];
-            $this->data = $post['data'];
+        if (!isset($get['action'])) {
+            throw new Exception("Action to execute did not pass. "
+                . "GET: " . json_encode($get)
+                . "POST: " . json_encode($post), 1);
+        }
 
-            return;
-        } else if ($get != null) {
-            if ($get['action']) {
-                $this->action = $get['action'];
-            }
+        $this->action = $get['action'];
 
-            if (isset($post['data'])) {
-                if ($this->isJson($post['data'])) {
-                    $this->data = json_decode($post['data'], true);
-
-                    return;
-                }
-
-                $this->data = $post['data'];
-
-                return;
-            }
-
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            unset($get['action']);
             $this->data = $get;
-
-            return;
-        } else {
-            $msg = "Incorect input. Data: " . json_encode(isset($post['data']) ? $post['data'] : '') .
-                " . Action: " . json_encode(isset($post['action']) ? $post['action'] : '') .
-                " . Page: " . $this->curPage. ".";
-            echo($msg);
-            error_log($msg);
             return;
         }
+
+        if (($_SERVER['REQUEST_METHOD'] === 'POST') && empty($post)) {
+            throw new Exception('Empty POST data', 1);
+        }
+
+        $this->data = $post;
+        return;
     }
 
     public function IsAppLoggedIn()
@@ -69,47 +54,22 @@ class CController
         $success = false;
         if ($this->_user->tryAuth($post, $session, $cookie)) {
             if(isset($this->_user->username) && ($this->_user->username != '')) {
-                $usrInfo = $this->_user->GetUsersInfo($this->_user->username);
-                $this->userLang = $usrInfo['lang'];
+                $userInfo = $this->_user->GetUsersInfo($this->_user->username);
+                $this->userLang = $userInfo['lang'];
             }
 
             $success = true;
         }
 
+        $className = get_class($this);
+        $page = substr($className, strpos($className, "\\") + 1);
+
         $L = new Language();
         $L->SetLanguageName($this->userLang);
         $this->userLang = $L->GetLanguageName();
-        $this->lang = $L->GetLanguage($this->curPage);
+        $this->lang = $L->GetLanguage($page);
         unset($L);
 
         return $success;
     }
-
-    public function RegisterActionExecution($action, $status,
-         $senderId = null, $senderName = null, $targetId = null, $targetName = null)
-   {
-      $userId = $this->_user->userInfo['id'];
-      $this->_user->RegisterUserAction($action, $status, $userId,
-            $senderId, $senderName, $targetId, $targetName);
-      return;
-   }
-
-   public function RegisterActionReject($action, $status,
-         $senderId = null, $senderName = null, $targetId = null, $targetName = null)
-   {
-      $userId = $this->_user->userInfo['id'];
-      $this->_user->RegisterUserAction($action, $status, $userId,
-            $senderId, $senderName, $targetId, $targetName);
-
-      unset($U);
-   }
-
-   private function isJson($string) {
-       if (!is_string($string)) {
-           return false;
-       }
-
-       json_decode($string);
-       return (json_last_error() == JSON_ERROR_NONE);
-   }
 }

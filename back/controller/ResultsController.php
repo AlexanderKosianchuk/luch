@@ -10,12 +10,12 @@ use Entity\Flight;
 use Entity\Fdr;
 use Entity\FlightSettlement;
 
+use Exception\BadRequestException;
+
 use \ReflectionMethod;
 
 class ResultsController extends CController
 {
-    public $curPage = 'resultsPage';
-
     private static $flightFilterArgs = [
         "fdr-type" => "",
         "bort" => "",
@@ -183,8 +183,7 @@ class ResultsController extends CController
         $flights = self::getFlightsByFilter($args, $userId);
 
         if ($flights === null) {
-            echo json_encode([]);
-            exit;
+            return json_encode([]);
         }
 
         $flightSettlements = [];
@@ -209,15 +208,22 @@ class ResultsController extends CController
             ];
         }
 
-        echo json_encode($resp);
-        exit;
+        return json_encode($resp);
     }
 
     public function getReport($args)
     {
-        $settlements = $args['settlements'];
+        if (!isset($args['chosenSettlements'])
+            || !isset($args['flightFilter'])
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $settlements = json_decode(html_entity_decode($args['chosenSettlements']), true);
+        $flightFilter = json_decode(html_entity_decode($args['flightFilter']), true);
+
         $userId = intval($this->_user->userInfo['id']);
-        $flights = self::getFlightsByFilter($args, $userId);
+        $flights = self::getFlightsByFilter($flightFilter, $userId);
         $report = [];
         $em = EM::get();
 
@@ -261,7 +267,6 @@ class ResultsController extends CController
             $resp[] = $item;
         }
 
-        echo json_encode($resp);
-        exit;
+        return json_encode($resp);
     }
 }

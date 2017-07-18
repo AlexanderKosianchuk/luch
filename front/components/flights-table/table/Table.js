@@ -1,16 +1,15 @@
-import './table.sass';
 import 'react-table/react-table.css'
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
-import ReactTable from 'react-table';
+
+import TableControl from 'controls/table/Table';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import getFlightsList from 'actions/getFlightsList';
-import getFoldersList from 'actions/getFoldersList';
-import flightListChoiceToggle from 'actions/flightListChoiceToggle';
+import request from 'actions/request';
+import transmit from 'actions/transmit';
 
 const TOP_CONTROLS_HEIGHT = 105;
 
@@ -43,7 +42,11 @@ class Table extends Component {
         this.resize();
 
         if (this.props.pending !== false) {
-            this.props.getFlightsList();
+            this.props.request(
+                ['flights', 'getFlights'],
+                'FLIGHTS',
+                'get'
+            );
         }
     }
 
@@ -58,14 +61,12 @@ class Table extends Component {
     handleGetTrProps(state, rowInfo, column, instance) {
         return {
             className: (() => {
-                if (!rowInfo || !this.props.flightsList.chosenItems) {
+                if (!rowInfo || !this.props.flights.chosenItems) {
                     return '';
                 }
 
-                let flightId = rowInfo.original.id;
-
-                let isChosen = this.props.flightsList.chosenItems.some((element) => {
-                    return element.id === flightId
+                let isChosen = this.props.flights.chosenItems.some((element) => {
+                    return element.id === rowInfo.original.id
                 });
 
                 return isChosen ? 'is-chosen' : '';
@@ -73,37 +74,32 @@ class Table extends Component {
             onClick: event => {
                 let target = event.currentTarget;
                 target.classList.toggle('is-chosen');
+                debugger;
 
-                let flightId = rowInfo.original.id;
-                this.props.flightListChoiceToggle({
-                    id: flightId,
-                    checkstate: target.classList.contains('is-chosen')
-                });
+                this.props.transmit(
+                    'FLIGHTS_CHOISE_TOGGLE',
+                    {
+                        id: rowInfo.original.id,
+                        checkstate: target.classList.contains('is-chosen')
+                    }
+                );
             }
         }
     }
 
     buildTable() {
-        //copying array 
-        var data = this.props.flightsList.items.slice();
+        //copying array
+        var data = this.props.flights.items.slice();
 
-        return (<ReactTable
+        return (<TableControl
             data={ data }
             columns={ this.columns }
-            className='flights-table-table__table'
             getTrProps={ this.handleGetTrProps.bind(this) }
-            previousText={ I18n.t('flightsTable.table.previous') }
-            nextText={ I18n.t('flightsTable.table.next') }
-            loadingText={ I18n.t('flightsTable.table.loading') }
-            noDataText={ I18n.t('flightsTable.table.noRowsFound') }
-            pageText={ I18n.t('flightsTable.table.page') }
-            ofText={ I18n.t('flightsTable.table.of') }
-            rowsText={ I18n.t('flightsTable.table.rows') }
         />);
     }
 
     buildBody() {
-        if (this.props.flightsList.pending !== false) {
+        if (this.props.flights.pending !== false) {
             return <ContentLoader/>
         } else {
             return this.buildTable();
@@ -123,14 +119,14 @@ class Table extends Component {
 
 function mapStateToProps(state) {
     return {
-        flightsList: state.flightsList,
+        flights: state.flights,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFlightsList: bindActionCreators(getFlightsList, dispatch),
-        flightListChoiceToggle: bindActionCreators(flightListChoiceToggle, dispatch),
+        request: bindActionCreators(request, dispatch),
+        transmit: bindActionCreators(transmit, dispatch),
     }
 }
 

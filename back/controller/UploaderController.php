@@ -21,13 +21,16 @@ use Entity\FlightSettlement;
 
 use Evenement\EventEmitter;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use ZipArchive;
 use \Exception;
 
 class UploaderController extends CController
 {
-    public $curPage = 'uploaderPage';
-
     function __construct()
     {
         $this->IsAppLoggedIn();
@@ -60,9 +63,9 @@ class UploaderController extends CController
             "align='left'>" .
             "</br>" .
              //left column for flight info - right for preview
-            "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
+            "<tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
 
-            "<table border='0' style='margin-bottom:15px;'>" .
+            "" .
             "<tr>" .
             "<td>" . $this->lang->bruType . "</td>";
 
@@ -168,11 +171,9 @@ class UploaderController extends CController
             }
         }
 
-        if(in_array(User::$PRIVILEGE_TUNE_FLIGHTS, $this->_user->privilege)) {
-            $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
-                "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
-                </tr>";
-        }
+        $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
+            "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
+            </tr>";
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->ignoreDueUploading . "</td>" .
                 "<td><input id='ignoreDueUploading".$index."' type='checkbox' class='FlightUploadingInputs'/></td>
@@ -1093,10 +1094,7 @@ class UploaderController extends CController
             || !isset($data['uploadingUid'])
             || !isset($data['fdrId'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $index = $data['index'];
@@ -1122,7 +1120,7 @@ class UploaderController extends CController
 
         $answ["status"] = "ok";
         $answ["data"] = $flightParamsSrt;
-        echo(json_encode($answ));
+        return json_encode($answ);
     }
 
     public function flightUploaderPreview($data)
@@ -1130,11 +1128,7 @@ class UploaderController extends CController
         if (!isset($data['fdrId'])
             || !isset($data['uploadingUid'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". " .
-                "Action: " . $this->action . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $fdrId = intval($data['fdrId']);
@@ -1143,7 +1137,7 @@ class UploaderController extends CController
         $uploadedFile = RuntimeManager::getFilePathByIud($uploadingUid);
         $resp = $this->CopyPreview($fdrId, $uploadedFile);
 
-        echo(json_encode($resp));
+        return json_encode($resp);
     }
 
     public function flightCutFile($data)
@@ -1157,11 +1151,7 @@ class UploaderController extends CController
             || !isset($data['startSliceTime'])
             || !isset($data['endSliceTime'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". " .
-                "Action: " . $this->action . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $fdrId = intval($data['fdrId']);
@@ -1185,7 +1175,7 @@ class UploaderController extends CController
         );
 
         $res['newUid'] = $newUid;
-        echo(json_encode($res));
+        return json_encode($res);
     }
 
     public function flightCyclicSliceFile($data)
@@ -1198,11 +1188,7 @@ class UploaderController extends CController
             || !isset($data['endCopyTime'])
             || !isset($data['startSliceTime'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". " .
-                "Action: " . $this->action . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $fdrId = intval($data['fdrId']);
@@ -1224,7 +1210,7 @@ class UploaderController extends CController
 
         $resp['newUid'] = $newUid;
 
-        echo(json_encode($resp));
+        return json_encode($resp);
     }
 
     public function flightProcces($data)
@@ -1235,11 +1221,7 @@ class UploaderController extends CController
             || !isset($data['flightInfo'])
             || !isset($data['flightAditionalInfo'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". " .
-                "Action: " . $this->action . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $fdrId = intval($data['fdrId']);
@@ -1253,7 +1235,7 @@ class UploaderController extends CController
         $flightAditionalInfo = array();
 
         $calibrationId = null;
-        if(isset($data['calibrationId'])
+        if (isset($data['calibrationId'])
             && !empty($data['calibrationId'])
             && is_int(intval($data['calibrationId']))
         ) {
@@ -1313,7 +1295,7 @@ class UploaderController extends CController
                 "data" => $uploadedFile,
                 "item" => FlightComponent::getTreeItem($flightId, $userId)
         );
-        echo(json_encode($answ));
+        return json_encode($answ);
     }
 
     public function flightProccesAndCheck($data)
@@ -1324,11 +1306,7 @@ class UploaderController extends CController
             || !isset($data['flightInfo'])
             || !isset($data['flightAditionalInfo'])
         ) {
-            $answ["status"] = "err";
-            $answ["error"] = "Not all nessesary params sent. Post: ".
-                json_encode($_POST) . ". " .
-                "Action: " . $this->action . ". Page UploaderController.php";
-            echo(json_encode($answ));
+            throw new BadRequestException(json_encode($data));
         }
 
         $uploadingUid = $data['uploadingUid'];
@@ -1403,13 +1381,11 @@ class UploaderController extends CController
 
         RuntimeManager::unlinkRuntimeFile($progressFilePath);
 
-        echo(json_encode([
+        return json_encode([
             "status" => "complete",
             "uploadingUid" => $uploadingUid,
             "item" => FlightComponent::getTreeItem($flightId, $userId)
-        ]));
-
-        exit;
+        ]);
     }
 
     public function flightEasyUpload($data)
@@ -1512,12 +1488,11 @@ class UploaderController extends CController
 
         RuntimeManager::unlinkRuntimeFile($progressFilePath);
 
-        echo(json_encode([
+        return json_encode([
             "status" => "complete",
             "uploadingUid" => $uploadingUid,
             "item" => FlightComponent::getTreeItem($flightId, $userId)
-        ]));
-        exit;
+        ]);
     }
 
     public function itemImport($data)
@@ -1529,29 +1504,13 @@ class UploaderController extends CController
         $fileName = strval($_FILES['flightFileArchive']['tmp_name']);
         $result = $this->ImportFlight($fileName);
 
-        $answ = array();
-        if ($result) {
-            $answ = [
-                'status' => 'ok'
-            ];
-
-            $this->RegisterActionExecution($this->action, "executed", $fileName, "fileName");
-        }
-        else
-        {
-            $answ['status'] = 'err';
-            $answ['data']['error'] = 'Error during flight import.';
-            $this->RegisterActionReject($this->action, "rejected", 0, $answ['data']['error']);
-        }
-
-        echo json_encode($answ);
-        exit;
+        return json_encode('ok');
     }
 
     public function getUploadingStatus($data)
     {
         if (!isset($data['uploadingUid'])) {
-            throw new Exception("Necessary param uploadingUid not passed.", 1);
+            throw new BadRequestException(json_encode($data));
         }
 
         $uploadingUid = strval($data['uploadingUid']);
@@ -1569,49 +1528,45 @@ class UploaderController extends CController
             try {
                 $val = file_get_contents($progressFilePath);
             } catch(Exception $e) {
-                echo(json_encode([
+                return json_encode([
                     "status" => "busy",
                     "progress" => -1,
                     "uploadingUid" => $uploadingUid
-                ]));
-                exit;
+                ]);
             }
 
             $val = preg_replace("/[^0-9]/","",$val);
 
             if (!is_int(intval($val))) {
-                echo(json_encode([
+                return json_encode([
                     "status" => "busy",
                     "progress" => -1,
                     "uploadingUid" => $uploadingUid
-                ]));
-                exit;
+                ]);
             }
 
             $val = intval($val);
 
             if ($val >= 0 && $val <= 100) {
-                echo(json_encode([
+                return json_encode([
                     "status" => "ok",
                     "progress" => $val,
                     "uploadingUid" => $uploadingUid
-                ]));
-                exit;
+                ]);
             }
         } else {
-            echo(json_encode([
+            return json_encode([
                 "status" => "complete",
                 "progress" => 101,
                 "uploadingUid" => $uploadingUid
-            ]));
-            exit;
+            ]);
         }
     }
 
     public function copyToRuntime($data)
     {
         if (!isset($_FILES['flightFile']['tmp_name'])) {
-            throw new Exception("Necessary param flightFile not passed.", 1);
+            throw new BadRequestException(json_encode($_FILES));
         }
 
         $fileName = strval($_FILES['flightFile']['tmp_name']);
@@ -1619,10 +1574,10 @@ class UploaderController extends CController
 
         $storedName = RuntimeManager::storeUploadedFile($fileName);
 
-        echo (json_encode([
+        return json_encode([
             'status' => 'ok',
             'file' => $storedName
-        ]));
+        ]);
     }
 
     public function storeFlightFile ($args)
@@ -1641,8 +1596,6 @@ class UploaderController extends CController
 
         $storedName = RuntimeManager::storeUploadedFile($fileName, $uploadingUid);
 
-        echo (json_encode([
-            'status' => 'ok'
-        ]));
+        return json_encode('ok');
     }
 }

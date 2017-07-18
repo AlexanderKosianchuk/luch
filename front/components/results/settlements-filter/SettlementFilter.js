@@ -6,8 +6,8 @@ import { Translate, I18n } from 'react-redux-i18n';
 import SettlementsFilterItem from 'components/results/settlements-filter-item/SettlementsFilterItem';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
-import changeSettlementItemCheckstate from 'actions/changeSettlementItemCheckstate';
-import applySettlementFilter from 'actions/applySettlementFilter';
+import transmit from 'actions/transmit';
+import request from 'actions/request';
 
 class SettlementFilter extends React.Component {
     handleSubmit(event) {
@@ -20,10 +20,15 @@ class SettlementFilter extends React.Component {
             && (settlementFilter.chosenSettlements.length > 0)
         ) {
             let chosenSettlements = settlementFilter.chosenSettlements.map((item) => item.id);
-            this.props.applySettlementFilter({
-                chosenSettlements: chosenSettlements,
-                flightFilter: flightFilter
-            });
+            this.props.request(
+                ['results', 'getReport'],
+                'SETTLEMENTS_REPORT',
+                'get',
+                {
+                    chosenSettlements: JSON.stringify(chosenSettlements),
+                    flightFilter: JSON.stringify(flightFilter)
+                }
+            );
         }
         event.preventDefault();
     }
@@ -34,13 +39,20 @@ class SettlementFilter extends React.Component {
 
             return (
                 <SettlementsFilterItem
-                    key={settlement.id}
-                    id={settlement.id}
-                    label={label}
-                    changeCheckstate={this.props.changeCheckstate}
+                    key={ settlement.id }
+                    id={ settlement.id }
+                    label={ label }
+                    changeCheckstate={ this.changeCheckstate.bind(this) }
                 />
             );
         });
+    }
+
+    changeCheckstate (payload) {
+        this.props.transmit(
+            'CHANGE_SETTLEMENT_ITEM_CHECKSTATE',
+            payload
+        );
     }
 
     allEmpty (obj) {
@@ -97,8 +109,8 @@ function mapStateToProps(store) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCheckstate: bindActionCreators(changeSettlementItemCheckstate, dispatch),
-        applySettlementFilter: bindActionCreators(applySettlementFilter, dispatch)
+        changeCheckstate: bindActionCreators(transmit, dispatch),
+        request: bindActionCreators(request, dispatch)
     }
 }
 

@@ -2,18 +2,26 @@
 
 namespace Controller;
 
+use Component\ResponseRegistrator;
+use Exception\UnknownActionException;
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
+use Doctrine\DBAL\Exception\DriverException;
+
 use Exception;
+use ReflectionClass;
 
 class EntryController extends CController
 {
-    public $curPage = 'indexPage';
-
     function __construct()
     {
         $this->setAttributes();
 
         if (!$this->IsAppLoggedIn()
-            && ($this->action !== 'user/login')
+            && ($this->action !== 'users/login')
         ) {
             echo (json_encode('Auth failed'));
             exit;
@@ -30,16 +38,45 @@ class EntryController extends CController
                 $controller = 'Controller\\' . $controller;
                 $C = new $controller;
                 $C->action = $this->action;
+                $userId = isset($this->_user->userInfo['id']) ? intval($this->_user->userInfo['id']) : -1;
+                $fullAction = get_class($C).'\\'.$method;
 
                 if (method_exists ($C, $method)) {
                     $C->IsAppLoggedIn();
+                    try {
+                        $response = $C->$method($this->data);
+                        ResponseRegistrator::register($userId, $fullAction);
+                        echo($response);
+                        exit;
+                    } catch (BadRequestException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 400, $exception->message);
+                    } catch (UnauthorizedException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 401, $exception->message);
+                    } catch (NotFoundException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 404, $exception->message);
+                    } catch (ForbiddenException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 403, $exception->message);
+                    } catch (DriverException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->getMessage());
+                    } catch (BadMethodCallException $exception) {
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->getMessage());
+                    } catch (Exception $exception) {
+                        $message = 'Unknown error';
 
-                    $C->$method($this->data);
+                        $class = new ReflectionClass($exception);
+                        $property = $class->getProperty('message');
+
+                        if (property_exists($exception, 'message')
+                        && $property->isPublic()) {
+                            $message = $exception->message;
+                        } else if (method_exists($exception, 'getMessage')) {
+                            $message = $exception->getMessage();
+                        }
+
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 500, $message);
+                    }
                 } else {
-                    throw new Exception("Called method unexist. "
-                        . "Controller: ". $controller . ", "
-                        . "Method: ". $method . ", "
-                        . "Args: " . json_encode($this->data), 1);
+                    ResponseRegistrator::faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);
                 }
             }
         }

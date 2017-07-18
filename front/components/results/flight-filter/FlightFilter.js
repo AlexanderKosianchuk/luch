@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
 
 import FlightFilterItem from 'components/results/flight-filter-item/FlightFilterItem';
-import applyFlightFilter from 'actions/applyFlightFilter';
-import changeFlightFilterItem from 'actions/changeFlightFilterItem';
+
+import request from 'actions/request';
+import transmit from 'actions/transmit';
 
 class FlightFilter extends React.Component {
     constructor(props) {
@@ -28,14 +29,26 @@ class FlightFilter extends React.Component {
                 id={field[1]}
                 label={field[2]}
                 placeholder={field[3]}
-                changeFlightFilterItem={this.props.changeFlightFilterItem}
+                changeFlightFilterItem={ this.changeFlightFilterItem.bind(this) }
             />
         );
     }
 
+    changeFlightFilterItem(payload) {
+        this.props.transmit(
+            'CHANGE_FLIGHT_FILTER_ITEM',
+            payload
+        )
+    }
+
     handleSubmit(event) {
         event.preventDefault();
-        this.props.applyFlightFilter(this.props.flightFilter);
+        this.props.request(
+            ['results', 'getSettlements'],
+            'SETTLEMENTS',
+            'get',
+            this.props.flightFilter
+        );
     }
 
     render() {
@@ -59,8 +72,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeFlightFilterItem: bindActionCreators(changeFlightFilterItem, dispatch),
-        applyFlightFilter: bindActionCreators(applyFlightFilter, dispatch)
+        request: bindActionCreators(request, dispatch),
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

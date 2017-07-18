@@ -20,14 +20,14 @@ export default class Title extends Component {
                 <span key={ item.key }>
                     <Translate value={ 'flightEvents.title.' + item.label} />
                     &nbsp;-&nbsp;
-                    { this.props.flightInfo[item.key] },&nbsp;
+                    { this.props.flight[item.key] },&nbsp;
                 </span>
             );
         });
     }
 
     buildAditionalInfo() {
-        let aditionalInfo = this.props.flightInfo.aditionalInfo || {};
+        let aditionalInfo = this.props.flight.aditionalInfo || {};
         if (!Array.isArray(Object.keys(aditionalInfo))) {
             return '';
         }
@@ -54,7 +54,7 @@ export default class Title extends Component {
 }
 
 Title.propTypes = {
-    flightInfo: PropTypes.shape({
+    flight: PropTypes.shape({
         fdrName: PropTypes.string,
         bort: PropTypes.string,
         voyage: PropTypes.string,

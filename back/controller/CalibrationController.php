@@ -5,18 +5,21 @@ namespace Controller;
 use Model\Fdr;
 use Model\Calibration;
 
+use Exception\UnauthorizedException;
+use Exception\BadRequestException;
+use Exception\NotFoundException;
+use Exception\ForbiddenException;
+
 use Component\FdrComponent;
 
 class CalibrationController extends CController
 {
-    public $curPage = 'calibrationPage';
-
     public function getAvaliableFdrs($data)
     {
         $userId = intval($this->_user->userInfo['id']);
         $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
 
-        echo json_encode($fdrsAndCalibrations);
+        return json_encode($fdrsAndCalibrations);
     }
 
     public function saveCalibration($data)
@@ -37,10 +40,7 @@ class CalibrationController extends CController
         $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
 
         if (!$isAvaliable) {
-            http_response_code(403);
-            header('HTTP/1.0 403 Forbidden');
-            echo 'FDR is not avaliable for current user.';
-            exit;
+            throw new ForbiddenException('requested FDR not avaliable for current user. FDR id: '. $fdrId);
         }
 
         $fdr = new Fdr;
@@ -69,7 +69,7 @@ class CalibrationController extends CController
 
         unset($calibration);
 
-        echo true;
+        return json_encode('ok');
     }
 
     public function deleteCalibration($data)
@@ -81,10 +81,7 @@ class CalibrationController extends CController
         $calibrationInfo = $calibration->getCalibrationById ($calibrationId, $userId);
 
         if (empty($calibrationInfo)) {
-            http_response_code(404);
-            header('HTTP/1.0 404 Not Found');
-            echo 'Calibration unexist.';
-            exit;
+            throw new NotFoundException("requested calibration not found. Calibration id: ". $calibrationId);
         }
 
         $fdrId = intval($calibrationInfo['id_fdr']);
@@ -93,10 +90,7 @@ class CalibrationController extends CController
         $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
 
         if (!$isAvaliable) {
-            http_response_code(403);
-            header('HTTP/1.0 403 Forbidden');
-            echo 'Trying to remove calibration for FDR that is not avaliable for current user.';
-            exit;
+            throw new ForbiddenException('requested FDR not avaliable for current user. FDR id: '. $fdrId);
         }
 
         $calibration->deleteCalibration ($calibrationId, $userId);
@@ -112,6 +106,6 @@ class CalibrationController extends CController
             $calibration->deleteCalibrationParams ($calibrationDynamicTable, $calibrationId);
         }
 
-        echo true;
+        return json_encode('ok');
     }
 }
