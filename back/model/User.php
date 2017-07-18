@@ -616,7 +616,7 @@ class User
         $link = $c->Connect();
 
         $userInfo = $this->GetUserInfo(intval($userId));
-        $authorId = $userInfo['id_user'];
+        $authorId = $userInfo['id_creator'];
 
         /* in case current user is admin role it will not have id_user (authorId) */
         if (isset($authorId)) {
