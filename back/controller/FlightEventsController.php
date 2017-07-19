@@ -173,13 +173,15 @@ class FlightEventsController extends CController
         ) {
             $counterNeedBrake = false;
             $aditionalInfoArr = json_decode($flightInfo['flightAditionalInfo'], true);
-            foreach ( $aditionalInfoArr as $name => $val) {
-                if ($counterNeedBrake) {
-                    $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
-                    $counterNeedBrake = ! $counterNeedBrake;
-                } else {
-                    $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
-                    $counterNeedBrake = ! $counterNeedBrake;
+            if (is_array($aditionalInfoArr)) {
+                foreach ( $aditionalInfoArr as $name => $val) {
+                    if ($counterNeedBrake) {
+                        $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
+                        $counterNeedBrake = ! $counterNeedBrake;
+                    } else {
+                        $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+                        $counterNeedBrake = ! $counterNeedBrake;
+                    }
                 }
             }
         }
