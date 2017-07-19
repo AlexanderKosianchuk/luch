@@ -1,0 +1,44 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: CodenameCoderFree4F;
+    src: url(fonts/CodenameCoderFree4F-Bold.ttf);
+}
+
+body {
+    font-family: "CodenameCoderFree4F", Helvetica, sans-serif;
+    font-size: 14px;
+    background-color:#fff;
+    color:#000;
+}
+
+body::scrollbar {
+    display: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.WorkSpace
+{
+    border:none;
+    float:left;
+    width:100%;
+    color:#676767;
+    overflow-y: auto;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+.Content, .ContentFullWidth, .ContentFullSize
+{
+    border:none;
+    width: 100%;
+    padding: 5px;
+    color:#676767;
+    overflow-y:auto;
+}

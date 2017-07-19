@@ -1,0 +1,219 @@
+.calibration-form-opitons-button {
+    margin-left: 20px;
+}
+
+#calibration-edit-form {
+    width: 100%;
+    text-align: center;
+}
+
+.calibration-form_input {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    background: #fff !important;
+    outline: none;
+    height: 32px;
+    width: 220px;
+    color: #333;
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+.calibration-form_input:focus {
+  border: 1px solid #555555;
+}
+
+.calibration-form_label {
+    padding: 2px 6px;
+    height: 32px;
+}
+
+.row.calibration-name {
+    padding: 5px 0px;
+}
+
+.calibration-edit-form .row {
+    width: 100%;
+    clear:both;
+}
+
+.calibration-param-row,
+.edit-calibration-row {
+    width: 100%;
+    clear:both;
+    text-align: left;
+}
+
+.calibration-param-row {
+    border: 1px solid #ddd;
+}
+
+.calibration-param-header,
+.edit-calibration-header {
+    min-height: 45px;
+    overflow: hidden;
+}
+
+.calibration-param-header-2 {
+    min-height: 24px;
+    overflow: hidden;
+}
+
+.calibration-param-cell,
+.edit-calibration-cell {
+    float: left;
+    vertical-align: middle;
+    padding: 4px 0px;
+}
+
+.edit-calibration-cell.center {
+    text-align: center;
+}
+
+.calibration-param-header.fill,
+.edit-calibration-row.fill {
+    background-color: #f6f6f6;
+}
+
+.calibration-param-header-2.fill-2 {
+    background-color: #f8f8f8;
+}
+
+.calibration-param-cell.fill-3 {
+    background-color: #fafafa;
+}
+
+.calibration-param-cell.col-12,
+.edit-calibration-cell.col-12 {
+    width: 100%;
+    overflow: hidden;
+}
+
+.calibration-param-cell.col-6 {
+    width: calc(50% - 1px);
+    overflow: hidden;
+}
+
+.calibration-param-cell.col-5dot5{
+    width: 45%;
+    overflow: hidden;
+}
+
+.calibration-param-cell.col-3,
+.edit-calibration-cell.col-3 {
+    width: 25%;
+    overflow: hidden;
+}
+
+.calibration-param-cell.col-2,
+.edit-calibration-cell.col-2 {
+    width: 16%;
+    overflow: hidden;
+}
+
+.calibration-param-cell.col-1,
+.edit-calibration-cell.col-1 {
+    width: 8%;
+    overflow: hidden;
+}
+
+.calibration-param-cell.bold,
+.edit-calibration-cell.bold {
+    font-weight: bold;
+}
+
+.calibration-param-cell.right-border {
+    border-right: 1px solid #eee;
+}
+
+.calibration-param-cell.top-border,
+.edit-calibration-row.top-border {
+    border-top: 1px solid #eee;
+}
+
+.calibration_button {
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+    background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+    background-color:#ffffff;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    cursor:pointer;
+    color:#666666;
+    font-family:Tahoma;
+    font-size:14px;
+    font-weight:bold;
+    padding:6px 24px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #ffffff;
+}
+
+.calibration_button__full-width {
+    width: calc(100% - 12px);
+}
+
+.calibration_button__wide {
+    min-width: 242px;
+    margin: 15px auto 5px;
+}
+
+.calibration_button__small {
+    width: 100%;
+    max-width: 30px;
+    min-height: 22px;
+    padding: 0px 2px;
+    line-height: 16px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.calibration_button .icon {
+    margin: 2px 3px;
+}
+
+.calibration_button:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+    background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+    background-color:#f6f6f6;
+}
+.calibration_button:active {
+    position:relative;
+    top:1px;
+}
+
+.calibration-param-editing {
+    max-width:95%;
+}
+
+.calibration-placeholder {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    line-height: 1.2em;
+}
+
+#calibration-form-content {
+    padding: 0 20px;
+}
+
+#calibrationFormOptions td label {
+    padding: 5px 5px 0px;
+}

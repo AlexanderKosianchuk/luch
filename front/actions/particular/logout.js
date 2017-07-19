@@ -12,19 +12,12 @@ export default function logout(payload) {
                 response
                     .json()
                     .then(json => {
-                        if (json.status === 'ok') {
-                            dispatch({
-                                type: 'USER_LOGGED_OUT',
-                                payload: json
-                            });
+                        dispatch({
+                            type: 'USER_LOGGED_OUT',
+                            payload: json
+                        });
 
-                            dispatch(push('/login'));
-                        } else {
-                            dispatch({
-                                type: 'LOGOUT_FAILED',
-                                payload: json
-                            });
-                        }
+                        dispatch(push('/login'));
                     });
             }, (response) => {
                 dispatch({

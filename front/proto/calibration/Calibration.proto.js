@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*global $, jQuery*/
-import 'stylesheets/pages/calibration.css';
+import 'style/pages/calibration.css';
 
 import 'chosen-js';
 import 'chosen-js/chosen.css';

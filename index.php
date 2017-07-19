@@ -13,10 +13,10 @@ $c = new IndexController($_POST, $_SESSION, $_COOKIE);
     login='<?= $c->getUserLogin(); ?>'
 >
 <head>
-    
-    
+
+
     <title>Luche</title>
-    <link href='/front/stylesheets/basicImg/favicone.ico' rel='shortcut icon' type='image/x-icon' />
+    <link href='/front/style/favicone.ico' rel='shortcut icon' type='image/x-icon' />
 </head>
 <body>
     <div id='root'><div>

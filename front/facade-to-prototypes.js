@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $, jQuery, FlightUploader, Chart, User*/
+/*global $, jQuery, FlightUploader, Chart*/
 
 'use strict';
 
@@ -16,12 +16,11 @@ import 'bootstrap-loader';
 import 'jquery-ui/themes/base/all.css';
 
 //old styles
-import 'stylesheets/style.css';
+import 'style/style.css';
 
 // old prototypes
 import FlightUploader from 'FlightUploader';
 import ChartService from 'Chart';
-import User from 'User';
 import Calibration from 'Calibration';
 
 import { push } from 'react-router-redux'
@@ -75,11 +74,6 @@ export default function facade(store) {
             apParams, bpParams
         );
         C.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('changeLanguage', function (e, newLanguage) {
-        let U = new User(store);
-        U.changeLanguage(newLanguage);
     });
 
     $(document).on('calibrationsShow', function (e, showcase) {

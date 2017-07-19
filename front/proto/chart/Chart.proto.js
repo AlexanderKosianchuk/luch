@@ -1,4 +1,4 @@
-import 'stylesheets/pages/chart.css';
+import 'style/pages/chart.css';
 
 import 'flot-charts';
 import 'flot-charts/jquery.flot.time';

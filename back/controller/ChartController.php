@@ -44,7 +44,7 @@ class ChartController extends CController
                     "<div id='legend'></div>" .
                 "</div>" .
              "<div id='loadingBox' class='LoadingBox'>" .
-                "<img src='/front/stylesheets/basicImg/loading.gif'/>" .
+                "<img src='/front/style/images/loading.gif'/>" .
              "</div>".
         "</div>";
 

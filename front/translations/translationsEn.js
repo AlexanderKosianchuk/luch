@@ -1,11 +1,15 @@
 const translationsEn = {
     en: {
         login: {
-            userName: 'User name',
-            loginForm: 'Login form',
-            authorize: 'Log in',
-            password: 'Password',
-            userUnexist: 'User unexist'
+            form: {
+                welcome: 'Welcome',
+                to: 'Flight data processing and analysis software complex «Luche»',
+                vendor: 'Aviation Technologies. We create future',
+                userName: 'User name',
+                authorize: 'Log in',
+                password: 'Password',
+                userUnexist: 'User unexist'
+            }
         },
         flightsTree: {
             apply: 'Apply',
