@@ -17,7 +17,7 @@ import redirect from 'actions/redirect';
 class TopMenu extends React.Component {
     changeLanguage(event) {
         let language = event.target.getAttribute('data-lang');
-        this.props.changeLanguage(language.toLowerCase());
+        this.props.changeLanguage({ language: language.toLowerCase() });
     }
 
     buildLanguageMenu() {

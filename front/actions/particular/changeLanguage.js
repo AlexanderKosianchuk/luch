@@ -6,17 +6,19 @@ export default function changeLanguage(payload) {
             type: 'PUT_LANGUAGE_START'
         });
 
-        dispatch(setLocale(payload.language));
-
-        dispatch({
-            type: 'PUT_LANGUAGE_COMPLETE',
-            payload: {
-                lang: payload.language
-            }
-        });
-
         fetch('/entry.php?action=users/userChangeLanguage&lang=' + payload.language,
             { credentials: "same-origin" }
-        );
+        ).then(() => {
+            dispatch(setLocale(payload.language));
+
+            dispatch({
+                type: 'PUT_LANGUAGE_COMPLETE',
+                payload: {
+                    lang: payload.language
+                }
+            });
+
+            location.reload();
+        });
     }
 };
