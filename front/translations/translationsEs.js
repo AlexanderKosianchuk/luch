@@ -2,8 +2,10 @@ const translationsEs = {
     es: {
         login: {
             form: {
+                welcome: 'Welcome',
+                to: 'Flight data processing and analysis software complex «Luche»',
+                vendor: 'Aviation Technologies. We create future',
                 userName: 'User name',
-                loginForm: 'Login form',
                 authorize: 'Log in',
                 password: 'Password',
                 userUnexist: 'User unexist'

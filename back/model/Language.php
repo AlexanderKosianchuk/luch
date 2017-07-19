@@ -38,6 +38,10 @@ class Language
 
         $lang = null;
 
+        if (!file_exists($filePath)) {
+            return $lang;
+        }
+
         $content = file_get_contents($filePath);
         $langObj = json_decode($content, true);
 
