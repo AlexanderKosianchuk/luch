@@ -217,7 +217,7 @@ class FlightEventsController extends CController
                 $pdf->SetFont ( 'dejavusans', '', 9, '', true );
 
                 $strStyle = 'style="text-align:center; font-weight: bold; background-color:#708090; color:#FFF"';
-                $str = '<p>' . '<tr ' . $strStyle . '><td width="70"> ' . $this->lang->start . '</td>' . '<td width="70">' . $this->lang->end . '</td>' . '<td width="70">' . $this->lang->duration . '</td>' . '<td width="70">' . $this->lang->code . '</td>' . '<td width="260">' . $this->lang->eventName . '</td>' . '<td width="110">' . $this->lang->algText . '</td>' . '<td width="180">' . $this->lang->aditionalInfo . '</td>' . '<td width="110">' . $this->lang->comment . '</td></tr>';
+                $str = '<p><table border="1" cellpadding="1" cellspacing="1">' . '<tr ' . $strStyle . '><td width="70"> ' . $this->lang->start . '</td>' . '<td width="70">' . $this->lang->end . '</td>' . '<td width="70">' . $this->lang->duration . '</td>' . '<td width="70">' . $this->lang->code . '</td>' . '<td width="260">' . $this->lang->eventName . '</td>' . '<td width="110">' . $this->lang->algText . '</td>' . '<td width="180">' . $this->lang->aditionalInfo . '</td>' . '<td width="110">' . $this->lang->comment . '</td></tr>';
 
                 for ($i = 0; $i < count ( $excEventsList ); $i ++) {
                     $event = $excEventsList [$i];
@@ -284,7 +284,7 @@ class FlightEventsController extends CController
     {
         if (!isset($args['flightId'])
             || empty($args['flightId'])
-            || !is_int(intval($data['flightId']))
+            || !is_int(intval($args['flightId']))
         ) {
             throw new BadRequestException(json_encode($args));
         }
