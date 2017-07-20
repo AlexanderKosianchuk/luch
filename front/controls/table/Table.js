@@ -10,7 +10,7 @@ export default function Table (props) {
         className='table-table'
         data={ props.data }
         columns={ props.columns }
-        getTrProps={ props.getTrProps }
+        getTrProps={ props.getTrProps || function () { return { className: '' } } }
         previousText={ I18n.t('table.previous') }
         nextText={ I18n.t('table.next') }
         loadingText={ I18n.t('table.loading') }

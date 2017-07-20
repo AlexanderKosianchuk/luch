@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import MainPage from 'controls/main-page/MainPage';
+import Menu from 'controls/menu/Menu';
 import Toolbar from 'components/uploading-preview/toolbar/Toolbar';
 
 import showPage from 'actions/showPage';
@@ -17,7 +17,7 @@ class UploadingPreview extends React.Component {
     render () {
         return (
             <div>
-                <MainPage/>
+                <Menu/>
                 <Toolbar/>
                 <div id='container'></div>
             </div>

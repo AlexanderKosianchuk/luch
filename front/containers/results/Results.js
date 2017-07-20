@@ -3,7 +3,7 @@ import './results.sass';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import MainPage from 'controls/main-page/MainPage';
+import Menu from 'controls/menu/Menu';
 import Toolbar from 'components/results/toolbar/Toolbar';
 import FlightFilter from 'components/results/flight-filter/FlightFilter';
 import SettlementFilter from 'components/results/settlements-filter/SettlementFilter';
@@ -13,7 +13,7 @@ export default class Results extends React.Component {
     render() {
         return (
             <div>
-                <MainPage />
+                <Menu />
                 <div className="results container-fluid">
                     <div className="row">
                         <div className="col-sm-12">

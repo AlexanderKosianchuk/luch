@@ -74,7 +74,6 @@ class Table extends Component {
             onClick: event => {
                 let target = event.currentTarget;
                 target.classList.toggle('is-chosen');
-                debugger;
 
                 this.props.transmit(
                     'FLIGHTS_CHOISE_TOGGLE',

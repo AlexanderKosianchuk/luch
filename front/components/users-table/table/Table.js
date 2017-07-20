@@ -10,7 +10,7 @@ import TableControl from 'controls/table/Table';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
-import transmit from 'actions/transmit';
+import redirect from 'actions/redirect';
 
 const TOP_CONTROLS_HEIGHT = 105;
 
@@ -19,19 +19,25 @@ class Table extends Component {
         super(props);
 
         this.columns = [{
-            Header: I18n.t('users.table.login'),
+            Header: I18n.t('usersTable.table.login'),
             accessor: 'login'
         }, {
-            Header: I18n.t('users.table.organization'),
+            Header: I18n.t('usersTable.table.name'),
+            accessor: 'name'
+        }, {
+            Header: I18n.t('usersTable.table.email'),
+            accessor: 'email'
+        }, {
+            Header: I18n.t('usersTable.table.phone'),
+            accessor: 'phone'
+        }, {
+            Header: I18n.t('usersTable.table.organization'),
             accessor: 'company',
         }, {
-            Header: I18n.t('users.table.lang'),
-            accessor: 'lang',
-        }, {
-            Header: I18n.t('users.table.role'),
+            Header: I18n.t('usersTable.table.role'),
             accessor: 'role'
         }, {
-            Header: I18n.t('users.table.logo'),
+            Header: I18n.t('usersTable.table.logo'),
             accessor: 'logo',
             Cell: props => {
                 return(
@@ -41,7 +47,33 @@ class Table extends Component {
                     </div>
                 );
             }
+        }, {
+            Header: '',
+            accessor: 'id',
+            minWidth: 60,
+            Cell: props => {
+                return(
+                    <div className='users-table-table__actions'>
+                        <span className='users-table-table__glyph-edit glyphicon glyphicon-edit'
+                            onClick={ this.handleEditClick.bind(this, props.value) }
+                        ></span>
+                        <span className='users-table-table__glyph-trash glyphicon glyphicon-trash'
+                            onClick={ this.handleDeleteClick.bind(this, props.value) }
+                        ></span>
+                    </div>
+                );
+            }
         }];
+    }
+
+    handleEditClick(id) {
+        this.props.redirect('/user/edit/' + id);
+    }
+
+    handleDeleteClick(id) {
+        if (confirm(I18n.t('usersTable.table.confimUserDeleting'))) {
+            this.props.redirect('/user/delete/' + id);
+        }
     }
 
     componentDidMount() {
@@ -64,34 +96,6 @@ class Table extends Component {
         this.container.style.height = window.innerHeight - TOP_CONTROLS_HEIGHT + 'px';
     }
 
-    handleGetTrProps(state, rowInfo, column, instance) {
-        return {
-            className: (() => {
-                if (!rowInfo || !this.props.users.chosenItems) {
-                    return '';
-                }
-
-                let isChosen = this.props.users.chosenItems.some((element) => {
-                    return element.id === rowInfo.original.id
-                });
-
-                return isChosen ? 'is-chosen' : '';
-            })(),
-            onClick: event => {
-                let target = event.currentTarget;
-                target.classList.toggle('is-chosen');
-
-                this.props.transmit(
-                    'USERS_CHOISE_TOGGLE',
-                    {
-                        id: rowInfo.original.id,
-                        checkstate: target.classList.contains('is-chosen')
-                    }
-                );
-            }
-        }
-    }
-
     buildTable() {
         //copying array
         var data = this.props.users.items.slice();
@@ -99,7 +103,6 @@ class Table extends Component {
         return (<TableControl
             data={ data }
             columns={ this.columns }
-            getTrProps={ this.handleGetTrProps.bind(this) }
         />);
     }
 
@@ -132,7 +135,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         request: bindActionCreators(request, dispatch),
-        transmit: bindActionCreators(transmit, dispatch),
+        redirect: bindActionCreators(redirect, dispatch),
     }
 }
 

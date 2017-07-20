@@ -81,7 +81,7 @@ class TopMenu extends React.Component {
                         { this.languageMenu }
                       </ul>
                     </li>
-                    <li><a className='is-hoverable' onClick={ () => { this.props.redirect('/user-options') }} href='#'>
+                    <li><a className='is-hoverable' onClick={ () => { this.props.redirect('/user-settings') }} href='#'>
                         <span className='glyphicon glyphicon-cog'></span>
                     </a></li>
                     <li><a className='is-hoverable' onClick={ this.props.logout } href='#'>

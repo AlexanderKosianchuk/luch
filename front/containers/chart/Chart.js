@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import MainPage from 'controls/main-page/MainPage';
+import Menu from 'controls/menu/Menu';
 import Toolbar from 'components/chart/toolbar/Toolbar';
 
 import request from 'actions/request';
@@ -57,7 +57,7 @@ class Chart extends React.Component {
     render () {
         return (
             <div>
-                <MainPage/>
+                <Menu/>
                 <Toolbar flightId={ this.props.flightId } />
                 <div id='container'></div>
             </div>

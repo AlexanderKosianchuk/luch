@@ -39,7 +39,7 @@ class CreateFolder extends Component {
     render() {
         return this.state.isInputShown
             ? <CreateFolderForm handleSaveFolderClick={ this.handleSaveFolderClick.bind(this) } />
-            : <CreateFolderButton handleCreateFolderClick={ this.handleCreateFolderClick.bind(this) } />
+            : <CreateFolderButton handleClick={ this.handleCreateFolderClick.bind(this) } />
     }
 }
 

@@ -192,16 +192,32 @@ const translationsEs = {
             upload: 'Upload',
             filesList: 'Files list',
         },
-        user: {
-            actions: 'User Actions',
-            add: 'Add User',
-            edit: 'Edit User',
-            delete: 'Delete User',
-            list: 'User List',
-            save: 'Save Yser',
-            cancel: 'Cancel',
-            confimUserDeletion: 'Confirm',
-            creaitonFailServerError: 'Fail Server',
+        usersTable: {
+            toolbar: {
+                list: 'Users list',
+            },
+            table: {
+                login: 'Login',
+                name: 'Name',
+                email: 'Email',
+                phone: 'Phone',
+                lang: 'Language',
+                role: 'Role',
+                organization: 'Organization',
+                logo: 'Logo',
+                create: 'Create',
+                edit: 'Edit',
+                delete: 'Delete',
+                list: 'List',
+                save: 'Save',
+                confimUserDeleting: 'Confirm user deleting'
+            }
+        },
+        userForm: {
+            toolbar: {
+                create: 'Create new user',
+                edit: 'Edit user'
+            },
         },
         topMenu: {
             fileImport: 'Import',
@@ -257,22 +273,7 @@ const translationsEs = {
             page: 'Page',
             of: 'of',
             rows: 'rows',
-        },
-        dataTable: {
-            sLengthMenu: 'Visualización _MENU_ registros por página',
-            sZeroRecords: 'No hay ningún resultado',
-            sInfo: 'resultados _START_ e _END_ registro de  _TOTAL_ ',
-            sInfoEmpty: 'entradas que faltan',
-            sInfoFiltered: '(Solamente _MAX_ )',
-            sSearch: 'Búsqueda',
-            sProcessing: 'Recuperando datos...',
-            oPaginate: {
-                sFirst: 'Principio',
-                sNext: 'Siguiente',
-                sPrevious: 'Anterior',
-                sLast: 'Final'
-            }
-        },
+        }
     }
 }
 

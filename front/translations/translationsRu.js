@@ -192,16 +192,32 @@ const translationsRu = {
             upload: 'Загрузить',
             filesList: 'Перечень файлов',
         },
-        user: {
-            actions: 'Действия',
-            add: 'Создать',
-            edit: 'Редактировать',
-            delete: 'Удалить',
-            list: 'Перечень',
-            save: 'Сохранить',
-            cancel: 'Отменить',
-            confimUserDeletion: 'Подтвердите удаление пользователей',
-            creaitonFailServerError: 'Ошибка связи при попытке создания пользователя. Попробуйте позже.',
+        usersTable: {
+            toolbar: {
+                list: 'Перечень пользователей',
+            },
+            table: {
+                login: 'Логин',
+                name: 'Имя',
+                email: 'Эл. почта',
+                phone: 'Тел.',
+                lang: 'Язык',
+                role: 'Роль',
+                organization: 'Организация',
+                logo: 'Логотип',
+                add: 'Создать',
+                edit: 'Редактировать',
+                delete: 'Удалить',
+                list: 'Перечень',
+                save: 'Сохранить',
+                confimUserDeletion: 'Подтвердите удаление пользователей'
+            }
+        },
+        userForm: {
+            toolbar: {
+                create: 'Cоздание нового пользователей',
+                edit: 'Редактирование пользователя'
+            },
         },
         topMenu: {
             fileImport: 'Импортировать',
@@ -257,22 +273,7 @@ const translationsRu = {
             page: 'Страница',
             of: 'из',
             rows: 'строк',
-        },
-        dataTable: {
-            sLengthMenu: 'Показывать по _MENU_ записей на странице',
-            sZeroRecords: 'Поиск не дал результата',
-            sInfo: 'Показано с _START_ по _END_ запись из  _TOTAL_ ',
-            sInfoEmpty: 'Записи Non',
-            sInfoFiltered: '(всего _MAX_ )',
-            sSearch: 'Поиск ',
-            sProcessing: 'Получение данных...',
-            oPaginate: {
-                sFirst: 'Начало',
-                sNext: 'Следующий',
-                sPrevious: 'Предыдущий',
-                sLast: 'Конец'
-            }
-        },
+        }
     }
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import MainPage from 'controls/main-page/MainPage';
+import Menu from 'controls/menu/Menu';
 
 import showPage from 'actions/showPage';
 
@@ -14,7 +14,7 @@ class Calibrations extends React.Component {
     render () {
         return (
             <div>
-                <MainPage />
+                <Menu />
                 <div id='container'></div>
             </div>
         );

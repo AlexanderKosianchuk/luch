@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import MainPage from 'controls/main-page/MainPage';
+import Menu from 'controls/menu/Menu';
 import FlightTemplateEditToolbar from 'controls/flight-template-edit-toolbar/FlightTemplateEditToolbar';
 import Params from 'components/flight-template-update/params/Params';
 
@@ -9,7 +9,7 @@ class FlightTemplateUpdate extends React.Component {
     render () {
         return (
             <div>
-                <MainPage/>
+                <Menu/>
                 <FlightTemplateEditToolbar
                     flightId={ this.props.flightId }
                     templateName={ this.props.templateName }

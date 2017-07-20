@@ -199,16 +199,32 @@ const translationsEn = {
             upload: 'Upload',
             filesList: 'Files list',
         },
-        user: {
-            actions: 'User Actions',
-            add: 'Add User',
-            edit: 'Edit User',
-            delete: 'Delete User',
-            list: 'User List',
-            save: 'Save Yser',
-            cancel: 'Cancel',
-            confimUserDeletion: 'Confirm',
-            creaitonFailServerError: 'Fail Server'
+        usersTable: {
+            toolbar: {
+                list: 'Users list',
+            },
+            table: {
+                login: 'Login',
+                name: 'Name',
+                email: 'Email',
+                phone: 'Phone',
+                lang: 'Language',
+                role: 'Role',
+                organization: 'Organization',
+                logo: 'Logo',
+                create: 'Create',
+                edit: 'Edit',
+                delete: 'Delete',
+                list: 'List',
+                save: 'Save',
+                confimUserDeleting: 'Confirm user deleting'
+            }
+        },
+        userForm: {
+            toolbar: {
+                create: 'Create new user',
+                edit: 'Edit user'
+            },
         },
         topMenu: {
             fileImport: 'Import',
@@ -264,22 +280,7 @@ const translationsEn = {
             page: 'Page',
             of: 'of',
             rows: 'rows',
-        },
-        dataTable: {
-            sLengthMenu: 'Show by _MENU_ rows on page',
-            sZeroRecords: 'Search result empty',
-            sInfo: 'Shown _START_ from _END_ rows of  _TOTAL_ ',
-            sInfoEmpty: 'rows Non',
-            sInfoFiltered: '(total _MAX_ )',
-            sSearch: 'Search ',
-            sProcessing: 'Receiving data...',
-            oPaginate: {
-                sFirst: 'Start',
-                sNext: 'Next',
-                sPrevious: 'Prev',
-                sLast: 'End'
-            }
-        },
+        }
     }
 };
 

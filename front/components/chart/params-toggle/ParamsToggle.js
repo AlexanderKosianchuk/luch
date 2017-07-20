@@ -26,12 +26,15 @@ class ParamsToggle extends React.Component {
     render() {
         return (
             <ul className='chart-params-toggle nav navbar-nav navbar-right'>
-                <li><a className={
-                        this.state.isShown ? 'chart-params-toggle__strikethrough' : ''
-                    } href='#' onClick={ this.handleClick.bind(this) }>
+                <li><a href='#' onClick={ this.handleClick.bind(this) }>
                     <span
                       className='glyphicon glyphicon-list-alt'
-                      aria-hidden='true'>
+                      aria-hidden='true'
+                    >
+                        <span className={
+                              this.state.isShown ? 'chart-params-toggle__strikethrough' : ''
+                          }>
+                        </span>
                     </span>
                 </a></li>
             </ul>
