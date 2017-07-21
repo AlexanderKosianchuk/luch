@@ -225,6 +225,21 @@ const translationsEn = {
                 create: 'Create new user',
                 edit: 'Edit user'
             },
+            form: {
+                login: 'Login',
+                name: 'Name',
+                email: 'Email',
+                phone: 'Phone',
+                pass: 'Password',
+                repeatPass: 'Repeat password',
+                organization: 'Organization',
+                role: 'Role',
+                admin: 'Admin',
+                moderator: 'Moderator',
+                user: 'User',
+                logo: 'Logo',
+                chooseFile: 'Choose logo'
+            }
         },
         topMenu: {
             fileImport: 'Import',

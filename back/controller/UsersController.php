@@ -13,6 +13,7 @@ use Component\EntityManagerComponent as EM;
 
 use Exception\UnauthorizedException;
 use Exception\NotFoundException;
+use Exception\ForbiddenException;
 
 class UsersController extends CController
 {
@@ -141,12 +142,42 @@ class UsersController extends CController
         return json_encode($users);
     }
 
+    public function getUser($args)
+    {
+        if (!isset($args['id'])) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        if (!isset($this->_user->userInfo)) {
+            throw new ForbiddenException('user is not authorized');
+        }
+
+        $requestedUserId = $args['id'];
+        $userId = intval($this->_user->userInfo['id']);
+        $role = strval($this->_user->userInfo['role']);
+
+        if (UserRepository::isUser($role) && $requestedUserId !== $userId) {
+            throw new ForbiddenException('forbidden info for current user');
+        }
+
+        $em = EM::get();
+
+        $user = $em->find('Entity\User', $requestedUserId);
+        $creatorId = $user->getCreatorId();
+
+        if (UserRepository::isModerator($role) && $creatorId !== $userId) {
+            throw new ForbiddenException('forbidden info for current user');
+        }
+
+        return json_encode($user->get());
+    }
+
     public function getLogo($args)
     {
         if (!isset($args)
             || !isset($args['id'])
         ) {
-            throw new BadRequestException(json_encode($data));
+            throw new BadRequestException(json_encode($args));
         }
 
         if (!isset($this->_user->userInfo)) {

@@ -218,6 +218,21 @@ const translationsRu = {
                 create: 'Cоздание нового пользователей',
                 edit: 'Редактирование пользователя'
             },
+            form: {
+                login: 'Логин',
+                name: 'Имя',
+                email: 'Эл. почта',
+                phone: 'Тел.',
+                pass: 'Пароль',
+                repeatPass: 'Повторно пароль',
+                organization: 'Организация',
+                role: 'Роль',
+                admin: 'Администратор',
+                moderator: 'Модератор',
+                user: 'Пользователь',
+                logo: 'Логотип',
+                chooseFile: 'Выберите файл'
+            }
         },
         topMenu: {
             fileImport: 'Импортировать',

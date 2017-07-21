@@ -16,7 +16,13 @@ export default function Row (props) {
                     <div className='form-group'>
                         <label htmlFor={ ('user-form-form__' + item.key) } className='col-sm-2 control-label'>{ item.label }</label>
                         <div className='col-sm-10'>
-                            <input type={ item.type } className='form-control' id={ ('user-form-form__' + item.key) } placeholder={ item.placeholder }/>
+                            <input type={ item.type } className='form-control'
+                                id={ ('user-form-form__' + item.key) }
+                                placeholder={ item.placeholder }
+                                value={ item.value || '' }
+                                data-key={ item.key }
+                                onChange={ props.handler }
+                            />
                         </div>
                     </div>
                 </div>
@@ -32,5 +38,6 @@ export default function Row (props) {
 }
 
 Row.propTypes = {
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    handler: PropTypes.func.isRequired,
 };

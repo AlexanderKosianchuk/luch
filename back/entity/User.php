@@ -59,6 +59,27 @@ class User
     /**
      * @var string
      *
+     * @Column(name="name", type="string", length=255, nullable=false)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @Column(name="email", type="string", length=255, nullable=false)
+     */
+    private $email;
+
+    /**
+     * @var string
+     *
+     * @Column(name="phone", type="string", length=255, nullable=false)
+     */
+    private $phone;
+
+    /**
+     * @var string
+     *
      * @Column(name="logo", type="blob", length=16777215, nullable=true)
      */
     private $logo;
@@ -83,5 +104,21 @@ class User
     public function getCreatorId()
     {
         return $this->creatorId;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'login' => $this->login,
+            'pass' => $this->pass,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'lang' => $this->lang,
+            'role' => $this->role,
+            'company' => $this->company,
+            'creatorId' => $this->creatorId,
+        ];
     }
 }

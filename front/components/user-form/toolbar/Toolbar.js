@@ -11,7 +11,8 @@ import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
     handleSaveClick() {
-
+        debugger;
+        console.log(this.props.form().get());
     }
 
     handleListClick() {
