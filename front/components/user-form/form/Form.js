@@ -8,6 +8,7 @@ import FileInput from 'react-file-input';
 import PropTypes from 'prop-types';
 
 import Row from 'components/user-form/row/Row';
+import AvaliableFdrsSelector from 'components/user-form/avaliable-fdrs-selector/AvaliableFdrsSelector';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
@@ -75,17 +76,7 @@ class Form extends Component {
 
         let form = this.props.form();
         Object.assign(form, {
-                get: () => {
-                    return {
-                        login: this.state.login,
-                        name: this.state.name,
-                        email: this.state.email,
-                        phone: this.state.phone,
-                        pass: this.state.pass,
-                        repeatPass: this.state.repeatPass,
-                        organization: this.state.organization
-                    };
-                }
+                get: () => new FormData(this.userForm)
             }
         );
     }
@@ -145,9 +136,20 @@ class Form extends Component {
 
     buildForm() {
         return (
-            <form className='user-form-form__container form-horizontal'>
+            <form
+                className='user-form-form__container form-horizontal'
+                ref={ (form) => { this.userForm = form; }}
+            >
                 { this.buildRows() }
                 <div className='row'>
+                    <div className='col-md-6'>
+                        <div className='form-group'>
+                          <label className='col-sm-2 control-label'><Translate value='userForm.form.avaliableFdrs'/></label>
+                          <div className='col-sm-10'>
+                            <AvaliableFdrsSelector/>
+                          </div>
+                        </div>
+                    </div>
                     <div className='col-md-6'>
                         <div className='form-group'>
                           <label className='col-sm-2 control-label'><Translate value='userForm.form.role'/></label>
@@ -169,13 +171,15 @@ class Form extends Component {
                           </div>
                         </div>
                     </div>
+                </div>
+                <div className='row'>
                     <div className='col-md-6'>
                         <div className='form-group'>
                           <label className='col-sm-2 control-label'><Translate value='userForm.form.logo'/></label>
                           <div className='col-sm-10'>
                               <FileInput
                                  className="btn btn-default"
-                                 name="flightFile"
+                                 name="userLogo"
                                  placeholder={ I18n.t('userForm.form.chooseFile') }
                                  onChange={ this.handleChange.bind(this) }
                                />

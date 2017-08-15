@@ -11,8 +11,14 @@ import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
     handleSaveClick() {
-        debugger;
-        console.log(this.props.form().get());
+        this.props.request(
+            ['uploader', 'storeFlightFile'],
+            'USER',
+            'post',
+            this.props.form().get()
+        ).then(() => {
+            this.props.redirect('/users');
+        });
     }
 
     handleListClick() {

@@ -238,6 +238,7 @@ const translationsEn = {
                 moderator: 'Moderator',
                 user: 'User',
                 logo: 'Logo',
+                avaliableFdrs: 'Set avaliable FDRs',
                 chooseFile: 'Choose logo'
             }
         },

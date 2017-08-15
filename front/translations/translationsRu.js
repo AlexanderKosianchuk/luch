@@ -231,6 +231,7 @@ const translationsRu = {
                 moderator: 'Модератор',
                 user: 'Пользователь',
                 logo: 'Логотип',
+                avaliableFdrs: 'Доступ к типам регистраторов',
                 chooseFile: 'Выберите файл'
             }
         },

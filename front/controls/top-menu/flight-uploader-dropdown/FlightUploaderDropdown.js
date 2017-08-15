@@ -14,11 +14,10 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import FlightUploaderFdrSelector from 'controls/top-menu/flight-uploader-fdr-selector/FlightUploaderFdrSelector';
 import FlightUploaderCalibrationSelector from 'controls/top-menu/flight-uploader-calibration-selector/FlightUploaderCalibrationSelector';
 
+import startEasyFlightUploading from 'actions/particular/startEasyFlightUploading';
+
 import request from 'actions/request';
 import transmit from 'actions/transmit';
-
-import startEasyFlightUploading from 'actions/particular/startEasyFlightUploading';
-import sendFlightFile from 'actions/particular/sendFlightFile';
 import redirect from 'actions/redirect';
 
 class FlightUploaderDropdown extends React.Component {
@@ -100,12 +99,16 @@ class FlightUploaderDropdown extends React.Component {
     handleChange() {
         let form = new FormData(this.sendFlightForm);
         let uploadingUid = uuidV4();
-        let that = this;
         form.append('uploadingUid', uploadingUid);
 
         if (this.props.previewState) {
-            this.props.sendFlightFile(form).then(() => {
-                that.props.redirect('/uploading/' + uploadingUid
+            this.props.request(
+                ['uploader', 'storeFlightFile'],
+                'FLIGHT_FILE',
+                'post',
+                form
+            ).then(() => {
+                this.props.redirect('/uploading/' + uploadingUid
                     + '/fdr-id/' + this.props.chosenFdr.id
                     + (this.props.chosenCalibration.id
                         ? ('/calibration-id/' + this.props.chosenCalibration.id || '')
@@ -189,9 +192,8 @@ function mapDispatchToProps(dispatch) {
     return {
         request: bindActionCreators(request, dispatch),
         transmit: bindActionCreators(transmit, dispatch),
-        startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch),
-        sendFlightFile: bindActionCreators(sendFlightFile, dispatch),
-        redirect: bindActionCreators(redirect, dispatch)
+        redirect: bindActionCreators(redirect, dispatch),
+        startEasyUploading: bindActionCreators(startEasyFlightUploading, dispatch)
     }
 }
 

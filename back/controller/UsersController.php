@@ -203,8 +203,20 @@ class UsersController extends CController
         return stream_get_contents($user->getLogo());
     }
 
-    public function CreateUserByForm($form, $file)
+    public function createUser()
     {
+        if (!isset($_FILES['userLogo']['tmp_name'])) {
+            throw new Exception("Necessary param flightFile not passed.", 1);
+        }
+
+        if (!isset($_POST['uploadingUid'])) {
+            throw new Exception("Necessary param uploadingUid not passed.", 1);
+        }
+
+        $fileName = strval($_FILES['flightFile']['tmp_name']);
+        $uploadingUid = strval($_POST['uploadingUid']);
+        $userId = intval($this->_user->userInfo['id']);
+
         $login = $form['login'];
         $company = $form['company'];
         $pwd = $form['pwd'];
@@ -277,20 +289,6 @@ class UsersController extends CController
         }
 
         return $msg;
-    }
-
-    public function createUser($data)
-    {
-        $resMsg = $this->CreateUserByForm($form, $file);
-
-        if($resMsg != '') {
-            $answ = [
-                'status' => 'err',
-                'error' => $resMsg
-            ];
-        }
-
-        return json_encode($answ);
     }
 
     public function updateUser($data)
