@@ -1,24 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import ee from 'event-emitter';
 import Menu from 'controls/menu/Menu';
 
 import Toolbar from 'components/user-form/toolbar/Toolbar';
 import Form from 'components/user-form/form/Form';
 
 class UserForm extends Component {
-    construct() {
-        this.form = {
-            get: null
-        };
-    }
+    constructor(props) {
+        super(props);
 
-    /*
-    This function is used to pass to Form this.form object.
-    Form redefines get method to return its state.
-    Toolbar uses get method to get form state after "Save" button click
-    */
-    form() { return this.form; }
+        let emitter = ee();
+        this.submit = () => emitter.emit('user-form-submit');
+        this.onSubmit = (callback) => emitter.on('user-form-submit', callback);
+        this.offSubmit = () => emitter.off('user-form-submit');
+    }
 
     render() {
         return (
@@ -26,12 +22,13 @@ class UserForm extends Component {
                 <Menu/>
                 <Toolbar
                     type={ this.props.type }
-                    form={ this.form }
+                    submit={ this.submit }
                 />
                 <Form
                     type={ this.props.type }
                     userId={ this.props.userId }
-                    form={ this.form }
+                    onSubmit={ this.onSubmit }
+                    offSubmit={ this.offSubmit }
                 />
             </div>
         );

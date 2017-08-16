@@ -232,7 +232,10 @@ const translationsEs = {
                 user: 'User',
                 logo: 'Logo',
                 avaliableFdrs: 'Set avaliable FDRs',
-                chooseFile: 'Choose logo'
+                chooseFile: 'Choose logo',
+                notAllNecessarySent: 'Not all necessary params filled (marked by *)',
+                alreadyExist: 'User with same login already exist',
+                creationError: 'User creation error'
             }
         },
         topMenu: {

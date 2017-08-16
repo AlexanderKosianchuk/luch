@@ -232,7 +232,10 @@ const translationsRu = {
                 user: 'Пользователь',
                 logo: 'Логотип',
                 avaliableFdrs: 'Доступ к типам регистраторов',
-                chooseFile: 'Выберите файл'
+                chooseFile: 'Выберите файл',
+                notAllNecessarySent: 'Не все обязательные поля заполнены (отмечены *)',
+                alreadyExist: 'Пользователь с выбраным логином уже существует',
+                creationError: 'Ошибка создания пользователя'
             }
         },
         topMenu: {

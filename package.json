@@ -66,6 +66,7 @@
     "bootstrap": "^3.3.7",
     "chosen-js": "^1.7.0",
     "datatables": "^1.10.13",
+    "event-emitter": "^0.3.5",
     "flot-charts": "^0.8.3",
     "form-urlencoded": "^2.0.0",
     "has-flag": "^2.0.0",

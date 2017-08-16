@@ -49,13 +49,13 @@ class EntryController extends CController
                         echo($response);
                         exit;
                     } catch (BadRequestException $exception) {
-                        ResponseRegistrator::faultResponse($userId, $fullAction, 400, $exception->message);
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 400, $exception->message, $exception->forwardingDescription);
                     } catch (UnauthorizedException $exception) {
-                        ResponseRegistrator::faultResponse($userId, $fullAction, 401, $exception->message);
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 401, $exception->message, $exception->forwardingDescription);
                     } catch (NotFoundException $exception) {
-                        ResponseRegistrator::faultResponse($userId, $fullAction, 404, $exception->message);
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 404, $exception->message, $exception->forwardingDescription);
                     } catch (ForbiddenException $exception) {
-                        ResponseRegistrator::faultResponse($userId, $fullAction, 403, $exception->message);
+                        ResponseRegistrator::faultResponse($userId, $fullAction, 403, $exception->message, $exception->forwardingDescription);
                     } catch (DriverException $exception) {
                         ResponseRegistrator::faultResponse($userId, $fullAction, 500, $exception->getMessage());
                     } catch (BadMethodCallException $exception) {

@@ -97,27 +97,32 @@ class RuntimeManager
         return $filePath;
     }
 
-    public static function storeUploadedFile($fileName, $uid = null)
+    public static function storeFile($fileName, $folder, $uid = null)
     {
         $runtimeDirectory = self::getRuntimeFolder();
-        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
+        $storedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . $folder;
 
-        if (!is_dir($uploadedFilesDir)) {
-            mkdir($uploadedFilesDir, 0755, true);
+        if (!is_dir($storedFilesDir)) {
+            mkdir($storedFilesDir, 0755, true);
         }
 
         if ($uid === null) {
             $uid = uniqid() ;
         }
 
-        $storedFileName = $uid . '.tmpf';
-        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
+        $storedFileName = $uid . '.tmpsf';
+        $storedFilePath = $storedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
 
         if (!file_exists($storedFilePath)) {
             move_uploaded_file ($fileName, $storedFilePath);
         }
 
-        return $storedFileName;
+        return $storedFilePath;
+    }
+
+    public static function storeUploadedFile($fileName, $uid = null)
+    {
+        return basename(self::storeFile($fileName, self::UPLOADED_FLIGHTS_FOLDER, $uid));
     }
 
     public static function getFilePathByIud($uid)

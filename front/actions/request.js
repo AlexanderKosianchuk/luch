@@ -32,43 +32,54 @@ export default function request(
         }
 
         return new Promise((resolve, reject) => {
-            fetch(url, options)
-            .then(
-                (response) => response.json(),
-                (response) => {
-                    dispatch({
-                        type: method.toUpperCase() + '_' + actionType + '_FAIL',
-                        payload: {
-                            request: payload,
-                            response: response
-                        }
-                    });
-                    reject(response);
-                    return response;
-                }
-            )
-            .then(
-                (json) => {
-                    dispatch({
-                        type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
-                        payload: {
-                            request: payload,
-                            response: json
-                        }
-                    });
-                    resolve(json);
-                },
-                (json) => {
-                    dispatch({
-                        type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
-                        payload: {
-                            request: payload,
-                            response: json
-                        }
-                    });
-                    reject(json);
-                }
-            )
+            try {
+                fetch(url, options)
+                .then(
+                    (response) => response.json(),
+                    (response) => {
+                        dispatch({
+                            type: method.toUpperCase() + '_' + actionType + '_FAIL',
+                            payload: {
+                                request: payload,
+                                response: response
+                            }
+                        });
+                        reject(response);
+                        return response;
+                    }
+                )
+                .then(
+                    (json) => {
+                        dispatch({
+                            type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
+                            payload: {
+                                request: payload,
+                                response: json
+                            }
+                        });
+                        resolve(json);
+                    },
+                    (json) => {
+                        dispatch({
+                            type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
+                            payload: {
+                                request: payload,
+                                response: json
+                            }
+                        });
+                        reject(json);
+                    }
+                );
+            } catch (exception) {
+                dispatch({
+                    type: method.toUpperCase() + '_' + actionType + '_FAIL_REQUEST',
+                    payload: {
+                        request: payload,
+                        response: exception
+                    }
+                });
+                reject(exception);
+            }
         });
     }
 };

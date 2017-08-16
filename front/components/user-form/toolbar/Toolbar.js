@@ -10,17 +10,6 @@ import ControlButtons from 'components/user-form/control-buttons/ControlButtons'
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
-    handleSaveClick() {
-        this.props.request(
-            ['uploader', 'storeFlightFile'],
-            'USER',
-            'post',
-            this.props.form().get()
-        ).then(() => {
-            this.props.redirect('/users');
-        });
-    }
-
     handleListClick() {
         this.props.redirect('/users');
     }
@@ -42,7 +31,7 @@ class Toolbar extends Component {
                     </div>
 
                     <ControlButtons
-                        handleSaveClick={ this.handleSaveClick.bind(this) }
+                        handleSaveClick={ this.props.submit }
                         handleListClick={ this.handleListClick.bind(this) }
                     />
                 </div>

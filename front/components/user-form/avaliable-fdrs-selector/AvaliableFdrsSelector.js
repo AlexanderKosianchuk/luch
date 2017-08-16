@@ -35,7 +35,7 @@ class AvaliableFdrsSelector extends Component {
         }
 
         return (
-            <select className="form-control" name="avaliableFdrs" multiple="multiple">
+            <select className="form-control" name="avaliableFdrs[]" multiple="multiple">
                 { this.buildList() }
             </select>
         );

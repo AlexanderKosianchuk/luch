@@ -4,8 +4,6 @@ import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
 import PropTypes from 'prop-types';
 
-const TOP_CONTROLS_HEIGHT = 105;
-
 export default function Row (props) {
     function buildInput() {
         let controls = props.controls;
@@ -18,6 +16,7 @@ export default function Row (props) {
                         <div className='col-sm-10'>
                             <input type={ item.type } className='form-control'
                                 id={ ('user-form-form__' + item.key) }
+                                name={ item.key }
                                 placeholder={ item.placeholder }
                                 value={ item.value || '' }
                                 data-key={ item.key }

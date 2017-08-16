@@ -215,11 +215,6 @@ class User
         return $userId;
     }
 
-    public function GetIdByUsername($username)
-    {
-        return $this->GetUserIdByName($username);
-    }
-
     public function GetUserNameById($requester)
     {
         $c = new DataBaseConnector;
@@ -239,9 +234,6 @@ class User
     public function GetUserInfo($userIdentity)
     {
         $userId = $userIdentity;
-        if (is_string($userIdentity)) {
-            $userId = $this->GetIdByUsername($userIdentity);
-        }
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
@@ -282,36 +274,50 @@ class User
         return $userInfo;
     }
 
-    public function CreateUserPersonal($login, $pwd, $company, $role, $logo, $authorId = null)
+    public function CreateUserPersonal($data)
     {
-        $query = "INSERT INTO `user_personal` ("
-        ."`login`,`pass`, `company`,`lang`,`role`,`logo`,`id_user`"
-        .") VALUES ("
-            ."'".$login."',"
-            ."'".md5($pwd)."',"
-            ."'".$company."',"
-            ."'en',"
-            ."'".$role."',"
-            ."LOAD_FILE('".$logo."'),"
-            .$authorId.");";
+        $loadFile = '';
+        if (strlen($data['logo']) > 0) {
+            $loadFile = "LOAD_FILE('".$data['logo']."'),";
+        }
 
-        $execInfo['query'] = $query;
-        $execInfo['status'] = 0;
+        $query = "INSERT INTO `user_personal` ("
+            ."`login`,"
+            ."`pass`,"
+            ."`name`,"
+            ."`email`,"
+            ."`phone`,"
+            ."`lang`,"
+            ."`role`,"
+            ."`company`,"
+            ."`logo`,"
+            ."`id_creator`"
+        .") VALUES ("
+            ."'".$data['login']."',"
+            ."'".md5($data['pass'])."',"
+            ."'".$data['name']."',"
+            ."'".$data['email']."',"
+            ."'".$data['phone']."',"
+            ."'en',"
+            ."'".$data['role']."',"
+            ."'".$data['company']."',"
+            .$loadFile
+            .$data['id_creator'].");";
 
         $c = new DataBaseConnector;
         $link = $c->Connect();
 
-        $execInfo['link'] = $link;
-        if($stmt = $link->prepare($query)) {
-            $execInfo['status'] = 1;
-        } else {
-            $execInfo['status'] = -1;
+        if ($stmt = $link->prepare($query)) {
+            $stmt->execute();
+            $stmt->close();
+
+            $query = "SELECT LAST_INSERT_ID() AS 'id';";
+            $result = $link->query($query);
+            $row = $result->fetch_array();
+            return intval($row["id"]);
         }
 
-        $stmt->execute();
-        $stmt->close();
-
-        return $execInfo;
+        return null;
     }
 
     public function UpdateUserPersonal($uId, $data)

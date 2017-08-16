@@ -21,7 +21,7 @@ class Form extends Component {
         this.controls = [
             {
                 key: 'login',
-                label: I18n.t('userForm.form.login'),
+                label: I18n.t('userForm.form.login') + '*',
                 type: 'text',
                 placeholder: ''
             },
@@ -45,19 +45,19 @@ class Form extends Component {
             },
             {
                 key: 'pass',
-                label: I18n.t('userForm.form.pass'),
+                label: I18n.t('userForm.form.pass') + '*',
                 type: 'password',
                 placeholder: ''
             },
             {
                 key: 'repeatPass',
-                label: I18n.t('userForm.form.repeatPass'),
+                label: I18n.t('userForm.form.repeatPass') + '*',
                 type: 'password',
                 placeholder: ''
             },
             {
                 key: 'organization',
-                label: I18n.t('userForm.form.organization'),
+                label: I18n.t('userForm.form.organization') + '*',
                 type: 'text',
                 placeholder: ''
             }
@@ -65,6 +65,7 @@ class Form extends Component {
 
         this.state = {
             pending: null,
+            message: '',
             login: '',
             name: '',
             email: '',
@@ -74,12 +75,30 @@ class Form extends Component {
             organization: ''
         }
 
-        let form = this.props.form();
-        Object.assign(form, {
-                get: () => new FormData(this.userForm)
-            }
-        );
+        props.onSubmit(this.handleSaveClick.bind(this));
     }
+
+    handleSaveClick() {
+        this.props.request(
+            ['users', 'create'],
+            'USER',
+            'post',
+            new FormData(this.userForm)
+        ).then((response) => {
+            if (response === 'ok') {
+                this.props.redirect('/users');
+            }
+
+            if (response.forwardingDescription) {
+                this.setState({ message: I18n.t('userForm.form.' + response.forwardingDescription) })
+            } else {
+                this.setState({ message: I18n.t('userForm.form.creationError') })
+            }
+        }, (response) => {
+            console.log(response);
+        });
+    }
+
 
     componentDidMount() {
         if ((this.props.type === 'edit') && (this.state.pending !== false)) {
@@ -92,6 +111,10 @@ class Form extends Component {
                 this.setState({ pending: false });
             })
         }
+    }
+
+    componetnWillUnmount() {
+        this.props.offSubmit();
     }
 
     buildRows() {
@@ -140,11 +163,16 @@ class Form extends Component {
                 className='user-form-form__container form-horizontal'
                 ref={ (form) => { this.userForm = form; }}
             >
+                <div className='row'>
+                    <div className='col-md-12 text-danger user-form-form__server-message'>
+                        { this.state.message }
+                    </div>
+                </div>
                 { this.buildRows() }
                 <div className='row'>
                     <div className='col-md-6'>
                         <div className='form-group'>
-                          <label className='col-sm-2 control-label'><Translate value='userForm.form.avaliableFdrs'/></label>
+                          <label className='col-sm-2 control-label'>{ I18n.t('userForm.form.avaliableFdrs') + '*' }</label>
                           <div className='col-sm-10'>
                             <AvaliableFdrsSelector/>
                           </div>
@@ -152,19 +180,19 @@ class Form extends Component {
                     </div>
                     <div className='col-md-6'>
                         <div className='form-group'>
-                          <label className='col-sm-2 control-label'><Translate value='userForm.form.role'/></label>
+                          <label className='col-sm-2 control-label'>{ I18n.t('userForm.form.role') + '*' }</label>
                           <div className='col-sm-10'>
                               <div className='checkbox'>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } />
+                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='admin' />
                                     <Translate value='userForm.form.admin'/>
                                 </label>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) }/>
+                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='moderator'/>
                                     <Translate value='userForm.form.moderator'/>
                                 </label>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } checked/>
+                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='user' checked/>
                                     <Translate value='userForm.form.user'/>
                                 </label>
                               </div>

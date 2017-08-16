@@ -10,8 +10,10 @@ use Model\UserOptions;
 use Repository\UserRepository;
 
 use Component\EntityManagerComponent as EM;
+use Component\RuntimeManager;
 
 use Exception\UnauthorizedException;
+use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
@@ -203,45 +205,54 @@ class UsersController extends CController
         return stream_get_contents($user->getLogo());
     }
 
-    public function createUser()
+    public function create($args)
     {
-        if (!isset($_FILES['userLogo']['tmp_name'])) {
-            throw new Exception("Necessary param flightFile not passed.", 1);
+        if (!isset($args['login'])
+            || empty($args['login'])
+            || !isset($args['pass'])
+            || empty($args['pass'])
+            || !isset($args['organization'])
+            || empty($args['organization'])
+            || !isset($args['avaliableFdrs'])
+            || empty($args['avaliableFdrs'])
+        ) {
+            throw new BadRequestException([json_encode($args), 'notAllNecessarySent']);
         }
 
-        if (!isset($_POST['uploadingUid'])) {
-            throw new Exception("Necessary param uploadingUid not passed.", 1);
+        if (!isset($this->_user->userInfo)) {
+            throw new ForbiddenException('user is not authorized');
         }
 
-        $fileName = strval($_FILES['flightFile']['tmp_name']);
-        $uploadingUid = strval($_POST['uploadingUid']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $login = $form['login'];
-        $company = $form['company'];
-        $pwd = $form['pwd'];
-        $role = $form['role'];
-        if(is_array($role)) {
-            $role = $role[count($role) - 1];
-        }
         $authorId = intval($this->_user->userInfo['id']);
-        $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
-        $file = str_replace("\\", "/", $file);
 
-        $msg = '';
+        $filePath = strval($_FILES['userLogo']['tmp_name']);
+        $fileForInserting = RuntimeManager::storeFile($filePath, 'user-logo');
+        $login = $args['login'];
+        $avaliableFdrs = $args['avaliableFdrs'];
 
-        if (!$this->_user->CheckUserPersonalExist($login)) {
-            $this->_user->CreateUserPersonal($login, $pwd, $company, $role, $file, $authorId);
-            $createdUserId = intval($this->_user->GetIdByUsername($login));
-
-            foreach($permittedBruTypes as $id) {
-                $this->_user->SetFDRavailable($createdUserId, intval($id));
-            }
-        } else {
-            $msg = $this->lang->userAlreadyExist;
+        if ($this->_user->CheckUserPersonalExist($login)) {
+            throw new ForbiddenException(['user already exist', 'alreadyExist']);
         }
 
-        return $msg;
+        $createdUserId = intval($this->_user->CreateUserPersonal([
+            'login' => $login,
+            'pass' => $args['pass'],
+            'name' => $args['name'],
+            'email' => $args['email'],
+            'phone' => $args['phone'],
+            'role' => $args['role'],
+            'company' => $args['organization'],
+            'logo' => $fileForInserting,
+            'id_creator' => $authorId
+        ]));
+
+        foreach($avaliableFdrs as $id) {
+            $this->_user->SetFDRavailable($createdUserId, intval($id));
+        }
+
+        //RuntimeManager::unlinkRuntimeFile($fileForInserting);
+
+        return json_encode('ok');
     }
 
     public function UpdateUserByForm($userIdToUpdate, $form, $file)

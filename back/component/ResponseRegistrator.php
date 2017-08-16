@@ -36,13 +36,21 @@ class ResponseRegistrator
         $em->flush();
     }
 
-    public static function faultResponse($userId, $action, $code, $message)
+    public static function faultResponse($userId, $action, $code, $message, $forwardingDescription = null)
     {
         $code = strval($code);
         self::register($userId, $action, $message, 'rejected', $code);
         http_response_code($code);
         header($code . ' ' . self::$codes[strval($code)]);
-        echo(json_encode($message));
+        if (!isset($forwardingDescription)) {
+            echo(json_encode($message));
+            exit;
+        }
+
+        echo(json_encode([
+            'message' => $message,
+            'forwardingDescription' => $forwardingDescription
+        ]));
         exit;
     }
 }
