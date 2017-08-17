@@ -121,4 +121,18 @@ class User
             'creatorId' => $this->creatorId,
         ];
     }
+
+    public function set($data)
+    {
+        $this->login = $data['login'];
+        $this->pass = $data['pass'];
+        $this->name = $data['name'];
+        $this->email = $data['email'];
+        $this->phone = $data['phone'];
+        $this->lang = $data['lang'];
+        $this->role = $data['role'];
+        $this->company = $data['company'];
+        $this->creatorId = $data['creatorId'];
+        $this->logo = $data['logo'];
+    }
 }

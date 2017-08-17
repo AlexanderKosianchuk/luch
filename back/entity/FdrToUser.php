@@ -46,4 +46,12 @@ class FdrToUser
      * @JoinColumn(name="id_fdr", referencedColumnName="id")
      */
     private $fdr;
+
+    public function setUserId($userId) {
+        $this->userId = $userId;
+    }
+
+    public function setFdrId($fdrId) {
+        $this->fdrId = $fdrId;
+    }
 }

@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
 import FileInput from 'react-file-input';
 import PropTypes from 'prop-types';
+import _isEqual from 'lodash.isequal';
 
 import Row from 'components/user-form/row/Row';
 import AvaliableFdrsSelector from 'components/user-form/avaliable-fdrs-selector/AvaliableFdrsSelector';
@@ -13,6 +14,9 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
 import redirect from 'actions/redirect';
+
+const EDIT_TYPE = 'edit';
+const CREATE_TYPE = 'create';
 
 class Form extends Component {
     constructor(props) {
@@ -64,7 +68,6 @@ class Form extends Component {
         ];
 
         this.state = {
-            pending: null,
             message: '',
             login: '',
             name: '',
@@ -72,7 +75,8 @@ class Form extends Component {
             phone: '',
             pass: '',
             repeatPass: '',
-            organization: ''
+            organization: '',
+            role: ''
         }
 
         props.onSubmit(this.handleSaveClick.bind(this));
@@ -80,36 +84,66 @@ class Form extends Component {
 
     handleSaveClick() {
         this.props.request(
-            ['users', 'create'],
-            'USER',
+            (this.props.type === EDIT_TYPE) ? ['users', 'update'] : ['users', 'create'],
+            (this.props.type === EDIT_TYPE) ? 'EDIT_USER' : 'CREATE_USER',
             'post',
             new FormData(this.userForm)
-        ).then((response) => {
-            if (response === 'ok') {
-                this.props.redirect('/users');
+        ).then(
+            (response) => this.props.redirect('/users'),
+            (response) => {
+                if (response.forwardingDescription) {
+                    this.setState({ message: I18n.t('userForm.form.' + response.forwardingDescription) })
+                } else {
+                    this.setState({ message: I18n.t('userForm.form.creationError') })
+                }
             }
+        );
+    }
 
-            if (response.forwardingDescription) {
-                this.setState({ message: I18n.t('userForm.form.' + response.forwardingDescription) })
-            } else {
-                this.setState({ message: I18n.t('userForm.form.creationError') })
-            }
-        }, (response) => {
-            console.log(response);
+    componentDidMount() {
+        if ((this.props.type === EDIT_TYPE) && (this.props.pending !== false)) {
+            this.props.request(
+                ['users', 'getUsers'],
+                'USERS',
+                'get'
+            );
+        }
+
+        this.setValues();
+    }
+
+    componentDidUpdate() {
+        this.setValues();
+    }
+
+    isEmptyObject(o) {
+        return Object.keys(o).every(function(x) {
+            return o[x]===''||o[x]===null;  // or just "return o[x];" for falsy values
         });
     }
 
+    setValues() {
+        if ((this.props.type !== EDIT_TYPE) || (this.props.pending !== false)) {
+            return;
+        }
 
-    componentDidMount() {
-        if ((this.props.type === 'edit') && (this.state.pending !== false)) {
-            this.props.request(
-                ['users', 'getUser'],
-                'USER',
-                'get',
-                { id: this.props.userId }
-            ).then(() => {
-                this.setState({ pending: false });
-            })
+        if (!this.isEmptyObject(this.state)) {
+            return;
+        }
+
+        let index = this.props.users.findIndex((element) => {
+            return element.id === this.props.userId;
+        });
+
+        if (index === -1) {
+            return;
+        }
+
+        let user = this.props.users[index];
+        user.pass = '';
+        let newState = { ...this.state, ...user };
+        if (!_isEqual(newState, this.state)) {
+            this.setState(newState);
         }
     }
 
@@ -147,6 +181,16 @@ class Form extends Component {
         return rows;
     }
 
+    isChecked(variant) {
+        if ((this.state.role === '') && (variant === 'user')) {
+            return 'checked';
+        }
+
+        if (this.state.role === variant) {
+            return 'checked';
+        }
+    }
+
     handleChange(event) {
         let element = event.target;
         let key = element.getAttribute('data-key');
@@ -155,6 +199,10 @@ class Form extends Component {
         if (this.state.hasOwnProperty(key)) {
             this.setState({ [key]: value });
         }
+    }
+
+    handleChangeRadio(target) {
+        this.setState({ role: target });
     }
 
     buildForm() {
@@ -184,15 +232,24 @@ class Form extends Component {
                           <div className='col-sm-10'>
                               <div className='checkbox'>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='admin' />
+                                    <input type='radio' name='role' value={ this.isChecked('admin') ? 'admin' : '' }
+                                        checked={ this.isChecked('admin') }
+                                        onChange={ this.handleChangeRadio.bind(this, 'admin') }
+                                    />
                                     <Translate value='userForm.form.admin'/>
                                 </label>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='moderator'/>
+                                    <input type='radio' name='role' value={ this.isChecked('moderator') ? 'moderator' : '' }
+                                        checked={ this.isChecked('moderator') }
+                                        onChange={ this.handleChangeRadio.bind(this, 'moderator') }
+                                    />
                                     <Translate value='userForm.form.moderator'/>
                                 </label>
                                 <label>
-                                    <input type='radio' name='role' onChange={ this.handleChange.bind(this) } value='user' checked/>
+                                    <input type='radio' name='role' value={ this.isChecked('user') ? 'user' : '' }
+                                        checked={ this.isChecked('user') }
+                                        onChange={ this.handleChangeRadio.bind(this, 'user') }
+                                    />
                                     <Translate value='userForm.form.user'/>
                                 </label>
                               </div>
@@ -209,7 +266,6 @@ class Form extends Component {
                                  className="btn btn-default"
                                  name="userLogo"
                                  placeholder={ I18n.t('userForm.form.chooseFile') }
-                                 onChange={ this.handleChange.bind(this) }
                                />
                           </div>
                         </div>
@@ -220,13 +276,13 @@ class Form extends Component {
     }
 
     buildBody() {
-        if ((this.props.type === 'edit') && (this.state.pending !== false)) {
+        if ((this.props.type === EDIT_TYPE)
+            && (this.props.pending !== false)
+        ) {
             return <ContentLoader/>
         }
 
-        if (this.props.type === 'create') {
-            return this.buildForm();
-        }
+        return this.buildForm();
     }
 
     render() {
@@ -246,7 +302,10 @@ Form.propTypes = {
 };
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        pending: state.users.pending,
+        users: state.users.items
+    };
 }
 
 function mapDispatchToProps(dispatch) {

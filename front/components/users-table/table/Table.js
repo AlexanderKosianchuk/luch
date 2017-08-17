@@ -72,7 +72,12 @@ class Table extends Component {
 
     handleDeleteClick(id) {
         if (confirm(I18n.t('usersTable.table.confimUserDeleting'))) {
-            this.props.redirect('/user/delete/' + id);
+            this.props.request(
+                ['users', 'delete'],
+                'DELETE_USER',
+                'post',
+                { userId: id }
+            );
         }
     }
 

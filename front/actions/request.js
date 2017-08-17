@@ -35,7 +35,29 @@ export default function request(
             try {
                 fetch(url, options)
                 .then(
-                    (response) => response.json(),
+                    (response) => {
+                        response.json().then((json) => {
+                            if (response.status === 200) {
+                                dispatch({
+                                    type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
+                                    payload: {
+                                        request: payload,
+                                        response: json
+                                    }
+                                });
+                                resolve(json);
+                            } else {
+                                dispatch({
+                                    type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
+                                    payload: {
+                                        request: payload,
+                                        response: json
+                                    }
+                                });
+                                reject(json);
+                            }
+                        });
+                    },
                     (response) => {
                         dispatch({
                             type: method.toUpperCase() + '_' + actionType + '_FAIL',
@@ -46,28 +68,6 @@ export default function request(
                         });
                         reject(response);
                         return response;
-                    }
-                )
-                .then(
-                    (json) => {
-                        dispatch({
-                            type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
-                            payload: {
-                                request: payload,
-                                response: json
-                            }
-                        });
-                        resolve(json);
-                    },
-                    (json) => {
-                        dispatch({
-                            type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
-                            payload: {
-                                request: payload,
-                                response: json
-                            }
-                        });
-                        reject(json);
                     }
                 );
             } catch (exception) {

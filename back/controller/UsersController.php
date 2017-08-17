@@ -6,11 +6,13 @@ use Model\User;
 use Model\Language;
 use Model\Fdr;
 use Model\UserOptions;
+use Entity\FdrToUser;
 
 use Repository\UserRepository;
 
 use Component\EntityManagerComponent as EM;
 use Component\RuntimeManager;
+use Component\FlightComponent;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
@@ -250,93 +252,134 @@ class UsersController extends CController
             $this->_user->SetFDRavailable($createdUserId, intval($id));
         }
 
-        //RuntimeManager::unlinkRuntimeFile($fileForInserting);
+        RuntimeManager::unlinkRuntimeFile($fileForInserting);
 
-        return json_encode('ok');
+        $em = EM::get();
+        $user = $em->find('Entity\User', $createdUserId);
+
+        return json_encode(array_merge($user->get(),
+            [ 'logo' => $em->getRepository('Entity\User')::getLogoUrl($createdUserId) ]
+        ));
     }
 
-    public function UpdateUserByForm($userIdToUpdate, $form, $file)
+    public function update($args)
     {
-        $userIdToUpdate = intval($userIdToUpdate);
-        $availableForUpdate = false;
-        $author = $this->_user->username;
-        $authorId = $this->_user->GetUserIdByName($author);
-        $authorInfo = $this->_user->GetUserInfo($authorId);
-        $userInfo = $this->_user->GetUserInfo($userIdToUpdate);
-
-        $userId = intval($this->_user->userInfo['id']);
-        $userRole = $this->_user->userInfo['role'];
-        $availableUsers = $this->_user->GetAvailableUsersList($userId, $userRole);
-
-        if(in_array($userIdToUpdate, $availableUsers)) {
-            $availableForUpdate = true;
+        if (!isset($args['login'])
+            || empty($args['login'])
+            || !isset($args['pass'])
+            || empty($args['pass'])
+            || !isset($args['organization'])
+            || empty($args['organization'])
+            || !isset($args['avaliableFdrs'])
+            || empty($args['avaliableFdrs'])
+        ) {
+            throw new BadRequestException([json_encode($args), 'notAllNecessarySent']);
         }
 
-        $personalData = [];
-
-        if(isset($form['pwd'])) {
-            $personalData['pass'] = md5($form['pwd']);
+        if (!isset($this->_user->userInfo)) {
+            throw new ForbiddenException('user is not authorized');
         }
 
-        if(isset($form['company'])) {
-            $personalData['company'] = $form['company'];
+        $authorId = intval($this->_user->userInfo['id']);
+        $userIdToUpdate = intval($args['id']);
+
+        $em = EM::get();
+
+        if (!$em->getRepository('Entity\User')->isAvaliable($userIdToUpdate, $userId)) {
+            throw new ForbiddenException('current user not able to update this');
         }
 
-        if(isset($form['role'])) {
-            $personalData['role'] = $form['role'];
+        $filePath = strval($_FILES['userLogo']['tmp_name']);
+        $fileForUpdating = RuntimeManager::storeFile($filePath, 'user-logo');
+        $login = $args['login'];
+        $avaliableFdrs = $args['avaliableFdrs'];
+
+        $user = $em->find('Entity\User', $userIdToDelete);
+
+        if (!$user) {
+            throw new NotFoundException('user with id '.$userIdToUpdate.' not found');
         }
 
-        if($file !== null) {
-            $personalData['logo'] = str_replace("\\", "/", $file);
-        }
+        $this->_user->UpdateUserPersonal(
+            $userIdToUpdate,
+            [
+                'login' => $login,
+                'pass' => $args['pass'],
+                'name' => $args['name'],
+                'email' => $args['email'],
+                'phone' => $args['phone'],
+                'role' => $args['role'],
+                'company' => $args['organization'],
+                'logo' => $fileForUpdating,
+                'id_creator' => $authorId
+            ]
+        );
 
-        $this->_user->UpdateUserPersonal($userIdToUpdate, $personalData);
+        RuntimeManager::unlinkRuntimeFile($fileForUpdating);
 
-        $permittedBruTypes = isset($form['FDRsAvailable']) ? $form['FDRsAvailable'] : [];
-        $msg = '';
-
-        foreach($permittedBruTypes as $id) {
-            $this->_user->SetFDRavailable($userIdToUpdate, intval($id));
-        }
-
-        return $msg;
-    }
-
-    public function updateUser($data)
-    {
-        $resMsg = $this->UpdateUserByForm($userIdToUpdate, $form, $file);
-
-        if($resMsg != '') {
-            $answ = [
-                'status' => 'err',
-                'error' => $resMsg
-            ];
-        }
-
-        return json_encode($answ);
-    }
-
-    public function deleteUser($data)
-    {
-        if (!isset($data) || !isset($data['userIds'])) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $userIds = $data['userIds'];
-
-        foreach ($userIds as $userDeleteId) {
-            if (is_int(intval($userDeleteId))) {
-                $userInfo = $this->_user->GetUserInfo(intval($userDeleteId));
-
-                if (!empty($userInfo)) {
-                    $login = $userInfo['login'];
-                    $this->_user->DeleteUserPersonal($login);
-                    $this->_user->UnsetFDRavailable($userDeleteId);
-
-                    /* TODO it is also necessary to clean up flight data and folders*/
-                }
+        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToDelete]);
+        if (isset($fdrToUser)) {
+            foreach ($fdrsToUser as $fdrToUser) {
+                $em->remove($fdrToUser);
             }
         }
+
+        foreach ($avaliableFdrs as $fdrId) {
+            $fdrToUser = new FdrToUser;
+            $fdrToUser->setUserId($userIdToUpdate);
+            $fdrToUser->setFdrId($fdrId);
+            $em->persist($fdrToUser);
+        }
+
+        $em->flush();
+        return 'ok';
+    }
+
+
+    public function delete($args)
+    {
+        if (!isset($args['userId'])
+            || empty($args['userId'])
+            || !is_int(intval($args['userId']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $userId = intval($this->_user->userInfo['id']);
+        $userIdToDelete = intval($args['userId']);
+
+        $em = EM::get();
+
+        if (!$em->getRepository('Entity\User')->isAvaliable($userIdToDelete, $userId)) {
+            throw new ForbiddenException('current user not able to delete this');
+        }
+
+        $user = $em->find('Entity\User', $userIdToDelete);
+        if (isset($user)) {
+            $em->remove($user);
+        }
+
+        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToDelete]);
+        if (isset($fdrToUser)) {
+            foreach ($fdrsToUser as $fdrToUser) {
+                $em->remove($fdrToUser);
+            }
+        }
+
+        $flightsToFolders = $em->getRepository('Entity\FlightToFolder')->findBy(['userId' => $userIdToDelete]);
+        if (isset($flightToFolder)) {
+            foreach ($flightsToFolders as $flightToFolder) {
+                $em->remove($flightToFolder);
+            }
+        }
+
+        $flights = $em->getRepository('Entity\Flight')->findBy(['id_user' => $userIdToDelete]);
+        $FC = new FlightComponent;
+        foreach ($flights as $flightId) {
+            $FC->DeleteFlight(intval($flightId), $userIdToDelete);
+        }
+
+        $em->flush();
 
         return json_encode('ok');
     }
