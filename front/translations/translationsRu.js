@@ -203,7 +203,7 @@ const translationsRu = {
                 phone: 'Тел.',
                 lang: 'Язык',
                 role: 'Роль',
-                organization: 'Организация',
+                company: 'Организация',
                 logo: 'Логотип',
                 add: 'Создать',
                 edit: 'Редактировать',
@@ -225,17 +225,19 @@ const translationsRu = {
                 phone: 'Тел.',
                 pass: 'Пароль',
                 repeatPass: 'Повторно пароль',
-                organization: 'Организация',
+                company: 'Организация',
                 role: 'Роль',
-                admin: 'Администратор',
-                moderator: 'Модератор',
-                user: 'Пользователь',
                 logo: 'Логотип',
                 avaliableFdrs: 'Доступ к типам регистраторов',
                 chooseFile: 'Выберите файл',
                 notAllNecessarySent: 'Не все обязательные поля заполнены (отмечены *)',
                 alreadyExist: 'Пользователь с выбраным логином уже существует',
                 creationError: 'Ошибка создания пользователя'
+            },
+            roleRadio: {
+                admin: 'Администратор',
+                moderator: 'Модератор',
+                user: 'Пользователь'
             }
         },
         topMenu: {

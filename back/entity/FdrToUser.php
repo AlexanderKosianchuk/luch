@@ -54,4 +54,8 @@ class FdrToUser
     public function setFdrId($fdrId) {
         $this->fdrId = $fdrId;
     }
+
+    public function setFdr($fdr) {
+        $this->fdr = $fdr;
+    }
 }

@@ -213,8 +213,8 @@ class UsersController extends CController
             || empty($args['login'])
             || !isset($args['pass'])
             || empty($args['pass'])
-            || !isset($args['organization'])
-            || empty($args['organization'])
+            || !isset($args['company'])
+            || empty($args['company'])
             || !isset($args['avaliableFdrs'])
             || empty($args['avaliableFdrs'])
         ) {
@@ -243,9 +243,9 @@ class UsersController extends CController
             'email' => $args['email'],
             'phone' => $args['phone'],
             'role' => $args['role'],
-            'company' => $args['organization'],
+            'company' => $args['company'],
+            'creatorId' => $authorId,
             'logo' => $fileForInserting,
-            'id_creator' => $authorId
         ]));
 
         foreach($avaliableFdrs as $id) {
@@ -257,19 +257,26 @@ class UsersController extends CController
         $em = EM::get();
         $user = $em->find('Entity\User', $createdUserId);
 
-        return json_encode(array_merge($user->get(),
-            [ 'logo' => $em->getRepository('Entity\User')::getLogoUrl($createdUserId) ]
-        ));
+        return json_encode([
+            'id' => $createdUserId,
+            'login' => $login,
+            'pass' => $args['pass'],
+            'name' => $args['name'],
+            'email' => $args['email'],
+            'phone' => $args['phone'],
+            'role' => $args['role'],
+            'company' => $args['company'],
+            'creatorId' => $authorId,
+            'logo' => $em->getRepository('Entity\User')::getLogoUrl($createdUserId)
+        ]);
     }
 
     public function update($args)
     {
-        if (!isset($args['login'])
-            || empty($args['login'])
+        if (!isset($args['id'])
+            || empty($args['id'])
             || !isset($args['pass'])
             || empty($args['pass'])
-            || !isset($args['organization'])
-            || empty($args['organization'])
             || !isset($args['avaliableFdrs'])
             || empty($args['avaliableFdrs'])
         ) {
@@ -280,7 +287,7 @@ class UsersController extends CController
             throw new ForbiddenException('user is not authorized');
         }
 
-        $authorId = intval($this->_user->userInfo['id']);
+        $userId = intval($this->_user->userInfo['id']);
         $userIdToUpdate = intval($args['id']);
 
         $em = EM::get();
@@ -294,7 +301,7 @@ class UsersController extends CController
         $login = $args['login'];
         $avaliableFdrs = $args['avaliableFdrs'];
 
-        $user = $em->find('Entity\User', $userIdToDelete);
+        $user = $em->find('Entity\User', $userIdToUpdate);
 
         if (!$user) {
             throw new NotFoundException('user with id '.$userIdToUpdate.' not found');
@@ -309,30 +316,39 @@ class UsersController extends CController
                 'email' => $args['email'],
                 'phone' => $args['phone'],
                 'role' => $args['role'],
-                'company' => $args['organization'],
-                'logo' => $fileForUpdating,
-                'id_creator' => $authorId
+                'company' => $args['company'],
+                'id_creator' => $userId,
+                'logo' => $fileForUpdating
             ]
         );
 
         RuntimeManager::unlinkRuntimeFile($fileForUpdating);
 
-        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToDelete]);
+        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToUpdate]);
         if (isset($fdrToUser)) {
             foreach ($fdrsToUser as $fdrToUser) {
                 $em->remove($fdrToUser);
             }
         }
 
-        foreach ($avaliableFdrs as $fdrId) {
-            $fdrToUser = new FdrToUser;
-            $fdrToUser->setUserId($userIdToUpdate);
-            $fdrToUser->setFdrId($fdrId);
-            $em->persist($fdrToUser);
+        foreach($avaliableFdrs as $id) {
+            $this->_user->SetFDRavailable($userIdToUpdate, intval($id));
         }
 
         $em->flush();
-        return 'ok';
+
+        return json_encode([
+            'id' => $userIdToUpdate,
+            'login' => $login,
+            'pass' => $args['pass'],
+            'name' => $args['name'],
+            'email' => $args['email'],
+            'phone' => $args['phone'],
+            'role' => $args['role'],
+            'company' => $args['company'],
+            'creatorId' => $userId,
+            'logo' => $em->getRepository('Entity\User')::getLogoUrl($userIdToUpdate)
+        ]);
     }
 
 

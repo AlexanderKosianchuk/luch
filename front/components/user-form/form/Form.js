@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import _isEqual from 'lodash.isequal';
 
 import Row from 'components/user-form/row/Row';
+import RoleRadio from 'components/user-form/role-radio/RoleRadio';
 import AvaliableFdrsSelector from 'components/user-form/avaliable-fdrs-selector/AvaliableFdrsSelector';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
@@ -60,8 +61,8 @@ class Form extends Component {
                 placeholder: ''
             },
             {
-                key: 'organization',
-                label: I18n.t('userForm.form.organization') + '*',
+                key: 'company',
+                label: I18n.t('userForm.form.company') + '*',
                 type: 'text',
                 placeholder: ''
             }
@@ -75,7 +76,7 @@ class Form extends Component {
             phone: '',
             pass: '',
             repeatPass: '',
-            organization: '',
+            company: '',
             role: ''
         }
 
@@ -109,11 +110,11 @@ class Form extends Component {
             );
         }
 
-        this.setValues();
+        this.setValues(this.props);
     }
 
-    componentDidUpdate() {
-        this.setValues();
+    componentWillReceiveProps(nextProps) {
+        this.setValues(nextProps);
     }
 
     isEmptyObject(o) {
@@ -122,8 +123,8 @@ class Form extends Component {
         });
     }
 
-    setValues() {
-        if ((this.props.type !== EDIT_TYPE) || (this.props.pending !== false)) {
+    setValues(props) {
+        if ((props.type !== EDIT_TYPE) || (props.pending !== false)) {
             return;
         }
 
@@ -131,15 +132,15 @@ class Form extends Component {
             return;
         }
 
-        let index = this.props.users.findIndex((element) => {
-            return element.id === this.props.userId;
+        let index = props.users.findIndex((element) => {
+            return element.id === props.userId;
         });
 
         if (index === -1) {
             return;
         }
 
-        let user = this.props.users[index];
+        let user = props.users[index];
         user.pass = '';
         let newState = { ...this.state, ...user };
         if (!_isEqual(newState, this.state)) {
@@ -181,16 +182,6 @@ class Form extends Component {
         return rows;
     }
 
-    isChecked(variant) {
-        if ((this.state.role === '') && (variant === 'user')) {
-            return 'checked';
-        }
-
-        if (this.state.role === variant) {
-            return 'checked';
-        }
-    }
-
     handleChange(event) {
         let element = event.target;
         let key = element.getAttribute('data-key');
@@ -201,16 +192,15 @@ class Form extends Component {
         }
     }
 
-    handleChangeRadio(target) {
-        this.setState({ role: target });
-    }
-
     buildForm() {
         return (
             <form
                 className='user-form-form__container form-horizontal'
                 ref={ (form) => { this.userForm = form; }}
             >
+                <div className='hidden'>
+                    <input name='id' type='text' defaultValue={ this.props.userId } />
+                </div>
                 <div className='row'>
                     <div className='col-md-12 text-danger user-form-form__server-message'>
                         { this.state.message }
@@ -228,32 +218,12 @@ class Form extends Component {
                     </div>
                     <div className='col-md-6'>
                         <div className='form-group'>
-                          <label className='col-sm-2 control-label'>{ I18n.t('userForm.form.role') + '*' }</label>
-                          <div className='col-sm-10'>
-                              <div className='checkbox'>
-                                <label>
-                                    <input type='radio' name='role' value={ this.isChecked('admin') ? 'admin' : '' }
-                                        checked={ this.isChecked('admin') }
-                                        onChange={ this.handleChangeRadio.bind(this, 'admin') }
-                                    />
-                                    <Translate value='userForm.form.admin'/>
-                                </label>
-                                <label>
-                                    <input type='radio' name='role' value={ this.isChecked('moderator') ? 'moderator' : '' }
-                                        checked={ this.isChecked('moderator') }
-                                        onChange={ this.handleChangeRadio.bind(this, 'moderator') }
-                                    />
-                                    <Translate value='userForm.form.moderator'/>
-                                </label>
-                                <label>
-                                    <input type='radio' name='role' value={ this.isChecked('user') ? 'user' : '' }
-                                        checked={ this.isChecked('user') }
-                                        onChange={ this.handleChangeRadio.bind(this, 'user') }
-                                    />
-                                    <Translate value='userForm.form.user'/>
-                                </label>
-                              </div>
-                          </div>
+                            <label className='col-sm-2 control-label'>{ I18n.t('userForm.form.role') + '*' }</label>
+                            <div className='col-sm-10'>
+                                <RoleRadio
+                                  role={ this.state.role }
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,7 +274,7 @@ Form.propTypes = {
 function mapStateToProps(state) {
     return {
         pending: state.users.pending,
-        users: state.users.items
+        users: state.users.items.slice()
     };
 }
 

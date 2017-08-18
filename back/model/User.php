@@ -335,7 +335,7 @@ class User
             }
         }
         $set = substr($set, 0, -2);
-        $query = "UPDATE `user_personal` SET ".$set." WHERE `id` = '".$uId."';";
+        $query = "UPDATE `user_personal` SET ".$set." WHERE `id` = ".$uId.";";
 
         $c = new DataBaseConnector;
         $link = $c->Connect();

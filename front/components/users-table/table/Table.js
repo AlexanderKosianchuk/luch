@@ -31,7 +31,7 @@ class Table extends Component {
             Header: I18n.t('usersTable.table.phone'),
             accessor: 'phone'
         }, {
-            Header: I18n.t('usersTable.table.organization'),
+            Header: I18n.t('usersTable.table.company'),
             accessor: 'company',
         }, {
             Header: I18n.t('usersTable.table.role'),

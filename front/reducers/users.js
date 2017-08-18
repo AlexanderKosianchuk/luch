@@ -7,6 +7,8 @@ let initialState = {
 }
 
 export default function user(state = initialState, action) {
+    let id = -1;
+    let index = -1;
     let items = [];
     switch (action.type) {
         case 'GET_USERS_START':
@@ -60,13 +62,29 @@ export default function user(state = initialState, action) {
                 }
             };
         case 'POST_DELETE_USER_COMPLETE':
-            let id = action.payload.request.userId;
+            id = action.payload.request.userId;
             items = state.items.slice();
-            let index = items.findIndex((element) => {
+            index = items.findIndex((element) => {
                 return element.id === id;
             });
 
             if (index !== -1) items.splice(index, 1);
+
+            return {
+                ...state, ...{
+                    items: items
+                }
+            };
+        case 'POST_EDIT_USER_COMPLETE':
+            id = action.payload.response.id;
+            items = state.items.slice();
+            index = items.findIndex((element) => {
+                return element.id === id;
+            });
+
+            if (index !== -1) items.splice(index, 1);
+
+            items.push(action.payload.response)
 
             return {
                 ...state, ...{

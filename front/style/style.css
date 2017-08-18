@@ -5,11 +5,16 @@
     src: url(fonts/CodenameCoderFree4F-Bold.ttf);
 }
 
+html {
+    height: 100%;
+}
+
 body {
     font-family: "CodenameCoderFree4F", Helvetica, sans-serif;
     font-size: 16px;
     background-color:#fff;
     color:#000;
+    min-height: 100%;
 }
 
 body::scrollbar {
