@@ -16,7 +16,9 @@ class Form extends Component {
         }
     }
 
-    auth() {
+    auth(event) {
+        event.preventDefault();
+
         this.props.login({
             login: this.loginInput.value,
             pass: this.passInput.value
@@ -29,7 +31,7 @@ class Form extends Component {
 
     render() {
         return (
-            <div className='login-form'>
+            <form className='login-form' onSubmit={ this.auth.bind(this) }>
                 <div className='login-form__form-wrapper'>
                     <div>
                         <div className='login-form__header'>
@@ -71,7 +73,7 @@ class Form extends Component {
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
         );
     }
 }

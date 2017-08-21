@@ -10,8 +10,9 @@ html {
 }
 
 body {
-    font-family: "CodenameCoderFree4F", Helvetica, sans-serif;
-    font-size: 16px;
+    /*font-family: "CodenameCoderFree4F", Helvetica, sans-serif;*/
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
     background-color:#fff;
     color:#000;
     min-height: 100%;

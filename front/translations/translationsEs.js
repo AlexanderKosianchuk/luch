@@ -240,7 +240,19 @@ const translationsEs = {
                 user: 'User'
             }
         },
+        userActivity: {
+            toolbar: {
+                list: 'User activity',
+            },
+            table: {
+                action: 'Action',
+                status: 'Status',
+                message: 'Response message',
+                date: 'Date'
+            }
+        },
         topMenu: {
+            brand: 'Luche',
             fileImport: 'Import',
             upload: 'Upload',
             flightImporterDropdown: {

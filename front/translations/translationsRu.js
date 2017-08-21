@@ -240,7 +240,19 @@ const translationsRu = {
                 user: 'Пользователь'
             }
         },
+        userActivity: {
+            toolbar: {
+                list: 'Список действий пользователя',
+            },
+            table: {
+                action: 'Действие',
+                status: 'Статус',
+                message: 'Ответ сервера',
+                date: 'Дата'
+            }
+        },
         topMenu: {
+            brand: 'Luch',
             fileImport: 'Импортировать',
             upload: 'Загрузить',
             flightImporterDropdown: {

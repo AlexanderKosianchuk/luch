@@ -7,10 +7,11 @@ import ReactTable from 'react-table';
 
 export default function Table (props) {
     return (<ReactTable
-        className='table-table'
+        className={ 'table-table ' + props.className || '' }
         data={ props.data }
         columns={ props.columns }
         getTrProps={ props.getTrProps || function () { return { className: '' } } }
+        onFetchData={ props.onFetchData || function () {} }
         previousText={ I18n.t('table.previous') }
         nextText={ I18n.t('table.next') }
         loadingText={ I18n.t('table.loading') }

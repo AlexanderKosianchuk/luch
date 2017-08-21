@@ -10,6 +10,7 @@ import FlightsTable from 'containers/flights-table/FlightsTable';
 import Settings from 'containers/settings/Settings';
 import Calibrations from 'containers/calibrations/Calibrations';
 import UsersTable from 'containers/users-table/UsersTable';
+import UserActivity from 'containers/user-activity/UserActivity';
 import UserForm from 'containers/user-form/UserForm';
 import FlightEvents from 'containers/flight-events/FlightEvents';
 import FlightTemplates from 'containers/flight-templates/FlightTemplates';
@@ -39,6 +40,7 @@ const App = ({ history }) => (
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />
             <Route exact path='/user/create/' component={ UserIsAuthenticated(UserForm) } />
             <Route exact path='/user/:type/:userId' component={ UserIsAuthenticated(UserForm) } />
+            <Route exact path='/user-activity/:userId' component={ UserIsAuthenticated(UserActivity) } />
             <Route path='/flight-events/:flightId' component={ UserIsAuthenticated(FlightEvents) } />
             <Route exact path='/flight-templates/:flightId' component={ UserIsAuthenticated(FlightTemplates) } />
             <Route path='/flight-template-edit/create/flight-id/:flightId/' component={ UserIsAuthenticated(FlightTemplateCreate) } />

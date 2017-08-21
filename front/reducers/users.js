@@ -1,5 +1,3 @@
-import findItemIndex from 'helpers/findItemIndex';
-
 let initialState = {
     pending: null,
     items: [],
@@ -23,8 +21,13 @@ export default function user(state = initialState, action) {
                 }
             };
         case 'USERS_CHOISE_TOGGLE':
-            let chosenIndex = findItemIndex(state.items, action.payload.id);
-            let chosenItemsIndex = findItemIndex(state.chosenItems, action.payload.id);
+            let chosenIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.id;
+            });
+
+            let chosenItemsIndex = state.chosenItems.findIndex((item) => {
+                return item.id === action.payload.id;
+            });
 
             if ((typeof chosenItemsIndex === 'number')
                  && (action.payload.checkstate === true)

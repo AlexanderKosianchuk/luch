@@ -46,7 +46,9 @@ class TopMenu extends React.Component {
                     <a className='main-menu-toggle navbar-brand is-hoverable' href='#'>
                         <span className='main-menu-toggle top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger'></span>
                     </a>
-                    <a className='top-menu__navbar-brand navbar-brand' href='#' onClick={ () => { this.props.redirect('/') }}>Luche</a>
+                    <a className='top-menu__navbar-brand navbar-brand' href='#' onClick={ () => { this.props.redirect('/') }}>
+                        <Translate value={ 'topMenu.brand' } />
+                    </a>
                 </div>
                 <div className='collapse navbar-collapse' id='top-menu-navbar-collapse'>
                   <ul className='nav navbar-nav'>
