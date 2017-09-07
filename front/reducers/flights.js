@@ -63,26 +63,26 @@ export default function flights(state = initialState, action) {
                 return item.id === action.payload.id;
             });
 
-            if ((typeof chosenItemsIndex === 'number')
-                 && (action.payload.checkstate === true)
-            ) {
-                return state;
-            }
-
-            if ((typeof chosenItemsIndex !== 'number')
+            if ((chosenItemsIndex === -1)
                  && (action.payload.checkstate === false)
             ) {
                 return state;
             }
 
-            if ((typeof chosenItemsIndex !== 'number')
+            if ((chosenItemsIndex >= 0)
+                 && (action.payload.checkstate === true)
+            ) {
+                return state;
+            }
+
+            if ((chosenItemsIndex === -1)
                  && (action.payload.checkstate === true)
             ) {
                 state.chosenItems.push(state.items[chosenIndex]);
                 return { ...state };
             }
 
-            if ((typeof chosenItemsIndex === 'number')
+            if ((chosenItemsIndex >= 0)
                  && (action.payload.checkstate === false)
             ) {
                 state.chosenItems.splice(chosenItemsIndex, 1);

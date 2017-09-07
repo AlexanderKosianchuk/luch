@@ -50,7 +50,7 @@ class Table extends Component {
     }
 
     onFetchData(state, instance) {
-        this.setState({ loading: true })
+        this.setState({ loading: true });
         // fetch your data
         /*Axios.post('mysite.com/data', {
             page: state.page,
