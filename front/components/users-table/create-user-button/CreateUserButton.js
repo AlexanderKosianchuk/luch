@@ -9,7 +9,7 @@ export default function CreateUserButton (props) {
             <li><a href='#' className='users-table-create-user-button__a'
                     onClick={ props.handleClick }>
                 <span
-                    className='users-table-create-user-button__folder glyphicon glyphicon-user' aria-hidden='true'>
+                    className='users-table-create-user-button__user glyphicon glyphicon-user' aria-hidden='true'>
                 </span>
                 <span
                     className='users-table-create-user-button__plus glyphicon glyphicon-plus'

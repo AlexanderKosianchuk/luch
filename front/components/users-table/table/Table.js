@@ -50,10 +50,13 @@ class Table extends Component {
         }, {
             Header: '',
             accessor: 'id',
-            minWidth: 60,
+            minWidth: 90,
             Cell: props => {
                 return(
                     <div className='users-table-table__actions'>
+                        <span className='users-table-table__glyph-activity glyphicon glyphicon-info-sign'
+                            onClick={ this.handleActivityClick.bind(this, props.value) }
+                        ></span>
                         <span className='users-table-table__glyph-edit glyphicon glyphicon-edit'
                             onClick={ this.handleEditClick.bind(this, props.value) }
                         ></span>
@@ -64,6 +67,10 @@ class Table extends Component {
                 );
             }
         }];
+    }
+
+    handleActivityClick(id) {
+        this.props.redirect('/user-activity/' + id);
     }
 
     handleEditClick(id) {

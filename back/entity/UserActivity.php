@@ -71,4 +71,17 @@ class UserActivity
         $this->message = $data['message'];
         $this->userId = $data['userId'];
     }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'action' => $this->action,
+            'status' => $this->status,
+            'code' => $this->code,
+            'message' => $this->message,
+            'date' => $this->date->format('y/m/d H:i:s'),
+            'userId' => $this->userId
+        ];
+    }
 }

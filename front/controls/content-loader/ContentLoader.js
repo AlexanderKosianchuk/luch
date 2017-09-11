@@ -32,7 +32,7 @@ export default function ContentLoader (props) {
     }
 
     return (
-        <div className="content-loader row"
+        <div className={ "content-loader row " + (props.className || '') }
             style={ getMargin() }
         >
             <div className="content-loader__loading"

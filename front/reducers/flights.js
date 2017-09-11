@@ -1,5 +1,3 @@
-import findItemIndex from 'helpers/findItemIndex';
-
 const initialState = {
     pending: null,
     items: [],
@@ -20,13 +18,17 @@ export default function flights(state = initialState, action) {
                 }
             };
         case 'DELETE_FLIGHT_COMPLETE': {
-            let deletedIndex = findItemIndex(state.items, action.payload.request.id);
+            let deletedIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (deletedIndex !== null) {
                 state.items.splice(deletedIndex, 1);
             }
 
-            deletedIndex = findItemIndex(state.chosenItems, action.payload.request.id);
+            deletedIndex = state.chosenItems.findIndex((item) => {
+                return item.id === action.payload.request.id
+            });
 
             if (deletedIndex !== null) {
                 state.chosenItems.splice(deletedIndex, 1);
@@ -35,7 +37,9 @@ export default function flights(state = initialState, action) {
             return { ...state };
         }
         case 'PUT_FLIGHT_PATH_COMPLETE': {
-            let movedIndex = findItemIndex(state.items, action.payload.request.id);
+            let movedIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (movedIndex !== null) {
                 state.items[movedIndex].parentId = action.payload.request.parentId
@@ -51,29 +55,34 @@ export default function flights(state = initialState, action) {
 
             return state;
         case 'FLIGHTS_CHOISE_TOGGLE':
-            let chosenIndex = findItemIndex(state.items, action.payload.id);
-            let chosenItemsIndex = findItemIndex(state.chosenItems, action.payload.id);
+            let chosenIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.id;
+            });
 
-            if ((typeof chosenItemsIndex === 'number')
-                 && (action.payload.checkstate === true)
-            ) {
-                return state;
-            }
+            let chosenItemsIndex = state.chosenItems.findIndex((item) => {
+                return item.id === action.payload.id;
+            });
 
-            if ((typeof chosenItemsIndex !== 'number')
+            if ((chosenItemsIndex === -1)
                  && (action.payload.checkstate === false)
             ) {
                 return state;
             }
 
-            if ((typeof chosenItemsIndex !== 'number')
+            if ((chosenItemsIndex >= 0)
+                 && (action.payload.checkstate === true)
+            ) {
+                return state;
+            }
+
+            if ((chosenItemsIndex === -1)
                  && (action.payload.checkstate === true)
             ) {
                 state.chosenItems.push(state.items[chosenIndex]);
                 return { ...state };
             }
 
-            if ((typeof chosenItemsIndex === 'number')
+            if ((chosenItemsIndex >= 0)
                  && (action.payload.checkstate === false)
             ) {
                 state.chosenItems.splice(chosenItemsIndex, 1);

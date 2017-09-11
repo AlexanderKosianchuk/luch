@@ -1,5 +1,3 @@
-import findItemIndex from 'helpers/findItemIndex';
-
 const initialState = {
     pending: null,
     items: [],
@@ -19,7 +17,9 @@ export default function folders(state = initialState, action) {
                 }
             };
         case 'DELETE_FOLDER_COMPLETE': {
-            let deletedIndex = findItemIndex(state.items, action.payload.request.id);
+            let deletedIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (deletedIndex !== null) {
                 state.items.splice(deletedIndex, 1);
@@ -31,7 +31,9 @@ export default function folders(state = initialState, action) {
             state.items.push(action.payload.response)
             return { ...state };
         case 'PUT_FOLDER_PATH_COMPLETE': {
-            let movedIndex = findItemIndex(state.items, action.payload.request.id);
+            let movedIndex = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (movedIndex !== null) {
                 state.items[movedIndex].parentId = action.payload.request.parentId
@@ -40,7 +42,9 @@ export default function folders(state = initialState, action) {
             return { ...state };
         }
         case 'PUT_FOLDER_EXPANDING_COMPLETE':
-            let toggledExpandingItem = findItemIndex(state.items, action.payload.request.id);
+            let toggledExpandingItem = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (toggledExpandingItem !== null) {
                 state.items[toggledExpandingItem].expanded
@@ -49,7 +53,9 @@ export default function folders(state = initialState, action) {
 
             return { ...state };
         case 'PUT_FOLDER_RENAME_COMPLETE':
-            let renamingItem = findItemIndex(state.items, action.payload.request.id);
+            let renamingItem = state.items.findIndex((item) => {
+                return item.id === action.payload.request.id;
+            });
 
             if (renamingItem !== null) {
                 state.items[renamingItem].name = action.payload.request.name;
