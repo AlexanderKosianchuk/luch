@@ -36,7 +36,12 @@ const App = ({ history }) => (
             <Route path='/flights/table' component={ UserIsAuthenticated(FlightsTable) } />
             <Route path='/user-settings' component={ UserIsAuthenticated(Settings) } />
             <Route path='/results' component={ UserIsAuthenticated(Results) } />
-            <Route path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
+
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
+
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />
             <Route exact path='/user/create/' component={ UserIsAuthenticated(UserForm) } />
             <Route exact path='/user/:type/:userId' component={ UserIsAuthenticated(UserForm) } />
