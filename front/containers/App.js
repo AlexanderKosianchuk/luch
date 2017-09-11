@@ -40,6 +40,8 @@ const App = ({ history }) => (
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />
             <Route exact path='/user/create/' component={ UserIsAuthenticated(UserForm) } />
             <Route exact path='/user/:type/:userId' component={ UserIsAuthenticated(UserForm) } />
+            <Route exact path='/user-activity/:userId/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(UserActivity) } />
+            <Route exact path='/user-activity/:userId/page/:page' component={ UserIsAuthenticated(UserActivity) } />
             <Route exact path='/user-activity/:userId' component={ UserIsAuthenticated(UserActivity) } />
             <Route path='/flight-events/:flightId' component={ UserIsAuthenticated(FlightEvents) } />
             <Route exact path='/flight-templates/:flightId' component={ UserIsAuthenticated(FlightTemplates) } />

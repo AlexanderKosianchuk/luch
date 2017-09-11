@@ -33,7 +33,9 @@ class Table extends Component {
         }];
 
         this.state = {
-            isLoading: true
+            data: [],
+            pages: 0,
+            isLoading: true,
         }
     }
 
@@ -51,19 +53,42 @@ class Table extends Component {
 
     onFetchData(state, instance) {
         this.setState({ loading: true });
-        // fetch your data
-        /*Axios.post('mysite.com/data', {
-            page: state.page,
-            pageSize: state.pageSize,
-            sorted: state.sorted,
-            filtered: state.filtered
-        }).then((res) => {
+
+        this.props.request(
+            ['users', 'getUserActivity'],
+            'USER_ACTIVITY',
+            'get', {
+                userId: this.props.userId,
+                page: this.props.page,
+                pageSize: this.props.pageSize
+            }
+        ).then((res) => {
+            let rows = res.rows;
+            let arr = new Array((this.props.page - 1)* this.props.pageSize);
+            let data = arr.concat(rows);
+
             this.setState({
-                data: res.data.rows,
-                pages: res.data.pages,
-                loading: false
+                data: data,
+                pages: res.pages,
+                isLoading: false
             });
-        });*/
+        });
+    }
+
+    onPageChange(pageIndex) {
+        this.props.redirect('/user-activity/'
+            + this.props.userId + '/'
+            + 'page/'+ (pageIndex + 1) + '/'
+            + 'page-size/'+ this.props.pageSize
+        );
+    }
+
+    onPageSizeChange(pageSize, pageIndex) {
+        this.props.redirect('/user-activity/'
+            + this.props.userId + '/'
+            + 'page/'+ (pageIndex + 1) + '/'
+            + 'page-size/'+ pageSize
+        );
     }
 
     render() {
@@ -75,6 +100,13 @@ class Table extends Component {
                     className={ this.state.isLoading ? 'user-activity-table__hidden' : '' }
                     columns={ this.columns }
                     onFetchData={ this.onFetchData.bind(this) }
+                    onPageChange={ this.onPageChange.bind(this) }
+                    onPageSizeChange={ this.onPageSizeChange.bind(this) }
+                    data={ this.state.data }
+                    page={ this.props.page - 1 }
+                    pages={ this.state.pages }
+                    pageSize={ this.props.pageSize }
+                    loading={ this.state.isLoading }
                 />
                 <ContentLoader
                     className={ this.state.isLoading ? '' : 'user-activity-table__hidden' }

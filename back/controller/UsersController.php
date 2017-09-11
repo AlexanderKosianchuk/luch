@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use Doctrine\ORM\Query;
+
 use Model\User;
 use Model\Language;
 use Model\Fdr;
@@ -398,5 +400,53 @@ class UsersController extends CController
         $em->flush();
 
         return json_encode('ok');
+    }
+
+    public function getUserActivity($args)
+    {
+        if (!isset($args['userId'])
+            || empty($args['userId'])
+            || !is_int(intval($args['userId']))
+            || !isset($args['page'])
+            || empty($args['page'])
+            || !is_int(intval($args['page']))
+            || !isset($args['pageSize'])
+            || empty($args['pageSize'])
+            || !is_int(intval($args['pageSize']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $userId = $args['userId'];
+        $page = $args['page'];
+        $pageSize = $args['pageSize'];
+
+        $em = EM::get();
+
+        $userActivityResult = $em->getRepository('Entity\UserActivity')
+            ->findBy(
+                ['userId' => $userId],
+                ['date' => 'DESC'],
+                $pageSize,
+                ($page - 1) * $pageSize
+            );
+
+        $activity = [];
+        foreach($userActivityResult as $item) {
+            $activity[] = $item->get();
+        }
+
+        $total = $em->getRepository('Entity\UserActivity')
+            ->createQueryBuilder('userActivity')
+            ->select('count(userActivity.id)')
+            ->where('userActivity.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        echo json_encode([
+            'rows' => $activity,
+            'pages' => round($total / $pageSize)
+        ]);
     }
 }

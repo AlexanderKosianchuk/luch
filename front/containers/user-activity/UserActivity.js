@@ -5,6 +5,7 @@ import Menu from 'controls/menu/Menu';
 
 import Toolbar from 'components/user-activity/toolbar/Toolbar';
 import Table from 'components/user-activity/table/Table';
+import { DEFAULT_PAGE_SIZE } from 'controls/table/Table';
 
 function UserActivity(props) {
     return (
@@ -13,6 +14,8 @@ function UserActivity(props) {
             <Toolbar/>
             <Table
                 userId={ props.userId }
+                page={ props.page }
+                pageSize={ props.pageSize }
             />
         </div>
     );
@@ -20,7 +23,9 @@ function UserActivity(props) {
 
 function mapStateToProps(state, ownProps) {
     return {
-        userId: parseInt(ownProps.match.params.userId) || null
+        userId: parseInt(ownProps.match.params.userId) || null,
+        page: parseInt(ownProps.match.params.page) || 1,
+        pageSize: parseInt(ownProps.match.params.pageSize) || DEFAULT_PAGE_SIZE
     };
 }
 
