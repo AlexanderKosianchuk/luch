@@ -64,7 +64,7 @@ class Table extends Component {
             }
         ).then((res) => {
             let rows = res.rows;
-            let arr = new Array((this.props.page - 1)* this.props.pageSize);
+            let arr = new Array((this.props.page - 1) * this.props.pageSize);
             let data = arr.concat(rows);
 
             this.setState({

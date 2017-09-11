@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Doctrine\ORM\Query;
-
 use Model\User;
 use Model\Language;
 use Model\Fdr;
