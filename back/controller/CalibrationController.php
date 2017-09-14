@@ -5,6 +5,8 @@ namespace Controller;
 use Model\Fdr;
 use Model\Calibration;
 
+use Component\EntityManagerComponent as EM;
+
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -107,5 +109,26 @@ class CalibrationController extends CController
         }
 
         return json_encode('ok');
+    }
+
+    public function getCalibrations()
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        $em = EM::get();
+
+        $calibrations = $em->getRepository('Entity\Calibration')
+            ->findBy(['userId' => $userId]);
+
+        $response = [];
+        foreach ($calibrations as $item) {
+            $response[] = $item->get();
+        }
+
+        return json_encode($response);
     }
 }

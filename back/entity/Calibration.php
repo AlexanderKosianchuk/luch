@@ -33,14 +33,14 @@ class Calibration
      *
      * @Column(name="id_fdr", type="integer", nullable=false)
      */
-    private $idFdr;
+    private $fdrId;
 
     /**
      * @var integer
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $idUser;
+    private $userId;
 
     /**
      * @var \DateTime
@@ -55,6 +55,18 @@ class Calibration
      * @Column(name="dt_updated", type="datetime", nullable=false)
      */
     private $dtUpdated;
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'fdrId' => $this->fdrId,
+            'userId' => $this->userId,
+            'dtCreated' => $this->dtCreated->format('y/m/d H:i:s'),
+            'dtUpdated' => $this->dtUpdated->format('y/m/d H:i:s')
+        ];
+    }
 
 
 }

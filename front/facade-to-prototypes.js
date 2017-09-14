@@ -76,11 +76,6 @@ export default function facade(store) {
         C.FillFactoryContaider(showcase);
     });
 
-    $(document).on('calibrationsShow', function (e, showcase) {
-        let CLB = new Calibration(store);
-        CLB.FillFactoryContaider(showcase);
-    });
-
     $(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {
         let FU = new FlightUploader(store);
         FU.uploadPreviewed().then(() => {

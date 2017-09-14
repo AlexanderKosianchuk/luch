@@ -19,16 +19,16 @@ class Table extends Component {
         super(props);
 
         this.columns = [{
-            Header: I18n.t('userActivity.table.action'),
+            Header: I18n.t('calibrations.table.action'),
             accessor: 'action'
         }, {
-            Header: I18n.t('userActivity.table.status'),
+            Header: I18n.t('calibrations.table.status'),
             accessor: 'status'
         }, {
-            Header: I18n.t('userActivity.table.message'),
+            Header: I18n.t('calibrations.table.message'),
             accessor: 'message'
         }, {
-            Header: I18n.t('userActivity.table.date'),
+            Header: I18n.t('calibrations.table.date'),
             accessor: 'date'
         }];
 
