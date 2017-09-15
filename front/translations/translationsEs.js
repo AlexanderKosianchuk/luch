@@ -167,12 +167,18 @@ const translationsEs = {
             }
         },
         calibration: {
-            title: 'Calibration',
-            fdr: 'FDR',
+            toolbar: {
+                title: 'Calibration'
+            },
+            table: {
+                fdr: 'FDR',
+                name: 'Name',
+                dateCreation: 'Creation Date',
+                dateLastEdit: 'Last Edit'
+            },
             create: 'Create',
             creationForm: 'Calibration Creation Form',
             for: 'for',
-            name: 'Name',
             paramName: 'Name',
             paramCode: 'Code',
             paramChannels: 'Channels',
@@ -181,8 +187,6 @@ const translationsEs = {
             update: 'Update',
             list: 'To List',
             unexist: 'No calibrations',
-            dateCreation: 'Creation Date',
-            dateLastEdit: 'Last Edit',
             controls: 'Controls',
             edit: 'Edit',
             delete: 'Delete',
@@ -266,6 +270,9 @@ const translationsEs = {
                 on: 'On',
                 off: 'Off',
             }
+        },
+        fdrSelector: {
+            placeholder: 'Select FDR type'
         },
         cycloParams: {
             colorPicker: {

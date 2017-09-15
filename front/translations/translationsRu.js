@@ -167,12 +167,18 @@ const translationsRu = {
             }
         },
         calibration: {
-            title: 'Градуировки',
-            fdr: 'Тип регистратора',
+            toolbar: {
+                title: 'Градуировки'
+            },
+            table: {
+                fdr: 'Тип регистратора',
+                name: 'Название',
+                dateCreation: 'Дата создания',
+                dateLastEdit: 'Дата последенего редактирования'
+            },
             create: 'Создать',
             creationForm: 'Форма создатания градуировки',
             for: 'для',
-            name: 'Название',
             paramName: 'Название',
             paramCode: 'Код',
             paramChannels: 'Каналы',
@@ -181,8 +187,6 @@ const translationsRu = {
             update: 'Обновить',
             list: 'К списку',
             unexist: 'Градуировки отсутствуют',
-            dateCreation: 'Дата создания',
-            dateLastEdit: 'Дата последенего редактирования',
             controls: 'Управление',
             edit: 'Редактировать',
             delete: 'Удалить',
@@ -266,6 +270,9 @@ const translationsRu = {
                 on: 'Вкл',
                 off: 'Выкл',
             }
+        },
+        fdrSelector: {
+            placeholder: 'Выберите тип регистратора'
         },
         cycloParams: {
             colorPicker: {

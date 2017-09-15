@@ -2,6 +2,7 @@ import './table.sass'
 import 'react-table/react-table.css'
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
@@ -19,28 +20,34 @@ class Table extends Component {
         super(props);
 
         this.columns = [{
-            Header: I18n.t('calibrations.table.action'),
-            accessor: 'action'
+            Header: '#',
+            accessor: 'number',
+            width: 60,
         }, {
-            Header: I18n.t('calibrations.table.status'),
-            accessor: 'status'
+            Header: I18n.t('calibration.table.name'),
+            accessor: 'name'
         }, {
-            Header: I18n.t('calibrations.table.message'),
-            accessor: 'message'
+            Header: I18n.t('calibration.table.fdr'),
+            accessor: 'fdrName'
         }, {
-            Header: I18n.t('calibrations.table.date'),
-            accessor: 'date'
+            Header: I18n.t('calibration.table.dateCreation'),
+            accessor: 'dtCreated'
+        }, {
+            Header: I18n.t('calibration.table.dateLastEdit'),
+            accessor: 'dtUpdated'
         }];
 
         this.state = {
             data: [],
             pages: 0,
-            isLoading: true,
-        }
+            isLoading: false
+        };
     }
 
     componentDidMount() {
         this.resize();
+
+        this.fetchData();
     }
 
     componentDidUpdate() {
@@ -51,20 +58,37 @@ class Table extends Component {
         this.container.style.height = window.innerHeight - TOP_CONTROLS_HEIGHT + 'px';
     }
 
-    onFetchData(state, instance) {
+    fetchData() {
+        console.log('this.state.loading');
+        console.log(this.state.isLoading);
+        debugger;
+        if (this.state.isLoading === true) {
+            return;
+        }
+
         this.setState({ loading: true });
 
         this.props.request(
-            ['users', 'getUserActivity'],
-            'USER_ACTIVITY',
-            'get', {
-                userId: this.props.userId,
+            ['calibration', 'getCalibrationsPage'],
+            'get',
+            null,
+            {
+                fdrId: this.props.fdrId,
                 page: this.props.page,
                 pageSize: this.props.pageSize
             }
         ).then((res) => {
-            let rows = res.rows;
-            let arr = new Array((this.props.page - 1) * this.props.pageSize);
+            let beforeItemsCount = (this.props.page - 1) * this.props.pageSize;
+            let counter = 0;
+            let arr = new Array(beforeItemsCount);
+
+            let rows = res.rows.map((row) => {
+                counter++;
+                return { ...row, ... {
+                    number: beforeItemsCount + counter
+                }}
+            })
+
             let data = arr.concat(rows);
 
             this.setState({
@@ -75,31 +99,52 @@ class Table extends Component {
         });
     }
 
+    navigate (fdrId, pageIndex, pageSize) {
+        if ((fdrId !== null)
+            && (pageIndex !== null)
+            && (pageSize !== null)
+        ) {
+            this.props.redirect('/calibrations/'
+                + 'fdr-id/' + fdrId + '/'
+                + 'page/'+ (pageIndex + 1) + '/'
+                + 'page-size/'+ pageSize
+            );
+        }
+
+        if ((fdrId === null)
+            && (pageIndex !== null)
+            && (pageSize !== null)
+        ) {
+            this.props.redirect('/calibrations/'
+                + 'page/'+ (pageIndex + 1) + '/'
+                + 'page-size/'+ pageSize
+            );
+        }
+
+        if ((fdrId !== null)
+            && (pageIndex === null)
+            && (pageSize == null)
+        ) {
+            this.props.redirect('/calibrations/' + fdrId);
+        }
+    }
+
     onPageChange(pageIndex) {
-        this.props.redirect('/user-activity/'
-            + this.props.userId + '/'
-            + 'page/'+ (pageIndex + 1) + '/'
-            + 'page-size/'+ this.props.pageSize
-        );
+        this.navigate (this.props.fdrId, (pageIndex + 1), this.props.pageSize);
     }
 
     onPageSizeChange(pageSize, pageIndex) {
-        this.props.redirect('/user-activity/'
-            + this.props.userId + '/'
-            + 'page/'+ (pageIndex + 1) + '/'
-            + 'page-size/'+ pageSize
-        );
+        this.navigate (this.props.fdrId, 1, pageSize);
     }
 
     render() {
         return (
-            <div className='user-activity-table'
+            <div className='calibrations-table'
                 ref={(container) => { this.container = container; }}
             >
                 <TableControl
-                    className={ this.state.isLoading ? 'user-activity-table__hidden' : '' }
+                    className={ this.state.isLoading ? 'calibrations-table__hidden' : '' }
                     columns={ this.columns }
-                    onFetchData={ this.onFetchData.bind(this) }
                     onPageChange={ this.onPageChange.bind(this) }
                     onPageSizeChange={ this.onPageSizeChange.bind(this) }
                     data={ this.state.data }
@@ -109,12 +154,21 @@ class Table extends Component {
                     loading={ this.state.isLoading }
                 />
                 <ContentLoader
-                    className={ this.state.isLoading ? '' : 'user-activity-table__hidden' }
+                    className={ this.state.isLoading ? '' : 'calibrations-table__hidden' }
                 />
             </div>
         );
     }
 }
+
+Table.propTypes = {
+    fdrId: PropTypes.number,
+    page:  PropTypes.number,
+    pageSize: PropTypes.number,
+
+    request: PropTypes.func,
+    transmit: PropTypes.func
+};
 
 function mapStateToProps(state) {
     return {};

@@ -39,6 +39,8 @@ const App = ({ history }) => (
 
             <Route exact path='/calibrations/fdr-id/:fdrId/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(Calibrations) } />
             <Route exact path='/calibrations/fdr-id/:fdrId/page/:page' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page' component={ UserIsAuthenticated(Calibrations) } />
             <Route exact path='/calibrations/fdr-id/:fdrId' component={ UserIsAuthenticated(Calibrations) } />
             <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
 

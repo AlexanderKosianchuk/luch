@@ -21,8 +21,8 @@ class List extends React.Component {
     componentWillMount() {
         this.props.request(
             ['templates', 'getFlightTemplates'],
-            'FLIGHT_TEMPLATES',
             'get',
+            'FLIGHT_TEMPLATES',
             { flightId: this.props.flightId }
         );
     }

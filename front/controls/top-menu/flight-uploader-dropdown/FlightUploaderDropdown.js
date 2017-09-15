@@ -49,8 +49,8 @@ class FlightUploaderDropdown extends Component {
         if (this.props.previewState) {
             this.props.request(
                 ['uploader', 'storeFlightFile'],
-                'FLIGHT_FILE',
                 'post',
+                'FLIGHT_FILE',
                 form
             ).then(() => {
                 this.props.redirect('/uploading/' + uploadingUid

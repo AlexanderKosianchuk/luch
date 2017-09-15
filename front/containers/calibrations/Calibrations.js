@@ -12,7 +12,9 @@ function Calibrations (props) {
     return (
         <div>
             <Menu />
-            <Toolbar/>
+            <Toolbar
+                fdrId={ props.fdrId }
+            />
             <Table
                 fdrId={ props.fdrId }
                 page={ props.page }

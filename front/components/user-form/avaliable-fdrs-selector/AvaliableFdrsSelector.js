@@ -11,8 +11,8 @@ class AvaliableFdrsSelector extends Component {
         if (this.props.fdrsPending !== false) {
             this.props.request(
                 ['fdr', 'getFdrs'],
-                'FDRS',
-                'get'
+                'get',
+                'FDRS'
             );
         }
     }

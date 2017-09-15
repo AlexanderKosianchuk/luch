@@ -30,8 +30,8 @@ class ShowChartByTemplates extends React.Component {
             let templateName = 'last';
             Promise.resolve(this.props.request(
                 ['templates', 'mergeTemplates'],
-                'TEMPLATES_MERGE',
                 'post',
+                'TEMPLATES_MERGE',
                 {
                     flightId: this.props.flightId,
                     resultTemplateName: templateName,

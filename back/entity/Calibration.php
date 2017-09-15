@@ -56,12 +56,20 @@ class Calibration
      */
     private $dtUpdated;
 
+    /**
+     * One Calibration has One Fdr.
+     * @OneToOne(targetEntity="Fdr")
+     * @JoinColumn(name="id_fdr", referencedColumnName="id")
+     */
+    private $fdr;
+
     public function get()
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
             'fdrId' => $this->fdrId,
+            'fdrName' => $this->fdr->getName(),
             'userId' => $this->userId,
             'dtCreated' => $this->dtCreated->format('y/m/d H:i:s'),
             'dtUpdated' => $this->dtUpdated->format('y/m/d H:i:s')

@@ -1,22 +1,41 @@
 import './toolbar.sass'
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { I18n } from 'react-redux-i18n';
+import { Translate } from 'react-redux-i18n';
 
-import ControlButtons from 'components/user-form/control-buttons/ControlButtons';
+import FdrSelector from 'controls/fdr-selector/FdrSelector';
 
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
+    handleChange(chosenFdr) {
+        let parsedUrl = new URL(window.location.href);
+        let url = parsedUrl.pathname;
+
+        if (url.indexOf('fdr-id') !== -1) {
+            url = url.replace(/fdr-id\/[0-9]+/, 'fdr-id/' + chosenFdr.id)
+        } else {
+            url = url.replace(/calibrations/, 'calibrations/fdr-id/' + chosenFdr.id)
+        }
+
+        this.props.redirect(url);
+    }
+
     handleListClick() {
         this.props.redirect('/users');
     }
 
     render() {
+        let isClear = true;
+        if (this.props.fdrId) {
+            isClear = false;
+        }
+
         return (
-            <nav className='navbar navbar-default'>
+            <nav className='calibrations-toolbar navbar navbar-default'>
                 <div className='container-fluid'>
                     <div className='navbar-header'>
                       <button type='button' className='navbar-toggle collapsed' data-toggle='collapse' data-target='#bs-navbar-collapse' aria-expanded='false'>
@@ -26,22 +45,43 @@ class Toolbar extends Component {
                         <span className='icon-bar'></span>
                       </button>
                       <a className='navbar-brand' href='#'>
-                        { I18n.t('userForm.toolbar.' + this.props.type) }
+                        <Translate value='calibration.toolbar.title' />
                       </a>
                     </div>
 
-                    <ControlButtons
-                        handleSaveClick={ this.props.submit }
-                        handleListClick={ this.handleListClick.bind(this) }
-                    />
+                    <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
+                        <ul className='nav navbar-nav navbar-right'>
+                            <FdrSelector
+                                chosenFdrId={ this.props.fdrId }
+                                isClear={ isClear }
+                                handleChange={ this.handleChange.bind(this) }
+                            />
+                            <li><a href='#'>
+                                <span
+                                    className='glyphicon glyphicon-plus' aria-hidden='true'>
+                                </span>
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
         );
     }
 }
 
-function mapStateToProps() {
-    return {};
+Toolbar.propTypes = {
+    fdrId: PropTypes.number,
+    page:  PropTypes.number,
+    pageSize: PropTypes.number,
+
+    chosen: PropTypes.object.isRequired,
+    redirect: PropTypes.func.isRequired
+};
+
+function mapStateToProps(state) {
+    return {
+        chosen: state.fdrs.chosen
+    }
 }
 
 function mapDispatchToProps(dispatch) {

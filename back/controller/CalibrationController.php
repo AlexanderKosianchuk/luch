@@ -131,4 +131,78 @@ class CalibrationController extends CController
 
         return json_encode($response);
     }
+
+    public function getCalibrationsPage($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['page'])
+            || empty($args['page'])
+            || !is_int(intval($args['page']))
+            || !isset($args['pageSize'])
+            || empty($args['pageSize'])
+            || !is_int(intval($args['pageSize']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $fdrId = null;
+
+        if (!isset($args['fdrId'])
+            || empty($args['fdrId'])
+            || !is_int(intval($args['fdrId']))
+        ) {
+            $fdrId = $args['fdrId'];
+        }
+
+        $page = $args['page'];
+        $pageSize = $args['pageSize'];
+
+        $em = EM::get();
+
+        $criteria = ['userId' => $userId];
+
+        if ($fdrId !== null) {
+            $criteria = array_merge($criteria, ['fdrId' => $fdrId]);
+        }
+
+        $calibrationResult = $em->getRepository('Entity\Calibration')
+            ->findBy(
+                $criteria,
+                ['dtUpdated' => 'DESC'],
+                $pageSize,
+                ($page - 1) * $pageSize
+            );
+
+        $activity = [];
+        foreach($calibrationResult as $item) {
+            $activity[] = $item->get();
+        }
+
+
+        $qb = $em->getRepository('Entity\Calibration')
+            ->createQueryBuilder('calibration')
+            ->select('count(calibration.id)')
+            ->where('calibration.userId = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($fdrId !== null) {
+            $qb
+                ->andWhere('calibration.fdrId = :fdrId')
+                ->setParameter('fdrId', $fdrId);
+        }
+
+        $total = $qb
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return json_encode([
+            'rows' => $activity,
+            'pages' => round($total / $pageSize)
+        ]);
+    }
 }

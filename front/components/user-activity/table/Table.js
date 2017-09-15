@@ -56,8 +56,9 @@ class Table extends Component {
 
         this.props.request(
             ['users', 'getUserActivity'],
+            'get',
             'USER_ACTIVITY',
-            'get', {
+            {
                 userId: this.props.userId,
                 page: this.props.page,
                 pageSize: this.props.pageSize
@@ -86,7 +87,7 @@ class Table extends Component {
     onPageSizeChange(pageSize, pageIndex) {
         this.props.redirect('/user-activity/'
             + this.props.userId + '/'
-            + 'page/'+ (pageIndex + 1) + '/'
+            + 'page/'+ 1 + '/'
             + 'page-size/'+ pageSize
         );
     }

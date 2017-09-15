@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { I18n } from 'react-redux-i18n';
 
 import Select from 'react-select2-wrapper';
 import 'react-select2-wrapper/css/select2.min.css';
@@ -16,8 +17,8 @@ class FdrSelector extends Component {
         if (this.props.pending === null) {
             this.props.request(
                 ['fdr', 'getFdrs'],
-                'FDRS',
-                'get'
+                'get',
+                'FDRS'
             );
         }
     }
@@ -52,6 +53,12 @@ class FdrSelector extends Component {
         }
 
         let chosen = this.props.fdrs[index];
+
+        if (typeof this.props.handleChange === 'function') {
+            this.props.handleChange(chosen);
+            return;
+        }
+
         this.props.transmit('CHOOSE_FDR', chosen);
 
         if (!chosen.calibrations
@@ -73,13 +80,25 @@ class FdrSelector extends Component {
             isHidden = false;
         }
 
+        let chosen = this.props.chosenFdrId || this.props.chosen.id || null;
+        let allowClear = false;
+        if (this.props.isClear) {
+            chosen = null;
+            allowClear = true;
+        }
+
         return (
-          <li className={ "fdr-selector " + (isHidden ? 'is-hidden' : '') }>
-              <a href="#"><Select
+          <li className={ 'fdr-selector ' + (isHidden ? 'is-hidden' : '') }>
+              <a href='#'><Select
+                  className='fdr-selector__select'
                   data={ this.buildList() }
-                  value={ this.props.chosen.id || null }
+                  value={ chosen }
                   onSelect={ this.handleSelect.bind(this) }
                   ref={(select) => { this.selectFdrType = select; }}
+                  options={{
+                      placeholder: I18n.t('fdrSelector.placeholder'),
+                      allowClear: allowClear
+                  }}
                 />
               </a>
           </li>
@@ -88,7 +107,9 @@ class FdrSelector extends Component {
 }
 
 FdrSelector.propTypes = {
-    handleReady: PropTypes.func,
+    isClear: PropTypes.bool,
+    chosenFdrId: PropTypes.number,
+    handleChange: PropTypes.func,
 
     pending:  PropTypes.bool,
     fdrs: PropTypes.array,

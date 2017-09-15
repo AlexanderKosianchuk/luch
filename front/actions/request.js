@@ -3,15 +3,17 @@ import queryString from 'query-string';
 
 export default function request(
     action,
-    actionType,
     method,
+    actionType = null,
     payload = {}
 ) {
     return function(dispatch) {
-        dispatch({
-            type: method.toUpperCase() + '_' + actionType + '_START',
-            payload: payload
-        });
+        if (actionType !== null) {
+            dispatch({
+                type: method.toUpperCase() + '_' + actionType + '_START',
+                payload: payload
+            });
+        }
 
         let url = ENTRY_URL+'?action='+action.join('/');
         let options = {
@@ -38,46 +40,58 @@ export default function request(
                     (response) => {
                         response.json().then((json) => {
                             if (response.status === 200) {
-                                dispatch({
-                                    type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
-                                    payload: {
-                                        request: payload,
-                                        response: json
-                                    }
-                                });
+                                if (actionType !== null) {
+                                    dispatch({
+                                        type: method.toUpperCase() + '_' + actionType + '_COMPLETE',
+                                        payload: {
+                                            request: payload,
+                                            response: json
+                                        }
+                                    });
+                                }
+
                                 resolve(json);
                             } else {
-                                dispatch({
-                                    type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
-                                    payload: {
-                                        request: payload,
-                                        response: json
-                                    }
-                                });
+                                if (actionType !== null) {
+                                    dispatch({
+                                        type: method.toUpperCase() + '_' + actionType + '_FAIL_PARSE',
+                                        payload: {
+                                            request: payload,
+                                            response: json
+                                        }
+                                    });
+                                }
+
                                 reject(json);
                             }
                         });
                     },
                     (response) => {
-                        dispatch({
-                            type: method.toUpperCase() + '_' + actionType + '_FAIL',
-                            payload: {
-                                request: payload,
-                                response: response
-                            }
-                        });
+                        if (actionType !== null) {
+                            dispatch({
+                                type: method.toUpperCase() + '_' + actionType + '_FAIL',
+                                payload: {
+                                    request: payload,
+                                    response: response
+                                }
+                            });
+                        }
+
                         reject(response);
                         return response;
                     }
                 );
             } catch (exception) {
-                dispatch({
-                    type: method.toUpperCase() + '_' + actionType + '_FAIL_REQUEST',
-                    payload: {
-                        request: payload,
-                        response: exception
-                    }
-                });
+                if (actionType !== null) {
+                    dispatch({
+                        type: method.toUpperCase() + '_' + actionType + '_FAIL_REQUEST',
+                        payload: {
+                            request: payload,
+                            response: exception
+                        }
+                    });
+                }
+
                 reject(exception);
             }
         });
