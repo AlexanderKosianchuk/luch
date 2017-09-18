@@ -37,10 +37,11 @@ class Table extends Component {
             accessor: 'dtUpdated'
         }];
 
+        this.isLoading = false;
+
         this.state = {
             data: [],
             pages: 0,
-            isLoading: false
         };
     }
 
@@ -50,8 +51,15 @@ class Table extends Component {
         this.fetchData();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         this.resize();
+
+        if ((prevProps.fdrId !== this.props.fdrId)
+             || (prevProps.page !== this.props.page)
+             || (prevProps.pageSize !== this.props.pageSize)
+         ) {
+             this.fetchData();
+         }
     }
 
     resize() {
@@ -59,14 +67,11 @@ class Table extends Component {
     }
 
     fetchData() {
-        console.log('this.state.loading');
-        console.log(this.state.isLoading);
-        debugger;
-        if (this.state.isLoading === true) {
+        if (this.isLoading === true) {
             return;
         }
 
-        this.setState({ loading: true });
+        this.isLoading = true;
 
         this.props.request(
             ['calibration', 'getCalibrationsPage'],
@@ -93,9 +98,10 @@ class Table extends Component {
 
             this.setState({
                 data: data,
-                pages: res.pages,
-                isLoading: false
+                pages: res.pages
             });
+
+            this.isLoading = false;
         });
     }
 
@@ -106,7 +112,7 @@ class Table extends Component {
         ) {
             this.props.redirect('/calibrations/'
                 + 'fdr-id/' + fdrId + '/'
-                + 'page/'+ (pageIndex + 1) + '/'
+                + 'page/'+ pageIndex + '/'
                 + 'page-size/'+ pageSize
             );
         }
@@ -116,7 +122,7 @@ class Table extends Component {
             && (pageSize !== null)
         ) {
             this.props.redirect('/calibrations/'
-                + 'page/'+ (pageIndex + 1) + '/'
+                + 'page/' + pageIndex + '/'
                 + 'page-size/'+ pageSize
             );
         }

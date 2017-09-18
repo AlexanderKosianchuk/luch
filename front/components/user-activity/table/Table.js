@@ -20,7 +20,8 @@ class Table extends Component {
 
         this.columns = [{
             Header: I18n.t('userActivity.table.action'),
-            accessor: 'action'
+            accessor: 'action',
+            minWidth: 260,
         }, {
             Header: I18n.t('userActivity.table.status'),
             accessor: 'status'
@@ -32,27 +33,41 @@ class Table extends Component {
             accessor: 'date'
         }];
 
+        this.isLoading = false;
+
         this.state = {
             data: [],
-            pages: 0,
-            isLoading: true,
+            pages: 0
         }
     }
 
     componentDidMount() {
         this.resize();
+
+        this.fetchData();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         this.resize();
+
+        if ((prevProps.userId !== this.props.userId)
+             || (prevProps.page !== this.props.page)
+             || (prevProps.pageSize !== this.props.pageSize)
+         ) {
+             this.fetchData();
+         }
     }
 
     resize() {
         this.container.style.height = window.innerHeight - TOP_CONTROLS_HEIGHT + 'px';
     }
 
-    onFetchData(state, instance) {
-        this.setState({ loading: true });
+    fetchData () {
+        if (this.isLoading === true) {
+            return;
+        }
+
+        this.isLoading = true;
 
         this.props.request(
             ['users', 'getUserActivity'],
@@ -70,9 +85,10 @@ class Table extends Component {
 
             this.setState({
                 data: data,
-                pages: res.pages,
-                isLoading: false
+                pages: res.pages
             });
+
+            this.isLoading = false;
         });
     }
 
@@ -87,7 +103,7 @@ class Table extends Component {
     onPageSizeChange(pageSize, pageIndex) {
         this.props.redirect('/user-activity/'
             + this.props.userId + '/'
-            + 'page/'+ 1 + '/'
+            + 'page/' + 1 + '/'
             + 'page-size/'+ pageSize
         );
     }
@@ -100,7 +116,6 @@ class Table extends Component {
                 <TableControl
                     className={ this.state.isLoading ? 'user-activity-table__hidden' : '' }
                     columns={ this.columns }
-                    onFetchData={ this.onFetchData.bind(this) }
                     onPageChange={ this.onPageChange.bind(this) }
                     onPageSizeChange={ this.onPageSizeChange.bind(this) }
                     data={ this.state.data }

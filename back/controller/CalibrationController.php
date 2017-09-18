@@ -152,9 +152,9 @@ class CalibrationController extends CController
 
         $fdrId = null;
 
-        if (!isset($args['fdrId'])
-            || empty($args['fdrId'])
-            || !is_int(intval($args['fdrId']))
+        if (isset($args['fdrId'])
+            && !empty($args['fdrId'])
+            && is_int(intval($args['fdrId']))
         ) {
             $fdrId = $args['fdrId'];
         }
@@ -182,7 +182,6 @@ class CalibrationController extends CController
         foreach($calibrationResult as $item) {
             $activity[] = $item->get();
         }
-
 
         $qb = $em->getRepository('Entity\Calibration')
             ->createQueryBuilder('calibration')
