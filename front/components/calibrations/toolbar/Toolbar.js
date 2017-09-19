@@ -24,8 +24,10 @@ class Toolbar extends Component {
         this.props.redirect(url);
     }
 
-    handleListClick() {
-        this.props.redirect('/users');
+    handleCreate() {
+        if (typeof parseInt(this.props.fdrId) === 'number') {
+            this.props.redirect('/calibration/create/fdr-id/' + this.props.fdrId);
+        }
     }
 
     render() {
@@ -56,9 +58,11 @@ class Toolbar extends Component {
                                 isClear={ isClear }
                                 handleChange={ this.handleChange.bind(this) }
                             />
-                            <li><a href='#'>
+                            <li><a href='#' className={ isClear ? 'calibrations-toolbar__is-hidden' : ''}>
                                 <span
-                                    className='glyphicon glyphicon-plus' aria-hidden='true'>
+                                    className='glyphicon glyphicon-plus' aria-hidden='true'
+                                    onClick={ this.handleCreate.bind(this) }
+                                >
                                 </span>
                             </a></li>
                         </ul>

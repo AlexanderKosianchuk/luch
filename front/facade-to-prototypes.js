@@ -21,7 +21,6 @@ import 'style/style.css';
 // old prototypes
 import FlightUploader from 'FlightUploader';
 import ChartService from 'Chart';
-import Calibration from 'Calibration';
 
 import { push } from 'react-router-redux'
 import startFlightUploading from 'actions/particular/startFlightUploading';

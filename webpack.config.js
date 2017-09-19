@@ -32,7 +32,6 @@ module.exports = {
         extensions: ['.js', '.jsx'],
         alias: {
             'facade': path.join(__dirname, 'front/facade-to-prototypes.js'),
-            'Calibration': path.join(__dirname, 'front/proto/calibration/Calibration.proto.js'),
             'AxesWorker': path.join(__dirname, 'front/proto/chart/AxesWorker.proto.js'),
             'Chart': path.join(__dirname, 'front/proto/chart/Chart.proto.js'),
             'Coordinate': path.join(__dirname, 'front/proto/chart/Coordinate.proto.js'),
@@ -40,8 +39,6 @@ module.exports = {
             'Legend': path.join(__dirname, 'front/proto/chart/Legend.proto.js'),
             'Param': path.join(__dirname, 'front/proto/chart/Param.proto.js'),
             'FlightUploader': path.join(__dirname, 'front/proto/flight/FlightUploader.proto.js'),
-            'User': path.join(__dirname, 'front/proto/user/User.proto.js'),
-            'FlightEvents': path.join(__dirname, 'front/proto/flightEvents/FlightEvents.proto.js'),
         },
     },
     watch: NODE_ENV == 'dev',
@@ -55,9 +52,6 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 loaders: 'babel-loader',
                 exclude: /node_modules/,
-                query: {
-                  presets: [['es2015', { 'modules': false }], 'react', 'stage-1'],
-                }
             }, {
                 test: /\.css$/,
                 use: [
