@@ -22,8 +22,6 @@ export default function settings(state = initialState, action) {
             }
 
             return { ...state };
-        case 'SET_SETTINGS':
-            return { ...state };
         default:
             return state;
     }

@@ -5,15 +5,7 @@
 
 // libs
 import 'jquery';
-import 'jquery-ui';
-import 'jquery-ui/ui/widgets/button';
-import 'jquery-ui/ui/widgets/menu';
-
-import 'datatables';
 import 'bootstrap-loader';
-
-// lib styles
-import 'jquery-ui/themes/base/all.css';
 
 //old styles
 import 'style/style.css';

@@ -1,6 +1,7 @@
 'use strict';
 
 import nodeExternals from 'webpack-node-externals';
+import webpack from 'webpack';
 import path from 'path';
 import { resolve } from 'path';
 
@@ -26,5 +27,10 @@ export default {
             loader: 'null-loader'
         }]
     },
-    devtool: "cheap-module-source-map"
+    devtool: "cheap-module-source-map",
+    plugins: [
+        new webpack.DefinePlugin({
+            NODE_ENV: JSON.stringify('test'),
+        })
+    ],
 };
