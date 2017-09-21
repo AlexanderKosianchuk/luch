@@ -13,6 +13,8 @@ luch.sublime-project
 # windows thumbnail cache
 Thumbs.db
 
+.tmp
+
 # composer vendor dir
 # /vendor
 /node_modules
