@@ -8,7 +8,7 @@
     "build": "webpack -p",
     "watch": "cross-env NODE_ENV=dev webpack --watch",
     "lint:js": "eslint front/ webpack.*.js --cache",
-    "test": "cross-env NODE_ENV=test mocha-webpack --webpack-config webpack.config-test.babel.js 'front/**/*.test.js'"
+    "test": "cross-env NODE_ENV=test mocha-webpack --webpack-config webpack.config-test.babel.js \"front/**/*.test.js\""
   },
   "repository": {
     "type": "git",

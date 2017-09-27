@@ -45,6 +45,7 @@ const App = ({ history }) => (
             <Route exact path='/calibrations/fdr-id/:fdrId' component={ UserIsAuthenticated(Calibrations) } />
             <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
 
+            <Route exact path='/calibration/update/:calibrationId' component={ UserIsAuthenticated(CalibrationForm) } />
             <Route exact path='/calibration/create/fdr-id/:fdrId' component={ UserIsAuthenticated(CalibrationForm) } />
 
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />

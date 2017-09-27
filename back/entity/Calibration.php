@@ -1,14 +1,14 @@
 <?php
 
-
-
 namespace Entity;
+
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Calibration
  *
  * @Table(name="calibrations", indexes={@Index(name="id_fdr", columns={"id_fdr"}), @Index(name="id_user", columns={"id_user"})})
- * @Entity
+ * @Entity(repositoryClass="Repository\CalibrationRepository")
  */
 class Calibration
 {
@@ -62,6 +62,11 @@ class Calibration
      * @JoinColumn(name="id_fdr", referencedColumnName="id")
      */
     private $fdr;
+
+    public function getFdr()
+    {
+        return $this->fdr;
+    }
 
     public function get()
     {

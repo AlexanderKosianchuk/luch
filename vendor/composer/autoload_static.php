@@ -27,6 +27,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Inflector\\' => 26,
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
@@ -66,6 +67,10 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         array (
             0 => __DIR__ . '/..' . '/robmorgan/phinx/src/Phinx',
         ),
+        'Doctrine\\Common\\Inflector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
         'Doctrine\\Common\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
@@ -102,10 +107,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
             array (
                 0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
             ),
-            'Doctrine\\Common\\Inflector\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
-            ),
             'Doctrine\\Common\\Collections\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/collections/lib',
@@ -136,12 +137,16 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Controller\\TemplatesController' => __DIR__ . '/../..' . '/back/controller/TemplatesController.php',
         'Controller\\UploaderController' => __DIR__ . '/../..' . '/back/controller/UploaderController.php',
         'Controller\\UsersController' => __DIR__ . '/../..' . '/back/controller/UsersController.php',
+        'EntityTraits\\dynamicTable' => __DIR__ . '/../..' . '/back/entity/traits/dynamicTable.php',
         'Entity\\Airport' => __DIR__ . '/../..' . '/back/entity/Airport.php',
         'Entity\\Calibration' => __DIR__ . '/../..' . '/back/entity/Calibration.php',
+        'Entity\\CalibrationParam' => __DIR__ . '/../..' . '/back/entity/CalibrationParam.php',
         'Entity\\Event' => __DIR__ . '/../..' . '/back/entity/Event.php',
         'Entity\\EventSettlement' => __DIR__ . '/../..' . '/back/entity/EventSettlement.php',
         'Entity\\EventToFdr' => __DIR__ . '/../..' . '/back/entity/EventToFdr.php',
         'Entity\\Fdr' => __DIR__ . '/../..' . '/back/entity/Fdr.php',
+        'Entity\\FdrAnalogParam' => __DIR__ . '/../..' . '/back/entity/FdrAnalogParam.php',
+        'Entity\\FdrBinaryParam' => __DIR__ . '/../..' . '/back/entity/FdrBinaryParam.php',
         'Entity\\FdrToUser' => __DIR__ . '/../..' . '/back/entity/FdrToUser.php',
         'Entity\\Flight' => __DIR__ . '/../..' . '/back/entity/Flight.php',
         'Entity\\FlightComments' => __DIR__ . '/../..' . '/back/entity/FlightComment.php',
@@ -174,6 +179,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\SearchFlights' => __DIR__ . '/../..' . '/back/model/SearchFlights.php',
         'Model\\User' => __DIR__ . '/../..' . '/back/model/User.php',
         'Model\\UserOptions' => __DIR__ . '/../..' . '/back/model/UserOptions.php',
+        'Repository\\CalibrationRepository' => __DIR__ . '/../..' . '/back/repository/CalibrationRepository.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
         'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',
     );

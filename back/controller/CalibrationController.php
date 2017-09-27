@@ -204,4 +204,63 @@ class CalibrationController extends CController
             'pages' => round($total / $pageSize)
         ]);
     }
+
+    public function getCalibrationById($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['id'])
+            || empty($args['id'])
+            || !is_int(intval($args['id']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $id = intval($args['id']);
+
+        $em = EM::get();
+
+        $calibration = $em->getRepository('Entity\Calibration')
+            ->findOneBy([
+                'userId' => $userId,
+                'id' => $id
+            ]);
+
+        if (empty($calibration)) {
+            throw new NotFoundException("requested calibration not found. Calibration id: ". $id);
+        }
+
+        return json_encode(
+            $em->getRepository('Entity\Calibration')->getCalibration($id)
+        );
+    }
+
+    public function getCalibrationParams($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['fdrId'])
+            || empty($args['fdrId'])
+            || !is_int(intval($args['fdrId']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $fdrId = intval($args['fdrId']);
+
+        $em = EM::get();
+
+        return json_encode(
+            $em->getRepository('Entity\Calibration')
+                ->getCalibratedParams($fdrId)
+        );
+    }
 }

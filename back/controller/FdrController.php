@@ -133,6 +133,7 @@ class FdrController extends CController
         unset($fdr);
 
         return json_encode([
+            'fdrId' => $fdrId,
             'analogParams' => $flightApHeaders,
             'binaryParams' => $flightBpHeaders
         ]);

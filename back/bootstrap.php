@@ -7,6 +7,8 @@ require_once "vendor/autoload.php";
 
 require_once "includes.php";
 
+define('SITE_ROOT_DIR', __DIR__);
+
 // for $_SESSION init
 if (session_status() == PHP_SESSION_NONE) session_start();
 session_write_close();

@@ -6,19 +6,9 @@ ini_set('display_errors','On');
 ini_set('output_buffering', 'On');
 ini_set('default_charset', 'utf-8');
 
-define('SITE_ROOT_DIR', __DIR__);
-
 define('PARAM_TYPE_AP', 'ap');
 define('PARAM_TYPE_BP', 'bp');
 define('POINT_MAX_COUNT', 8500);
 define('PARAMS_PAGING', 200);
-
-//dataTable
-define('sEcho', 0);
-define('iDisplayStart', 3);
-define('iDisplayLength', 4);
-define('reservDisplayLength', 100);
-
-define('FOLDER_START_ID', 1000000);
 
 define('VERSION', '6.6.12.02');

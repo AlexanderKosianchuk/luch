@@ -35,6 +35,22 @@ class Table extends Component {
         }, {
             Header: I18n.t('calibration.table.dateLastEdit'),
             accessor: 'dtUpdated'
+        }, {
+            Header: '',
+            accessor: 'id',
+            minWidth: 50,
+            Cell: props => {
+                return(
+                    <div className='calibrations-table__actions'>
+                        <span className='calibrations-table__glyph-edit glyphicon glyphicon-edit'
+                            onClick={ this.handleEditClick.bind(this, props.value) }
+                        ></span>
+                        <span className='calibrations-table__glyph-trash glyphicon glyphicon-trash'
+                            onClick={ this.handleDeleteClick.bind(this, props.value) }
+                        ></span>
+                    </div>
+                );
+            }
         }];
 
         this.isLoading = false;
@@ -43,6 +59,21 @@ class Table extends Component {
             data: [],
             pages: 0,
         };
+    }
+
+    handleEditClick(id) {
+        this.props.redirect('/calibration/update/' + id);
+    }
+
+    handleDeleteClick() {
+        if (confirm(I18n.t('calibration.table.confimDeleting'))) {
+            this.props.request(
+                ['calibration', 'delete'],
+                'post',
+                'DELETE_CALIBRATION',
+                { calibrationId: id }
+            );
+        }
     }
 
     componentDidMount() {
