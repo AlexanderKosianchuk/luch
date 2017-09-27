@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
-import CreateFolderButton from 'components/flights-tree/create-folder-button/CreateFolderButton'
-import CreateFolderForm from 'components/flights-tree/create-folder-form/CreateFolderForm'
+import CreateFolderButton from 'components/flights-tree/create-folder-button/CreateFolderButton';
+import ToolbarInput from 'controls/toolbar-input/ToolbarInput';
 
 import request from 'actions/request';
 
@@ -38,7 +38,7 @@ class CreateFolder extends Component {
 
     render() {
         return this.state.isInputShown
-            ? <CreateFolderForm handleSaveFolderClick={ this.handleSaveFolderClick.bind(this) } />
+            ? <ToolbarInput handleSaveClick={ this.handleSaveFolderClick.bind(this) } />
             : <CreateFolderButton handleClick={ this.handleCreateFolderClick.bind(this) } />
     }
 }

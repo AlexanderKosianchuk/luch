@@ -10,6 +10,7 @@ import flight from 'reducers/flight';
 import flights from 'reducers/flights';
 import folders from 'reducers/folders';
 import fdrCyclo from 'reducers/fdrCyclo';
+import calibration from 'reducers/calibration';
 import calibrations from 'reducers/calibrations';
 import flightUploadingState from 'reducers/flightUploadingState';
 import settings from 'reducers/settings';
@@ -25,6 +26,7 @@ export default combineReducers({
     flights,
     folders,
     fdrCyclo,
+    calibration,
     calibrations,
     flightUploadingState,
     flightFilter,

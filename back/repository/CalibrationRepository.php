@@ -90,9 +90,15 @@ class CalibrationRepository extends EntityRepository
         $params = [];
 
         foreach($calibrationParams as $item) {
-            $params[] = $item->get();
+            $params[] = array_merge($item->get(), [
+                    'description' => (!empty($item->getFdrAnalogParam())) ? $item->getFdrAnalogParam()->get() : null,
+                ]
+            );
         }
 
-        return $params;
+        return array_merge(
+            $calibration->get(),
+            [ 'params' => $params ]
+        );
     }
 }

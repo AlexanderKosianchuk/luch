@@ -66,15 +66,23 @@ class CalibrationParam
         return $this->id;
     }
 
+    public function getCalibration()
+    {
+        return $this->calibration;
+    }
+
+    public function getFdrAnalogParam()
+    {
+        return $this->fdrAnalogParam;
+    }
+
     public function get()
     {
         return [
             'id' => $this->id,
             'calibrationId' => $this->calibrationId,
             'paramId' => $this->paramId,
-            'xy' => json_decode($this->xy),
-            'calibration' => (!empty($this->calibration)) ? $this->calibration->get() : null,
-            'fdrAnalogParams' => (!empty($this->fdrAnalogParam)) ? $this->fdrAnalogParam->get() : null
+            'xy' => json_decode($this->xy)
         ];
     }
 }

@@ -10,7 +10,7 @@ export default function calibration(state = initialState, action) {
             return { ...state,
                 ...{ pending: true }
             };
-        case 'GET_CALIBRATION_COMPLETE':
+        case 'GET_CALIBRATIONS_COMPLETE':
             return { ...state, ...{
                 pending: false,
                 items: action.payload.response,

@@ -26,6 +26,17 @@ export default function calibration(state = initialState, action) {
         case 'GET_CALIBRATION_COMPLETE':
             return { ...state, ...{
                 pending: false,
+
+                fdrId: action.payload.response.fdrId || null,
+                fdrName: action.payload.response.fdrName || null,
+                userId: action.payload.response.userId || null,
+
+                id: action.payload.response.id || null,
+                name: action.payload.response.name || null,
+                dtCreated:action.payload.response.dtCreated || null,
+                dtUpdated: action.payload.response.dtUpdated || null,
+
+                params: action.payload.response.params || []
             }};
         default:
             return state;

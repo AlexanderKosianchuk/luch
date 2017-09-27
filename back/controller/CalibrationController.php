@@ -111,7 +111,7 @@ class CalibrationController extends CController
         return json_encode('ok');
     }
 
-    public function getCalibrations()
+    public function getCalibrationsList()
     {
         $userId = intval($this->_user->userInfo['id']);
 
