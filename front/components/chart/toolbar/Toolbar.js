@@ -7,6 +7,8 @@ import Print from 'components/chart/print/Print';
 import FullSize from 'components/chart/full-size/FullSize';
 import ParamsToggle from 'components/chart/params-toggle/ParamsToggle';
 
+import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
+
 export default class Toolbar extends React.Component {
     constructor(props) {
         super(props);
@@ -17,12 +19,7 @@ export default class Toolbar extends React.Component {
             <nav className='flight-events-toolbar navbar navbar-default'>
                 <div className='container-fluid'>
                     <div className='navbar-header'>
-                      <button type='button' className='navbar-toggle collapsed' data-toggle='collapse' data-target='#bs-navbar-collapse' aria-expanded='false'>
-                        <span className='sr-only'>Toggle navigation</span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                      </button>
+                      <NavbarToggle/>
                     </div>
 
                     <div className='collapse navbar-collapse' id='bs-navbar-collapse'>

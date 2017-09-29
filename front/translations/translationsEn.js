@@ -199,6 +199,11 @@ const translationsEn = {
             delete: 'Delete',
             inputName: 'Please input name to save'
         },
+        calibrationForm: {
+            toolbar: {
+                title: 'Calibration for FDR %{fdrName}'
+            },
+        },
         flightUploader: {
             upload: 'Upload',
             filesList: 'Files list',
@@ -263,7 +268,7 @@ const translationsEn = {
             }
         },
         topMenu: {
-            brand: 'Luche',
+            brand: 'Luch',
             fileImport: 'Import',
             upload: 'Upload',
             flightImporterDropdown: {

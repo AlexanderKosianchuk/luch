@@ -46,7 +46,7 @@ class FlightUploaderDropdown extends Component {
         let uploadingUid = uuidV4();
         form.append('uploadingUid', uploadingUid);
 
-        if (this.props.previewState) {
+        if (this.state.previewNeed) {
             this.props.request(
                 ['uploader', 'storeFlightFile'],
                 'post',
@@ -92,7 +92,7 @@ class FlightUploaderDropdown extends Component {
             <li><a href="#">
                 <span className="flight-uploader-dropdown__switch-label"><Translate value='topMenu.flightUploaderDropdown.preview'/></span>
                 <Switch
-                    value={ this.state.previewState }
+                    value={ this.state.previewNeed }
                     bsSize="mini"
                     onText={ <Translate value='topMenu.flightUploaderDropdown.on'/> }
                     offText={ <Translate value='topMenu.flightUploaderDropdown.off'/> }
@@ -117,7 +117,12 @@ class FlightUploaderDropdown extends Component {
 }
 
 function mapStateToProps(state) {
-    return {}
+    return {
+        fdrsPending: state.fdrs.pending,
+        fdrs: state.fdrs,
+        chosenFdr: state.fdrs.chosen,
+        chosenCalibration: state.calibrations.chosen
+    }
 }
 
 function mapDispatchToProps(dispatch) {

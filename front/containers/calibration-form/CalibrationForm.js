@@ -44,8 +44,8 @@ class CalibrationForm extends Component {
         return (
             <div>
                 <Menu />
-                <Toolbar
-                    action={ this.props.action }
+                <Toolbar action={ this.props.action } />
+                <Form
                     fdrId={ this.props.fdrId }
                     calibrationId={ this.props.calibrationId }
                 />
@@ -53,12 +53,6 @@ class CalibrationForm extends Component {
         );
     }
 }
-
-/*<Form
-    action={ this.props.action }
-    fdrId={ this.props.fdrId }
-    calibrationId={ this.props.calibrationId }
-/>*/
 
 function mapStateToProps(state, ownProps) {
     return {

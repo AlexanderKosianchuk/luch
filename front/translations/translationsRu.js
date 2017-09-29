@@ -192,6 +192,11 @@ const translationsRu = {
             delete: 'Удалить',
             inputName: 'Введите название калибровки для сохранения'
         },
+        calibrationForm: {
+            toolbar: {
+                title: 'Градуировка для %{fdrName}'
+            },
+        },
         flightUploader: {
             upload: 'Загрузить',
             filesList: 'Перечень файлов',

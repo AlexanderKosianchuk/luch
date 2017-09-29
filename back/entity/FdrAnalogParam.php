@@ -131,7 +131,10 @@ class FdrAnalogParam
 
     public function isCalibrated()
     {
-        return isset($this->xy) && ($this->xy !== '');
+        return isset($this->xy)
+            && ($this->xy !== '')
+            && ($this->xy !== 0)
+            && (strlen($this->xy) > 2);
     }
 
     public function get()
@@ -151,7 +154,7 @@ class FdrAnalogParam
             'shift' => $this->shift,
             'minus' => $this->minus,
             'k' => $this->k,
-            'xy' => (strlen($this->xy) > 0) ? json_decode($this->xy) : '',
+            'xy' => (strlen($this->xy) > 2) ? json_decode($this->xy, true) : [],
             'alg' => $this->alg
         ];
     }

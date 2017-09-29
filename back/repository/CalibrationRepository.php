@@ -44,7 +44,6 @@ class CalibrationRepository extends EntityRepository
         $params = [];
 
         foreach($fdrAnalogParam as $item) {
-            // 1 - calibration param type
             if ($item->isCalibrated()) {
                 $params[] = $item->get();
             }

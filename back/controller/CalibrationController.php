@@ -257,10 +257,31 @@ class CalibrationController extends CController
         $fdrId = intval($args['fdrId']);
 
         $em = EM::get();
+        $fdr = $em->find('Entity\Fdr', $fdrId);
 
-        return json_encode(
-            $em->getRepository('Entity\Calibration')
-                ->getCalibratedParams($fdrId)
-        );
+        if (empty($fdr)) {
+            throw new NotFoundException("requested FDR not found. Received id: ". $fdrId);
+        }
+
+        $params = $em->getRepository('Entity\Calibration')
+            ->getCalibratedParams($fdrId);
+
+        $calibrationParams = [];
+
+        foreach ($params as $param) {
+            $calibrationParams[] = [
+                'id' => null,
+                'calibrationId' => null,
+                'description' => $param,
+                'paramId' => $param['id'],
+                'xy' => []
+            ];
+        }
+
+        return json_encode([
+            'fdrId' => $fdrId,
+            'fdrName' => $fdr->getName(),
+            'params' => $calibrationParams
+        ]);
     }
 }

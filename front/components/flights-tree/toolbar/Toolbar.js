@@ -7,17 +7,14 @@ import FlightListViewSwitch from 'controls/flight-list-view-switch/FlightListVie
 import MenuDropdown from 'components/flights-tree/menu-dropdown/MenuDropdown';
 import CreateFolder from 'components/flights-tree/create-folder/CreateFolder';
 
+import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
+
 export default function Toolbar (props) {
     return (
         <nav className='flights-tree-toolbar navbar navbar-default'>
             <div className='container-fluid'>
                 <div className='navbar-header'>
-                  <button type='button' className='navbar-toggle collapsed' data-toggle='collapse' data-target='#bs-navbar-collapse' aria-expanded='false'>
-                    <span className='sr-only'>Toggle navigation</span>
-                    <span className='icon-bar'></span>
-                    <span className='icon-bar'></span>
-                    <span className='icon-bar'></span>
-                  </button>
+                  <NavbarToggle/>
                   <a className='navbar-brand' href='#'><Translate value='flightsTree.toolbar.flightList' /></a>
                 </div>
 

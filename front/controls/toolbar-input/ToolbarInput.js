@@ -13,6 +13,11 @@ export default class ToolbarInput extends Component{
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            value: nextProps.value || ''
+        });
+    }
 
     handleClick(event) {
         let textInputValue = this.textInput.value;

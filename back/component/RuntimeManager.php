@@ -130,7 +130,7 @@ class RuntimeManager
         $runtimeDirectory = self::getRuntimeFolder();
         $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
 
-        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpf';
+        $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpsf';
 
         return $storedFilePath;
     }

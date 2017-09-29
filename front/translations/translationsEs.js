@@ -192,6 +192,11 @@ const translationsEs = {
             delete: 'Delete',
             inputName: 'Please input name to save',
         },
+        calibrationForm: {
+            toolbar: {
+                title: 'Calibration for FDR %{fdrName}'
+            },
+        },
         flightUploader: {
             upload: 'Upload',
             filesList: 'Files list',

@@ -209,7 +209,8 @@ FlightUploader.prototype.PreviewChart = function (parent,
             my: "center",
             at: "center",
             of: gCont
-        }).fadeIn();
+        });
+        loadingBox.fadeIn();
 
         //=============================================================
 
@@ -267,7 +268,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
             url: ENTRY_URL + "?action=uploader/flightUploaderPreview",
             async: true
         }).done(function(apDataArray){
-            $("div#loadingBox" + index).remove();
+            $("div#loadingBox" + index);//.remove();
             var prmData = Array(),
                 i = 0;
             for (var key in apDataArray)  {
