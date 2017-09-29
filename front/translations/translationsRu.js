@@ -196,6 +196,13 @@ const translationsRu = {
             toolbar: {
                 title: 'Градуировка для %{fdrName}'
             },
+            param: {
+                code: 'Код параметра',
+                name: 'Название (е.и.)',
+                channels: 'Каналы',
+                minValue: 'Мин. зн.',
+                maxValue: 'Макс. зн.'
+            }
         },
         flightUploader: {
             upload: 'Загрузить',

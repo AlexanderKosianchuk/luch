@@ -37,6 +37,16 @@ export default function startFlightUploading(payload) {
                 if (json.status !== 'complete') {
                     setTimeout(checkProgress, 1000);
                 }
+
+                if (json.status === 'complete') {
+                    dispatch({
+                        type: 'FLIGHT_UPLOADING_COMPLETE',
+                        payload: {
+                            uploadingUid: payload.uploadingUid,
+                            item: json.item
+                        }
+                    });
+                }
             });
         };
 

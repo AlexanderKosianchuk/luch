@@ -14,6 +14,7 @@
     "type": "git",
     "url": "http://gitlab.luch15.com/at/luch.git"
   },
+  "moduleRoots": [ "front", "back" ],
   "author": "AlexanderKosianchuk",
   "license": "ISC",
   "devDependencies": {

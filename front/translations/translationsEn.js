@@ -3,7 +3,7 @@ const translationsEn = {
         login: {
             form: {
                 welcome: 'Welcome',
-                to: 'Flight data processing and analysis software complex «Luche»',
+                to: 'Flight data processing and analysis software complex «Luch»',
                 vendor: 'Aviation Technologies. We create future',
                 userName: 'User name',
                 authorize: 'Log in',
@@ -203,6 +203,13 @@ const translationsEn = {
             toolbar: {
                 title: 'Calibration for FDR %{fdrName}'
             },
+            param: {
+                code: 'Code',
+                name: 'Name (dim)',
+                channels: 'Channels',
+                minValue: 'Min value',
+                maxValue: 'Max value'
+            }
         },
         flightUploader: {
             upload: 'Upload',
