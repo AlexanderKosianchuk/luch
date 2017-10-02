@@ -32,7 +32,9 @@ class FlightUploaderDropdown extends Component {
     }
 
     handleClickOutside(event) {
-        if ((event.target.className.includes('flight-uploader-dropdown-toggle'))
+        if ((event.target.nodeName !== 'svg')
+            && !event.target.ownerSVGElement
+            && (event.target.className.includes('flight-uploader-dropdown-toggle'))
             && !this.state.isShown
         ) {
             this.setState({ isShown: true });

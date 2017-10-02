@@ -18,7 +18,7 @@ export default function Spreadsheet(props) {
                     />
                 )
             }
-            <div className='btn btn-default'>
+            <div className='btn btn-default calibration-form-spreadsheet__buttom'>
                 <Translate value='calibrationForm.spreadsheet.addButton'/>
             </div>
         </div>

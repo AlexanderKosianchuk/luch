@@ -14,7 +14,10 @@
     "type": "git",
     "url": "http://gitlab.luch15.com/at/luch.git"
   },
-  "moduleRoots": [ "front", "back" ],
+  "moduleRoots": [
+    "front",
+    "back"
+  ],
   "author": "AlexanderKosianchuk",
   "license": "ISC",
   "devDependencies": {
@@ -105,6 +108,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "react-sortable-tree": "^0.1.19",
     "react-table": "^6.4.0",
+    "recharts": "^0.22.4",
     "redux-auth-wrapper": "^1.1.0",
     "uuid": "^3.0.1"
   }

@@ -18,7 +18,9 @@ class FlightImporterDropdown extends React.Component {
     }
 
     handleClickOutside(event) {
-        if ((event.target.className.includes('flight-importer-dropdown-toggle'))
+        if ((event.target.nodeName !== 'svg')
+            && !event.target.ownerSVGElement
+            && (event.target.className.includes('flight-importer-dropdown-toggle'))
             && !this.state.isShown
         ) {
             this.setState({ isShown: true });
