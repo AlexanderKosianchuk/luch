@@ -23,7 +23,7 @@ class Toolbar extends Component {
                       <NavbarToggle/>
                       <span className='navbar-brand' href='#'>
                         <Translate value='calibrationForm.toolbar.title'
-                            fdrName={ this.props.fdrName }
+                            fdrName={ this.props.fdrName || '' }
                         />
                       </span>
 

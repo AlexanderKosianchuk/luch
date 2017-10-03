@@ -5,16 +5,21 @@ import PropTypes from 'prop-types';
 import { Translate } from 'react-redux-i18n';
 
 import SpreadsheetRow from 'components/calibration-form/spreadsheet-row/SpreadsheetRow';
+import SpreadsheetTitle from 'components/calibration-form/spreadsheet-title/SpreadsheetTitle';
 
 export default function Spreadsheet(props) {
     return (
         <div className='calibration-form-spreadsheet'>
+            <SpreadsheetTitle/>
             {
                 props.xy.map((item, index) =>
                     <SpreadsheetRow
+                        paramId={ props.paramId }
                         key={ index }
+                        index={ index }
                         x={ parseInt(item.x) }
                         y={ parseInt(item.y) }
+                        update={ props.update }
                     />
                 )
             }
@@ -26,5 +31,7 @@ export default function Spreadsheet(props) {
 }
 
 Spreadsheet.propTypes = {
-    xy: PropTypes.array.isRequired
+    paramId: PropTypes.number.isRequired,
+    xy: PropTypes.array.isRequired,
+    update: PropTypes.func
 };
