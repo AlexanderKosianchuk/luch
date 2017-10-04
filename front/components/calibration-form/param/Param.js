@@ -11,7 +11,11 @@ export default class Param extends Component {
     constructor(props) {
         super(props);
 
-        let xy = this.sort(props.param.xy) || this.sort(props.param.description.xy);
+        let xy = (props.param.xy.length > 0)
+            ? props.param.description.xy
+            : props.param.description.xy;
+
+        xy = this.sort(xy);
         xy = xy.map((item) => {
             return {
                 x: parseInt(item.x),
@@ -22,7 +26,8 @@ export default class Param extends Component {
         this.state = {
             chartWidth: 0,
             chartHeaight: 0,
-            xy: xy
+            xy: xy,
+            messageIsHidden: true
         }
     }
 
@@ -46,17 +51,103 @@ export default class Param extends Component {
     }
 
     update(key, index, value) {
-        if (this.state.xy[index]
-            && this.state.xy[index][key]
-            && (this.state.xy[index][key] !== value)
-        ) {
+        if ((key === 'xy') && (value === null)) {
             let xy = this.state.xy.slice();
-            xy[index][key] = value;
+            xy.splice(index, 1);
 
             this.setState({
                 xy: xy
             });
+
+            return;
         }
+
+        if ((key === 'xy')
+            && (index === -1)
+            && (value === 'add')
+        ) {
+            let xy = this.state.xy.slice();
+
+            if (this.state.xy.length > 2) {
+                let xy2 = this.state.xy.pop();
+                let xy1 = this.state.xy.pop();
+
+                let x = xy2.x > xy1.x
+                    ? xy2.x + (xy2.x - xy1.x)
+                    : xy2.x - (xy1.x - xy2.x);
+
+                let y = this.getAproximation(xy2, xy1, 'y', 'x', x);
+
+                xy.push({ x: x, y: y });
+            } else if ((this.state.xy.length < 2)
+                && (this.state.xy.length > 0)
+            ) {
+                let xy = this.state.xy.pop();
+
+                xy.push({ x: xy.x * 1.1, y: xy.y * 1.1 });
+            } else {
+                xy.push({ x: 1, y: 1 });
+            }
+
+            this.setState({
+                xy: xy
+            });
+
+            return;
+        }
+
+        if (this.state.xy[index]
+            && this.state.xy[index][key]
+            && (this.state.xy[index][key] !== value)
+        ) {
+            let aprox = null;
+            let xy = this.state.xy.slice();
+            xy[index][key] = value;
+
+            let attr1 = 'x';
+            let attr2 = 'y';
+            let search = xy[index]['y'];
+
+            if (key === 'y') {
+                attr1 = 'y';
+                attr2 = 'x';
+                search = xy[index]['x'];
+            }
+
+            if (this.state.xy.length > 2) {
+                let xy2 = this.state.xy[1];
+                let xy1 = this.state.xy[2];
+
+                if (index === (this.state.xy.length - 1)) {
+                    let xy2 = this.state.xy[this.state.xy.length - 2];
+                    let xy1 = this.state.xy[this.state.xy.length - 3];
+                } else if (index !== 0) {
+                    xy2 = this.state.xy[index + 1];
+                    xy1 = this.state.xy[index - 1];
+                }
+
+                aprox = this.getAproximation(xy2, xy1, attr1, attr2, search);
+            }
+
+            this.setState({
+                xy: xy,
+                messageIsHidden: this.isBetween(value, aprox)
+            });
+        }
+    }
+
+    isBetween(val, aprox) {
+        let min = Math.min(aprox * -2, aprox * 2);
+        let max = Math.max(aprox * -2, aprox * 2);
+
+        return ((val > min) ? ((val < max) ? val : max) : min) === val;
+    }
+
+    getAproximation(xy2, xy1, attr1, attr2, val) {
+        return xy2[attr1]
+            + (val - xy2[attr2])
+            / (xy1[attr2] - xy2[attr2])
+            * (xy1[attr1] - xy2[attr1]);
     }
 
     render() {
@@ -86,11 +177,14 @@ export default class Param extends Component {
                         { this.props.param.description.maxValue } {' '}
                         { this.props.param.description.dim }
                     </div>
+                    <div className={ 'calibration-form-param__message ' + (this.state.messageIsHidden ? 'is-hidden' : '') }>
+                        <Translate value='calibrationForm.param.deviationFromStandardView'/>
+                    </div>
                 </div>
                 <div className='row'>
                     <div className='col-md-6' ref={ (subling) => { this.subling = subling }}>
                         <Spreadsheet
-                            paramId={ this.props.param.id }
+                            paramId={ this.props.param.description.id }
                             xy={ this.state.xy }
                             update={ this.update.bind(this) }
                         />

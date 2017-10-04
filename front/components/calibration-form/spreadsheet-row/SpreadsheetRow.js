@@ -17,17 +17,30 @@ export default class SpreadsheetRow extends Component {
         }
     }
 
-    handleChange(attr, event) {
+    componentWillReceiveProps(newProps) {
         this.setState({
-            [attr]: parseInt(event.target.value)
+            x: newProps.x,
+            y: newProps.y
         });
     }
 
-    handleClick(event) {
+    handleChange(attr, event) {
+        let val = parseInt(event.target.value);
+
+        if (isNaN(val)) {
+            val = -1;
+        }
+
+        this.setState({
+            [attr]: val
+        });
+    }
+
+    handleClick(index, event) {
         event.preventDefault();
         event.stopPropagation();
 
-        this.el.remove();
+        this.update('xy', index, null);
     }
 
     handleBlur(attr, index) {
@@ -65,7 +78,7 @@ export default class SpreadsheetRow extends Component {
 
                 <button
                     className='btn btn-danger calibration-form-spreadsheet-row__button'
-                    onClick={ this.handleClick.bind(this) }
+                    onClick={ this.handleClick.bind(this, this.props.index) }
                 >
                     <span className='glyphicon glyphicon-trash'></span>
                 </button>

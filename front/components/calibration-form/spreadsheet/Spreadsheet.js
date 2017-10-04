@@ -8,6 +8,10 @@ import SpreadsheetRow from 'components/calibration-form/spreadsheet-row/Spreadsh
 import SpreadsheetTitle from 'components/calibration-form/spreadsheet-title/SpreadsheetTitle';
 
 export default function Spreadsheet(props) {
+    function handleClick() {
+        props.update('xy', -1, 'add');
+    }
+
     return (
         <div className='calibration-form-spreadsheet'>
             <SpreadsheetTitle/>
@@ -23,7 +27,9 @@ export default function Spreadsheet(props) {
                     />
                 )
             }
-            <div className='btn btn-default calibration-form-spreadsheet__buttom'>
+            <div className='btn btn-default calibration-form-spreadsheet__buttom'
+                onClick={ handleClick }
+            >
                 <Translate value='calibrationForm.spreadsheet.addButton'/>
             </div>
         </div>
