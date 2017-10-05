@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ee from 'event-emitter';
 
 import Menu from 'controls/menu/Menu';
 
@@ -10,6 +11,15 @@ import Form from 'components/calibration-form/form/Form';
 import request from 'actions/request';
 
 class CalibrationForm extends Component {
+    constructor(props) {
+        super(props);
+
+        let emitter = ee();
+        this.submit = () => emitter.emit('calibration-form-submit');
+        this.onSubmit = (callback) => emitter.on('calibration-form-submit', callback);
+        this.offSubmit = () => emitter.off('calibration-form-submit');
+    }
+
     componentDidMount() {
         if (this.props.action === 'update') {
             this.props.request(
@@ -44,10 +54,15 @@ class CalibrationForm extends Component {
         return (
             <div>
                 <Menu />
-                <Toolbar action={ this.props.action } />
+                <Toolbar
+                    action={ this.props.action }
+                    submit={ this.submit }
+                />
                 <Form
                     fdrId={ this.props.fdrId }
                     calibrationId={ this.props.calibrationId }
+                    onSubmit={ this.onSubmit }
+                    offSubmit={ this.offSubmit }
                 />
             </div>
         );

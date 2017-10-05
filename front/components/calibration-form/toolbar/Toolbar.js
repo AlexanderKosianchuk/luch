@@ -1,20 +1,14 @@
 import './toolbar.sass'
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
+import PropTypes from 'prop-types';
 import { Translate, I18n } from 'react-redux-i18n';
 import ToolbarInput from 'controls/toolbar-input/ToolbarInput';
 import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
 
-import redirect from 'actions/redirect';
-
 class Toolbar extends Component {
-    handleSaveClick() {
-        //this.props.redirect('/calibration/create/fdr-id/' + this.props.fdrId);
-    }
-
     render() {
         return (
             <nav className='calibrations-toolbar navbar navbar-default'>
@@ -31,7 +25,7 @@ class Toolbar extends Component {
 
                     <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
                         <ToolbarInput
-                            handleSaveClick={ this.handleSaveClick.bind(this) }
+                            handleSaveClick={ this.props.submit }
                             value={ this.props.calibrationName || '' }
                         />
                     </div>
@@ -45,7 +39,7 @@ Toolbar.propTypes = {
     calibrationName: PropTypes.string,
     fdrName: PropTypes.string,
 
-    redirect: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
@@ -56,9 +50,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+    return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

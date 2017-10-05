@@ -13,7 +13,11 @@ class Form extends Component {
     constructor(props) {
         super(props);
 
-        this.calibrationForm = null;
+        props.onSubmit(this.handleSaveClick.bind(this));
+    }
+
+    handleSaveClick() {
+        console.log(1);
     }
 
     buildRows(params) {
@@ -46,6 +50,10 @@ class Form extends Component {
         return this.buildForm();
     }
 
+    componetnWillUnmount() {
+        this.props.offSubmit();
+    }
+
     render() {
         return (
             <div className='calibration-form-form'>
@@ -57,7 +65,9 @@ class Form extends Component {
 
 Form.propTypes = {
     pending: PropTypes.bool,
-    params: PropTypes.array
+    params: PropTypes.array,
+    onSubmit: PropTypes.func.isRequired,
+    offSubmit: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
