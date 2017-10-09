@@ -23,7 +23,7 @@ export default function request(
         if (method === 'get') {
             url += '&' + queryString.stringify(payload)
         } else {
-            options.method = 'post';// until backend do not support REST methods
+            options.method = 'post';
 
             if (isFormData(payload)) {
                 options.body = payload;

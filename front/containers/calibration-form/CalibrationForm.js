@@ -15,7 +15,7 @@ class CalibrationForm extends Component {
         super(props);
 
         let emitter = ee();
-        this.submit = () => emitter.emit('calibration-form-submit');
+        this.submit = (event, name) => emitter.emit('calibration-form-submit', name);
         this.onSubmit = (callback) => emitter.on('calibration-form-submit', callback);
         this.offSubmit = () => emitter.off('calibration-form-submit');
     }

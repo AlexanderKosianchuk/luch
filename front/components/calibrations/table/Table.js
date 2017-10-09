@@ -65,14 +65,14 @@ class Table extends Component {
         this.props.redirect('/calibration/update/' + id);
     }
 
-    handleDeleteClick() {
+    handleDeleteClick(id) {
         if (confirm(I18n.t('calibration.table.confimDeleting'))) {
             this.props.request(
-                ['calibration', 'delete'],
+                ['calibration', 'deleteCalibration'],
                 'post',
                 'DELETE_CALIBRATION',
                 { calibrationId: id }
-            );
+            ).then(() => this.props.redirect('/calibrations'));
         }
     }
 

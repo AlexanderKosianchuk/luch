@@ -12,7 +12,7 @@ export default class Param extends Component {
         super(props);
 
         let xy = (props.param.xy.length > 0)
-            ? props.param.description.xy
+            ? props.param.xy
             : props.param.description.xy;
 
         xy = this.sort(xy);

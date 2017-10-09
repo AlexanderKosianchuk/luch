@@ -62,14 +62,14 @@ export default class SpreadsheetRow extends Component {
                 ref={ (el) => { this.el = el }}
             >
                 <input className='form-control calibration-form-spreadsheet-row__input'
-                    name={ 'Param[' + this.props.paramId + '][y]' }
+                    name={ 'calibrations[' + this.props.paramId + '][' + this.props.index + '][y]' }
                     value={ this.state.y }
                     onChange={ this.handleChange.bind(this, 'y') }
                     onBlur={ this.handleBlur.bind(this, 'y', this.props.index) }
                     onKeyPress={ this.handleKeyPress.bind(this, 'y', this.props.index) }
                 />
                 <input className='form-control calibration-form-spreadsheet-row__input'
-                    name={ 'Param[' + this.props.paramId + '][x]' }
+                    name={ 'calibrations[' + this.props.paramId + '][' + this.props.index + '][x]' }
                     value={ this.state.x }
                     onChange={ this.handleChange.bind(this, 'x') }
                     onBlur={ this.handleBlur.bind(this, 'x', this.props.index) }

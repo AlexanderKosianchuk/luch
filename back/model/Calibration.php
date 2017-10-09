@@ -597,18 +597,12 @@ class Calibration
         $calibrationId = $calibrationInfo['id'];
         $this->deleteCalibrationParams ($tableName, $calibrationId);
 
-        foreach ($calibrations as $calibration) {
-            if(isset($calibration['paramId'])
-                && is_int(intval($calibration['paramId']))
-                && isset($calibration['points'])
-                && is_array($calibration['points'])
-            ) {
-                $this->setCalibrationParam ($tableName,
-                    $calibrationId,
-                    intval($calibration['paramId']),
-                    json_encode($calibration['points'])
-                );
-            }
+        foreach ($calibrations as $paramId => $xy) {
+            $this->setCalibrationParam ($tableName,
+                $calibrationId,
+                intval($paramId),
+                json_encode($xy)
+            );
         }
 
         return true;
@@ -659,18 +653,12 @@ class Calibration
 
         $this->deleteCalibrationParams ($tableName, $calibrationId);
 
-        foreach ($calibrations as $calibration) {
-            if(isset($calibration['paramId'])
-                && is_int(intval($calibration['paramId']))
-                && isset($calibration['points'])
-                && is_array($calibration['points'])
-            ) {
-                $this->setCalibrationParam ($tableName,
-                    $calibrationId,
-                    intval($calibration['paramId']),
-                    json_encode($calibration['points'])
-                );
-            }
+        foreach ($calibrations as $paramId => $xy) {
+            $this->setCalibrationParam ($tableName,
+                $calibrationId,
+                intval($paramId),
+                json_encode($xy)
+            );
         }
 
         $this->updateCalibrationTime ($calibrationId, $userId);
