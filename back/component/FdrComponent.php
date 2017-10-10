@@ -34,37 +34,30 @@ class FdrComponent
             }
         }
 
+        $em = EM::get();
         $fdrsAndCalibrations = [];
         $calibration = new Calibration;
         foreach ($fdrsWithCalibration as $fdrInfo) {
             $fdrId = intval($fdrInfo['id']);
             $fdrCode = $fdrInfo['code'];
             $calibrationDynamicTable = $calibration->getTableName($fdrCode);
-            $fdrCalibrations = $calibration->getCalibrations($fdrId, $userId);
+
+            $fdrCalibrations = $em->getRepository('Entity\Calibration')
+                ->findBy([
+                    'userId' => $userId,
+                    'fdrId' => $fdrId
+                ]);
+
             $calibratedParams = $fdr->getCalibratedParams($fdrId);
 
             foreach ($fdrCalibrations as &$fdrCalibration) {
-                $calibrationCalibratedParams = [];
-                $calibrationId = intval($fdrCalibration['id']);
-
-                $params = [];
-                foreach ($calibratedParams as $param) {
-                    $paramId = $param['id'];
-                    $paramCalibration = $calibration->getCalibrationParam ($calibrationDynamicTable, $calibrationId, $paramId);
-                    $paramInfo = $fdr->GetParamInfoById($fdr->getApTableName($fdrId), $paramId);
-                    $calibrationCalibratedParams[] = array_merge(
-                        $paramInfo, $paramCalibration
-                    );
-                }
-
-                $fdrCalibration['calibratedParams'] = $calibrationCalibratedParams;
+                $fdrCalibration = $fdrCalibration->get();
             }
 
             $fdrsAndCalibrations[] = [
                 'id' => intval($fdrInfo['id']),
                 'name' => $fdrInfo['name'],
-                'calibrations' => $fdrCalibrations,
-                'calibratedParams' => $calibratedParams
+                'calibrations' => $fdrCalibrations
             ];
         }
 

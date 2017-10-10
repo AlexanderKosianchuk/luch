@@ -21,8 +21,8 @@ class SaveForm extends React.Component {
     saveTemplate() {
         this.props.request(
             ['templates', 'setTemplate'],
-            'TEMPLATE',
             'post',
+            'TEMPLATE',
             {
                 flightId: this.props.flightId,
                 templateName: this.state.inputValue,

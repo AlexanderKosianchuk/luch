@@ -37,8 +37,8 @@ class Item extends React.Component {
     applyColor(color) {
         this.props.request(
             ['fdr', 'setParamColor'],
-            'CYCLO_PARAM_COLOR',
             'put',
+            'CYCLO_PARAM_COLOR',
             {
                 flightId: this.props.flightId,
                 paramCode: this.props.param.code,

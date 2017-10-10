@@ -14,8 +14,8 @@ class CycloParams extends React.Component {
         if (this.props.flightId) {
             this.props.request(
                 ['fdr', 'getCyclo'],
-                'FDR_CYCLO',
                 'get',
+                'FDR_CYCLO',
                 { flightId: this.props.flightId }
             );
         } else {

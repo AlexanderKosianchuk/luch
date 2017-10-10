@@ -22,8 +22,8 @@ class SettlementFilter extends React.Component {
             let chosenSettlements = settlementFilter.chosenSettlements.map((item) => item.id);
             this.props.request(
                 ['results', 'getReport'],
-                'SETTLEMENTS_REPORT',
                 'get',
+                'SETTLEMENTS_REPORT',
                 {
                     chosenSettlements: JSON.stringify(chosenSettlements),
                     flightFilter: JSON.stringify(flightFilter)

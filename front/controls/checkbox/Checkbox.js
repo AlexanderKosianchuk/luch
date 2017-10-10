@@ -10,7 +10,7 @@ export default function Checkbox (props) {
             <div className='checkbox__container'>
                 <input id={ 'checkbox__input-' + uid }
                   type='checkbox'
-                  value='None'
+                  value=''
                   name='check'
                   checked={ props.checkstate || false }
                   onChange={ props.changeCheckState || (() => {}) }

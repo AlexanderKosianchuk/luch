@@ -45,8 +45,8 @@ class FlightFilter extends React.Component {
         event.preventDefault();
         this.props.request(
             ['results', 'getSettlements'],
-            'SETTLEMENTS',
             'get',
+            'SETTLEMENTS',
             this.props.flightFilter
         );
     }

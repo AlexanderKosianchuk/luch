@@ -5,6 +5,8 @@ namespace Controller;
 use Model\Fdr;
 use Model\Calibration;
 
+use Component\EntityManagerComponent as EM;
+
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -50,14 +52,17 @@ class CalibrationController extends CController
 
         $calibration = new Calibration();
         $calibrationDynamicTable = $calibration->createTable($fdrCode);
+        $calibrationInfo = [];
 
         if ($calibrationId === null) {
-            $calibration->createCalibration($calibrationDynamicTable,
+            $calibrationInfo = $calibration->createCalibration($calibrationDynamicTable,
                 $fdrId,
                 $userId,
                 $calibrationsName,
                 $calibrations
             );
+
+            $calibrationId = $calibrationInfo['id'];
         } else {
             $calibration->updateCalibration($calibrationDynamicTable,
                 $calibrationId,
@@ -69,7 +74,19 @@ class CalibrationController extends CController
 
         unset($calibration);
 
-        return json_encode('ok');
+        $em = EM::get();
+
+        $calibration = $em->getRepository('Entity\Calibration')
+            ->findOneBy([
+                'userId' => $userId,
+                'id' => $calibrationId
+            ]);
+
+        if (empty($calibration)) {
+            throw new NotFoundException("saved calibration error. Cant find by id. Calibration id: ". $id);
+        }
+
+        return json_encode($calibration->get());
     }
 
     public function deleteCalibration($data)
@@ -107,5 +124,179 @@ class CalibrationController extends CController
         }
 
         return json_encode('ok');
+    }
+
+    public function getCalibrationsList()
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        $em = EM::get();
+
+        $calibrations = $em->getRepository('Entity\Calibration')
+            ->findBy(['userId' => $userId]);
+
+        $response = [];
+        foreach ($calibrations as $item) {
+            $response[] = $item->get();
+        }
+
+        return json_encode($response);
+    }
+
+    public function getCalibrationsPage($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['page'])
+            || empty($args['page'])
+            || !is_int(intval($args['page']))
+            || !isset($args['pageSize'])
+            || empty($args['pageSize'])
+            || !is_int(intval($args['pageSize']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $fdrId = null;
+
+        if (isset($args['fdrId'])
+            && !empty($args['fdrId'])
+            && is_int(intval($args['fdrId']))
+        ) {
+            $fdrId = $args['fdrId'];
+        }
+
+        $page = $args['page'];
+        $pageSize = $args['pageSize'];
+
+        $em = EM::get();
+
+        $criteria = ['userId' => $userId];
+
+        if ($fdrId !== null) {
+            $criteria = array_merge($criteria, ['fdrId' => $fdrId]);
+        }
+
+        $calibrationResult = $em->getRepository('Entity\Calibration')
+            ->findBy(
+                $criteria,
+                ['dtUpdated' => 'DESC'],
+                $pageSize,
+                ($page - 1) * $pageSize
+            );
+
+        $activity = [];
+        foreach($calibrationResult as $item) {
+            $activity[] = $item->get();
+        }
+
+        $qb = $em->getRepository('Entity\Calibration')
+            ->createQueryBuilder('calibration')
+            ->select('count(calibration.id)')
+            ->where('calibration.userId = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($fdrId !== null) {
+            $qb
+                ->andWhere('calibration.fdrId = :fdrId')
+                ->setParameter('fdrId', $fdrId);
+        }
+
+        $total = $qb
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return json_encode([
+            'rows' => $activity,
+            'pages' => round($total / $pageSize)
+        ]);
+    }
+
+    public function getCalibrationById($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['id'])
+            || empty($args['id'])
+            || !is_int(intval($args['id']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $id = intval($args['id']);
+
+        $em = EM::get();
+
+        $calibration = $em->getRepository('Entity\Calibration')
+            ->findOneBy([
+                'userId' => $userId,
+                'id' => $id
+            ]);
+
+        if (empty($calibration)) {
+            throw new NotFoundException("requested calibration not found. Calibration id: ". $id);
+        }
+
+        return json_encode(
+            $em->getRepository('Entity\Calibration')->getCalibration($id)
+        );
+    }
+
+    public function getCalibrationParams($args)
+    {
+        $userId = intval($this->_user->userInfo['id']);
+
+        if (!is_int($userId)) {
+            throw new UnauthorizedException('user id - ' . strval($userId));
+        }
+
+        if (!isset($args['fdrId'])
+            || empty($args['fdrId'])
+            || !is_int(intval($args['fdrId']))
+        ) {
+            throw new BadRequestException(json_encode($args));
+        }
+
+        $fdrId = intval($args['fdrId']);
+
+        $em = EM::get();
+        $fdr = $em->find('Entity\Fdr', $fdrId);
+
+        if (empty($fdr)) {
+            throw new NotFoundException("requested FDR not found. Received id: ". $fdrId);
+        }
+
+        $params = $em->getRepository('Entity\Calibration')
+            ->getCalibratedParams($fdrId);
+
+        $calibrationParams = [];
+
+        foreach ($params as $param) {
+            $calibrationParams[] = [
+                'id' => null,
+                'calibrationId' => null,
+                'description' => $param,
+                'paramId' => $param['id'],
+                'xy' => []
+            ];
+        }
+
+        return json_encode([
+            'fdrId' => $fdrId,
+            'fdrName' => $fdr->getName(),
+            'params' => $calibrationParams
+        ]);
     }
 }

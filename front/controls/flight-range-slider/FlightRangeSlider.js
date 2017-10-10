@@ -16,8 +16,8 @@ class FlightRangeSlider extends React.Component {
         if (this.props.flightDuration === null) {
             this.props.request(
                 ['flights', 'getFlightInfo'],
-                'FLIGHT',
                 'get',
+                'FLIGHT',
                 { flightId: this.props.flightId }
             );
         }

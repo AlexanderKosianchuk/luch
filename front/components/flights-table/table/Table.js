@@ -44,8 +44,8 @@ class Table extends Component {
         if (this.props.pending !== false) {
             this.props.request(
                 ['flights', 'getFlights'],
-                'FLIGHTS',
-                'get'
+                'get',
+                'FLIGHTS'
             );
         }
     }

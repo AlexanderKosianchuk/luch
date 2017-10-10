@@ -22,8 +22,8 @@ class List extends React.Component {
         ) {
             this.props.request(
                 ['flights', 'getFlightInfo'],
-                'FLIGHT',
                 'get',
+                'FLIGHT',
                 { flightId: this.props.flightId }
             );
         }
@@ -35,8 +35,8 @@ class List extends React.Component {
         ) {
             this.props.request(
                 ['flightEvents', 'getFlightEvents'],
-                'FLIGHT_EVENTS',
                 'get',
+                'FLIGHT_EVENTS',
                 { flightId: this.props.flightId }
             );
         }

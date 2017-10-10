@@ -63,14 +63,14 @@ class UploaderController extends CController
             "align='left'>" .
             "</br>" .
              //left column for flight info - right for preview
-            "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px'>" .
+            "<table style='width:100%'><tr><td style='width:" . $fileInfoColumnWidth . "px; padding:10px;'>" .
 
             "<table border='0' style='margin-bottom:15px;'>" .
             "<tr>" .
             "<td>" . $this->lang->bruType . "</td>";
 
         $flightParamsSrt .= "<td>"
-            ."<input id='bruType' name='fdrName' class='FlightUploadingInputs' value='" . $fdrInfo['name'] .
+            ."<input id='bruType' name='fdrName' class='FlightUploadingInputs form-control' value='" . $fdrInfo['name'] .
             "' readonly /></td>" .
             "</tr><tr>";
 
@@ -80,7 +80,7 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->bortNum . "</td>" .
-            "<td><input id='bort' name='bort' type='text' class='FlightUploadingInputs' ".
+            "<td><input id='bort' name='bort' type='text' class='FlightUploadingInputs form-control' ".
             "value='" . $bortFromHeader . "'/></td>" .
             "</tr>";
 
@@ -90,7 +90,7 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->voyage . "</td>" .
-            "<td><input id='voyage' name='voyage' type='text' class='FlightUploadingInputs' ".
+            "<td><input id='voyage' name='voyage' type='text' class='FlightUploadingInputs form-control' ".
             "value='" . $voyageFromHeader . "'/></td>" .
             "</tr>";
 
@@ -100,7 +100,7 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->departureAirport . "</td>" .
-                "<td><input id='departureAirport' name='departureAirport' type='text' class='FlightUploadingInputs' ".
+                "<td><input id='departureAirport' name='departureAirport' type='text' class='FlightUploadingInputs form-control' ".
                 "value='" . $departureAirportFromHeader . "'/></td>" .
                 "</tr>";
 
@@ -110,7 +110,7 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->arrivalAirport . "</td>" .
-                "<td><input id='arrivalAirport' name='arrivalAirport' type='text' class='FlightUploadingInputs' ".
+                "<td><input id='arrivalAirport' name='arrivalAirport' type='text' class='FlightUploadingInputs form-control' ".
                 "value='" . $arrivalAirportFromHeader . "'/></td>" .
                 "</tr>";
 
@@ -124,14 +124,14 @@ class UploaderController extends CController
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->flightDate . "</td>" .
-                "<td><input id='copyCreationTime' name='copyCreationTime' type='time' class='FlightUploadingInputs' " .
+                "<td><input id='copyCreationTime' name='copyCreationTime' type='time' class='FlightUploadingInputs form-control' " .
                 "value='" . $copyCreationTimeFromHeader . "'/> <br>" .
-                "<input id='copyCreationDate' name='copyCreationDate' type='date' class='FlightUploadingInputs'" .
+                "<input id='copyCreationDate' name='copyCreationDate' type='date' class='FlightUploadingInputs form-control'" .
                 "value='" . $copyCreationDateFromHeader . "'/>" .
                 "</td></tr>";
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->performer . "</td>" .
-                "<td><input id='performer' name='performer' type='text' class='FlightUploadingInputs' value='" .
+                "<td><input id='performer' name='performer' type='text' class='FlightUploadingInputs form-control' value='" .
                 $this->_user->username . "'/></td>" .
                 "</tr>";
 
@@ -165,29 +165,31 @@ class UploaderController extends CController
                 }
 
                 $flightParamsSrt .= "<td><input id='" . $aditionalInfo[$i] . "'
-                        name='aditionalInfo" . $i . "' type='text' class='FlightUploadingInputsAditionalInfo' " .
+                        name='aditionalInfo" . $i . "' type='text' class='FlightUploadingInputsAditionalInfo form-control' " .
                         "value='" . $aditionalInfoFromHeader . "'/></td>
                 </tr>";
             }
         }
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
-            "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs'/></td>
+            "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs form-control'"
+            ." style='height: 18px;'/></td>
             </tr>";
 
         $flightParamsSrt .= "<tr><td>" . $this->lang->ignoreDueUploading . "</td>" .
-                "<td><input id='ignoreDueUploading".$index."' type='checkbox' class='FlightUploadingInputs'/></td>
+                "<td><input id='ignoreDueUploading".$index."' type='checkbox' class='FlightUploadingInputs form-control'"
+                ." style='height: 18px;'/></td>
                 </tr>";
 
         $flightParamsSrt .= "</table>";
 
         //priview column
-        $flightParamsSrt .= "</td><td align='center' style='vertical-align:top; padding-top:7px;'>";
+        $flightParamsSrt .= "</td><td align='center' style='vertical-align:top; padding-top:7px; position: relative;'>";
 
         $previewParams = trim($previewParams);
         if ($previewParams != '') {
-            $flightParamsSrt .= "<div id='loadingBox".$index."' width='100%' style='position:absolute;'>
-                    <img style='margin:0px auto 0px;' src='/front/style/images/loading.gif'/></div>";
+            $flightParamsSrt .= "<div id='loadingBox".$index."' width='100%' style='position:absolute;top: 110px; left: calc(50% - 30px);'>
+                    <img src='/front/style/images/loading.gif'/></div>";
 
             $flightParamsSrt .= "<div id='previewChartContainer".$index."' " .
                     "style='width:95%; border:0;'>
@@ -197,7 +199,7 @@ class UploaderController extends CController
                 </div>";
 
             $flightParamsSrt .= "<button id='sliceFlightButt".$index."' ".
-                    "class='SliceFlightButt' ".
+                    "class='SliceFlightButt btn btn-default' ".
                     "data-index='".$index."' " .
                     "data-uploading-uid='" . $uploadingUid . "' " .
                     "data-file='".$filePath."' " .
@@ -206,7 +208,7 @@ class UploaderController extends CController
                     $this->lang->slice . "</button>";
 
             $flightParamsSrt .= "<button id='sliceCyclicFlightButt".$index."' ".
-                    "class='SliceCyclicFlightButt' ".
+                    "class='SliceCyclicFlightButt btn btn-default' ".
                     "data-index='".$index."' " .
                     "data-uploading-uid='" . $uploadingUid . "' " .
                     "data-file='".$filePath."' " .
@@ -237,7 +239,7 @@ class UploaderController extends CController
         $flightInfo = [];
 
         if (($headerScr != '') || ($headerScr != null)) {
-            $headerScr = str_replace('Frame', '\Model\Frame', $headerScr);
+            $headerScr = str_replace('new Frame', 'new \Model\Frame', $headerScr);
             eval($headerScr);
 
             if (isset($Fl)) {
@@ -341,7 +343,7 @@ class UploaderController extends CController
 
         if(($headerScr != '') || ($headerScr != null))
         {
-            $headerScr = str_replace('Frame', '\Model\Frame', $headerScr);
+            $headerScr = str_replace('new Frame', 'new \Model\Frame', $headerScr);
             eval ($headerScr);
         }
 

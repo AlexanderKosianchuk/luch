@@ -62,7 +62,7 @@ class Form extends Component {
                         <div className='login-form__input-wrap'>
                             <Translate value='login.form.password'/>
                             <input name='pass' ref={ (textInput) => { this.passInput = textInput; }}
-                                className='form-control login-form__form-control' type='text'
+                                className='form-control login-form__form-control' type='password'
                             />
                         </div>
                     </div>

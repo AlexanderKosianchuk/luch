@@ -23,8 +23,8 @@ class Params extends React.Component {
     componentWillMount() {
         this.props.request(
             ['templates', 'getTemplate'],
-            'TEMPLATE',
             'get',
+            'TEMPLATE',
             {
                 flightId: this.props.flightId,
                 templateName: this.props.templateName

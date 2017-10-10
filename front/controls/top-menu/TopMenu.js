@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
 import { push } from 'react-router-redux'
 
+import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
 import FlightUploaderDropdown from 'controls/top-menu/flight-uploader-dropdown/FlightUploaderDropdown';
 import FlightImporterDropdown from 'controls/top-menu/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'controls/top-menu/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
@@ -37,12 +38,7 @@ class TopMenu extends React.Component {
             <nav className='top-menu navbar navbar-dark'>
               <div className='container-fluid'>
                 <div className='navbar-header'>
-                    <button type='button' className='navbar-toggle collapsed' data-toggle='collapse' data-target='#top-menu-navbar-collapse' aria-expanded='false'>
-                        <span className='sr-only'>Toggle navigation</span>
-                        <span className='top-menu__icon-bar icon-bar'></span>
-                        <span className='top-menu__icon-bar icon-bar'></span>
-                        <span className='top-menu__icon-bar icon-bar'></span>
-                      </button>
+                    <NavbarToggle/>
                     <a className='main-menu-toggle navbar-brand is-hoverable' href='#'>
                         <span className='main-menu-toggle top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger'></span>
                     </a>

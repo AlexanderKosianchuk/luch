@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
+import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
+
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
@@ -17,12 +19,7 @@ class Toolbar extends Component {
             <nav className='user-activity-toolbar navbar navbar-default'>
                 <div className='container-fluid'>
                     <div className='navbar-header'>
-                      <button type='button' className='navbar-toggle collapsed' data-toggle='collapse' data-target='#bs-navbar-collapse' aria-expanded='false'>
-                        <span className='sr-only'>Toggle navigation</span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                      </button>
+                      <NavbarToggle/>
                       <a className='navbar-brand' href='#'><Translate value='userActivity.toolbar.list' /></a>
                     </div>
 

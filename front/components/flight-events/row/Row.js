@@ -49,8 +49,8 @@ class Row extends Component {
 
         this.props.request(
             ['flightEvents', 'changeReliability'],
-            'CHANGE_EVENT_RELIABILITY',
             'post',
+            'CHANGE_EVENT_RELIABILITY',
             {
                 flightId: this.props.flightId,
                 eventId: eventId,

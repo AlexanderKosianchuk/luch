@@ -1,5 +1,6 @@
 .flight-uploader-dropdown
     text-align: center
+    min-width: 210px
 
     & a
         color: #333 !important
@@ -17,5 +18,10 @@
     &__switch-label
         margin-right: 10px
 
-.flight-uploader-dropdown.is-shown
-    display: block
+    &.is-disabled
+        pointer-events: none
+        color: #AAA
+        background: #F5F5F5
+
+    &.is-shown
+        display: block

@@ -18,8 +18,8 @@ class List extends React.Component {
     componentDidMount() {
         this.props.request(
             ['users', 'getUserSettings'],
+            'get',
             'USER_SETTINGS',
-            'get'
         );
     }
 
@@ -62,8 +62,8 @@ class List extends React.Component {
     onClick() {
         this.props.request(
             ['users', 'setUserSettings'],
-            'USER_SETTINGS',
             'put',
+            'USER_SETTINGS',
             this.props.settings.items
         ).then(() => this.props.redirect('/'));
     }

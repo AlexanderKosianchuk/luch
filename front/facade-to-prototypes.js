@@ -5,15 +5,7 @@
 
 // libs
 import 'jquery';
-import 'jquery-ui';
-import 'jquery-ui/ui/widgets/button';
-import 'jquery-ui/ui/widgets/menu';
-
-import 'datatables';
 import 'bootstrap-loader';
-
-// lib styles
-import 'jquery-ui/themes/base/all.css';
 
 //old styles
 import 'style/style.css';
@@ -21,7 +13,6 @@ import 'style/style.css';
 // old prototypes
 import FlightUploader from 'FlightUploader';
 import ChartService from 'Chart';
-import Calibration from 'Calibration';
 
 import { push } from 'react-router-redux'
 import startFlightUploading from 'actions/particular/startFlightUploading';
@@ -74,11 +65,6 @@ export default function facade(store) {
             apParams, bpParams
         );
         C.FillFactoryContaider(showcase);
-    });
-
-    $(document).on('calibrationsShow', function (e, showcase) {
-        let CLB = new Calibration(store);
-        CLB.FillFactoryContaider(showcase);
     });
 
     $(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {

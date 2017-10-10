@@ -13,8 +13,8 @@ class Chart extends React.Component {
         Promise.all([
             this.props.request(
                 ['templates', 'getTemplate'],
-                'TEMPLATE',
                 'get',
+                'TEMPLATE',
                 {
                     flightId: this.props.flightId,
                     templateName: this.props.templateName
@@ -22,8 +22,8 @@ class Chart extends React.Component {
             ),
             this.props.request(
                 ['flights', 'getFlightInfo'],
-                'FLIGHT',
                 'get',
+                'FLIGHT',
                 { flightId: this.props.flightId }
             )
         ]).then(() => {

@@ -9,6 +9,7 @@ import FlightsTree from 'containers/flights-tree/FlightsTree';
 import FlightsTable from 'containers/flights-table/FlightsTable';
 import Settings from 'containers/settings/Settings';
 import Calibrations from 'containers/calibrations/Calibrations';
+import CalibrationForm from 'containers/calibration-form/CalibrationForm';
 import UsersTable from 'containers/users-table/UsersTable';
 import UserActivity from 'containers/user-activity/UserActivity';
 import UserForm from 'containers/user-form/UserForm';
@@ -36,13 +37,24 @@ const App = ({ history }) => (
             <Route path='/flights/table' component={ UserIsAuthenticated(FlightsTable) } />
             <Route path='/user-settings' component={ UserIsAuthenticated(Settings) } />
             <Route path='/results' component={ UserIsAuthenticated(Results) } />
-            <Route path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
+
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId/page/:page' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations/fdr-id/:fdrId' component={ UserIsAuthenticated(Calibrations) } />
+            <Route exact path='/calibrations' component={ UserIsAuthenticated(Calibrations) } />
+
+            <Route exact path='/calibration/update/:calibrationId' component={ UserIsAuthenticated(CalibrationForm) } />
+            <Route exact path='/calibration/create/fdr-id/:fdrId' component={ UserIsAuthenticated(CalibrationForm) } />
+
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />
             <Route exact path='/user/create/' component={ UserIsAuthenticated(UserForm) } />
             <Route exact path='/user/:type/:userId' component={ UserIsAuthenticated(UserForm) } />
             <Route exact path='/user-activity/:userId/page/:page/page-size/:pageSize' component={ UserIsAuthenticated(UserActivity) } />
             <Route exact path='/user-activity/:userId/page/:page' component={ UserIsAuthenticated(UserActivity) } />
             <Route exact path='/user-activity/:userId' component={ UserIsAuthenticated(UserActivity) } />
+
             <Route path='/flight-events/:flightId' component={ UserIsAuthenticated(FlightEvents) } />
             <Route exact path='/flight-templates/:flightId' component={ UserIsAuthenticated(FlightTemplates) } />
             <Route path='/flight-template-edit/create/flight-id/:flightId/' component={ UserIsAuthenticated(FlightTemplateCreate) } />

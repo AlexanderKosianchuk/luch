@@ -4,6 +4,8 @@ namespace Entity;
 
 use \Exception;
 
+use EntityTraits\dynamicTable;
+
 /**
  * FlightSettlement
  *
@@ -12,6 +14,7 @@ use \Exception;
  */
 class FlightSettlement
 {
+    use dynamicTable;
     private static $_prefix = '_settlements';
     /**
      * @var integer
@@ -211,23 +214,6 @@ class FlightSettlement
                 throw new Exception("FlightSettlement dynamic table truncating query failed. Query: "
                     . $query, 1);
             }
-        }
-
-        return $dynamicTableName;
-    }
-
-    public static function getTable($link, $guid)
-    {
-        if (!is_string($guid)) {
-            throw new Exception("Incorrect guid passed. String is required. Passed: "
-                . json_encode($guid), 1);
-        }
-
-        $dynamicTableName = $guid . self::$_prefix;
-        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
-        $result = $link->query($query);
-        if (!$result->fetch_array()) {
-            return null;
         }
 
         return $dynamicTableName;

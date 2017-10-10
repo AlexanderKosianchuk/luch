@@ -3,7 +3,7 @@ const translationsEn = {
         login: {
             form: {
                 welcome: 'Welcome',
-                to: 'Flight data processing and analysis software complex «Luche»',
+                to: 'Flight data processing and analysis software complex «Luch»',
                 vendor: 'Aviation Technologies. We create future',
                 userName: 'User name',
                 authorize: 'Log in',
@@ -174,12 +174,18 @@ const translationsEn = {
             }
         },
         calibration: {
-            title: 'Calibration',
-            fdr: 'FDR',
+            toolbar: {
+                title: 'Calibration'
+            },
+            table: {
+                fdr: 'FDR',
+                name: 'Name',
+                dateCreation: 'Creation Date',
+                dateLastEdit: 'Last Edit'
+            },
             create: 'Create',
             creationForm: 'Calibration Creation Form',
             for: 'for',
-            name: 'Name',
             paramName: 'Name',
             paramCode: 'Code',
             paramChannels: 'Channels',
@@ -188,12 +194,22 @@ const translationsEn = {
             update: 'Update',
             list: 'To List',
             unexist: 'No calibrations',
-            dateCreation: 'Creation Date',
-            dateLastEdit: 'Last Edit',
             controls: 'Controls',
             edit: 'Edit',
             delete: 'Delete',
             inputName: 'Please input name to save'
+        },
+        calibrationForm: {
+            toolbar: {
+                title: 'Calibration for FDR %{fdrName}'
+            },
+            param: {
+                code: 'Code',
+                name: 'Name (dim)',
+                channels: 'Channels',
+                minValue: 'Min value',
+                maxValue: 'Max value'
+            }
         },
         flightUploader: {
             upload: 'Upload',
@@ -259,7 +275,7 @@ const translationsEn = {
             }
         },
         topMenu: {
-            brand: 'Luche',
+            brand: 'Luch',
             fileImport: 'Import',
             upload: 'Upload',
             flightImporterDropdown: {
@@ -273,6 +289,9 @@ const translationsEn = {
                 on: 'On',
                 off: 'Off',
             }
+        },
+        fdrSelector: {
+            placeholder: 'Select FDR type'
         },
         cycloParams: {
             colorPicker: {

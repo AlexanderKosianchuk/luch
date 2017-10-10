@@ -16,7 +16,9 @@ class Menu extends React.Component {
     }
 
     handleToggleMenu (target) {
-        if ((target.className.includes('main-menu-toggle'))
+        if ((event.target.nodeName !== 'svg')
+            && !event.target.ownerSVGElement
+            && (target.className.includes('main-menu-toggle'))
             && !this.state.showMenu
         ) {
             this.setState({ showMenu: true });

@@ -1,39 +1,42 @@
 const initialState = {
     pending: null,
-    items: null,
-    chosen: null,
-    chosenCalibration: null //TODO: remove to separate reducer
+    items: [],
+    chosen: {},
+    chosenCalibration: {}
 };
 
 export default function fdrs(state = initialState, action) {
+    let chosenCalibration = {};
+
     switch (action.type) {
         case 'GET_FDRS_START':
             return { ...state,
                 ...{ pending: true }
             };
         case 'GET_FDRS_COMPLETE':
-            let chosen = {};
-            let chosenCalibration = {};
-
-            if (action.payload.response.length > 0) {
-                chosen = action.payload.response[0];
-
-                if (chosen.calibrations
-                    && (chosen.calibrations.length > 0)
-                ) {
-                    chosenCalibration = chosen.calibrations[0];
-                }
+            if (action.payload.response[0]
+                && action.payload.response[0].calibrations
+                && (action.payload.response[0].calibrations.length > 0)
+            ) {
+                chosenCalibration = action.payload.response[0].calibrations[0];
             }
 
-            return {
+            return { ...state, ...{
                 pending: false,
                 items: action.payload.response,
-                chosen: chosen,
+                chosen: action.payload.response[0] || {},
                 chosenCalibration: chosenCalibration
-            };
+            }};
         case 'CHOOSE_FDR':
+            if (action.payload.calibrations
+                && (action.payload.calibrations.length > 0)
+            ) {
+                chosenCalibration = action.payload.calibrations[0];
+            }
+
             return { ...state, ...{
-                chosen: action.payload
+                chosen: action.payload,
+                chosenCalibration: chosenCalibration
             }};
         case 'CHOOSE_CALIBRATION':
             return { ...state, ...{

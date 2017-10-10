@@ -1,5 +1,6 @@
 const initialState = {
     pending: null,
+    fdrId: null,
     analogParams: [],
     binaryParams: [],
     chosenAnalogParams: [],
@@ -14,6 +15,7 @@ export default function fdrCyclo(state = initialState, action) {
             return { ...state,
                 ...{
                     pending: false,
+                    fdrId: action.payload.response.fdrId,
                     analogParams: action.payload.response.analogParams,
                     binaryParams: action.payload.response.binaryParams,
                 }

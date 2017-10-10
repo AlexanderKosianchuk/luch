@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use \Exception;
 
+use EntityTraits\dynamicTable;
+
 /**
  * FlightEvent
  *
@@ -15,6 +17,7 @@ use \Exception;
  */
 class FlightEvent
 {
+    use dynamicTable;
     private static $_prefix = '_events';
     /**
      * @var integer
@@ -199,23 +202,6 @@ class FlightEvent
                 throw new Exception("FlightEvent dynamic table truncating query failed. Query: "
                     . $query, 1);
             }
-        }
-
-        return $dynamicTableName;
-    }
-
-    public static function getTable($link, $guid)
-    {
-        if (!is_string($guid)) {
-            throw new Exception("Incorrect guid passed. String is required. Passed: "
-                . json_encode($guid), 1);
-        }
-
-        $dynamicTableName = $guid . self::$_prefix;
-        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
-        $result = $link->query($query);
-        if (!$result->fetch_array()) {
-            return null;
         }
 
         return $dynamicTableName;

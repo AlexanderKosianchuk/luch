@@ -1,14 +1,14 @@
 <?php
 
-
-
 namespace Entity;
+
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Calibration
  *
  * @Table(name="calibrations", indexes={@Index(name="id_fdr", columns={"id_fdr"}), @Index(name="id_user", columns={"id_user"})})
- * @Entity
+ * @Entity(repositoryClass="Repository\CalibrationRepository")
  */
 class Calibration
 {
@@ -33,14 +33,14 @@ class Calibration
      *
      * @Column(name="id_fdr", type="integer", nullable=false)
      */
-    private $idFdr;
+    private $fdrId;
 
     /**
      * @var integer
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $idUser;
+    private $userId;
 
     /**
      * @var \DateTime
@@ -55,6 +55,36 @@ class Calibration
      * @Column(name="dt_updated", type="datetime", nullable=false)
      */
     private $dtUpdated;
+
+    /**
+     * One Calibration has One Fdr.
+     * @OneToOne(targetEntity="Fdr")
+     * @JoinColumn(name="id_fdr", referencedColumnName="id")
+     */
+    private $fdr;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getFdr()
+    {
+        return $this->fdr;
+    }
+
+    public function get()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'fdrId' => $this->fdrId,
+            'fdrName' => $this->fdr->getName(),
+            'userId' => $this->userId,
+            'dtCreated' => $this->dtCreated->format('y/m/d H:i:s'),
+            'dtUpdated' => $this->dtUpdated->format('y/m/d H:i:s')
+        ];
+    }
 
 
 }
