@@ -52,14 +52,17 @@ class CalibrationController extends CController
 
         $calibration = new Calibration();
         $calibrationDynamicTable = $calibration->createTable($fdrCode);
+        $calibrationInfo = [];
 
         if ($calibrationId === null) {
-            $calibration->createCalibration($calibrationDynamicTable,
+            $calibrationInfo = $calibration->createCalibration($calibrationDynamicTable,
                 $fdrId,
                 $userId,
                 $calibrationsName,
                 $calibrations
             );
+
+            $calibrationId = $calibrationInfo['id'];
         } else {
             $calibration->updateCalibration($calibrationDynamicTable,
                 $calibrationId,
@@ -71,7 +74,19 @@ class CalibrationController extends CController
 
         unset($calibration);
 
-        return json_encode('ok');
+        $em = EM::get();
+
+        $calibration = $em->getRepository('Entity\Calibration')
+            ->findOneBy([
+                'userId' => $userId,
+                'id' => $calibrationId
+            ]);
+
+        if (empty($calibration)) {
+            throw new NotFoundException("saved calibration error. Cant find by id. Calibration id: ". $id);
+        }
+
+        return json_encode($calibration->get());
     }
 
     public function deleteCalibration($data)

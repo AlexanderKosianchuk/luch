@@ -63,6 +63,11 @@ class Calibration
      */
     private $fdr;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getFdr()
     {
         return $this->fdr;

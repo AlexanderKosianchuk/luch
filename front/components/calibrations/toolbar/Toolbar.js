@@ -42,7 +42,7 @@ class Toolbar extends Component {
                 <div className='container-fluid'>
                     <div className='navbar-header'>
                       <NavbarToggle/>
-                      
+
                       <a className='navbar-brand' href='#'>
                         <Translate value='calibration.toolbar.title' />
                       </a>
@@ -55,12 +55,11 @@ class Toolbar extends Component {
                                 isClear={ isClear }
                                 handleChange={ this.handleChange.bind(this) }
                             />
-                            <li><a href='#' className={ isClear ? 'calibrations-toolbar__is-hidden' : ''}>
-                                <span
-                                    className='glyphicon glyphicon-plus' aria-hidden='true'
-                                    onClick={ this.handleCreate.bind(this) }
-                                >
-                                </span>
+                            <li><a href='#'
+                                className={ isClear ? 'calibrations-toolbar__is-hidden' : ''}
+                                onClick={ this.handleCreate.bind(this) }
+                            >
+                                <span className='glyphicon glyphicon-plus' aria-hidden='true'></span>
                             </a></li>
                         </ul>
                     </div>

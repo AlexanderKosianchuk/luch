@@ -9,6 +9,7 @@ import Select from 'react-select2-wrapper';
 import 'react-select2-wrapper/css/select2.min.css';
 
 import request from 'actions/request';
+import transmit from 'actions/transmit';
 
 class CalibrationSelector extends Component {
     componentDidMount() {
@@ -42,7 +43,7 @@ class CalibrationSelector extends Component {
         let el = this.selectedCalibration.el[0];
         let val = parseInt(el.options[el.selectedIndex].value);
 
-        let index = this.props.selectedCalibration.findIndex((item) => {
+        let index = this.props.calibrations.findIndex((item) => {
             return item.id === val;
         });
 
@@ -57,8 +58,8 @@ class CalibrationSelector extends Component {
     render() {
         let isHidden = true;
 
-        if (this.props.fdrs
-            && (this.props.fdrs.length > 0)
+        if (this.props.calibrations
+            && (this.props.calibrations.length > 0)
             && (this.props.chosen)
         ) {
             isHidden = false;
@@ -93,14 +94,15 @@ CalibrationSelector.propTypes = {
 function mapStateToProps(state) {
     return {
         pending: state.calibrations.pending,
-        calibrations: state.calibrations.items,
-        chosen: state.calibrations.chosen
+        calibrations: state.fdrs.chosen.calibrations,
+        chosen: state.fdrs.chosenCalibration
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        request: bindActionCreators(request, dispatch)
+        request: bindActionCreators(request, dispatch),
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

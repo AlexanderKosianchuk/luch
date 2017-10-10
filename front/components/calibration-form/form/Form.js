@@ -28,7 +28,7 @@ class Form extends Component {
             'post',
             (this.props.calibrationId === null) ? 'CREATE_CALIBRATION' : 'UPDATE_CALIBRATION',
             form
-        ).then(response => this.props.redirect('/calibrations'));
+        ).then(response => this.props.redirect('/calibrations/fdr-id/' + this.props.fdrId));
     }
 
     buildRows(params) {

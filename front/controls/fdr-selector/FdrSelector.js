@@ -60,15 +60,6 @@ class FdrSelector extends Component {
         }
 
         this.props.transmit('CHOOSE_FDR', chosen);
-
-        if (!chosen.calibrations
-            || (chosen.calibrations.length === 0)
-        ) {
-            this.props.transmit('CHOOSE_CALIBRATION', {});
-            return;
-        }
-
-        this.props.transmit('CHOOSE_CALIBRATION', chosen.calibrations[0]);
     }
 
     render() {

@@ -119,7 +119,7 @@ class Calibration
         $result = $stmt->get_result();
 
         $calibration = [];
-        if($row = $result->fetch_array()) {
+        if ($row = $result->fetch_array()) {
             foreach ($row as $key => $value) {
                 $calibration[$key] = $value;
             }
@@ -605,7 +605,7 @@ class Calibration
             );
         }
 
-        return true;
+        return $calibrationInfo;
     }
 
     public function updateCalibration($tableName,
@@ -664,6 +664,8 @@ class Calibration
         $this->updateCalibrationTime ($calibrationId, $userId);
         $this->updateCalibrationName ($calibrationId, $calibrationsName, $userId);
 
-        return true;
+        $calibrationInfo = $this->getCalibrationById ($calibrationId, $userId);
+
+        return $calibrationInfo;
     }
 }

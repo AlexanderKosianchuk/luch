@@ -94,6 +94,7 @@
     "lodash.constant": "^3.0.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isinteger": "^4.0.4",
+    "moment": "^2.18.1",
     "object-to-formdata": "^1.0.12",
     "prop-types": "^15.5.10",
     "rc-collapse": "^1.7.6",

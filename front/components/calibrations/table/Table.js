@@ -1,11 +1,11 @@
 import './table.sass'
-import 'react-table/react-table.css'
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
+import moment from 'moment';
 
 import TableControl from 'controls/table/Table';
 import ContentLoader from 'controls/content-loader/ContentLoader';
@@ -88,6 +88,7 @@ class Table extends Component {
         if ((prevProps.fdrId !== this.props.fdrId)
              || (prevProps.page !== this.props.page)
              || (prevProps.pageSize !== this.props.pageSize)
+             || (prevProps.calibrations.length !== this.props.calibrations.length)
          ) {
              this.fetchData();
          }
@@ -174,6 +175,24 @@ class Table extends Component {
         this.navigate (this.props.fdrId, 1, pageSize);
     }
 
+    handleGetTrProps(state, rowInfo, column, instance) {
+        if (!rowInfo) {
+            return {};
+        }
+
+        let diff = moment().diff(moment(rowInfo.row.dtUpdated, 'YY-MM-DD hh:ii:ss'), 'months');
+
+        if (diff > 3) {
+            return {
+                style: {
+                    background: '#ffefaf'
+                }
+            }
+        } else {
+            return {};
+        }
+    }
+
     render() {
         return (
             <div className='calibrations-table'
@@ -184,6 +203,7 @@ class Table extends Component {
                     columns={ this.columns }
                     onPageChange={ this.onPageChange.bind(this) }
                     onPageSizeChange={ this.onPageSizeChange.bind(this) }
+                    getTrProps={ this.handleGetTrProps.bind(this) }
                     data={ this.state.data }
                     page={ this.props.page - 1 }
                     pages={ this.state.pages }
@@ -208,7 +228,9 @@ Table.propTypes = {
 };
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        calibrations: state.calibrations.items
+    };
 }
 
 function mapDispatchToProps(dispatch) {
