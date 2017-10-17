@@ -2,14 +2,7 @@
 
 namespace Controller;
 
-use Model\Language;
-use Model\FlightTemplate;
-use Model\Channel;
-use Model\Fdr;
-use Model\Flight;
-
-use Component\EntityManagerComponent as EM;
-use Component\FdrComponent;
+use Framework\Application as App;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
@@ -18,28 +11,15 @@ use Exception\ForbiddenException;
 
 use \Exception;
 
-class FdrController extends CController
+class FdrController extends BaseController
 {
-    function __construct()
+    public function getFdrsAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
-
-        $L = new Language();
-        unset($L);
-    }
-
-    public function getFdrs($args)
-    {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
-
-        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
-
-        return json_encode($fdrsAndCalibrations);
+        return json_encode(
+            App::dic()
+                ->get('FdrComponent')
+                ->getAvaliableFdrs()
+        );
     }
 
     public function ShowParamList($fdrId)

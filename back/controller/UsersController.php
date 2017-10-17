@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use \Framework\Application as App;
+
 use Model\User;
 use Model\Language;
 use Model\Fdr;
@@ -19,38 +21,18 @@ use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-class UsersController extends CController
+class UsersController extends BaseController
 {
-    function __construct()
+    public function loginAction ($user, $pass)
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
-    }
-
-    public function login ($args)
-    {
-        if (empty($args)
-            || !isset($args['login'])
-            || !isset($args['pass'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $U = new User();
-        $data = [
-            'user' => $args['login'],
-            'pwd' => $args['pass']
-        ];
-
-        $success = false;
         $lang = 'en';
 
-        $isAuthorized = $U->tryAuth($data, $_SESSION, $_COOKIE);
+        $userId = App::dic()->get('User')->signIn(
+            $user,
+            $pass
+        );
 
-        if (!$isAuthorized
-            || !isset($U->username)
-            || empty($U->username)
-        ) {
+        if ($userId === null) {
             return json_encode([
                 'status' => 'fail',
                 'message' => 'userUnexist',
@@ -58,25 +40,18 @@ class UsersController extends CController
             ]);
         }
 
-        $usrInfo = $U->GetUsersInfo($U->username);
-        $lang = strtolower($usrInfo['lang']);
+        $user = App::em()->find('Entity\User', $userId);
 
         return json_encode([
             'status' => 'ok',
-            'login' => $args['login'],
-            'lang' => $lang
+            'login' => $user->getLogin(),
+            'lang' => strtolower($user->getLang())
         ]);
     }
 
-    public function userLogout()
+    public function logoutAction()
     {
-        if (!isset($this->_user->username)
-            || ($this->_user->username === '')
-        ) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $this->_user->logout($this->_user->username);
+        App::dic()->get('User')->logout();
 
         return json_encode('ok');
     }

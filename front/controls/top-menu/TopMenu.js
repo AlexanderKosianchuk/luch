@@ -4,16 +4,15 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Translate, I18n } from 'react-redux-i18n';
-import { push } from 'react-router-redux'
 
 import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
 import FlightUploaderDropdown from 'controls/top-menu/flight-uploader-dropdown/FlightUploaderDropdown';
 import FlightImporterDropdown from 'controls/top-menu/flight-importer-dropdown/FlightImporterDropdown';
 import FlightUploadingProgressIndicator from 'controls/top-menu/flight-uploading-progress-indicator/FlightUploadingProgressIndicator';
 
-import logout from 'actions/particular/logout';
 import changeLanguage from 'actions/particular/changeLanguage';
 import redirect from 'actions/redirect';
+import request from 'actions/request';
 
 class TopMenu extends React.Component {
     changeLanguage(event) {
@@ -30,6 +29,14 @@ class TopMenu extends React.Component {
                 return <li key={ item }><a href='#' onClick={ this.changeLanguage.bind(this) } data-lang={ item }>{ item }</a></li>
             }
         });
+    }
+
+    logout() {
+        this.props.request(
+            ['users', 'logout'],
+            'post',
+            'USER_LOGOUT'
+        ).then(() => this.props.redirect('/login'));
     }
 
     render() {
@@ -82,7 +89,7 @@ class TopMenu extends React.Component {
                     <li><a className='is-hoverable' onClick={ () => { this.props.redirect('/user-settings') }} href='#'>
                         <span className='glyphicon glyphicon-cog'></span>
                     </a></li>
-                    <li><a className='is-hoverable' onClick={ this.props.logout } href='#'>
+                    <li><a className='is-hoverable' onClick={ this.logout.bind(this) } href='#'>
                         <span className='glyphicon glyphicon-log-out'></span>
                     </a></li>
                   </ul>
@@ -103,7 +110,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logout: bindActionCreators(logout, dispatch),
+        request: bindActionCreators(request, dispatch),
         changeLanguage: bindActionCreators(changeLanguage, dispatch),
         redirect: bindActionCreators(redirect, dispatch)
     }

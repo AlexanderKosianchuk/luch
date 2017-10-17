@@ -39,6 +39,7 @@ phpunit.phar
 #log
 /log
 npm-debug.log
+php_errors.log
 
 #server
 .bash_history

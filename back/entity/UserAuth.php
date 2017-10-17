@@ -26,7 +26,7 @@ class UserAuth
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $idUser;
+    private $userId;
 
     /**
      * @var string
@@ -49,5 +49,23 @@ class UserAuth
      */
     private $dt;
 
+    public function getUserId()
+    {
+        return $this->userId;
+    }
 
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    public function setToken($token)
+    {
+        $this->token = $token;
+    }
+
+    public function setExp($exp)
+    {
+        $this->exp = $exp;
+    }
 }

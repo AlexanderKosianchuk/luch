@@ -2,13 +2,12 @@
 
 namespace Component;
 
-use Entity\UserActivity;
-
-use Component\EntityManagerComponent as EM;
+use \Framework\Application as App;
+use \Entity\UserActivity;
 
 use Exception;
 
-class ResponseRegistrator
+class ResponseRegistrator extends BaseComponent
 {
     private static $codes = [
         '200' => 'OK',
@@ -19,9 +18,9 @@ class ResponseRegistrator
         '500' => 'Internal Server Error'
     ];
 
-    public static function register($userId, $action, $message = 'ok', $status = 'executed', $code = 200)
+    public function register($action, $message = 'ok', $status = 'executed', $code = 200)
     {
-        $em = EM::get();
+        $em = App::em();
 
         $userActivity = new UserActivity;
         $userActivity->setAttributes([
@@ -29,17 +28,17 @@ class ResponseRegistrator
             'status' => $status,
             'code' => $code,
             'message' => $message,
-            'userId' => $userId
+            'userId' => intval(App::user()->getId())
         ]);
 
         $em->persist($userActivity);
         $em->flush();
     }
 
-    public static function faultResponse($userId, $action, $code, $message, $forwardingDescription = null)
+    public function faultResponse($action, $code, $message, $forwardingDescription = null)
     {
         $code = strval($code);
-        self::register($userId, $action, $message, 'rejected', $code);
+        $this->register($action, $message, 'rejected', $code);
         http_response_code($code);
         header($code . ' ' . self::$codes[strval($code)]);
         if (!isset($forwardingDescription)) {

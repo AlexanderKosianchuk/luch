@@ -6,18 +6,14 @@ use Model\Fdr;
 use Model\Calibration;
 use Model\User;
 
-use Component\EntityManagerComponent as EM;
-
 use Exception;
 
-class FdrComponent
+class FdrComponent extends BaseComponent
 {
-    public static function getAvaliableFdrs($userId)
+    public function getAvaliableFdrs()
     {
-        if (!is_int($userId)) {
-            throw new Exception("Incorrect userId passed. Integer is required. Passed: "
-                . json_encode($userId), 1);
-        }
+        $userId = $this->user()->getId();
+        return $userId;
 
         $user = new User;
         $avaliablefdrIds = $user->getAvailableFdrs($userId);

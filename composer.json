@@ -1,5 +1,5 @@
 {
-    "name": "AT/luch",
+    "name": "AT/luche",
     "description": "Flight data processor.",
     "type": "project",
     "license": "MIT",
@@ -14,10 +14,15 @@
         "doctrine/orm": "2.4.*",
         "symfony/yaml": "2.*",
         "evenement/evenement": "2.0.*",
-        "robmorgan/phinx": "^0.8.0"
+        "robmorgan/phinx": "^0.8.0",
+        "php-di/php-di": "^5.4",
+        "doctrine/annotations": "^1.5",
+        "klein/klein": "^2.1",
+        "mustache/mustache": "^2.12"
     },
     "autoload": {
         "classmap": [
+            "back/framework/",
             "back/repository/",
             "back/entity/",
             "back/model/",

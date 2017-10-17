@@ -8,6 +8,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'bbf73f3db644d3dced353b837903e74c' => __DIR__ . '/..' . '/php-di/php-di/src/DI/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -23,7 +24,18 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'P' => 
         array (
             'Psr\\Log\\' => 8,
+            'Psr\\Container\\' => 14,
+            'PhpDocReader\\' => 13,
             'Phinx\\' => 6,
+        ),
+        'K' => 
+        array (
+            'Klein\\' => 6,
+        ),
+        'I' => 
+        array (
+            'Invoker\\' => 8,
+            'Interop\\Container\\' => 18,
         ),
         'D' => 
         array (
@@ -31,6 +43,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
+            'DI\\' => 3,
         ),
     );
 
@@ -63,9 +76,29 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'PhpDocReader\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
+        ),
         'Phinx\\' => 
         array (
             0 => __DIR__ . '/..' . '/robmorgan/phinx/src/Phinx',
+        ),
+        'Klein\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/klein/klein/src/Klein',
+        ),
+        'Invoker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/invoker/src',
+        ),
+        'Interop\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
         ),
         'Doctrine\\Common\\Inflector\\' => 
         array (
@@ -83,9 +116,20 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
+        'DI\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/php-di/src/DI',
+        ),
     );
 
     public static $prefixesPsr0 = array (
+        'M' => 
+        array (
+            'Mustache' => 
+            array (
+                0 => __DIR__ . '/..' . '/mustache/mustache/src',
+            ),
+        ),
         'E' => 
         array (
             'Evenement' => 
@@ -115,16 +159,20 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
     );
 
     public static $classMap = array (
+        'Component\\BaseComponent' => __DIR__ . '/../..' . '/back/framework/BaseComponent.php',
         'Component\\EntityManagerComponent' => __DIR__ . '/../..' . '/back/component/EntityManagerComponent.php',
         'Component\\EventProcessingComponent' => __DIR__ . '/../..' . '/back/component/EventProcessingComponent.php',
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',
+        'Component\\Rbac' => __DIR__ . '/../..' . '/back/component/Rbac.php',
         'Component\\RealConnectionFactory' => __DIR__ . '/../..' . '/back/component/RealConnectionComponent.php',
         'Component\\ResponseRegistrator' => __DIR__ . '/../..' . '/back/component/ResponseRegistrator.php',
         'Component\\RuntimeManager' => __DIR__ . '/../..' . '/back/component/RuntimeManager.php',
-        'Controller\\CController' => __DIR__ . '/../..' . '/back/controller/CController.php',
+        'Component\\TemplateEngine' => __DIR__ . '/../..' . '/back/component/TemplateEngine.php',
+        'Component\\User' => __DIR__ . '/../..' . '/back/component/User.php',
+        'Controller\\BaseController' => __DIR__ . '/../..' . '/back/framework/BaseController.php',
         'Controller\\CalibrationController' => __DIR__ . '/../..' . '/back/controller/CalibrationController.php',
         'Controller\\ChartController' => __DIR__ . '/../..' . '/back/controller/ChartController.php',
         'Controller\\EntryController' => __DIR__ . '/../..' . '/back/controller/EntryController.php',
@@ -164,6 +212,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Exception\\NotFoundException' => __DIR__ . '/../..' . '/back/exception/NotFoundException.php',
         'Exception\\UnauthorizedException' => __DIR__ . '/../..' . '/back/exception/UnauthorizedException.php',
         'Exception\\UnknownActionException' => __DIR__ . '/../..' . '/back/exception/UnknownActionException.php',
+        'Framework\\Application' => __DIR__ . '/../..' . '/back/framework/Application.php',
         'Model\\Airport' => __DIR__ . '/../..' . '/back/model/Airport.php',
         'Model\\Calibration' => __DIR__ . '/../..' . '/back/model/Calibration.php',
         'Model\\Channel' => __DIR__ . '/../..' . '/back/model/Channel.php',

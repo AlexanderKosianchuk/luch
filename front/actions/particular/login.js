@@ -9,8 +9,8 @@ export default function login(payload) {
         });
 
         return new Promise((resolve, reject) => {
-            fetch('/entry.php?action=users/login&' + queryString.stringify(payload),
-                { credentials: "same-origin" }
+            fetch(ENTRY_URL + 'users/login/' + 'login/' + payload.login + '/pass/' + payload.pass,
+                { credentials: 'same-origin' }
             ).then((response) => {
                     response
                         .json()
@@ -39,7 +39,7 @@ export default function login(payload) {
                         type: 'LOGIN_FAILED',
                         payload: response
                     });
-                    reject(json);
+                    reject(response);
                 }
             );
         });

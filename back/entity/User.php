@@ -91,9 +91,24 @@ class User
      */
     private $creatorId;
 
+    public function getId()
+    {
+        return intval($this->id);
+    }
+
     public function getRole()
     {
         return $this->role;
+    }
+
+    public function getLogin()
+    {
+        return strval($this->login);
+    }
+
+    public function getLang()
+    {
+        return strval($this->lang);
     }
 
     public function getLogo()

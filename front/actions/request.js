@@ -15,13 +15,13 @@ export default function request(
             });
         }
 
-        let url = ENTRY_URL+'?action='+action.join('/');
+        let url = ENTRY_URL + action.join('/');
         let options = {
             credentials: 'same-origin',
             method: 'get'
         };
         if (method === 'get') {
-            url += '&' + queryString.stringify(payload)
+            url += '/' + queryString.stringify(payload)
         } else {
             options.method = 'post';
 
