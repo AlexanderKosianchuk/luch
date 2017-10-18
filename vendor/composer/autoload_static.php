@@ -9,6 +9,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'bbf73f3db644d3dced353b837903e74c' => __DIR__ . '/..' . '/php-di/php-di/src/DI/functions.php',
+        '1e324484438cc32b4bd213e3a86f9851' => __DIR__ . '/..' . '/philipp15b/php-i18n/i18n.class.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -160,22 +161,20 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
 
     public static $classMap = array (
         'Component\\BaseComponent' => __DIR__ . '/../..' . '/back/framework/BaseComponent.php',
-        'Component\\EntityManagerComponent' => __DIR__ . '/../..' . '/back/component/EntityManagerComponent.php',
         'Component\\EventProcessingComponent' => __DIR__ . '/../..' . '/back/component/EventProcessingComponent.php',
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',
-        'Component\\Rbac' => __DIR__ . '/../..' . '/back/component/Rbac.php',
-        'Component\\RealConnectionFactory' => __DIR__ . '/../..' . '/back/component/RealConnectionComponent.php',
+        'Component\\Rbac' => __DIR__ . '/../..' . '/back/framework/system-components/Rbac.php',
+        'Component\\RealConnection' => __DIR__ . '/../..' . '/back/framework/system-components/RealConnection.php',
         'Component\\ResponseRegistrator' => __DIR__ . '/../..' . '/back/component/ResponseRegistrator.php',
         'Component\\RuntimeManager' => __DIR__ . '/../..' . '/back/component/RuntimeManager.php',
-        'Component\\TemplateEngine' => __DIR__ . '/../..' . '/back/component/TemplateEngine.php',
-        'Component\\User' => __DIR__ . '/../..' . '/back/component/User.php',
+        'Component\\TemplateEngine' => __DIR__ . '/../..' . '/back/framework/system-components/TemplateEngine.php',
+        'Component\\User' => __DIR__ . '/../..' . '/back/framework/system-components/User.php',
         'Controller\\BaseController' => __DIR__ . '/../..' . '/back/framework/BaseController.php',
         'Controller\\CalibrationController' => __DIR__ . '/../..' . '/back/controller/CalibrationController.php',
         'Controller\\ChartController' => __DIR__ . '/../..' . '/back/controller/ChartController.php',
-        'Controller\\EntryController' => __DIR__ . '/../..' . '/back/controller/EntryController.php',
         'Controller\\FdrController' => __DIR__ . '/../..' . '/back/controller/FdrController.php',
         'Controller\\FlightEventsController' => __DIR__ . '/../..' . '/back/controller/FlightEventsController.php',
         'Controller\\FlightsController' => __DIR__ . '/../..' . '/back/controller/FlightsController.php',
@@ -226,9 +225,10 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\Frame' => __DIR__ . '/../..' . '/back/model/Frame.php',
         'Model\\Language' => __DIR__ . '/../..' . '/back/model/Language.php',
         'Model\\SearchFlights' => __DIR__ . '/../..' . '/back/model/SearchFlights.php',
-        'Model\\User' => __DIR__ . '/../..' . '/back/model/User.php',
         'Model\\UserOptions' => __DIR__ . '/../..' . '/back/model/UserOptions.php',
         'Repository\\CalibrationRepository' => __DIR__ . '/../..' . '/back/repository/CalibrationRepository.php',
+        'Repository\\FdrRepository' => __DIR__ . '/../..' . '/back/repository/FdrRepository.php',
+        'Repository\\FdrToUserRepository' => __DIR__ . '/../..' . '/back/repository/FdrToUserRepository.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
         'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',
     );

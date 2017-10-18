@@ -18,7 +18,7 @@ class FdrController extends BaseController
         return json_encode(
             App::dic()
                 ->get('FdrComponent')
-                ->getAvaliableFdrs()
+                ->getFdrs()
         );
     }
 

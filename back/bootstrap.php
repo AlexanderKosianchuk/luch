@@ -1,7 +1,6 @@
 <?php
 
 require_once 'vendor/autoload.php';
-require_once 'includes.php';
 
 define('SITE_ROOT_DIR', dirname(__DIR__));
 

@@ -4,15 +4,25 @@ namespace Component;
 
 use Exception;
 
-class RealConnectionFactory
+class RealConnection
 {
-    public static function create($db = "default")
-    {
-        global $CONFIG;
-        $dbConfig = $CONFIG["db"]["default"];
+    private $_dbConfig;
 
-        if (isset($CONFIG["db"][$db])) {
-            $dbConfig = $CONFIG["db"][$db];
+    public function init($dbConfig)
+    {
+        $this->_dbConfig = $dbConfig;
+    }
+
+    public function create($db = "default")
+    {
+        if ($this->_dbConfig === null) {
+            throw new Exception("RealConnectionFactory did not configure", 1);
+        }
+
+        $dbConfig = $this->_dbConfig["default"];
+
+        if (isset($this->_dbConfig[$db])) {
+            $dbConfig = $this->_dbConfig[$db];
         }
 
         $link = mysqli_init();
@@ -34,7 +44,7 @@ class RealConnectionFactory
         return $link;
     }
 
-    public static function destroy($link)
+    public function destroy($link)
     {
         if (method_exists ($link, "close")) {
             $link->close();

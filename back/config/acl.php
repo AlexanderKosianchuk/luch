@@ -4,6 +4,7 @@ return [
     'user' => [
         'actions' => [
             'getFdrsAction',
+            'getCalibrationsListAction',
             'logoutAction'
         ]
     ],

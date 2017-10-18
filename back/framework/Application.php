@@ -17,6 +17,8 @@ class Application
     private static $_params;
     private static $_acl;
     private static $_rbac;
+    private static $_connect;
+    private static $_i18n;
 
     private static $_instance;
 
@@ -35,6 +37,8 @@ class Application
         self::configureDependencyInjection($cfg);
         self::configureCurrentUser();
         self::configureAcl($cfg);
+        self::configureConnectionFactory($cfg);
+        self::configureI18n($cfg);
     }
 
     private static function configureDoctrine($cfg)
@@ -54,12 +58,16 @@ class Application
         );
 
         // obtaining the entity manager
-        self::$_em = EntityManager::create(
-            $cfg['db']['default'],
-            $anotationConfig
-        );
+        foreach ($cfg['db'] as $key => $item) {
+            $em = EntityManager::create(
+                $item,
+                $anotationConfig
+            );
 
-        self::$_em->getConfiguration()->addEntityNamespace('Entity', 'Entity');
+            $em->getConfiguration()->addEntityNamespace('Entity', 'Entity');
+
+            self::$_em[$key] = $em;
+        }
     }
 
     private static function configureDependencyInjection($cfg)
@@ -141,7 +149,7 @@ class Application
                 }
             }
         }
-        
+
         self::$_acl = [
             'tree' => $tree,
             'actions' => $allActions
@@ -151,8 +159,37 @@ class Application
         $Rbac = $dic->get('Rbac');
         $role = self::user()->getRole();
 
-        $Rbac->configAcl(self::$_acl, $role);
+        $Rbac->init(self::$_acl, $role);
         self::$_rbac = $Rbac;
+    }
+
+    private static function configureConnectionFactory($cfg)
+    {
+        if (!isset($cfg['db'])) {
+            throw new Exception('Config file does not contain database config', 1);
+        }
+
+        self::$_connect = self::dic()->get('RealConnection');
+        self::$_connect->init($cfg['db']);
+    }
+
+    private static function configureI18n($cfg)
+    {
+        if (!isset($cfg['i18n'])) {
+            throw new Exception('Config file does not contain i18n config', 1);
+        }
+
+        if (!file_exists($cfg['i18n']['langCache'])) {
+            mkdir($cfg['i18n']['langCache'], 0755, true);
+        }
+
+        self::$_i18n = new \i18n(
+            $cfg['i18n']['langFilesDir'] . '{LANGUAGE}.ini',
+            $cfg['i18n']['langCache'],
+            $cfg['i18n']['forcedLang']
+        );
+
+        self::$_i18n->init();
     }
 
     private static function app()
@@ -160,13 +197,14 @@ class Application
         if (is_null(self::$_instance)) {
             self::$_instance = new self();
         }
+
         return self::$_instance;
     }
 
-    public static function em()
+    public static function em($db = 'default')
     {
         $instance = self::app();
-        return $instance::$_em;
+        return $instance::$_em[$db];
     }
 
     public static function dic()
@@ -191,5 +229,17 @@ class Application
     {
         $instance = self::app();
         return $instance::$_rbac;
+    }
+
+    public static function connection()
+    {
+        $instance = self::app();
+        return $instance::$_connect;
+    }
+
+    public static function i18n()
+    {
+        $instance = self::app();
+        return $instance::$_i18n;
     }
 }

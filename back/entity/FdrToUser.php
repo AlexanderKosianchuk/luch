@@ -2,11 +2,13 @@
 
 namespace Entity;
 
+use Doctrine\ORM\EntityRepository;
+
 /**
  * FdrToUser
  *
  * @Table(name="fdr_to_user")
- * @Entity
+ * @Entity(repositoryClass="Repository\FdrToUserRepository")
  */
 class FdrToUser
 {
@@ -57,5 +59,13 @@ class FdrToUser
 
     public function setFdr($fdr) {
         $this->fdr = $fdr;
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getFdr() {
+        return $this->fdr;
     }
 }

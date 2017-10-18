@@ -18,11 +18,13 @@
         "php-di/php-di": "^5.4",
         "doctrine/annotations": "^1.5",
         "klein/klein": "^2.1",
-        "mustache/mustache": "^2.12"
+        "mustache/mustache": "^2.12",
+        "philipp15b/php-i18n": "^3.0"
     },
     "autoload": {
         "classmap": [
             "back/framework/",
+            "back/framework/system-components/",
             "back/repository/",
             "back/entity/",
             "back/model/",

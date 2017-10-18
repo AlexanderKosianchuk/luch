@@ -89,6 +89,7 @@ class User extends BaseComponent
         if (session_status() == PHP_SESSION_NONE) session_start();
         $_SESSION['uid'] = $id;
         $_SESSION['login'] = $user->getLogin();
+        $_SESSION['lang'] = $user->getLang();
         session_write_close();
 
         return $id;

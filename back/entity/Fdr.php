@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Fdr
  *
  * @Table(name="fdrs")
- * @Entity
+ * @Entity(repositoryClass="Repository\FdrRepository")
  */
 class Fdr
 {
@@ -36,102 +36,74 @@ class Fdr
     private $code;
 
     /**
-     * @var string
-     *
-     * @Column(name="gradiApTableName", type="string", length=255, nullable=false)
-     */
-    private $gradiaptablename;
-
-    /**
-     * @var string
-     *
-     * @Column(name="gradiBpTableName", type="string", length=255, nullable=false)
-     */
-    private $gradibptablename;
-
-    /**
-     * @var string
-     *
-     * @Column(name="excListTableName", type="string", length=255, nullable=false)
-     */
-    private $exclisttablename;
-
-    /**
-     * @var string
-     *
-     * @Column(name="paramSetTemplateListTableName", type="string", length=20, nullable=false)
-     */
-    private $paramsettemplatelisttablename;
-
-    /**
      * @var float
      *
-     * @Column(name="stepLength", type="float", precision=10, scale=0, nullable=false)
+     * @Column(name="step_length", type="float", precision=10, scale=0, nullable=false)
      */
     private $stepLength;
 
     /**
      * @var integer
      *
-     * @Column(name="stepDivider", type="integer", nullable=false)
+     * @Column(name="step_divider", type="integer", nullable=false)
      */
     private $stepDivider;
 
     /**
      * @var integer
      *
-     * @Column(name="frameLength", type="integer", nullable=false)
+     * @Column(name="frame_length", type="integer", nullable=false)
      */
     private $frameLength;
 
     /**
      * @var integer
      *
-     * @Column(name="wordLength", type="integer", nullable=false)
+     * @Column(name="word_length", type="integer", nullable=false)
      */
     private $wordLength;
 
     /**
      * @var string
      *
-     * @Column(name="aditionalInfo", type="text", length=65535, nullable=false)
+     * @Column(name="aditional_info", type="text", length=65535, nullable=false)
      */
     private $aditionalInfo;
 
     /**
      * @var integer
      *
-     * @Column(name="headerLength", type="integer", nullable=false)
+     * @Column(name="header_length", type="integer", nullable=false)
      */
     private $headerLength;
 
     /**
      * @var string
      *
-     * @Column(name="headerScr", type="text", length=65535, nullable=false)
+     * @Column(name="header_scr", type="text", length=65535, nullable=false)
      */
     private $headerScr;
 
     /**
      * @var string
      *
-     * @Column(name="frameSyncroCode", type="string", length=8, nullable=false)
+     * @Column(name="frame_syncro_code", type="string", length=8, nullable=false)
      */
     private $frameSyncroCode;
 
     /**
      * @var string
      *
-     * @Column(name="previewParams", type="string", length=255, nullable=false)
+     * @Column(name="preview_params", type="string", length=255, nullable=false)
      */
     private $previewParams;
 
     /**
      * @var string
      *
-     * @Column(name="author", type="string", length=200, nullable=false)
+     * @Column(name="id_user", type="integer",  nullable=false)
      */
-    private $author;
+    private $userId;
 
     /**
      * @var string
@@ -194,10 +166,6 @@ class Fdr
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'gradiApTableName' => $this->gradiApTableName,
-            'gradiBpTableName' => $this->gradiBpTableName,
-            'excListTableName' => $this->excListTableName,
-            'paramSetTemplateListTableName' => $this->paramSetTemplateListTableName,
             'stepLength' => $this->stepLength,
             'stepDivider' => $this->stepDivider,
             'frameLength' => $this->frameLength,
@@ -207,8 +175,8 @@ class Fdr
             'headerScr' => $this->headerScr,
             'frameSyncroCode' => $this->frameSyncroCode,
             'previewParams' => $this->previewParams,
-            'author' => $this->author,
-            'kmlExportScript' => $this->kmlExportScript
+            'kmlExportScript' => $this->kmlExportScript,
+            'userId' => $this->userId
         ];
     }
 }

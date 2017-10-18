@@ -10,7 +10,7 @@ class Rbac extends BaseComponent
     private $_acl;
     private $_role;
 
-    public function configAcl($acl, $userRole)
+    public function init($acl, $userRole)
     {
         $this->_allActions = $acl['actions'];
         $this->_acl = $acl['tree'];

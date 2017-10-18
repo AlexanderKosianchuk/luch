@@ -2,61 +2,64 @@
 
 namespace Component;
 
-use Model\Fdr;
-use Model\Calibration;
-use Model\User;
+use Framework\Application as App;
+
+use Entity\FdrAnalogParam;
+use Entity\CalibrationParam;
 
 use Exception;
 
 class FdrComponent extends BaseComponent
 {
-    public function getAvaliableFdrs()
+    public function getFdrs()
     {
         $userId = $this->user()->getId();
-        return $userId;
 
-        $user = new User;
-        $avaliablefdrIds = $user->getAvailableFdrs($userId);
+        $fdrs = $this->em()
+            ->getRepository('Entity\FdrToUser')
+            ->getAvaliableFdrs($userId);
 
-        $fdr = new Fdr;
-        $fdrInfoList = $fdr->getFdrList($avaliablefdrIds);
-
-        $fdrsWithCalibration = [];
-        foreach ($fdrInfoList as $fdrInfo) {
-            $calibrationParamsExist = $fdr->checkCalibrationParamsExist(intval($fdrInfo['id']));
-
-            if ($calibrationParamsExist) {
-                $fdrsWithCalibration[] = $fdrInfo;
-            }
-        }
-
-        $em = EM::get();
         $fdrsAndCalibrations = [];
-        $calibration = new Calibration;
-        foreach ($fdrsWithCalibration as $fdrInfo) {
-            $fdrId = intval($fdrInfo['id']);
-            $fdrCode = $fdrInfo['code'];
-            $calibrationDynamicTable = $calibration->getTableName($fdrCode);
-
-            $fdrCalibrations = $em->getRepository('Entity\Calibration')
+        foreach ($fdrs as $fdr) {
+            $fdrCalibrations = $this->em()->getRepository('Entity\Calibration')
                 ->findBy([
                     'userId' => $userId,
-                    'fdrId' => $fdrId
+                    'fdrId' => $fdr->getId()
                 ]);
 
-            $calibratedParams = $fdr->getCalibratedParams($fdrId);
-
-            foreach ($fdrCalibrations as &$fdrCalibration) {
-                $fdrCalibration = $fdrCalibration->get();
+            $calibrations = [];
+            foreach ($fdrCalibrations as $item) {
+                $calibrations[] = $item->get();
             }
 
             $fdrsAndCalibrations[] = [
-                'id' => intval($fdrInfo['id']),
-                'name' => $fdrInfo['name'],
-                'calibrations' => $fdrCalibrations
+                'id' => $fdr->getId(),
+                'name' => $fdr->getName(),
+                'calibrations' => $calibrations
             ];
         }
 
         return $fdrsAndCalibrations;
+    }
+
+    public function getParams($fdrId)
+    {
+        $fdr = App::em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+        $link = App::connection()->create('fdrs');
+        $fdrAnalogParamTable = FdrAnalogParam::getTable($link, $fdr->getCode());
+        App::connection()->destroy($link);
+
+        if ($fdrAnalogParamTable === null) {
+            return null;
+        }
+
+        App::em('fdrs')
+            ->getClassMetadata('Entity\FdrAnalogParam')
+            ->setTableName($fdrAnalogParamTable);
+
+        return App::em('fdrs')
+            ->getRepository('Entity\FdrAnalogParam')
+            ->findAll('Entity\FdrAnalogParam');
     }
 }

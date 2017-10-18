@@ -3,6 +3,7 @@
 namespace Controller;
 
 use \Framework\Application as App;
+use \L;
 
 class IndexController extends BaseController
 {
@@ -15,7 +16,7 @@ class IndexController extends BaseController
         return $te->render($tpl, [
             'languange' => $user->getLang(),
             'login' => $user->getLogin(),
-            'title' => 'title',
+            'title' => L::title,
             'script' => $this->gutScriptName()
         ]);
     }

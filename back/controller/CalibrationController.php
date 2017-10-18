@@ -2,26 +2,30 @@
 
 namespace Controller;
 
-use Model\Fdr;
-use Model\Calibration;
-
-use Component\EntityManagerComponent as EM;
+use Framework\Application as App;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-use Component\FdrComponent;
-
-class CalibrationController extends CController
+class CalibrationController extends BaseController
 {
-    public function getAvaliableFdrs($data)
+    public function getCalibrationsListAction()
     {
-        $userId = intval($this->_user->userInfo['id']);
-        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
+        $userId = $this->user()->getId();
 
-        return json_encode($fdrsAndCalibrations);
+        $em = EM::get();
+
+        $calibrations = $em->getRepository('Entity\Calibration')
+            ->findBy(['userId' => $userId]);
+
+        $response = [];
+        foreach ($calibrations as $item) {
+            $response[] = $item->get();
+        }
+
+        return json_encode($response);
     }
 
     public function saveCalibration($data)
@@ -126,26 +130,7 @@ class CalibrationController extends CController
         return json_encode('ok');
     }
 
-    public function getCalibrationsList()
-    {
-        $userId = intval($this->_user->userInfo['id']);
 
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
-
-        $em = EM::get();
-
-        $calibrations = $em->getRepository('Entity\Calibration')
-            ->findBy(['userId' => $userId]);
-
-        $response = [];
-        foreach ($calibrations as $item) {
-            $response[] = $item->get();
-        }
-
-        return json_encode($response);
-    }
 
     public function getCalibrationsPage($args)
     {

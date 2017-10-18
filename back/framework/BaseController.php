@@ -35,17 +35,17 @@ class BaseController
             $response = call_user_func_array([$this, $method], $arguments);
             $rr->register($userId, $fullAction);
         } catch (BadRequestException $exception) {
-            $rr->faultResponse($action, 400, $exception->message, $exception->forwardingDescription);
+            $rr->faultResponse($method, 400, $exception->message, $exception->forwardingDescription);
         } catch (UnauthorizedException $exception) {
-            $rr->faultResponse($action, 401, $exception->message, $exception->forwardingDescription);
+            $rr->faultResponse($method, 401, $exception->message, $exception->forwardingDescription);
         } catch (NotFoundException $exception) {
-            $rr->faultResponse($action, 404, $exception->message, $exception->forwardingDescription);
+            $rr->faultResponse($method, 404, $exception->message, $exception->forwardingDescription);
         } catch (ForbiddenException $exception) {
-            $rr->faultResponse($action, 403, $exception->message, $exception->forwardingDescription);
+            $rr->faultResponse($method, 403, $exception->message, $exception->forwardingDescription);
         } catch (DriverException $exception) {
-            $rr->faultResponse($action, 500, $exception->getMessage());
+            $rr->faultResponse($method, 500, $exception->getMessage());
         } catch (BadMethodCallException $exception) {
-            $rr->faultResponse($action, 500, $exception->getMessage());
+            $rr->faultResponse($method, 500, $exception->getMessage());
         } catch (Exception $exception) {
             $message = 'Unknown error';
 
@@ -59,7 +59,7 @@ class BaseController
                 $message = $exception->getMessage();
             }
 
-            $rr->faultResponse($action, 500, $message);
+            $rr->faultResponse($method, 500, $message);
         }
 
         return $response;
