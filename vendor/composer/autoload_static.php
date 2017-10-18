@@ -172,6 +172,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Component\\RuntimeManager' => __DIR__ . '/../..' . '/back/component/RuntimeManager.php',
         'Component\\TemplateEngine' => __DIR__ . '/../..' . '/back/framework/system-components/TemplateEngine.php',
         'Component\\User' => __DIR__ . '/../..' . '/back/framework/system-components/User.php',
+        'Component\\UserSettingsComponent' => __DIR__ . '/../..' . '/back/component/UserSettingsComponent.php',
         'Controller\\BaseController' => __DIR__ . '/../..' . '/back/framework/BaseController.php',
         'Controller\\CalibrationController' => __DIR__ . '/../..' . '/back/controller/CalibrationController.php',
         'Controller\\ChartController' => __DIR__ . '/../..' . '/back/controller/ChartController.php',
@@ -227,9 +228,9 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\SearchFlights' => __DIR__ . '/../..' . '/back/model/SearchFlights.php',
         'Model\\UserOptions' => __DIR__ . '/../..' . '/back/model/UserOptions.php',
         'Repository\\CalibrationRepository' => __DIR__ . '/../..' . '/back/repository/CalibrationRepository.php',
-        'Repository\\FdrRepository' => __DIR__ . '/../..' . '/back/repository/FdrRepository.php',
         'Repository\\FdrToUserRepository' => __DIR__ . '/../..' . '/back/repository/FdrToUserRepository.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
+        'Repository\\FlightToFolderRepository' => __DIR__ . '/../..' . '/back/repository/FlightToFolderRepository.php',
         'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',
     );
 

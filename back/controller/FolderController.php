@@ -2,31 +2,37 @@
 
 namespace Controller;
 
-use Model\User;
-use Model\Folder;
-use Model\Flight;
+use Framework\Application as App;
 
 use Entity\Folder as FolderEntity;
-
-use Component\EntityManagerComponent as EM;
-use Component\FlightComponent;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-class FolderController extends CController
+class FolderController extends BaseController
 {
-    function __construct()
+    public function getFoldersAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $userId = App::user()->getId();
 
-        $get = $_GET;
-        if(isset($get['action']) && ($get['action'] != '')) {
-            $this->getAction = $get['action'];
+        $folders = App::em()->getRepository('Entity\Folder')
+            ->findBy(['userId' => $userId]);
+
+        $items = [];
+        foreach ($folders as $folder) {
+            $items[] = array_merge(
+                $folder->get(),
+                [
+                    'type' => 'folder',
+                    'parentId' => intval($folder->getPath()),
+                    'expanded' => boolval($folder->getIsExpanded())
+                ]
+            );
         }
+
+        return json_encode($items);
     }
 
     public function createFolder($data)
@@ -59,34 +65,6 @@ class FolderController extends CController
                'parentId' => intval($folder->getPath())
            ]
        ));
-    }
-
-    public function getFolders($args)
-    {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new Exception("Incorrect userId used in getFolders FlightsController." . $userId, 1);
-        }
-
-        $em = EM::get();
-
-        $folders = $em->getRepository('Entity\Folder')
-            ->findBy(['userId' => $userId]);
-
-        $items = [];
-        foreach ($folders as $folder) {
-            $items[] = array_merge(
-                $folder->get(),
-                [
-                    'type' => 'folder',
-                    'parentId' => intval($folder->getPath()),
-                    'expanded' => boolval($folder->getIsExpanded())
-                ]
-            );
-        }
-
-        return json_encode($items);
     }
 
     public function toggleFolderExpanding($data)

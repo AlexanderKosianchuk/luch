@@ -5,6 +5,9 @@ return [
         'actions' => [
             'getFdrsAction',
             'getCalibrationsListAction',
+            'getFoldersAction',
+            'getFlightsAction',
+            'getUserSettingsAction',
             'logoutAction'
         ]
     ],

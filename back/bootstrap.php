@@ -14,7 +14,7 @@ if ((APPLICATION_ENV === 'dev')
 ) {
     error_reporting(E_ALL);
     ini_set('display_errors','On');
-    ini_set('error_log','php_errors.log');
+    ini_set('error_log','log/error.log');
 }
 
 // for $_SESSION init

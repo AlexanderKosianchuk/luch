@@ -2,19 +2,7 @@
 
 namespace Controller;
 
-use \Framework\Application as App;
-
-use Model\User;
-use Model\Language;
-use Model\Fdr;
-use Model\UserOptions;
-use Entity\FdrToUser;
-
-use Repository\UserRepository;
-
-use Component\EntityManagerComponent as EM;
-use Component\RuntimeManager;
-use Component\FlightComponent;
+use Framework\Application as App;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
@@ -27,7 +15,7 @@ class UsersController extends BaseController
     {
         $lang = 'en';
 
-        $userId = App::dic()->get('User')->signIn(
+        $userId = App::dic()->get('user')->signIn(
             $user,
             $pass
         );
@@ -51,23 +39,18 @@ class UsersController extends BaseController
 
     public function logoutAction()
     {
-        App::dic()->get('User')->logout();
+        App::dic()->get('user')->logout();
 
         return json_encode('ok');
     }
 
-    public function getUserSettings()
+    public function getUserSettingsAction()
     {
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
+        $userId = App::user()->getId();
 
-        $O = new UserOptions();
-        $userId = intval($this->_user->userInfo['id']);
-        $settings = $O->GetOptions($userId);
-        unset($O);
-
-        return json_encode($settings);
+        return json_encode(
+            App::dic()->get('userSettings')->getSettings($userId)
+        );
     }
 
     public function setUserSettings($settings)

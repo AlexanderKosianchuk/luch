@@ -49,9 +49,19 @@ class UserAuth
      */
     private $dt;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    public function getExp()
+    {
+        return $this->exp;
     }
 
     public function setUserId($userId)

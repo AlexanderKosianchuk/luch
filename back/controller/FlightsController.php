@@ -2,22 +2,9 @@
 
 namespace Controller;
 
-use Model\User;
-use Model\Fdr;
-use Model\Frame;
-use Model\Calibration;
-use Model\Folder;
-use Model\Flight;
-use Model\FlightComments;
-use Model\FlightException;
-use Model\DataBaseConnector;
+use Framework\Application as App;
 
 use Entity\Flight as FlightEntity;
-
-use Component\EntityManagerComponent as EM;
-use Component\FlightComponent;
-use Component\EventProcessingComponent;
-use Component\RuntimeManager;
 
 use Evenement\EventEmitter;
 
@@ -29,17 +16,24 @@ use Exception\ForbiddenException;
 use Exception;
 use ZipArchive;
 
-class FlightsController extends CController
+class FlightsController extends BaseController
 {
-    function __construct()
+    public function getFlightsAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $userId = App::user()->getId();
 
-        $get = $_GET;
-        if(isset($get['action']) && ($get['action'] != '')) {
-            $this->getAction = $get['action'];
+        $items = [];
+        $flightsToFolders = App::em()->getRepository('Entity\FlightToFolder')
+            ->findBy(['userId' => $userId]);
+
+        foreach ($flightsToFolders as $flightToFolders) {
+            $items[] = App::em()->getRepository('Entity\FlightToFolder')
+                ->getTreeItem(
+                    $flightToFolders->getFlightId(), $userId
+                );
         }
+
+        return json_encode($items);
     }
 
     public function changeFlightPath($data)
@@ -458,27 +452,6 @@ class FlightsController extends CController
 
        return $flightTiming;
    }
-
-    public function getFlights($args)
-    {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException(json_encode($userId));
-        }
-
-        $em = EM::get();
-
-        $items = [];
-        $flightsToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findBy(['userId' => $userId]);
-
-        foreach ($flightsToFolders as $flightToFolders) {
-            $items[] = FlightComponent::getTreeItem($flightToFolders->getFlightId(), $userId);
-        }
-
-        return json_encode($items);
-    }
 
    public function itemExport($data)
    {

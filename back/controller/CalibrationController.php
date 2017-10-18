@@ -13,11 +13,10 @@ class CalibrationController extends BaseController
 {
     public function getCalibrationsListAction()
     {
-        $userId = $this->user()->getId();
+        $userId = App::user()->getId();
 
-        $em = EM::get();
-
-        $calibrations = $em->getRepository('Entity\Calibration')
+        $calibrations = App::em()
+            ->getRepository('Entity\Calibration')
             ->findBy(['userId' => $userId]);
 
         $response = [];

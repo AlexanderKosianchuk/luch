@@ -15,7 +15,7 @@ class BaseController
     public function callAction($method, $arguments = []) {
         $fullAction = get_class($this).'\\'.$method;
         $userId = App::user()->getId();
-        $rr = App::dic()->get('ResponseRegistrator');
+        $rr = App::dic()->get('responseRegistrator');
 
         if (!method_exists($this, $method)) {
             $rr->faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);
@@ -24,6 +24,9 @@ class BaseController
                 'action ' . $method . ' not found.'
             );
         }
+
+        error_log(json_encode(App::rbac()->check($method)));
+        error_log(json_encode($userId));
 
         if (!App::rbac()->check($method)) {
             throw new ForbiddenException(

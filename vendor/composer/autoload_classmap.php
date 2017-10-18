@@ -18,6 +18,7 @@ return array(
     'Component\\RuntimeManager' => $baseDir . '/back/component/RuntimeManager.php',
     'Component\\TemplateEngine' => $baseDir . '/back/framework/system-components/TemplateEngine.php',
     'Component\\User' => $baseDir . '/back/framework/system-components/User.php',
+    'Component\\UserSettingsComponent' => $baseDir . '/back/component/UserSettingsComponent.php',
     'Controller\\BaseController' => $baseDir . '/back/framework/BaseController.php',
     'Controller\\CalibrationController' => $baseDir . '/back/controller/CalibrationController.php',
     'Controller\\ChartController' => $baseDir . '/back/controller/ChartController.php',
@@ -73,8 +74,8 @@ return array(
     'Model\\SearchFlights' => $baseDir . '/back/model/SearchFlights.php',
     'Model\\UserOptions' => $baseDir . '/back/model/UserOptions.php',
     'Repository\\CalibrationRepository' => $baseDir . '/back/repository/CalibrationRepository.php',
-    'Repository\\FdrRepository' => $baseDir . '/back/repository/FdrRepository.php',
     'Repository\\FdrToUserRepository' => $baseDir . '/back/repository/FdrToUserRepository.php',
     'Repository\\FlightEventRepository' => $baseDir . '/back/repository/FlightEventRepository.php',
+    'Repository\\FlightToFolderRepository' => $baseDir . '/back/repository/FlightToFolderRepository.php',
     'Repository\\UserRepository' => $baseDir . '/back/repository/UserRepository.php',
 );

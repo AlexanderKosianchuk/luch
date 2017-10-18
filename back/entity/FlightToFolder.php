@@ -6,7 +6,7 @@ namespace Entity;
  * FlightToFolder
  *
  * @Table(name="flight_to_folder")
- * @Entity
+ * @Entity(repositoryClass="Repository\FlightToFolderRepository")
  */
 class FlightToFolder
 {

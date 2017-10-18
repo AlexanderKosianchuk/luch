@@ -6,7 +6,6 @@ use \Exception;
 
 class UserOptions
 {
-
     private static $defaultOptions = [
             'printTableStep' => 1,
             'mainChartColor' => 'fff',

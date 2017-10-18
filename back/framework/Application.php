@@ -84,7 +84,7 @@ class Application
 
     private static function configureCurrentUser()
     {
-        $user = self::dic()->get('User');
+        $user = self::dic()->get('user');
         $userId = $user->tryAuth($_SESSION, $_COOKIE);
 
         if ($userId === null) {

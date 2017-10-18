@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Fdr
  *
  * @Table(name="fdrs")
- * @Entity(repositoryClass="Repository\FdrRepository")
+ * @Entity
  */
 class Fdr
 {
