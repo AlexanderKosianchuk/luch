@@ -129,6 +129,11 @@ class FdrAnalogParam
      */
     private $alg;
 
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
     public function isCalibrated()
     {
         return isset($this->xy)

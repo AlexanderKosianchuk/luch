@@ -22,9 +22,7 @@ class UserSettingsComponent extends BaseComponent
 
         $arr = [];
         foreach ($settings as $item) {
-            $arr[] = [
-                $item->getName() => $item->getValue()
-            ];
+            $arr[$item->getName()] = $item->getValue();
         }
 
         if (count($arr) === 0) {

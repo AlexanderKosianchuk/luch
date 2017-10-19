@@ -2,13 +2,16 @@
 
 namespace Component;
 
-use \Framework\Application as App;
-use \Entity\UserActivity;
-
 use Exception;
 
 class ResponseRegistrator extends BaseComponent
 {
+    /**
+     * @Inject
+     * @var \Entity\UserActivity
+     */
+    private $UserActivity;
+
     private static $codes = [
         '200' => 'OK',
         '400' => 'Bad Request',
@@ -20,19 +23,17 @@ class ResponseRegistrator extends BaseComponent
 
     public function register($action, $message = 'ok', $status = 'executed', $code = 200)
     {
-        $em = App::em();
-
-        $userActivity = new UserActivity;
+        $userActivity = new $this->UserActivity;
         $userActivity->setAttributes([
             'action' => $action,
             'status' => $status,
             'code' => $code,
             'message' => $message,
-            'userId' => intval(App::user()->getId())
+            'userId' => intval($this->user()->getId())
         ]);
 
-        $em->persist($userActivity);
-        $em->flush();
+        $this->em()->persist($userActivity);
+        $this->em()->flush();
     }
 
     public function faultResponse($action, $code, $message, $forwardingDescription = null)

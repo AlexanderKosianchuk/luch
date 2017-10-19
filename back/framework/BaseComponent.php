@@ -10,7 +10,15 @@ class BaseComponent
         return App::em();
     }
 
+    protected function connection() {
+        return App::connection();
+    }
+
     protected function user() {
         return App::user();
+    }
+
+    protected function rbac() {
+        return App::rbac();
     }
 }

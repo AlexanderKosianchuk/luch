@@ -25,9 +25,6 @@ class BaseController
             );
         }
 
-        error_log(json_encode(App::rbac()->check($method)));
-        error_log(json_encode($userId));
-
         if (!App::rbac()->check($method)) {
             throw new ForbiddenException(
                 'action ' . $method . ' execution forbidden for user with current privilege.'

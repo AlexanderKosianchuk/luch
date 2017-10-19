@@ -116,7 +116,7 @@ class User extends BaseComponent
         }
 
         // half expiration, lets update
-        if (intval($diff->format('%R%a')) < 15) {
+        if (intval($diff->format('%R%a')) > 15) {
             $userAuth->setExp(new \DateTime("+ 1 month"));
             $this->em()->merge($userAuth);
             $this->em()->flush();

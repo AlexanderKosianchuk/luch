@@ -26,7 +26,7 @@ class CreateFolder extends Component {
             ['folder', 'createFolder'],
             'post',
             'FOLDER',
-            { name: folderName }
+            { folderName: folderName }
         );
     }
 

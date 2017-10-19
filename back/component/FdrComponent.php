@@ -2,15 +2,22 @@
 
 namespace Component;
 
-use Framework\Application as App;
-
-use Entity\FdrAnalogParam;
-use Entity\CalibrationParam;
-
 use Exception;
 
 class FdrComponent extends BaseComponent
 {
+    /**
+     * @Inject
+     * @var Entity\FdrAnalogParam
+     */
+    private $FdrAnalogParam;
+
+    /**
+     * @Inject
+     * @var Entity\FdrBinaryParam
+     */
+    private $FdrBinaryParam;
+
     public function getFdrs()
     {
         $userId = $this->user()->getId();
@@ -44,22 +51,80 @@ class FdrComponent extends BaseComponent
 
     public function getParams($fdrId)
     {
-        $fdr = App::em()->find('Entity\Fdr', ['id' => $fdrId]);
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $link = App::connection()->create('fdrs');
-        $fdrAnalogParamTable = FdrAnalogParam::getTable($link, $fdr->getCode());
-        App::connection()->destroy($link);
+        $link = $this->connection()->create('fdrs');
+        $fdrAnalogParamTable = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
+        $this->connection()->destroy($link);
 
         if ($fdrAnalogParamTable === null) {
             return null;
         }
 
-        App::em('fdrs')
+        $this->em('fdrs')
             ->getClassMetadata('Entity\FdrAnalogParam')
             ->setTableName($fdrAnalogParamTable);
 
-        return App::em('fdrs')
+        return $this->em('fdrs')
             ->getRepository('Entity\FdrAnalogParam')
             ->findAll('Entity\FdrAnalogParam');
+    }
+
+    public function getAnalogPrefixes($fdrId)
+    {
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+        $link = $this->connection()->create('fdrs');
+        $fdrAnalogTable = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
+        $this->connection()->destroy($link);
+
+        if ($fdrAnalogTable === null) {
+            return null;
+        }
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FdrAnalogParam')
+            ->setTableName($fdrAnalogTable);
+
+         $params = $this->em('fdrs')
+            ->getRepository('Entity\FdrAnalogParam')
+            ->findAll('Entity\FdrAnalogParam');
+
+        $prefixes = [];
+
+        foreach ($params as $item) {
+            $prefixes[$item->getPrefix()] = 0;
+        }
+
+        return array_keys($prefixes);
+    }
+
+    public function getBinaryPrefixes($fdrId)
+    {
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+        $link = $this->connection()->create('fdrs');
+        $fdrBinaryTable = $this->FdrBinaryParam::getTable($link, $fdr->getCode());
+        $this->connection()->destroy($link);
+
+        if ($fdrBinaryTable === null) {
+            return null;
+        }
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FdrBinaryParam')
+            ->setTableName($fdrBinaryTable);
+
+        $params = $this->em('fdrs')
+            ->getRepository('Entity\FdrBinaryParam')
+            ->findAll('Entity\FdrBinaryParam');
+
+        $prefixes = [];
+
+        foreach ($params as $item) {
+            $prefixes[$item->getPrefix()] = 0;
+        }
+
+        return array_keys($prefixes);
     }
 }

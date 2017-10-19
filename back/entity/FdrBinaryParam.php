@@ -77,6 +77,11 @@ class FdrBinaryParam
      */
     private $basis;
 
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
     public function get()
     {
         return [

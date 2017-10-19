@@ -2,59 +2,113 @@
 
 namespace Component;
 
-use Framework\Application as App;
-
 use Exception;
 
 class FlightComponent extends BaseComponent
 {
-    public function DeleteFlight($flightId, $userId)
+    /**
+     * @Inject
+     * @var Component\FdrComponent
+     */
+    private $fdrComponent;
+
+    /**
+     * @Inject
+     * @var Entity\FdrAnalogParam
+     */
+    private $FdrAnalogParam;
+
+    /**
+     * @Inject
+     * @var Entity\FdrBinaryParam
+     */
+    private $FdrBinaryParam;
+
+    /**
+     * @Inject
+     * @var Entity\FlightSettlement
+     */
+    private $FlightSettlement;
+
+    /**
+     * @Inject
+     * @var Entity\FlightEvent
+     */
+    private $FlightEvent;
+
+    /**
+     * @Inject
+     * @var Entity\CalibrationParam
+     */
+    private $CalibrationParam;
+
+    /**
+     * @Inject
+     * @var Entity\FlightEventOld
+     */
+    private $FlightEventOld;
+
+    public function deleteFlight($flightId, $userId)
     {
-        if(!is_int($flightId)) {
-            throw new Exception("Incorrect flight id passed", 1);
+        $criteria = ['id' => $flightId];
+
+        if (!self::dic()->get('user')->isAdmin()) {
+            $criteria['userId'] = $userId;
         }
 
-        if(!is_int($userId)) {
-            throw new Exception("Incorrect user id passed", 1);
+        $flightToFolder = $this->em()
+            ->getRepository('Entity\FlightToFolder')
+            ->findBy($criteria);
+
+        if (!$flightToFolder) {
+            return;
         }
 
-        $U = new User;
-        $userInfo = $U->GetUserInfo($userId);
-        $role = $userInfo['role'];
-        if (User::isAdmin($role)) {
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            $fdrId = intval($flightInfo["id_fdr"]);
-
-            $fdr = new Fdr;
-            $fdrInfo = $fdr->getFdrInfo($fdrId);
-            $prefixApArr = $fdr->GetBruApCycloPrefixes($fdrId);
-            $prefixBpArr = $fdr->GetBruBpCycloPrefixes($fdrId);
-            unset($fdr);
-
-            $prefixes = [];
-            foreach ($prefixApArr as $num) {
-                $prefixes[] = '_ap_'.$num;
-            }
-            foreach ($prefixBpArr as $num) {
-                $prefixes[] = '_bp_'.$num;
-            }
-            $prefixes[] = FlightSettlement::getPrefix();
-            $prefixes[] = FlightEvent::getPrefix();
-            $prefixes[] = '_ex';
-
-            $Fl->DeleteFlight($flightId, $prefixes);
-
-            $Fd = new Folder;
-            $Fd->DeleteFlightFromFolders($flightId);
-            unset($Fd);
-        } else {
-            $Fd = new Folder;
-            $Fd->DeleteFlightFromFolderForUser($flightId, $userId);
-            unset($Fd);
+        foreach ($flightToFolder as $item) {
+            $em->remove($item);
+            $em->flush();
         }
 
-        unset($U);
+        if (!App::rbac()->check('deleteFlightIrretrievably')) {
+            return;
+        }
+
+        $flight = $this->em()
+            ->getRepository('Entity\Flight')
+            ->findOneBy([
+                'id' => $flightId,
+                'userId' => $userId
+            ]);
+
+        $fdr = $flight->getFdr();
+        $guid = $flight->getGuid();
+
+        $analogPrefixes = $fdrComponent->getAnalogPrefixes($fdr->getId());
+        $binaryPrefixes = $fdrComponent->getBinaryPrefixes($fdr->getId());
+
+        $tables = [];
+        foreach ($analogPrefixes as $num) {
+            $tables[] = '_' . $guid . '_' . $this->FdrAnalogParam::$prefix . '_' . $num;
+        }
+
+        foreach ($binaryPrefixes as $num) {
+            $tables[] = '_' . $guid . '_' . $this->FdrBinaryParam::$prefix . '_' . $num;
+        }
+
+        $link = $this->connection()->create('flights');
+        $tables[] = $this->FlightSettlement::getTable($link, $guid);
+        $tables[] = $this->FlightEvent::getTable($link, $guid);
+        $tables[] = $this->CalibrationParam::getTable($link, $guid);
+
+        foreach ($tables as $table) {
+            $this->connection()->drop($link, $table);
+        }
+
+        $this->connection()->destroy($link);
+
+        $em->remove($flight);
+        $em->flush();
+
         return true;
     }
 

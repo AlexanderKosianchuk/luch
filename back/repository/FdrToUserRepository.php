@@ -14,8 +14,12 @@ class FdrToUserRepository extends EntityRepository
         $fdrsToUser = $this->findBy(['userId' => $userId]);
         $fdrs = [];
 
+        $ids = [];
         foreach ($fdrsToUser as $item) {
-            $fdrs[] = $item->getFdr();
+            if (!in_array($item->getFdrId(), $ids)) {
+                $fdrs[] = $item->getFdr();
+                $ids[] = $item->getFdrId();
+            }
         }
 
         return $fdrs;

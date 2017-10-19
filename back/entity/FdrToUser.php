@@ -65,6 +65,10 @@ class FdrToUser
         return $this->id;
     }
 
+    public function getFdrId() {
+        return $this->fdrId;
+    }
+
     public function getFdr() {
         return $this->fdr;
     }

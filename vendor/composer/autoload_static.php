@@ -165,6 +165,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
+        'Component\\FolderComponent' => __DIR__ . '/../..' . '/back/component/FolderComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',
         'Component\\Rbac' => __DIR__ . '/../..' . '/back/framework/system-components/Rbac.php',
         'Component\\RealConnection' => __DIR__ . '/../..' . '/back/framework/system-components/RealConnection.php',
@@ -199,6 +200,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Entity\\Flight' => __DIR__ . '/../..' . '/back/entity/Flight.php',
         'Entity\\FlightComments' => __DIR__ . '/../..' . '/back/entity/FlightComment.php',
         'Entity\\FlightEvent' => __DIR__ . '/../..' . '/back/entity/FlightEvent.php',
+        'Entity\\FlightEventOld' => __DIR__ . '/../..' . '/back/entity/FlightEventOld.php',
         'Entity\\FlightSettlement' => __DIR__ . '/../..' . '/back/entity/FlightSettlement.php',
         'Entity\\FlightToFolder' => __DIR__ . '/../..' . '/back/entity/FlightToFolder.php',
         'Entity\\Folder' => __DIR__ . '/../..' . '/back/entity/Folder.php',
@@ -222,7 +224,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\FlightComments' => __DIR__ . '/../..' . '/back/model/FlightComments.php',
         'Model\\FlightException' => __DIR__ . '/../..' . '/back/model/FlightException.php',
         'Model\\FlightTemplate' => __DIR__ . '/../..' . '/back/model/FlightTemplate.php',
-        'Model\\Folder' => __DIR__ . '/../..' . '/back/model/Folder.php',
         'Model\\Frame' => __DIR__ . '/../..' . '/back/model/Frame.php',
         'Model\\Language' => __DIR__ . '/../..' . '/back/model/Language.php',
         'Model\\SearchFlights' => __DIR__ . '/../..' . '/back/model/SearchFlights.php',
@@ -231,6 +232,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Repository\\FdrToUserRepository' => __DIR__ . '/../..' . '/back/repository/FdrToUserRepository.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
         'Repository\\FlightToFolderRepository' => __DIR__ . '/../..' . '/back/repository/FlightToFolderRepository.php',
+        'Repository\\FolderRepository' => __DIR__ . '/../..' . '/back/repository/FolderRepository.php',
         'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',
     );
 

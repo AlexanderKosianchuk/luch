@@ -8,7 +8,7 @@ namespace Entity;
  * Folders
  *
  * @Table(name="folders")
- * @Entity
+ * @Entity(repositoryClass="Repository\FolderRepository")
  */
 class Folder
 {
@@ -52,6 +52,11 @@ class Folder
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getPath()

@@ -4,7 +4,7 @@ namespace Controller;
 
 use Framework\Application as App;
 
-use Entity\Folder as FolderEntity;
+use Entity\Folder;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
@@ -35,61 +35,17 @@ class FolderController extends BaseController
         return json_encode($items);
     }
 
-    public function createFolder($data)
+    public function toggleFolderExpandingAction($id, $expanded)
     {
-        if (!isset($data['name']) ) {
-            throw new BadRequestException(json_encode($data));
+        $id = intval($id);
+        $expanded = ($expanded === 'true') ? true : false;
+        $userId = App::user()->getId();
+
+        $folder = App::em()->getRepository('Entity\Folder')->setExpanded($id, $expanded, $userId);
+
+        if ($folder === null) {
+            throw new NotFoundException("requested folder not found. Folder id: ". $id);
         }
-
-        $folderName = $data['name'];
-        $fullpath = 0; // root
-
-        $userId = intval($this->_user->userInfo['id']);
-
-        $em = EM::get();
-
-        $folder = new FolderEntity;
-        $folder->set([
-            'name' => $folderName,
-            'path' => $fullpath,
-            'userId' => $userId,
-            'isExpanded' => 1
-        ]);
-        $em->persist($folder);
-        $em->flush();
-
-       return json_encode(array_merge(
-           $folder->get(),
-           [
-               'type' => 'folder',
-               'parentId' => intval($folder->getPath())
-           ]
-       ));
-    }
-
-    public function toggleFolderExpanding($data)
-    {
-        if (!isset($data['id'])
-            || !is_int(intval($data['id']))
-            || !isset($data['expanded'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $id = intval($data['id']);
-        $userId = intval($this->_user->userInfo['id']);
-        $expanded = ($data['expanded'] === 'true') ? true : false;
-
-        $em = EM::get();
-
-        $folders = $em->find('Entity\Folder', $id);
-
-        if ($folders === null) {
-            throw new NotFoundException("requested filder not found. Folder id: ". $id);
-        }
-
-        $folders->setExpanded(intval($expanded));
-        $em->flush();
 
         return json_encode([
             'id' => $id,
@@ -97,44 +53,56 @@ class FolderController extends BaseController
         ]);
     }
 
-    public function deleteFolder($data)
+    public function createFolderAction($folderName)
     {
-        if (!isset($data['id'])
-            || !is_int(intval($data['id']))
-        ) {
-            throw new BadRequestException(json_encode($data));
+        $folder = new Folder;
+        $folder->set([
+            'name' => $folderName,
+            'path' => 0, // root
+            'userId' => App::user()->getId(),
+            'isExpanded' => true
+        ]);
+
+        App::em()->persist($folder);
+        App::em()->flush();
+
+       return json_encode(array_merge(
+           $folder->get(), [
+               'type' => 'folder',
+               'parentId' => $folder->getPath()
+           ]
+       ));
+    }
+
+    public function deleteFolderAction($id)
+    {
+        $id = intval($id);
+
+        $folder = App::em()->find('Entity\Folder', $id);
+
+        if (!$folder) {
+            throw new NotFoundException("Folder id: ". $id);
         }
 
-        $id = $data['id'];
-        $userId = intval($this->_user->userInfo['id']);
-        $userInfo = $this->_user->userInfo;
+        $folder = App::em()
+            ->find('Entity\Folder', [
+                'id' => $id,
+                'userId' => App::user()->getId()
+            ]);
 
-        $Fd = new Folder;
-        $availableFolders = $Fd->GetAvailableFolders($userId);
-        $result = array();
-
-        if (!in_array($id, $availableFolders)) {
-            throw new ForbiddenException('requested folder not avaliable for current user. Folder id: '. $flightId);
+        if (!$folder) {
+            throw new ForbiddenException('requested folder not avaliable for current user. Folder id: '. $id);
         }
 
-        $Fd = new Folder;
-        $subitems = $Fd->getSubitems($id, $userId);
-
-        foreach ($subitems as $item) {
-            $id = intval($item['id']);
-            if ($item['type'] === 'folder') {
-                 $Fd->DeleteFolder($id, $userId);
-            } else if ($item['type'] === 'flight') {
-                if (User::isAdmin($userInfo['role'])
-                    || User::isModerator($userInfo['role'])
-                ) {
-                    $FC = new FlightComponent;
-                    $result = $FC->DeleteFlight($id, $userId);
-                    unset($FC);
-                }
-            }
+        if (!App::rbac()->check('deleteFolder')) {
+            throw new ForbiddenException('action: deleteFolder. Folder id: '. $id);
         }
-        unset($Fd);
+
+        $result = App::dic()->get('folder')->deleteFolderContent($id);
+
+        if (!$result) {
+            throw new Exception('Cant delete folder. Folder id: '. $id);
+        }
 
         return json_encode('ok');
     }

@@ -6,6 +6,8 @@ return [
             'getFdrsAction',
             'getCalibrationsListAction',
             'getFoldersAction',
+            'toggleFolderExpandingAction',
+            'createFolderAction',
             'getFlightsAction',
             'getUserSettingsAction',
             'logoutAction'
@@ -13,11 +15,17 @@ return [
     ],
     'moderator' => [
         'parent' => 'user',
-        'actions' => []
+        'actions' => [
+            'deleteFolderAction',
+        ]
     ],
     'admin' => [
         'parent' => 'moderator',
-        'actions' => []
+        'actions' => [
+            'deleteFlightAction',
+            'deleteFlightIrretrievably',
+            'deleteFolderContent'
+        ]
     ],
     'local' => [
         'parent' => 'admin',

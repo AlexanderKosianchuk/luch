@@ -22,6 +22,13 @@ class Flight
     /**
      * @var string
      *
+     * @Column(name="guid", type="string", length=20, nullable=true)
+     */
+    private $guid;
+
+    /**
+     * @var string
+     *
      * @Column(name="bort", type="string", length=255, nullable=true)
      */
     private $bort;
@@ -34,18 +41,18 @@ class Flight
     private $voyage;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @Column(name="startCopyTime", type="bigint", nullable=true)
+     * @Column(name="captain", type="string", length=255, nullable=true)
      */
-    private $startCopyTime;
+    private $captain;
 
     /**
      * @var integer
      *
-     * @Column(name="uploadingCopyTime", type="bigint", nullable=true)
+     * @Column(name="start_copy_time", type="bigint", nullable=true)
      */
-    private $uploadingCopyTime;
+    private $startCopyTime;
 
     /**
      * @var string
@@ -57,37 +64,30 @@ class Flight
     /**
      * @var string
      *
-     * @Column(name="departureAirport", type="string", length=255, nullable=true)
+     * @Column(name="departure_airport", type="string", length=255, nullable=true)
      */
     private $departureAirport;
 
     /**
      * @var string
      *
-     * @Column(name="arrivalAirport", type="string", length=255, nullable=true)
+     * @Column(name="arrival_airport", type="string", length=255, nullable=true)
      */
     private $arrivalAirport;
 
     /**
      * @var string
      *
-     * @Column(name="flightAditionalInfo", type="text", length=65535, nullable=true)
+     * @Column(name="aditional_info", type="text", length=65535, nullable=true)
      */
-    private $flightAditionalInfo;
+    private $aditionalInfo;
 
     /**
      * @var string
      *
-     * @Column(name="fileName", type="string", length=255, nullable=true)
+     * @Column(name="path", type="string", length=255, nullable=true)
      */
-    private $filename;
-
-    /**
-     * @var string
-     *
-     * @Column(name="guid", type="string", length=20, nullable=true)
-     */
-    private $guid;
+    private $path;
 
     /**
      * @var integer
@@ -102,6 +102,13 @@ class Flight
      * @Column(name="id_user", type="integer", nullable=false)
      */
     private $id_user;
+
+    /**
+     * @var integer
+     *
+     * @Column(name="dt", type="bigint", nullable=true)
+     */
+    private $dt;
 
     /**
      * One Flight has One Fdr.
@@ -147,24 +154,50 @@ class Flight
         return $this->startCopyTime;
     }
 
+    public function getBort()
+    {
+        return $this->bort;
+    }
+
+    public function getVoyage()
+    {
+        return $this->voyage;
+    }
+
+    public function getCaptain()
+    {
+        return $this->captain;
+    }
+
+    public function getDepartureAirport()
+    {
+        return $this->departureAirport;
+    }
+
+    public function getArrivalAirport()
+    {
+        return $this->arrivalAirport;
+    }
+
     public function get()
     {
         $flightInfo = [
            'id' => $this->id,
+           'guid' => $this->guid,
            'bort' => $this->bort,
            'voyage' => $this->voyage,
+           'captain' => $this->captain,
            'startCopyTime' => $this->startCopyTime,
-           'uploadingCopyTime' => $this->uploadingCopyTime,
            'performer' => $this->performer,
            'departureAirport' => $this->departureAirport,
            'arrivalAirport' => $this->arrivalAirport,
-           'filename' => $this->filename,
-           'guid' => $this->guid,
-           'aditionalInfo' => []
+           'path' => $this->path,
+           'aditionalInfo' => [],
+           'dt' => $this->dt,
         ];
 
-        if (is_array(json_decode($this->flightAditionalInfo, true))) {
-            $aditionalInfo = json_decode($this->flightAditionalInfo, true);
+        if (is_array(json_decode($this->aditionalInfo, true))) {
+            $aditionalInfo = json_decode($this->aditionalInfo, true);
             $flightInfo = array_merge($flightInfo, $aditionalInfo);
             $flightInfo['aditionalInfo'] = $aditionalInfo;
         }

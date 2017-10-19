@@ -31,7 +31,10 @@ $klein->respond(function ($request, $response, $service) {
     $controller = 'Controller\\' . $controller;
     $method = $exp[1] . 'Action';
     $c = new $controller;
-    $fullAction = get_class($c) . '\\' . $method;
+    if (!method_exists ($c, $method)) {
+        $indexAction();
+    }
+
     $data = [];
 
     if (count($exp) === 3) {
@@ -46,14 +49,19 @@ $klein->respond(function ($request, $response, $service) {
 
     $data = array_merge(
         $data,
-        $_POST
+        $_POST,
+        $_GET
     );
 
-    if (!method_exists ($c, $method)) {
-        $indexAction();
+    $safeData = [];
+    foreach (array_keys($data) as $key) {
+        $input = htmlspecialchars($data[$key], ENT_IGNORE, 'utf-8');
+        $input = strip_tags($input);
+        $input = stripslashes($input);
+        $safeData[$key] = $input;
     }
 
-    echo $c->callAction($method, $data);
+    echo $c->callAction($method, $safeData);
     exit;
 });
 

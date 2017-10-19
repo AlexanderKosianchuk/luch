@@ -51,4 +51,16 @@ class RealConnection
         }
     }
 
+    public function drop($link, $table)
+    {
+        $table = mysqli_real_escape_string ($link , $table);
+        $query = "DROP TABLE `".$table."`;";
+        $result = $link->query($query);
+
+        if (!$result->fetch_array()) {
+            return null;
+        }
+
+        return $table;
+    }
 }
