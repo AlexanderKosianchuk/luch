@@ -80,6 +80,16 @@ class Folder
         ];
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
     public function set($obj)
     {
         $this->name = $obj['name'];

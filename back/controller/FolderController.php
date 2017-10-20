@@ -6,8 +6,6 @@ use Framework\Application as App;
 
 use Entity\Folder;
 
-use Exception\UnauthorizedException;
-use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
@@ -107,23 +105,47 @@ class FolderController extends BaseController
         return json_encode('ok');
     }
 
-    public function ChangeFolderPath($data)
+    public function renameFolderAction($id, $name)
     {
-        if (!isset($data['id'])
-            || !isset($data['parentId'])
-            || !is_int(intval($data['id']))
-            || !is_int(intval($data['parentId']))
-        ) {
-            throw new BadRequestException(json_encode($data));
+        $userId = App::user()->getId();
+
+        $folder = App::em()->find('Entity\Folder', [
+            'id' => $id,
+            'userId' => $userId
+        ]);
+
+        if (!$folder) {
+            throw new NotFoundException("Folder id: ". $id);
         }
 
-        $userId = intval($this->_user->userInfo['id']);
-        $sender = intval($data['id']);
-        $target = intval($data['parentId']);
+        $folder->setName($name);
 
-        $Fd = new Folder;
-        $result = $Fd->ChangeFolderPath($sender, $target, $userId);
-        unset($Fd);
+        App::em()->merge($folder);
+        App::em()->flush();
+
+        return json_encode('ok');
+    }
+
+    public function changeFolderPathAction($id, $parentId)
+    {
+        $sender = intval($id);
+        $target = intval($parentId);
+
+        $userId = App::user()->getId();
+
+        $folder = App::em()->find('Entity\Folder', [
+            'id' => $sender,
+            'userId' => $userId
+        ]);
+
+        if (!$folder) {
+            throw new NotFoundException("Folder id: ". $id);
+        }
+
+        $folder->setPath($target);
+
+        App::em()->merge($folder);
+        App::em()->flush();
 
         return json_encode([
             'id' => $sender,
@@ -131,23 +153,5 @@ class FolderController extends BaseController
         ]);
     }
 
-   public function renameFolder($data)
-   {
-       if(!isset($data['id'])
-           || !isset($data['name'])
-       ) {
-           throw new BadRequestException(json_encode($data));
-       }
 
-       $folderId = $data['id'];
-       $folderName = $data['name'];
-
-       $userId = intval($this->_user->userInfo['id']);
-
-       $Fd = new Folder;
-       $Fd->RenameFolder($folderId, $folderName, $userId);
-       unset($Fd);
-
-       return json_encode('ok');
-   }
 }
