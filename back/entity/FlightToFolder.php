@@ -22,28 +22,28 @@ class FlightToFolder
     /**
      * @var integer
      *
-     * @Column(name="flightId", type="integer", nullable=true)
+     * @Column(name="id_flight", type="integer", nullable=false)
      */
     private $flightId;
 
     /**
      * @var integer
      *
-     * @Column(name="folderId", type="integer", nullable=true)
+     * @Column(name="id_folder", type="integer", nullable=false)
      */
     private $folderId;
 
     /**
      * @var integer
      *
-     * @Column(name="userId", type="integer", nullable=true)
+     * @Column(name="id_user", type="integer", nullable=false)
      */
     private $userId;
 
     /**
      * Many FlightToFolder has One Flight.
      * @ManyToOne(targetEntity="Flight")
-     * @JoinColumn(name="flightId", referencedColumnName="id")
+     * @JoinColumn(name="id_flight", referencedColumnName="id")
      */
     private $flight;
 
@@ -60,5 +60,25 @@ class FlightToFolder
     public function getFolderId()
     {
         return $this->folderId;
+    }
+
+    public function setFlightId($flightId)
+    {
+        return $this->flightId = $flightId;
+    }
+
+    public function setFolderId($folderId)
+    {
+        return $this->folderId = $folderId;
+    }
+
+    public function setUserId($userId)
+    {
+        return $this->userId = $userId;
+    }
+
+    public function setFlight($flight)
+    {
+        return $this->flight = $flight;
     }
 }

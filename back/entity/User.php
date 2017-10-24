@@ -91,6 +91,18 @@ class User
      */
     private $creatorId;
 
+    /**
+     * One User has One User.
+     * @OneToOne(targetEntity="User")
+     * @JoinColumn(name="id_creator", referencedColumnName="id")
+     */
+    private $creator;
+
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
     public function getId()
     {
         return intval($this->id);

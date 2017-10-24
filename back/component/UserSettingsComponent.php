@@ -2,8 +2,6 @@
 
 namespace Component;
 
-use Framework\Application as App;
-
 use Exception;
 
 class UserSettingsComponent extends BaseComponent
@@ -17,7 +15,7 @@ class UserSettingsComponent extends BaseComponent
 
     public function getSettings($userId)
     {
-        $settings = App::em()->getRepository('Entity\UserSetting')
+        $settings = $this->em()->getRepository('Entity\UserSetting')
             ->findBy(['userId' => $userId]);
 
         $arr = [];

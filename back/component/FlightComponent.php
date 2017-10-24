@@ -48,11 +48,60 @@ class FlightComponent extends BaseComponent
      */
     private $FlightEventOld;
 
+    public function insert($guid, $flightInfo, $frdId, $userId, $calibrationId)
+    {
+        $user = $this->em()->find('Entity\User', $userId);
+        $fdr = $this->em()->find('Entity\Fdr', $frdId);
+        $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
+
+        $copyCreationTime = $flightInfo['copyCreationTime'];
+        $copyCreationDate = $flightInfo['copyCreationDate'];
+
+        if (strlen($copyCreationTime) > 5) {
+            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime);
+        } else {
+            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime . ':00');
+        }
+
+        if ($flightInfo['performer'] === null) {
+            $flightInfo['performer'] = $user->getLogin();
+        }
+
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->insert($guid, $flightInfo, $fdr, $user, $calibration);
+
+        if ($this->member()->isUser()) {
+            $creator = $this->user()->getCreator();
+
+            if ($creator) {
+                $this->em()->getRepository('Entity\FlightToFolder')
+                    ->insert(0, $creator->getId(), $flight);
+            }
+        }
+
+        if ($this->member()->isUser()
+            || $this->member()->isLocal()
+            || $this->member()->isModerator()
+        ) {
+            $this->em()->getRepository('Entity\FlightToFolder')
+                ->insert(0, $this->user()->getId(), $flight);
+        }
+
+        $admins = $this->em()->getRepository('Entity\User')->getAdmins();
+
+        foreach ($admins as $user) {
+            $this->em()->getRepository('Entity\FlightToFolder')
+                ->insert(0, $user->getId(), $flight);
+        }
+
+        return $flight;
+    }
+
     public function deleteFlight($flightId, $userId)
     {
         $criteria = ['id' => $flightId];
 
-        if (!self::dic()->get('user')->isAdmin()) {
+        if (!$this->dic()->get('user')->isAdmin()) {
             $criteria['userId'] = $userId;
         }
 
@@ -69,7 +118,7 @@ class FlightComponent extends BaseComponent
             $em->flush();
         }
 
-        if (!App::rbac()->check('deleteFlightIrretrievably')) {
+        if (!$this->rbac()->check('deleteFlightIrretrievably')) {
             return;
         }
 
@@ -112,7 +161,7 @@ class FlightComponent extends BaseComponent
         return true;
     }
 
-    public static function getFlightEvents($flightId, $flightGuid = '')
+    public function getFlightEvents($flightId, $flightGuid = '')
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
@@ -148,7 +197,7 @@ class FlightComponent extends BaseComponent
         return $events;
     }
 
-    public static function getFlightSettlements($flightId, $flightGuid = '')
+    public function getFlightSettlements($flightId, $flightGuid = '')
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flight id passed", 1);

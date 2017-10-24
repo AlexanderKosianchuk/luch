@@ -4,8 +4,7 @@
  * Fork this project on GitHub!
  * https://github.com/Philipp15b/php-i18n
  *
- * License: Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
- * License URL: http://creativecommons.org/licenses/by-sa/3.0/deed.en
+ * License: MIT
  */
 
 class i18n {
@@ -34,6 +33,14 @@ class i18n {
      * @var string
      */
     protected $fallbackLang = 'en';
+
+    /**
+     * Merge in fallback language
+     * Whether to merge current language's strings with the strings of the fallback language ($fallbackLang).
+     *
+     * @var bool
+     */
+    protected $mergeFallback = false;
 
     /**
      * The class name of the compiled class that contains the translated texts.
@@ -122,7 +129,7 @@ class i18n {
         // search for language file
         $this->appliedLang = NULL;
         foreach ($this->userLangs as $priority => $langcode) {
-            $this->langFilePath = str_replace('{LANGUAGE}', $langcode, $this->filePath);
+            $this->langFilePath = $this->getConfigFilename($langcode);
             if (file_exists($this->langFilePath)) {
                 $this->appliedLang = $langcode;
                 break;
@@ -133,35 +140,35 @@ class i18n {
         }
 
         // search for cache file
-        $this->cacheFilePath = $this->cachePath . '/php_i18n_' . md5_file(__FILE__) . '_' . $this->appliedLang . '.cache.php';
+        $this->cacheFilePath = $this->cachePath . '/php_i18n_' . md5_file(__FILE__) . '_' . $this->prefix . '_' . $this->appliedLang . '.cache.php';
 
-        // if no cache file exists or if it is older than the language file create a new one
-        if (!file_exists($this->cacheFilePath) || filemtime($this->cacheFilePath) < filemtime($this->langFilePath)) {
-            switch ($this->get_file_extension()) {
-                case 'ini':
-                    $config = parse_ini_file($this->langFilePath, true);
-                    break;
-                case 'yml':
-                    require_once 'vendor/spyc.php';
-                    $config = spyc_load_file($this->langFilePath);
-                    break;
-                case 'json':
-                    $config = json_decode(file_get_contents($this->langFilePath), true);
-                    break;
-                default:
-                    throw new InvalidArgumentException($this->get_file_extension() . " is not a valid extension!");
-            }
+        // whether we need to create a new cache file
+        $outdated = !file_exists($this->cacheFilePath) ||
+            filemtime($this->cacheFilePath) < filemtime($this->langFilePath) || // the language config was updated
+            ($this->mergeFallback && filemtime($this->cacheFilePath) < filemtime($this->getConfigFilename($this->fallbackLang))); // the fallback language config was updated
 
-            $compiled = "<?php class " . $this->prefix . " {\n";
-            $compiled .= $this->compile($config);
-            $compiled .= 'public static function __callStatic($string, $args) {' . "\n";
-            $compiled .= '    return vsprintf(constant("self::" . $string), $args);' . "\n";
-            $compiled .= "}\n}";
+        if ($outdated) {
+            $config = $this->load($this->langFilePath);
+            if ($this->mergeFallback)
+                $config = self::array_extend($config, $this->load($this->getConfigFilename($this->fallbackLang)));
+
+            $compiled = "<?php class " . $this->prefix . " {\n"
+            	. $this->compile($config)
+            	. 'public static function __callStatic($string, $args) {' . "\n"
+            	. '    return vsprintf(constant("self::" . $string), $args);'
+            	. "\n}\n}\n"
+            	. "function ".$this->prefix .'($string, $args=NULL) {'."\n"
+            	. '    $return = constant("'.$this->prefix.'::".$string);'."\n"
+            	. '    return $args ? vsprintf($return,$args) : $return;'
+            	. "\n}";
+
+			if( ! is_dir($this->cachePath))
+				mkdir($this->cachePath, 0755, true);
 
             if (file_put_contents($this->cacheFilePath, $compiled) === FALSE) {
                 throw new Exception("Could not write cache file to path '" . $this->cacheFilePath . "'. Is it writable?");
             }
-            chmod($this->cacheFilePath, 0777);
+            chmod($this->cacheFilePath, 0755);
 
         }
 
@@ -197,6 +204,11 @@ class i18n {
     public function setFallbackLang($fallbackLang) {
         $this->fail_after_init();
         $this->fallbackLang = $fallbackLang;
+    }
+
+    public function setMergeFallback($mergeFallback) {
+        $this->fail_after_init();
+        $this->mergeFallback = $mergeFallback;
     }
 
     public function setPrefix($prefix) {
@@ -258,13 +270,41 @@ class i18n {
         // remove duplicate elements
         $userLangs = array_unique($userLangs);
 
+        // remove illegal userLangs
+        $userLangs2 = array();
         foreach ($userLangs as $key => $value) {
-            $userLangs[$key] = preg_replace('/[^a-zA-Z0-9_-]/', '', $value); // only allow a-z, A-Z and 0-9
+            // only allow a-z, A-Z and 0-9 and _ and -
+            if (preg_match('/^[a-zA-Z0-9_-]*$/', $value) === 1)
+                $userLangs2[$key] = $value;
         }
 
-        return $userLangs;
+        return $userLangs2;
     }
 
+    protected function getConfigFilename($langcode) {
+        return str_replace('{LANGUAGE}', $langcode, $this->filePath);
+    }
+
+    protected function load($filename) {
+        $ext = substr(strrchr($filename, '.'), 1);
+        switch ($ext) {
+            case 'properties':
+            case 'ini':
+                $config = parse_ini_file($filename, true);
+                break;
+            case 'yml':
+                if( ! class_exists('Spyc') )
+                    require_once 'vendor/spyc.php';
+                $config = spyc_load_file($filename);
+                break;
+            case 'json':
+                $config = json_decode(file_get_contents($filename), true);
+                break;
+            default:
+                throw new InvalidArgumentException($ext . " is not a valid extension!");
+        }
+        return $config;
+    }
 
     /**
      * Recursively compile an associative array to PHP code.
@@ -281,14 +321,20 @@ class i18n {
         return $code;
     }
 
-    protected function get_file_extension() {
-        return substr(strrchr($this->langFilePath, '.'), 1);
-    }
-
     protected function fail_after_init() {
         if ($this->isInitialized()) {
             throw new BadMethodCallException('This ' . __CLASS__ . ' object is already initalized, so you can not change any settings.');
         }
+    }
+
+    // Something of a sane version of PHP's array_merge
+    private static function array_extend($a, $b) {
+        foreach ($b as $key => $value) {
+            if (!array_key_exists($key, $a)) {
+                $a[$key] = $value;
+	        }
+        }
+	   return $a;
     }
 
 }

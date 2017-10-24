@@ -8,7 +8,7 @@ namespace Entity;
  * Airports
  *
  * @Table(name="airports")
- * @Entity
+ * @Entity(repositoryClass="Repository\AirportRepository")
  */
 class Airport
 {

@@ -19,9 +19,10 @@
 
 namespace Doctrine\DBAL\Driver\OCI8;
 
-use PDO;
-use IteratorAggregate;
 use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Driver\StatementIterator;
+use IteratorAggregate;
+use PDO;
 
 /**
  * The OCI8 implementation of the Statement interface.
@@ -29,7 +30,7 @@ use Doctrine\DBAL\Driver\Statement;
  * @since 2.0
  * @author Roman Borschel <roman@code-factory.org>
  */
-class OCI8Statement implements \IteratorAggregate, Statement
+class OCI8Statement implements IteratorAggregate, Statement
 {
     /**
      * @var resource
@@ -120,10 +121,10 @@ class OCI8Statement implements \IteratorAggregate, Statement
      *
      * @param string $statement The SQL statement to convert.
      *
-     * @return string
+     * @return array [0] => the statement value (string), [1] => the paramMap value (array).
      * @throws \Doctrine\DBAL\Driver\OCI8\OCI8Exception
      */
-    static public function convertPositionalToNamedPlaceholders($statement)
+    public static function convertPositionalToNamedPlaceholders($statement)
     {
         $fragmentOffset = $tokenOffset = 0;
         $fragments = $paramMap = [];
@@ -370,9 +371,7 @@ class OCI8Statement implements \IteratorAggregate, Statement
      */
     public function getIterator()
     {
-        $data = $this->fetchAll();
-
-        return new \ArrayIterator($data);
+        return new StatementIterator($this);
     }
 
     /**

@@ -421,7 +421,7 @@ class ClassMetadataInfo implements ClassMetadata
      * READ-ONLY: The primary table definition. The definition is an array with the
      * following entries:
      *
-     * name => 
+     * name => <tableName>
      * schema => <schemaName>
      * indexes => array
      * uniqueConstraints => array
@@ -2110,7 +2110,7 @@ class ClassMetadataInfo implements ClassMetadata
      * Sets the primary table definition. The provided array supports the
      * following structure:
      *
-     * name =>  (optional, defaults to class name)
+     * name => <tableName> (optional, defaults to class name)
      * indexes => array of indexes (optional)
      * uniqueConstraints => array of constraints (optional)
      *

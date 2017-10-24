@@ -15,7 +15,7 @@ class UsersController extends BaseController
     {
         $lang = 'en';
 
-        $userId = App::dic()->get('user')->signIn(
+        $userId = $this->member()->signIn(
             $user,
             $pass
         );
@@ -28,7 +28,7 @@ class UsersController extends BaseController
             ]);
         }
 
-        $user = App::em()->find('Entity\User', $userId);
+        $user = $this->em()->find('Entity\User', $userId);
 
         return json_encode([
             'status' => 'ok',
@@ -39,17 +39,17 @@ class UsersController extends BaseController
 
     public function logoutAction()
     {
-        App::dic()->get('user')->logout();
+        $this->member()->logout();
 
         return json_encode('ok');
     }
 
     public function getUserSettingsAction()
     {
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
         return json_encode(
-            App::dic()->get('userSettings')->getSettings($userId)
+            $this->dic()->get('userSettings')->getSettings($userId)
         );
     }
 

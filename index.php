@@ -55,9 +55,23 @@ $klein->respond(function ($request, $response, $service) {
 
     $safeData = [];
     foreach (array_keys($data) as $key) {
-        $input = htmlspecialchars($data[$key], ENT_IGNORE, 'utf-8');
-        $input = strip_tags($input);
-        $input = stripslashes($input);
+        $input = null;
+
+        if (is_array($data[$key])) {
+            $input = [];
+            foreach ($data[$key] as $item) {
+                $item = htmlspecialchars($item, ENT_IGNORE, 'utf-8');
+                $item = strip_tags($item);
+                $item = stripslashes($item);
+
+                $input[] = $item;
+            }
+        } else {
+            $input = htmlspecialchars($data[$key], ENT_IGNORE, 'utf-8');
+            $input = strip_tags($input);
+            $input = stripslashes($input);
+        }
+
         $safeData[$key] = $input;
     }
 

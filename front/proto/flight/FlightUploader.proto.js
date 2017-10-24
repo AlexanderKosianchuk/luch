@@ -70,7 +70,7 @@ FlightUploader.prototype.GetFlightParams = function(
                 calibrationId: calibrationId
             },
             dataType: 'json',
-            url: ENTRY_URL + "?action=uploader/flightShowUploadingOptions",
+            url: ENTRY_URL + "uploader/flightUploadingOptions",
             async: false
         }).fail(function(msg){
             console.log(msg);
@@ -134,7 +134,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
             fdrId: fdrId
         },
         dataType: 'json',
-        url: ENTRY_URL + "?action=uploader/flightShowUploadingOptions",
+        url: ENTRY_URL + "uploader/flightUploadingOptions",
         async: false
     }).fail(function(msg){
         console.log(msg);
@@ -265,8 +265,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
                 fdrId: fdrId,
             },
             dataType: 'json',
-            url: ENTRY_URL + "?action=uploader/flightUploaderPreview",
-            async: true
+            url: ENTRY_URL + "uploader/flightUploaderPreview",
         }).done(function(apDataArray){
             $("div#loadingBox" + index);//.remove();
             var prmData = Array(),
@@ -449,7 +448,7 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
                             endSliceTime:  self.plotSelectedToRangeStack[curIndex]
                         },
                         dataType: 'json',
-                        url: ENTRY_URL + '?action=uploader/'+action,
+                        url: ENTRY_URL + 'uploader/'+action,
                         async: true
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
@@ -507,7 +506,7 @@ FlightUploader.prototype.Import = function(form, dfd) {
         dataType: 'json',
         processData: false,
         contentType: false,
-        url: ENTRY_URL + "?action=uploader/itemImport"
+        url: ENTRY_URL + "uploader/itemImport"
     }).done(function(answ){
         if (answ["status"] == 'ok') {
             dfd.resolve();
@@ -576,7 +575,7 @@ FlightUploader.prototype.uploadPreviewed = function() {
                 }
 
                 var pV = {
-                    action: '?action=uploader/' + flightConvertionAction,
+                    action: 'uploader/' + flightConvertionAction,
                     data: {
                         fdrId: fdrId,
                         uploadingUid: uploadingUid,

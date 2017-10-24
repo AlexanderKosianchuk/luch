@@ -4,16 +4,11 @@ namespace Component;
 
 use Exception;
 
-class RuntimeManager
+class RuntimeManager extends BaseComponent
 {
-    const UPLOADED_FLIGHTS_FOLDER = 'uploaded-flights';
-    const EXPORTED_FOLDER = 'exported';
-    const IMPORTED_FOLDER = 'imported';
-
-    public static function getRuntimeFolder()
+    public function getRuntimeFolder()
     {
-        global $CONFIG;
-        $runtimeDirectory = $CONFIG['params']['runtimeDirectory'];
+        $runtimeDirectory = $this->params()->runtimeDirectory;
 
         if (!is_dir($runtimeDirectory)) {
             mkdir($runtimeDirectory, 0755, true);
@@ -22,10 +17,10 @@ class RuntimeManager
         return $runtimeDirectory;
     }
 
-    public static function getExportFolder()
+    public function getExportFolder()
     {
-        $runtimeDirectory = self::getRuntimeFolder();
-        $exportedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::EXPORTED_FOLDER;
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $exportedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . $this->EXPORTED_FOLDER;
 
         if (!is_dir($exportedFilesDir)) {
             mkdir($exportedFilesDir, 0755, true);
@@ -34,10 +29,10 @@ class RuntimeManager
         return $exportedFilesDir;
     }
 
-    public static function getImportFolder()
+    public function getImportFolder()
     {
-        $runtimeDirectory = self::getRuntimeFolder();
-        $importFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::IMPORTED_FOLDER;
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $importFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . $this->IMPORTED_FOLDER;
 
         if (!is_dir($importFilesDir)) {
             mkdir($importFilesDir, 0755, true);
@@ -46,9 +41,9 @@ class RuntimeManager
         return $importFilesDir;
     }
 
-    public static function getExportedUrl($fileName)
+    public function getExportedUrl($fileName)
     {
-        $runtimeDirectory = self::getRuntimeFolder();
+        $runtimeDirectory = $this->getRuntimeFolder();
         $runtimeDirName = basename($runtimeDirectory);
 
         $exportedUrl = 'http';
@@ -64,43 +59,42 @@ class RuntimeManager
            $exportedUrl .= $_SERVER["SERVER_NAME"];
         }
 
-        return $exportedUrl.'/'.$runtimeDirName.'/'.self::EXPORTED_FOLDER.'/'.$fileName . '.zip';
+        return $exportedUrl.'/'.$runtimeDirName.'/'.$this->EXPORTED_FOLDER.'/'.$fileName . '.zip';
     }
 
-    public static function getExportedFilePath($fileName)
+    public function getExportedFilePath($fileName)
     {
-        $exportedFileDir = self::getExportFolder();
+        $exportedFileDir = $this->getExportFolder();
         return $exportedFileDir . DIRECTORY_SEPARATOR . $fileName . '.zip';
     }
 
-    public static function createExportedFile($fileName)
+    public function createExportedFile($fileName)
     {
-        $filePath = self::getExportedFilePath($fileName);
+        $filePath = $this->getExportedFilePath($fileName);
         $fileNameDesc = fopen($filePath, "w");
         fclose($fileNameDesc);
 
         return $filePath;
     }
 
-    public static function getProgressFilePath($uploadingUid)
+    public function getProgressFilePath($uploadingUid)
     {
-        $runtimeDirectory = self::getRuntimeFolder();
+        $runtimeDirectory = $this->getRuntimeFolder();
         return $runtimeDirectory . DIRECTORY_SEPARATOR . $uploadingUid . '.tmps';
     }
 
-    public static function createProgressFile($uploadingUid)
+    public function createProgressFile($uploadingUid)
     {
-        $filePath = self::getProgressFilePath($uploadingUid);
+        $filePath = $this->getProgressFilePath($uploadingUid);
         $fileNameDesc = fopen($filePath, "w");
         fclose($fileNameDesc);
 
         return $filePath;
     }
 
-    public static function storeFile($fileName, $folder, $uid = null)
+    public function storeFile($fileName, $folder, $uid = null)
     {
-        $runtimeDirectory = self::getRuntimeFolder();
-        $storedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . $folder;
+        $storedFilesDir = $folder;
 
         if (!is_dir($storedFilesDir)) {
             mkdir($storedFilesDir, 0755, true);
@@ -112,33 +106,38 @@ class RuntimeManager
 
         $storedFileName = $uid . '.tmpsf';
         $storedFilePath = $storedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
+        $res = null;
 
         if (!file_exists($storedFilePath)) {
-            move_uploaded_file ($fileName, $storedFilePath);
+            $res = move_uploaded_file ($fileName, $storedFilePath);
         }
 
         return $storedFilePath;
     }
 
-    public static function storeUploadedFile($fileName, $uid = null)
+    public function storeUploadedFile($fileName, $uid = null)
     {
-        return basename(self::storeFile($fileName, self::UPLOADED_FLIGHTS_FOLDER, $uid));
+        return basename($this->storeFile(
+            $fileName,
+            $this->params()->uploadedFlightsFolder,
+            $uid
+        ));
     }
 
-    public static function getFilePathByIud($uid)
+    public function getFilePathByIud($uid)
     {
-        $runtimeDirectory = self::getRuntimeFolder();
-        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $uploadedFilesDir = $this->params()->uploadedFlightsFolder;
 
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpsf';
 
         return $storedFilePath;
     }
 
-    public static function getUploadedFilePath($fileName)
+    public function getUploadedFilePath($fileName)
     {
-        $runtimeDirectory = self::getRuntimeFolder();
-        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . self::UPLOADED_FLIGHTS_FOLDER;
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $uploadedFilesDir = $runtimeDirectory . DIRECTORY_SEPARATOR . $this->UPLOADED_FLIGHTS_FOLDER;
 
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $fileName;
 
@@ -149,7 +148,7 @@ class RuntimeManager
         return $storedFilePath;
     }
 
-    public static function unlinkRuntimeFile($filePath)
+    public function unlinkRuntimeFile($filePath)
     {
         if (file_exists($filePath)) {
             unlink($filePath);

@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Framework\Application as App;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -16,7 +14,7 @@ class FdrController extends BaseController
     public function getFdrsAction()
     {
         return json_encode(
-            App::dic()
+            $this->dic()
                 ->get('fdr')
                 ->getFdrs()
         );

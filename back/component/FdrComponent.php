@@ -70,6 +70,22 @@ class FdrComponent extends BaseComponent
             ->findAll('Entity\FdrAnalogParam');
     }
 
+    public function getPrefixGroupedParams($fdrId)
+    {
+        $params = $this->getParams($fdrId);
+
+        $grouped = [];
+        foreach ($params as $param) {
+            if (!isset($grouped[$param->getPrefix()])) {
+                $grouped[$param->getPrefix()] = [];
+            }
+
+            $grouped[$param->getPrefix()][] = $param->get(true);
+        }
+
+        return $grouped;
+    }
+
     public function getAnalogPrefixes($fdrId)
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);

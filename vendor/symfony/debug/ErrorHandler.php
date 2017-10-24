@@ -480,7 +480,7 @@ class ErrorHandler
     }
 
     /**
-     * Handles an exception by logging then forwardingDescription it to another handler.
+     * Handles an exception by logging then forwarding it to another handler.
      *
      * @param \Exception|\Throwable $exception An exception to handle
      * @param array                 $error     An array as returned by error_get_last()

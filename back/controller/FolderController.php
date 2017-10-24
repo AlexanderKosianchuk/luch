@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Framework\Application as App;
-
 use Entity\Folder;
 
 use Exception\NotFoundException;
@@ -13,9 +11,9 @@ class FolderController extends BaseController
 {
     public function getFoldersAction()
     {
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
-        $folders = App::em()->getRepository('Entity\Folder')
+        $folders = $this->em()->getRepository('Entity\Folder')
             ->findBy(['userId' => $userId]);
 
         $items = [];
@@ -37,9 +35,9 @@ class FolderController extends BaseController
     {
         $id = intval($id);
         $expanded = ($expanded === 'true') ? true : false;
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
-        $folder = App::em()->getRepository('Entity\Folder')->setExpanded($id, $expanded, $userId);
+        $folder = $this->em()->getRepository('Entity\Folder')->setExpanded($id, $expanded, $userId);
 
         if ($folder === null) {
             throw new NotFoundException("requested folder not found. Folder id: ". $id);
@@ -57,12 +55,12 @@ class FolderController extends BaseController
         $folder->set([
             'name' => $folderName,
             'path' => 0, // root
-            'userId' => App::user()->getId(),
+            'userId' => $this->user()->getId(),
             'isExpanded' => true
         ]);
 
-        App::em()->persist($folder);
-        App::em()->flush();
+        $this->em()->persist($folder);
+        $this->em()->flush();
 
        return json_encode(array_merge(
            $folder->get(), [
@@ -76,27 +74,27 @@ class FolderController extends BaseController
     {
         $id = intval($id);
 
-        $folder = App::em()->find('Entity\Folder', $id);
+        $folder = $this->em()->find('Entity\Folder', $id);
 
         if (!$folder) {
             throw new NotFoundException("Folder id: ". $id);
         }
 
-        $folder = App::em()
+        $folder = $this->em()
             ->find('Entity\Folder', [
                 'id' => $id,
-                'userId' => App::user()->getId()
+                'userId' => $this->user()->getId()
             ]);
 
         if (!$folder) {
             throw new ForbiddenException('requested folder not avaliable for current user. Folder id: '. $id);
         }
 
-        if (!App::rbac()->check('deleteFolder')) {
+        if (!$this->rbac()->check('deleteFolder')) {
             throw new ForbiddenException('action: deleteFolder. Folder id: '. $id);
         }
 
-        $result = App::dic()->get('folder')->deleteFolderContent($id);
+        $result = $this->dic()->get('folder')->deleteFolderContent($id);
 
         if (!$result) {
             throw new Exception('Cant delete folder. Folder id: '. $id);
@@ -107,9 +105,9 @@ class FolderController extends BaseController
 
     public function renameFolderAction($id, $name)
     {
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
-        $folder = App::em()->find('Entity\Folder', [
+        $folder = $this->em()->find('Entity\Folder', [
             'id' => $id,
             'userId' => $userId
         ]);
@@ -120,8 +118,8 @@ class FolderController extends BaseController
 
         $folder->setName($name);
 
-        App::em()->merge($folder);
-        App::em()->flush();
+        $this->em()->merge($folder);
+        $this->em()->flush();
 
         return json_encode('ok');
     }
@@ -131,9 +129,9 @@ class FolderController extends BaseController
         $sender = intval($id);
         $target = intval($parentId);
 
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
-        $folder = App::em()->find('Entity\Folder', [
+        $folder = $this->em()->find('Entity\Folder', [
             'id' => $sender,
             'userId' => $userId
         ]);
@@ -144,8 +142,8 @@ class FolderController extends BaseController
 
         $folder->setPath($target);
 
-        App::em()->merge($folder);
-        App::em()->flush();
+        $this->em()->merge($folder);
+        $this->em()->flush();
 
         return json_encode([
             'id' => $sender,

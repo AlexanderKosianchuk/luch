@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Filesystem;
 
+use Symfony\Component\Filesystem\Exception\InvalidArgumentException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
@@ -252,7 +253,7 @@ class Filesystem
                 $this->chgrp(new \FilesystemIterator($file), $group, true);
             }
             if (is_link($file) && function_exists('lchgrp')) {
-                if (true !== @lchgrp($file, $group) || (defined('HHVM_VERSION') && !posix_getgrnam($group))) {
+                if (true !== @lchgrp($file, $group)) {
                     throw new IOException(sprintf('Failed to chgrp file "%s".', $file), 0, null, $file);
                 }
             } else {
@@ -450,6 +451,14 @@ class Filesystem
      */
     public function makePathRelative($endPath, $startPath)
     {
+        if (!$this->isAbsolutePath($startPath)) {
+            throw new InvalidArgumentException(sprintf('The start path "%s" is not absolute.', $startPath));
+        }
+
+        if (!$this->isAbsolutePath($endPath)) {
+            throw new InvalidArgumentException(sprintf('The end path "%s" is not absolute.', $endPath));
+        }
+
         // Normalize separators on Windows
         if ('\\' === DIRECTORY_SEPARATOR) {
             $endPath = str_replace('\\', '/', $endPath);
@@ -598,7 +607,7 @@ class Filesystem
     {
         return strspn($file, '/\\', 0, 1)
             || (strlen($file) > 3 && ctype_alpha($file[0])
-                && ':' === substr($file, 1, 1)
+                && ':' === $file[1]
                 && strspn($file, '/\\', 2, 1)
             )
             || null !== parse_url($file, PHP_URL_SCHEME)

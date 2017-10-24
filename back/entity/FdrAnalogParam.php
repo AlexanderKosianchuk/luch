@@ -134,6 +134,11 @@ class FdrAnalogParam
         return $this->prefix;
     }
 
+    public function getCode()
+    {
+        return $this->code;
+    }
+
     public function isCalibrated()
     {
         return isset($this->xy)
@@ -142,9 +147,9 @@ class FdrAnalogParam
             && (strlen($this->xy) > 2);
     }
 
-    public function get()
+    public function get($isArray = false)
     {
-        return [
+        $arr = [
             'id' => $this->id,
             'channel' => $this->channel,
             'code' => $this->code,
@@ -162,5 +167,11 @@ class FdrAnalogParam
             'xy' => (strlen($this->xy) > 2) ? json_decode($this->xy, true) : [],
             'alg' => $this->alg
         ];
+
+        if ($isArray) {
+            return $arr;
+        }
+
+        return (object) $arr;
     }
 }

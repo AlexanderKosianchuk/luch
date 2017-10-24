@@ -6,8 +6,8 @@ use \Framework\Application as App;
 
 class BaseComponent
 {
-    protected function em() {
-        return App::em();
+    protected function em($db = 'default') {
+        return App::em($db);
     }
 
     protected function connection() {
@@ -18,7 +18,15 @@ class BaseComponent
         return App::user();
     }
 
+    protected function member() {
+        return App::dic()->get('user');
+    }
+
     protected function rbac() {
         return App::rbac();
+    }
+
+    protected function params() {
+        return App::params();
     }
 }

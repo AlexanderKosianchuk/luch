@@ -2,20 +2,18 @@
 
 namespace Controller;
 
-use \Framework\Application as App;
 use \L;
 
 class IndexController extends BaseController
 {
     public function indexAction()
     {
-        $user = App::user();
-        $te = App::dic()->get('TemplateEngine');
+        $te = $this->dic()->get('TemplateEngine');
         $tpl = file_get_contents(SITE_ROOT_DIR . '/back/view/index.mustache');
 
         return $te->render($tpl, [
-            'languange' => $user->getLang(),
-            'login' => $user->getLogin(),
+            'languange' => $this->user()->getLang(),
+            'login' => $this->user()->getLogin(),
             'title' => L::title,
             'script' => $this->gutScriptName()
         ]);

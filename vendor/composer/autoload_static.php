@@ -8,8 +8,8 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        'bbf73f3db644d3dced353b837903e74c' => __DIR__ . '/..' . '/php-di/php-di/src/DI/functions.php',
         '1e324484438cc32b4bd213e3a86f9851' => __DIR__ . '/..' . '/philipp15b/php-i18n/i18n.class.php',
+        'bbf73f3db644d3dced353b837903e74c' => __DIR__ . '/..' . '/php-di/php-di/src/DI/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -40,7 +40,9 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Inflector\\' => 26,
+            'Doctrine\\Common\\Collections\\' => 28,
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
@@ -101,9 +103,17 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
         ),
+        'Doctrine\\Common\\Lexer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
+        ),
         'Doctrine\\Common\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
+        'Doctrine\\Common\\Collections\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections',
         ),
         'Doctrine\\Common\\Cache\\' => 
         array (
@@ -148,14 +158,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
             array (
                 0 => __DIR__ . '/..' . '/doctrine/dbal/lib',
             ),
-            'Doctrine\\Common\\Lexer\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
-            ),
-            'Doctrine\\Common\\Collections\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/collections/lib',
-            ),
         ),
     );
 
@@ -165,7 +167,10 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
+        'Component\\FlightProcessingComponent' => __DIR__ . '/../..' . '/back/component/FlightProcessingComponent.php',
+        'Component\\FlightRepresentationComponent' => __DIR__ . '/../..' . '/back/component/FlightRepresentationComponent.php',
         'Component\\FolderComponent' => __DIR__ . '/../..' . '/back/component/FolderComponent.php',
+        'Component\\FrameComponent' => __DIR__ . '/../..' . '/back/component/FrameComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',
         'Component\\Rbac' => __DIR__ . '/../..' . '/back/framework/system-components/Rbac.php',
         'Component\\RealConnection' => __DIR__ . '/../..' . '/back/framework/system-components/RealConnection.php',
@@ -215,7 +220,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Exception\\UnauthorizedException' => __DIR__ . '/../..' . '/back/exception/UnauthorizedException.php',
         'Exception\\UnknownActionException' => __DIR__ . '/../..' . '/back/exception/UnknownActionException.php',
         'Framework\\Application' => __DIR__ . '/../..' . '/back/framework/Application.php',
-        'Model\\Airport' => __DIR__ . '/../..' . '/back/model/Airport.php',
         'Model\\Calibration' => __DIR__ . '/../..' . '/back/model/Calibration.php',
         'Model\\Channel' => __DIR__ . '/../..' . '/back/model/Channel.php',
         'Model\\DataBaseConnector' => __DIR__ . '/../..' . '/back/model/DataBaseConnector.php',
@@ -225,12 +229,11 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\FlightException' => __DIR__ . '/../..' . '/back/model/FlightException.php',
         'Model\\FlightTemplate' => __DIR__ . '/../..' . '/back/model/FlightTemplate.php',
         'Model\\Frame' => __DIR__ . '/../..' . '/back/model/Frame.php',
-        'Model\\Language' => __DIR__ . '/../..' . '/back/model/Language.php',
-        'Model\\SearchFlights' => __DIR__ . '/../..' . '/back/model/SearchFlights.php',
-        'Model\\UserOptions' => __DIR__ . '/../..' . '/back/model/UserOptions.php',
+        'Repository\\AirportRepository' => __DIR__ . '/../..' . '/back/repository/AirportRepository.php',
         'Repository\\CalibrationRepository' => __DIR__ . '/../..' . '/back/repository/CalibrationRepository.php',
         'Repository\\FdrToUserRepository' => __DIR__ . '/../..' . '/back/repository/FdrToUserRepository.php',
         'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
+        'Repository\\FlightRepository' => __DIR__ . '/../..' . '/back/repository/FlightRepository.php',
         'Repository\\FlightToFolderRepository' => __DIR__ . '/../..' . '/back/repository/FlightToFolderRepository.php',
         'Repository\\FolderRepository' => __DIR__ . '/../..' . '/back/repository/FolderRepository.php',
         'Repository\\UserRepository' => __DIR__ . '/../..' . '/back/repository/UserRepository.php',

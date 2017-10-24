@@ -65,19 +65,18 @@ class Frame
         return $frame;
     }
 
-    public function ConvertFrameToPhisics($extSplitedFrame, $extStartTime, $extStepLength, $extChannelFreq, $extFrameNum, $extCycloAp, & $algHeap)
+    public function ConvertFrameToPhisics(
+        $frame,
+        $startTime,
+        $stepLength,
+        $channelFreq,
+        $frameNum,
+        $cycloAp,
+        & $algHeap)
     {
-        $frame = $extSplitedFrame;
-        $startTime = $extStartTime;
-        $stepLength = $extStepLength;
-        $channelFreq = $extChannelFreq;
-        $frameNum = $extFrameNum;
-        $cycloAp = $extCycloAp;
-
         $phisicsFrame = array();
 
-        for($ind1 = 0; $ind1 < count($cycloAp); $ind1++)
-        {
+        for ($ind1 = 0; $ind1 < count($cycloAp); $ind1++) {
             $paramCyclo = $cycloAp[$ind1];
             $channels = explode(",", $paramCyclo["channel"]);
             $channels = array_map('trim', $channels);
@@ -86,20 +85,17 @@ class Frame
             $paramTypeArr = array();
             $paramTypeArg = array();
 
-            if(strpos("/", $paramType) > -1)
-            {
+            if (strpos("/", $paramType) > -1) {
                 $paramTypeArr = explode("/", $paramType);
 
                 $paramTypeArg = $paramTypeArr[0];
                 $paramType = $paramTypeArr[1];
 
-                if(strpos("i", $paramTypeArg) > -1)
-                {
+                if (strpos("i", $paramTypeArg) > -1) {
                     $codeValue = ~$codeValue;
                 }
 
-                if(strpos("r", $paramTypeArg) > -1)
-                {
+                if(strpos("r", $paramTypeArg) > -1) {
                     $newCodeVal = '';
                     for($rotInd = strlen($codeValue) - 2; $rotInd >= 0; $rotInd-=2)
                     {
@@ -110,95 +106,66 @@ class Frame
             }
 
             $interview = array();
-            for($ind2 = 0; $ind2 < count($channels); $ind2++)
-            {
+            for ($ind2 = 0; $ind2 < count($channels); $ind2++) {
                 $codeValue = $frame[$channels[$ind2]];
 
                 //get phisics analog param from code
-                if($paramType == 1)//type 1 uses for graduated params
-                {
+                if ($paramType == 1) {//type 1 uses for graduated params
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
                     $gradi = $paramCyclo['xy'];
 
-                    for($j = 0; $j < count($gradi); $j++)
-                    {
-                        if($apCode <= $gradi[$j]['y'])
-                        {
+                    for ($j = 0; $j < count($gradi); $j++) {
+                        if($apCode <= $gradi[$j]['y']) {
                             break;
                         }
                     }
 
                     //faling extrapolation
-                    if($j == 0)
-                    {
+                    if($j == 0) {
                         //exact match
-                        if($apCode == $gradi[$j]['y'])
-                        {
+                        if($apCode == $gradi[$j]['y']) {
                             $phisics = $gradi[$j]['x'];
-                        }
-                        else
-                        {
+                        } else {
                             $p = $apCode;
                             $p0 = $gradi[0];
                             $p1 = $gradi[1];
 
-                            if($p1['y'] - $p0['y'] == 0)
-                            {
+                            if ($p1['y'] - $p0['y'] == 0) {
                                 $phisics = 0;
-                            }
-                            else
-                            {
+                            } else {
                                 $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
                                         ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
                             }
                         }
                     }
-                    //rising extrapolation
-                    else if($j >= (count($gradi) - 1))
-                    {
+                    else if($j >= (count($gradi) - 1)) {//rising extrapolation
                         //exact match
-                        if($apCode == $gradi[count($gradi) - 1]['y'])
-                        {
+                        if ($apCode == $gradi[count($gradi) - 1]['y']) {
                             $phisics = $gradi[count($gradi) - 1]['x'];
-                        }
-                        else
-                        {
+                        } else {
                             $p = $apCode;
                             $p0 = $gradi[count($gradi) - 2];
                             $p1 = $gradi[count($gradi) - 1];
 
-                            if($p1['y'] - $p0['y'] == 0)
-                            {
+                            if ($p1['y'] - $p0['y'] == 0) {
                                 $phisics = 0;
-                            }
-                            else
-                            {
+                            } else {
                                 $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
                                         ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
                             }
                         }
-
-                    }
-                    //interpolation
-                    else
-                    {
+                    } else {//interpolation
                         //exact match
-                        if($apCode == $gradi[$j]['y'])
-                        {
+                        if ($apCode == $gradi[$j]['y']) {
                             $phisics = $gradi[$j]['x'];
-                        }
-                        else
-                        {
+                        } else {
                             $p = $apCode;
                             $p0 = $gradi[$j - 1];
                             $p1 = $gradi[$j];
 
-                            if($p1['y'] - $p0['y'] == 0)
-                            {
+                            if ($p1['y'] - $p0['y'] == 0) {
                                 $phisics = 0;
-                            }
-                            else
-                            {
+                            } else {
                                 $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
                                         ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
                             }
@@ -206,9 +173,7 @@ class Frame
                     }
 
                     array_push($interview, $phisics);
-                }
-                else if($paramType == 2)//calc param
-                {
+                } else if($paramType == 2) {//calc param
                     $alg = $paramCyclo['alg'];
                     $alg = str_replace("[p]", "'" . $codeValue . "'", $alg);
                     $alg = str_replace("[k]", $paramCyclo['k'], $alg);
@@ -221,9 +186,7 @@ class Frame
 
                     array_push($interview, $phisics);
 
-                }
-                else if($paramType == 3)//left bit as sign
-                {
+                } else if($paramType == 3) {//left bit as sign
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> ($paramCyclo['shift']);
                     $minus = (hexdec($codeValue) & $paramCyclo['minus']);
                     if($minus > 0)
@@ -234,31 +197,24 @@ class Frame
                     $phisics = $apCode * $paramCyclo['k'];
 
                     array_push($interview, $phisics);
-                }
-                else if($paramType == 4)//unsigned params with coef
-                {
+                } else if($paramType == 4) { //unsigned params with coef
+
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
                     $phisics = $apCode * $paramCyclo['k'];
 
                     array_push($interview, $phisics);
-                }
-                else if($paramType == 41)//unsigned params with coef and invers by 255
-                {
+                } else if($paramType == 41) {//unsigned params with coef and invers by 255
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
                     $phisics = 255 - ($apCode * $paramCyclo['k']);
 
                     array_push($interview, $phisics);
-                }
-                else if($paramType == 42)// simple HEX
-                {
+                } else if($paramType == 42) {// simple HEX
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
                     $apCode = dechex($apCode);
                     $phisics = $apCode * $paramCyclo['k'];
 
                     array_push($interview, $phisics);
-                }
-                else if($paramType == 5)//signed params with coef
-                {
+                } else if($paramType == 5) {//signed params with coef
                     $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> ($paramCyclo['shift'] + 1);
                     $minus = (hexdec($codeValue) & $paramCyclo['mask']) >> ($paramCyclo['shift']);
                     if($minus > $paramCyclo['mask'] / 2)
@@ -1180,239 +1136,345 @@ class Frame
                             array_push($phisicsBinaryParamsFrame, $param);
                             }
                         }
-                }
-                else if($binParamType == 123)//rotation bytes in word and for TCAS (with Basis)  (mask 511) 7,8,9 Bits (Frame = 0)
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0))
-                    {
+                } else if($binParamType == 123) {//rotation bytes in word and for TCAS (with Basis)  (mask 511) 7,8,9 Bits (Frame = 0)
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']) >> 6;//decbin
-                        if($bpCode == $binParam['basis'])
-                        {
-                        $param = array("frameNum" => $frameNum,
+                        if ($bpCode == $binParam['basis']) {
+                            $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
                                     ($stepLength / $channelFreq * $chInd)) * 1000,
                                 "code" => $binParam['code']);
-                        array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                        else
-                        {
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                        {
-                            if(isset($algHeap[$binParam['code']]) &&
+                    } else {
+                            if (isset($algHeap[$binParam['code']]) &&
                                 ($algHeap[$binParam['code']] == 1))
                             {
-                            $param = array("frameNum" => $frameNum,
+                                $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
+                                array_push($phisicsBinaryParamsFrame, $param);
                             }
                         }
-                }
-                else if($binParamType == 124)//rotation bytes in word and for TCAS (with Basis)  (mask 4095) 10,11,12 Bits (Frame = 0)
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0))
-                    {
+                } else if($binParamType == 124) {//rotation bytes in word and for TCAS (with Basis)  (mask 4095) 10,11,12 Bits (Frame = 0)
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']) >> 9;//decbin
-                        if($bpCode == $binParam['basis'])
-                        {
-                        $param = array("frameNum" => $frameNum,
+                        if ($bpCode == $binParam['basis']) {
+                            $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
                                     ($stepLength / $channelFreq * $chInd)) * 1000,
                                 "code" => $binParam['code']);
-                        array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                        else
-                        {
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                        {
-                            if(isset($algHeap[$binParam['code']]) &&
+                    } else {
+                            if (isset($algHeap[$binParam['code']]) &&
                                 ($algHeap[$binParam['code']] == 1))
                             {
-                            $param = array("frameNum" => $frameNum,
+                                $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
+                                array_push($phisicsBinaryParamsFrame, $param);
                             }
                         }
-                }
-                else if($binParamType == 125)//rotation bytes any Bits and = Basis  (Frame = 1)
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 1))
-                    {
+                } else if($binParamType == 125) {//rotation bytes any Bits and = Basis  (Frame = 1)
+                    if (($apPhisicsByPrefixes['1'][0][2] == 1)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode == $binParam['basis'])
-                        {
-                        $param = array("frameNum" => $frameNum,
+                        if ($bpCode == $binParam['basis']) {
+                            $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
                                     ($stepLength / $channelFreq * $chInd)) * 1000,
                                 "code" => $binParam['code']);
-                        array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                        else
-                        {
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                        {
-                            if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                            {
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
-                            }
                         }
-                }
-                else if($binParamType == 126)//rotation bytes any Bits and = Basis  (Frame = 2)
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 2))
-                    {
+                    }
+                } else if($binParamType == 126) {//rotation bytes any Bits and = Basis  (Frame = 2)
+                    if (($apPhisicsByPrefixes['1'][0][2] == 2)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode == $binParam['basis'])
-                        {
-                        $param = array("frameNum" => $frameNum,
+                        if ($bpCode == $binParam['basis']) {
+                            $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
                                     ($stepLength / $channelFreq * $chInd)) * 1000,
                                 "code" => $binParam['code']);
-                        array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                        else
-                        {
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                        {
-                            if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                            {
+                    } else {
+                        if(isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
-                            }
                         }
-                }
-                else if($binParamType == 127)//rotation bytes any Bits and = Basis  (Frame = 3)
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 3))
-                    {
+                    }
+                } else if($binParamType == 127) {//rotation bytes any Bits and = Basis  (Frame = 3)
+                    if (($apPhisicsByPrefixes['1'][0][2] == 3)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode == $binParam['basis'])
-                        {
-                        $param = array("frameNum" => $frameNum,
+                        if ($bpCode == $binParam['basis']) {
+                            $param = array("frameNum" => $frameNum,
                                 "time" => ($startTime + ($frameNum * $stepLength) +
                                     ($stepLength / $channelFreq * $chInd)) * 1000,
                                 "code" => $binParam['code']);
-                        array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                        else
-                        {
+                                array_push($phisicsBinaryParamsFrame, $param);
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                        {
-                            if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                            {
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
-                            }
                         }
-                }
-                else if($binParamType == 27) // frame = 0
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0))
-                    {
+                    }
+                } else if($binParamType == 27) {// frame = 0
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
+                        if ($bpCode > 0) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 271) {//rev 27
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if (!($bpCode > 0)) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
                             $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
                         }
                     }
-                }
-                else if($binParamType == 271) //rev 27
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0))
-                    {
+                } else if($binParamType == 28)  {// frame = 1
+                    if (($apPhisicsByPrefixes['1'][0][2] == 1)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if(!($bpCode > 0))
+                        if ($bpCode > 0) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if(isset($algHeap[$binParam['code']]) &&
+                                ($algHeap[$binParam['code']] == 1))
                         {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 281) { // inv 28
+                   if (($apPhisicsByPrefixes['1'][0][2] == 1)) {
+                           $tempStr1 = substr ($codeValue, 0, 2);
+                           $tempStr2 = substr ($codeValue, 2, 2);
+                           $rotatedStr = $tempStr2 . $tempStr1;
+                           $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                           if (!($bpCode > 0))  {
+                               $param = array("frameNum" => $frameNum,
+                                       "time" => ($startTime + ($frameNum * $stepLength) +
+                                               ($stepLength / $channelFreq * $chInd)) * 1000,
+                                       "code" => $binParam['code']);
+                               array_push($phisicsBinaryParamsFrame, $param);
+                               $algHeap[$binParam['code']] = 1;
+                           } else {
+                               $algHeap[$binParam['code']] = 0;
+                           }
+                       } else  {
+                           if (isset($algHeap[$binParam['code']]) &&
+                               ($algHeap[$binParam['code']] == 1)
+                           ) {
+                               $param = array("frameNum" => $frameNum,
+                                       "time" => ($startTime + ($frameNum * $stepLength) +
+                                               ($stepLength / $channelFreq * $chInd)) * 1000,
+                                       "code" => $binParam['code']);
+                               array_push($phisicsBinaryParamsFrame, $param);
+                           }
+                       }
+               } else if ($binParamType == 29)  {// frame = 2
+                    if (($apPhisicsByPrefixes['1'][0][2] == 2)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if ($bpCode > 0) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 291)  {// inv 29
+                    if (($apPhisicsByPrefixes['1'][0][2] == 2)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if (!($bpCode > 0)) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                        ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 30) { // frame = 3
+                    if (($apPhisicsByPrefixes['1'][0][2] == 3)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if ($bpCode > 0) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 31) { // frame = 1 or frame = 3
+                    if (($apPhisicsByPrefixes['1'][0][2] == 1) || ($apPhisicsByPrefixes['1'][0][2] == 3)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if ($bpCode > 0) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
                             $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                                ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
@@ -1420,244 +1482,107 @@ class Frame
                             array_push($phisicsBinaryParamsFrame, $param);
                         }
                     }
-                }
-                else if($binParamType == 28)  // frame = 1
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 1))
-                    {
+                } else if($binParamType == 301) { // inv 30
+                    if (($apPhisicsByPrefixes['1'][0][2] == 3)) {
                         $tempStr1 = substr ($codeValue, 0, 2);
                         $tempStr2 = substr ($codeValue, 2, 2);
                         $rotatedStr = $tempStr2 . $tempStr1;
                         $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
+                        if (!($bpCode > 0)) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if(isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 32) {// frame = 0 or frame = 2
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0) || ($apPhisicsByPrefixes['1'][0][2] == 2)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if ($bpCode > 0) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 311) {//inv 31
+                    if (($apPhisicsByPrefixes['1'][0][2] == 1) || ($apPhisicsByPrefixes['1'][0][2] == 3)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if (!($bpCode > 0)) {
+                            $param = array("frameNum" => $frameNum,
+                                "time" => ($startTime + ($frameNum * $stepLength) +
+                                    ($stepLength / $channelFreq * $chInd)) * 1000,
+                                "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                            $algHeap[$binParam['code']] = 1;
+                        } else {
+                            $algHeap[$binParam['code']] = 0;
+                        }
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
+                            $param = array("frameNum" => $frameNum,
+                                    "time" => ($startTime + ($frameNum * $stepLength) +
+                                            ($stepLength / $channelFreq * $chInd)) * 1000,
+                                    "code" => $binParam['code']);
+                            array_push($phisicsBinaryParamsFrame, $param);
+                        }
+                    }
+                } else if($binParamType == 321) { // inv 32
+                    if (($apPhisicsByPrefixes['1'][0][2] == 0) || ($apPhisicsByPrefixes['1'][0][2] == 2)) {
+                        $tempStr1 = substr ($codeValue, 0, 2);
+                        $tempStr2 = substr ($codeValue, 2, 2);
+                        $rotatedStr = $tempStr2 . $tempStr1;
+                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
+                        if (!($bpCode > 0)) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
                                     "code" => $binParam['code']);
                             array_push($phisicsBinaryParamsFrame, $param);
                             $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
+                        } else {
                             $algHeap[$binParam['code']] = 0;
                         }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 29)  // frame = 2
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 2))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 30)  // frame = 3
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 3))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 31)  // frame = 1 or frame = 3
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 1) || ($apPhisicsByPrefixes['1'][0][2] == 3))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 32) // frame = 0 or frame = 2
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0) || ($apPhisicsByPrefixes['1'][0][2] == 2))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if($bpCode > 0)
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 311) //inv 31
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 1) || ($apPhisicsByPrefixes['1'][0][2] == 3))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if(!($bpCode > 0))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                        }
-                    }
-                }
-                else if($binParamType == 321) // inv 32
-                {
-                    if(($apPhisicsByPrefixes['1'][0][2] == 0) || ($apPhisicsByPrefixes['1'][0][2] == 2))
-                    {
-                        $tempStr1 = substr ($codeValue, 0, 2);
-                        $tempStr2 = substr ($codeValue, 2, 2);
-                        $rotatedStr = $tempStr2 . $tempStr1;
-                        $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                        if(!($bpCode > 0))
-                        {
-                            $param = array("frameNum" => $frameNum,
-                                    "time" => ($startTime + ($frameNum * $stepLength) +
-                                            ($stepLength / $channelFreq * $chInd)) * 1000,
-                                    "code" => $binParam['code']);
-                            array_push($phisicsBinaryParamsFrame, $param);
-                            $algHeap[$binParam['code']] = 1;
-                        }
-                        else
-                        {
-                            $algHeap[$binParam['code']] = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(isset($algHeap[$binParam['code']]) &&
-                                ($algHeap[$binParam['code']] == 1))
-                        {
+                    } else {
+                        if (isset($algHeap[$binParam['code']]) &&
+                            ($algHeap[$binParam['code']] == 1)
+                        ) {
                             $param = array("frameNum" => $frameNum,
                                     "time" => ($startTime + ($frameNum * $stepLength) +
                                             ($stepLength / $channelFreq * $chInd)) * 1000,
@@ -1671,418 +1596,6 @@ class Frame
 
         return $phisicsBinaryParamsFrame;
     }
-
-    /*public function ConvertFrameToBinaryParams($extSplitedFrame, $extFrameNum, $extCycloBp)
-    {
-        $frame = $extSplitedFrame;
-        $frameNum = $extFrameNum;
-        $cycloBp = $extCycloBp;
-
-        $phisicsBinaryParamsFrame = array();
-
-        //get binary param from this code
-        foreach($cycloBp as $binParam)
-        {
-            $codeValue = $frame[$binParam["channel"]];
-
-            if($binParam['type'] == 1)
-            {
-                $bpCode = (hexdec($codeValue) & $binParam['mask']);//decbin
-                if($bpCode > 0)
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'],
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            else if($binParam['type'] == 2)//rotation bytes in word
-            {
-                $tempStr1 = substr ($codeValue, 0, 2);
-                $tempStr2 = substr ($codeValue, 2, 2);
-                $rotatedStr = $tempStr2 . $tempStr1;
-                $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                if($bpCode > 0)
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'],
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            //virtual bp
-            else if($binParam['type'] == 3)
-            {
-                $bpCode = (hexdec($codeValue) & $binParam['mask']);//decbin
-                if(!($bpCode > 0))
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'] + 5000,
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            //virtual bp
-            else if($binParam['type'] == 4)//rotation bytes in word
-            {
-                $tempStr1 = substr ($codeValue, 0, 2);
-                $tempStr2 = substr ($codeValue, 2, 2);
-                $rotatedStr = $tempStr2 . $tempStr1;
-                $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-                if(!($bpCode > 0))
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'] + 5000,
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            else if($binParam['type'] == 5)
-            {
-                $bpCode = (hexdec($codeValue) & $binParam['basis']);//decbin
-                if($bpCode == $binParam['mask'])
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'],
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            else if($binParam['type'] == 6)
-            {
-                $bpCode = (hexdec($codeValue) & $binParam['mask']);//decbin
-                if(!($bpCode > 0))
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'],
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-            else if($binParam['type'] == 7)
-            {
-                $bpCode = (hexdec($codeValue) & $binParam['mask']);//decbin ( virtual type  6)
-                if(($bpCode > 0))
-                {
-                    $param = array("frameNum" => $frameNum,
-                            "channel" => $binParam['channel'] + 5000,
-                            "mask" => $binParam['mask']);
-                    array_push($phisicsBinaryParamsFrame, $param);
-                }
-            }
-        }
-
-        return $phisicsBinaryParamsFrame;
-    }*/
-
-    /*public function ConvertFrameToPhisict($extFrame, $extFrameLength, $extFrameNum, $cycloAp, $cycloBp, $extWordLength, $algHeap)
-     {
-    $wordLength = $extWordLength;
-
-    $unpackedFrame = unpack("H*", $extFrame);
-    $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-    $frameNum = $extFrameNum;
-    $frameLength = $extFrameLength;
-    $phisicsAnalogParamsFrame = array();
-    $phisicsBinaryParamsFrame = array();
-    $phisicsFrame = array();
-
-    $paramCounter = 0;
-    $paramCyclo = $cycloAp[$paramCounter];
-
-    $binCounter = 0;
-    $binParam = $cycloBp[$binCounter];
-
-    $i = 0;
-
-    while($i < $frameLength / $wordLength)
-    {
-    if($paramCyclo['channel'] == $i)
-    {
-    //get phisics analog param from code
-    if($paramCyclo['type'] == 1)//type 1 uses for graduated params
-    {
-    $v = $paramCyclo;
-    $apCode = (hexdec($splitedFrame[$i]) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-    $gradi = $v['xy'];
-
-    for($j = 0; $j < count($gradi); $j++)
-    {
-    if($apCode <= $gradi[$j]['y'])
-    {
-    break;
-    }
-    }
-
-    //faling extrapolation
-    if($j == 0)
-    {
-    //exact match
-    if($apCode == $gradi[$j]['y'])
-    {
-    $phisics = $gradi[$j]['x'];
-    }
-    else
-    {
-    $p = $apCode;
-    $p0 = $gradi[0];
-    $p1 = $gradi[1];
-
-    if($p1['y'] - $p0['y'] == 0)
-    {
-    $phisics = 0;
-    }
-    else
-    {
-    $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
-            ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
-    }
-    }
-    }
-    //rising extrapolation
-    else if($j >= (count($gradi) - 1))
-    {
-    //exact match
-    if($apCode == $gradi[count($gradi) - 1]['y'])
-    {
-    $phisics = $gradi[count($gradi) - 1]['x'];
-    }
-    else
-    {
-    $p = $apCode;
-    $p0 = $gradi[count($gradi) - 2];
-    $p1 = $gradi[count($gradi) - 1];
-
-    if($p1['y'] - $p0['y'] == 0)
-    {
-    $phisics = 0;
-    }
-    else
-    {
-    $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
-            ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
-    }
-    }
-
-    }
-    //interpolation
-    else
-    {
-    //exact match
-    if($apCode == $gradi[$j]['y'])
-    {
-    $phisics = $gradi[$j]['x'];
-    }
-    else
-    {
-    $p = $apCode;
-    $p0 = $gradi[$j - 1];
-    $p1 = $gradi[$j];
-
-    if($p1['y'] - $p0['y'] == 0)
-    {
-    $phisics = 0;
-    }
-    else
-    {
-    $phisics = $p0['x'] + (($p1['x'] - $p0['x']) *
-            ($p - $p0['y'])) / ($p1['y'] - $p0['y']);
-    }
-    }
-    }
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 2)//unsigned params with coef
-    {
-    //$algHeap to store global temp values
-    //$Ch = new Cache();
-    //$algHeap = unserialize($Ch->retrieve('algHeap'));
-
-    $alg = $paramCyclo['alg'];
-    $alg = str_replace("[p]", "'" . $splitedFrame[$i] . "'", $alg);
-    $alg = str_replace("[k]", $paramCyclo['k'], $alg);
-    $alg = str_replace("[mask]", $paramCyclo['mask'], $alg);
-    $alg = str_replace("[shift]", $paramCyclo['shift'], $alg);
-    $alg = str_replace("[minus]", $paramCyclo['minus'], $alg);
-
-    eval($alg);//$phisics must be assigned in alg
-
-    //$Ch->store('algHeap', serialize($algHeap), $expiration = 1);
-    //unset($Ch);
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    //3 not used yet
-    else if($paramCyclo['type'] == 4)//unsigned params with coef
-    {
-    $apCode = (hexdec($splitedFrame[$i]) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-    $phisics = $apCode * $paramCyclo['k'];
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 5)//signed params with coef
-    {
-    $apCode = (hexdec($splitedFrame[$i]) & $paramCyclo['mask']) >> ($paramCyclo['shift'] + 1);
-    $minus = (hexdec($splitedFrame[$i]) & $paramCyclo['mask']) >> ($paramCyclo['shift']);
-    if($minus > $paramCyclo['mask'] / 2)
-    {
-    $apCode = $apCode - $paramCyclo['mask'];
-    }
-    $phisics = $apCode * $paramCyclo['k'];
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 6)//unsigned params with coef with rotation bytes in word
-    {
-    $tempStr1 = substr ($splitedFrame[$i], 0, 2);//because 2 hex  digits in byte
-    $tempStr2 = substr ($splitedFrame[$i], 2, 2);
-    $rotatedStr = $tempStr2 . $tempStr1;
-
-    $apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-    $phisics = $apCode * $paramCyclo['k'];
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 7)//using field minus to find negative values with rotation bytes in word
-    {
-    $tempStr1 = substr ($splitedFrame[$i], 0, 2);
-    $tempStr2 = substr ($splitedFrame[$i], 2, 2);
-    $rotatedStr = $tempStr2 . $tempStr1;
-    $apCode = (hexdec($rotatedStr) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-    if($apCode >= $paramCyclo['minus'])
-    {
-    $apCode -= $paramCyclo['minus'] * 2;
-    }
-    $phisics = $apCode * $paramCyclo['k'];
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 8)//signed params with coef with negative values
-    {
-    $apCode = (hexdec($splitedFrame[$i]));
-    if($apCode > 32768)
-    {
-    $apCode -= 65535;
-    }
-    $phisics = $apCode * $paramCyclo['k'];
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 9)//signed params with coef with gradual rotation
-    {
-    $apCode = (hexdec($splitedFrame[$i]));
-    if($apCode > 32768)
-    {
-    $apCode -= 65535;
-    }
-    $phisics = $apCode * $paramCyclo['k'];
-    if($phisics < 0)
-    {
-    $phisics += 360;
-    }
-
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-    else if($paramCyclo['type'] == 10)//using field minus to find negative values
-    {
-    $apCode = (hexdec($splitedFrame[$i]) & $paramCyclo['mask']) >> $paramCyclo['shift'];
-    if($apCode >= $paramCyclo['minus'])
-    {
-    $apCode -= $paramCyclo['minus'] * 2;
-    }
-    $phisics = $apCode * $paramCyclo['k'];
-    $param = array("frameNum" => $frameNum, "channel" => $paramCyclo['channel'], "value" => $phisics);
-    array_push($phisicsAnalogParamsFrame, $param);
-    }
-
-    $paramCounter++;
-    if(count($cycloAp) > $paramCounter)
-    {
-    $paramCyclo = $cycloAp[$paramCounter];
-    }
-    }
-
-    //get binary param from this code
-    while($binParam['channel'] == $i)
-    {
-    if($binParam['type'] == 1)
-    {
-    $bpCode = (hexdec($splitedFrame[$i]) & $binParam['mask']);//decbin
-    if($bpCode > 0)
-    {
-    $param = array("frameNum" => $frameNum,
-            "channel" => $binParam['channel'],
-            "mask" => $binParam['mask']);
-    array_push($phisicsBinaryParamsFrame, $param);
-    }
-    }
-    else if($binParam['type'] == 2)//rotation bytes in word
-    {
-    $tempStr1 = substr ($splitedFrame[$i], 0, 2);
-    $tempStr2 = substr ($splitedFrame[$i], 2, 2);
-    $rotatedStr = $tempStr2 . $tempStr1;
-    $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-    if($bpCode > 0)
-    {
-    $param = array("frameNum" => $frameNum,
-            "channel" => $binParam['channel'],
-            "mask" => $binParam['mask']);
-    array_push($phisicsBinaryParamsFrame, $param);
-    }
-    }
-    if($binParam['type'] == 3)
-    {
-    $bpCode = (hexdec($splitedFrame[$i]) & $binParam['mask']);//decbin
-    if(!($bpCode > 0))
-    {
-    $param = array("frameNum" => $frameNum,
-            "channel" => $binParam['channel'] + 5000,
-            "mask" => $binParam['mask']);
-    array_push($phisicsBinaryParamsFrame, $param);
-    }
-    }
-    else if($binParam['type'] == 4)//rotation bytes in word
-    {
-    $tempStr1 = substr ($splitedFrame[$i], 0, 2);
-    $tempStr2 = substr ($splitedFrame[$i], 2, 2);
-    $rotatedStr = $tempStr2 . $tempStr1;
-    $bpCode = (hexdec($rotatedStr) & $binParam['mask']);//decbin
-    if(!($bpCode > 0))
-    {
-    $param = array("frameNum" => $frameNum,
-            "channel" => $binParam['channel'] + 5000,
-            "mask" => $binParam['mask']);
-    array_push($phisicsBinaryParamsFrame, $param);
-    }
-    }
-
-    $binCounter++;
-    if(count($cycloBp) > $binCounter)
-    {
-    $binParam = $cycloBp[$binCounter];
-    }
-    else
-    {
-    $binParam = false;
-    }
-    }
-
-    $i++;
-    }
-
-    array_push($phisicsFrame, $phisicsAnalogParamsFrame);
-    array_push($phisicsFrame, $phisicsBinaryParamsFrame);
-
-    return $phisicsFrame;
-    }*/
 
     public function DeleteFile($extFileName)
     {

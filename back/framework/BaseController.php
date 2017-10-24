@@ -3,6 +3,7 @@
 namespace Controller;
 
 use \Framework\Application as App;
+use \Component\BaseComponent;
 
 use \Exception\NotFoundException;
 use \Exception\ForbiddenException;
@@ -10,12 +11,16 @@ use \Exception\ForbiddenException;
 use \Exception;
 use \ReflectionClass;
 
-class BaseController
+class BaseController extends BaseComponent
 {
+    protected function dic() {
+        return App::dic();
+    }
+
     public function callAction($method, $arguments = []) {
         $fullAction = get_class($this).'\\'.$method;
-        $userId = App::user()->getId();
-        $rr = App::dic()->get('responseRegistrator');
+        $userId = $this->user()->getId();
+        $rr = $this->dic()->get('responseRegistrator');
 
         if (!method_exists($this, $method)) {
             $rr->faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);
@@ -25,7 +30,7 @@ class BaseController
             );
         }
 
-        if (!App::rbac()->check($method)) {
+        if (!$this->rbac()->check($method)) {
             throw new ForbiddenException(
                 'action ' . $method . ' execution forbidden for user with current privilege.'
             );

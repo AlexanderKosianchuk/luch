@@ -23,6 +23,15 @@ class ResponseRegistrator extends BaseComponent
 
     public function register($action, $message = 'ok', $status = 'executed', $code = 200)
     {
+        /*
+        * If fatal error EM closes by Doctrine
+        * as far fatal is posible only in development
+        * wont reopen EM to write register it
+        */
+        if (!$this->em()->isOpen()) {
+            return;
+        }
+
         $userActivity = new $this->UserActivity;
         $userActivity->setAttributes([
             'action' => $action,

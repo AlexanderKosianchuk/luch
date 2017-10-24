@@ -9,7 +9,7 @@ import redirect from 'actions/redirect';
 class Toolbar extends React.Component {
     handleUploadClick() {
         this.props.trigger('uploadPreviewedFlight');
-        this.props.redirect('/');
+        //this.props.redirect('/');
     }
 
     render() {

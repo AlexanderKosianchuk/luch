@@ -325,7 +325,7 @@ class QueryBuilder
      */
     public function getParameter($key)
     {
-        return isset($this->params[$key]) ? $this->params[$key] : null;
+        return $this->params[$key] ?? null;
     }
 
     /**
@@ -347,7 +347,7 @@ class QueryBuilder
      */
     public function getParameterType($key)
     {
-        return isset($this->paramTypes[$key]) ? $this->paramTypes[$key] : null;
+        return $this->paramTypes[$key] ?? null;
     }
 
     /**
@@ -420,7 +420,7 @@ class QueryBuilder
         $isMultiple = is_array($this->sqlParts[$sqlPartName]);
 
         if ($isMultiple && !$isArray) {
-            $sqlPart = array($sqlPart);
+            $sqlPart = [$sqlPart];
         }
 
         $this->state = self::STATE_DIRTY;
@@ -540,7 +540,7 @@ class QueryBuilder
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->update('users', 'u')
-     *         ->set('u.password', md5('password'))
+     *         ->set('u.last_login', 'NOW()')
      *         ->where('u.id = ?');
      * </code>
      *
@@ -733,7 +733,7 @@ class QueryBuilder
      * <code>
      *     $qb = $conn->createQueryBuilder()
      *         ->update('users', 'u')
-     *         ->set('u.password', md5('password'))
+     *         ->set('u.last_login', 'NOW()')
      *         ->where('u.id = ?');
      * </code>
      *
@@ -765,7 +765,7 @@ class QueryBuilder
      *     $or->add($qb->expr()->eq('u.id', 2));
      *
      *     $qb->update('users', 'u')
-     *         ->set('u.password', md5('password'))
+     *         ->set('u.last_login', 'NOW()')
      *         ->where($or);
      * </code>
      *
@@ -1093,7 +1093,7 @@ class QueryBuilder
     public function resetQueryPart($queryPartName)
     {
         $this->sqlParts[$queryPartName] = is_array($this->sqlParts[$queryPartName])
-            ? array() : null;
+            ? [] : null;
 
         $this->state = self::STATE_DIRTY;
 
@@ -1131,8 +1131,8 @@ class QueryBuilder
      */
     private function getFromClauses()
     {
-        $fromClauses = array();
-        $knownAliases = array();
+        $fromClauses = [];
+        $knownAliases = [];
 
         // Loop through all FROM clauses
         foreach ($this->sqlParts['from'] as $from) {

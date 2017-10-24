@@ -15,32 +15,41 @@ class User extends BaseComponent
         'local' => 'local'
     ];
 
-    public static function isAdmin($userRole) {
-        if($userRole == self::$role['admin']) {
+    public function isA($roleToCompareWith, $userRole = null)
+    {
+        if ($userRole == null) {
+            $userRole = $this->user()->getRole();
+        }
+
+        if (!isset(self::$role[$roleToCompareWith])) {
+            throw new Exception("Checking role unexist. Role: ".$roleToCompareWith, 1);
+        }
+
+        if ($userRole === self::$role[$roleToCompareWith]) {
             return true;
         }
 
         return false;
     }
 
-    public static function isModerator($userRole) {
-        if($userRole == self::$role['moderator']) {
-            return true;
-        }
-
-        return false;
+    public function isAdmin($userRole = null)
+    {
+        return $this->isA('admin');
     }
 
-    public static function isUser($userRole) {
-        if($userRole == self::$role['user']) {
-            return true;
-        }
-
-        return false;
+    public function isModerator($userRole = null)
+    {
+        return $this->isA('moderator');
     }
 
-    public static function isLocal($userRole) {
-        if($userRole == self::$role['local']) {
+    public function isUser($userRole = null)
+    {
+        return $this->isA('user');
+    }
+
+    public function isLocal($userRole = null)
+    {
+        if ($userRole == self::$role['local']) {
             return true;
         }
 

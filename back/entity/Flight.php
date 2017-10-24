@@ -2,11 +2,13 @@
 
 namespace Entity;
 
+use Exception;
+
 /**
  * Flights
  *
  * @Table(name="flights")
- * @Entity
+ * @Entity(repositoryClass="Repository\FlightRepository")
  */
 class Flight
 {
@@ -22,56 +24,56 @@ class Flight
     /**
      * @var string
      *
-     * @Column(name="guid", type="string", length=20, nullable=true)
+     * @Column(name="guid", type="string", length=20, nullable=false)
      */
     private $guid;
 
     /**
      * @var string
      *
-     * @Column(name="bort", type="string", length=255, nullable=true)
+     * @Column(name="bort", type="string", length=255, nullable=false)
      */
     private $bort;
 
     /**
      * @var string
      *
-     * @Column(name="voyage", type="string", length=255, nullable=true)
+     * @Column(name="voyage", type="string", length=255, nullable=false)
      */
     private $voyage;
 
     /**
      * @var string
      *
-     * @Column(name="captain", type="string", length=255, nullable=true)
+     * @Column(name="captain", type="string", length=255, nullable=false)
      */
     private $captain;
 
     /**
      * @var integer
      *
-     * @Column(name="start_copy_time", type="bigint", nullable=true)
+     * @Column(name="start_copy_time", type="bigint", nullable=false)
      */
     private $startCopyTime;
 
     /**
      * @var string
      *
-     * @Column(name="performer", type="string", length=255, nullable=true)
+     * @Column(name="performer", type="string", length=255, nullable=false)
      */
     private $performer;
 
     /**
      * @var string
      *
-     * @Column(name="departure_airport", type="string", length=255, nullable=true)
+     * @Column(name="departure_airport", type="string", length=255, nullable=false)
      */
     private $departureAirport;
 
     /**
      * @var string
      *
-     * @Column(name="arrival_airport", type="string", length=255, nullable=true)
+     * @Column(name="arrival_airport", type="string", length=255, nullable=false)
      */
     private $arrivalAirport;
 
@@ -94,19 +96,26 @@ class Flight
      *
      * @Column(name="id_fdr", type="integer", nullable=false)
      */
-    private $id_fdr;
+    private $fdrId;
 
     /**
      * @var integer
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $id_user;
+    private $userId;
 
     /**
      * @var integer
      *
-     * @Column(name="dt", type="bigint", nullable=true)
+     * @Column(name="id_calibration", type="integer", nullable=true)
+     */
+    private $calibrationId;
+
+    /**
+     * @var integer
+     *
+     * @Column(name="dt", type="datetime", nullable=false)
      */
     private $dt;
 
@@ -123,6 +132,13 @@ class Flight
      * @JoinColumn(name="id_user", referencedColumnName="id")
      */
     private $user;
+
+    /**
+     * One Flight has One Calibration.
+     * @OneToOne(targetEntity="Calibration")
+     * @JoinColumn(name="id_calibration", referencedColumnName="id")
+     */
+    private $calibration;
 
     public function getFdr()
     {
@@ -179,7 +195,7 @@ class Flight
         return $this->arrivalAirport;
     }
 
-    public function get()
+    public function get($isArray = false)
     {
         $flightInfo = [
            'id' => $this->id,
@@ -202,6 +218,37 @@ class Flight
             $flightInfo['aditionalInfo'] = $aditionalInfo;
         }
 
-        return $flightInfo;
+        if ($isArray) {
+            return $flightInfo;
+        }
+
+        return (object) $flightInfo;
+    }
+
+
+    public function set($guid, $data, $fdr, $user, $calibration = null)
+    {
+        if (!$guid) {
+            throw new Exception("Cant insert flight without guid", 1);
+        }
+
+        if (!$fdr) {
+            throw new Exception("Cant insert flight without fdr", 1);
+        }
+
+        $this->guid = $guid;
+        $this->bort = $data['bort'] ?? 'x';
+        $this->voyage = $data['voyage'] ?? 'x';
+        $this->captain = $data['captain'] ?? 'x';
+        $this->startCopyTime = $data['startCopyTime'] ?? 0;
+        $this->performer = $data['performer'] ?? 'x';
+        $this->departureAirport = $data['departureAirport'] ?? 'x';
+        $this->arrivalAirport = $data['arrivalAirport'] ?? 'x';
+        $this->aditionalInfo = $data['aditionalInfo'] ?? '';
+        $this->path = $data['path'] ?? '';
+
+        $this->fdr = $fdr;
+        $this->user = $user;
+        $this->calibration = $calibration;
     }
 }

@@ -13,45 +13,6 @@ use Exception;
 
 class UserRepository extends EntityRepository
 {
-    public static $role = [
-        'admin' => 'admin',
-        'moderator' => 'moderator',
-        'user' => 'user',
-        'local' => 'local'
-    ];
-
-    public static function isAdmin($userRole) {
-        if ($userRole == self::$role['admin']) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isModerator($userRole) {
-        if ($userRole == self::$role['moderator']) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isUser($userRole) {
-        if ($userRole == self::$role['user']) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isLocal($userRole) {
-        if($userRole == self::$role['local']) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function getUsers($userId)
     {
         if (!is_int($userId)) {
@@ -91,7 +52,12 @@ class UserRepository extends EntityRepository
         return $usersWithLogo;
     }
 
-    public static function getLogoUrl($userId)
+    public function getAdmins()
+    {
+        return $this->findBy(['role' => 'admin']);
+    }
+
+    public function getLogoUrl($userId)
     {
         if (!is_int($userId)) {
             throw new Exception("Incorrect userId passed. Int is required. Passed: "

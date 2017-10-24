@@ -155,14 +155,44 @@ class Fdr
         return $this->frameLength;
     }
 
+    public function getWordLength()
+    {
+        return $this->wordLength;
+    }
+
     public function getEventsToFdr()
     {
         return $this->eventsToFdr;
     }
 
-    public function get()
+    public function getPreviewParams()
     {
-        return [
+        return $this->previewParams;
+    }
+
+    public function getHeaderScr()
+    {
+        return $this->headerScr;
+    }
+
+    public function getHeaderLength()
+    {
+        return $this->headerLength;
+    }
+
+    public function getFrameSyncroCode()
+    {
+        return $this->frameSyncroCode;
+    }
+
+    public function getAditionalInfo()
+    {
+        return $this->aditionalInfo;
+    }
+
+    public function get($isArray = false)
+    {
+        $arr = [
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
@@ -178,5 +208,11 @@ class Fdr
             'kmlExportScript' => $this->kmlExportScript,
             'userId' => $this->userId
         ];
+
+        if ($isArray) {
+            return $arr;
+        }
+
+        return (object) $arr;
     }
 }

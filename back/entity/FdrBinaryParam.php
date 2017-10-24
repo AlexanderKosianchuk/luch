@@ -82,9 +82,9 @@ class FdrBinaryParam
         return $this->prefix;
     }
 
-    public function get()
+    public function get($isArray = false)
     {
-        return [
+        $arr = [
             'id' => $this->id,
             'channel' => $this->channel,
             'code' => $this->code,
@@ -95,6 +95,12 @@ class FdrBinaryParam
             'mask' => $this->mask,
             'basis' => $this->basis
         ];
+
+        if ($isArray) {
+            return $arr;
+        }
+
+        return (object) $arr;
     }
 
 

@@ -101,7 +101,7 @@ class Application
             throw new Exception('Config file does not contain params config', 1);
         }
 
-        self::$_params = $cfg['params'];
+        self::$_params = (object)$cfg['params'];
     }
 
     private static function buildAclTree($aclCfg, $role, &$actions)

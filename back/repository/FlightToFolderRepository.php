@@ -4,6 +4,8 @@ namespace Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Entity\FlightToFolder;
+
 class FlightToFolderRepository extends EntityRepository
 {
     public function getTreeItem($flightId, $userId)
@@ -15,7 +17,7 @@ class FlightToFolderRepository extends EntityRepository
         $startCopyTimeFormated = date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime());
 
         $item = array_merge(
-            $flightToFolders->getFlight()->get(), [
+            $flightToFolders->getFlight()->get(true), [
                 'noChildren' => true,
                 'type' => 'flight',
                 'parentId' => $flightToFolders->getFolderId(),
@@ -24,5 +26,20 @@ class FlightToFolderRepository extends EntityRepository
         );
 
         return $item;
+    }
+
+    public function insert($folderId, $userId, $flight)
+    {
+        $em = $this->getEntityManager();
+
+        $ftf = new FlightToFolder;
+        $ftf->setFolderId($folderId);
+        $ftf->setUserId($userId);
+        $ftf->setFlight($flight);
+
+        $em->persist($ftf);
+        $em->flush();
+
+        return $ftf;
     }
 }
