@@ -7,12 +7,12 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Component\\BaseComponent' => $baseDir . '/back/framework/BaseComponent.php',
+    'Component\\CalibrationComponent' => $baseDir . '/back/component/CalibrationComponent.php',
     'Component\\EventProcessingComponent' => $baseDir . '/back/component/EventProcessingComponent.php',
     'Component\\FdrComponent' => $baseDir . '/back/component/FdrComponent.php',
     'Component\\FdrCycloComponent' => $baseDir . '/back/component/FdrCycloComponent.php',
     'Component\\FlightComponent' => $baseDir . '/back/component/FlightComponent.php',
     'Component\\FlightProcessingComponent' => $baseDir . '/back/component/FlightProcessingComponent.php',
-    'Component\\FlightRepresentationComponent' => $baseDir . '/back/component/FlightRepresentationComponent.php',
     'Component\\FolderComponent' => $baseDir . '/back/component/FolderComponent.php',
     'Component\\FrameComponent' => $baseDir . '/back/component/FrameComponent.php',
     'Component\\OSdetectionComponent' => $baseDir . '/back/component/OSdetectionComponent.php',

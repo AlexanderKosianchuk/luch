@@ -10,13 +10,13 @@ trait dynamicTable {
                 . json_encode($code), 1);
         }
 
-        $dynamicTableName = $base . self::$_prefix;
-        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
+        $query = "SHOW TABLES LIKE '". $base . self::$_prefix."';";
         $result = $link->query($query);
+
         if (!$result->fetch_array()) {
             return null;
         }
 
-        return $dynamicTableName;
+        return $base . self::$_prefix;
     }
 }

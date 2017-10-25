@@ -92,7 +92,7 @@ class RuntimeManager extends BaseComponent
         return $filePath;
     }
 
-    public function storeFile($fileName, $folder, $uid = null)
+    public function storeFile($fileName, $folder, $name = null, $dim = 'tmpsf')
     {
         $storedFilesDir = $folder;
 
@@ -100,16 +100,42 @@ class RuntimeManager extends BaseComponent
             mkdir($storedFilesDir, 0755, true);
         }
 
-        if ($uid === null) {
-            $uid = uniqid() ;
+        if ($name === null) {
+            $name = uniqid() ;
         }
 
-        $storedFileName = $uid . '.tmpsf';
+        $storedFileName = $name . '.' . $dim;
         $storedFilePath = $storedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
         $res = null;
 
         if (!file_exists($storedFilePath)) {
             $res = move_uploaded_file ($fileName, $storedFilePath);
+        }
+
+        return $storedFilePath;
+    }
+
+    public function storeFlight($fileName)
+    {
+        $storedFlightsDir = $this->params()->storedFlights;
+
+        if (!is_dir($storedFlightsDir)) {
+            mkdir($storedFlightsDir, 0755, true);
+        }
+
+        $storedFlightsDir .= DIRECTORY_SEPARATOR . date("Ymd");
+
+        if (!is_dir($storedFlightsDir)) {
+            mkdir($storedFlightsDir, 0755, true);
+        }
+
+        $name = basename($fileName, '.tmpsf') . '.flt';
+
+        $storedFilePath = $storedFlightsDir . DIRECTORY_SEPARATOR . $name;
+        $res = null;
+
+        if (file_exists($fileName) && !file_exists($storedFilePath)) {
+            $res = rename($fileName, $storedFilePath);
         }
 
         return $storedFilePath;

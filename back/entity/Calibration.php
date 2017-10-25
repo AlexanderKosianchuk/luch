@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
  * Calibration
  *
  * @Table(name="calibrations", indexes={@Index(name="id_fdr", columns={"id_fdr"}), @Index(name="id_user", columns={"id_user"})})
- * @Entity(repositoryClass="Repository\CalibrationRepository")
+ * @Entity
  */
 class Calibration
 {

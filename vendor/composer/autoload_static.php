@@ -163,12 +163,12 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
 
     public static $classMap = array (
         'Component\\BaseComponent' => __DIR__ . '/../..' . '/back/framework/BaseComponent.php',
+        'Component\\CalibrationComponent' => __DIR__ . '/../..' . '/back/component/CalibrationComponent.php',
         'Component\\EventProcessingComponent' => __DIR__ . '/../..' . '/back/component/EventProcessingComponent.php',
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
         'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\FlightProcessingComponent' => __DIR__ . '/../..' . '/back/component/FlightProcessingComponent.php',
-        'Component\\FlightRepresentationComponent' => __DIR__ . '/../..' . '/back/component/FlightRepresentationComponent.php',
         'Component\\FolderComponent' => __DIR__ . '/../..' . '/back/component/FolderComponent.php',
         'Component\\FrameComponent' => __DIR__ . '/../..' . '/back/component/FrameComponent.php',
         'Component\\OSdetectionComponent' => __DIR__ . '/../..' . '/back/component/OSdetectionComponent.php',

@@ -38,7 +38,7 @@ class UploaderController extends BaseController
         $fdrId = intval($fdrId);
 
         $uploadedFile = $this->dic()->get('runtimeManager')->getFilePathByIud($uploadingUid);
-        $response = $this->dic()->get('flightRepresentation')->preview($fdrId, $uploadedFile);
+        $response = $this->dic()->get('flightProcessor')->preview($fdrId, $uploadedFile);
 
         return json_encode($response);
     }
@@ -71,6 +71,111 @@ class UploaderController extends BaseController
         return json_encode([
             'status' => 'ok',
             'data' => $flightParamsSrt
+        ]);
+    }
+
+    public function flightProccesAndCheckAction(
+        $fdrId,
+        $uploadingUid,
+        $receivedCalibrationId,
+        $uploadedFile,
+        $receivedFlightInfo
+    ) {
+        $receivedAditionalInfo = [];
+        if (isset($_POST['flightAditionalInfo'])
+            && is_array($_POST['flightAditionalInfo'])
+        ) {
+            $receivedAditionalInfo = $_POST['flightAditionalInfo'];
+        }
+
+        $fdrId = intval($fdrId);
+
+        $flightInfo = [];
+        $flightAditionalInfo = [];
+
+        $calibrationId = null;
+        if (($receivedCalibrationId !== null)
+            && !empty($receivedCalibrationId)
+            && is_int(intval($receivedCalibrationId))
+        ) {
+            $calibrationId = intval($receivedCalibrationId);
+        }
+
+        $userId = $this->user()->getId();
+
+        //in such way it was passed in js because of imposible to do it by usual aasoc arr
+        for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
+            if ((string)$receivedFlightInfo[$i + 1] != '') {
+                $flightInfo[(string)$receivedFlightInfo[$i]] =
+                    (string)$receivedFlightInfo[$i + 1];
+            } else {
+                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
+            }
+        }
+
+        $aditionalInfoVars = '';
+        if ($receivedAditionalInfo != 0) {
+            for ($i = 0; $i < count($receivedAditionalInfo); $i+=2) {
+                $flightAditionalInfo[(string)$receivedAditionalInfo[$i]] =
+                    (string)$receivedAditionalInfo[$i + 1];
+            }
+
+            $aditionalInfoVars = json_encode($flightAditionalInfo);
+        }
+
+        $flightInfo['aditionalInfo'] = $aditionalInfoVars;
+
+$storedFlightFile = $uploadedFile;
+        /*$storedFlightFile = $this->dic()
+            ->get('runtimeManager')
+            ->storeFlight($uploadedFile);
+
+        $flightInfo['path'] = $storedFlightFile;
+
+        $flight = $this->dic()
+            ->get('flight')
+            ->insert(
+                $uploadingUid,
+                $flightInfo,
+                $fdrId,
+                $userId,
+                $calibrationId
+            );*/
+
+        $totalPersentage = 50;
+        $progressFilePath = $this->dic()
+            ->get('runtimeManager')
+            ->createProgressFile($uploadingUid);
+
+        $this->dic()
+            ->get('flightProcessor')
+            ->process(
+                $storedFlightFile,
+                $progressFilePath,
+                $totalPersentage,
+                $fdrId,
+                $calibrationId
+            );
+
+        exit;
+
+        $this->dic()
+            ->get('flightProcessor')
+            ->proccesFlightException(
+                $flight->getId(),
+                $progressFilePath
+            );
+
+        $this->dic()
+            ->get('runtimeManager')
+            ->unlinkRuntimeFile($progressFilePath);
+
+        return json_encode([
+            'status' => 'complete',
+            'uploadingUid' => $uploadingUid,
+            'item' => $this->em()
+                ->getRepository('Entity\FlightToFolder')
+                ->getTreeItem($flight->getId(), $userId)
         ]);
     }
 
@@ -858,97 +963,6 @@ class UploaderController extends BaseController
         return json_encode($answ);
     }
 
-    public function flightProccesAndCheckAction(
-        $fdrId,
-        $uploadingUid,
-        $receivedCalibrationId,
-        $uploadedFile,
-        $receivedFlightInfo
-    ) {
-        $receivedAditionalInfo = [];
-        if (isset($_POST['flightAditionalInfo'])
-            && is_array($_POST['flightAditionalInfo'])
-        ) {
-            $receivedAditionalInfo = $_POST['flightAditionalInfo'];
-        }
-
-        $fdrId = intval($fdrId);
-
-        $flightInfo = [];
-        $flightAditionalInfo = [];
-
-        $calibrationId = null;
-        if (($receivedCalibrationId !== null)
-            && !empty($receivedCalibrationId)
-            && is_int(intval($receivedCalibrationId))
-        ) {
-            $calibrationId = intval($receivedCalibrationId);
-        }
-
-        $userId = $this->user()->getId();
-
-        //in such way it was passed in js because of imposible to do it by usual aasoc arr
-        for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
-            if ((string)$receivedFlightInfo[$i + 1] != '') {
-                $flightInfo[(string)$receivedFlightInfo[$i]] =
-                    (string)$receivedFlightInfo[$i + 1];
-            } else {
-                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
-            }
-        }
-
-        $aditionalInfoVars = '';
-        if ($receivedAditionalInfo != 0) {
-            for($i = 0; $i < count($receivedAditionalInfo); $i+=2) {
-                $flightAditionalInfo[(string)$receivedAditionalInfo[$i]] =
-                    (string)$receivedAditionalInfo[$i + 1];
-            }
-
-            $aditionalInfoVars = json_encode($flightAditionalInfo);
-        }
-
-        $flightInfo['aditionalInfo'] = $aditionalInfoVars;
-
-        $flight = $this->dic()->get('flight')
-            ->insert(
-                $uploadingUid,
-                $flightInfo,
-                $fdrId,
-                $userId,
-                $calibrationId
-            );
-
-        echo $flight->getId(); exit;
-
-        $totalPersentage = 50;
-        $progressFilePath = $this->dic()->get('runtimeManager')
-            ->createProgressFile($uploadingUid);
-
-        $this->dic()->get('flightProcessing')
-            ->proccess(
-                $flightId,
-                $fdrId,
-                $calibrationId,
-                $uploadedFile,
-                $progressFilePath,
-                $totalPersentage
-            );
-
-        $this->dic()->get('flightProcessing')
-            ->proccesFlightException(
-                $flightId,
-                $progressFilePath
-            );
-
-        RuntimeManager::unlinkRuntimeFile($progressFilePath);
-
-        return json_encode([
-            "status" => "complete",
-            "uploadingUid" => $uploadingUid,
-            "item" => FlightComponent::getTreeItem($flightId, $userId)
-        ]);
-    }
-
     public function flightEasyUpload($data)
     {
         if (!isset($_POST['fdrId'])) {
@@ -968,7 +982,6 @@ class UploaderController extends BaseController
             throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
                 . json_encode($fdrId), 1);
         }
-
 
         $uploadingUid = strval($_POST['uploadingUid']);
         if (!is_string($_POST['uploadingUid'])) {

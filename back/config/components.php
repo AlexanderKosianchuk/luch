@@ -15,6 +15,6 @@ return [
     'userSettings' => DI\object('Component\UserSettingsComponent'),
     'folder' => DI\object('Component\FolderComponent'),
     'runtimeManager' => DI\object('Component\RuntimeManager'),
+    'calibration' => DI\object('Component\CalibrationComponent'),
     'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
-    'flightRepresentation' => DI\object('Component\FlightRepresentationComponent'),
 ];

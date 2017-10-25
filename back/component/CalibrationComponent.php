@@ -1,58 +1,39 @@
 <?php
 
-namespace Repository;
-
-use Doctrine\ORM\EntityRepository;
-
-use Entity\Fdr;
-use Entity\CalibrationParam;
-use Entity\FdrAnalogParam;
-
-use Component\RealConnectionFactory as LinkFactory;
+namespace Component;
 
 use Exception;
 
-class CalibrationRepository extends EntityRepository
+class CalibrationComponent extends BaseComponent
 {
-    public function getCalibratedParams($fdrId)
+    /**
+     * @Inject
+     * @var Entity\CalibrationParam
+     */
+    private $CalibrationParam;
+
+    public function getCalibrationParams ($fdrId, $id)
     {
-        if (!is_int($fdrId)) {
-            throw new Exception("Incorrect fdrId passed. Int is required. Passed: "
-                . json_encode($fdrId), 1);
-        }
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $em = $this->getEntityManager();
+        $link = $this->connection()->create('fdrs');
+        $calibrationTable = $this->CalibrationParam::getTable($link, $fdr->getCode());
+        $this->connection()->destroy($link);
 
-        $fdr = $em->find('Entity\Fdr', $fdrId);
-
-        if ($fdr === null) {
+        if ($calibrationTable === null) {
             return null;
         }
 
-        $link = LinkFactory::create();
-        $fdrAnalogParamTable = FdrAnalogParam::getTable($link, $fdr->getCode());
-        LinkFactory::destroy($link);
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\CalibrationParam')
+            ->setTableName($calibrationTable);
 
-        if ($fdrAnalogParamTable === null) {
-            return null;
-        }
-
-        $em->getClassMetadata('Entity\FdrAnalogParam')->setTableName($fdrAnalogParamTable);
-
-        $fdrAnalogParam = $em->getRepository('Entity\FdrAnalogParam')->findAll();
-
-        $params = [];
-
-        foreach($fdrAnalogParam as $item) {
-            if ($item->isCalibrated()) {
-                $params[] = $item->get();
-            }
-        }
-
-        return $params;
+        return $this->em('fdrs')
+                ->getRepository('Entity\CalibrationParam')
+                ->findBy(['calibrationId' => $id]);
     }
 
-    public function getCalibration($id)
+    /*public function getCalibration($id)
     {
         if (!is_int($id)) {
             throw new Exception("Incorrect calibration id passed. Int is required. Passed: "
@@ -99,5 +80,5 @@ class CalibrationRepository extends EntityRepository
             $calibration->get(),
             [ 'params' => $params ]
         );
-    }
+    }*/
 }

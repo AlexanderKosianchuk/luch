@@ -20,14 +20,15 @@ class FlightsController extends BaseController
 {
     public function getFlightsAction()
     {
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
         $items = [];
-        $flightsToFolders = App::em()->getRepository('Entity\FlightToFolder')
+        $flightsToFolders = $this->em()->getRepository('Entity\FlightToFolder')
             ->findBy(['userId' => $userId]);
 
         foreach ($flightsToFolders as $flightToFolders) {
-            $items[] = App::em()->getRepository('Entity\FlightToFolder')
+            $items[] = $this->em()
+                ->getRepository('Entity\FlightToFolder')
                 ->getTreeItem(
                     $flightToFolders->getFlightId(), $userId
                 );

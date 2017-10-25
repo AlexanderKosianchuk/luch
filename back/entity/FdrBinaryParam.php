@@ -2,6 +2,8 @@
 
 namespace Entity;
 
+use EntityTraits\dynamicTable;
+
 /**
  * FdrBinaryParam
  *
@@ -10,6 +12,7 @@ namespace Entity;
  */
 class FdrBinaryParam
 {
+    use dynamicTable;
     private static $_prefix = '_bp';
 
     /**
