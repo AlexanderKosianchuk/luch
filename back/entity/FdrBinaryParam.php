@@ -46,25 +46,11 @@ class FdrBinaryParam
     private $name;
 
     /**
-     * @var string
-     *
-     * @Column(name="dim", type="string", length=9, nullable=false)
-     */
-    private $color;
-
-    /**
      * @var integer
      *
      * @Column(name="type", type="integer", nullable=false)
      */
     private $type;
-
-    /**
-     * @var string
-     *
-     * @Column(name="prefix", type="string", length=9, nullable=false)
-     */
-    private $prefix;
 
     /**
      * @var integer
@@ -80,6 +66,20 @@ class FdrBinaryParam
      */
     private $basis;
 
+    /**
+     * @var string
+     *
+     * @Column(name="color", type="string", length=9, nullable=false)
+     */
+    private $color;
+
+    /**
+     * @var string
+     *
+     * @Column(name="prefix", type="string", length=9, nullable=false)
+     */
+    private $prefix;
+
     public function getPrefix()
     {
         return $this->prefix;
@@ -87,9 +87,16 @@ class FdrBinaryParam
 
     public function get($isArray = false)
     {
+        $channels = $this->channel;
+
+        if (strpos($this->channel, ',') !== -1) {
+            $channels = explode(',', $this->channel);
+            $channels = array_map('trim', $channels);
+        }
+
         $arr = [
             'id' => $this->id,
-            'channel' => $this->channel,
+            'channel' => $channels,
             'code' => $this->code,
             'name' => $this->name,
             'color' => $this->color,

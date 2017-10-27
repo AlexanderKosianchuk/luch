@@ -86,6 +86,43 @@ class FdrComponent extends BaseComponent
         return $grouped;
     }
 
+    public function getBinaryParams($fdrId)
+    {
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+        $link = $this->connection()->create('fdrs');
+        $table = $this->FdrBinaryParam::getTable($link, $fdr->getCode());
+        $this->connection()->destroy($link);
+
+        if ($table === null) {
+            return null;
+        }
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FdrBinaryParam')
+            ->setTableName($table);
+
+        return $this->em('fdrs')
+            ->getRepository('Entity\FdrBinaryParam')
+            ->findAll('Entity\FdrBinaryParam');
+    }
+
+    public function getPrefixGroupedBinaryParams($fdrId)
+    {
+        $params = $this->getBinaryParams($fdrId);
+
+        $grouped = [];
+        foreach ($params as $param) {
+            if (!isset($grouped[$param->getPrefix()])) {
+                $grouped[$param->getPrefix()] = [];
+            }
+
+            $grouped[$param->getPrefix()][] = $param->get(true);
+        }
+
+        return $grouped;
+    }
+
     public function getAnalogPrefixes($fdrId)
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
@@ -142,5 +179,21 @@ class FdrComponent extends BaseComponent
         }
 
         return array_keys($prefixes);
+    }
+
+    public function getPrefixFrequency($paramsCyclo)
+    {
+        $freq = [];
+        foreach ($paramsCyclo as $prefix => $params) {
+            foreach ($params as $param) {
+                if (!isset($freq[$param['prefix']])) {
+                    $freq[$param['prefix']] = [];
+                }
+
+                $freq[strval($param['prefix'])] = count($param['channel']);
+            }
+        }
+
+        return $freq;
     }
 }

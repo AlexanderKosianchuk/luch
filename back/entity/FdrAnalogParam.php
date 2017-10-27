@@ -129,6 +129,11 @@ class FdrAnalogParam
      */
     private $alg;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getPrefix()
     {
         return $this->prefix;
@@ -137,6 +142,17 @@ class FdrAnalogParam
     public function getCode()
     {
         return $this->code;
+    }
+
+    public function getChannel()
+    {
+        if (strpos($this->channel, ',') !== -1) {
+            $channels = explode(',', $this->channel);
+            $channels = array_map('trim', $channels);
+            return $channels;
+        }
+
+        return $this->channel;
     }
 
     public function isCalibrated()
@@ -149,9 +165,16 @@ class FdrAnalogParam
 
     public function get($isArray = false)
     {
+        $channels = $this->channel;
+
+        if (strpos($this->channel, ',') !== -1) {
+            $channels = explode(',', $this->channel);
+            $channels = array_map('trim', $channels);
+        }
+
         $arr = [
             'id' => $this->id,
-            'channel' => $this->channel,
+            'channel' => $channels,
             'code' => $this->code,
             'name' => $this->name,
             'dim' => $this->dim,

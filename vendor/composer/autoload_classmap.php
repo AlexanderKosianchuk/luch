@@ -74,7 +74,6 @@ return array(
     'Model\\FlightTemplate' => $baseDir . '/back/model/FlightTemplate.php',
     'Model\\Frame' => $baseDir . '/back/model/Frame.php',
     'Repository\\AirportRepository' => $baseDir . '/back/repository/AirportRepository.php',
-    'Repository\\CalibrationRepository' => $baseDir . '/back/repository/CalibrationRepository.php',
     'Repository\\FdrToUserRepository' => $baseDir . '/back/repository/FdrToUserRepository.php',
     'Repository\\FlightEventRepository' => $baseDir . '/back/repository/FlightEventRepository.php',
     'Repository\\FlightRepository' => $baseDir . '/back/repository/FlightRepository.php',

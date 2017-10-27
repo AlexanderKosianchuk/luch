@@ -48,6 +48,13 @@ class CalibrationParam
     private $xy;
 
     /**
+     * One CalibrationParam has One Calibration.
+     * @OneToOne(targetEntity="Calibration")
+     * @JoinColumn(name="id_calibration", referencedColumnName="id")
+     */
+    private $calibration;
+
+    /**
      * One CalibrationParam has One FdrAnalogParam.
      * @OneToOne(targetEntity="FdrAnalogParam")
      * @JoinColumn(name="id_param", referencedColumnName="id")
@@ -59,9 +66,19 @@ class CalibrationParam
         return $this->id;
     }
 
+    public function getCalibration()
+    {
+        return $this->calibration;
+    }
+
     public function getFdrAnalogParam()
     {
         return $this->fdrAnalogParam;
+    }
+
+    public function getXy()
+    {
+        return (strlen($this->xy) > 2) ? json_decode($this->xy, true) : [];
     }
 
     public function get()

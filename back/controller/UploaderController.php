@@ -5,8 +5,6 @@ namespace Controller;
 use Entity\FlightEvent;
 use Entity\FlightSettlement;
 
-use Evenement\EventEmitter;
-
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
@@ -125,7 +123,12 @@ class UploaderController extends BaseController
 
         $flightInfo['aditionalInfo'] = $aditionalInfoVars;
 
-$storedFlightFile = $uploadedFile;
+        /* DEBUGG */
+        $storedFlightFile = $uploadedFile;
+
+        $flight = $this->em()
+            ->find('Entity\Flight', 63);
+
         /*$storedFlightFile = $this->dic()
             ->get('runtimeManager')
             ->storeFlight($uploadedFile);
@@ -143,32 +146,33 @@ $storedFlightFile = $uploadedFile;
             );*/
 
         $totalPersentage = 50;
-        $progressFilePath = $this->dic()
-            ->get('runtimeManager')
-            ->createProgressFile($uploadingUid);
 
         $this->dic()
             ->get('flightProcessor')
             ->process(
+                $uploadingUid,
                 $storedFlightFile,
-                $progressFilePath,
+                0,
                 $totalPersentage,
                 $fdrId,
                 $calibrationId
             );
 
-        exit;
-
         $this->dic()
-            ->get('flightProcessor')
-            ->proccesFlightException(
-                $flight->getId(),
-                $progressFilePath
+            ->get('eventProcessor')
+            ->analyze($flight);
+
+        $file = $this->dic()
+            ->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'close'
             );
 
-        $this->dic()
-            ->get('runtimeManager')
-            ->unlinkRuntimeFile($progressFilePath);
+        if (file_exists($file->path)) {
+            unlink($file->path);
+        }
 
         return json_encode([
             'status' => 'complete',
@@ -522,109 +526,6 @@ $storedFlightFile = $uploadedFile;
             $answ["error"] = "Invalid slice range. Page UploaderController.php";
 
             return $answ;
-        }
-    }
-
-    public function ProccesFlightException(
-        $flightId,
-        $tempFilePath
-    ) {
-        $flightId = intval($flightId);
-
-        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
-        if (!is_dir($tmpProccStatusFilesDir)) {
-            mkdir($tmpProccStatusFilesDir);
-        }
-
-        $this->writeStatus ($tempFilePath, 50);
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo["apTableName"];
-        $bpTableName = $flightInfo["bpTableName"];
-        $excEventsTableName = $flightInfo["exTableName"];
-        $startCopyTime = $flightInfo["startCopyTime"];
-        $tableGuid = substr($apTableName, 0, 14);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $excListTableName = $fdrInfo["excListTableName"];
-        $apGradiTableName = $fdrInfo["gradiApTableName"];
-        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-        $stepLength = $fdrInfo["stepLength"];
-
-        if ($excListTableName != "") {
-            $excListTableName = $fdrInfo["excListTableName"];
-            $apGradiTableName = $fdrInfo["gradiApTableName"];
-            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-
-            $FEx = new FlightException;
-            $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
-            //Get exc refParam list
-            $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
-
-            $exList = $FEx->GetFlightExceptionTable($excListTableName);
-
-            //file can be accesed by ajax what can cause warning
-            error_reporting(E_ALL ^ E_WARNING);
-            set_time_limit (0);
-
-            //50 because we think previous 50 ware used during proc
-            $tmpStatus = 50;
-            $newStatus = 50;
-
-            for($i = 0; $i < count($exList); $i++) {
-                $newStatus = round(50 + (25 / count($exList) * $i));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-
-                $curExList = $exList[$i];
-                $FEx->PerformProcessingByExceptions($curExList,
-                        $flightInfo, $flightExTableName,
-                        $apTableName, $bpTableName,
-                        $startCopyTime, $stepLength);
-            }
-
-            $emitter = new EventEmitter();
-
-            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 75;
-                $this->writeStatus ($tempFilePath, $tmpStatus);
-            });
-
-            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath, $tmpStatus, $newStatus) {
-                $newStatus = round(75 + (25 / count($total) * $progress));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-            });
-
-            $emitter->on('EventProcessing:end', function () use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 100;
-                $this->writeStatus ($tempFilePath, $tmpStatus);
-            });
-
-            EventProcessingComponent::processEvents($flightId, $emitter);
-
-            error_reporting(E_ALL);
-        }
-
-        unset($fdr);
-    }
-
-    private function writeStatus ($path, $status)
-    {
-        if (file_exists($path)) {
-            try {
-                $fp = fopen($path, "w");
-                fwrite($fp, json_encode($status));
-                fclose($fp);
-            } catch (Exception $e) { }
         }
     }
 

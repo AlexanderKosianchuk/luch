@@ -6,9 +6,13 @@ use Exception;
 
 class RuntimeManager extends BaseComponent
 {
+    public static $ext = '.t';
+
+    private $_descriptors = [];
+
     public function getRuntimeFolder()
     {
-        $runtimeDirectory = $this->params()->runtimeDirectory;
+        $runtimeDirectory = $this->params()->folders->runtimeDirectory;
 
         if (!is_dir($runtimeDirectory)) {
             mkdir($runtimeDirectory, 0755, true);
@@ -77,27 +81,10 @@ class RuntimeManager extends BaseComponent
         return $filePath;
     }
 
-    public function getProgressFilePath($uploadingUid)
-    {
-        $runtimeDirectory = $this->getRuntimeFolder();
-        return $runtimeDirectory . DIRECTORY_SEPARATOR . $uploadingUid . '.tmps';
-    }
-
-    public function createProgressFile($uploadingUid)
-    {
-        $filePath = $this->getProgressFilePath($uploadingUid);
-        $fileNameDesc = fopen($filePath, "w");
-        fclose($fileNameDesc);
-
-        return $filePath;
-    }
-
     public function storeFile($fileName, $folder, $name = null, $dim = 'tmpsf')
     {
-        $storedFilesDir = $folder;
-
-        if (!is_dir($storedFilesDir)) {
-            mkdir($storedFilesDir, 0755, true);
+        if (!is_dir($folder)) {
+            mkdir($folder, 0755, true);
         }
 
         if ($name === null) {
@@ -105,7 +92,7 @@ class RuntimeManager extends BaseComponent
         }
 
         $storedFileName = $name . '.' . $dim;
-        $storedFilePath = $storedFilesDir . DIRECTORY_SEPARATOR . $storedFileName;
+        $storedFilePath = $folder . DIRECTORY_SEPARATOR . $storedFileName;
         $res = null;
 
         if (!file_exists($storedFilePath)) {
@@ -117,7 +104,7 @@ class RuntimeManager extends BaseComponent
 
     public function storeFlight($fileName)
     {
-        $storedFlightsDir = $this->params()->storedFlights;
+        $storedFlightsDir = $this->params()->folders->storedFlights;
 
         if (!is_dir($storedFlightsDir)) {
             mkdir($storedFlightsDir, 0755, true);
@@ -145,7 +132,7 @@ class RuntimeManager extends BaseComponent
     {
         return basename($this->storeFile(
             $fileName,
-            $this->params()->uploadedFlightsFolder,
+            $this->params()->folders->uploadedFlightsFolder,
             $uid
         ));
     }
@@ -153,7 +140,7 @@ class RuntimeManager extends BaseComponent
     public function getFilePathByIud($uid)
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $uploadedFilesDir = $this->params()->uploadedFlightsFolder;
+        $uploadedFilesDir = $this->params()->folders->uploadedFlightsFolder;
 
         $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $uid . '.tmpsf';
 
@@ -179,5 +166,97 @@ class RuntimeManager extends BaseComponent
         if (file_exists($filePath)) {
             unlink($filePath);
         }
+    }
+
+    public function writeToRuntimeTemporaryFile(
+        $category,
+        $fileName,
+        $data,
+        $dataType = 'raw',
+        $truncate = false,
+        $writeType = 'w',
+        $close = false
+    ) {
+        $file = $this->getTemporaryFileDesc(
+            $category,
+            $fileName,
+            'open'
+        );
+
+        if (file_exists($file->path) && flock($file->desc, LOCK_EX)) {
+            try {
+                if ($truncate) {
+                    ftruncate($file->desc, 0);
+                }
+
+                switch ($dataType) {
+                    case 'json':
+                        fwrite($file->desc, json_encode($data));
+                        break;
+                    case 'csv':
+                        fputcsv($file->desc, $data);
+                        break;
+                    default:
+                        fwrite($file->desc, $data);
+                        break;
+                }
+            } catch (Exception $e) { }
+            flock($file->desc, LOCK_UN);
+        }
+
+        if ($close) {
+            if (get_resource_type($file->desc) === 'file') {
+                fclose($file->desc);
+                unset($this->_descriptors[$fileName]);
+            }
+        }
+    }
+
+    public function getTemporaryFileDesc(
+        $category,
+        $fileName,
+        $task = 'noop',
+        $writeType = 'w'
+    ) {
+        $file = $category
+            .DIRECTORY_SEPARATOR
+            .$fileName
+            .$this::$ext;
+
+        // this method is necessary runtime folder to be createExportedFile
+        // if it is not exist
+        $this->getRuntimeFolder();
+
+        if (!is_dir($category)) {
+            mkdir($category, 0755, true);
+        }
+
+        $desc = null;
+        switch ($task) {
+            case 'open':
+                if (!isset($this->_descriptors[$fileName])
+                    || (get_resource_type($this->_descriptors[$fileName]) !== 'stream')
+                ) {
+                    $this->_descriptors[$fileName] = fopen($file, $writeType);
+                }
+                $desc = $this->_descriptors[$fileName];
+                break;
+            case 'close':
+                if (isset($this->_descriptors[$fileName])
+                    && (get_resource_type($this->_descriptors[$fileName]) === 'stream')
+                ) {
+                    fclose($this->_descriptors[$fileName]);
+                    unset($this->_descriptors[$fileName]);
+                }
+                break;
+            default:
+                $desc = $this->_descriptors[$fileName];
+                break;
+        }
+
+        return (object)[
+            'path' => $file,
+            'desc' => $desc
+        ];
     }
 }

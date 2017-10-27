@@ -17,4 +17,5 @@ return [
     'runtimeManager' => DI\object('Component\RuntimeManager'),
     'calibration' => DI\object('Component\CalibrationComponent'),
     'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
+    'eventProcessor' => DI\object('Component\EventProcessingComponent'),
 ];

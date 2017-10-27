@@ -45,7 +45,7 @@ class FlightUploaderDropdown extends Component {
 
     handleChange() {
         let form = new FormData(this.sendFlightForm);
-        let uploadingUid = uuidV4();
+        let uploadingUid = uuidV4().substring(0, 18);
         form.append('uploadingUid', uploadingUid);
 
         if (this.state.previewNeed) {

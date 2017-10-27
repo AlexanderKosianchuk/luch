@@ -2,12 +2,16 @@
 
 namespace Component;
 
-use Framework\Application as App;
-
 use Exception;
 
 class FlightProcessingComponent extends BaseComponent
 {
+    /**
+     * @Inject
+     * @var Component\FlightComponent
+     */
+    private $flightComponent;
+
     /**
      * @Inject
      * @var Component\FrameComponent
@@ -25,6 +29,12 @@ class FlightProcessingComponent extends BaseComponent
      * @var Component\CalibrationComponent
      */
     private $calibrationComponent;
+
+    /**
+     * @Inject
+     * @var Component\RuntimeManager
+     */
+    private $runtimeManager;
 
     public function readHeader($fdrId, $file)
     {
@@ -185,220 +195,281 @@ class FlightProcessingComponent extends BaseComponent
     }
 
     public function process(
-        $storedFlightFile,
-        $progressFilePath,
+        $flightUid,
+        $file,
+        $startCopyTime,
         $totalPersentage,
         $fdrId,
         $calibrationId = null
     ) {
         $fdrId = intval($fdrId);
         $userId = $this->user()->getId();
+        $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
-        $analogParams = $this
-            ->fdrComponent
+        $analogParamsCyclo = $this->fdrComponent
             ->getPrefixGroupedParams($fdrId);
 
         if ($calibrationId !== null) {
             $calibratedParams = $this->calibrationComponent
                 ->getCalibrationParams($fdrId, $calibrationId);
 
-            //var_dump($calibratedParams); exit;
-
-            foreach ($analogParams as $prefix => &$params) {
+            foreach ($analogParamsCyclo as $prefix => &$params) {
                 foreach ($params as &$param) {
                     $paramId = $param['id'];
 
-                    if(isset($calibratedParams[$paramId])) {
-                        $param['xy'] = $calibratedParams[$paramId]['xy'];
+                    if (isset($calibratedParams[$paramId])) {
+                        $param['xy'] = $calibratedParams[$paramId]->getXy();
                     }
                 }
             }
         }
 
+        $binaryParamsCyclo = $this->fdrComponent
+            ->getPrefixGroupedBinaryParams($fdrId);
 
+        $fileDesc = fopen($file, 'rb');
+        $fileSize = filesize($file);
 
-        $prefixFreqArr = $fdr->GetBruApCycloPrefixFreq($fdrId);
+        $frameSyncroCode = $fdr->getFrameSyncroCode();
+        $syncroWordOffset = $this->frameComponent
+            ->searchSyncroWord(
+                $frameSyncroCode,
+                $fdr->getHeaderLength(),
+                $fileDesc,
+                $fileSize
+            );
 
-        $cycloBpByPrefixes = $fdr->GetBruBpCycloPrefixOrganized($fdrId);
-        $prefixBpFreqArr = $fdr->GetBruBpCycloPrefixFreq($fdrId);
-        unset($fdr);
-        $apTables = $Fl->CreateFlightParamTables($flightId, $cycloApByPrefixes, $cycloBpByPrefixes);
-        unset($Fl);
-
-        $Fr = new Frame;
-        $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $headerLength, $fileName);
-
-        $fileDesc = $Fr->OpenFile($fileName);
-        $fileSize = $Fr->GetFileSize($fileName);
-
-        $frameNum = 0;
-        $totalFrameNum = floor(($fileSize - $syncroWordOffset)  / $frameLength);
-
-        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
-
-        $fileNameApArr = array();
-        $fileNameApDescArr = array();
-        foreach ($cycloApByPrefixes as $prefix => $item) {
-            $fileNameAp = $tmpProccStatusFilesDir . "/" . $tableNameAp . "_".$prefix.".tbl";
-            $fileNameApArr[$prefix] = $fileNameAp;
-            $fileNameApDesc = fopen($fileNameAp, "w");
-            $fileNameApDescArr[$prefix] = $fileNameApDesc;
-        }
-
-        $fileNameBpArr = array();
-        $fileNameBpDescArr = array();
-        foreach ($cycloBpByPrefixes as $prefix => $item) {
-            $fileNameBp = $tmpProccStatusFilesDir . "/" . $tableNameBp . "_".$prefix.".tbl";
-            $fileNameBpArr[$prefix] = $fileNameBp;
-            $fileNameBpDesc = fopen($fileNameBp, "w");
-            $fileNameBpDescArr[$prefix] = $fileNameBpDesc;
-        }
-
-        fseek($fileDesc, $syncroWordOffset, SEEK_SET);
+        fseek ($fileDesc, $syncroWordOffset, SEEK_SET);
         $curOffset = $syncroWordOffset;
+        $frameLength = $fdr->getFrameLength();
+
+        $algHeap = [];
+        $frameNum = 0;
+        $totalFrameNum = floor(($fileSize - $syncroWordOffset)  / $fdr->getFrameLength());
+        $status = (object)[
+            'new' => 0,
+            'current' => 0,
+            'total' =>  $totalFrameNum
+        ];
 
         //file can be accesed by ajax while try to open what can cause warning
-        error_reporting(E_ALL ^ E_WARNING);
+        //error_reporting(E_ALL ^ E_WARNING);
         set_time_limit (0);
 
-        $algHeap = array();
-        $tmpStatus = 0;
-        $newStatus = 0;
-        $this->writeStatus ($tempFilePath, $tmpStatus);
-
-        if ($frameSyncroCode != '') {
-            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
-            //while(($frameNum < 20) && ($curOffset < $fileSize))
-            {
+        if (isset($frameSyncroCode) && ($frameSyncroCode != '')) {
+            //while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
+            while(($frameNum < 20) && ($curOffset < $fileSize)) {
                 $curOffset = ftell($fileDesc);
-                $frame = $Fr->ReadFrame($fileDesc, $frameLength);
+                $frame = stream_get_contents($fileDesc, $frameLength);
                 $unpackedFrame = unpack("H*", $frame);
 
-                if($Fr->CheckSyncroWord($frameSyncroCode, $unpackedFrame[1]) === true)
-                {
-                    $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-
-                    $apPhisicsByPrefixes = array();
-                    foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
-                        $channelFreq = $prefixFreqArr[$prefix];
-                        $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
-                        $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
-                    }
-
-                    $bpPhisicsByPrefixes = array();
-                    foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
-                        $channelFreq = $prefixBpFreqArr[$prefix];
-                        $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
-                            $frameNum,
-                            $startCopyTime,
-                            $stepLength,
-                            $channelFreq,
-                            $cycloBp,
-                            $apPhisicsByPrefixes,
-                            $algHeap);
-
-                        $bpPhisicsByPrefixes[$prefix] = $convBinFrame;
-                    }
-
-                    $Fr->AppendFrameToFile($apPhisicsByPrefixes, $fileNameApDescArr);
-                    $Fr->AppendFrameToFile($bpPhisicsByPrefixes, $fileNameBpDescArr);
+                if ($this->frameComponent->checkSyncroWord($frameSyncroCode, $unpackedFrame[1]) === true) {
+                    $this->processFrame(
+                        $flightUid,
+                        $unpackedFrame,
+                        $fileSize,
+                        $analogParamsCyclo,
+                        $binaryParamsCyclo,
+                        $startCopyTime,
+                        $fdr,
+                        $frameNum,
+                        $status,
+                        $algHeap
+                    );
 
                     $frameNum++;
                 } else {
-                    $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $curOffset, $fileName);
+                    $syncroWordOffset = $this->frameComponent
+                        ->searchSyncroWord(
+                            $frameSyncroCode,
+                            $headerLength,
+                            $fileDesc,
+                            $fileSize
+                        );
 
                     fseek($fileDesc, $syncroWordOffset, SEEK_SET);
 
                     $framesLeft = floor(($fileSize - $syncroWordOffset)  / $frameLength);
                     $totalFrameNum = $frameNum + $framesLeft;
-
-                }
-
-                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
                 }
             }
         } else {
-            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
-            //while(($frameNum < 20) && ($curOffset < $fileSize))
-            {
+            //while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
+            while(($frameNum < 20) && ($curOffset < $fileSize)) {
                 $curOffset = ftell($fileDesc);
-                $frame = $Fr->ReadFrame($fileDesc, $frameLength);
+                $frame = stream_get_contents($fileDesc, $frameLength);
                 $unpackedFrame = unpack("H*", $frame);
 
-                $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-
-                $apPhisicsByPrefixes = array();
-                foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
-                    $channelFreq = $prefixFreqArr[$prefix];
-                    $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
-                    $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
-                }
-
-                $bpPhisicsByPrefixes = array();
-                foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
-                    $channelFreq = $prefixBpFreqArr[$prefix];
-                    $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
-                        $frameNum,
-                        $startCopyTime,
-                        $stepLength,
-                        $channelFreq,
-                        $cycloBp,
-                        $apPhisicsByPrefixes,
-                        $algHeap);
-
-                    $bpPhisicsByPrefixes[$prefix] = $convBinFrame;
-                }
-
-                $Fr->AppendFrameToFile($apPhisicsByPrefixes, $fileNameApDescArr);
-                $Fr->AppendFrameToFile($bpPhisicsByPrefixes, $fileNameBpDescArr);
+                $this->processFrame(
+                    $flightUid,
+                    $unpackedFrame,
+                    $fileSize,
+                    $analogParamsCyclo,
+                    $binaryParamsCyclo,
+                    $startCopyTime,
+                    $fdr,
+                    $frameNum,
+                    $status,
+                    $algHeap
+                );
 
                 $frameNum++;
 
-                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
             }
         }
 
-        $this->writeStatus ($tempFilePath, $totalPersentage);
+        $this->runtimeManager->writeToRuntimeTemporaryFile(
+            $this->params()->folders->uploadingStatus,
+            $flightUid,
+            $totalPersentage,
+            'json',
+            true,
+            'w',
+            true
+        );
 
         error_reporting(E_ALL);
+        fclose($fileDesc);
 
-        //not need any more
-        $Fr->CloseFile($fileDesc);
-        unlink($fileName);
+        $this->flightComponent->createParamTables(
+            $flightUid,
+            $analogParamsCyclo,
+            $binaryParamsCyclo
+        );
 
-        foreach($fileNameApArr as $prefix => $fileNameAp) {
-            fclose($fileNameApDescArr[$prefix]);
-            $Fr->LoadFileToTable($tableNameAp . "_" . $prefix, $fileNameAp);
-            unlink($fileNameAp);
+        foreach ($analogParamsCyclo as $prefix => $cyclo) {
+            $this->loadParamFilesToTables(
+                $flightUid.'_ap_'.$cyclo[0]['prefix']
+            );
         }
 
-        foreach($fileNameBpArr as $prefix => $fileNameBp) {
-            fclose($fileNameBpDescArr[$prefix]);
-            $Fr->LoadFileToTable($tableNameBp . "_" . $prefix, $fileNameBp);
-            unlink($fileNameBp);
+        foreach($binaryParamsCyclo as $prefix => $cyclo) {
+            $this->loadParamFilesToTables(
+                $flightUid.'_bp_'.$cyclo[0]['prefix']
+            );
         }
 
-        $userId = intval($this->_user->userInfo['id']);
-        $observerIds = $this->_user->GetObservers($userId);
+        return $flightUid;
+    }
 
-        if (!in_array($userId, $observerIds)) {
-            $observerIds[] = $userId;
+    private function convertFrame (
+        $flightUid,
+        $analogParamsCyclo,
+        $binaryParamsCyclo,
+        $splitedFrame,
+        $startCopyTime,
+        $stepLength,
+        $frameNum,
+        &$algHeap
+    ) {
+        foreach ($analogParamsCyclo as $prefix => $cyclo) {
+            $channelFreq = count($cyclo[0]['channel']);
+
+            /*
+             * convertFrameToPhisics may return few frames,
+             * because few channel values in frame
+             */
+            $phisicsFrames = $this->frameComponent->convertFrameToPhisics(
+                $splitedFrame,
+                $startCopyTime,
+                $stepLength,
+                $frameNum,
+                $cyclo,
+                $algHeap,
+                $channelFreq
+            );
+
+            foreach ($phisicsFrames as $frame) {
+                $this->runtimeManager->writeToRuntimeTemporaryFile(
+                    $this->params()->folders->uploadingFlightsTables,
+                    $flightUid.'_ap_'.$channelFreq,
+                    $frame,
+                    'csv'
+                );
+            }
         }
 
-        $Fd = new Folder;
-        foreach ($observerIds as $id) {
-            $Fd->PutFlightInFolder($flightId, 0, $id); //we put currently uploaded file in root
-        }
-        unset($Fd);
-        unset($Fr);
+        foreach ($binaryParamsCyclo as $prefix => $cyclo) {
+            $channelFreq = count($cyclo[0]['channel']);
 
-        return $flightId;
+            $convBinFrame = $this->frameComponent->convertFrameToBinaryParams(
+                $splitedFrame,
+                $frameNum,
+                $startCopyTime,
+                $stepLength,
+                $channelFreq,
+                $cyclo,
+                $analogParamsCyclo,
+                $algHeap
+            );
+
+            foreach ($convBinFrame as $frame) {
+                $this->runtimeManager->writeToRuntimeTemporaryFile(
+                    $this->params()->folders->uploadingFlightsTables,
+                    $flightUid.'_bp_'.$channelFreq,
+                    $frame,
+                    'csv'
+                );
+            }
+        }
+    }
+
+    private function processFrame (
+        $flightUid,
+        $unpackedFrame,
+        $fileSize,
+        $analogParamsCyclo,
+        $binaryParamsCyclo,
+        $startCopyTime,
+        $fdr,
+        $frameNum,
+        $status,
+        &$algHeap
+    ) {
+        $splitedFrame = str_split($unpackedFrame[1], $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
+
+        $this->convertFrame(
+            $flightUid,
+            $analogParamsCyclo,
+            $binaryParamsCyclo,
+            $splitedFrame,
+            $startCopyTime,
+            $fdr->getStepLength(),
+            $frameNum,
+            $algHeap
+        );
+
+        $this->runtimeManager->writeToRuntimeTemporaryFile(
+            $this->params()->folders->uploadingStatus,
+            $flightUid,
+            $status->current,
+            'json',
+            true
+        );
+
+        $status->new = round (
+            $status->total
+            / $fileSize
+            * $frameNum
+            * $fdr->getFrameLength()
+        );
+        if ($status->new > $status->current) {
+            $status->current = $status->new;
+        }
+    }
+
+    private function loadParamFilesToTables($tableName)
+    {
+        $file = $this->runtimeManager->getTemporaryFileDesc(
+            $this->params()->folders->uploadingFlightsTables,
+            $tableName,
+            'close'
+        );
+
+        $this->connection()->loadFile($tableName, $file->path);
+
+        if (file_exists($file->path)) {
+            unlink($file->path);
+        }
     }
 }

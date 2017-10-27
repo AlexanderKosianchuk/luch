@@ -438,7 +438,7 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
                         type: "POST",
                         data: {
                             uploadingUid: uploadingUid,
-                            newUid: uuidV4(),
+                            newUid: uuidV4().substring(0, 18),
                             fdrId: fdrId,
                             file: fileName,
 

@@ -2,9 +2,7 @@
 
 namespace Component;
 
-use Component\EntityManagerComponent as EM;
-use Component\FdrCycloComponent as Cyclo;
-use Component\RealConnectionFactory as LinkFactory;
+use Evenement\EventEmitter;
 
 use Entity\FlightEvent;
 use Entity\FlightSettlement;
@@ -12,10 +10,16 @@ use Entity\Flight;
 
 use Exception;
 
-class EventProcessingComponent
+class EventProcessingComponent extends BaseComponent
 {
-    private static $tableSign = '^';
-    private static $eventTimeServiceKeys = [
+    /**
+     * @Inject
+     * @var Entity\FlightEventOld
+     */
+    private $FlightEventOld;
+
+    private Static $tableSign = '^';
+    private Static $eventTimeServiceKeys = [
         'startFrameNum',
         'endFrameNum',
         'startTime',
@@ -24,7 +28,98 @@ class EventProcessingComponent
 
     private static $eventRuntimeServiceKey = 'runtime';
 
-    public static function processEvents($flightId, $emitter)
+    public function analyze($flight)
+    {
+
+    }
+
+    public function processEventsOld(
+        $flightId,
+        $tempFilePath
+    ) {
+        $flightId = intval($flightId);
+
+        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
+        if (!is_dir($tmpProccStatusFilesDir)) {
+            mkdir($tmpProccStatusFilesDir);
+        }
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $fdrId = intval($flightInfo['id_fdr']);
+        $apTableName = $flightInfo["apTableName"];
+        $bpTableName = $flightInfo["bpTableName"];
+        $excEventsTableName = $flightInfo["exTableName"];
+        $startCopyTime = $flightInfo["startCopyTime"];
+        $tableGuid = substr($apTableName, 0, 14);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo($fdrId);
+        $excListTableName = $fdrInfo["excListTableName"];
+        $apGradiTableName = $fdrInfo["gradiApTableName"];
+        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+        $stepLength = $fdrInfo["stepLength"];
+
+        if ($excListTableName != "") {
+            $excListTableName = $fdrInfo["excListTableName"];
+            $apGradiTableName = $fdrInfo["gradiApTableName"];
+            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+
+            $FEx = new FlightException;
+            $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
+            //Get exc refParam list
+            $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
+
+            $exList = $FEx->GetFlightExceptionTable($excListTableName);
+
+            //file can be accesed by ajax what can cause warning
+            error_reporting(E_ALL ^ E_WARNING);
+            set_time_limit (0);
+
+            //50 because we think previous 50 ware used during proc
+            $tmpStatus = 50;
+            $newStatus = 50;
+
+            for($i = 0; $i < count($exList); $i++) {
+                $newStatus = round(50 + (25 / count($exList) * $i));
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                }
+
+                $curExList = $exList[$i];
+                $FEx->PerformProcessingByExceptions($curExList,
+                        $flightInfo, $flightExTableName,
+                        $apTableName, $bpTableName,
+                        $startCopyTime, $stepLength);
+            }
+
+            $emitter = new EventEmitter();
+
+            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath, $tmpStatus) {
+                $tmpStatus = 75;
+            });
+
+            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath, $tmpStatus, $newStatus) {
+                $newStatus = round(75 + (25 / count($total) * $progress));
+                if ($newStatus > $tmpStatus) {
+                    $tmpStatus = $newStatus;
+                }
+            });
+
+            $emitter->on('EventProcessing:end', function () use ($tempFilePath, $tmpStatus) {
+                $tmpStatus = 100;
+            });
+
+            EventProcessingComponent::processEvents($flightId, $emitter);
+
+            error_reporting(E_ALL);
+        }
+
+        unset($fdr);
+    }
+
+    public  function processEvents($flightId, $emitter)
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
@@ -122,7 +217,7 @@ class EventProcessingComponent
         $emitter->emit('EventProcessing:end', []);
     }
 
-    private static function executeEvent($queryAlg, $startCopyTime, $stepLength)
+    private  function executeEvent($queryAlg, $startCopyTime, $stepLength)
     {
         if (!is_string($queryAlg)) {
             throw new Exception("Incorrect queryAlg passed. String is required. Passed: "
@@ -167,7 +262,7 @@ class EventProcessingComponent
         return $resultArr;
     }
 
-    private static function executeSettlement($queryAlg)
+    private  function executeSettlement($queryAlg)
     {
         if (!is_string($queryAlg)) {
             throw new Exception("Incorrect queryAlg passed. String is required. Passed: "
@@ -197,7 +292,7 @@ class EventProcessingComponent
         return $settlementValue;
     }
 
-    private static function eventArrayToSection($resultArr, $startCopyTime, $stepLength)
+    private  function eventArrayToSection($resultArr, $startCopyTime, $stepLength)
     {
         if (!is_array($resultArr)) {
             throw new Exception("Incorrect resultArr passed. Array is required. Passed: "
@@ -244,7 +339,7 @@ class EventProcessingComponent
         return $sections;
     }
 
-    private static function eventLengthCheck($sections, $minLength)
+    private  function eventLengthCheck($sections, $minLength)
     {
         if (!is_array($sections)) {
             throw new Exception("Incorrect sections passed. Array is required. Passed: "
@@ -271,7 +366,7 @@ class EventProcessingComponent
         return $checkedSections;
     }
 
-    private static function substituteParams($alg, $substitution, $fdrCode, $flightGuid)
+    private  function substituteParams($alg, $substitution, $fdrCode, $flightGuid)
     {
         if (!is_string($alg)) {
             throw new Exception("Incorrect alg passed. String is required. Passed: "
@@ -331,7 +426,7 @@ class EventProcessingComponent
         return $alg;
     }
 
-    private static function substituteFlightInfo($alg, $flightInfo)
+    private  function substituteFlightInfo($alg, $flightInfo)
     {
         foreach ($flightInfo as $flightInfoKey => $flightInfoVal) {
             if (is_string($flightInfoVal)) {
@@ -342,12 +437,12 @@ class EventProcessingComponent
         return $alg;
     }
 
-    private static function substituteRuntime($alg, $guid)
+    private  function substituteRuntime($alg, $guid)
     {
         return str_replace(self::$eventRuntimeServiceKey, $guid, $alg);
     }
 
-    private static function substituteEventTime($alg, $section)
+    private  function substituteEventTime($alg, $section)
     {
         foreach (self::$eventTimeServiceKeys as $item) {
             if (!isset($section[$item])) {

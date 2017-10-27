@@ -63,4 +63,21 @@ class RealConnection
 
         return $table;
     }
+
+    public function loadFile($tableName, $file, $db = 'flights')
+    {
+        $link = $this->create($db);
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $file = str_replace('\\\\', '/', $file);
+            $file = str_replace('\\', '/', $file);
+        }
+
+        $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$tableName."` FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';";
+        $link->query($query);
+
+        $this->destroy($link);
+
+        unset($c);
+    }
 }

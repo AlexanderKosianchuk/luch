@@ -42,12 +42,6 @@ class FlightComponent extends BaseComponent
      */
     private $CalibrationParam;
 
-    /**
-     * @Inject
-     * @var Entity\FlightEventOld
-     */
-    private $FlightEventOld;
-
     public function insert($guid, $flightInfo, $frdId, $userId, $calibrationId)
     {
         $user = $this->em()->find('Entity\User', $userId);
@@ -222,5 +216,46 @@ class FlightComponent extends BaseComponent
         return $allFlightSettlements;
     }
 
+    public function createParamTables($flightUid, $paramCyclo, $binaryCyclo)
+    {
+        $tables = [
+            'params' => [],
+            'binary' => [],
+        ];
 
+        $link = $this->connection()->create('flights');
+
+        foreach ($paramCyclo as $prefix => $cyclo) {
+            $table = $flightUid."_ap_".$prefix;
+            $tables['params'][] = $table;
+
+            $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT";
+
+            foreach ($cyclo as $param) {
+                $query .= ", `".$param["code"]."` FLOAT(7,2)";
+            }
+
+            $query .= ", PRIMARY KEY (`frameNum`, `time`)) " .
+                    "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+            $stmt = $link->prepare($query);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        foreach ($binaryCyclo as $prefix => $prefixCyclo) {
+            $table = $flightUid."_bp_".$prefix;
+            $tables['binary'][] = $table;
+
+            $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
+                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+            $stmt = $link->prepare($query);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $this->connection()->destroy($link);
+
+        return $tables;
+    }
 }

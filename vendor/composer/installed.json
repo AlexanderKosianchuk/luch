@@ -775,12 +775,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/doctrine/annotations.git",
-            "reference": "ff479e64fc3e3c91e947349a06c628b5bac31c27"
+            "reference": "1d78773a83ef6d2efd8d9ea766f1b49cbabd5d29"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/doctrine/annotations/zipball/ff479e64fc3e3c91e947349a06c628b5bac31c27",
-            "reference": "ff479e64fc3e3c91e947349a06c628b5bac31c27",
+            "url": "https://api.github.com/repos/doctrine/annotations/zipball/1d78773a83ef6d2efd8d9ea766f1b49cbabd5d29",
+            "reference": "1d78773a83ef6d2efd8d9ea766f1b49cbabd5d29",
             "shasum": ""
         },
         "require": {
@@ -791,7 +791,7 @@
             "doctrine/cache": "1.*",
             "phpunit/phpunit": "^5.7"
         },
-        "time": "2017-10-08T08:05:29+00:00",
+        "time": "2017-10-26T16:48:07+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
