@@ -15,7 +15,7 @@ use EntityTraits\dynamicTable;
 class FlightEventOld
 {
     use dynamicTable;
-    private static $_prefix = '_ex';
+    public static $_prefix = '_ex';
     /**
      * @var integer
      *
@@ -87,4 +87,9 @@ class FlightEventOld
      * @Column(name="userComment", type="text", length=65255, nullable=false)
      */
     private $userComment;
+
+    public static function getPrefix()
+    {
+        return self::$_prefix;
+    }
 }

@@ -1408,12 +1408,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/config.git",
-            "reference": "d87b019c71a1ebc173dcb65737b74d6d6e0d66a5"
+            "reference": "404da940b1d36d8a4b583d678a6f2d04f316797f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/config/zipball/d87b019c71a1ebc173dcb65737b74d6d6e0d66a5",
-            "reference": "d87b019c71a1ebc173dcb65737b74d6d6e0d66a5",
+            "url": "https://api.github.com/repos/symfony/config/zipball/404da940b1d36d8a4b583d678a6f2d04f316797f",
+            "reference": "404da940b1d36d8a4b583d678a6f2d04f316797f",
             "shasum": ""
         },
         "require": {
@@ -1432,7 +1432,7 @@
         "suggest": {
             "symfony/yaml": "To use the yaml reference dumper"
         },
-        "time": "2017-10-24T14:12:06+00:00",
+        "time": "2017-10-28T16:10:19+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

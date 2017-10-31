@@ -90,4 +90,9 @@ class CalibrationParam
             'xy' => json_decode($this->xy)
         ];
     }
+
+    public static function getPrefix()
+    {
+        return self::$_prefix;
+    }
 }

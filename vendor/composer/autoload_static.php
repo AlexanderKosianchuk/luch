@@ -164,9 +164,9 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
     public static $classMap = array (
         'Component\\BaseComponent' => __DIR__ . '/../..' . '/back/framework/BaseComponent.php',
         'Component\\CalibrationComponent' => __DIR__ . '/../..' . '/back/component/CalibrationComponent.php',
+        'Component\\EventComponent' => __DIR__ . '/../..' . '/back/component/EventComponent.php',
         'Component\\EventProcessingComponent' => __DIR__ . '/../..' . '/back/component/EventProcessingComponent.php',
         'Component\\FdrComponent' => __DIR__ . '/../..' . '/back/component/FdrComponent.php',
-        'Component\\FdrCycloComponent' => __DIR__ . '/../..' . '/back/component/FdrCycloComponent.php',
         'Component\\FlightComponent' => __DIR__ . '/../..' . '/back/component/FlightComponent.php',
         'Component\\FlightProcessingComponent' => __DIR__ . '/../..' . '/back/component/FlightProcessingComponent.php',
         'Component\\FolderComponent' => __DIR__ . '/../..' . '/back/component/FolderComponent.php',
@@ -201,6 +201,7 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Entity\\Fdr' => __DIR__ . '/../..' . '/back/entity/Fdr.php',
         'Entity\\FdrAnalogParam' => __DIR__ . '/../..' . '/back/entity/FdrAnalogParam.php',
         'Entity\\FdrBinaryParam' => __DIR__ . '/../..' . '/back/entity/FdrBinaryParam.php',
+        'Entity\\FdrEventOld' => __DIR__ . '/../..' . '/back/entity/FdrEventOld.php',
         'Entity\\FdrToUser' => __DIR__ . '/../..' . '/back/entity/FdrToUser.php',
         'Entity\\Flight' => __DIR__ . '/../..' . '/back/entity/Flight.php',
         'Entity\\FlightComments' => __DIR__ . '/../..' . '/back/entity/FlightComment.php',

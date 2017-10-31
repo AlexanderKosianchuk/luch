@@ -6,46 +6,6 @@ class FlightException
 {
     public static $TABLE_PREFIX = '_ex';
 
-    public static function getTableName($guid)
-    {
-        return $guid . self::$TABLE_PREFIX;
-    }
-
-    public function CreateFlightExceptionTable($flightId, $flightTablesGuid)
-    {
-        $flightExTableName = self::getTableName($flightTablesGuid);
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "UPDATE `flights` SET exTableName = '".$flightExTableName."' WHERE id='".$flightId."';";
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-
-        $query = "CREATE TABLE `".$flightExTableName."` (`id` INT NOT NULL AUTO_INCREMENT, "
-                . " `frameNum` INT,"
-                . " `startTime` BIGINT,"
-                . " `endFrameNum` INT,"
-                . " `endTime` BIGINT,"
-                . " `refParam` VARCHAR(255),"
-                . " `code` VARCHAR(255),"
-                . " `excAditionalInfo` TEXT,"
-                . " `falseAlarm` BOOL DEFAULT 0,"
-                . " `userComment` TEXT,"
-                . " PRIMARY KEY (`id`))"
-                . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-        $stmt = $link->prepare($query);
-        $stmt->execute();
-
-        $stmt->close();
-        $c->Disconnect();
-
-        unset($c);
-
-        return $flightExTableName;
-    }
-
     public function DropFlightExceptionTable($extFlightExTableName)
     {
         $flightExTableName = $extFlightExTableName;

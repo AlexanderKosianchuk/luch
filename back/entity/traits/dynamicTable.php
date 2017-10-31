@@ -7,7 +7,7 @@ trait dynamicTable {
     {
         if (!is_string($base)) {
             throw new Exception("Incorrect base passed. String is required. Passed: "
-                . json_encode($code), 1);
+                . json_encode($base), 1);
         }
 
         $query = "SHOW TABLES LIKE '". $base . self::$_prefix."';";

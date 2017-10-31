@@ -144,7 +144,7 @@ class FlightComponent extends BaseComponent
         $tables[] = $this->CalibrationParam::getTable($link, $guid);
 
         foreach ($tables as $table) {
-            $this->connection()->drop($link, $table);
+            $this->connection()->drop($table, null, $link);
         }
 
         $this->connection()->destroy($link);
@@ -226,7 +226,7 @@ class FlightComponent extends BaseComponent
         $link = $this->connection()->create('flights');
 
         foreach ($paramCyclo as $prefix => $cyclo) {
-            $table = $flightUid."_ap_".$prefix;
+            $table = $flightUid.$this->FdrAnalogParam::getTablePrefix()."_".$prefix;
             $tables['params'][] = $table;
 
             $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT";
@@ -244,7 +244,7 @@ class FlightComponent extends BaseComponent
         }
 
         foreach ($binaryCyclo as $prefix => $prefixCyclo) {
-            $table = $flightUid."_bp_".$prefix;
+            $table = $flightUid.$this->FdrBinaryParam::getTablePrefix()."_".$prefix;
             $tables['binary'][] = $table;
 
             $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .

@@ -51,29 +51,76 @@ class RealConnection
         }
     }
 
-    public function drop($link, $table)
+    public function drop($table, $db = 'flights', $link = null)
     {
-        $table = mysqli_real_escape_string ($link , $table);
-        $query = "DROP TABLE `".$table."`;";
-        $result = $link->query($query);
-
-        if (!$result->fetch_array()) {
-            return null;
+        if (!is_string($table)) {
+            throw new Exception("Incorrect table name passed. String is required. Passed: "
+                . json_encode($table), 1);
         }
 
-        return $table;
+        if (!$this->isExist($table, $db, $link)) {
+            return;
+        }
+
+        $cleanUpNeed = false;
+        if ($link === null) {
+            $link = $this->create($db);
+        }
+
+        $table = mysqli_real_escape_string ($link, $table);
+        $query = "DROP TABLE `".$table."`;";
+        $stmt = $link->prepare($query);
+        $stmt->execute();
+        $stmt->close();
+
+        if ($cleanUpNeed) {
+            $this->destroy($link);
+        }
     }
 
-    public function loadFile($tableName, $file, $db = 'flights')
+    public function isExist($table, $db = 'fdrs', $link = null)
+    {
+        if (!is_string($table)) {
+            throw new Exception("Incorrect table name passed. String is required. Passed: "
+                . json_encode($table), 1);
+        }
+
+        $cleanUpNeed = false;
+        if ($link === null) {
+            $cleanUpNeed = true;
+            $link = $this->create($db);
+        }
+
+        $table = mysqli_real_escape_string ($link , $table);
+
+        $query = "SHOW TABLES LIKE '".$table."';";
+        $result = $link->query($query);
+
+        $isExist = false;
+
+        if ($result->fetch_array()) {
+            $isExist = true;
+        }
+
+        if ($cleanUpNeed) {
+            $this->destroy($link);
+        }
+
+        return $isExist;
+    }
+
+    public function loadFile($table, $file, $db = 'flights')
     {
         $link = $this->create($db);
+
+        $table = mysqli_real_escape_string ($link , $table);
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $file = str_replace('\\\\', '/', $file);
             $file = str_replace('\\', '/', $file);
         }
 
-        $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$tableName."` FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';";
+        $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$table."` FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';";
         $link->query($query);
 
         $this->destroy($link);

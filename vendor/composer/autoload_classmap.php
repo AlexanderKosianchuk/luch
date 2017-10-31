@@ -8,9 +8,9 @@ $baseDir = dirname($vendorDir);
 return array(
     'Component\\BaseComponent' => $baseDir . '/back/framework/BaseComponent.php',
     'Component\\CalibrationComponent' => $baseDir . '/back/component/CalibrationComponent.php',
+    'Component\\EventComponent' => $baseDir . '/back/component/EventComponent.php',
     'Component\\EventProcessingComponent' => $baseDir . '/back/component/EventProcessingComponent.php',
     'Component\\FdrComponent' => $baseDir . '/back/component/FdrComponent.php',
-    'Component\\FdrCycloComponent' => $baseDir . '/back/component/FdrCycloComponent.php',
     'Component\\FlightComponent' => $baseDir . '/back/component/FlightComponent.php',
     'Component\\FlightProcessingComponent' => $baseDir . '/back/component/FlightProcessingComponent.php',
     'Component\\FolderComponent' => $baseDir . '/back/component/FolderComponent.php',
@@ -45,6 +45,7 @@ return array(
     'Entity\\Fdr' => $baseDir . '/back/entity/Fdr.php',
     'Entity\\FdrAnalogParam' => $baseDir . '/back/entity/FdrAnalogParam.php',
     'Entity\\FdrBinaryParam' => $baseDir . '/back/entity/FdrBinaryParam.php',
+    'Entity\\FdrEventOld' => $baseDir . '/back/entity/FdrEventOld.php',
     'Entity\\FdrToUser' => $baseDir . '/back/entity/FdrToUser.php',
     'Entity\\Flight' => $baseDir . '/back/entity/Flight.php',
     'Entity\\FlightComments' => $baseDir . '/back/entity/FlightComment.php',

@@ -2,12 +2,6 @@
 
 namespace Component;
 
-use Evenement\EventEmitter;
-
-use Entity\FlightEvent;
-use Entity\FlightSettlement;
-use Entity\Flight;
-
 use Exception;
 
 class EventProcessingComponent extends BaseComponent
@@ -17,6 +11,54 @@ class EventProcessingComponent extends BaseComponent
      * @var Entity\FlightEventOld
      */
     private $FlightEventOld;
+
+    /**
+     * @Inject
+     * @var Entity\FlightEvent
+     */
+    private $FlightEvent;
+
+    /**
+     * @Inject
+     * @var Entity\FlightSettlement
+     */
+    private $FlightSettlement;
+
+    /**
+     * @Inject
+     * @var Component\RuntimeManager
+     */
+    private $runtimeManager;
+
+    /**
+     * @Inject
+     * @var Component\EventComponent
+     */
+    private $eventComponent;
+
+    /**
+     * @Inject
+     * @var Entity\FdrAnalogParam
+     */
+    private $FdrAnalogParam;
+
+    /**
+     * @Inject
+     * @var Entity\FdrBinaryParam
+     */
+    private $FdrBinaryParam;
+
+    /**
+     * @Inject
+     * @var Component\FdrComponent
+     */
+    private $fdrComponent;
+
+    /**
+     * @Inject
+     * @var Evenement\EventEmitter
+     */
+    private $EventEmitter;
 
     private Static $tableSign = '^';
     private Static $eventTimeServiceKeys = [
@@ -28,107 +70,68 @@ class EventProcessingComponent extends BaseComponent
 
     private static $eventRuntimeServiceKey = 'runtime';
 
-    public function analyze($flight)
+    private function reportProgress($progress, $guid)
     {
-
+        $this->runtimeManager->writeToRuntimeTemporaryFile(
+            $this->params()->folders->uploadingStatus,
+            $guid,
+            $progress, // % of total progress (100%)
+            'json',
+            true
+        );
     }
 
-    public function processEventsOld(
-        $flightId,
-        $tempFilePath
-    ) {
-        $flightId = intval($flightId);
+    public function analyze(\Entity\Flight $flight)
+    {
+        $tmpStatus = 50;
+        $emitter = new $this->EventEmitter();
+        $that = $this;
 
-        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
-        if (!is_dir($tmpProccStatusFilesDir)) {
-            mkdir($tmpProccStatusFilesDir);
-        }
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo["apTableName"];
-        $bpTableName = $flightInfo["bpTableName"];
-        $excEventsTableName = $flightInfo["exTableName"];
-        $startCopyTime = $flightInfo["startCopyTime"];
-        $tableGuid = substr($apTableName, 0, 14);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $excListTableName = $fdrInfo["excListTableName"];
-        $apGradiTableName = $fdrInfo["gradiApTableName"];
-        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-        $stepLength = $fdrInfo["stepLength"];
-
-        if ($excListTableName != "") {
-            $excListTableName = $fdrInfo["excListTableName"];
-            $apGradiTableName = $fdrInfo["gradiApTableName"];
-            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-
-            $FEx = new FlightException;
-            $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
-            //Get exc refParam list
-            $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
-
-            $exList = $FEx->GetFlightExceptionTable($excListTableName);
-
-            //file can be accesed by ajax what can cause warning
-            error_reporting(E_ALL ^ E_WARNING);
-            set_time_limit (0);
-
-            //50 because we think previous 50 ware used during proc
-            $tmpStatus = 50;
-            $newStatus = 50;
-
-            for($i = 0; $i < count($exList); $i++) {
-                $newStatus = round(50 + (25 / count($exList) * $i));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                }
-
-                $curExList = $exList[$i];
-                $FEx->PerformProcessingByExceptions($curExList,
-                        $flightInfo, $flightExTableName,
-                        $apTableName, $bpTableName,
-                        $startCopyTime, $stepLength);
+        $emitter->on('EventProcessing:progress',
+            function ($progress) use ($that, $flight, $tmpStatus)
+        {
+            if ($progress > $tmpStatus) {
+                $tmpStatus = $progress;
+                $that->reportProgress($progress, $flight->getGuid());
             }
+        });
 
-            $emitter = new EventEmitter();
-
-            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 75;
-            });
-
-            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath, $tmpStatus, $newStatus) {
-                $newStatus = round(75 + (25 / count($total) * $progress));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                }
-            });
-
-            $emitter->on('EventProcessing:end', function () use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 100;
-            });
-
-            EventProcessingComponent::processEvents($flightId, $emitter);
-
-            error_reporting(E_ALL);
-        }
-
-        unset($fdr);
+        $this->reportProgress(50, $flight->getGuid());
+        $this->processEventsOld($flight, $emitter);
+        $this->reportProgress(75, $flight->getGuid());
+        $this->processEvents($flight, $emitter);
+        $this->reportProgress(100, $flight->getGuid());
     }
 
-    public  function processEvents($flightId, $emitter)
+    public function processEventsOld(\Entity\Flight $flight, $emitter)
     {
-        if (!is_int($flightId)) {
-            throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
-                . json_encode($flightId), 1);
+        $fdr = $flight->getFdr();
+        $oldProcessingEventsNeed = $this->eventComponent->isOldProcessingEventsTableExist($fdr->getCode());
+
+        if (!$oldProcessingEventsNeed) {
+            return;
         }
 
-        $em = EM::get();
+        $table = $this->eventComponent->createOldEventsTable($flight->getGuid());
+        $events = $this->eventComponent->getOldEvents($fdr->getCode());
 
-        $flight = $em->find('Entity\Flight', $flightId);
+        for ($ii = 0; $ii < count($events); $ii++) {
+            $status = round(50 + (25 / count($events) * $ii));
+            $emitter->emit('EventProcessing:progress', [$status]);
+
+            $this->performProcessingByOldEvents(
+                $events[$ii]->get(true),
+                $flight->get(true),
+                $table,
+                $flight->getGuid().$this->FdrAnalogParam::getTablePrefix(),
+                $flight->getGuid().$this->FdrBinaryParam::getTablePrefix(),
+                $fdr->getStepLength()
+            );
+        }
+    }
+
+    public function processEvents(\Entity\Flight $flight, $emitter)
+    {
         $fdr = $flight->getFdr();
         $fdrCode = $fdr->getCode();
         $flightGuid = $flight->getGuid();
@@ -139,15 +142,13 @@ class EventProcessingComponent extends BaseComponent
         $eventRows = [];
         $flightEvents = [];
 
-        $link = LinkFactory::create();
-        $flightEventTable = FlightEvent::createTable($link, $flightGuid);
-        $flightSettlementTable = FlightSettlement::createTable($link, $flightGuid);
-        LinkFactory::destroy($link);
+        $link = $this->connection()->create('flights');
+        $flightEventTable = $this->FlightEvent::createTable($link, $flightGuid);
+        $flightSettlementTable = $this->FlightSettlement::createTable($link, $flightGuid);
+        $this->connection()->destroy($link);
 
-        $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
-        $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
-
-        $emitter->emit('EventProcessing:start', [count($eventsToFdr)]);
+        $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+        $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
 
         $ii = 0;
         foreach ($eventsToFdr as $eventToFdr) {
@@ -157,42 +158,46 @@ class EventProcessingComponent extends BaseComponent
 
             $alg = $event->getAlg();
 
-            $eventAlg = self::substituteParams($alg, $substitution,
-                $fdrCode, $flightGuid);
+            $eventAlg = $this->substituteParams(
+                $alg,
+                $substitution,
+                $fdr->getId(),
+                $flightGuid
+            );
 
-            $eventAlg = self::substituteFlightInfo($eventAlg, $flight->get());
-            $eventAlg = self::substituteRuntime($eventAlg, $flightGuid);
+            $eventAlg = $this->substituteFlightInfo($eventAlg, $flight->get());
+            $eventAlg = $this->substituteRuntime($eventAlg, $flightGuid);
 
             $minLength = $event->getMinLength();
-            $eventArray = self::executeEvent($eventAlg, $startCopyTime, $stepLength);
-            $sections = self::eventArrayToSection($eventArray, $startCopyTime, $stepLength);
-            $checkedSections = self::eventLengthCheck($sections, $minLength);
+            $eventArray = $this->executeEvent($eventAlg, $startCopyTime, $stepLength);
+            $sections = $this->eventArrayToSection($eventArray, $startCopyTime, $stepLength);
+            $checkedSections = $this->eventLengthCheck($sections, $minLength);
 
             foreach ($checkedSections as $section) {
-                $flightEvent = new FlightEvent;
+                $flightEvent = new $this->FlightEvent;
                 $flightEvent->setAttributes([
                     'eventId' => $event->getId(),
                     'startTime' => $section['startTime'],
                     'endTime' => $section['endTime'],
-                    'event' => $event
                 ]);
 
-                $em->persist($flightEvent);
-                $em->flush();
+                $this->em('flights')->persist($flightEvent);
+                var_dump($flightEvent); exit;
+                $this->em('flights')->flush();
 
                 foreach ($eventSettlements as $settlement) {
                     $settlementAlg = $settlement->getAlg();
 
-                    $settlementAlg = self::substituteParams($settlementAlg, $substitution,
+                    $settlementAlg = $this->substituteParams($settlementAlg, $substitution,
                         $fdrCode, $flightGuid);
 
-                    $settlementAlg = self::substituteFlightInfo($settlementAlg, $flight->get());
-                    $settlementAlg = self::substituteRuntime($settlementAlg, $fdrCode);
+                    $settlementAlg = $this->substituteFlightInfo($settlementAlg, $flight->get());
+                    $settlementAlg = $this->substituteRuntime($settlementAlg, $fdrCode);
 
-                    $settlementAlg = self::substituteEventTime($settlementAlg, $section);
-                    $value = self::executeSettlement($settlementAlg);
+                    $settlementAlg = $this->substituteEventTime($settlementAlg, $section);
+                    $value = $this->executeSettlement($settlementAlg);
 
-                    $flightSettlement = new FlightSettlement;
+                    $flightSettlement = new $this->FlightSettlement;
                     $flightSettlement->setAttributes([
                         'eventId' => $event->getId(),
                         'flightEventId' => $flightEvent->getId(),
@@ -202,22 +207,18 @@ class EventProcessingComponent extends BaseComponent
                         'eventSettlement' => $settlement,
                     ]);
 
-                    $em->persist($flightSettlement);
-                    $em->flush();
+                    $this->em('flights')->persist($flightSettlement);
+                    $this->em('flights')->flush();
                 }
             }
 
             $ii ++;
-            $emitter->emit('EventProcessing:progress', [
-                $ii,
-                count($eventsToFdr)
-            ]);
+            $status = round(75 + (25 / count($eventsToFdr) * $ii));
+            $emitter->emit('EventProcessing:progress', [$status]);
         }
-
-        $emitter->emit('EventProcessing:end', []);
     }
 
-    private  function executeEvent($queryAlg, $startCopyTime, $stepLength)
+    private function executeEvent($queryAlg, $startCopyTime, $stepLength)
     {
         if (!is_string($queryAlg)) {
             throw new Exception("Incorrect queryAlg passed. String is required. Passed: "
@@ -229,7 +230,7 @@ class EventProcessingComponent extends BaseComponent
                 . json_encode($stepLength), 1);
         }
 
-        $link = LinkFactory::create();
+        $link = $this->connection()->create('flights');
         $resultArr = [];
 
         if (!$link->multi_query($queryAlg)) {
@@ -257,19 +258,19 @@ class EventProcessingComponent extends BaseComponent
             }
         } while ($link->more_results() && $link->next_result());
 
-        LinkFactory::destroy($link);
+        $this->connection()->destroy($link);
 
         return $resultArr;
     }
 
-    private  function executeSettlement($queryAlg)
+    private function executeSettlement($queryAlg)
     {
         if (!is_string($queryAlg)) {
             throw new Exception("Incorrect queryAlg passed. String is required. Passed: "
                 . json_encode($queryAlg), 1);
         }
 
-        $link = LinkFactory::create();
+        $link = $this->connection()->create('flights');
         $settlementValue = null;
 
         if (!$link->multi_query($queryAlg)) {
@@ -287,12 +288,12 @@ class EventProcessingComponent extends BaseComponent
             }
         } while ($link->more_results() && $link->next_result());
 
-        LinkFactory::destroy($link);
+        $this->connection()->destroy($link);
 
         return $settlementValue;
     }
 
-    private  function eventArrayToSection($resultArr, $startCopyTime, $stepLength)
+    private function eventArrayToSection($resultArr, $startCopyTime, $stepLength)
     {
         if (!is_array($resultArr)) {
             throw new Exception("Incorrect resultArr passed. Array is required. Passed: "
@@ -339,7 +340,7 @@ class EventProcessingComponent extends BaseComponent
         return $sections;
     }
 
-    private  function eventLengthCheck($sections, $minLength)
+    private function eventLengthCheck($sections, $minLength)
     {
         if (!is_array($sections)) {
             throw new Exception("Incorrect sections passed. Array is required. Passed: "
@@ -366,16 +367,16 @@ class EventProcessingComponent extends BaseComponent
         return $checkedSections;
     }
 
-    private  function substituteParams($alg, $substitution, $fdrCode, $flightGuid)
+    private function substituteParams($alg, $substitution, $fdrId, $flightGuid)
     {
         if (!is_string($alg)) {
             throw new Exception("Incorrect alg passed. String is required. Passed: "
                 . json_encode($alg), 1);
         }
 
-        if (!is_string($fdrCode)) {
-            throw new Exception("Incorrect fdrCode passed. String is required. Passed: "
-                . json_encode($fdrCode), 1);
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int is required. Passed: "
+                . json_encode($fdrId), 1);
         }
 
         if (!is_string($flightGuid)) {
@@ -383,7 +384,9 @@ class EventProcessingComponent extends BaseComponent
                 . json_encode($flightGuid), 1);
         }
 
-        $codeToTable = Cyclo::getCodeToTableArray($fdrCode, $flightGuid);
+        $codeToTable = $this->fdrComponent
+            ->getCodeToTableArray($fdrId, $flightGuid);
+
         if ($substitution !== null) {
             $substitutions = json_decode($substitution, true);
 
@@ -426,7 +429,7 @@ class EventProcessingComponent extends BaseComponent
         return $alg;
     }
 
-    private  function substituteFlightInfo($alg, $flightInfo)
+    private function substituteFlightInfo($alg, $flightInfo)
     {
         foreach ($flightInfo as $flightInfoKey => $flightInfoVal) {
             if (is_string($flightInfoVal)) {
@@ -437,12 +440,12 @@ class EventProcessingComponent extends BaseComponent
         return $alg;
     }
 
-    private  function substituteRuntime($alg, $guid)
+    private function substituteRuntime($alg, $guid)
     {
         return str_replace(self::$eventRuntimeServiceKey, $guid, $alg);
     }
 
-    private  function substituteEventTime($alg, $section)
+    private function substituteEventTime($alg, $section)
     {
         foreach (self::$eventTimeServiceKeys as $item) {
             if (!isset($section[$item])) {
@@ -457,4 +460,177 @@ class EventProcessingComponent extends BaseComponent
         return $alg;
     }
 
+    public function performProcessingByOldEvents(
+        $event,
+        $flightInfo,
+        $tableName,
+        $apTableName,
+        $bpTableName,
+        $stepLength
+    ) {
+        $eventsList = array();
+        $link = $this->connection()->create('flights');
+        $link2 = $this->connection()->create('flights');
+        $link3 = $this->connection()->create('flights');
+
+        $startCopyTime = $flightInfo['startCopyTime'];
+
+        $query = $event['alg'];
+
+        $query = str_replace("[ap]", $apTableName, $query);
+        $query = str_replace("[bp]", $bpTableName, $query);
+        $query = str_replace("[ex]", $tableName, $query);
+
+        foreach ($flightInfo as $key => $val) {
+            if (is_string($val)) {
+                $query = str_replace("[".$key."]", $val, $query);
+            }
+
+            if (is_array($val)) {
+                foreach ($val as $aditionalKey => $aditionalValue) {
+                    $query = str_replace("[".$aditionalKey."]", $aditionalValue, $query);
+                }
+            }
+        }
+
+        $aditionalQueries = [];
+
+        //check delimiter exist in string
+        if (strpos($query,'#') !== false) {
+            $query = explode("#", $query);
+            $queryAlg = $query[0];
+
+            if ((count($query) - 1) % 2 == 0) {
+                for ($i = 1; $i < count($query); $i+=2) {
+                    $aditionalQueries[] = array(
+                        "aditionalInfoComment" => $query[$i],
+                        "aditionalInfoAlg" => $query[$i + 1]);
+                }
+            }
+            //else no aditional info
+        } else {
+            $queryAlg = $query;
+        }
+
+
+        if (!$link->multi_query($queryAlg)) {
+            //err log
+            error_log("Impossible to execute multiquery: (" .
+                $queryAlg . ") " . $link->error);
+        }
+
+        do {
+            if ($res = $link->store_result()) {
+                $resultArr = array();
+                while($row = $res->fetch_array()) {
+                    //exception alg can return frameNum or frameNum and time
+                    if (isset($row['time'])) {
+                        $resultArr[] = array(
+                            "frameNum" => $row['frameNum'],
+                            "time" => $row['time']);
+                    } else {
+                        $time = ($startCopyTime + $row['frameNum'] * $stepLength) * 1000; //1000 to convert in microsec
+                        $resultArr[] = array(
+                            "frameNum" => $row['frameNum'],
+                            "time" => $time);
+                    }
+                }
+
+                //reorganize arr to simplify inserting
+                $normalizedResultArr = array();
+                if (count($resultArr) > 0) {
+                    $endFrameNum = $resultArr[0]['frameNum'] + 1;
+                    $endTime = ($startCopyTime + $endFrameNum * $stepLength) * 1000; //1000 to convert in microsec
+                    $normalizedResultArr[] = array(
+                            "frameNum" => $resultArr[0]["frameNum"],
+                            "startTime" => $resultArr[0]["time"],
+                            "endFrameNum" => $endFrameNum,
+                            "endTime" => $endTime);
+
+                    for($j = 1; $j < count($resultArr); $j++) {
+                        $prevFrameNum = $resultArr[$j - 1]['frameNum'];
+                        $curFrameNum = $resultArr[$j]['frameNum'];
+
+                        if (($curFrameNum - $prevFrameNum) > 1) {
+                            $endFrameNum =  $curFrameNum + 1;
+                            $endTime = ($startCopyTime + $endFrameNum * $stepLength) * 1000;
+                            $normalizedResultArr[] = array(
+                                "frameNum" => $curFrameNum,
+                                "startTime" => $resultArr[$j]["time"],
+                                "endFrameNum" => $endFrameNum,
+                                "endTime" => $endTime);
+                        } else {
+                            $endTime = ($startCopyTime + $curFrameNum * $stepLength) * 1000;
+
+                            $normalizedResultArr[count($normalizedResultArr) - 1]["endFrameNum"] = $curFrameNum;
+                            $normalizedResultArr[count($normalizedResultArr) - 1]["endTime"] = $endTime;
+                        }
+                    }
+                }
+
+                //remove events less minLength
+                $checkedNormalizedResultArr = array();
+                if($event["minLength"] != 0) {
+                    for($j = 0; $j < count($normalizedResultArr); $j++) {
+                        if (($normalizedResultArr[$j]["endTime"] - $normalizedResultArr[$j]["startTime"]) > $event["minLength"]) {
+                            $checkedNormalizedResultArr[] = $normalizedResultArr[$j];
+                        }
+                    }
+                    $normalizedResultArr = $checkedNormalizedResultArr;
+                }
+
+                for ($j = 0; $j < count($normalizedResultArr); $j++) {
+                    $aditionalInfoStr = "";
+
+                    for ($k = 0; $k < count($aditionalQueries); $k++) {
+                        $aditionalInfoStr .= $aditionalQueries[$k]["aditionalInfoComment"] . " ";
+                        $query = $aditionalQueries[$k]["aditionalInfoAlg"];
+
+                        //in aditionalQueries we can use this variables
+                        //startFrameNum
+                        //endFrameNum
+                        //startTime
+                        //endTime
+
+                        $query = str_replace("[startFrameNum]", $normalizedResultArr[$j]['frameNum'], $query);
+                        $query = str_replace("[endFrameNum]", $normalizedResultArr[$j]['endFrameNum'], $query);
+                        $query = str_replace("[startTime]", $normalizedResultArr[$j]['startTime'], $query);
+                        $query = str_replace("[endTime]", $normalizedResultArr[$j]['endTime'], $query);
+
+                        $result = $link3->query($query);
+
+                        $excRefParamsList = array();
+                        $row = $result->fetch_array();
+
+                        $aditionalInfoStr .= $row[0] . "; ";
+                    }
+
+                    $query = "INSERT INTO `".$tableName."` (`frameNum`,".
+                            "`startTime`, ".
+                            "`endFrameNum`, ".
+                            "`endTime`, ".
+                            "`refParam`, ".
+                            "`code`, ".
+                            "`excAditionalInfo`) ".
+                            "VALUES (".$normalizedResultArr[$j]['frameNum'].",".
+                            $normalizedResultArr[$j]['startTime'].",".
+                            $normalizedResultArr[$j]['endFrameNum'].",".
+                            $normalizedResultArr[$j]['endTime'].",'".
+                            $event['refParam']."','".
+                            $event['code']."','".
+                            $aditionalInfoStr."');";
+                    $stmt = $link2->prepare($query);
+                    $stmt->execute();
+                }
+
+                $res->free();
+            }
+        } while ($link->more_results() && $link->next_result());
+
+        $this->connection()->destroy($link);
+        $this->connection()->destroy($link2);
+        $this->connection()->destroy($link3);
+
+        return $eventsList;
+    }
 }

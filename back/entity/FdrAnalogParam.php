@@ -197,4 +197,9 @@ class FdrAnalogParam
 
         return (object) $arr;
     }
+
+    public static function getTablePrefix()
+    {
+        return self::$_prefix;
+    }
 }

@@ -13,7 +13,7 @@ use EntityTraits\dynamicTable;
 class FdrBinaryParam
 {
     use dynamicTable;
-    private static $_prefix = '_bp';
+    public static $_prefix = '_bp';
 
     /**
      * @var integer
@@ -80,6 +80,11 @@ class FdrBinaryParam
      */
     private $prefix;
 
+    public function getCode()
+    {
+        return $this->code;
+    }
+
     public function getPrefix()
     {
         return $this->prefix;
@@ -113,5 +118,8 @@ class FdrBinaryParam
         return (object) $arr;
     }
 
-
+    public static function getTablePrefix()
+    {
+        return self::$_prefix;
+    }
 }

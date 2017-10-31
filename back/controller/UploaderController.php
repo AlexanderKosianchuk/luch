@@ -127,7 +127,7 @@ class UploaderController extends BaseController
         $storedFlightFile = $uploadedFile;
 
         $flight = $this->em()
-            ->find('Entity\Flight', 63);
+            ->find('Entity\Flight', 64);
 
         /*$storedFlightFile = $this->dic()
             ->get('runtimeManager')
@@ -170,9 +170,9 @@ class UploaderController extends BaseController
                 'close'
             );
 
-        if (file_exists($file->path)) {
+        /*if (file_exists($file->path)) {
             unlink($file->path);
-        }
+        }*/
 
         return json_encode([
             'status' => 'complete',

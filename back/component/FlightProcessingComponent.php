@@ -36,6 +36,18 @@ class FlightProcessingComponent extends BaseComponent
      */
     private $runtimeManager;
 
+    /**
+     * @Inject
+     * @var Entity\FdrAnalogParam
+     */
+    private $FdrAnalogParam;
+
+    /**
+     * @Inject
+     * @var Entity\FdrBinaryParam
+     */
+    private $FdrBinaryParam;
+
     public function readHeader($fdrId, $file)
     {
         $fdr = $this->em()->find('\Entity\Fdr', $fdrId);
@@ -339,13 +351,13 @@ class FlightProcessingComponent extends BaseComponent
 
         foreach ($analogParamsCyclo as $prefix => $cyclo) {
             $this->loadParamFilesToTables(
-                $flightUid.'_ap_'.$cyclo[0]['prefix']
+                $flightUid.$this->FdrAnalogParam::getTablePrefix().'_'.$cyclo[0]['prefix']
             );
         }
 
         foreach($binaryParamsCyclo as $prefix => $cyclo) {
             $this->loadParamFilesToTables(
-                $flightUid.'_bp_'.$cyclo[0]['prefix']
+                $flightUid.$this->FdrBinaryParam::getTablePrefix().'_'.$cyclo[0]['prefix']
             );
         }
 
@@ -382,7 +394,7 @@ class FlightProcessingComponent extends BaseComponent
             foreach ($phisicsFrames as $frame) {
                 $this->runtimeManager->writeToRuntimeTemporaryFile(
                     $this->params()->folders->uploadingFlightsTables,
-                    $flightUid.'_ap_'.$channelFreq,
+                    $flightUid.$this->FdrAnalogParam::getTablePrefix().'_'.$channelFreq,
                     $frame,
                     'csv'
                 );
@@ -406,7 +418,7 @@ class FlightProcessingComponent extends BaseComponent
             foreach ($convBinFrame as $frame) {
                 $this->runtimeManager->writeToRuntimeTemporaryFile(
                     $this->params()->folders->uploadingFlightsTables,
-                    $flightUid.'_bp_'.$channelFreq,
+                    $flightUid.$this->FdrBinaryParam::getTablePrefix().'_'.$channelFreq,
                     $frame,
                     'csv'
                 );

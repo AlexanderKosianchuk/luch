@@ -6,6 +6,8 @@ use Exception;
 
 class FdrComponent extends BaseComponent
 {
+    private static $_codeToTable = [];
+
     /**
      * @Inject
      * @var Entity\FdrAnalogParam
@@ -17,6 +19,36 @@ class FdrComponent extends BaseComponent
      * @var Entity\FdrBinaryParam
      */
     private $FdrBinaryParam;
+
+    private function setAnalogParamsTable($fdrCode)
+    {
+        $link = $this->connection()->create('fdrs');
+        $table = $this->FdrAnalogParam::getTable($link, $fdrCode);
+        $this->connection()->destroy($link);
+
+        if ($table === null) {
+            return null;
+        }
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FdrAnalogParam')
+            ->setTableName($table);
+    }
+
+    private function setBinaryParamsTable($fdrCode)
+    {
+        $link = $this->connection()->create('fdrs');
+        $table = $this->FdrBinaryParam::getTable($link, $fdrCode);
+        $this->connection()->destroy($link);
+
+        if ($table === null) {
+            return null;
+        }
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FdrBinaryParam')
+            ->setTableName($table);
+    }
 
     public function getFdrs()
     {
@@ -53,17 +85,7 @@ class FdrComponent extends BaseComponent
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $link = $this->connection()->create('fdrs');
-        $fdrAnalogParamTable = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
-        $this->connection()->destroy($link);
-
-        if ($fdrAnalogParamTable === null) {
-            return null;
-        }
-
-        $this->em('fdrs')
-            ->getClassMetadata('Entity\FdrAnalogParam')
-            ->setTableName($fdrAnalogParamTable);
+        $this->setAnalogParamsTable($fdr->getCode());
 
         return $this->em('fdrs')
             ->getRepository('Entity\FdrAnalogParam')
@@ -90,17 +112,7 @@ class FdrComponent extends BaseComponent
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $link = $this->connection()->create('fdrs');
-        $table = $this->FdrBinaryParam::getTable($link, $fdr->getCode());
-        $this->connection()->destroy($link);
-
-        if ($table === null) {
-            return null;
-        }
-
-        $this->em('fdrs')
-            ->getClassMetadata('Entity\FdrBinaryParam')
-            ->setTableName($table);
+        $this->setBinaryParamsTable($fdr->getCode());
 
         return $this->em('fdrs')
             ->getRepository('Entity\FdrBinaryParam')
@@ -127,19 +139,9 @@ class FdrComponent extends BaseComponent
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $link = $this->connection()->create('fdrs');
-        $fdrAnalogTable = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
-        $this->connection()->destroy($link);
+        $this->setAnalogParamsTable($fdr->getCode());
 
-        if ($fdrAnalogTable === null) {
-            return null;
-        }
-
-        $this->em('fdrs')
-            ->getClassMetadata('Entity\FdrAnalogParam')
-            ->setTableName($fdrAnalogTable);
-
-         $params = $this->em('fdrs')
+        $params = $this->em('fdrs')
             ->getRepository('Entity\FdrAnalogParam')
             ->findAll('Entity\FdrAnalogParam');
 
@@ -156,17 +158,7 @@ class FdrComponent extends BaseComponent
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $link = $this->connection()->create('fdrs');
-        $fdrBinaryTable = $this->FdrBinaryParam::getTable($link, $fdr->getCode());
-        $this->connection()->destroy($link);
-
-        if ($fdrBinaryTable === null) {
-            return null;
-        }
-
-        $this->em('fdrs')
-            ->getClassMetadata('Entity\FdrBinaryParam')
-            ->setTableName($fdrBinaryTable);
+        $this->setAnalogBinaryTable($fdr->getCode());
 
         $params = $this->em('fdrs')
             ->getRepository('Entity\FdrBinaryParam')
@@ -195,5 +187,39 @@ class FdrComponent extends BaseComponent
         }
 
         return $freq;
+    }
+
+    public function getCodeToTableArray($fdrId, $flightTable)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+        $this->setAnalogParamsTable($fdr->getCode());
+        $this->setBinaryParamsTable($fdr->getCode());
+
+        $params = $this->getParams($fdrId);
+        $binary = $this->getBinaryParams($fdrId);
+
+        if (count(self::$_codeToTable) > 0) {
+            return self::$_codeToTable;
+        }
+
+        foreach ($params as $param) {
+            self::$_codeToTable[$param->getCode()] = $flightTable
+                .$this->FdrAnalogParam->getTablePrefix()
+                .'_'.$param->getPrefix();
+        }
+
+        foreach ($binary as $param) {
+            self::$_codeToTable[$param->getCode()] = $flightTable
+                .$this->FdrBinaryParam->getTablePrefix()
+                .'_'.$param->getPrefix();
+        }
+
+        return self::$_codeToTable;
     }
 }

@@ -66,13 +66,6 @@ class Event
     /**
      * @var string
      *
-     * @Column(name="comment", type="text", length=65535, nullable=false)
-     */
-    private $comment;
-
-    /**
-     * @var string
-     *
      * @Column(name="alg_text", type="string", length=255, nullable=false)
      */
     private $algText;
@@ -154,7 +147,6 @@ class Event
             'refParam' => $this->refParam,
             'minLength' => $this->minLength,
             'alg' => $this->alg,
-            'comment' => $this->comment,
             'algText' => $this->algText,
             'visualization' => $this->visualization
         ];

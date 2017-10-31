@@ -56,13 +56,6 @@ class FlightEvent
     private $falseAlarm;
 
     /**
-     * Many FlightEvents have One Event.
-     * @ManyToOne(targetEntity="Event", inversedBy="flightEvents")
-     * @JoinColumn(name="id_event", referencedColumnName="id")
-     */
-    private $event;
-
-    /**
      * One FlightEvent has Many FlightSettlements.
      * @OneToMany(targetEntity="FlightSettlement", mappedBy="flightEvent")
      */
@@ -154,7 +147,6 @@ class FlightEvent
         if (!isset($attributes['startTime'])
             || !isset($attributes['endTime'])
             || !isset($attributes['eventId'])
-            || !isset($attributes['event'])
         ) {
             throw new Exception("Not all necessary attributes passed. "
                 . "startTime, endTime, eventId are required. Passed: "
@@ -164,7 +156,6 @@ class FlightEvent
         $this->setStartTime($attributes['startTime']);
         $this->setEndTime($attributes['endTime']);
         $this->setEventId($attributes['eventId']);
-        $this->setEvent($attributes['event']);
 
         $falseAlarm = isset($attributes['falseAlarm']) ? $attributes['falseAlarm'] : false;
         $this->setFalseAlarm($falseAlarm);
