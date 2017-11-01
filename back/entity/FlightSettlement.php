@@ -60,18 +60,6 @@ class FlightSettlement
      */
     private $flightEvent;
 
-    /**
-     * Many FlightSettlements have One EventSettlement.
-     * @ManyToOne(targetEntity="EventSettlement", inversedBy="flightSettlements")
-     * @JoinColumn(name="id_settlement", referencedColumnName="id")
-     */
-    private $eventSettlement;
-
-    public function getEventSettlement()
-    {
-        return $this->eventSettlement;
-    }
-
     public function getValue()
     {
         return $this->value;
@@ -95,16 +83,6 @@ class FlightSettlement
         }
 
         $this->settlementId = $settlementId;
-    }
-
-    public function setEventSettlement($settlement)
-    {
-        if (!is_a($settlement, 'Entity\EventSettlement')) {
-            throw new Exception("Incorrect settlement passed. EventSettlement obj is required. Passed: "
-                . get_class($settlement) . '. ' . json_encode($settlement), 1);
-        }
-
-        $this->eventSettlement = $settlement;
     }
 
     public function setFlightEvent($flightEvent)
@@ -147,7 +125,6 @@ class FlightSettlement
         if (!isset($attributes['eventId'])
             || !isset($attributes['settlementId'])
             || !isset($attributes['flightEventId'])
-            || !isset($attributes['eventSettlement'])
             || !isset($attributes['flightEvent'])
             || !isset($attributes['value'])
         ) {
@@ -159,7 +136,6 @@ class FlightSettlement
         $this->setEventId($attributes['eventId']);
         $this->setSettlementId($attributes['settlementId']);
         $this->setFlightEventId($attributes['flightEventId']);
-        $this->setEventSettlement($attributes['eventSettlement']);
         $this->setFlightEvent($attributes['flightEvent']);
         $this->setValue($attributes['value']);
     }

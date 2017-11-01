@@ -8,9 +8,9 @@ export default function startFlightUploading(payload) {
         });
 
         let checkProgress = function () {
-            fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid='+payload.uploadingUid, {
+            fetch(ENTRY_URL+'uploader/getUploadingStatus/uploadingUid/'+payload.uploadingUid, {
                 method: 'GET',
-                credentials: "same-origin"
+                credentials: 'same-origin'
             })
             .then((response) => {
                 try {  return response.json() }
@@ -51,6 +51,5 @@ export default function startFlightUploading(payload) {
         };
 
         setTimeout(checkProgress, 1000);
-
     }
 };

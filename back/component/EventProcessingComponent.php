@@ -147,7 +147,7 @@ class EventProcessingComponent extends BaseComponent
         $flightSettlementTable = $this->FlightSettlement::createTable($link, $flightGuid);
         $this->connection()->destroy($link);
 
-        $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+        $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName('`'.$flightEventTable.'`');
         $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
 
         $ii = 0;
@@ -182,14 +182,17 @@ class EventProcessingComponent extends BaseComponent
                 ]);
 
                 $this->em('flights')->persist($flightEvent);
-                var_dump($flightEvent); exit;
                 $this->em('flights')->flush();
 
                 foreach ($eventSettlements as $settlement) {
                     $settlementAlg = $settlement->getAlg();
 
-                    $settlementAlg = $this->substituteParams($settlementAlg, $substitution,
-                        $fdrCode, $flightGuid);
+                    $settlementAlg = $this->substituteParams(
+                        $settlementAlg,
+                        $substitution,
+                        $fdr->getId(),
+                        $flightGuid
+                    );
 
                     $settlementAlg = $this->substituteFlightInfo($settlementAlg, $flight->get());
                     $settlementAlg = $this->substituteRuntime($settlementAlg, $fdrCode);
@@ -204,7 +207,6 @@ class EventProcessingComponent extends BaseComponent
                         'settlementId' => $settlement->getId(),
                         'value' => $value,
                         'flightEvent' => $flightEvent,
-                        'eventSettlement' => $settlement,
                     ]);
 
                     $this->em('flights')->persist($flightSettlement);

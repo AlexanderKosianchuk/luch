@@ -38,6 +38,12 @@ class FlightComponent extends BaseComponent
 
     /**
      * @Inject
+     * @var Entity\FlightEventOld
+     */
+    private $FlightEventOld;
+
+    /**
+     * @Inject
      * @var Entity\CalibrationParam
      */
     private $CalibrationParam;
@@ -95,7 +101,7 @@ class FlightComponent extends BaseComponent
     {
         $criteria = ['id' => $flightId];
 
-        if (!$this->dic()->get('user')->isAdmin()) {
+        if (!$this->member()->isAdmin()) {
             $criteria['userId'] = $userId;
         }
 
@@ -103,13 +109,9 @@ class FlightComponent extends BaseComponent
             ->getRepository('Entity\FlightToFolder')
             ->findBy($criteria);
 
-        if (!$flightToFolder) {
-            return;
-        }
-
         foreach ($flightToFolder as $item) {
-            $em->remove($item);
-            $em->flush();
+            $this->em()->remove($item);
+            $this->em()->flush();
         }
 
         if (!$this->rbac()->check('deleteFlightIrretrievably')) {
@@ -123,34 +125,39 @@ class FlightComponent extends BaseComponent
                 'userId' => $userId
             ]);
 
+        if (!$flight) {
+            return true;
+        }
+
         $fdr = $flight->getFdr();
         $guid = $flight->getGuid();
 
-        $analogPrefixes = $fdrComponent->getAnalogPrefixes($fdr->getId());
-        $binaryPrefixes = $fdrComponent->getBinaryPrefixes($fdr->getId());
-
+        $analogPrefixes = $this->fdrComponent->getAnalogPrefixes($fdr->getId());
+        $binaryPrefixes = $this->fdrComponent->getBinaryPrefixes($fdr->getId());
         $tables = [];
         foreach ($analogPrefixes as $num) {
-            $tables[] = '_' . $guid . '_' . $this->FdrAnalogParam::$prefix . '_' . $num;
+            $tables[] = $guid.$this->FdrAnalogParam->getTablePrefix().'_'.$num;
         }
 
         foreach ($binaryPrefixes as $num) {
-            $tables[] = '_' . $guid . '_' . $this->FdrBinaryParam::$prefix . '_' . $num;
+            $tables[] = $guid.$this->FdrBinaryParam->getTablePrefix().'_'.$num;
         }
 
         $link = $this->connection()->create('flights');
         $tables[] = $this->FlightSettlement::getTable($link, $guid);
         $tables[] = $this->FlightEvent::getTable($link, $guid);
-        $tables[] = $this->CalibrationParam::getTable($link, $guid);
+        $tables[] = $this->FlightEventOld::getTable($link, $guid);
 
         foreach ($tables as $table) {
-            $this->connection()->drop($table, null, $link);
+            if ($table) {
+                $this->connection()->drop($table, null, $link);
+            }
         }
 
         $this->connection()->destroy($link);
 
-        $em->remove($flight);
-        $em->flush();
+        $this->em()->remove($flight);
+        $this->em()->flush();
 
         return true;
     }
@@ -168,7 +175,7 @@ class FlightComponent extends BaseComponent
         }
 
         if ($flightGuid === '') {
-            $flight = $em->find('Entity\Flight', $flightId);
+            $flight = $this->em()->find('Entity\Flight', $flightId);
             $flightGuid = $flight->getGuid();
         }
 
@@ -183,10 +190,9 @@ class FlightComponent extends BaseComponent
             return [];
         }
 
-        $em = EM::get();
-        $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
-        $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
-        $events = $em->getRepository('Entity\FlightEvent')->findAll();
+        $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+        $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+        $events = $this->em()->getRepository('Entity\FlightEvent')->findAll();
 
         return $events;
     }
@@ -198,8 +204,7 @@ class FlightComponent extends BaseComponent
         }
 
         if ($flightGuid === '') {
-            $em = EM::get();
-            $flight = $em->find('Entity\Flight', $flightId);
+            $flight = $this->em()->find('Entity\Flight', $flightId);
             $flightGuid = $flight->getGuid();
         }
 

@@ -144,7 +144,6 @@ class FdrComponent extends BaseComponent
         $params = $this->em('fdrs')
             ->getRepository('Entity\FdrAnalogParam')
             ->findAll('Entity\FdrAnalogParam');
-
         $prefixes = [];
 
         foreach ($params as $item) {
@@ -158,7 +157,7 @@ class FdrComponent extends BaseComponent
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-        $this->setAnalogBinaryTable($fdr->getCode());
+        $this->setBinaryParamsTable($fdr->getCode());
 
         $params = $this->em('fdrs')
             ->getRepository('Entity\FdrBinaryParam')

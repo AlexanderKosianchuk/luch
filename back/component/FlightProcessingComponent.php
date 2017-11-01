@@ -115,7 +115,7 @@ class FlightProcessingComponent extends BaseComponent
         $groupedCyclo = [];
         foreach ($params as $param) {
             if (in_array($param->getCode(), $previewParams)) {
-                if (!isset($grouped[$param->getPrefix()])) {
+                if (!isset($groupedCyclo[$param->getPrefix()])) {
                     $groupedCyclo[$param->getPrefix()] = [];
                 }
 
@@ -180,7 +180,7 @@ class FlightProcessingComponent extends BaseComponent
 
                     $phisicsFrame = $phisicsFrame[0]; // 0 - ap 1 - bp
 
-                    for($i = 0; $i < count($cycloAp); $i++) {
+                    for ($i = 0; $i < count($cycloAp); $i++) {
                         $data[$cycloAp[$i]['code']][] = array($phisicsFrame[1], $phisicsFrame[$i + 2]); //+2 because 0 - frameNum, 1 - time
                     }
                 }
@@ -257,20 +257,16 @@ class FlightProcessingComponent extends BaseComponent
 
         $algHeap = [];
         $frameNum = 0;
+        $status = 0;
         $totalFrameNum = floor(($fileSize - $syncroWordOffset)  / $fdr->getFrameLength());
-        $status = (object)[
-            'new' => 0,
-            'current' => 0,
-            'total' =>  $totalFrameNum
-        ];
 
         //file can be accesed by ajax while try to open what can cause warning
         //error_reporting(E_ALL ^ E_WARNING);
         set_time_limit (0);
 
         if (isset($frameSyncroCode) && ($frameSyncroCode != '')) {
-            //while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
-            while(($frameNum < 20) && ($curOffset < $fileSize)) {
+            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
+            //while(($frameNum < 20) && ($curOffset < $fileSize)) {
                 $curOffset = ftell($fileDesc);
                 $frame = stream_get_contents($fileDesc, $frameLength);
                 $unpackedFrame = unpack("H*", $frame);
@@ -279,7 +275,6 @@ class FlightProcessingComponent extends BaseComponent
                     $this->processFrame(
                         $flightUid,
                         $unpackedFrame,
-                        $fileSize,
                         $analogParamsCyclo,
                         $binaryParamsCyclo,
                         $startCopyTime,
@@ -290,6 +285,7 @@ class FlightProcessingComponent extends BaseComponent
                     );
 
                     $frameNum++;
+                    $status = intval(100 / $totalFrameNum * $frameNum);
                 } else {
                     $syncroWordOffset = $this->frameComponent
                         ->searchSyncroWord(
@@ -303,11 +299,12 @@ class FlightProcessingComponent extends BaseComponent
 
                     $framesLeft = floor(($fileSize - $syncroWordOffset)  / $frameLength);
                     $totalFrameNum = $frameNum + $framesLeft;
+                    $status = 100 / $totalFrameNum * $frameNum;
                 }
             }
         } else {
-            //while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
-            while(($frameNum < 20) && ($curOffset < $fileSize)) {
+            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize)) {
+            //while(($frameNum < 20) && ($curOffset < $fileSize)) {
                 $curOffset = ftell($fileDesc);
                 $frame = stream_get_contents($fileDesc, $frameLength);
                 $unpackedFrame = unpack("H*", $frame);
@@ -315,7 +312,6 @@ class FlightProcessingComponent extends BaseComponent
                 $this->processFrame(
                     $flightUid,
                     $unpackedFrame,
-                    $fileSize,
                     $analogParamsCyclo,
                     $binaryParamsCyclo,
                     $startCopyTime,
@@ -326,7 +322,7 @@ class FlightProcessingComponent extends BaseComponent
                 );
 
                 $frameNum++;
-
+                $status = intval(100 / $totalFrameNum * $frameNum);
             }
         }
 
@@ -429,7 +425,6 @@ class FlightProcessingComponent extends BaseComponent
     private function processFrame (
         $flightUid,
         $unpackedFrame,
-        $fileSize,
         $analogParamsCyclo,
         $binaryParamsCyclo,
         $startCopyTime,
@@ -454,20 +449,10 @@ class FlightProcessingComponent extends BaseComponent
         $this->runtimeManager->writeToRuntimeTemporaryFile(
             $this->params()->folders->uploadingStatus,
             $flightUid,
-            $status->current,
-            'json',
+            $status,
+            'raw',
             true
         );
-
-        $status->new = round (
-            $status->total
-            / $fileSize
-            * $frameNum
-            * $fdr->getFrameLength()
-        );
-        if ($status->new > $status->current) {
-            $status->current = $status->new;
-        }
     }
 
     private function loadParamFilesToTables($tableName)

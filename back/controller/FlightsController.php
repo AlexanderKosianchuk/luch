@@ -27,11 +27,25 @@ class FlightsController extends BaseController
             ->findBy(['userId' => $userId]);
 
         foreach ($flightsToFolders as $flightToFolders) {
-            $items[] = $this->em()
-                ->getRepository('Entity\FlightToFolder')
-                ->getTreeItem(
-                    $flightToFolders->getFlightId(), $userId
-                );
+            $flightId = $flightToFolders->getFlightId();
+            $flight = $this->em()->createQueryBuilder()
+                ->select('f')
+                ->from('Entity\Flight', 'f')
+                ->where('f.id = ?1')
+                ->setParameter(1, $flightId)
+                ->getQuery()
+                ->getScalarResult();
+
+            if (empty($flight)) {
+                $this->em()->remove($flightToFolders);
+                $this->em()->flush();
+            } else {
+                $items[] = $this->em()
+                    ->getRepository('Entity\FlightToFolder')
+                    ->getTreeItem(
+                        $flightToFolders->getFlightId(), $userId
+                    );
+            }
         }
 
         return json_encode($items);
@@ -61,31 +75,13 @@ class FlightsController extends BaseController
         ]);
     }
 
-   public function deleteFlight($data)
-   {
-       if (!isset($data['id'])
-           || !(is_int(intval($data['id'])) || is_array($data['id']))
-       ) {
-           throw new BadRequestException(json_encode($data));
-       }
+    public function deleteFlightAction($id)
+    {
+        $this->dic()->get('flight')
+            ->deleteFlight(intval($id), $this->user()->getId());
 
-       $flights = $data['id'];
-       if (!is_array($data['id'])) {
-           $flights = [];
-           $flights[] = intval($data['id']);
-       }
-
-       $userId = intval($this->_user->userInfo['id']);
-
-       $FC = new FlightComponent;
-       foreach ($flights as $flightId) {
-           $FC->DeleteFlight(intval($flightId), $userId);
-       }
-
-       unset($FC);
-
-       return json_encode('ok');
-   }
+        return json_encode('ok');
+    }
 
     public function processFlight($data)
     {

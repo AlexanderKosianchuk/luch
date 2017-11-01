@@ -360,6 +360,7 @@ FlightUploader.prototype.UpdateLegend = function(previewParams,
 //Get value by x coord by interpolating
 FlightUploader.prototype.GetValue = function(previewParams, dataset, x) {
     var yArr = Array();
+
     for (var i = 0; i < previewParams.length; i++) {
         var series = dataset[i];
 
@@ -438,7 +439,7 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
                         type: "POST",
                         data: {
                             uploadingUid: uploadingUid,
-                            newUid: uuidV4().substring(0, 18),
+                            newUid: uuidV4().substring(0, 18).replace(/-/g, ''),
                             fdrId: fdrId,
                             file: fileName,
 
@@ -489,7 +490,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
     }).fail(function(mess){
         console.log(mess);
     });
-
+console.log(uploadingUid);
     $(document).trigger("startProccessing", [uploadingUid]);
 }
 

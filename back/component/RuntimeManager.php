@@ -234,12 +234,16 @@ class RuntimeManager extends BaseComponent
         $desc = null;
         switch ($task) {
             case 'open':
-                if (!isset($this->_descriptors[$fileName])
-                    || (get_resource_type($this->_descriptors[$fileName]) !== 'stream')
+                if (isset($this->_descriptors[$fileName])) {
+                    $desc = $this->_descriptors[$fileName];
+                    break;
+                }
+
+                if ((in_array($writeType, ['w', 'w+', 'a', 'x', 'x+']) || file_exists($file))
+                    && (!isset($this->_descriptors[$fileName]) || get_resource_type($this->_descriptors[$fileName]) !== 'stream')
                 ) {
                     $this->_descriptors[$fileName] = fopen($file, $writeType);
                 }
-                $desc = $this->_descriptors[$fileName];
                 break;
             case 'close':
                 if (isset($this->_descriptors[$fileName])

@@ -123,13 +123,7 @@ class UploaderController extends BaseController
 
         $flightInfo['aditionalInfo'] = $aditionalInfoVars;
 
-        /* DEBUGG */
-        $storedFlightFile = $uploadedFile;
-
-        $flight = $this->em()
-            ->find('Entity\Flight', 64);
-
-        /*$storedFlightFile = $this->dic()
+        $storedFlightFile = $this->dic()
             ->get('runtimeManager')
             ->storeFlight($uploadedFile);
 
@@ -143,7 +137,7 @@ class UploaderController extends BaseController
                 $fdrId,
                 $userId,
                 $calibrationId
-            );*/
+            );
 
         $totalPersentage = 50;
 
@@ -170,9 +164,9 @@ class UploaderController extends BaseController
                 'close'
             );
 
-        /*if (file_exists($file->path)) {
+        if (file_exists($file->path)) {
             unlink($file->path);
-        }*/
+        }
 
         return json_encode([
             'status' => 'complete',
@@ -527,15 +521,6 @@ class UploaderController extends BaseController
 
             return $answ;
         }
-    }
-
-    public function DeleteFlight()
-    {
-         $FC = new FlightComponent;
-         $result = $FC->DeleteFlight($this->flightId, intval($this->_user->userInfo['id']));
-         unset($FC);
-
-         return $result;
     }
 
     public function ImportFlight($copiedFilePath)
@@ -982,19 +967,17 @@ class UploaderController extends BaseController
         return json_encode('ok');
     }
 
-    public function getUploadingStatus($data)
+    public function getUploadingStatusAction($uploadingUid)
     {
-        if (!isset($data['uploadingUid'])) {
-            throw new BadRequestException(json_encode($data));
-        }
+        $progressFile = $this->dic()->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'open',
+                'r'
+            );
 
-        $uploadingUid = strval($data['uploadingUid']);
-        if (!is_string($data['uploadingUid'])) {
-            throw new Exception("Incorrect uploadingUid passed. String is required. Passed: "
-                . json_encode($data['uploadingUid']), 1);
-        }
-
-        $progressFilePath = RuntimeManager::getProgressFilePath($uploadingUid);
+        $progressFilePath = $progressFile->path;
 
         //file can be accesed by ajax while try to open what can cause warning
         error_reporting(0);
