@@ -475,22 +475,21 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
     }
 };
 
-FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
+FlightUploader.prototype.InitiateFlightProccessing = function(data) {
     var self = this,
-        uploadingUid = pV.data.uploadingUid;
+        uploadingUid = data.uploadingUid;
 
     $.ajax({
+        url: ENTRY_URL + 'uploader/flightProcces',
         type: "POST",
-        data: pV.data,
+        data: data,
         dataType: 'json',
-        url: ENTRY_URL + pV.action,
-        async: true
     }).done(function(answ){
         $(document).trigger("endProccessing", [uploadingUid, answ.item]);
     }).fail(function(mess){
         console.log(mess);
     });
-console.log(uploadingUid);
+
     $(document).trigger("startProccessing", [uploadingUid]);
 }
 
@@ -568,26 +567,19 @@ FlightUploader.prototype.uploadPreviewed = function() {
                     flightAditionalInfo = 0;
                 }
 
-                var flightConvertionAction = "flightProcces",
-                    performProc = $el.find("input#execProc").prop('checked');
+                var check = $el.find("input#execProc").prop('checked');
 
-                if (performProc == true){
-                    flightConvertionAction = "flightProccesAndCheck";
-                }
-
-                var pV = {
-                    action: 'uploader/' + flightConvertionAction,
-                    data: {
-                        fdrId: fdrId,
-                        uploadingUid: uploadingUid,
-                        calibrationId: calibrationId,
-                        fileName: fileName,
-                        flightInfo: flightInfo,
-                        flightAditionalInfo : flightAditionalInfo
-                    }
+                var data = {
+                    fdrId: fdrId,
+                    uploadingUid: uploadingUid,
+                    calibrationId: calibrationId,
+                    fileName: fileName,
+                    flightInfo: flightInfo,
+                    flightAditionalInfo: flightAditionalInfo,
+                    check: check
                 };
 
-                self.InitiateFlightProccessing(pV);
+                self.InitiateFlightProccessing(data);
                 index++;
 
                 if (index === count) {

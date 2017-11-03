@@ -183,7 +183,10 @@ class RuntimeManager extends BaseComponent
             'open'
         );
 
-        if (file_exists($file->path) && flock($file->desc, LOCK_EX)) {
+        if (file_exists($file->path)
+            && isset($file->desc)
+            && flock($file->desc, LOCK_EX)
+        ) {
             try {
                 if ($truncate) {
                     ftruncate($file->desc, 0);

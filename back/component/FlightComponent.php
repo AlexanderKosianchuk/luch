@@ -63,7 +63,7 @@ class FlightComponent extends BaseComponent
             $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime . ':00');
         }
 
-        if ($flightInfo['performer'] === null) {
+        if (!isset($flightInfo['performer'])) {
             $flightInfo['performer'] = $user->getLogin();
         }
 

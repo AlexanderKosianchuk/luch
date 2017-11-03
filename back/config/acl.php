@@ -10,7 +10,6 @@ return [
             'createFolderAction',
             'getFlightsAction',
             'getUserSettingsAction',
-            'getUserSettingsAction',
             'logoutAction'
         ]
     ],
@@ -21,7 +20,8 @@ return [
             'storeFlightFileAction',
             'flightUploadingOptionsAction',
             'flightUploaderPreviewAction',
-            'flightProccesAndCheckAction'
+            'flightProccesAndCheckAction',
+            'flightEasyUploadAction'
         ]
     ],
     'admin' => [

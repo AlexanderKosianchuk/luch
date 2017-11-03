@@ -221,4 +221,47 @@ class FdrComponent extends BaseComponent
 
         return self::$_codeToTable;
     }
+
+    public function isAvaliable($fdrId, $userId = null)
+    {
+        if (!is_int($fdrId)) {
+            throw new Exception("Incorrect fdrId passed. Int is required. Passed: "
+                . json_encode($fdrId), 1);
+        }
+
+        if ($userId === null) {
+            $userId = $this->user()->getId();
+        }
+
+        if ($this->member()->isAdmin()
+            || $this->member()->isLocal()
+        ) {
+            return true;
+        }
+
+        $fdr = $this->em()->find('Entity\Fdr', [
+            'id' => $fdrId,
+            'userId' => $userId
+        ]);
+
+        if ($fdr) {
+            return true;
+        }
+
+        if ($this->member()->isUser()) {
+            return false;
+        }
+
+        $users = $this->em()->find('Entity\User', [
+            'creatorId' => $userId
+        ]);
+
+        foreach ($users as $user) {
+            if ($this->isAvaliable($fdrId, $userId = null)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

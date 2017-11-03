@@ -11,12 +11,12 @@ use Exception\ForbiddenException;
 
 class UsersController extends BaseController
 {
-    public function loginAction ($user, $pass)
+    public function loginAction ($login, $pass = '')
     {
         $lang = 'en';
 
         $userId = $this->member()->signIn(
-            $user,
+            $login,
             $pass
         );
 

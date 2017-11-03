@@ -34,26 +34,22 @@ class User extends BaseComponent
 
     public function isAdmin($userRole = null)
     {
-        return $this->isA('admin');
+        return $this->isA('admin', $userRole);
     }
 
     public function isModerator($userRole = null)
     {
-        return $this->isA('moderator');
+        return $this->isA('moderator', $userRole);
     }
 
     public function isUser($userRole = null)
     {
-        return $this->isA('user');
+        return $this->isA('user', $userRole);
     }
 
     public function isLocal($userRole = null)
     {
-        if ($userRole == self::$role['local']) {
-            return true;
-        }
-
-        return false;
+        $this->isA('local', $userRole);
     }
 
     public function signIn($login, $pass, $autologin = true)

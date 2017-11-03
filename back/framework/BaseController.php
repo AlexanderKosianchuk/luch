@@ -36,8 +36,19 @@ class BaseController extends BaseComponent
             );
         }
 
+        $fire_args=array();
+
+        $reflection = new \ReflectionMethod($this, $method);
+        $fireArgs = [];
+
+        foreach($reflection->getParameters() as $arg) {
+            if (isset($arguments[$arg->name])) {
+                $fireArgs[$arg->name]=$arguments[$arg->name];
+            }
+        }
+
         try {
-            $response = call_user_func_array([$this, $method], $arguments);
+            $response = call_user_func_array([$this, $method], $fireArgs);
             $rr->register($userId, $fullAction);
         } catch (BadRequestException $exception) {
             $rr->faultResponse($method, 400, $exception->message, $exception->forwardingDescription);

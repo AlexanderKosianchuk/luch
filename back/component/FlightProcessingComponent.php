@@ -469,4 +469,24 @@ class FlightProcessingComponent extends BaseComponent
             unlink($file->path);
         }
     }
+
+    public function checkAditionalInfoFromHeader($fdrId, $headerInfo)
+    {
+        $aditionalInfo = [];
+
+        $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+        $aditionalInfoArr = explode(";", $fdr->getAditionalInfo());
+
+        foreach($aditionalInfoArr as $key => $val) {
+            if (isset($headerInfo[$val])) {
+                $aditionalInfo[$val] = $headerInfo[$val];
+            } else {
+                $aditionalInfo[$val] = "x";
+            }
+        }
+
+        unset($fdr);
+
+        return json_encode($aditionalInfo);
+    }
 }
