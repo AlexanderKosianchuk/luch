@@ -56,12 +56,12 @@ foreach (array_keys($data) as $key) {
 
     if (is_array($data[$key])) {
         $input = [];
-        foreach ($data[$key] as $item) {
-            $item = htmlspecialchars($item, ENT_IGNORE, 'utf-8');
-            $item = strip_tags($item);
-            $item = stripslashes($item);
+        foreach ($data[$key] as $itemKey => $itemValue) {
+            $itemValue = htmlspecialchars($itemValue, ENT_IGNORE, 'utf-8');
+            $itemValue = strip_tags($itemValue);
+            $itemValue = stripslashes($itemValue);
 
-            $input[] = $item;
+            $input[$itemKey] = $itemValue;
         }
     } else {
         $input = htmlspecialchars($data[$key], ENT_IGNORE, 'utf-8');

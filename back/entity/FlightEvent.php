@@ -13,7 +13,7 @@ use EntityTraits\dynamicTable;
  * FlightEvent
  *
  * @Table(name="NULL")
- * @Entity(repositoryClass="Repository\FlightEventRepository")
+ * @Entity
  */
 class FlightEvent
 {
@@ -86,15 +86,21 @@ class FlightEvent
         return $this->flightSettlements;
     }
 
-    public function get()
+    public function get($isArray = false)
     {
-        return [
+        $flightEvent = [
             'id' => $this->id,
             'eventId' => $this->eventId,
             'startTime' => $this->startTime,
             'endTime' => $this->endTime,
             'falseAlarm' => $this->falseAlarm
         ];
+
+        if ($isArray) {
+            return $flightEvent;
+        }
+
+        return (object)$flightEvent;
     }
 
     public static function getPrefix()

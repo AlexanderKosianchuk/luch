@@ -10,6 +10,8 @@ return [
             'createFolderAction',
             'getFlightsAction',
             'getUserSettingsAction',
+            'setUserSettingsAction',
+            'getFlightEventsAction',
             'logoutAction'
         ]
     ],

@@ -64,7 +64,7 @@ class List extends React.Component {
             ['users', 'setUserSettings'],
             'put',
             'USER_SETTINGS',
-            this.props.settings.items
+            { settings: this.props.settings.items }
         ).then(() => this.props.redirect('/'));
     }
 

@@ -18,6 +18,18 @@ class EventComponent extends BaseComponent
      */
     private $FlightEventOld;
 
+    /**
+     * @Inject
+     * @var Entity\FlightEvent
+     */
+    private $FlightEvent;
+
+    /**
+     * @Inject
+     * @var Entity\FlightSettlement
+     */
+    private $FlightSettlement;
+
     public function createOldEventsTable($guid)
     {
         $flightExTableName = $guid.$this->FlightEventOld::getPrefix();
@@ -27,15 +39,15 @@ class EventComponent extends BaseComponent
         $this->connection()->drop($flightExTableName, null, $link);
 
         $query = "CREATE TABLE `".$flightExTableName."` (`id` INT NOT NULL AUTO_INCREMENT, "
-            . " `frameNum` INT,"
-            . " `startTime` BIGINT,"
-            . " `endFrameNum` INT,"
-            . " `endTime` BIGINT,"
-            . " `refParam` VARCHAR(255),"
+            . " `frame_num` INT,"
+            . " `start_time` BIGINT,"
+            . " `end_frame_num` INT,"
+            . " `end_time` BIGINT,"
+            . " `ref_param` VARCHAR(255),"
             . " `code` VARCHAR(255),"
-            . " `excAditionalInfo` TEXT,"
-            . " `falseAlarm` BOOL DEFAULT 0,"
-            . " `userComment` TEXT,"
+            . " `exc_aditional_info` TEXT,"
+            . " `false_alarm` BOOL DEFAULT 0,"
+            . " `user_comment` TEXT,"
             . " PRIMARY KEY (`id`))"
             . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
@@ -66,6 +78,40 @@ class EventComponent extends BaseComponent
             ->setTableName($table);
     }
 
+    private function setupFlightEventOldEntity($code)
+    {
+        $link = $this->connection()->create('flights');
+        $table = $this->FlightEventOld::getTable($link, $code);
+        $this->connection()->destroy($link);
+
+        $this->em('fdrs')
+            ->getClassMetadata('Entity\FlightEventOld')
+            ->setTableName($table);
+    }
+
+    private function setupFlightEventEntity($code)
+    {
+        $link = $this->connection()->create('flights');
+        $table = $this->FlightEvent::getTable($link, $code);
+        $this->connection()->destroy($link);
+
+        $this->em('flights')
+            ->getClassMetadata('Entity\FlightEvent')
+            ->setTableName($table);
+    }
+
+    private function setupFlightSettlementEntity($code)
+    {
+        $link = $this->connection()->create('flights');
+        $table = $this->FlightSettlement::getTable($link, $code);
+        $this->connection()->destroy($link);
+
+        $this->em('flights')
+            ->getClassMetadata('Entity\FlightSettlement')
+            ->setTableName($table);
+    }
+
+
     public function getRefParams($code)
     {
 
@@ -88,6 +134,187 @@ class EventComponent extends BaseComponent
             ->createQueryBuilder('fdrEventOld')
             ->getQuery()
             ->getResult();
+    }
+
+    public function timestampToDuration($microsecsCount)
+    {
+        if ($microsecsCount > 1000) {
+            $timeInterval = $microsecsCount / 1000;
+
+            $hours = floor($timeInterval / (60*60));
+            $mins = floor(($timeInterval - $hours * 60*60) / 60);
+            $secs = floor(($timeInterval - $hours * 60*60 - $mins * 60));
+
+            if(strlen($hours) < 2) {
+                $hours = "0".$hours;
+            }
+            if(strlen($mins) < 2) {
+                $mins = "0".$mins;
+            }
+            if(strlen($secs) < 2) {
+                $secs = "0".$secs;
+            }
+            $duration = $hours .":".$mins.":".$secs;
+            return $duration;
+        } else {
+            return (float)($microsecsCount / 1000);
+        }
+    }
+
+    public function getFormatedFlightEvents (
+        $flightId,
+        $flightGuid,
+        $isDisabled,
+        $startCopyTime,
+        $stepLength
+    ) {
+        if (!is_string($flightGuid)) {
+            throw new Exception("Incorrect flightGuid passed. String is required. Passed: "
+                . json_encode($flightGuid), 1);
+        }
+
+        $flightEventsOld = $this->getFlightEventsOldExtended(
+            $flightId,
+            $flightGuid,
+            $startCopyTime,
+            $stepLength,
+            $isDisabled
+        );
+
+        $flightEvents = $this->getFlightEventsExtended(
+            $flightGuid,
+            $startCopyTime,
+            $stepLength,
+            $isDisabled
+        );
+
+        return array_merge($flightEventsOld, $flightEvents);
+    }
+
+    public function getFlightEventsOldExtended(
+        $flightId,
+        $flightGuid,
+        $startCopyTime,
+        $stepLength,
+        $isDisabled
+    ) {
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+        $fdr = $flight->getFdr();
+        $this->setupFdrEventOldEntity($fdr->getCode());
+        $this->setupFlightEventOldEntity($flightGuid);
+
+        $oldEvents = $this->em('flights')
+            ->getRepository('Entity\FlightEventOld')->findAll();
+
+        $flightEvents = [];
+        foreach ($oldEvents as $event) {
+            $event = $event->get(true);
+            $fdrEventOld = $this->em('fdrs')
+                ->getRepository('Entity\FdrEventOld')
+                ->findOneBy(['code' => $event['code']]);
+                
+            $flightEvents[] = array_merge(
+                $event, [
+                    'start' => date("H:i:s", $event['startTime'] / 1000),
+                    'reliability' => (intval($event['falseAlarm']) === 0),
+                    'end' => date("H:i:s", $event['endTime'] / 1000),
+                    'duration' => $this->timestampToDuration($event['endTime']
+                        - $event['startTime']
+                    ),
+                    'eventType' => 1,
+                    'isDisabled' => $isDisabled
+                ],
+                $fdrEventOld->get(true)
+            );
+        }
+
+        return $flightEvents;
+    }
+
+    public function getFlightEventsExtended(
+        $flightGuid,
+        $startCopyTime,
+        $stepLength,
+        $isDisabled
+    ) {
+        $this->setupFlightEventEntity($flightGuid);
+        $this->setupFlightSettlementEntity($flightGuid);
+
+        $flightEvents = $this->em('flights')
+            ->getRepository('Entity\FlightEvent')->findAll();
+
+        $ids = [];
+        foreach ($flightEvents as $event) {
+            $ids[] = $event->getId();
+        }
+
+        $qb = $this->em()->createQueryBuilder();
+
+        $events = $this->em()
+            ->getRepository('Entity\Event')
+            ->createQueryBuilder('event')
+            ->add('where', $qb->expr()->in('event.id', $ids))
+            ->getQuery()
+            ->getArrayResult();
+
+        $eventsAssoc = [];
+        foreach ($events as $event) {
+            $eventsAssoc[$event['id']] = $event;
+        }
+
+        $eventSettlements = $this->em()
+            ->getRepository('Entity\EventSettlement')
+            ->createQueryBuilder('eventSettlement')
+            ->add('where', $qb->expr()->in('eventSettlement.eventId', $ids))
+            ->getQuery()
+            ->getArrayResult();
+
+        $eventsSettlementsAssoc = [];
+        foreach ($eventSettlements as $eventSettlement) {
+            $eventsSettlementsAssoc[$eventSettlement['eventId']] = $eventSettlement;
+        }
+
+        $array = [];
+        foreach ($flightEvents as $flightEvent) {
+            $settlements = $flightEvent->getFlightSettlements();
+            $flightEvent = $flightEvent->get(true);
+            $event = $eventsAssoc[$flightEvent['id']] ?? null;
+
+            if (!$event) {
+                throw new Exception("Cant find Event for FlightEvent. FlightEventId:".$flightEvent['id'], 1);
+            }
+
+            $formatedSettlements = [];
+            foreach ($settlements as $settlement) {
+                $formatedSettlements[] = $eventsSettlementsAssoc[$flightEvent['id']]['text']
+                    .' = '.$settlement->getValue();
+            }
+
+            $array[] = [
+                'id' => $flightEvent['id'],
+                'refParam' => $event['refParam'],
+                'frameNum' => (intval(substr($flightEvent['startTime'], 0, -3)) - $startCopyTime) * $stepLength,
+                'endFrameNum' => (intval(substr($flightEvent['endTime'], 0, -3)) - $startCopyTime) * $stepLength,
+                'start' => date('H:i:s', intval(substr($flightEvent['startTime'], 0, -3))),
+                'end' => date('H:i:s', intval(substr($flightEvent['endTime'], 0, -3))),
+                'duration' => gmdate('H:i:s',
+                       (($flightEvent['endTime']
+                           - $flightEvent['startTime'])
+                       / 1000)
+                   ),
+                'code' => $event['code'],
+                'comment' => '',
+                'algText' => $event['algText'],
+                'status' => $event['status'],
+                'excAditionalInfo' => $formatedSettlements,
+                'reliability' => (intval($flightEvent['falseAlarm']) === 0),
+                'isDisabled' => $isDisabled,
+                'userComment' => '',
+                'eventType' => 2
+            ];
+        }
+
+        return $array;
     }
 
 }

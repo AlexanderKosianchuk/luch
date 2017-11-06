@@ -49,16 +49,6 @@ class EventSettlement
      */
     private $event;
 
-    /**
-     * One EventSettlement has Many FlightSettlements.
-     * @OneToMany(targetEntity="FlightSettlement", mappedBy="eventSettlement")
-     */
-    private $flightSettlements;
-
-    public function __construct() {
-        $this->flightSettlements = new ArrayCollection();
-    }
-
     public function getId()
     {
         return $this->id;

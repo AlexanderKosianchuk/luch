@@ -232,7 +232,6 @@ class ComposerStaticInit957bae1b0e3e2bc3fe568f00ac4778eb
         'Model\\Frame' => __DIR__ . '/../..' . '/back/model/Frame.php',
         'Repository\\AirportRepository' => __DIR__ . '/../..' . '/back/repository/AirportRepository.php',
         'Repository\\FdrToUserRepository' => __DIR__ . '/../..' . '/back/repository/FdrToUserRepository.php',
-        'Repository\\FlightEventRepository' => __DIR__ . '/../..' . '/back/repository/FlightEventRepository.php',
         'Repository\\FlightRepository' => __DIR__ . '/../..' . '/back/repository/FlightRepository.php',
         'Repository\\FlightToFolderRepository' => __DIR__ . '/../..' . '/back/repository/FlightToFolderRepository.php',
         'Repository\\FolderRepository' => __DIR__ . '/../..' . '/back/repository/FolderRepository.php',

@@ -53,40 +53,16 @@ class UsersController extends BaseController
         );
     }
 
-    public function setUserSettings($settings)
+    public function setUserSettingsAction($settings)
     {
-        if (!isset($settings)
-            || empty($settings)
-            || !is_array($settings)
-        ) {
-            throw new BadRequestException(json_encode($settings));
-        }
-
-        $O = new UserOptions();
-        $userId = intval($this->_user->userInfo['id']);
-        $O->UpdateOptions($settings, $userId);
-        unset($O);
+        $this->dic()->get('userSettings')->updateSettings($settings);
 
         return json_encode('ok');
     }
 
-    public function userChangeLanguage($data)
+    public function userChangeLanguageAction($lang)
     {
-        if (!isset($data)
-            || !isset($data['lang'])
-            || empty($data['lang'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $lang = $data['lang'];
-
-        $L = new Language;
-        $L->SetLanguageName($lang);
-        unset($L);
-
-        $this->_user->SetUserLanguage($this->_user->username, $lang);
-
+        $this->user()->setLanguage($lang);
         return json_encode('ok');
     }
 

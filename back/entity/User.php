@@ -149,6 +149,11 @@ class User
         ];
     }
 
+    public function setLanguage($lang)
+    {
+        $this->lang = $lang;
+    }
+
     public function set($data)
     {
         $this->login = $data['login'];

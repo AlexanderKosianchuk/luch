@@ -2,11 +2,6 @@
 
 namespace Controller;
 
-use Model\Flight;
-use Model\Fdr;
-use Model\Frame;
-use Model\FlightException;
-use Model\User;
 use Component\RuntimeManager;
 
 use Exception\UnauthorizedException;
@@ -14,19 +9,80 @@ use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-use Component\EntityManagerComponent as EM;
-
 use TCPDF;
 
-require_once (SITE_ROOT_DIR."/tcpdf/tcpdf.php");
-require_once (SITE_ROOT_DIR."/tcpdf/config/tcpdf_config.php");
+require_once (SITE_ROOT_DIR."/back/tcpdf/tcpdf.php");
+require_once (SITE_ROOT_DIR."/back/tcpdf/config/tcpdf_config.php");
 
-class FlightEventsController extends CController
+class FlightEventsController extends BaseController
 {
-    function __construct()
+    public function getFlightEventsAction($flightId)
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $flightId = intval($flightId);
+        $userId = $this->user()->getId();
+
+        $flightToFolders = $this->em()->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        if ($flightToFolders === null) {
+            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
+        }
+
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        if ($flight === null) {
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
+        }
+
+        $flightInfo = $flight->get();
+        $fdr = $flight->getFdr();
+
+        $isDisabled = true;
+        if ($this->member()->isAdmin() || $this->member()->isModerator()) {
+            $isDisabled = false;
+        }
+
+        $startCopyTime = $flight->getStartCopyTime();
+        $frameLength = $fdr->getFrameLength();
+        $flightEvents = $this->dic()
+            ->get('event')
+            ->getFormatedFlightEvents(
+                $flight->getId(),
+                $flight->getGuid(),
+                $isDisabled,
+                $startCopyTime,
+                $frameLength
+            );
+
+        if (empty($flightEvents) && (count($flightEvents) === 0)) {
+            return json_encode([
+                'items' => [],
+                'isProcessed' => true
+            ]);
+        }
+
+        $accordion = [];
+
+        for($ii = 0; $ii < count($flightEvents); $ii++) {
+            $codePrefix = substr($flightEvents[$ii]['code'], 0, 3);
+
+            if (in_array($codePrefix, self::$exceptionTypes)) {
+                if (!isset($accordion[$codePrefix])) {
+                    $accordion[$codePrefix] = [];
+                }
+                $accordion[$codePrefix][] = $flightEvents[$ii];
+            } else {
+                if (!isset($accordion[self::$exceptionTypeOther])) {
+                    $accordion[self::$exceptionTypeOther] = [];
+                }
+                $accordion[self::$exceptionTypeOther][] = $flightEvents[$ii];
+            }
+        }
+
+        return json_encode([
+            'items' => $accordion,
+            'isProcessed' => true
+        ]);
     }
 
     public function ConstructFlightEventsList($flightId, $sections = [], $colored = false)
@@ -304,115 +360,6 @@ class FlightEventsController extends CController
         '000', '001', '002', '003', 'other'
     ];
 
-    public function getFlightEvents($data)
-    {
-        if (!isset($data['flightId'])
-            || !is_int(intval($data['flightId']))
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $em = EM::get();
-
-        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
-
-        if ($flightToFolders === null) {
-            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
-        }
-
-        $flight = $em->find('Entity\Flight', $flightId);
-
-        if ($flight === null) {
-            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
-        }
-
-        $flightInfo = $flight->get();
-        $fdr = $flight->getFdr();
-
-        $exTableName = FlightException::getTableName($flight->getGuid());
-        $excListTableName = FlightException::getTableName($fdr->getCode());
-
-        $role = $this->_user->userInfo['role'];
-        $isDisabled = true;
-        if (User::isAdmin($role) || User::isModerator($role)) {
-            $isDisabled = false;
-        }
-
-        $startCopyTime = $flight->getStartCopyTime();
-        $frameLength = $fdr->getFrameLength();
-        $flightEvents = $em->getRepository('Entity\FlightEvent')
-            ->getFormatedFlightEvents($flight->getGuid(), $isDisabled, $startCopyTime, $frameLength);
-
-        if (($exTableName === "") && ($flightEvents === null)) {
-            return json_encode([
-                'items' => [],
-                'isProcessed' => false
-            ]);
-        }
-
-        $FEx = new FlightException;
-        $excEventsList = $FEx->GetFlightEventsList($exTableName);
-
-        if (empty($excEventsList) && (count($flightEvents) === 0)) {
-            $analisysStatuts = false;
-            return json_encode([
-                'items' => [],
-                'isProcessed' => true
-            ]);
-        }
-
-        $Frame = new Frame;
-        //change frame num to time
-        for ($ii = 0; $ii < count($excEventsList); $ii++) {
-            $flightEvents[] = array_merge(
-                $excEventsList[$ii],
-                [
-                    'start' => date("H:i:s", $excEventsList[$ii]['startTime'] / 1000),
-                    'reliability' => (intval($excEventsList[$ii]['falseAlarm']) === 0),
-                    'end' => date("H:i:s", $excEventsList[$ii]['endTime'] / 1000),
-                    'duration' => $Frame->TimeStampToDuration($excEventsList[$ii]['endTime'] - $excEventsList[$ii]['startTime']),
-                    'eventType' => 1,
-                    'isDisabled' => $isDisabled
-                ],
-                $FEx->GetExcInfo(
-                    $excListTableName,
-                    $excEventsList[$ii]['refParam'],
-                    $excEventsList[$ii]['code']
-                )
-            );
-        }
-        unset($Frame);
-
-        $accordion = [];
-
-        for($ii = 0; $ii < count($flightEvents); $ii++) {
-            $codePrefix = substr($flightEvents[$ii]['code'], 0, 3);
-
-            if (in_array($codePrefix, self::$exceptionTypes)) {
-                if (!isset($accordion[$codePrefix])) {
-                    $accordion[$codePrefix] = [];
-                }
-                $accordion[$codePrefix][] = $flightEvents[$ii];
-            } else {
-                if (!isset($accordion[self::$exceptionTypeOther])) {
-                    $accordion[self::$exceptionTypeOther] = [];
-                }
-                $accordion[self::$exceptionTypeOther][] = $flightEvents[$ii];
-            }
-        }
-
-        unset($FEx);
-
-        return json_encode([
-            'items' => $accordion,
-            'isProcessed' => true
-        ]);
-    }
-
     public function changeReliability($args)
     {
         if (!isset($args['flightId'])
@@ -435,14 +382,14 @@ class FlightEventsController extends CController
         $reliability = ($args['reliability'] === 'true') ? true : false;
         $em = EM::get();
 
-        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
+        $flightToFolders = $this->em()->getRepository('Entity\FlightToFolder')
             ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
 
         if ($flightToFolders === null) {
             throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
         }
 
-        $flight = $em->getRepository('Entity\Flight')->findOneById($flightId);
+        $flight = $this->em()->getRepository('Entity\Flight')->findOneById($flightId);
 
         if ($flight === null) {
             throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
@@ -455,7 +402,7 @@ class FlightEventsController extends CController
         }
 
         if ($eventType === 2) {
-            $val = $em->getRepository('Entity\FlightEvent')
+            $val = $this->em()->getRepository('Entity\FlightEvent')
                 ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
         }
 

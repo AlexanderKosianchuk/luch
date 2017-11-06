@@ -181,4 +181,22 @@ class User extends BaseComponent
 
         return $token;
     }
+
+    private function setLanguage($lang, $id = null)
+    {
+        $user = $this->user();
+        if ($id !== null) {
+            $user = $this->em()->find('Entity\User', $id);
+        }
+
+        if (!$user) {
+            return null;
+        }
+
+        $user->setLanguage($lang);
+        $this->em()->merge($user);
+        $this->em()->flush();
+
+        return $id;
+    }
 }

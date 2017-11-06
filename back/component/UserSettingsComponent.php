@@ -37,4 +37,23 @@ class UserSettingsComponent extends BaseComponent
 
         return $arr;
     }
+
+    public function updateSettings($settings, $userId = null)
+    {
+        if (!isset($userId)) {
+            $userId = $this->user()->getId();
+        }
+
+        $userSettings = $this->em()->getRepository('Entity\UserSetting')
+            ->findBy(['userId' => $userId]);
+
+        foreach ($userSettings as $setting) {
+            if (isset($settings[$setting->getName()])) {
+                $setting->setValue($settings[$setting->getName()]);
+                $this->em()->persist($setting);
+            }
+        }
+
+        $this->em()->flush();
+    }
 }
