@@ -6,6 +6,9 @@ use Exception;
 
 class FdrComponent extends BaseComponent
 {
+    const PARAM_TYPE_AP = 'ap';
+    const PARAM_TYPE_BP = 'bp';
+
     private static $_codeToTable = [];
 
     /**
@@ -19,6 +22,16 @@ class FdrComponent extends BaseComponent
      * @var Entity\FdrBinaryParam
      */
     private $FdrBinaryParam;
+
+    public static function getApType()
+    {
+        return self::PARAM_TYPE_AP;
+    }
+
+    public static function getBpType()
+    {
+        return self::PARAM_TYPE_BP;
+    }
 
     private function setAnalogParamsTable($fdrCode)
     {
@@ -81,15 +94,29 @@ class FdrComponent extends BaseComponent
         return $fdrsAndCalibrations;
     }
 
-    public function getParams($fdrId)
+    public function getParams($fdrId, $isArray = false)
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
         $this->setAnalogParamsTable($fdr->getCode());
 
-        return $this->em('fdrs')
+        $params = $this->em('fdrs')
             ->getRepository('Entity\FdrAnalogParam')
-            ->findAll('Entity\FdrAnalogParam');
+            ->findAll();
+
+        if (!$isArray) {
+            return $params;
+        }
+
+        $array = [];
+        foreach ($params as $param) {
+            $array[] = array_merge(
+                $param->get(true),
+                ['type' => 'ap']
+            );
+        }
+
+        return $array;
     }
 
     public function getPrefixGroupedParams($fdrId)
@@ -108,15 +135,29 @@ class FdrComponent extends BaseComponent
         return $grouped;
     }
 
-    public function getBinaryParams($fdrId)
+    public function getBinaryParams($fdrId, $isArray = false)
     {
         $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
         $this->setBinaryParamsTable($fdr->getCode());
 
-        return $this->em('fdrs')
+        $params = $this->em('fdrs')
             ->getRepository('Entity\FdrBinaryParam')
-            ->findAll('Entity\FdrBinaryParam');
+            ->findAll();
+
+        if (!$isArray) {
+            return $params;
+        }
+
+        $array = [];
+        foreach ($params as $param) {
+            $array[] = array_merge(
+                $param->get(true),
+                ['type' => 'bp']
+            );
+        }
+
+        return $array;
     }
 
     public function getPrefixGroupedBinaryParams($fdrId)
@@ -263,5 +304,100 @@ class FdrComponent extends BaseComponent
         }
 
         return false;
+    }
+
+    public function getAnalogByCode($fdrId, $code)
+    {
+        $userId = $this->user()->getId();
+
+        $fdr = $this->em()->find('Entity\Fdr', [
+            'id' => $fdrId,
+            'userId' => $userId
+        ]);
+
+        if (!$fdr) {
+            throw new Exception('FDR not found. Id: '.$fdrId, 1);
+        }
+
+        $this->setAnalogParamsTable($fdr->getCode());
+
+        return $this->em('fdrs')
+            ->getRepository('Entity\FdrAnalogParam')
+            ->findOneBy([
+                'code' => $code
+            ]);
+    }
+
+    public function getBinaryByCode($fdrId, $code)
+    {
+        $userId = $this->user()->getId();
+
+        $fdr = $this->em()->find('Entity\Fdr', [
+            'id' => $fdrId,
+            'userId' => $userId
+        ]);
+
+        if (!$fdr) {
+            throw new Exception('FDR not found. Id: '.$fdrId, 1);
+        }
+
+        $this->setBinaryParamsTable($fdr->getCode());
+
+        return $this->em('fdrs')
+            ->getRepository('Entity\FdrBinaryParam')
+            ->findOneBy([
+                'code' => $code
+            ]);
+    }
+
+    public function getParamByCode($fdrId, $code)
+    {
+        $a = $this->getAnalogByCode(
+            $fdrId,
+            $code
+        );
+
+        if ($a) {
+            return array_merge(
+                $a->get(true),
+                ['type' => self::getApType()]
+            );
+        }
+
+        $b = $this->getBinaryByCode(
+            $fdrId,
+            $code
+        );
+
+        if ($b) {
+            return array_merge(
+                $b->get(true),
+                ['type' => self::getBpType()]
+            );
+        }
+
+        return [];
+    }
+
+    public function getAnalogTable($base = '', $appendix = '')
+    {
+        $table = $base.$this->FdrAnalogParam::getTablePrefix();
+
+        if ($appendix === '') {
+            return $table;
+        }
+
+        return $table.'_'.$appendix;
+    }
+
+    public function getBinaryTable($base = '', $appendix = '')
+    {
+        $table = $base.$this->FdrBinaryParam::getTablePrefix();
+
+        if ($appendix === '') {
+            return $table;
+        }
+
+        return $table.'_'.$appendix;
     }
 }

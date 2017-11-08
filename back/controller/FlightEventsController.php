@@ -34,7 +34,6 @@ class FlightEventsController extends BaseController
             throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
-        $flightInfo = $flight->get();
         $fdr = $flight->getFdr();
 
         $isDisabled = true;

@@ -11,6 +11,7 @@ return [
     'responseRegistrator' => DI\object('Component\ResponseRegistrator'),
     'user' => DI\object('Component\User'),
     'fdr' => DI\object('Component\FdrComponent'),
+    'fdrTemplate' => DI\object('Component\FdrTemplateComponent'),
     'flight' => DI\object('Component\FlightComponent'),
     'event' => DI\object('Component\EventComponent'),
     'userSettings' => DI\object('Component\UserSettingsComponent'),
@@ -19,4 +20,5 @@ return [
     'calibration' => DI\object('Component\CalibrationComponent'),
     'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
     'eventProcessor' => DI\object('Component\EventProcessingComponent'),
+    'channel' => DI\object('Component\ChannelComponent'),
 ];

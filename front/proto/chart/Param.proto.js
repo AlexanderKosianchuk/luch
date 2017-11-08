@@ -89,9 +89,7 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
     $.ajax({
         data: pV,
         type: "POST",
-        dataType: "json",
-        url: ENTRY_URL + '?action=chart/getApParamValueAction',
-        async: true
+        url: ENTRY_URL + 'chart/getApParamData',
     }).done(function(receivedParamPoints){
         apDataArray = receivedParamPoints;
         var pV = {

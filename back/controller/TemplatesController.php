@@ -2,21 +2,8 @@
 
 namespace Controller;
 
-use Model\Language;
-use Model\Flight;
-use Model\Fdr;
-use Model\Frame;
-use Model\FlightTemplate;
-use Model\FlightException;
-use Model\FlightComments;
-use Model\Channel;
-use Model\User;
-
+use Entity\FdrTemplate;
 use Entity\FlightEvent;
-use Entity\FlightSettlement;
-
-use Component\EntityManagerComponent as EM;
-use Component\RealConnectionFactory as LinkFactory;
 
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
@@ -25,15 +12,105 @@ use Exception\ForbiddenException;
 
 use Exception;
 
-class TemplatesController extends CController
+class TemplatesController extends BaseController
 {
-    function __construct()
+    public function getFlightTemplatesAction($flightId)
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $flightId = intval($flightId);
+        $userId = $this->user()->getId();
+
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+        $fdr = $flight->getFdr();
+
+        $isExist = $this->connection()->isExist($fdr->getCode().FdrTemplate::getPrefix());
+
+        if (!$isExist) {
+            $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
+        }
+
+        $templatesToSend = $this->dic()->get('fdrTemplate')->getTemplates($flightId, true);
+        $flightEvents = $this->dic()->get('event')->getFlightEvents($flightId);
+
+        //if performed exception search and isset events
+        if (count($flightEvents) > 0) {
+            $codesArr = [];
+            $params = [];
+            foreach ($flightEvents as $event) {
+                $paramDesc = $this->dic()->get('fdr')
+                    ->getParamByCode(
+                        $fdr->getId(),
+                        $event['refParam']
+                    );
+
+                if (!empty($paramDesc) && !in_array($event['refParam'], $codesArr)) {
+                    $codesArr[] = $event['refParam'];
+                    $params[] = $paramDesc;
+                }
+            }
+
+            $this->dic()->get('fdrTemplate')->create(
+                $fdr->getCode(),
+                $this->dic()->get('fdrTemplate')::getEventsName(),
+                $params
+            );
+
+            $templatesToSend[] = [
+                'name' =>  $this->dic()->get('fdrTemplate')::getEventsName(),
+                'paramCodes' => $codesArr,
+                'params' => $params,
+                'servicePurpose' => [
+                    'isEvents' => true
+                ]
+            ];
+        }
+
+        return json_encode($templatesToSend);
     }
 
-    private function CreateTemplate($flightId, $params, $tplName)
+    public function getTemplateAction($flightId, $templateName)
+    {
+        $flightId = intval($flightId);
+
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        if (!$flight) {
+            throw new NotFoundException('fligth id: '.$flightId);
+        }
+
+        $fdrTemplateParams = $this->dic()->get('fdrTemplate')->getTemplateByName(
+            $flight->getFdr()->getCode(),
+            $templateName
+        );
+
+        $analogParams = [];
+        $binaryParams = [];
+        foreach ($fdrTemplateParams as $templateParam) {
+            $param = $this->dic()->get('fdr')->getParamByCode(
+                $flight->getFdr()->getId(),
+                $templateParam->getParamCode()
+            );
+
+            if ($param['type'] === $this->dic()->get('fdr')->getApType()) {
+                $analogParams[] = $param;
+            }
+
+            if ($param['type'] === $this->dic()->get('fdr')->getBpType()) {
+                $binaryParams[] = $param;
+            }
+        }
+
+        return json_encode([
+            'name' => $templateName,
+            'ap' => $analogParams,
+            'bp' => $binaryParams,
+            'servisePurpose' => (($this->dic()->get('fdrTemplate')->isDefault($templateName))
+                ? ['isDefault' => true]
+                : false
+            )
+        ]);
+    }
+
+    public function CreateTemplate($flightId, $params, $tplName)
     {
         $Fl = new Flight;
         $flightInfo = $Fl->GetFlightInfo($flightId);
@@ -265,60 +342,6 @@ class TemplatesController extends CController
         return json_encode('ok');
     }
 
-    public function getTemplate($args)
-    {
-        if (!isset($args['flightId'])
-            || !isset($args['templateName'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $flightId = intval($args['flightId']);
-
-        $flight = new Flight;
-        $flightInfo = $flight->getFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($flight);
-
-        $templateName = $args['templateName'];
-
-        $params = $this->GetTplParamCodes($flightId, $templateName);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
-
-        $analogParams = [];
-        $binaryParams = [];
-
-        foreach ($params['ap'] as $code) {
-            $analogParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_AP);
-        }
-
-        foreach ($params['bp'] as $code) {
-            $binaryParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_BP);
-        }
-
-        unset($fdr);
-
-        $user = $this->_user->userInfo['login'];
-        $ft = new FlightTemplate;
-        $defaultName = $ft->GetDefaultPST($paramSetTemplateListTableName, $user);
-        unset($ft);
-
-        return json_encode([
-            'name' => $templateName,
-            'ap' => $analogParams,
-            'bp' => $binaryParams,
-            'servisePurpose' => (($defaultName === $templateName)
-                ? ['isDefault' => true]
-                : false
-            )
-        ]);
-    }
-
     public function removeTemplate($args)
     {
         if (!isset($args['flightId'])
@@ -346,122 +369,5 @@ class TemplatesController extends CController
         unset($template);
 
         return json_encode('ok');
-    }
-
-    public function getFlightTemplates($args)
-    {
-        if (!isset($args['flightId'])) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $flightId = intval($args['flightId']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $fdrCode = $fdrInfo['code'];
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-        $exTableName = $fdrCode . FlightException::$TABLE_PREFIX;
-        $templatesTable = $fdrInfo['paramSetTemplateListTableName'];
-
-        $flightTemplate = new FlightTemplate;
-        //if no template table - create it
-        if ($templatesTable == "") {
-            $templatesTable = $fdrCode . FlightTemplate::$TABLE_PREFIX;
-            $flightTemplate->CreatePSTTable($templatesTable);
-            $flightTemplate->AddPSTTable($fdrId, $templatesTable);
-        }
-
-        //if isset excListTable create list to add template
-        $excEventsList = array();
-        if ($exTableName !== "") {
-            $FEx = new FlightException;
-            $excEventsList = $FEx->GetFlightEventsParamsList($exTableName);
-            unset($FEx);
-        }
-
-        $templatesList = $flightTemplate->GetPSTList($templatesTable, $this->_user->username);
-        $templatesToSend = [];
-
-        for ($i = 0; $i < count($templatesList); $i++) {
-            $template = $templatesList[$i];
-            $templateName = $template['name'];
-            $templateParamCodesArr = $template['params'];
-            $isDefault = $template['isDefault'];
-            $params = [];
-
-            foreach ($templateParamCodesArr as $code) {
-                $params[] =  $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code);
-            }
-
-            if ($templateName === FlightTemplate::$EVENTS_TPL_NAME) {
-                continue;
-            }
-
-            if ($templateName === FlightTemplate::$LAST_TPL_NAME) {
-                $templatesToSend[] = [
-                    'name' => $templateName,
-                    'paramCodes' => $templateParamCodesArr,
-                    'params' => $params,
-                    'servicePurpose' => [
-                        'isLast' => true
-                    ]
-                ];
-                continue;
-            }
-
-            if ($isDefault) {
-                $templatesToSend[] = [
-                    'name' => $templateName,
-                    'paramCodes' => $templateParamCodesArr,
-                    'params' => $params,
-                    'servicePurpose' => [
-                        'isDefault' => true
-                    ]
-                ];
-                continue;
-            }
-
-            $templatesToSend[] = [
-                'name' => $templateName,
-                'paramCodes' => $templateParamCodesArr,
-                'params' => $params
-            ];
-        }
-
-        //if performed exception search and isset events
-        if (!(empty($excEventsList))) {
-            $templateParamCodesArr = [];
-            for ($i = 0; $i < count($excEventsList); $i++) {
-                $templateParamCodesArr[] = $excEventsList[$i];
-            }
-
-            $params = [];
-            foreach ($templateParamCodesArr as $code) {
-                $params[] =  $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code);
-            }
-
-            $templatesToSend[] = [
-                'name' => FlightTemplate::$EVENTS_TPL_NAME,
-                'paramCodes' => $templateParamCodesArr,
-                'params' => $params,
-                'servicePurpose' => [
-                    'isEvents' => true
-                ]
-            ];
-
-            $this->CreateTemplate($flightId, $params, FlightTemplate::$EVENTS_TPL_NAME);
-        }
-
-        unset($fdr);
-        unset($flightTemplate);
-
-        return json_encode($templatesToSend);
     }
 }

@@ -12,6 +12,13 @@ return [
             'getUserSettingsAction',
             'setUserSettingsAction',
             'getFlightEventsAction',
+            'getFlightInfoAction',
+            'getCycloAction',
+            'getFlightTemplatesAction',
+            'getTemplateAction',
+            'putChartContainerAction',
+            'getApParamDataAction',
+            'getBpParamDataAction',
             'logoutAction'
         ]
     ],

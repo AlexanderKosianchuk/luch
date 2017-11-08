@@ -424,32 +424,6 @@ class FlightsController extends BaseController
        return $info;
    }
 
-   public function GetFlightTiming($flightId)
-   {
-       $Fl = new Flight;
-       $flightInfo = $Fl->GetFlightInfo($flightId);
-       $fdrId = intval($flightInfo['id_fdr']);
-       unset($Fl);
-
-       $fdr = new Fdr;
-       $fdrInfo = $fdr->getFdrInfo($fdrId);
-       $stepLength = $fdrInfo['stepLength'];
-
-       $prefixArr = $fdr->GetBruApCycloPrefixes($fdrInfo['id']);
-       unset($fdr);
-
-       $Frame = new Frame;
-       $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
-       unset($Frame);
-
-       $stepsCount = $framesCount * $stepLength;
-       $flightTiming['duration'] = $stepsCount;
-       $flightTiming['startCopyTime'] = $flightInfo['startCopyTime'];
-       $flightTiming['stepLength'] = $stepLength;
-
-       return $flightTiming;
-   }
-
    public function itemExport($data)
    {
        if (!isset($data['id']) && !isset($data['folderDest'])) {
@@ -561,30 +535,21 @@ class FlightsController extends BaseController
         return $figPrRow;
     }
 
-    public function getFlightInfo($data)
+    public function getFlightInfoAction($flightId)
     {
-        if (!isset($data['flightId'])) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-
-        $em = EM::get();
-
-        $items = [];
-        $flight = $em->getRepository('Entity\Flight')
+        $flightId = intval($flightId);
+        $flight = $this->em()->getRepository('Entity\Flight')
             ->findOneBy(['id' => $flightId]);
 
         if (!$flight) {
             throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
-        $flightTiming = $this->GetFlightTiming($flightId);
+        $flightTiming = $this->dic()->get('flight')->getFlightTiming($flightId);
 
         return json_encode([
             'data' => array_merge(
-                $flight->get(),
-                [
+                $flight->get(true), [
                     'fdrId' => $flight->getFdr()->getName(),
                     'fdrName' => $flight->getFdr()->getName(),
                     'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),

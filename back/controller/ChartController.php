@@ -2,15 +2,6 @@
 
 namespace Controller;
 
-use Model\Flight;
-use Model\Fdr;
-use Model\Language;
-use Model\FlightTemplate;
-use Model\UserOptions;
-use Model\Frame;
-use Model\Channel;
-use Model\FlightException;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -18,26 +9,13 @@ use Exception\ForbiddenException;
 
 use Component\OSdetectionComponent;
 
-class ChartController extends CController
+class ChartController extends BaseController
 {
-    private $title = 'Title';
-
-    function __construct()
+    public function putChartContainerAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $mainChartColor = $this->dic()->get('userSettings')->getSettingValue('mainChartColor');
+        $lineWidth = $this->dic()->get('userSettings')->getSettingValue('lineWidth');
 
-        $L = new Language();
-        unset($L);
-    }
-
-    public function putChartContainer($data)
-    {
-        $userId = $this->_user->userInfo['id'];
-        $O = new UserOptions();
-        $mainChartColor = $O->GetOptionValue($userId, 'mainChartColor');
-        $lineWidth = $O->GetOptionValue($userId, 'lineWidth');
-        unset($O);
         $workspace = "<div id='chartWorkspace' class='WorkSpace'>".
             "<div id='graphContainer' class='GraphContainer'>" .
                 "<div id='placeholder' data-bgcolor='".$mainChartColor."' data-linewidth='".$lineWidth."'></div>" .
@@ -56,31 +34,23 @@ class ChartController extends CController
         ]);
     }
 
-    public function GetApParamValue(
+    public function getApParamDataAction(
         $flightId,
+        $paramApCode,
         $startFrame,
         $endFrame,
-        $seriesCount,
-        $code,
+        $totalSeriesCount,
         $isPrintPage
     ) {
-        $Fl = new Flight();
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo['apTableName'];
-        $bpTableName = $flightInfo['bpTableName'];
-        $startCopyTime = $flightInfo['startCopyTime'];
-        unset($Fl);
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
-        $cycloApTableName = $fdrInfo["gradiApTableName"];
-        $cycloBpTableName = $fdrInfo["gradiBpTableName"];
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
+        }
 
-        $Frame = new Frame();
-        $framesCount = $Frame->GetFramesCount($apTableName, $prefixArr[0]); //giving just some prefix
-        unset($Frame);
+        $startCopyTime = $flight->getStartCopyTime();
+        $timing = $this->dic()->get('flight')->getFlightTiming($flight->getId());
+        $framesCount = $timing['framesCount'];
 
         if ($startFrame == null) {
             $startFrame = 0;
@@ -94,36 +64,38 @@ class ChartController extends CController
             $endFrame = $framesCount;
         }
 
-        if ($seriesCount == null) {
-            $seriesCount = 1;
+        if ($totalSeriesCount == null) {
+            $totalSeriesCount = 1;
         }
 
-        $Ch = new Channel();
+        $param = $this->dic()->get('fdr')->getParamByCode(
+            $flight->getFdr()->getId(),
+            $paramApCode
+        );
 
-        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName,
-            $code, PARAM_TYPE_AP);
+        $pointsMaxCount = $this->dic()->get('userSettings')->getSettingValue('pointsMaxCount');
 
-        $prefix = $paramInfo["prefix"];
-        $freq = $paramInfo["freq"];
-
-        $compression = Channel::$compressionTypes['none'];
+        $compression = $this->dic()->get('channel')::getNoCompressionType();
         if (!$isPrintPage && (($startFrame !== 0) || ($endFrame !== $framesCount))) {
-            $compression = Channel::$compressionTypes['aroundRange'];
-        } else if (!$isPrintPage && ($framesCount * $seriesCount > POINT_MAX_COUNT)) {
-            $compression = Channel::$compressionTypes['general'];
+            $compression = $this->dic()->get('channel')::getAroundRangeCompressionType();
+        } else if (!$isPrintPage && ($framesCount * $totalSeriesCount > $pointsMaxCount)) {
+            $compression = $this->dic()->get('channel')::getGeneralCompressionType();
         }
 
-        $syncParam = $Ch->GetChannel($apTableName,
-            $code,
-            $prefix,
+        $table = $this->dic()->get('fdr')->getAnalogTable($flight->getGuid(), $param['prefix']);
+
+        $syncParam = $this->dic()->get('channel')->get(
+            $table,
+            $paramApCode,
             $startFrame,
             $endFrame,
-            $seriesCount,
+            $totalSeriesCount,
             $framesCount,
+            $pointsMaxCount,
             $compression
         );
 
-        return $syncParam;
+        return json_encode($syncParam);
     }
 
     public static function getBoolean($value)
@@ -458,51 +430,6 @@ class ChartController extends CController
         }
 
         return $step;
-    }
-
-    public function getApParamValueAction($data)
-    {
-        if(!isset($data['flightId'])
-            || !isset($data['paramApCode'])
-            || !isset($data['totalSeriesCount'])
-            || !isset($data['startFrame'])
-            || !isset($data['endFrame'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $isPrintPage = ChartController::getBoolean($data['isPrintPage']);
-
-        $flightId = $data['flightId'];
-        $paramApCode = $data['paramApCode'];
-        $totalSeriesCount = intval($data['totalSeriesCount']);
-        $startFrame = intval($data['startFrame']);
-        $endFrame = intval($data['endFrame']);
-
-        $paramData = $this->GetApParamValue($flightId,
-            $startFrame, $endFrame, $totalSeriesCount,
-            $paramApCode, $isPrintPage);
-
-        return json_encode($paramData);
-    }
-
-    public function getBpParamValueAction($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['paramBpCode'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCode = $data['paramBpCode'];
-
-        $paramData = [];
-        if(!empty($paramCode)) {
-            $paramData = $this->GetBpParamValue($flightId, $paramCode);
-        }
-
-        echo json_encode($paramData);
     }
 
     public function rcvLegend($data)

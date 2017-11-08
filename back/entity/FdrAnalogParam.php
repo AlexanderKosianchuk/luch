@@ -139,9 +139,25 @@ class FdrAnalogParam
         return $this->prefix;
     }
 
+    public function getFrequency()
+    {
+        $channels = $this->getChannel();
+        return is_array($channels) ? count($channels) : 1;
+    }
+
     public function getCode()
     {
         return $this->code;
+    }
+
+    public function getMinValue($minValue)
+    {
+        $this->minValue = $minValue;
+    }
+
+    public function getMaxValue($maxValue)
+    {
+        $this->maxValue = $maxValue;
     }
 
     public function getChannel()
@@ -165,16 +181,9 @@ class FdrAnalogParam
 
     public function get($isArray = false)
     {
-        $channels = $this->channel;
-
-        if (strpos($this->channel, ',') !== -1) {
-            $channels = explode(',', $this->channel);
-            $channels = array_map('trim', $channels);
-        }
-
         $arr = [
             'id' => $this->id,
-            'channel' => $channels,
+            'channel' => $this->getChannel(),
             'code' => $this->code,
             'name' => $this->name,
             'dim' => $this->dim,
@@ -187,6 +196,7 @@ class FdrAnalogParam
             'shift' => $this->shift,
             'minus' => $this->minus,
             'k' => $this->k,
+            'frequency' => $this->getFrequency(),
             'xy' => (strlen($this->xy) > 2) ? json_decode($this->xy, true) : [],
             'alg' => $this->alg
         ];

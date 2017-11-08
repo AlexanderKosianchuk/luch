@@ -90,25 +90,40 @@ class FdrBinaryParam
         return $this->prefix;
     }
 
+    public function getFrequency()
+    {
+        $channels = $this->getChannel();
+        return is_array($channels) ? count($channels) : 1;
+    }
+
+    public function getChannel()
+    {
+        if (strpos($this->channel, ',') !== -1) {
+            $channels = explode(',', $this->channel);
+            $channels = array_map('trim', $channels);
+            return $channels;
+        }
+
+        return $this->channel;
+    }
+
     public function get($isArray = false)
     {
         $channels = $this->channel;
 
-        if (strpos($this->channel, ',') !== -1) {
-            $channels = explode(',', $this->channel);
-            $channels = array_map('trim', $channels);
-        }
-
         $arr = [
             'id' => $this->id,
-            'channel' => $channels,
+            'channel' => $this->getChannel(),
             'code' => $this->code,
             'name' => $this->name,
             'color' => $this->color,
             'type' => $this->type,
             'prefix' => $this->prefix,
             'mask' => $this->mask,
-            'basis' => $this->basis
+            'basis' => $this->basis,
+            'minValue' => 0,
+            'maxValue' => 1,
+            'frequency' => $this->getFrequency(),
         ];
 
         if ($isArray) {

@@ -38,18 +38,6 @@ class EventProcessingComponent extends BaseComponent
 
     /**
      * @Inject
-     * @var Entity\FdrAnalogParam
-     */
-    private $FdrAnalogParam;
-
-    /**
-     * @Inject
-     * @var Entity\FdrBinaryParam
-     */
-    private $FdrBinaryParam;
-
-    /**
-     * @Inject
      * @var Component\FdrComponent
      */
     private $fdrComponent;
@@ -123,8 +111,8 @@ class EventProcessingComponent extends BaseComponent
                 $events[$ii]->get(true),
                 $flight->get(true),
                 $table,
-                $flight->getGuid().$this->FdrAnalogParam::getTablePrefix(),
-                $flight->getGuid().$this->FdrBinaryParam::getTablePrefix(),
+                $this->fdrComponent->getAnalogTable($flight->getGuid()),
+                $this->fdrComponent->getBinaryTable($flight->getGuid()),
                 $fdr->getStepLength()
             );
         }

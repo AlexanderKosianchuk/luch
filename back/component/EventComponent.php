@@ -114,7 +114,6 @@ class EventComponent extends BaseComponent
 
     public function getRefParams($code)
     {
-
         $this->setupFdrEventOldEntity($code);
 
         return $this->em('fdrs')
@@ -159,6 +158,62 @@ class EventComponent extends BaseComponent
         } else {
             return (float)($microsecsCount / 1000);
         }
+    }
+
+    public function getFlightEvents ($flightId)
+    {
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        $fdr = $flight->getFdr();
+        $this->setupFdrEventOldEntity($fdr->getCode());
+        $this->setupFlightEventOldEntity($flight->getGuid());
+
+        $oldEvents = $this->em('flights')
+            ->getRepository('Entity\FlightEventOld')->findAll();
+
+        $eventsArray = [];
+
+        foreach ($oldEvents as $event) {
+            $eventsArray[] = $event->get(true);
+        }
+
+        $this->setupFlightEventEntity($flight->getGuid());
+        $this->setupFlightSettlementEntity($flight->getGuid());
+
+        $flightEvents = $this->em('flights')
+            ->getRepository('Entity\FlightEvent')->findAll();
+
+        if (count($flightEvents) === 0) {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($flightEvents as $event) {
+            $ids[] = $event->getId();
+        }
+
+        $qb = $this->em()->createQueryBuilder();
+
+        $events = $this->em()
+            ->getRepository('Entity\Event')
+            ->createQueryBuilder('event')
+            ->add('where', $qb->expr()->in('event.id', $ids))
+            ->getQuery()
+            ->getArrayResult();
+
+        $eventsAssoc = [];
+        foreach ($events as $event) {
+            $eventsAssoc[$event['id']] = $event;
+        }
+
+        foreach ($flightEvents as $event) {
+            $eventsArray[] = array_merge(
+                $event->get(true),
+                $eventsAssoc[$event->getId()]
+            );
+        }
+
+        return $eventsArray;
     }
 
     public function getFormatedFlightEvents (
@@ -212,7 +267,7 @@ class EventComponent extends BaseComponent
             $fdrEventOld = $this->em('fdrs')
                 ->getRepository('Entity\FdrEventOld')
                 ->findOneBy(['code' => $event['code']]);
-                
+
             $flightEvents[] = array_merge(
                 $event, [
                     'start' => date("H:i:s", $event['startTime'] / 1000),
@@ -242,6 +297,10 @@ class EventComponent extends BaseComponent
 
         $flightEvents = $this->em('flights')
             ->getRepository('Entity\FlightEvent')->findAll();
+
+        if (count($flightEvents) === 0) {
+            return [];
+        }
 
         $ids = [];
         foreach ($flightEvents as $event) {

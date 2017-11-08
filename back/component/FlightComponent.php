@@ -14,18 +14,6 @@ class FlightComponent extends BaseComponent
 
     /**
      * @Inject
-     * @var Entity\FdrAnalogParam
-     */
-    private $FdrAnalogParam;
-
-    /**
-     * @Inject
-     * @var Entity\FdrBinaryParam
-     */
-    private $FdrBinaryParam;
-
-    /**
-     * @Inject
      * @var Entity\FlightSettlement
      */
     private $FlightSettlement;
@@ -136,11 +124,11 @@ class FlightComponent extends BaseComponent
         $binaryPrefixes = $this->fdrComponent->getBinaryPrefixes($fdr->getId());
         $tables = [];
         foreach ($analogPrefixes as $num) {
-            $tables[] = $guid.$this->FdrAnalogParam->getTablePrefix().'_'.$num;
+            $tables[] = $this->fdrComponent->getAnalogTable($guid, $num);
         }
 
         foreach ($binaryPrefixes as $num) {
-            $tables[] = $guid.$this->FdrBinaryParam->getTablePrefix().'_'.$num;
+            $tables[] = $this->fdrComponent->getBinaryTable($guid, $num);
         }
 
         $link = $this->connection()->create('flights');
@@ -231,7 +219,7 @@ class FlightComponent extends BaseComponent
         $link = $this->connection()->create('flights');
 
         foreach ($paramCyclo as $prefix => $cyclo) {
-            $table = $flightUid.$this->FdrAnalogParam::getTablePrefix()."_".$prefix;
+            $table = $this->fdrComponent->getAnalogTable($flightUid, $prefix);
             $tables['params'][] = $table;
 
             $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT";
@@ -249,7 +237,7 @@ class FlightComponent extends BaseComponent
         }
 
         foreach ($binaryCyclo as $prefix => $prefixCyclo) {
-            $table = $flightUid.$this->FdrBinaryParam::getTablePrefix()."_".$prefix;
+            $table = $this->fdrComponent->getBinaryTable($flightUid, $prefix);
             $tables['binary'][] = $table;
 
             $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
@@ -262,5 +250,36 @@ class FlightComponent extends BaseComponent
         $this->connection()->destroy($link);
 
         return $tables;
+    }
+
+    public function getFlightTiming($flightId)
+    {
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->findOneBy(['id' => $flightId]);
+        $fdr = $flight->getFdr();
+        $stepLength = $fdr->getStepLength();
+
+        $prefixArr = $this->fdrComponent->getAnalogPrefixes($fdr->getId());
+        $framesCount = $this->getFramesCount($flight->getGuid(), $prefixArr[0]); //giving just some prefix
+        $stepsCount = $framesCount * $stepLength;
+
+        return [
+            'duration' => $stepsCount,
+            'startCopyTime' => $flight->getStartCopyTime(),
+            'stepLength' => $stepLength,
+            'framesCount' => $framesCount
+        ];
+    }
+
+    public function getFramesCount($apTableName, $prefix)
+    {
+        $link = $this->connection()->create('flights');
+        $query = "SELECT MAX(`frameNum`) FROM `".$apTableName."_ap_". $prefix ."` LIMIT 1;";
+        $result = $link->query($query);
+        $row = $result->fetch_array();
+        $framesCount = $row[0];
+        $this->connection()->destroy($link);
+
+        return $framesCount;
     }
 }

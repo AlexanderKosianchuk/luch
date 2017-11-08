@@ -11,7 +11,13 @@ class UserSettingsComponent extends BaseComponent
         'mainChartColor' => 'fff',
         'lineWidth' => 1,
         'flightShowAction' => 'events',
+        'pointsMaxCount' => 16000,
     ];
+
+    public static function getDefaultSettings()
+    {
+        return self::$defaultSettings;
+    }
 
     public function getSettings($userId)
     {
@@ -24,7 +30,7 @@ class UserSettingsComponent extends BaseComponent
         }
 
         if (count($arr) === 0) {
-            return self::$defaultSettings;
+            return self::getDefaultSettings();
         }
 
         if (count($arr) !== self::$defaultSettings) {
@@ -37,6 +43,32 @@ class UserSettingsComponent extends BaseComponent
 
         return $arr;
     }
+
+    public function getSettingValue($name, $userId = null)
+    {
+        if ($userId === null) {
+            $userId = $this->user()->getId();
+        }
+
+        $setting = $this->em()->getRepository('Entity\UserSetting')
+            ->findOneBy([
+                'name' => $name,
+                'userId' => $userId
+            ]);
+
+        if ($setting) {
+            return $setting->getValue();
+        }
+
+        if (!$setting
+            && isset(self::getDefaultSettings()[$name])
+        ) {
+            return self::getDefaultSettings()[$name];
+        }
+
+        throw new Exception("User setting unexist. Name: ".$name, 1);
+    }
+
 
     public function updateSettings($settings, $userId = null)
     {

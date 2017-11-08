@@ -36,18 +36,6 @@ class FlightProcessingComponent extends BaseComponent
      */
     private $runtimeManager;
 
-    /**
-     * @Inject
-     * @var Entity\FdrAnalogParam
-     */
-    private $FdrAnalogParam;
-
-    /**
-     * @Inject
-     * @var Entity\FdrBinaryParam
-     */
-    private $FdrBinaryParam;
-
     public function readHeader($fdrId, $file)
     {
         $fdr = $this->em()->find('\Entity\Fdr', $fdrId);
@@ -347,13 +335,13 @@ class FlightProcessingComponent extends BaseComponent
 
         foreach ($analogParamsCyclo as $prefix => $cyclo) {
             $this->loadParamFilesToTables(
-                $flightUid.$this->FdrAnalogParam::getTablePrefix().'_'.$cyclo[0]['prefix']
+                $this->fdrComponent->getAnalogTable($flightUid, $cyclo[0]['prefix'])
             );
         }
 
         foreach($binaryParamsCyclo as $prefix => $cyclo) {
             $this->loadParamFilesToTables(
-                $flightUid.$this->FdrBinaryParam::getTablePrefix().'_'.$cyclo[0]['prefix']
+                $this->fdrComponent->getBinaryTable($flightUid, $cyclo[0]['prefix'])
             );
         }
 
@@ -390,7 +378,7 @@ class FlightProcessingComponent extends BaseComponent
             foreach ($phisicsFrames as $frame) {
                 $this->runtimeManager->writeToRuntimeTemporaryFile(
                     $this->params()->folders->uploadingFlightsTables,
-                    $flightUid.$this->FdrAnalogParam::getTablePrefix().'_'.$channelFreq,
+                    $this->fdrComponent->getAnalogTable($flightUid, $channelFreq),
                     $frame,
                     'csv'
                 );
@@ -414,7 +402,7 @@ class FlightProcessingComponent extends BaseComponent
             foreach ($convBinFrame as $frame) {
                 $this->runtimeManager->writeToRuntimeTemporaryFile(
                     $this->params()->folders->uploadingFlightsTables,
-                    $flightUid.$this->FdrBinaryParam::getTablePrefix().'_'.$channelFreq,
+                    $this->fdrComponent->getBinaryTable($flightUid, $channelFreq),
                     $frame,
                     'csv'
                 );
