@@ -69,6 +69,16 @@ class FdrTemplate
         $this->paramCode = $paramsCode;
     }
 
+    public function getMinYaxis()
+    {
+        return $this->minYaxis;
+    }
+
+    public function getMaxYaxis()
+    {
+        return $this->maxYaxis;
+    }
+
     public function setMinYaxis($minYaxis)
     {
         $this->minYaxis = $minYaxis;

@@ -116,19 +116,18 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
     var self = this,
         paramsArr = apParams.concat(bpParams);
 
-    for(var i = 0; i < paramsArr.length; i++)
-    {
+    for (var i = 0; i < paramsArr.length; i++) {
         var pV = {
             flightId: flightId,
-            paramCode: paramsArr[i],
+            code: paramsArr[i],
             tplName: tplName,
         };
 
         $.ajax({
-            type: "POST",
+            type: 'POST',
             data: pV,
             dataType: 'json',
-            url: ENTRY_URL + "?action=chart/getParamMinmaxAction",
+            url: ENTRY_URL+'chart/getParamMinMax',
             async: false
         }).done(function(receivedMinMax){
             var minMax = receivedMinMax;

@@ -147,7 +147,7 @@ class FdrTemplateComponent extends BaseComponent
 
             foreach ($rows as $templateRow) {
                 $paramDesc = $this->fdrComponent->getParamByCode(
-                    $flight->getFdr()->getId(),
+                    $flight->getFdrId(),
                     $templateRow->getParamCode()
                 );
 
@@ -218,5 +218,26 @@ class FdrTemplateComponent extends BaseComponent
         foreach ($templates as $template) {
             $this->em('fdrs')->remove($template);
         }
+    }
+
+    public function getParamMinMax($fdrCode, $templateName, $code, $userId = null)
+    {
+        if ($userId === null) {
+            $userId = $this->user()->getId();
+        }
+
+        $this->setFdrTemplateTable($fdrCode);
+
+        $template = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+            ->findOneBy([
+                'name' => $templateName,
+                'paramCode' => $code,
+                'userId' => $userId
+            ]);
+
+        return [
+            'min' => $template->getMinYaxis(),
+            'max' => $template->getMaxYaxis()
+        ];
     }
 }

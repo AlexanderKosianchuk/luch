@@ -69,7 +69,7 @@ class ChartController extends BaseController
         }
 
         $param = $this->dic()->get('fdr')->getParamByCode(
-            $flight->getFdr()->getId(),
+            $flight->getFdrId(),
             $paramApCode
         );
 
@@ -98,165 +98,148 @@ class ChartController extends BaseController
         return json_encode($syncParam);
     }
 
-    public static function getBoolean($value)
+    public function getBpParamDataAction($flightId, $code)
     {
-       if ($value === 'true') {
-          return true;
-       } else {
-          return false;
-       }
-    }
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-    public function GetBpParamValue($extFlightId, $extParamCode)
-    {
-        $flightId = $extFlightId;
-        $code = $extParamCode;
-
-        $Fl = new Flight();
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo['apTableName'];
-        $bpTableName = $flightInfo['bpTableName'];
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo["gradiApTableName"];
-        $cycloBpTableName = $fdrInfo["gradiBpTableName"];
-        $stepLength = $fdrInfo["stepLength"];
-
-        $Ch = new Channel();
-        $paramValuesArr = array();
-
-        $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $code, PARAM_TYPE_BP);
-        $bpTableName = $bpTableName . "_" . $paramInfo['prefix'];
-        $freq = $paramInfo['freq'];
-        unset($fdr);
-
-        $syncParam = $Ch->GetBinaryParam($bpTableName, $code, $stepLength, $freq);
-
-        return $syncParam;
-    }
-
-    public function GetParamColor($extFlightId, $extParamCode)
-    {
-        $flightId = $extFlightId;
-        $paramCode = $extParamCode;
-
-        $color = 'ffffff';
-
-        $Fl = new Flight();
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $gradiApTableName = $fdrInfo['gradiApTableName'];
-        $gradiBpTableName = $fdrInfo['gradiBpTableName'];
-
-        $paramInfo = $fdr->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
-
-        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-            $color = $fdr->GetParamColor($gradiApTableName, $paramCode);
-        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
-            $color = $fdr->GetParamColor($gradiBpTableName, $paramCode);
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
         }
 
-        unset($fdr);
+        $param = $this->dic()->get('fdr')->getParamByCode(
+            $flight->getFdrId(),
+            $code
+        );
 
-        return $color;
+        $table = $this->dic()->get('fdr')->getBinaryTable(
+            $flight->getGuid(),
+            $param['prefix']
+        );
+
+        return json_encode($this->dic()->get('channel')->getBinary(
+            $table,
+            $code,
+            $flight->getFdr()->getStepLength(),
+            $param['frequency']
+        ));
     }
 
-    public function GetParamInfo($extFlightId, $extParamCode)
+    public function getParamInfoAction($flightId, $code)
     {
-        $flightId = $extFlightId;
-        $paramCode = $extParamCode;
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-        $color = 'ffffff';
-
-        $Fl = new Flight();
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $gradiApTableName = $fdrInfo['gradiApTableName'];
-        $gradiBpTableName = $fdrInfo['gradiBpTableName'];
-
-        $paramInfo = $fdr->GetParamInfoByCode($gradiApTableName, $gradiBpTableName, $paramCode);
-
-        if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-            $color = $fdr->GetParamColor($gradiApTableName, $paramCode);
-        } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
-            $color = $fdr->GetParamColor($gradiBpTableName, $paramCode);
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
         }
 
-        $paramInfo['color'] = $color;
+        $paramInfo = $this->dic()->get('fdr')
+            ->getParamByCode($flight->getFdrId(), $code);
 
-        unset($fdr);
-
-        return $paramInfo;
+        echo json_encode($paramInfo);
     }
 
-    public function GetLegend($flightId, $paramCodeArray)
+    public function getParamMinMaxAction($flightId, $code, $tplName)
     {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
+        }
 
-        for ($i = 0; $i < count($paramCodeArray); $i++) {
-            $paramCode = $paramCodeArray[$i];
-            if (!empty($paramCode)) {
-                $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
+        return json_encode($this->dic()->get('fdrTemplate')
+            ->GetParamMinMax(
+                $flight->getFdr()->getCode(),
+                $tplName,
+                $code
+            )
+        );
+    }
 
-                if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-                    $infoArray[] = $paramInfo['name'].", ".
-                    $paramInfo['dim'];
-                } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
-                    $infoArray[] = $paramInfo['name'];
+    public function getFlightExceptionsAction($flightId, $refParam)
+    {
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
+        }
+
+        $events = $this->dic()->get('event')
+            ->getFlightEventsByRefParam(
+                $flight,
+                $refParam
+            );
+
+        $chartEventBoxes = [];
+
+        foreach ($events as $event) {
+            $param = $this->dic()->get('fdr')->getParamByCode(
+                $flight->getFdrId(),
+                $event['refParam']
+            );
+
+            $val = 1;
+            if ($param['type'] === $this->dic()->get('fdr')::getApType()) {
+                $val = $this->dic()->get('channel')->getParamValue(
+                    $flight->getGuid().'_'.$param['type'].'_'.$param['prefix'],
+                    $event['refParam'],
+                    $event['frameNum']
+                );
+            }
+
+            //Because of cyrillic string
+            $unicodeConv = function($key, $param) {
+                if (($param[$key] != "") && ($param[$key] != " ") && ($param[$key] != null)) {
+                    $str = is_array($param[$key]) ? implode('; ', $param[$key]) : $param[$key];
+                    // The four \\\\ in the pattern here are necessary to match \u in the original string
+                    $replacedString = preg_replace("/\\\\u(\w{4})/", "&#$1;", $str);
+                    $unicodeString = mb_convert_encoding($replacedString, 'UTF-8', 'HTML-ENTITIES');
+                    return $unicodeString . "; ";
                 }
+
+                return '';
+            };
+
+            $comment = '';
+            foreach (['text', 'status', 'algText', 'userComment', 'excAditionalInfo'] as $key) {
+                $comment .= $unicodeConv($key, $event);
+            }
+
+            $chartEventBoxes[] = [
+                $event['startTime'],
+                $event['endTime'],
+                $event['code'],
+                $val,
+                $comment,
+                $event['refParam']
+            ];
+        }
+
+        return json_encode($chartEventBoxes);
+    }
+
+    public function getLegendAction($flightId, $paramCodes)
+    {
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
+        }
+
+        $infoArray = [];
+        foreach ($paramCodes as $code) {
+            $param = $this->dic()->get('fdr')->getParamByCode(
+                $flight->getFdrId(),
+                $code
+            );
+
+            if ($param['type'] === $this->dic()->get('fdr')::getApType()) {
+                $infoArray[] = $param['name'].', '.$param['dim'];
+            } else if ($param['type'] === $this->dic()->get('fdr')::getBpType()) {
+                $infoArray[] = $param['name'];
             }
         }
-        unset($fdr);
 
-        return $infoArray;
-    }
-
-    public function GetParamMinmax($flightId, $paramCode, $tplName)
-    {
-        $user = $this->_user->username;
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
-        unset($fdr);
-
-        $flightTemplate = new FlightTemplate;
-        $minMax = $flightTemplate->GetParamMinMax($PSTTableName, $tplName,
-                $paramCode, $user);
-        unset($flightTemplate);
-
-        if ($minMax == '') {
-            $minMax = array(
-                'min' => -1,
-                'max' => 1
-            );
-        }
-
-        return $minMax;
+        return json_encode($infoArray);
     }
 
     public function SetParamMinmax(
@@ -282,58 +265,7 @@ class ChartController extends BaseController
         $flightTemplate->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
         unset($flightTemplate);
 
-        return "ok";
-    }
-
-    public function GetFlightExceptions($flightId, $refParam)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $excTableName = $flightInfo['exTableName'];
-
-        if ($excTableName != '') {
-            $startCopyTime = $flightInfo['startCopyTime'];
-            $apTableName = $flightInfo['apTableName'];
-
-            $fdr = new Fdr;
-            $fdrInfo = $fdr->getFdrInfo($fdrId);
-            $stepLength = $fdrInfo['stepLength'];
-            $cycloApTableName = $fdrInfo['gradiApTableName'];
-            $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-            $excListTableName = $fdrInfo['excListTableName'];
-            $paramType = $fdr->GetParamType($refParam,
-                    $cycloApTableName,$cycloBpTableName);
-            $excList = array();
-            if ($paramType == PARAM_TYPE_AP) {
-                $paramInfo = $fdr->GetParamInfoByCode(
-                    $cycloApTableName,
-                    $cycloBpTableName,
-                    $refParam,
-                    PARAM_TYPE_AP
-                );
-
-                $prefix = $paramInfo["prefix"];
-                $apTableName = $apTableName . "_" . $prefix;
-
-                $FEx = new FlightException;
-                $excList = (array)$FEx->GetExcApByCode($excTableName,
-                        $refParam, $apTableName, $excListTableName);
-                unset($FEx);
-            } else if($paramType == PARAM_TYPE_BP) {
-                $FEx = new FlightException;
-                $excList = (array)$FEx->GetExcBpByCode($excTableName, $refParam,
-                        $stepLength, $startCopyTime, $excListTableName);
-                unset($FEx);
-            }
-            unset($fdr);
-            return $excList;
-        } else {
-            return 'null';
-        }
-
+        return 'ok';
     }
 
     public function GetTableRawData(
@@ -432,40 +364,6 @@ class ChartController extends BaseController
         return $step;
     }
 
-    public function rcvLegend($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['paramCodes']))
-        {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCodes = $data['paramCodes'];
-
-        $legend = $this->GetLegend($flightId, $paramCodes);
-
-        return json_encode($legend);
-    }
-
-    public function getParamMinmaxAction($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['paramCode'])
-            || !isset($data['tplName'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCode = $data['paramCode'];
-        $tplName = $data['tplName'];
-
-        $minmax = $this->GetParamMinmax($flightId, $paramCode, $tplName);
-
-        return json_encode($minmax);
-    }
-
     public function setParamMinmaxAction($data)
     {
         if (!isset($data['flightId'])
@@ -487,57 +385,6 @@ class ChartController extends BaseController
 
         $answ["status"] = $status;
         return json_encode($answ);
-    }
-
-    public function getParamColorAction($data)
-    {
-        if(!isset($data['flightId'])
-            || !isset($data['paramCode'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = $data['flightId'];
-        $paramCode = $data['paramCode'];
-
-        $color = $this->GetParamColor($flightId, $paramCode);
-
-        return json_encode($color);
-    }
-
-    public function getParamInfoAction($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['paramCode']))
-        {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCode = $data['paramCode'];
-
-        $info = [];
-        if (!empty($paramCode)) {
-            $info = $this->GetParamInfo($flightId, $paramCode);
-        }
-
-        echo json_encode($info);
-    }
-
-    public function getFlightExceptionsAction($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['refParam']))
-        {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCode = $data['refParam'];
-
-        $exceptions = $this->GetFlightExceptions($flightId, $paramCode);
-
-        return json_encode($exceptions);
     }
 
     public function figurePrint($data)

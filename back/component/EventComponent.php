@@ -135,29 +135,28 @@ class EventComponent extends BaseComponent
             ->getResult();
     }
 
-    public function timestampToDuration($microsecsCount)
-    {
-        if ($microsecsCount > 1000) {
-            $timeInterval = $microsecsCount / 1000;
+    public function getFlightEventsByRefParam(
+        $flight,
+        $refParam
+    ) {
+        $flightEventsOld = $this->getFlightEventsOldExtended(
+            $flight->getId(),
+            $flight->getGuid(),
+            $flight->getStartCopyTime(),
+            $flight->getFdr()->getStepLength(),
+            false,
+            $refParam
+        );
 
-            $hours = floor($timeInterval / (60*60));
-            $mins = floor(($timeInterval - $hours * 60*60) / 60);
-            $secs = floor(($timeInterval - $hours * 60*60 - $mins * 60));
+        $flightEvents = $this->getFlightEventsExtended(
+            $flight->getGuid(),
+            $flight->getStartCopyTime(),
+            $flight->getFdr()->getStepLength(),
+            false,
+            $refParam
+        );
 
-            if(strlen($hours) < 2) {
-                $hours = "0".$hours;
-            }
-            if(strlen($mins) < 2) {
-                $mins = "0".$mins;
-            }
-            if(strlen($secs) < 2) {
-                $secs = "0".$secs;
-            }
-            $duration = $hours .":".$mins.":".$secs;
-            return $duration;
-        } else {
-            return (float)($microsecsCount / 1000);
-        }
+        return array_merge($flightEventsOld, $flightEvents);
     }
 
     public function getFlightEvents ($flightId)
@@ -251,15 +250,25 @@ class EventComponent extends BaseComponent
         $flightGuid,
         $startCopyTime,
         $stepLength,
-        $isDisabled
+        $isDisabled,
+        $refParamCode = null
     ) {
         $flight = $this->em()->find('Entity\Flight', $flightId);
         $fdr = $flight->getFdr();
         $this->setupFdrEventOldEntity($fdr->getCode());
         $this->setupFlightEventOldEntity($flightGuid);
 
-        $oldEvents = $this->em('flights')
-            ->getRepository('Entity\FlightEventOld')->findAll();
+        $oldEvents = [];
+        $rp = $this->em('flights')
+            ->getRepository('Entity\FlightEventOld');
+
+        if ($refParamCode === null) {
+            $oldEvents = $rp->findAll();
+        } else {
+            $oldEvents = $rp->findBy([
+                'refParam' => $refParamCode
+            ]);
+        }
 
         $flightEvents = [];
         foreach ($oldEvents as $event) {
@@ -290,13 +299,33 @@ class EventComponent extends BaseComponent
         $flightGuid,
         $startCopyTime,
         $stepLength,
-        $isDisabled
+        $isDisabled,
+        $refParamCode = null
     ) {
         $this->setupFlightEventEntity($flightGuid);
         $this->setupFlightSettlementEntity($flightGuid);
 
-        $flightEvents = $this->em('flights')
-            ->getRepository('Entity\FlightEvent')->findAll();
+        $flightEvents = [];
+
+        if ($refParamCode === null) {
+            $flightEvents = $this->em('flights')
+                ->getRepository('Entity\FlightEvent')
+                ->findAll();
+        } else {
+            $event = $this->em()
+                ->getRepository('Entity\Event')
+                ->createQueryBuilder('event')
+                ->where('event.refParam = ?1')
+                ->setParameter(1, $refParamCode)
+                ->getQuery()
+                ->getResult();
+
+            if (count($event)) {
+                $flightEvents = $this->em('flights')
+                    ->getRepository('Entity\FlightEvent')
+                    ->findBy(['eventId' => $event[0]->getId()]);
+            }
+        }
 
         if (count($flightEvents) === 0) {
             return [];
@@ -356,6 +385,8 @@ class EventComponent extends BaseComponent
                 'endFrameNum' => (intval(substr($flightEvent['endTime'], 0, -3)) - $startCopyTime) * $stepLength,
                 'start' => date('H:i:s', intval(substr($flightEvent['startTime'], 0, -3))),
                 'end' => date('H:i:s', intval(substr($flightEvent['endTime'], 0, -3))),
+                'startTime' => $flightEvent['startTime'],
+                'endTime' => $flightEvent['endTime'],
                 'duration' => gmdate('H:i:s',
                        (($flightEvent['endTime']
                            - $flightEvent['startTime'])
@@ -363,6 +394,7 @@ class EventComponent extends BaseComponent
                    ),
                 'code' => $event['code'],
                 'comment' => '',
+                'text' => $event['text'],
                 'algText' => $event['algText'],
                 'status' => $event['status'],
                 'excAditionalInfo' => $formatedSettlements,
@@ -376,4 +408,28 @@ class EventComponent extends BaseComponent
         return $array;
     }
 
+    public function timestampToDuration($microsecsCount)
+    {
+        if ($microsecsCount > 1000) {
+            $timeInterval = $microsecsCount / 1000;
+
+            $hours = floor($timeInterval / (60*60));
+            $mins = floor(($timeInterval - $hours * 60*60) / 60);
+            $secs = floor(($timeInterval - $hours * 60*60 - $mins * 60));
+
+            if(strlen($hours) < 2) {
+                $hours = "0".$hours;
+            }
+            if(strlen($mins) < 2) {
+                $mins = "0".$mins;
+            }
+            if(strlen($secs) < 2) {
+                $secs = "0".$secs;
+            }
+            $duration = $hours .":".$mins.":".$secs;
+            return $duration;
+        } else {
+            return (float)($microsecsCount / 1000);
+        }
+    }
 }

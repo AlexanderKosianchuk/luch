@@ -405,36 +405,6 @@ class FlightTemplate
         unset($c);
     }
 
-    public function GetParamMinMax($extPSTListTableName, $extTemplateName, $extParamCode, $extUser)
-    {
-        $PSTListTableName = $extPSTListTableName;
-        $tplName = $extTemplateName;
-        $paramCode = $extParamCode;
-        $user = $extUser;
-
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT `minYaxis`, `maxYaxis` FROM `".$PSTListTableName."` " .
-                "WHERE `name` = '".$tplName."' AND  `paramCode` = '".$paramCode."' ".
-                "AND `user` = '".$user."';";
-
-        $result = $link->query($query);
-        $minMax = "";
-        if($row = $result->fetch_array())
-        {
-            $minMax = array(
-                'min' => $row['minYaxis'],
-                'max' => $row['maxYaxis']
-                );
-        }
-
-        $c->Disconnect();
-        unset($c);
-
-        return $minMax;
-    }
-
     public function CreateTplWithDistributedParams(
         $PSTTableName,
         $tplName,

@@ -47,36 +47,30 @@ Exception.prototype.ReceiveExcepions = function(){
                 flightId: self.flightId,
                 refParam: refParam
             },
-            type: "POST",
-            url: ENTRY_URL + '?action=chart/getFlightExceptionsAction',
+            type: 'POST',
             dataType: 'json',
+            url: ENTRY_URL+'chart/getFlightExceptions',
             success: function(inData) { return inData; },
-            async: false,
-        }).done(function(excDataArray){
-            if(excDataArray != 'null'){
-                if(excDataArray.length > 0) {
-                    for(var j = 0; j < excDataArray.length; j++) {
+        }).done(function(excDataArray) {
+            if(excDataArray.length > 0) {
+                for (var j = 0; j < excDataArray.length; j++) {
+                    var paramDetails = self.associativeParamsArr[refParam];
 
-                        var paramDetails = self.associativeParamsArr[refParam];
+                    self.BuildExcContainer(self.excLabelId,
+                        refParam,
+                        excDataArray[j][0], //startTime
+                        excDataArray[j][1], //endTime
+                        excDataArray[j][2], //code
+                        excDataArray[j][3], //value
+                        decodeURIComponent(escape(excDataArray[j][4])),//comment encoded because or cyrillic
+                        excDataArray[j][5], //visualization type
+                        paramDetails[0], //yAxNum
+                        paramDetails[1]);  //color
 
-                        self.BuildExcContainer(self.excLabelId,
-                            refParam,
-                            excDataArray[j][0], //startTime
-                            excDataArray[j][1], //endTime
-                            excDataArray[j][2], //code
-                            excDataArray[j][3], //value
-                            decodeURIComponent(escape(excDataArray[j][4])),//comment encoded because or cyrillic
-                            excDataArray[j][5], //visualization type
-                            paramDetails[0], //yAxNum
-                            paramDetails[1]);  //color
-
-                        var selector = 'div#excLabel' + self.excLabelId;
-                        self.excLabelId++;
-                        self.excContainersArr.push($(selector));
-                    };
+                    var selector = 'div#excLabel' + self.excLabelId;
+                    self.excLabelId++;
+                    self.excContainersArr.push($(selector));
                 };
-            } else {
-                console.log("No flight exceptions");
             }
         }).fail(function(e){
             console.log(e);

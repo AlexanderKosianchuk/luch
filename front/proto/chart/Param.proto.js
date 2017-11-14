@@ -89,20 +89,19 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
     $.ajax({
         data: pV,
         type: "POST",
-        url: ENTRY_URL + 'chart/getApParamData',
+        dataType: 'json',
+        url: ENTRY_URL+'chart/getApParamData',
     }).done(function(receivedParamPoints){
         apDataArray = receivedParamPoints;
-        var pV = {
-            flightId: self.flightId,
-            paramCode: paramCode
-        };
 
         $.ajax({
             type: "POST",
-            data: pV,
+            data: {
+                flightId: self.flightId,
+                code: paramCode
+            },
             dataType: 'json',
-            url: ENTRY_URL + '?action=chart/getParamInfoAction',
-            async: true
+            url: ENTRY_URL+'chart/getParamInfo',
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],
                 nm = receivedInfo['name'];
@@ -138,32 +137,27 @@ Param.prototype.GetApParam = function(paramCode, i, lineWidth, dfd){
 Param.prototype.GetBpParam = function(paramCode, i, lineWidth, dfd){
     var self = this,
         bpDataArray = Array(),
-        color = String(),
-        pV = {
-            flightId: self.flightId,
-            paramBpCode: paramCode
-        };
+        color = String();
 
     $.ajax({
         type: "POST",
-        data: pV,
+        data: {
+            flightId: self.flightId,
+            code: paramCode
+        },
         dataType: 'json',
-        url: ENTRY_URL + '?action=chart/getBpParamValueAction',
-        async: true
+        url: ENTRY_URL+'chart/getBpParamData',
     }).done(function(receivedParamPoints){
         bpDataArray = receivedParamPoints;
 
-        var pV = {
-            flightId: self.flightId,
-            paramCode: paramCode
-        };
-
         $.ajax({
             type: "POST",
-            data: pV,
+            data: {
+                flightId: self.flightId,
+                code: paramCode
+            },
             dataType: 'json',
-            url: ENTRY_URL + '?action=chart/getParamInfoAction',
-            async: true
+            url: ENTRY_URL+'chart/getParamInfo',
         }).done(function(receivedInfo){
             var color = receivedInfo['color'],
                 nm = receivedInfo['name'];

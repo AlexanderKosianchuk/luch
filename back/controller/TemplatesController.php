@@ -86,7 +86,7 @@ class TemplatesController extends BaseController
         $binaryParams = [];
         foreach ($fdrTemplateParams as $templateParam) {
             $param = $this->dic()->get('fdr')->getParamByCode(
-                $flight->getFdr()->getId(),
+                $flight->getFdrId(),
                 $templateParam->getParamCode()
             );
 

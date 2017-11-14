@@ -24,7 +24,7 @@ class FdrController extends BaseController
     {
         if ($fdrId === null) {
             $flight = $this->em()->find('Entity\Flight', $flightId);
-            $fdrId = $flight->getFdr()->getId();
+            $fdrId = $flight->getFdrId();
             unset($Fl);
         }
 

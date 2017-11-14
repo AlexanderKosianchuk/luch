@@ -19,6 +19,10 @@ return [
             'putChartContainerAction',
             'getApParamDataAction',
             'getBpParamDataAction',
+            'getParamInfoAction',
+            'getParamMinMaxAction',
+            'getFlightExceptionsAction',
+            'getLegendAction',
             'logoutAction'
         ]
     ],
