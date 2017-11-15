@@ -240,4 +240,31 @@ class FdrTemplateComponent extends BaseComponent
             'max' => $template->getMaxYaxis()
         ];
     }
+
+    public function setParamMinMax(
+        $fdrCode,
+        $templateName,
+        $code,
+        $range,
+        $userId = null
+    ) {
+        if ($userId === null) {
+            $userId = $this->user()->getId();
+        }
+
+        $this->setFdrTemplateTable($fdrCode);
+
+        $template = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+            ->findOneBy([
+                'name' => $templateName,
+                'paramCode' => $code,
+                'userId' => $userId
+            ]);
+
+        $template->setMinYaxis($range->min);
+        $template->setMaxYaxis($range->max);
+
+        $this->em('fdrs')->persist($template);
+        $this->em('fdrs')->flush();
+    }
 }

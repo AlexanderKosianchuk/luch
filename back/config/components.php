@@ -10,6 +10,7 @@ return [
 
     'responseRegistrator' => DI\object('Component\ResponseRegistrator'),
     'user' => DI\object('Component\User'),
+    'userManager' => DI\object('Component\UserManagementComponent'),
     'fdr' => DI\object('Component\FdrComponent'),
     'fdrTemplate' => DI\object('Component\FdrTemplateComponent'),
     'flight' => DI\object('Component\FlightComponent'),

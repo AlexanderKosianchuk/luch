@@ -23,6 +23,8 @@ return [
             'getParamMinMaxAction',
             'getFlightExceptionsAction',
             'getLegendAction',
+            'setParamMinMaxAction',
+            'getLogoAction',
             'logoutAction'
         ]
     ],
@@ -42,7 +44,8 @@ return [
         'actions' => [
             'deleteFlightAction',
             'deleteFlightIrretrievably',
-            'deleteFolderContent'
+            'deleteFolderContent',
+            'getUsersAction'
         ]
     ],
     'local' => [

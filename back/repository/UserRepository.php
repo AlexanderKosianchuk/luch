@@ -13,58 +13,9 @@ use Exception;
 
 class UserRepository extends EntityRepository
 {
-    public function getUsers($userId)
-    {
-        if (!is_int($userId)) {
-            throw new Exception("Incorrect userId passed. Int is required. Passed: "
-                . json_encode($userId), 1);
-        }
-
-        $user = $this->findOneBy(['id' => $userId]);
-        $role = $user->getRole();
-        $users = [];
-
-        switch($role) {
-            case self::$role['admin']:
-                $users = $this->createQueryBuilder('users')
-                    ->getQuery()
-                    ->getResult(Query::HYDRATE_ARRAY);
-            break;
-            case self::$role['moderator']:
-                $users = $this->createQueryBuilder('users')
-                    ->from('Entity\User', 'u')
-                    ->where('u.creatorId = :creatorId')
-                    ->setParameter('creatorId', $userId)
-                    ->getQuery()
-                    ->getResult(Query::HYDRATE_ARRAY);
-            break;
-        }
-
-        $usersWithLogo = [];
-        foreach ($users as $user) {
-            if (isset($user['logo'])) {
-                $user['logo'] = self::getLogoUrl($user['id']);
-            }
-
-            $usersWithLogo[] = $user;
-        }
-
-        return $usersWithLogo;
-    }
-
     public function getAdmins()
     {
         return $this->findBy(['role' => 'admin']);
-    }
-
-    public function getLogoUrl($userId)
-    {
-        if (!is_int($userId)) {
-            throw new Exception("Incorrect userId passed. Int is required. Passed: "
-                . json_encode($userId), 1);
-        }
-
-        return 'action=users/getLogo&id='.$userId;
     }
 
     public function isAvaliable($userId, $creatorId)
@@ -83,10 +34,10 @@ class UserRepository extends EntityRepository
         $role = $creator->getRole();
 
         switch($role) {
-            case self::$role['admin']:
+            case 'admin':
                 return true;
             break;
-            case self::$role['moderator']:
+            case 'moderator':
                 $user = $this->findOneBy(['id' => $userId]);
                 if ($user->getCreatorId() === $creatorId) {
                     return true;

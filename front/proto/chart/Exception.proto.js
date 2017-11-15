@@ -54,10 +54,12 @@ Exception.prototype.ReceiveExcepions = function(){
         }).done(function(excDataArray) {
             if(excDataArray.length > 0) {
                 for (var j = 0; j < excDataArray.length; j++) {
-                    var paramDetails = self.associativeParamsArr[refParam];
+                    var paramCode = excDataArray[j][6];
+                    var paramDetails = self.associativeParamsArr[paramCode];
 
-                    self.BuildExcContainer(self.excLabelId,
-                        refParam,
+                    self.BuildExcContainer(
+                        self.excLabelId,
+                        paramCode,
                         excDataArray[j][0], //startTime
                         excDataArray[j][1], //endTime
                         excDataArray[j][2], //code
@@ -65,7 +67,8 @@ Exception.prototype.ReceiveExcepions = function(){
                         decodeURIComponent(escape(excDataArray[j][4])),//comment encoded because or cyrillic
                         excDataArray[j][5], //visualization type
                         paramDetails[0], //yAxNum
-                        paramDetails[1]);  //color
+                        paramDetails[1] //color
+                    );
 
                     var selector = 'div#excLabel' + self.excLabelId;
                     self.excLabelId++;
@@ -80,9 +83,18 @@ Exception.prototype.ReceiveExcepions = function(){
 //=============================================================
 
 //=============================================================
-Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTime,
-    content, value, comment, visType, yAxNum, color) {
-
+Exception.prototype.BuildExcContainer = function(
+    id,
+    refParam,
+    startTime,
+    endTime,
+    content,
+    value,
+    comment,
+    visType,
+    yAxNum,
+    color
+) {
     var self = this;
         //$startTime, $endTime, $code, $value, $excComment, $visualization
         //VISUALIZATION TYPES
@@ -120,7 +132,8 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
             "border-radius": '3px',
             "z-index": '1',
             "color": '#111'})
-        .appendTo(self.ccCont).fadeIn(200);
+        .appendTo(self.ccCont)
+        .fadeIn(200);
 
         if(visType.indexOf("C") > -1){
             var curSubscribers = sender.data("subscribers"),
@@ -181,9 +194,11 @@ Exception.prototype.BuildExcContainer = function(id, refParam, startTime, endTim
             sender.data("subscribers", newSubscriber);
         }
 
-        if(visType.indexOf("A") > -1){
+        if (visType.indexOf("A") > -1) {
             self.ShowHideExcSupportTools(sender);
         }
+
+        this.UpdateExcContainersPos();
 
         sender[0].onclick = function(){
             self.ShowHideExcSupportTools(sender);

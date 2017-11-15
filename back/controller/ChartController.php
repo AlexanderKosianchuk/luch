@@ -210,6 +210,7 @@ class ChartController extends BaseController
                 $event['code'],
                 $val,
                 $comment,
+                $event['visualization'],
                 $event['refParam']
             ];
         }
@@ -242,30 +243,28 @@ class ChartController extends BaseController
         return json_encode($infoArray);
     }
 
-    public function SetParamMinmax(
+    public function setParamMinMaxAction(
         $flightId,
         $paramCode,
         $tplName,
         $min,
         $max
     ) {
-        $user = $this->_user->username;
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
+        if (!$flight) {
+            throw new NotFoundException("flightId: ".$flightId);
+        }
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
-        unset($fdr);
+        $this->dic()->get('fdrTemplate')
+            ->setParamMinMax(
+                $flight->getFdrCode(),
+                $tplName,
+                $paramCode,
+                (object)['min' => $min, 'max' => $max]
+            );
 
-        $flightTemplate = new FlightTemplate;
-        $flightTemplate->UpdateParamMinMax($PSTTableName, $tplName, $paramCode, $min, $max, $user);
-        unset($flightTemplate);
-
-        return 'ok';
+        return json_encode('ok');
     }
 
     public function GetTableRawData(
@@ -362,29 +361,6 @@ class ChartController extends BaseController
         }
 
         return $step;
-    }
-
-    public function setParamMinmaxAction($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['paramCode'])
-            || !isset($data['tplName'])
-            || !isset($data['min'])
-            || !isset($data['max'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $paramCode = $data['paramCode'];
-        $tplName = $data['tplName'];
-        $min = $data['min'];
-        $max = $data['max'];
-
-        $status = $this->SetParamMinmax($flightId, $paramCode, $tplName, $min, $max);
-
-        $answ["status"] = $status;
-        return json_encode($answ);
     }
 
     public function figurePrint($data)

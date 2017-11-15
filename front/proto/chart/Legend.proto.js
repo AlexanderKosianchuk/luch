@@ -204,7 +204,7 @@ Legend.prototype.ShowLeadParamVal = function(val, label){
     if (this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
         this.leadParamValBox.text(label + " = " + val);
         this.leadParamValBox.css({
-            'left': this.pos.pageX,
+            'left': this.pos.pageX + 10,
             'top': this.pos.pageY - 25,
             });
     }

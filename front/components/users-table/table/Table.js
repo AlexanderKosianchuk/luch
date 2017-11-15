@@ -42,7 +42,7 @@ class Table extends Component {
             Cell: props => {
                 return(
                     <div className='users-table-table__logo'
-                        style={{ content: 'url('+ENTRY_URL+'?'+props.value+')' }}
+                        style={{ content: 'url('+ENTRY_URL+props.value+')' }}
                     >
                     </div>
                 );

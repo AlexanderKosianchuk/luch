@@ -163,7 +163,7 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
                     min: yAxArr[i].min,
                     username: this.user
                 },
-                url: ENTRY_URL + "?action=chart/setParamMinmaxAction",
+                url: ENTRY_URL+'chart/setParamMinMax',
             }).done(function(e){
                 self.distributionProc--;
             }).fail(function(e){

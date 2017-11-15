@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Framework\Application as App;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -66,18 +64,32 @@ class UsersController extends BaseController
         return json_encode('ok');
     }
 
-    public function getUsers()
+    public function getUsersAction()
     {
-        if (!isset($this->_user->userInfo)) {
+        return json_encode(
+            $this->dic()
+                ->get('userManager')
+                ->getUsers()
+        );
+    }
+
+    public function getLogoAction($id)
+    {
+        $user = $this->em()->find('Entity\User', $id);
+
+        if (!$user) {
+            throw new NotFoundException("requested user not found. Id: ".$id);
+        }
+
+        $creatorId = intval($this->user()->getId());
+
+        if (!$this->em()->getRepository('Entity\User')->isAvaliable($user->getId(), $creatorId)) {
             throw new ForbiddenException('user is not authorized');
         }
 
-        $userId = intval($this->_user->userInfo['id']);
+        header('Content-type:image/png');
 
-        $em = EM::get();
-        $users = $em->getRepository('Entity\User')->getUsers($userId);
-
-        return json_encode($users);
+        return stream_get_contents($user->getLogo());
     }
 
     public function getUser($args)
@@ -108,37 +120,6 @@ class UsersController extends BaseController
         }
 
         return json_encode($user->get());
-    }
-
-    public function getLogo($args)
-    {
-        if (!isset($args)
-            || !isset($args['id'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $creatorId = intval($this->_user->userInfo['id']);
-        $userId = intval($args['id']);
-
-        $em = EM::get();
-
-        $user = $em->getRepository('Entity\User')->findOneBy(['id' => $userId]);
-        if (!$user) {
-            throw new NotFoundException("requested user not found. Id: ". $userId);
-        }
-
-        if (!$em->getRepository('Entity\User')->isAvaliable($userId, $creatorId)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        header('Content-type:image/png');
-
-        return stream_get_contents($user->getLogo());
     }
 
     public function create($args)

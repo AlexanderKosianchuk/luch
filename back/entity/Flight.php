@@ -165,6 +165,11 @@ class Flight
         return $this->getFdr()->getId();
     }
 
+    public function getFdrCode()
+    {
+        return $this->getFdr()->getCode();
+    }
+
     public function getGuid()
     {
         return $this->guid;
