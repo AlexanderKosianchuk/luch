@@ -27,6 +27,7 @@ return [
             'getLogoAction',
             'figurePrintAction',
             'printBlankAction',
+            'setTemplateAction',
             'logoutAction'
         ]
     ],

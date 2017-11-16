@@ -110,82 +110,86 @@ class TemplatesController extends BaseController
         ]);
     }
 
-    public function CreateTemplate($flightId, $params, $tplName)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
+    public function setTemplateAction(
+        $flightId,
+        $templateName,
+        $analogParams,
+        $binaryParams = []
+    ) {
+        $flight = $this->em()->find('Entity\Flight', intval($flightId));
 
-        $apTableName = $flightInfo['apTableName'];
-        $bpTableName = $flightInfo['bpTableName'];
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-        $PSTTableName = $fdrInfo['paramSetTemplateListTableName'];
-
-        $paramsWithType = array();
-        $Ch = new Channel;
-
-        for ($i = 0; $i < count($params); $i++) {
-            if (!isset($params[$i]['id'])) {
-                continue;
-            }
-
-            $paramId = $params[$i]['id'];
-            $paramType = $params[$i]['paramType'];
-            $paramInfo = [];
-            if ($paramType === PARAM_TYPE_AP) {
-                $paramInfo = $fdr->GetParamInfoById($cycloApTableName, $paramId);
-                $paramInfo['paramType'] = PARAM_TYPE_AP;
-            } else if ($paramType === PARAM_TYPE_BP) {
-                $paramInfo = $fdr->GetParamInfoById($cycloBpTableName, $paramId);
-                $paramInfo['paramType'] = PARAM_TYPE_BP;
-            }
-
-            if (count($paramInfo) === 0) {
-                continue;
-            }
-
-            if (isset($paramInfo['paramType'])
-                && ($paramInfo['paramType'] == PARAM_TYPE_AP)
-            ) {
-                $apTableNameWithPrefix = $apTableName . "_" . $paramInfo['prefix'];
-                $paramMinMax = $Ch->GetParamMinMax($apTableNameWithPrefix,
-                $paramInfo['code'], $this->_user->username);
-
-                $paramsWithType[PARAM_TYPE_AP][] = [
-                    'code' => $paramInfo['code'],
-                    'min' => $paramMinMax['min'],
-                    'max' => $paramMinMax['max']
-                ];
-            } else if(isset($paramInfo['paramType'])
-                && ($paramInfo['paramType'] == PARAM_TYPE_BP)
-            ) {
-                $paramsWithType[PARAM_TYPE_BP][] = [
-                    'code' => $paramInfo['code']
-                ];
-            }
+        if (!$flight) {
+            throw new NotFoundException('fligth id: '.$flightId);
         }
-        unset($fdr);
 
-        $flightTemplate = new FlightTemplate;
-        $fdrCode = $fdrInfo['code'];
-        $templatesTable = $fdrInfo['paramSetTemplateListTableName'];
+        $paramsWithType = [];
+        foreach ($analogParams as $item) {
+            $param = $this->dic()
+                ->get('fdr')
+                ->getAnalogById(
+                    $flight->getFdrId(),
+                    intval($item['id'])
+                );
+
+            $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$param->getPrefix();
+            $minMax = $this->dic()
+                ->get('channel')
+                ->getParamMinMax(
+                    $table,
+                    $param->getCode(),
+                    $this->dic()->get('fdr')->getApType()
+                );
+
+            $paramsWithType[$this->dic()->get('fdr')->getApType()][] = [
+                'code' => $param->getCode(),
+                'min' => $minMax['min'],
+                'max' => $minMax['max']
+            ];
+        }
+
+        foreach ($binaryParams as $item) {
+            $param = $this->dic()
+                ->get('fdr')
+                ->getBinaryById(
+                    $flight->getFdrId(),
+                    intval($item['id'])
+                );
+
+            $paramsWithType[$this->dic()->get('fdr')->getBpType()][] = [
+                'code' => $param->getCode(),
+                'min' => 0,
+                'max' => 1
+            ];
+        }
+
+        $link = $this->connection()->create('fdrs');
+        $table = \Entity\FdrTemplate::getTable($link, $flight->getFdrCode());
+        $this->connection()->destroy($link);
 
         //if no template table - create it
-        if ($templatesTable == "") {
-            $templatesTable = $fdrCode . FlightTemplate::$TABLE_PREFIX;
-            $flightTemplate->CreatePSTTable($templatesTable);
-            $flightTemplate->AddPSTTable($fdrId, $templatesTable);
+        if ($table === null) {
+            $this->dic()
+                ->get('fdrTemplate')
+                ->createFdrTemplateTable($flight->getFdrCode());
         }
-        $flightTemplate->DeleteTemplate($PSTTableName, $tplName, $this->_user->username);
-        $flightTemplate->CreateTplWithDistributedParams($PSTTableName, $tplName, $paramsWithType, $this->_user->username);
 
-        unset($Ch);
-        unset($flightTemplate);
+        $this->dic()
+            ->get('fdrTemplate')
+            ->delete(
+                $flight->getFdrCode(),
+                $templateName,
+                $this->user()->getId()
+        );
+
+        $this->dic()
+            ->get('fdrTemplate')
+            ->createWithDistributedParams(
+                $flight->getFdrCode(),
+                $templateName,
+                $paramsWithType
+            );
+
+        return json_encode('ok');
     }
 
     public function GetDefaultTplParams($extFlightId)
@@ -277,27 +281,6 @@ class TemplatesController extends BaseController
         $answ["data"] = $data;
 
         return json_encode($answ);
-    }
-
-    public function setTemplate($data)
-    {
-        if (!isset($data['flightId'])
-            || !isset($data['templateName'])
-            || !isset($data['analogParams'])
-            || !isset($data['binaryParams'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-        $templateName = $data['templateName'];
-        $analogParams = $data['analogParams'];
-        $binaryParams = $data['binaryParams'];
-
-
-        $this->CreateTemplate($flightId, array_merge($analogParams, $binaryParams), $templateName);
-
-        return json_encode('ok');
     }
 
     public function mergeTemplates($args)

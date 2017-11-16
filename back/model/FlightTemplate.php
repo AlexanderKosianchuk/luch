@@ -405,66 +405,6 @@ class FlightTemplate
         unset($c);
     }
 
-    public function CreateTplWithDistributedParams(
-        $PSTTableName,
-        $tplName,
-        $paramsWithType,
-        $username
-    ) {
-        $apCount = count($paramsWithType[PARAM_TYPE_AP]);
-
-        for($i = 0; $i < count($paramsWithType[PARAM_TYPE_AP]); $i++)
-        {
-            $paramCode = $paramsWithType[PARAM_TYPE_AP][$i]['code'];
-            $yMax = $paramsWithType[PARAM_TYPE_AP][$i]['max'];
-            $yMin = $paramsWithType[PARAM_TYPE_AP][$i]['min'];
-            $curCorridor = 0;
-
-            if(($i == 0) && ($yMax > 1)){
-                $yMax += $yMax * 0.15;//prevent first(top) param out chart boundary
-            }
-
-            if($yMax == $yMin) {
-                $yMax += 0.001; //if $yMax == $yMin parameter builds as straight line in bottom of chart
-            }
-
-            if($yMax > 0) {
-                $curCorridor = (($yMax - $yMin) * 1.05);
-            } else {
-                $curCorridor = -(($yMin - $yMax) * 1.05);
-            }
-
-            $axisMax = $yMax + ($i * $curCorridor);
-            $axisMin = $yMin - (($apCount - $i) * $curCorridor);
-
-            $this->AddParamToTemplateWithMinMax($PSTTableName,
-                $tplName, $paramCode, $axisMin, $axisMax, $username);
-        }
-
-        if(isset($paramsWithType[PARAM_TYPE_BP]))
-        {
-            $busyCorridor = (($apCount -1) / $apCount * 100);
-            $freeCorridor = 100 - $busyCorridor;//100%
-
-            $bpCount = count($paramsWithType[PARAM_TYPE_BP]);
-            $curCorridor = $freeCorridor / $bpCount;
-            $j = 0;
-
-            for($i = $apCount; $i < $apCount + $bpCount; $i++)
-            {
-                $axisMax = 100 - ($curCorridor * $j);
-                $axisMin = 0 - ($curCorridor * $j);
-
-                $this->AddParamToTemplateWithMinMax($PSTTableName,
-                    $tplName, $paramsWithType[PARAM_TYPE_BP][$j]['code'],
-                    $axisMin, $axisMax, $username);
-                $j++;
-            }
-        }
-
-        return false;
-    }
-
     public function createTemplate($templateName, $templateItems, $tableName, $username)
     {
         $this->DeleteTemplate($tableName, $templateName, $username);

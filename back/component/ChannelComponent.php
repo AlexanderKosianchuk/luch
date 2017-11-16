@@ -84,7 +84,7 @@ class ChannelComponent extends BaseComponent
                 $result = $link->query($query);
 
                 while ($row = $result->fetch_array()) {
-                    $point = array($row['time'], $row[$code]);
+                    $point = array(intval($row['time']), floatval($row[$code]));
                     $pointPairList[] = $point;
                 }
                 $result->free();
@@ -96,7 +96,7 @@ class ChannelComponent extends BaseComponent
                 $result = $link->query($query);
 
                 while ($row = $result->fetch_array()) {
-                    $point = array($row['time'], $row[$code]);
+                    $point = array(intval($row['time']), floatval($row[$code]));
                     $pointPairList[] = $point;
                 }
 
@@ -113,7 +113,7 @@ class ChannelComponent extends BaseComponent
                 $result = $link->query($query);
 
                 while($row = $result->fetch_array()) {
-                    $point = array($row['time'], $row[$code]);
+                    $point = array(intval($row['time']), floatval($row[$code]));
                     $pointPairList[] = $point;
                 }
 
@@ -130,7 +130,7 @@ class ChannelComponent extends BaseComponent
                 $result = $link->query($query);
 
                 while ($row = $result->fetch_array()) {
-                    $point = array($row['time'], $row[$code]);
+                    $point = array(intval($row['time']), floatval($row[$code]));
                     $pointPairList[] = $point;
                 }
 
@@ -347,24 +347,27 @@ class ChannelComponent extends BaseComponent
         return $normTime;
     }
 
-    public function GetParamMinMax($apTableName, $paramCode)
+    public function getParamMinMax($table, $paramCode)
     {
-        $minMax = array();
+        $minMax = [
+            'min' => 0,
+            'max' => 1
+        ];
 
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
-
-        $query = "SELECT MIN(`".$paramCode."`), MAX(`".$paramCode."`) FROM `".$apTableName."` WHERE 1;";
+        $query = "SELECT MIN(`".$paramCode."`), MAX(`".$paramCode."`) FROM `".$table."` WHERE 1;";
+        $link = $this->connection()->create('flights');
         $result = $link->query($query);
 
-        $row = $result->fetch_array();
-        $minMax['min'] = $row["MIN(`".$paramCode."`)"];
-        $minMax['max'] = $row["MAX(`".$paramCode."`)"];
+        if ($row = $result->fetch_array()) {
+            $minMax = [
+                'min' => $row["MIN(`".$paramCode."`)"],
+                'max' => $row["MAX(`".$paramCode."`)"]
+            ];
+        }
 
         $result->free();
-        $c->Disconnect();
+        $this->connection()->destroy($link);
 
         return $minMax;
-
     }
 }

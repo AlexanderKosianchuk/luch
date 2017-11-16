@@ -8,7 +8,7 @@ use EntityTraits\dynamicTable;
  * FdrTemplate
  *
  * @Table(name="NULL")
- * @Entity
+ * @Entity(repositoryClass="Repository\FdrTemplateRepository")
  */
 class FdrTemplate
 {
@@ -69,16 +69,6 @@ class FdrTemplate
         $this->paramCode = $paramsCode;
     }
 
-    public function getMinYaxis()
-    {
-        return $this->minYaxis;
-    }
-
-    public function getMaxYaxis()
-    {
-        return $this->maxYaxis;
-    }
-
     public function setMinYaxis($minYaxis)
     {
         $this->minYaxis = $minYaxis;
@@ -94,9 +84,24 @@ class FdrTemplate
         $this->userId = $userId;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function getParamCode()
     {
         return $this->paramCode;
+    }
+
+    public function getMinYaxis()
+    {
+        return $this->minYaxis;
+    }
+
+    public function getMaxYaxis()
+    {
+        return $this->maxYaxis;
     }
 
     public static function getPrefix()

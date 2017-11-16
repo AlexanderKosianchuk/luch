@@ -218,6 +218,8 @@ class FdrTemplateComponent extends BaseComponent
         foreach ($templates as $template) {
             $this->em('fdrs')->remove($template);
         }
+
+        $this->em('fdrs')->flush();
     }
 
     public function getParamMinMax($fdrCode, $templateName, $code, $userId = null)
@@ -265,6 +267,85 @@ class FdrTemplateComponent extends BaseComponent
         $template->setMaxYaxis($range->max);
 
         $this->em('fdrs')->persist($template);
+        $this->em('fdrs')->flush();
+    }
+
+    public function createWithDistributedParams(
+        $fdrCode,
+        $tplName,
+        $paramsWithType,
+        $userId = null
+    ) {
+        if ($userId === null) {
+            $userId = $this->user()->getId();
+        }
+
+        $apParams = $paramsWithType[$this->fdrComponent->getApType()];
+        $apCount = count($apParams);
+
+        for ($i = 0; $i < $apCount; $i++) {
+            $param = $apParams[$i];
+            $paramCode = $param['code'];
+            $yMax = $param['max'];
+            $yMin = $param['min'];
+            $curCorridor = 0;
+
+            if(($i == 0) && ($yMax > 1)){
+                $yMax += $yMax * 0.15;//prevent first(top) param out chart boundary
+            }
+
+            if($yMax == $yMin) {
+                $yMax += 0.001; //if $yMax == $yMin parameter builds as straight line in bottom of chart
+            }
+
+            if($yMax > 0) {
+                $curCorridor = (($yMax - $yMin) * 1.05);
+            } else {
+                $curCorridor = -(($yMin - $yMax) * 1.05);
+            }
+
+            $axisMax = $yMax + ($i * $curCorridor);
+            $axisMin = $yMin - (($apCount - $i) * $curCorridor);
+
+            $this->em('fdrs')
+                ->getRepository('Entity\FdrTemplate')
+                ->insert(
+                    $this->em('fdrs'),
+                    $tplName,
+                    $paramCode,
+                    $axisMin,
+                    $axisMax,
+                    $this->user()->getId()
+                );
+        }
+
+        if (isset($paramsWithType[$this->fdrComponent->getBpType()])) {
+            $bpParams = $paramsWithType[$this->fdrComponent->getBpType()];
+            $busyCorridor = (($apCount -1) / $apCount * 100);
+            $freeCorridor = 100 - $busyCorridor;//100%
+
+            $bpCount = count($bpParams);
+            $curCorridor = $freeCorridor / $bpCount;
+            $j = 0;
+
+            for ($i = $apCount; $i < $apCount + $bpCount; $i++) {
+                $paramCode = $bpParams[$i - $apCount]['code'];
+                $axisMax = 100 - ($curCorridor * $j);
+                $axisMin = 0 - ($curCorridor * $j);
+
+                $this->em('fdrs')
+                    ->getRepository('Entity\FdrTemplate')
+                    ->insert(
+                        $this->em('fdrs'),
+                        $tplName,
+                        $paramCode,
+                        $axisMin,
+                        $axisMax,
+                        $this->user()->getId()
+                    );
+            }
+        }
+
         $this->em('fdrs')->flush();
     }
 }

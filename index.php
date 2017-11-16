@@ -51,22 +51,30 @@ $data = array_merge(
 );
 
 $safeData = [];
+
+$stripSlashes = function($itemValue) {
+    $itemValue = htmlspecialchars($itemValue, ENT_IGNORE, 'utf-8');
+    $itemValue = strip_tags($itemValue);
+    return stripslashes($itemValue);
+};
+
 foreach (array_keys($data) as $key) {
     $input = null;
 
     if (is_array($data[$key])) {
         $input = [];
         foreach ($data[$key] as $itemKey => $itemValue) {
-            $itemValue = htmlspecialchars($itemValue, ENT_IGNORE, 'utf-8');
-            $itemValue = strip_tags($itemValue);
-            $itemValue = stripslashes($itemValue);
-
-            $input[$itemKey] = $itemValue;
+            if (is_array($itemValue)) {
+                $input[$itemKey] = [];
+                foreach ($itemValue as $subItemKey => $subItemValue) {
+                    $input[$itemKey][$subItemKey] = $stripSlashes($subItemValue);
+                }
+            } else {
+                $input[$itemKey] = $stripSlashes($itemValue);
+            }
         }
     } else {
-        $input = htmlspecialchars($data[$key], ENT_IGNORE, 'utf-8');
-        $input = strip_tags($input);
-        $input = stripslashes($input);
+        $input = $stripSlashes($data[$key]);
     }
 
     $safeData[$key] = $input;

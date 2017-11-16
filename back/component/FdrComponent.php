@@ -328,6 +328,26 @@ class FdrComponent extends BaseComponent
             ]);
     }
 
+    public function getAnalogById($fdrId, $id)
+    {
+        $userId = $this->user()->getId();
+
+        $fdr = $this->em()->find('Entity\Fdr', [
+            'id' => $fdrId,
+            'userId' => $userId
+        ]);
+
+        if (!$fdr) {
+            throw new Exception('FDR not found. Id: '.$fdrId, 1);
+        }
+
+        $this->setAnalogParamsTable($fdr->getCode());
+
+        return $this
+            ->em('fdrs')
+            ->find('Entity\FdrAnalogParam', $id);
+    }
+
     public function getBinaryByCode($fdrId, $code)
     {
         $userId = $this->user()->getId();
@@ -348,6 +368,26 @@ class FdrComponent extends BaseComponent
             ->findOneBy([
                 'code' => $code
             ]);
+    }
+
+    public function getBinaryById($fdrId, $id)
+    {
+        $userId = $this->user()->getId();
+
+        $fdr = $this->em()->find('Entity\Fdr', [
+            'id' => $fdrId,
+            'userId' => $userId
+        ]);
+
+        if (!$fdr) {
+            throw new Exception('FDR not found. Id: '.$fdrId, 1);
+        }
+
+        $this->setBinaryParamsTable($fdr->getCode());
+
+        return $this
+            ->em('fdrs')
+            ->find('Entity\FdrBinaryParam', $id);
     }
 
     public function getParamByCode($fdrId, $code)

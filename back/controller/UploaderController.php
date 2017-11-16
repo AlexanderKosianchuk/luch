@@ -139,7 +139,7 @@ class UploaderController extends BaseController
             ->process(
                 $uploadingUid,
                 $storedFlightFile,
-                0,
+                $flight->getStartCopyTime(),
                 $totalPersentage,
                 $fdrId,
                 $calibrationId
