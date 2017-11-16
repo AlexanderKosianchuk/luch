@@ -118,6 +118,11 @@ class User
         return strval($this->login);
     }
 
+    public function getName()
+    {
+        return strval($this->name);
+    }
+
     public function getLang()
     {
         return strval($this->lang);
@@ -126,6 +131,11 @@ class User
     public function getLogo()
     {
         return $this->logo;
+    }
+
+    public function getCompany()
+    {
+        return $this->company;
     }
 
     public function getCreatorId()

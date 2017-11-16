@@ -397,6 +397,7 @@ class EventComponent extends BaseComponent
                 'text' => $event['text'],
                 'algText' => $event['algText'],
                 'status' => $event['status'],
+                'falseAlarm' => $flightEvent['falseAlarm'],
                 'excAditionalInfo' => $formatedSettlements,
                 'visualization' => $event['visualization'],
                 'reliability' => (intval($flightEvent['falseAlarm']) === 0),

@@ -26,6 +26,7 @@ return [
             'setParamMinMaxAction',
             'getLogoAction',
             'figurePrintAction',
+            'printBlankAction',
             'logoutAction'
         ]
     ],

@@ -205,6 +205,20 @@ class Flight
         return $this->arrivalAirport;
     }
 
+    public function getPerformer()
+    {
+        return $this->performer;
+    }
+
+    public function getAditionalInfo()
+    {
+        if (is_array(json_decode($this->aditionalInfo, true))) {
+            return json_decode($this->aditionalInfo, true);
+        }
+
+        return [];
+    }
+
     public function get($isArray = false)
     {
         $flightInfo = [
@@ -222,11 +236,8 @@ class Flight
            'dt' => $this->dt,
         ];
 
-        if (is_array(json_decode($this->aditionalInfo, true))) {
-            $aditionalInfo = json_decode($this->aditionalInfo, true);
-            $flightInfo = array_merge($flightInfo, $aditionalInfo);
-            $flightInfo['aditionalInfo'] = $aditionalInfo;
-        }
+        $flightInfo = array_merge($flightInfo, $this->getAditionalInfo());
+        $flightInfo['aditionalInfo'] = $this->getAditionalInfo();
 
         if ($isArray) {
             return $flightInfo;
