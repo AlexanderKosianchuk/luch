@@ -4,13 +4,9 @@ export default function flightDataTablePrint(payload) {
     return function(dispatch) {
         let form = document.createElement('form');
         form.target = '_blank';
-        form.action = ENTRY_URL;
+        form.method = 'POST';
+        form.action = ENTRY_URL+'chart/figurePrint';
         form.style = 'display:none;';
-
-        let actionInput = document.createElement('input');
-        actionInput.name = 'action';
-        actionInput.value = 'chart/figurePrint';
-        form.appendChild(actionInput);
 
         let flightIdInput = document.createElement('input');
         flightIdInput.name = 'flightId';

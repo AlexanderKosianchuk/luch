@@ -25,6 +25,7 @@ return [
             'getLegendAction',
             'setParamMinMaxAction',
             'getLogoAction',
+            'figurePrintAction',
             'logoutAction'
         ]
     ],

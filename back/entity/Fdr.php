@@ -150,6 +150,11 @@ class Fdr
         return $this->stepLength;
     }
 
+    public function getStepDivider()
+    {
+        return $this->stepDivider;
+    }
+
     public function getFrameLength()
     {
         return $this->frameLength;

@@ -255,27 +255,25 @@ class ChannelComponent extends BaseComponent
     }
 
     public function GetNormalizedApParam(
-        $apTableName,
+        $tableName,
         $stepDivider,
         $code,
         $steps,
-        $pefix,
         $startFrame,
         $endFrame
     ) {
-        $tableName = $apTableName . "_" . $pefix;
         $duplication = $stepDivider / $steps;
 
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
+        $query = 'SELECT `'.$code.'` FROM `'.$tableName.'` WHERE '
+            .'`frameNum` >= ? AND `frameNum` < ? ORDER BY `frameNum` ASC;';
 
-        $query = "SELECT `".$code."` FROM `".$tableName."` WHERE
-            `frameNum` >= ".$startFrame." AND `frameNum` < ".$endFrame."
-            ORDER BY `frameNum`ASC;";
+        $link = $this->connection()->create('flights');
+        $stmt = $link->prepare($query);
+        $stmt->bind_param('ii', $startFrame, $endFrame);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        $result = $link->query($query);
-
-        $normArr = array();
+        $normArr = [];
         while ($row = $result->fetch_array()) {
             array_push($normArr, $row[$code]);
             for ($i = 1; $i < $duplication; $i++) {
@@ -284,64 +282,65 @@ class ChannelComponent extends BaseComponent
         }
 
         $result->free();
-        $c->Disconnect();
+        $this->connection()->destroy($link);
 
         return $normArr;
     }
 
-    public function GetNormalizedBpParam($extBpTableName,
-            $extStepDivider, $extCode, $extFreq, $extPefix,
-            $extStartFrame, $extEndFrame)
-    {
-        $tableName = $extBpTableName . "_".$extPefix;
-        $stepDivider = $extStepDivider;
-        $code = $extCode;
-        $startFrame = $extStartFrame;
-        $endFrame = $extEndFrame;
-        $steps = $extFreq;
+    public function getNormalizedBpParam(
+        $tableName,
+        $stepDivider,
+        $code,
+        $steps,
+        $startFrame,
+        $endFrame
+    ) {
         $duplication = $stepDivider / $steps;
         $totalRows = ($endFrame - $startFrame) * $stepDivider;
 
-        $c = new DataBaseConnector;
-        $link = $c->Connect();
 
-        $query = "SELECT `frameNum`, `time` FROM `".$tableName."` WHERE `code` = '" . $code . "' ".
-            "AND `frameNum` >= ".$startFrame." AND `frameNum` < ".$endFrame. " ".
-            "ORDER BY `time` ASC;";
+        $query = "SELECT `frameNum`, `time` FROM `".$tableName."` WHERE `code` = ? ".
+            "AND `frameNum` >= ? AND `frameNum` < ? ORDER BY `time` ASC;";
 
-        $result = $link->query($query);
+        $link = $this->connection()->create('flights');
+        $stmt = $link->prepare($query);
+        $stmt->bind_param('sii', $code, $startFrame, $endFrame);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         $normArr = array();
-        for($i = 0; $i < $totalRows; $i++)
-        {
+        for ($i = 0; $i < $totalRows; $i++) {
             $normArr[$i] = 0;
         }
 
-        while($row = $result->fetch_array())
-        {
+        while ($row = $result->fetch_array()) {
             $position = ($row['frameNum'] - $startFrame) * $stepDivider;
             $normArr[$position] = 1;
-            for($i = 1; $i < $stepDivider; $i++)
-            {
+            for ($i = 1; $i < $stepDivider; $i++) {
                 $position = ($row['frameNum'] - $startFrame) * $stepDivider + $i;
                 $normArr[$position] = 1;
             }
         }
 
         $result->free();
-        $c->Disconnect();
+        $this->connection()->destroy($link);
 
         return $normArr;
     }
 
-    public function NormalizeTime($stepDivider, $stepLength,
-            $totalFrameNum, $startCopyTime, $startFrame, $endFrame)
-    {
+    public function normalizeTime(
+        $stepDivider,
+        $stepLength,
+        $totalFrameNum,
+        $startCopyTime,
+        $startFrame,
+        $endFrame
+    ) {
         $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
 
         $normTime = [];
         $currTime = $startCopyTime * 1000;
-        for($i = $startFrame; $i < ($endFrame * $stepDivider); $i++) {
+        for ($ii = $startFrame; $ii < ($endFrame * $stepDivider); $ii++) {
             array_push($normTime, date("H:i:s", $currTime / 1000). "." . substr($currTime, -3));
             $currTime += $stepMicroTime;
         }

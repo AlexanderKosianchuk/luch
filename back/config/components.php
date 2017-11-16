@@ -22,4 +22,5 @@ return [
     'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
     'eventProcessor' => DI\object('Component\EventProcessingComponent'),
     'channel' => DI\object('Component\ChannelComponent'),
+    'osInfo' => DI\object('Component\OsInfoComponent')
 ];
