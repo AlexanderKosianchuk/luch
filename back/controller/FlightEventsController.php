@@ -86,7 +86,7 @@ class FlightEventsController extends BaseController
         ]);
     }
 
-    public function printBlankAction($flightId, $colored = true, $sections = [])
+    public function printBlankAction($flightId, $colored = false, $sections = [])
     {
         $colored = $colored === 'true' ? true : false;
         $flight = $this->em()->find('Entity\Flight', $flightId);
@@ -365,30 +365,13 @@ class FlightEventsController extends BaseController
         '000', '001', '002', '003', 'other'
     ];
 
-    public function changeReliability($args)
+    public function changeReliabilityAction($flightId, $eventId, $eventType, $reliability = false)
     {
-        if (!isset($args['flightId'])
-            || !is_int(intval($args['flightId']))
-            || !isset($args['eventId'])
-            || !is_int(intval($args['eventId']))
-            || !isset($args['eventType'])
-            || !is_int(intval($args['eventType']))
-            || !in_array(intval($args['eventType']), [1, 2])
-            || !isset($args['reliability'])
-            || !in_array($args['reliability'], ['true', 'false'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $flightId = intval($args['flightId']);
-        $eventId = intval($args['eventId']);
-        $eventType = intval($args['eventType']);
-        $reliability = ($args['reliability'] === 'true') ? true : false;
-        $em = EM::get();
+        $falseAlarm = $reliability === 'true' ? false : true;
+        $eventType = intval($eventType);
 
         $flightToFolders = $this->em()->getRepository('Entity\FlightToFolder')
-            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+            ->findOneBy(['userId' => $this->user()->getId(), 'flightId' => $flightId]);
 
         if ($flightToFolders === null) {
             throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
@@ -400,16 +383,12 @@ class FlightEventsController extends BaseController
             throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
-        if ($eventType === 1) {
-            $FEx = new FlightException;
-            $extExcTableName = $FEx->getTableName($flight->getGuid());
-            $FEx->UpdateFalseAlarmState($extExcTableName, $eventId, $reliability);
-        }
-
-        if ($eventType === 2) {
-            $val = $this->em()->getRepository('Entity\FlightEvent')
-                ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
-        }
+        $this->dic()->get('event')->updateFalseAlarm(
+            $flight->getGuid(),
+            $eventType,
+            $eventId,
+            $falseAlarm
+        );
 
         return json_encode('ok');
     }

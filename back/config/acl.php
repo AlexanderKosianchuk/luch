@@ -38,7 +38,8 @@ return [
             'flightUploadingOptionsAction',
             'flightUploaderPreviewAction',
             'flightProccesAndCheckAction',
-            'flightEasyUploadAction'
+            'flightEasyUploadAction',
+            'changeReliabilityAction'
         ]
     ],
     'admin' => [

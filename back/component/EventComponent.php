@@ -410,6 +410,33 @@ class EventComponent extends BaseComponent
         return $array;
     }
 
+    public function updateFalseAlarm(
+        $flightGuid,
+        $eventType,
+        $eventId,
+        $falseAlarm
+    ) {
+        if ($eventType === 1) {
+            $this->setupFlightEventOldEntity($flightGuid);
+
+            $flightEventOld = $this->em('flights')
+                ->find('Entity\FlightEventOld', $eventId);
+
+            $flightEventOld->setFalseAlarm($falseAlarm);
+            $this->em('flights')->persist($flightEventOld);
+            $this->em('flights')->flush();
+        } else if ($eventType === 2) {
+            $this->setupFlightEventEntity($flightGuid);
+
+            $flightEvent = $this->em('flights')
+                ->find('Entity\FlightEvent', $eventId);
+
+            $flightEvent->setFalseAlarm($falseAlarm);
+            $this->em('flights')->persist($flightEvent);
+            $this->em('flights')->flush();
+        }
+    }
+
     public function timestampToDuration($microsecsCount)
     {
         if ($microsecsCount > 1000) {

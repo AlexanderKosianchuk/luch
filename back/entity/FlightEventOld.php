@@ -93,6 +93,11 @@ class FlightEventOld
         return self::$_prefix;
     }
 
+    public function setFalseAlarm($falseAlarm)
+    {
+        $this->falseAlarm = $falseAlarm;
+    }
+
     public function get($isArray = false)
     {
         $flightEvent = [
