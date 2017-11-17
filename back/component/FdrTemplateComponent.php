@@ -283,7 +283,8 @@ class FdrTemplateComponent extends BaseComponent
         $apParams = $paramsWithType[$this->fdrComponent->getApType()];
         $apCount = count($apParams);
 
-        for ($i = 0; $i < $apCount; $i++) {
+        // start from top
+        for ($i = ($apCount - 1); $i >= 0; $i--) {
             $param = $apParams[$i];
             $paramCode = $param['code'];
             $yMax = $param['max'];
@@ -343,6 +344,7 @@ class FdrTemplateComponent extends BaseComponent
                         $axisMax,
                         $this->user()->getId()
                     );
+                $j++;
             }
         }
 

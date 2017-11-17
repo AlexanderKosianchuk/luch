@@ -918,23 +918,4 @@ class UploaderController extends BaseController
             ]);
         }
     }
-
-    public function copyToRuntime($data)
-    {
-        if (!isset($_FILES['flightFile']['tmp_name'])) {
-            throw new BadRequestException(json_encode($_FILES));
-        }
-
-        $fileName = strval($_FILES['flightFile']['tmp_name']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $storedName = RuntimeManager::storeUploadedFile($fileName);
-
-        return json_encode([
-            'status' => 'ok',
-            'file' => $storedName
-        ]);
-    }
-
-
 }

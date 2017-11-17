@@ -192,164 +192,91 @@ class TemplatesController extends BaseController
         return json_encode('ok');
     }
 
-    public function GetDefaultTplParams($extFlightId)
+    public function removeTemplateAction($flightId, $templateName)
     {
-        $flightId = $extFlightId;
+        $flight = $this->em()->find('Entity\Flight', intval($flightId));
 
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-
-        $flightTemplate = new FlightTemplate;
-        $params = $flightTemplate->GetDefaultTemplateParams($paramSetTemplateListTableName, $this->_user->username);
-        unset($flightTemplate);
-
-        $apParams = array();
-        $bpParams = array();
-        foreach($params as $paramCode) {
-            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-            if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-                $apParams[] = $paramInfo['code'];
-            } else if($paramInfo["paramType"] == PARAM_TYPE_BP) {
-                $bpParams[] = $paramInfo['code'];
-            }
+        if (!$flight) {
+            throw new NotFoundException('fligth id: '.$flightId);
         }
 
-        unset($fdr);
-        return array(
-            'ap' => $apParams,
-            'bp' => $bpParams);
-    }
-
-    public function GetTplParamCodes($flightId, $tplName)
-    {
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $paramSetTemplateListTableName = $fdrInfo['paramSetTemplateListTableName'];
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-
-        $flightTemplate = new FlightTemplate;
-        $params = $flightTemplate->GetPSTByName($paramSetTemplateListTableName, $tplName, $this->_user->username);
-        unset($flightTemplate);
-
-        $apParams = array();
-        $bpParams = array();
-        foreach ($params as $paramCode) {
-            $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-            if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
-                $apParams[] = $paramInfo['code'];
-            } else if($paramInfo["paramType"] == PARAM_TYPE_BP) {
-                $bpParams[] = $paramInfo['code'];
-            }
-        }
-
-        unset($fdr);
-        return [
-            'ap' => $apParams,
-            'bp' => $bpParams
-        ];
-    }
-
-    public function getDefaultTemplateParamCodes($data)
-    {
-        if (!isset($data['flightId'])) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-
-        $params = $this->GetDefaultTplParams($flightId);
-
-        $data = array(
-                'ap' => $params['ap'],
-                'bp' => $params['bp']
-        );
-        $answ["status"] = "ok";
-        $answ["data"] = $data;
-
-        return json_encode($answ);
-    }
-
-    public function mergeTemplates($args)
-    {
-        if (!isset($args['flightId'])
-            || !isset($args['resultTemplateName'])
-            || !isset($args['templatesToMerge'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $flightId = intval($args['flightId']);
-        $resultTemplateName = $args['resultTemplateName'];
-        $templatesToMerge = json_decode(html_entity_decode($args['templatesToMerge']));
-        $username = $this->_user->username;
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $cycloApTableName = $fdrInfo['gradiApTableName'];
-        $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-        $tableName = $fdrInfo['paramSetTemplateListTableName'];
-
-        $templatesParams = [];
-
-        $flightTemplate = new FlightTemplate;
-        foreach ($templatesToMerge as $templateName) {
-            $params = $flightTemplate->GetPSTByName($tableName, $templateName, $username);
-
-            for ($i = 0; $i < count($params); $i++) {
-                $paramCode = $params[$i];
-                $templatesParams[] = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-            }
-        }
-
-        $this->CreateTemplate($flightId, $templatesParams, $resultTemplateName);
+        $this->dic()
+            ->get('fdrTemplate')
+            ->delete($flight->getFdrCode(), $templateName);
 
         return json_encode('ok');
     }
 
-    public function removeTemplate($args)
-    {
-        if (!isset($args['flightId'])
-            || !isset($args['templateName'])
-        ) {
-            throw new BadRequestException(json_encode($args));
+    public function mergeTemplatesAction(
+        $flightId,
+        $resultTemplateName,
+        $templatesToMerge
+    ) {
+        $flight = $this->em()->find('Entity\Flight', intval($flightId));
+
+        if (!$flight) {
+            throw new NotFoundException('fligth id: '.$flightId);
         }
 
-        $flightId = intval($args['flightId']);
-        $templateName = $args['templateName'];
-        $username = $this->_user->username;
+        $templatesToMerge = json_decode(html_entity_decode($templatesToMerge));
 
-        $flight = new Flight;
-        $flightInfo = $flight->getFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($flight);
+        $paramCodes = [];
+        foreach ($templatesToMerge as $templateName) {
+            $templateRows = $this->dic()
+                ->get('fdrTemplate')
+                ->getTemplateByName($flight->getFdrCode(), $templateName);
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $templateTable = $fdrInfo['paramSetTemplateListTableName'];
-        unset($fdr);
+            foreach ($templateRows as $row) {
+                if (!in_array($row->getParamCode(), $paramCodes)) {
+                    $paramCodes[] = $row->getParamCode();
+                }
+            }
+        }
 
-        $template = new FlightTemplate;
-        $template->DeleteTemplate($templateTable, $templateName, $username);
-        unset($template);
+        $templatesParams = [];
+        foreach ($paramCodes as $code) {
+            $paramForTemplate = [
+                'code' => $code,
+                'min' => 0,
+                'max' => 1
+            ];
+
+            $param = $this->dic()->get('fdr')->getParamByCode(
+                $flight->getFdrId(),
+                $code
+            );
+
+            if ($param['type'] === $this->dic()->get('fdr')->getApType()) {
+                $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$param['prefix'];
+                $minMax = $this->dic()
+                    ->get('channel')
+                    ->getParamMinMax(
+                        $table,
+                        $code
+                    );
+
+                $paramForTemplate['min'] = $minMax['min'];
+                $paramForTemplate['max'] = $minMax['max'];
+            }
+
+            $templatesParams[$param['type']][] = $paramForTemplate;
+        }
+
+        $this->dic()
+            ->get('fdrTemplate')
+            ->delete(
+                $flight->getFdrCode(),
+                $resultTemplateName,
+                $this->user()->getId()
+        );
+
+        $this->dic()
+            ->get('fdrTemplate')
+            ->createWithDistributedParams(
+                $flight->getFdrCode(),
+                $resultTemplateName,
+                $templatesParams
+            );
 
         return json_encode('ok');
     }

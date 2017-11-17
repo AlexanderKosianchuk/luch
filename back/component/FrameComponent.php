@@ -122,7 +122,14 @@ class FrameComponent extends BaseComponent
                     $alg = str_replace("[minus]", $paramCyclo['minus'], $alg);
                     $alg = str_replace("[xy]", json_encode($paramCyclo['xy']), $alg);
 
-                    eval($alg);//$phisics must be assigned in alg
+                    error_reporting(0);
+                    try {
+                        eval($alg);//$phisics must be assigned in alg
+                    } catch (Exception $e) {
+                        error_log('Eval exc. '.$paramCyclo['code'].'. '.$e);
+                        $phisics = 0;
+                    }
+                    error_reporting(E_ALL);
 
                     array_push($interview, $phisics);
 

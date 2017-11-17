@@ -51,30 +51,6 @@ class FlightsController extends BaseController
         return json_encode($items);
     }
 
-    public function changeFlightPath($data)
-    {
-        if (!isset($data['id'])
-            || !isset($data['parentId'])
-            || !is_int(intval($data['id']))
-            || !is_int(intval($data['parentId']))
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $sender = intval($data['id']);
-        $target = intval($data['parentId']);
-
-        $Fd = new Folder;
-        $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-        unset($Fd);
-
-        return json_encode([
-            'id' => $sender,
-            'parentId' => $target
-        ]);
-    }
-
     public function deleteFlightAction($id)
     {
         $this->dic()->get('flight')
@@ -83,6 +59,32 @@ class FlightsController extends BaseController
         return json_encode('ok');
     }
 
+    public function getFlightInfoAction($flightId)
+    {
+        $flightId = intval($flightId);
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->findOneBy(['id' => $flightId]);
+
+        if (!$flight) {
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
+        }
+
+        $flightTiming = $this->dic()->get('flight')->getFlightTiming($flightId);
+
+        return json_encode([
+            'data' => array_merge(
+                $flight->get(true), [
+                    'fdrId' => $flight->getFdr()->getName(),
+                    'fdrName' => $flight->getFdr()->getName(),
+                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
+                ]
+            ),
+            'duration' => $flightTiming['duration'],
+            'startFlightTime' => $flightTiming['startCopyTime'],
+            'stepLength' => $flightTiming['stepLength'],
+        ]);
+    }
+    
     public function processFlight($data)
     {
         if (!isset($data['id'])
@@ -143,6 +145,30 @@ class FlightsController extends BaseController
 
         unset($fdr);
         return json_encode('ok');
+   }
+
+   public function changeFlightPath($data)
+   {
+       if (!isset($data['id'])
+           || !isset($data['parentId'])
+           || !is_int(intval($data['id']))
+           || !is_int(intval($data['parentId']))
+       ) {
+           throw new BadRequestException(json_encode($data));
+       }
+
+       $userId = intval($this->_user->userInfo['id']);
+       $sender = intval($data['id']);
+       $target = intval($data['parentId']);
+
+       $Fd = new Folder;
+       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
+       unset($Fd);
+
+       return json_encode([
+           'id' => $sender,
+           'parentId' => $target
+       ]);
    }
 
    public function ExportFlightsAndFolders($flightIds, $folderDest)
@@ -533,31 +559,5 @@ class FlightsController extends BaseController
 
         unset($U);
         return $figPrRow;
-    }
-
-    public function getFlightInfoAction($flightId)
-    {
-        $flightId = intval($flightId);
-        $flight = $this->em()->getRepository('Entity\Flight')
-            ->findOneBy(['id' => $flightId]);
-
-        if (!$flight) {
-            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
-        }
-
-        $flightTiming = $this->dic()->get('flight')->getFlightTiming($flightId);
-
-        return json_encode([
-            'data' => array_merge(
-                $flight->get(true), [
-                    'fdrId' => $flight->getFdr()->getName(),
-                    'fdrName' => $flight->getFdr()->getName(),
-                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
-                ]
-            ),
-            'duration' => $flightTiming['duration'],
-            'startFlightTime' => $flightTiming['startCopyTime'],
-            'stepLength' => $flightTiming['stepLength'],
-        ]);
     }
 }

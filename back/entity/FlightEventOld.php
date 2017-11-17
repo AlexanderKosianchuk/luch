@@ -28,35 +28,35 @@ class FlightEventOld
     /**
      * @var integer
      *
-     * @Column(name="frame_num", type="integer", nullable=false)
+     * @Column(name="frameNum", type="integer", nullable=false)
      */
     private $frameNum;
 
     /**
      * @var integer
      *
-     * @Column(name="start_time", type="bigint", nullable=false)
+     * @Column(name="startTime", type="bigint", nullable=false)
      */
     private $startTime;
 
     /**
      * @var integer
      *
-     * @Column(name="end_frame_num", type="integer", nullable=false)
+     * @Column(name="endFrameNum", type="integer", nullable=false)
      */
     private $endFrameNum;
 
     /**
      * @var integer
      *
-     * @Column(name="end_time", type="bigint", nullable=false)
+     * @Column(name="endTime", type="bigint", nullable=false)
      */
     private $endTime;
 
     /**
      * @var string
      *
-     * @Column(name="ref_param", type="string", length=255, nullable=false)
+     * @Column(name="refParam", type="string", length=255, nullable=false)
      */
     private $refParam;
 
@@ -70,21 +70,21 @@ class FlightEventOld
     /**
      * @var string
      *
-     * @Column(name="exc_aditional_info", type="text", length=65255, nullable=false)
+     * @Column(name="excAditionalInfo", type="text", length=65255, nullable=false)
      */
     private $excAditionalInfo;
 
     /**
      * @var boolean
      *
-     * @Column(name="false_alarm", type="boolean", nullable=false)
+     * @Column(name="falseAlarm", type="boolean", nullable=false)
      */
     private $falseAlarm;
 
     /**
      * @var string
      *
-     * @Column(name="user_comment", type="text", length=65255, nullable=false)
+     * @Column(name="userComment", type="text", length=65255, nullable=false)
      */
     private $userComment;
 

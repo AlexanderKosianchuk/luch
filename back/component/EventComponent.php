@@ -39,15 +39,15 @@ class EventComponent extends BaseComponent
         $this->connection()->drop($flightExTableName, null, $link);
 
         $query = "CREATE TABLE `".$flightExTableName."` (`id` INT NOT NULL AUTO_INCREMENT, "
-            . " `frame_num` INT,"
-            . " `start_time` BIGINT,"
-            . " `end_frame_num` INT,"
-            . " `end_time` BIGINT,"
-            . " `ref_param` VARCHAR(255),"
+            . " `frameNum` INT,"
+            . " `startTime` BIGINT,"
+            . " `endFrameNum` INT,"
+            . " `endTime` BIGINT,"
+            . " `refParam` VARCHAR(255),"
             . " `code` VARCHAR(255),"
-            . " `exc_aditional_info` TEXT,"
-            . " `false_alarm` BOOL DEFAULT 0,"
-            . " `user_comment` TEXT,"
+            . " `excAditionalInfo` TEXT,"
+            . " `falseAlarm` BOOL DEFAULT 0,"
+            . " `userComment` TEXT,"
             . " PRIMARY KEY (`id`))"
             . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
 

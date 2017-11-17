@@ -358,6 +358,7 @@ class FlightProcessingComponent extends BaseComponent
         $frameNum,
         &$algHeap
     ) {
+        $phisicsFrames = [];
         foreach ($analogParamsCyclo as $prefix => $cyclo) {
             $channelFreq = count($cyclo[0]['channel']);
 
@@ -395,7 +396,7 @@ class FlightProcessingComponent extends BaseComponent
                 $stepLength,
                 $channelFreq,
                 $cyclo,
-                $analogParamsCyclo,
+                $phisicsFrames,
                 $algHeap
             );
 

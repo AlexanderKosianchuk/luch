@@ -13,7 +13,7 @@ class AirportRepository extends EntityRepository
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
 
-        return $qb->select(['ICAO','name'])
+        return $qb->select('a')
            ->from('Entity\Airport', 'a')
            ->andWhere('a.runwayStartLat > ?1')
            ->andWhere('a.runwayStartLat < ?2')

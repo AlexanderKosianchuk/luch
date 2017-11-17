@@ -68,49 +68,49 @@ class Airport
      *
      * @Column(name="magnVariation", type="float", precision=10, scale=0, nullable=false)
      */
-    private $magnvariation;
+    private $magnVariation;
 
     /**
      * @var float
      *
      * @Column(name="runwayStartLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $runwaystartlat;
+    private $runwayStartLat;
 
     /**
      * @var float
      *
      * @Column(name="runwayStartLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $runwaystartlong;
+    private $runwayStartLong;
 
     /**
      * @var float
      *
      * @Column(name="runwayStartElev", type="float", precision=10, scale=0, nullable=false)
      */
-    private $runwaystartelev;
+    private $runwayStartElev;
 
     /**
      * @var float
      *
      * @Column(name="runwayEndLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $runwayendlat;
+    private $runwayEndLat;
 
     /**
      * @var float
      *
      * @Column(name="runwayEndLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $runwayendlong;
+    private $runwayEndLong;
 
     /**
      * @var float
      *
      * @Column(name="runwayEndElev", type="float", precision=10, scale=0, nullable=false)
      */
-    private $runwayendelev;
+    private $runwayEndElev;
 
     /**
      * @var integer
@@ -138,126 +138,124 @@ class Airport
      *
      * @Column(name="ILSAlt", type="float", precision=10, scale=0, nullable=false)
      */
-    private $ilsalt;
+    private $ilsAlt;
 
     /**
      * @var float
      *
      * @Column(name="ILSDist", type="float", precision=10, scale=0, nullable=false)
      */
-    private $ilsdist;
+    private $ilsDist;
 
     /**
      * @var float
      *
      * @Column(name="ILSLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $ilslat;
+    private $ilsLat;
 
     /**
      * @var float
      *
      * @Column(name="ILSLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $ilslong;
+    private $ilsLong;
 
     /**
      * @var float
      *
      * @Column(name="landingTransLevel", type="float", precision=10, scale=0, nullable=false)
      */
-    private $landingtranslevel;
+    private $landingTransLevel;
 
     /**
      * @var float
      *
      * @Column(name="takeoffTransAlt", type="float", precision=10, scale=0, nullable=false)
      */
-    private $takeofftransalt;
+    private $takeoffTransAlt;
 
     /**
      * @var float
      *
      * @Column(name="OMAlt", type="float", precision=10, scale=0, nullable=false)
      */
-    private $omalt;
+    private $omAlt;
 
     /**
      * @var float
      *
      * @Column(name="OMDist", type="float", precision=10, scale=0, nullable=false)
      */
-    private $omdist;
+    private $omDist;
 
     /**
      * @var float
      *
      * @Column(name="OMLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $omlat;
+    private $omLat;
 
     /**
      * @var float
      *
      * @Column(name="OMLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $omlong;
+    private $omLong;
 
     /**
      * @var float
      *
      * @Column(name="IMAlt", type="float", precision=10, scale=0, nullable=false)
      */
-    private $imalt;
+    private $imAlt;
 
     /**
      * @var float
      *
      * @Column(name="IMDist", type="float", precision=10, scale=0, nullable=false)
      */
-    private $imdist;
+    private $imDist;
 
     /**
      * @var float
      *
      * @Column(name="IMLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $imlat;
+    private $imLat;
 
     /**
      * @var float
      *
      * @Column(name="IMLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $imlong;
+    private $imLong;
 
     /**
      * @var float
      *
      * @Column(name="MMAlt", type="float", precision=10, scale=0, nullable=false)
      */
-    private $mmalt;
+    private $mmAlt;
 
     /**
      * @var float
      *
      * @Column(name="MMDist", type="float", precision=10, scale=0, nullable=false)
      */
-    private $mmdist;
+    private $mmDist;
 
     /**
      * @var float
      *
      * @Column(name="MMLat", type="float", precision=10, scale=7, nullable=false)
      */
-    private $mmlat;
+    private $mmLat;
 
     /**
      * @var float
      *
      * @Column(name="MMLong", type="float", precision=10, scale=7, nullable=false)
      */
-    private $mmlong;
-
-
+    private $mmLong;
 }

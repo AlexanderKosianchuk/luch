@@ -28,6 +28,7 @@ return [
             'figurePrintAction',
             'printBlankAction',
             'setTemplateAction',
+            'mergeTemplatesAction',
             'logoutAction'
         ]
     ],
@@ -40,6 +41,7 @@ return [
             'flightUploaderPreviewAction',
             'flightProccesAndCheckAction',
             'flightEasyUploadAction',
+            'removeTemplateAction',
             'changeReliabilityAction'
         ]
     ],

@@ -58,25 +58,21 @@ $stripSlashes = function($itemValue) {
     return stripslashes($itemValue);
 };
 
-foreach (array_keys($data) as $key) {
-    $input = null;
-
-    if (is_array($data[$key])) {
+$recursivePush = function($array) use ($stripSlashes, &$recursivePush) {
+    if (is_array($array)) {
         $input = [];
-        foreach ($data[$key] as $itemKey => $itemValue) {
-            if (is_array($itemValue)) {
-                $input[$itemKey] = [];
-                foreach ($itemValue as $subItemKey => $subItemValue) {
-                    $input[$itemKey][$subItemKey] = $stripSlashes($subItemValue);
-                }
-            } else {
-                $input[$itemKey] = $stripSlashes($itemValue);
-            }
+        foreach ($array as $itemKey => $itemValue) {
+            $input[$itemKey] = $recursivePush($itemValue);
         }
-    } else {
-        $input = $stripSlashes($data[$key]);
-    }
 
+        return $input;
+    } else {
+        return $stripSlashes($array);
+    }
+};
+
+foreach (array_keys($data) as $key) {
+    $input = $recursivePush($data[$key]);
     $safeData[$key] = $input;
 }
 
