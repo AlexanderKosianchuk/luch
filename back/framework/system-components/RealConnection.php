@@ -127,4 +127,40 @@ class RealConnection
 
         unset($c);
     }
+
+    public function exportTable($tableName, $filePath, $link = null, $db = 'flights')
+    {
+        if ($link === null) {
+            $link = $this->create($db);
+        }
+
+        $fileName = basename($filePath);
+        $root = dirname($filePath);
+
+        $exportedFileName = [
+            'dir' => $root,
+            'tmp' => sys_get_temp_dir().DIRECTORY_SEPARATOR.$fileName.".csv",
+            'root' => $root.DIRECTORY_SEPARATOR.$fileName.".csv",
+            'filename' => $fileName.".csv"
+        ];
+
+        /*GRANT FILE ON *.* TO 'dbUser'@'localhost'*/
+        $query = "SELECT * FROM `".$tableName."`"
+            ." INTO OUTFILE '".$exportedFileName['tmp']."'"
+            ." FIELDS TERMINATED BY ','"
+            ." LINES TERMINATED BY ';';";
+        $result = $link->query($query);
+
+        if ($link === null) {
+            $this->destroy($link);
+        }
+
+        if (file_exists($exportedFileName['tmp'])) {
+            try {
+                $status = copy($exportedFileName['tmp'], $exportedFileName['root']);
+                //unlink($exportedFileName['tmp']);
+            } catch(Exception $e) { }
+        }
+        return $exportedFileName;
+    }
 }

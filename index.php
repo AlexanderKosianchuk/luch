@@ -3,7 +3,6 @@
 require_once 'back/bootstrap.php';
 
 use \Controller\IndexController;
-use \Framework\Application as App;
 
 $pathname = trim($_SERVER['REQUEST_URI'], '/');
 $exp = explode('/', $pathname);

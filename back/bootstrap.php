@@ -1,8 +1,8 @@
 <?php
 
-require_once 'vendor/autoload.php';
-
 define('SITE_ROOT_DIR', dirname(__DIR__));
+
+require_once SITE_ROOT_DIR.'/vendor/autoload.php';
 
 // Define application environment
 defined('APPLICATION_ENV') || define('APPLICATION_ENV',

@@ -57,6 +57,12 @@ class Application
             true
         );
 
+        if (APPLICATION_ENV === 'dev') {
+            $anotationConfig->setAutoGenerateProxyClasses(true);
+        } else {
+            $anotationConfig->setAutoGenerateProxyClasses(false);
+        }
+
         // obtaining the entity manager
         foreach ($cfg['db'] as $key => $item) {
             $em = EntityManager::create(

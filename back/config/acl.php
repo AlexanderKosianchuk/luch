@@ -42,6 +42,7 @@ return [
             'flightProccesAndCheckAction',
             'flightEasyUploadAction',
             'removeTemplateAction',
+            'itemExportAction',
             'changeReliabilityAction'
         ]
     ],

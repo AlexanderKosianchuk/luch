@@ -1,4 +1,7 @@
 <?php
-require_once "back/bootstrap.php";
+require_once 'bootstrap.php';
 
-return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($EM);
+use \Framework\Application as App;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+
+return ConsoleRunner::createHelperSet(App::em('default'));
