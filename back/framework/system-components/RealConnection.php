@@ -120,7 +120,10 @@ class RealConnection
             $file = str_replace('\\', '/', $file);
         }
 
-        $query = "LOAD DATA LOCAL INFILE '".$file."' INTO TABLE `".$table."` FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';";
+        $query = "LOAD DATA LOCAL INFILE '".$file."' "
+           ."INTO TABLE `".$table."` "
+           ."FIELDS TERMINATED BY ',' "
+           ."LINES TERMINATED BY ';';";
         $link->query($query);
 
         $this->destroy($link);

@@ -36,7 +36,7 @@ class RuntimeManager extends BaseComponent
     public function getImportFolder()
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $importFilesDir = $runtimeDirectory.DIRECTORY_SEPARATOR.$this->params()->folders->importedFolder;
+        $importFilesDir = $this->params()->folders->importedFolder;
 
         if (!is_dir($importFilesDir)) {
             mkdir($importFilesDir, 0755, true);
@@ -198,6 +198,7 @@ class RuntimeManager extends BaseComponent
                         break;
                     case 'csv':
                         fputcsv($file->desc, $data);
+                        fwrite($file->desc, ';');
                         break;
                     default:
                         fwrite($file->desc, $data);

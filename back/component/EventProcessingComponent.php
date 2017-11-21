@@ -131,8 +131,8 @@ class EventProcessingComponent extends BaseComponent
         $flightEvents = [];
 
         $link = $this->connection()->create('flights');
-        $flightEventTable = $this->FlightEvent::createTable($link, $flightGuid);
-        $flightSettlementTable = $this->FlightSettlement::createTable($link, $flightGuid);
+        $flightEventTable = $this->eventComponent->createEventsTable($flightGuid);
+        $flightSettlementTable = $this->eventComponent->createSettlementsTable($flightGuid);
         $this->connection()->destroy($link);
 
         $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName('`'.$flightEventTable.'`');

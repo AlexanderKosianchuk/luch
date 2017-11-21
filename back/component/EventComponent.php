@@ -32,6 +32,11 @@ class EventComponent extends BaseComponent
 
     public function createOldEventsTable($guid)
     {
+        if (!is_string($guid)) {
+            throw new Exception("Incorrect guid passed. String is required. Passed: "
+                . json_encode($guid), 1);
+        }
+
         $flightExTableName = $guid.$this->FlightEventOld::getPrefix();
 
         $link = $this->connection()->create('flights');
@@ -58,6 +63,92 @@ class EventComponent extends BaseComponent
         $this->connection()->destroy($link);
 
         return $flightExTableName;
+    }
+
+    public function createEventsTable($guid)
+    {
+        if (!is_string($guid)) {
+            throw new Exception("Incorrect guid passed. String is required. Passed: "
+                . json_encode($guid), 1);
+        }
+
+        $dynamicTableName = $guid.$this->FlightEvent::getPrefix();
+        $link = $this->connection()->create('flights');
+        $this->connection()->drop($dynamicTableName, null, $link);
+
+        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
+        $result = $link->query($query);
+        if (!$result->fetch_array()) {
+            $query = "CREATE TABLE `".$dynamicTableName."` ("
+                . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
+                . "`start_time` BIGINT(20) NOT NULL, "
+                . "`end_time` BIGINT(20) NOT NULL, "
+                . "`id_event` BIGINT(20) NOT NULL, "
+                . "`false_alarm` BOOLEAN NOT NULL, "
+                . " INDEX (`id_event`), "
+                . " PRIMARY KEY (`id`)) "
+                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+            $stmt = $link->prepare($query);
+            if (!$stmt->execute()) {
+                throw new Exception("FlightEvent dynamic table creation query failed. Query: "
+                    . $query, 1);
+            }
+        } else {
+            $query = "DELETE FROM `".$dynamicTableName."` WHERE 1;";
+            $stmt = $link->prepare($query);
+            if (!$stmt->execute()) {
+                throw new Exception("FlightEvent dynamic table truncating query failed. Query: "
+                    . $query, 1);
+            }
+        }
+
+        $this->connection()->destroy($link);
+
+        return $dynamicTableName;
+    }
+
+    public function createSettlementsTable($guid)
+    {
+        if (!is_string($guid)) {
+            throw new Exception("Incorrect guid passed. String is required. Passed: "
+                . json_encode($guid), 1);
+        }
+
+        $dynamicTableName = $guid.$this->FlightSettlement::getPrefix();
+        $link = $this->connection()->create('flights');
+        $this->connection()->drop($dynamicTableName, null, $link);
+
+        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
+        $result = $link->query($query);
+        if (!$result->fetch_array()) {
+            $query = "CREATE TABLE `".$dynamicTableName."` ("
+                . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
+                . "`id_event` BIGINT(20) NOT NULL, "
+                . "`id_settlement` BIGINT(20) NOT NULL, "
+                . "`id_flight_event` BIGINT(20) NOT NULL, "
+                . "`value` VARCHAR(20) NOT NULL, "
+                . " INDEX (`id_event`), "
+                . " INDEX (`id_settlement`), "
+                . " INDEX (`id_flight_event`), "
+                . " PRIMARY KEY (`id`)) "
+                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+            $stmt = $link->prepare($query);
+            if (!$stmt->execute()) {
+                throw new Exception("FlightSettlement dynamic table creation query failed. Query: "
+                    . $query, 1);
+            }
+        } else {
+            $query = "DELETE FROM `".$dynamicTableName."` WHERE 1;";
+            $stmt = $link->prepare($query);
+            if (!$stmt->execute()) {
+                throw new Exception("FlightSettlement dynamic table truncating query failed. Query: "
+                    . $query, 1);
+            }
+        }
+
+        $this->connection()->destroy($link);
+
+        return $dynamicTableName;
     }
 
     public function isOldProcessingEventsTableExist($code)

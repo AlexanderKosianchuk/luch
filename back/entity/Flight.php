@@ -232,7 +232,9 @@ class Flight
            'departureAirport' => $this->departureAirport,
            'arrivalAirport' => $this->arrivalAirport,
            'path' => $this->path,
-           'aditionalInfo' => [],
+           'fdrId'=>$this->fdrId,
+           'userId'=>$this->userId,
+           'calibrationId'=>$this->calibrationId,
            'dt' => $this->dt,
         ];
 

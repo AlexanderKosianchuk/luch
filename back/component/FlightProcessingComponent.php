@@ -444,18 +444,21 @@ class FlightProcessingComponent extends BaseComponent
         );
     }
 
-    private function loadParamFilesToTables($tableName)
+    public function loadParamFilesToTables($tableName, $filePath = null)
     {
-        $file = $this->runtimeManager->getTemporaryFileDesc(
-            $this->params()->folders->uploadingFlightsTables,
-            $tableName,
-            'close'
-        );
+        if ($filePath === null) {
+            $file = $this->runtimeManager->getTemporaryFileDesc(
+                $this->params()->folders->uploadingFlightsTables,
+                $tableName,
+                'close'
+            );
+            $filePath = $file->path;
+        }
 
-        $this->connection()->loadFile($tableName, $file->path);
+        $this->connection()->loadFile($tableName, $filePath);
 
-        if (file_exists($file->path)) {
-            unlink($file->path);
+        if (file_exists($filePath)) {
+            unlink($filePath);
         }
     }
 

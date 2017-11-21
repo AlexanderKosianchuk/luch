@@ -612,174 +612,6 @@ class UploaderController extends BaseController
         }
     }
 
-    public function ImportFlight($copiedFilePath)
-    {
-        $copiedFilesDir = RuntimeManager::getImportFolder() . DIRECTORY_SEPARATOR;
-
-        $zip = new ZipArchive;
-        $res = $zip->open($copiedFilePath);
-        $importFolderName = sprintf("Imported_%s", date('Y-m-d'));
-        $needToCreateImportedFolder = true;
-
-        $Fl = new Flight;
-        $fdr = new Fdr;
-        $Fr = new Frame;
-        $FlE = new FlightException;
-        $Fd = new Folder;
-
-        $folderInfo = [];
-        $userId = intval($this->_user->userInfo['id']);
-
-        if ($res === TRUE) {
-            $i = 0;
-            $headerFiles = [];
-            do {
-                $fileName = $zip->getNameIndex($i);
-                if((strpos($fileName, "header") !== false)) {
-                    $headerFiles[] = $fileName;
-                }
-                $i++;
-            } while($i < $zip->numFiles);
-
-            foreach ($headerFiles as $name) {
-                $zip->extractTo($copiedFilesDir, $name);
-
-                $json = file_get_contents($copiedFilesDir."/".$name);
-                unlink($copiedFilesDir."/".$name);
-                $flightInfoImported = json_decode($json, true);
-                $fdrId = intval($flightInfoImported['id_fdr']);
-
-                $flightId = $Fl->InsertNewFlight(
-                    $flightInfoImported['bort'],
-                    $flightInfoImported['voyage'],
-                    $flightInfoImported['startCopyTime'],
-                    $fdrId,
-                    $flightInfoImported['bruType'],
-                    $flightInfoImported['performer'],
-                    $flightInfoImported['departureAirport'],
-                    $flightInfoImported['arrivalAirport'],
-                    $copiedFilePath,
-                    $flightInfoImported['flightAditionalInfo'],
-                    $userId
-                );
-
-                $flightInfo = $Fl->GetFlightInfo($flightId);
-
-                $tableNameAp = $flightInfo['apTableName'];
-                $tableNameBp = $flightInfo['bpTableName'];
-                $flightGuid = $flightInfo["guid"];
-
-                $fdrInfo = $fdr->getFdrInfo($fdrId);
-                $apPrefixes = $fdr->GetBruApCycloPrefixes($fdrId);
-                $bpPrefixes = $fdr->GetBruBpCycloPrefixes($fdrId);
-
-                $apCyclo = $fdr->GetBruApCycloPrefixOrganized($fdrId);
-
-                $tables = $Fl->CreateFlightParamTables(
-                    $flightId,
-                    $apCyclo,
-                    $bpPrefixes
-                );
-
-                $apTables = $flightInfoImported["apTables"];
-
-                for($j = 0; $j < count($apTables); $j++) {
-                    $zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
-                    if (file_exists($copiedFilesDir.$apTables[$j]["file"])) {
-                        $Fr->LoadFileToTable($tableNameAp . "_" . $apTables[$j]["pref"], $copiedFilesDir.$apTables[$j]["file"]);
-                        unlink($copiedFilesDir.$apTables[$j]["file"]);
-                    }
-                }
-
-                $bpTables = $flightInfoImported["bpTables"];
-                for ($j = 0; $j < count($bpTables); $j++) {
-                    $zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
-                    if(file_exists($copiedFilesDir.$bpTables[$j]["file"])) {
-                        $Fr->LoadFileToTable($tableNameBp . "_" . $bpTables[$j]["pref"], $copiedFilesDir.$bpTables[$j]["file"]);
-                        unlink($copiedFilesDir.$bpTables[$j]["file"]);
-                    }
-                }
-
-                if (isset($flightInfoImported["exTableName"])
-                    && ($flightInfoImported["exTableName"] != "")
-                ) {
-                    $flightExTableName = $FlE->CreateFlightExceptionTable($flightId, $flightGuid);
-
-                    $exTables = $flightInfoImported["exTables"];
-                    $zip->extractTo($copiedFilesDir, $exTables);
-                    $Fr->LoadFileToTable($flightExTableName, $copiedFilesDir.$exTables);
-                    if (file_exists($copiedFilesDir.$exTables)) {
-                        unlink($copiedFilesDir.$exTables);
-                    }
-                }
-
-                if (isset($flightInfoImported["eventsTable"])
-                    && ($flightInfoImported["eventsTable"] != "")
-                ) {
-                    $link = LinkFactory::create();
-                    $flightEventTable = FlightEvent::createTable($link, $flightGuid);
-                    LinkFactory::destroy($link);
-
-                    $fileName = $flightInfoImported["eventsTable"];
-                    $zip->extractTo($copiedFilesDir, $fileName);
-                    $Fr->LoadFileToTable($flightEventTable, $copiedFilesDir.$fileName);
-                    if (file_exists($copiedFilesDir.$fileName)) {
-                        unlink($copiedFilesDir.$fileName);
-                    }
-                }
-
-                if (isset($flightInfoImported["settlementsTable"])
-                    && ($flightInfoImported["settlementsTable"] != "")
-                ) {
-                    $link = LinkFactory::create();
-                    $flightSettlementTable = FlightSettlement::createTable($link, $flightGuid);
-                    LinkFactory::destroy($link);
-
-                    $fileName = $flightInfoImported["settlementsTable"];
-                    $zip->extractTo($copiedFilesDir, $fileName);
-                    $Fr->LoadFileToTable($flightSettlementTable, $copiedFilesDir.$fileName);
-                    if (file_exists($copiedFilesDir.$fileName)) {
-                        unlink($copiedFilesDir.$fileName);
-                    }
-                }
-
-                if (count($headerFiles) > 1) {
-                    if ($needToCreateImportedFolder) {
-                        $folderInfo = $Fd->CreateFolder($importFolderName, 0, $userId);
-                        $needToCreateImportedFolder = false;
-                    }
-
-                    if (isset($folderInfo['folderId'])) {
-                        $Fd->PutFlightInFolder($flightId, $folderInfo['folderId'], $userId);
-                    } else {
-                        $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
-                    }
-                } else {
-                    //into root if only one
-                    $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
-                }
-            }
-
-            $zip->close();
-            unlink($copiedFilePath);
-
-            unset($zip);
-            unset($Fl);
-            unset($FlE);
-            unset($Fr);
-            unset($Fd);
-            unset($fdr);
-
-            if(count($headerFiles) <= 0) {
-                return false;
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function flightCutFile($data)
     {
         if(!isset($data['fdrId'])
@@ -853,14 +685,143 @@ class UploaderController extends BaseController
         return json_encode($resp);
     }
 
-    public function itemImport($data)
+    public function itemImportAction($flightGuid)
     {
         if (!isset($_FILES['flightFileArchive']['tmp_name'])) {
-            throw new Exception("Necessary param flightFileArchive not passed.", 1);
+            throw new BadRequestException('necessary param flightFileArchive not passed.');
         }
 
-        $fileName = strval($_FILES['flightFileArchive']['tmp_name']);
-        $result = $this->ImportFlight($fileName);
+        $uploadedArchivePath = strval($_FILES['flightFileArchive']['tmp_name']);
+        $copiedFilesDir = $this->dic()->get('runtimeManager')->getImportFolder();
+        $copiedFilePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$_FILES['flightFileArchive']['name'];
+
+        move_uploaded_file($uploadedArchivePath, $copiedFilePath);
+
+        $zip = new ZipArchive;
+        $res = $zip->open($copiedFilePath);
+        $importFolderName = sprintf("Imported_%s", date('Y-m-d'));
+        $needToCreateImportedFolder = true;
+
+        $folderInfo = [];
+        $userId = $this->user()->getId();
+
+        if ($res !== TRUE) {
+            echo json_encode('err');
+        }
+
+        $i = 0;
+        $headerFiles = [];
+        do {
+            $fileName = $zip->getNameIndex($i);
+            if((strpos($fileName, 'header') !== false)) {
+                $headerFiles[] = $fileName;
+            }
+            $i++;
+        } while($i < $zip->numFiles);
+
+        if (count($headerFiles) === 0) {
+            echo json_encode('err');
+        }
+
+        foreach ($headerFiles as $name) {
+            $zip->extractTo($copiedFilesDir, $name);
+
+            $json = file_get_contents($copiedFilesDir.'/'.$name);
+            unlink($copiedFilesDir.'/'.$name);
+            $flightInfoImported = json_decode($json, true);
+
+            $fdrId = $flightInfoImported['fdrId'];
+            $userId = $flightInfoImported['userId'];
+            $calibrationId = $flightInfoImported['calibrationId'];
+
+            $flightInfoImported['copyCreationTime'] = date('H:i:s', $flightInfoImported['startCopyTime']);
+            $flightInfoImported['copyCreationDate'] = date('Y-m-d', $flightInfoImported['startCopyTime']);
+
+            $flightInfoImported['aditionalInfo'] = json_encode($flightInfoImported['aditionalInfo']);
+            $flight = $this->dic()->get('flight')
+                ->insert($flightGuid, $flightInfoImported, $fdrId, $userId, $calibrationId);
+            $flightId = $flight->getId();
+
+            $analogParamsCyclo = $this->dic()->get('fdr')
+                ->getPrefixGroupedParams($fdrId);
+
+            $binaryParamsCyclo = $this->dic()->get('fdr')
+                ->getPrefixGroupedBinaryParams($fdrId);
+
+            $this->dic()->get('flight')->createParamTables(
+                $flightGuid,
+                $analogParamsCyclo,
+                $binaryParamsCyclo
+            );
+
+            $apTables = $flightInfoImported["apTables"];
+
+            for($j = 0; $j < count($apTables); $j++) {
+                $zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$apTables[$j]["file"];
+                $tableName = $this->dic()->get('fdr')->getAnalogTable($flightGuid, $apTables[$j]['pref']);
+
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            $bpTables = $flightInfoImported["bpTables"];
+            for ($j = 0; $j < count($bpTables); $j++) {
+                $zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$bpTables[$j]["file"];
+                $tableName = $this->dic()->get('fdr')->getBinaryTable($flightGuid, $bpTables[$j]['pref']);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["exTables"])
+                && ($flightInfoImported["exTables"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["exTables"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["exTables"]);
+                $tableName = $this->dic()->get('event')
+                    ->createOldEventsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["eventsTable"])
+                && ($flightInfoImported["eventsTable"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["eventsTable"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["eventsTable"]);
+                $tableName = $this->dic()->get('event')
+                    ->createEventsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["settlementsTable"])
+                && ($flightInfoImported["settlementsTable"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["settlementsTable"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["settlementsTable"]);
+                $tableName = $this->dic()->get('event')
+                    ->createSettlementsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+        }
 
         return json_encode('ok');
     }

@@ -501,12 +501,12 @@ FlightUploader.prototype.Import = function(form, dfd) {
     var self = this;
 
     $.ajax({
-        type: "POST",
+        type: 'POST',
         data: form,
         dataType: 'json',
         processData: false,
         contentType: false,
-        url: ENTRY_URL + "uploader/itemImport"
+        url: ENTRY_URL+'uploader/itemImport'
     }).done(function(answ){
         if (answ["status"] == 'ok') {
             dfd.resolve();

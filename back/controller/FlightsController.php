@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Framework\Application as App;
-
 use Entity\Flight as FlightEntity;
 
 use Evenement\EventEmitter;
@@ -355,7 +353,7 @@ class FlightsController extends BaseController
                 ->getBinaryPrefixes($flight->getFdrId());
 
             for ($i = 0; $i < count($bpPrefixes); $i++) {
-                $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getBpType().'_'.$apPrefixes[$i];
+                $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getBpType().'_'.$bpPrefixes[$i];
 
                 $exportedTable = $this->connection()->exportTable(
                     $table,
