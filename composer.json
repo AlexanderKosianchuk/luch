@@ -27,7 +27,6 @@
             "back/framework/system-components/",
             "back/repository/",
             "back/entity/",
-            "back/model/",
             "back/controller/",
             "back/component/",
             "back/exception/"
