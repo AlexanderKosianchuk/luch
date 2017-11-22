@@ -2,55 +2,23 @@
 
 namespace Controller;
 
-use Model\User;
-use Model\Language;
-use Model\Fdr;
-use Model\UserOptions;
-use Entity\FdrToUser;
-
-use Repository\UserRepository;
-
-use Component\EntityManagerComponent as EM;
-use Component\RuntimeManager;
-use Component\FlightComponent;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-class UsersController extends CController
+class UsersController extends BaseController
 {
-    function __construct()
+    public function loginAction ($login, $pass = '')
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
-    }
-
-    public function login ($args)
-    {
-        if (empty($args)
-            || !isset($args['login'])
-            || !isset($args['pass'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $U = new User();
-        $data = [
-            'user' => $args['login'],
-            'pwd' => $args['pass']
-        ];
-
-        $success = false;
         $lang = 'en';
 
-        $isAuthorized = $U->tryAuth($data, $_SESSION, $_COOKIE);
+        $userId = $this->member()->signIn(
+            $login,
+            $pass
+        );
 
-        if (!$isAuthorized
-            || !isset($U->username)
-            || empty($U->username)
-        ) {
+        if ($userId === null) {
             return json_encode([
                 'status' => 'fail',
                 'message' => 'userUnexist',
@@ -58,92 +26,70 @@ class UsersController extends CController
             ]);
         }
 
-        $usrInfo = $U->GetUsersInfo($U->username);
-        $lang = strtolower($usrInfo['lang']);
+        $user = $this->em()->find('Entity\User', $userId);
 
         return json_encode([
             'status' => 'ok',
-            'login' => $args['login'],
-            'lang' => $lang
+            'login' => $user->getLogin(),
+            'lang' => strtolower($user->getLang())
         ]);
     }
 
-    public function userLogout()
+    public function logoutAction()
     {
-        if (!isset($this->_user->username)
-            || ($this->_user->username === '')
-        ) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $this->_user->logout($this->_user->username);
+        $this->member()->logout();
 
         return json_encode('ok');
     }
 
-    public function getUserSettings()
+    public function getUserSettingsAction()
     {
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
+        $userId = $this->user()->getId();
 
-        $O = new UserOptions();
-        $userId = intval($this->_user->userInfo['id']);
-        $settings = $O->GetOptions($userId);
-        unset($O);
-
-        return json_encode($settings);
+        return json_encode(
+            $this->dic()->get('userSettings')->getSettings($userId)
+        );
     }
 
-    public function setUserSettings($settings)
+    public function setUserSettingsAction($settings)
     {
-        if (!isset($settings)
-            || empty($settings)
-            || !is_array($settings)
-        ) {
-            throw new BadRequestException(json_encode($settings));
-        }
-
-        $O = new UserOptions();
-        $userId = intval($this->_user->userInfo['id']);
-        $O->UpdateOptions($settings, $userId);
-        unset($O);
+        $this->dic()->get('userSettings')->updateSettings($settings);
 
         return json_encode('ok');
     }
 
-    public function userChangeLanguage($data)
+    public function userChangeLanguageAction($lang)
     {
-        if (!isset($data)
-            || !isset($data['lang'])
-            || empty($data['lang'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $lang = $data['lang'];
-
-        $L = new Language;
-        $L->SetLanguageName($lang);
-        unset($L);
-
-        $this->_user->SetUserLanguage($this->_user->username, $lang);
-
+        $this->user()->setLanguage($lang);
         return json_encode('ok');
     }
 
-    public function getUsers()
+    public function getUsersAction()
     {
-        if (!isset($this->_user->userInfo)) {
+        return json_encode(
+            $this->dic()
+                ->get('userManager')
+                ->getUsers()
+        );
+    }
+
+    public function getLogoAction($id)
+    {
+        $user = $this->em()->find('Entity\User', $id);
+
+        if (!$user) {
+            throw new NotFoundException("requested user not found. Id: ".$id);
+        }
+
+        $creatorId = intval($this->user()->getId());
+
+        if (!$this->em()->getRepository('Entity\User')->isAvaliable($user->getId(), $creatorId)) {
             throw new ForbiddenException('user is not authorized');
         }
 
-        $userId = intval($this->_user->userInfo['id']);
+        header('Content-type:image/png');
 
-        $em = EM::get();
-        $users = $em->getRepository('Entity\User')->getUsers($userId);
-
-        return json_encode($users);
+        return stream_get_contents($user->getLogo());
     }
 
     public function getUser($args)
@@ -174,37 +120,6 @@ class UsersController extends CController
         }
 
         return json_encode($user->get());
-    }
-
-    public function getLogo($args)
-    {
-        if (!isset($args)
-            || !isset($args['id'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $creatorId = intval($this->_user->userInfo['id']);
-        $userId = intval($args['id']);
-
-        $em = EM::get();
-
-        $user = $em->getRepository('Entity\User')->findOneBy(['id' => $userId]);
-        if (!$user) {
-            throw new NotFoundException("requested user not found. Id: ". $userId);
-        }
-
-        if (!$em->getRepository('Entity\User')->isAvaliable($userId, $creatorId)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        header('Content-type:image/png');
-
-        return stream_get_contents($user->getLogo());
     }
 
     public function create($args)

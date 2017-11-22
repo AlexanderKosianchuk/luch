@@ -2,14 +2,16 @@
 
 namespace Component;
 
-use Entity\UserActivity;
-
-use Component\EntityManagerComponent as EM;
-
 use Exception;
 
-class ResponseRegistrator
+class ResponseRegistrator extends BaseComponent
 {
+    /**
+     * @Inject
+     * @var \Entity\UserActivity
+     */
+    private $UserActivity;
+
     private static $codes = [
         '200' => 'OK',
         '400' => 'Bad Request',
@@ -19,27 +21,34 @@ class ResponseRegistrator
         '500' => 'Internal Server Error'
     ];
 
-    public static function register($userId, $action, $message = 'ok', $status = 'executed', $code = 200)
+    public function register($action, $message = 'ok', $status = 'executed', $code = 200)
     {
-        $em = EM::get();
+        /*
+        * If fatal error EM closes by Doctrine
+        * as far fatal is posible only in development
+        * wont reopen EM to write register it
+        */
+        if (!$this->em()->isOpen()) {
+            return;
+        }
 
-        $userActivity = new UserActivity;
+        $userActivity = new $this->UserActivity;
         $userActivity->setAttributes([
             'action' => $action,
             'status' => $status,
             'code' => $code,
             'message' => $message,
-            'userId' => $userId
+            'userId' => intval($this->user()->getId())
         ]);
 
-        $em->persist($userActivity);
-        $em->flush();
+        $this->em()->persist($userActivity);
+        $this->em()->flush();
     }
 
-    public static function faultResponse($userId, $action, $code, $message, $forwardingDescription = null)
+    public function faultResponse($action, $code, $message, $forwardingDescription = null)
     {
         $code = strval($code);
-        self::register($userId, $action, $message, 'rejected', $code);
+        $this->register($action, $message, 'rejected', $code);
         http_response_code($code);
         header($code . ' ' . self::$codes[strval($code)]);
         if (!isset($forwardingDescription)) {

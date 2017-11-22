@@ -66,13 +66,6 @@ class Event
     /**
      * @var string
      *
-     * @Column(name="comment", type="text", length=65535, nullable=false)
-     */
-    private $comment;
-
-    /**
-     * @var string
-     *
      * @Column(name="alg_text", type="string", length=255, nullable=false)
      */
     private $algText;
@@ -91,12 +84,6 @@ class Event
     private $eventToFdrs;
 
     /**
-     * One Event has Many FlightEvents.
-     * @OneToMany(targetEntity="FlightEvent", mappedBy="event")
-     */
-    private $flightEvents;
-
-    /**
      * One Event has Many EventSettlements.
      * @OneToMany(targetEntity="EventSettlement", mappedBy="event")
      */
@@ -105,18 +92,12 @@ class Event
     public function __construct()
     {
         $this->eventToFdrs = new ArrayCollection();
-        $this->flightEvents = new ArrayCollection();
         $this->eventSettlements = new ArrayCollection();
     }
 
     public function getEventToFdrs()
     {
         return $this->eventToFdrs;
-    }
-
-    public function getFlightEvents()
-    {
-        return $this->flightEvents;
     }
 
     public function getEventSettlements()
@@ -154,7 +135,6 @@ class Event
             'refParam' => $this->refParam,
             'minLength' => $this->minLength,
             'alg' => $this->alg,
-            'comment' => $this->comment,
             'algText' => $this->algText,
             'visualization' => $this->visualization
         ];

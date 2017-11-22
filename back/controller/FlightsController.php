@@ -2,22 +2,7 @@
 
 namespace Controller;
 
-use Model\User;
-use Model\Fdr;
-use Model\Frame;
-use Model\Calibration;
-use Model\Folder;
-use Model\Flight;
-use Model\FlightComments;
-use Model\FlightException;
-use Model\DataBaseConnector;
-
 use Entity\Flight as FlightEntity;
-
-use Component\EntityManagerComponent as EM;
-use Component\FlightComponent;
-use Component\EventProcessingComponent;
-use Component\RuntimeManager;
 
 use Evenement\EventEmitter;
 
@@ -29,68 +14,74 @@ use Exception\ForbiddenException;
 use Exception;
 use ZipArchive;
 
-class FlightsController extends CController
+class FlightsController extends BaseController
 {
-    function __construct()
+    public function getFlightsAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $userId = $this->user()->getId();
 
-        $get = $_GET;
-        if(isset($get['action']) && ($get['action'] != '')) {
-            $this->getAction = $get['action'];
+        $items = [];
+        $flightsToFolders = $this->em()->getRepository('Entity\FlightToFolder')
+            ->findBy(['userId' => $userId]);
+
+        foreach ($flightsToFolders as $flightToFolders) {
+            $flightId = $flightToFolders->getFlightId();
+            $flight = $this->em()->createQueryBuilder()
+                ->select('f')
+                ->from('Entity\Flight', 'f')
+                ->where('f.id = ?1')
+                ->setParameter(1, $flightId)
+                ->getQuery()
+                ->getScalarResult();
+
+            if (empty($flight)) {
+                $this->em()->remove($flightToFolders);
+                $this->em()->flush();
+            } else {
+                $items[] = $this->em()
+                    ->getRepository('Entity\FlightToFolder')
+                    ->getTreeItem(
+                        $flightToFolders->getFlightId(), $userId
+                    );
+            }
         }
+
+        return json_encode($items);
     }
 
-    public function changeFlightPath($data)
+    public function deleteFlightAction($id)
     {
-        if (!isset($data['id'])
-            || !isset($data['parentId'])
-            || !is_int(intval($data['id']))
-            || !is_int(intval($data['parentId']))
-        ) {
-            throw new BadRequestException(json_encode($data));
+        $this->dic()->get('flight')
+            ->deleteFlight(intval($id), $this->user()->getId());
+
+        return json_encode('ok');
+    }
+
+    public function getFlightInfoAction($flightId)
+    {
+        $flightId = intval($flightId);
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->findOneBy(['id' => $flightId]);
+
+        if (!$flight) {
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
-        $userId = intval($this->_user->userInfo['id']);
-        $sender = intval($data['id']);
-        $target = intval($data['parentId']);
-
-        $Fd = new Folder;
-        $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-        unset($Fd);
+        $flightTiming = $this->dic()->get('flight')->getFlightTiming($flightId);
 
         return json_encode([
-            'id' => $sender,
-            'parentId' => $target
+            'data' => array_merge(
+                $flight->get(true), [
+                    'fdrId' => $flight->getFdr()->getName(),
+                    'fdrName' => $flight->getFdr()->getName(),
+                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
+                ]
+            ),
+            'duration' => $flightTiming['duration'],
+            'startFlightTime' => $flightTiming['startCopyTime'],
+            'stepLength' => $flightTiming['stepLength'],
         ]);
     }
-
-   public function deleteFlight($data)
-   {
-       if (!isset($data['id'])
-           || !(is_int(intval($data['id'])) || is_array($data['id']))
-       ) {
-           throw new BadRequestException(json_encode($data));
-       }
-
-       $flights = $data['id'];
-       if (!is_array($data['id'])) {
-           $flights = [];
-           $flights[] = intval($data['id']);
-       }
-
-       $userId = intval($this->_user->userInfo['id']);
-
-       $FC = new FlightComponent;
-       foreach ($flights as $flightId) {
-           $FC->DeleteFlight(intval($flightId), $userId);
-       }
-
-       unset($FC);
-
-       return json_encode('ok');
-   }
 
     public function processFlight($data)
     {
@@ -154,150 +145,28 @@ class FlightsController extends CController
         return json_encode('ok');
    }
 
-   public function ExportFlightsAndFolders($flightIds, $folderDest)
+   public function changeFlightPath($data)
    {
-      $Fd = new Folder;
-
-      $userId = intval($this->_user->userInfo['id']);
-      $allFolders = [];
-
-      foreach ($folderDest as $dest) {
-         $allFolders = $Fd->SubfoldersDeepScan($dest, $userId, $adminRole);
-      }
-
-      foreach ($allFolders as $folderId) {
-         $flightIds = array_merge($flightIds,
-               $Fd->GetFlightsByFolder($folderId, $userId, $adminRole));
-      }
-      unset($Fd);
-
-      $exportedFiles = [];
-
-      $Fl = new Flight;
-      $C = new DataBaseConnector;
-      $Fdr = new Fdr;
-
-      foreach ($flightIds as $flightId) {
-         $flightInfo = $Fl->GetFlightInfo($flightId);
-
-         $fileGuid = uniqid();
-         $exportedFileName = $flightInfo['bort']
-            . "_" . date("Y-m-d", $flightInfo['startCopyTime'])
-            . "_" . $flightInfo['voyage']
-            . "_" . $fileGuid;
-
-         $exportedFileDir = RuntimeManager::getExportFolder();
-         $exportedFilePath = RuntimeManager::createExportedFile($exportedFileName);
-
-         $headerFile = [];
-         $headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
-         $headerFile['root'] = $exportedFileDir.DIRECTORY_SEPARATOR.$headerFile['filename'];
-         $exportedFiles[] = $headerFile;
-
-         $apPrefixes = $Fdr->GetBruApCycloPrefixes(intval($flightInfo["id_fdr"]));
-
-         for ($i = 0; $i < count($apPrefixes); $i++) {
-            $exportedTable = $C->ExportTable(
-                $flightInfo["apTableName"]."_".$apPrefixes[$i],
-                $flightInfo["apTableName"]."_".$apPrefixes[$i] . "_" . $fileGuid,
-                $exportedFileDir
-            );
-
-            $exportedFiles[] = $exportedTable;
-
-            $flightInfo["apTables"][] = array(
-                  "pref" => $apPrefixes[$i],
-                  "file" => $exportedTable["filename"]);
-         }
-
-         $bpPrefixes = $Fdr->GetBruBpCycloPrefixes(intval($flightInfo["id_fdr"]));
-
-         for ($i = 0; $i < count($bpPrefixes); $i++) {
-            $exportedTable = $C->ExportTable(
-                $flightInfo["bpTableName"]."_".$apPrefixes[$i],
-                $flightInfo["bpTableName"]."_".$bpPrefixes[$i] . "_" . $fileGuid,
-                $exportedFileDir
-            );
-
-            $exportedFiles[] = $exportedTable;
-
-            $flightInfo["bpTables"][] = array(
-                  "pref" => $bpPrefixes[$i],
-                  "file" => $exportedTable["filename"]);
-         }
-
-         $eventTables = [
-            ['table' => $flightInfo["exTableName"], 'label' => "exTables"],
-            ['table' => $flightInfo["guid"].'_events', 'label' => "eventsTable"],
-            ['table' => $flightInfo["guid"].'_settlements', 'label' => "settlementsTable"],
-         ];
-
-         foreach ($eventTables as $item) {
-             $this->exportEventTable(
-                 $flightInfo,
-                 $item['table'],
-                 $item['label'],
-                 $fileGuid,
-                 $exportedFiles,
-                 $exportedFileDir
-             );
-         }
-
-         $exportedFileDesc = fopen($headerFile['root'], "w");
-         fwrite ($exportedFileDesc , json_encode($flightInfo));
-         fclose($exportedFileDesc);
-      }
-
-      unset($Fl);
-      unset($C);
-      unset($Fdr);
-
-      $zip = new ZipArchive;
-      if ($zip->open($exportedFilePath, ZipArchive::CREATE) === TRUE) {
-         for($i = 0; $i < count($exportedFiles); $i++) {
-            $zip->addFile($exportedFiles[$i]['root'], $exportedFiles[$i]['filename']);
-         }
-         $zip->close();
-      } else {
-         error_log('Failed zipping flight.');
-      }
-
-      for ($i = 0; $i < count($exportedFiles); $i++) {
-         if(file_exists($exportedFiles[$i]['root'])) {
-            //unlink($exportedFiles[$i]['root']);
-         }
-      }
-
-      error_reporting(E_ALL);
-      return RuntimeManager::getExportedUrl($exportedFileName);
-   }
-
-   private function exportEventTable(
-       &$flightInfo,
-       $tableName,
-       $flightInfolabel,
-       $fileGuid,
-       &$exportedFiles,
-       $exportedFileDir
-   ) {
-       $C = new DataBaseConnector;
-
-       if ($C->checkTableExist($tableName)) {
-           $exportedTable = $C->ExportTable(
-             $tableName,
-             $tableName . "_" . $fileGuid,
-             $exportedFileDir
-           );
-           $exportedFiles[] = $exportedTable;
-
-           $flightInfo[$flightInfolabel] = $exportedTable["filename"];
-
-           return $tableName . "_" . $fileGuid;
+       if (!isset($data['id'])
+           || !isset($data['parentId'])
+           || !is_int(intval($data['id']))
+           || !is_int(intval($data['parentId']))
+       ) {
+           throw new BadRequestException(json_encode($data));
        }
 
-       unset($C);
+       $userId = intval($this->_user->userInfo['id']);
+       $sender = intval($data['id']);
+       $target = intval($data['parentId']);
 
-       return false;
+       $Fd = new Folder;
+       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
+       unset($Fd);
+
+       return json_encode([
+           'id' => $sender,
+           'parentId' => $target
+       ]);
    }
 
    public function GetEvents()
@@ -433,92 +302,132 @@ class FlightsController extends CController
        return $info;
    }
 
-   public function GetFlightTiming($flightId)
-   {
-       $Fl = new Flight;
-       $flightInfo = $Fl->GetFlightInfo($flightId);
-       $fdrId = intval($flightInfo['id_fdr']);
-       unset($Fl);
-
-       $fdr = new Fdr;
-       $fdrInfo = $fdr->getFdrInfo($fdrId);
-       $stepLength = $fdrInfo['stepLength'];
-
-       $prefixArr = $fdr->GetBruApCycloPrefixes($fdrInfo['id']);
-       unset($fdr);
-
-       $Frame = new Frame;
-       $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
-       unset($Frame);
-
-       $stepsCount = $framesCount * $stepLength;
-       $flightTiming['duration'] = $stepsCount;
-       $flightTiming['startCopyTime'] = $flightInfo['startCopyTime'];
-       $flightTiming['stepLength'] = $stepLength;
-
-       return $flightTiming;
-   }
-
-    public function getFlights($args)
+    public function itemExportAction($flightIds)
     {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException(json_encode($userId));
+        if (!is_array($flightIds)) {
+            $flightIds = [$flightIds];
         }
 
-        $em = EM::get();
+        $exportedFiles = [];
 
-        $items = [];
-        $flightsToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findBy(['userId' => $userId]);
+        foreach ($flightIds as $flightId) {
+            $flight = $this->em()->find('Entity\Flight', $flightId);
+            $flightInfo = $this->em()->find('Entity\Flight', $flightId)->get(true);
 
-        foreach ($flightsToFolders as $flightToFolders) {
-            $items[] = FlightComponent::getTreeItem($flightToFolders->getFlightId(), $userId);
+            $fileGuid = uniqid();
+            $exportedFileName = $flightInfo['bort']
+                .'_'.date('Y-m-d', $flightInfo['startCopyTime'])
+                .'_'.$flightInfo['voyage']
+                .'_'.$fileGuid;
+
+            $exportedFileDir = $this->dic()->get('runtimeManager')->getExportFolder();
+            $exportedFilePath = $this->dic()->get('runtimeManager')->createExportedFile($exportedFileName);
+
+            $headerFile = [];
+            $headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
+            $headerFile['root'] = $exportedFileDir.DIRECTORY_SEPARATOR.$headerFile['filename'];
+            $exportedFiles[] = $headerFile;
+
+            $apPrefixes = $this->dic()->get('fdr')
+                ->getAnalogPrefixes($flight->getFdrId());
+
+            $link = $this->connection()->create('flights');
+
+            for ($i = 0; $i < count($apPrefixes); $i++) {
+                $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$apPrefixes[$i];
+                $exportedTable = $this->connection()->exportTable(
+                    $table,
+                    $exportedFileDir.DIRECTORY_SEPARATOR.$table."_".$fileGuid,
+                    $link
+                );
+
+                $exportedFiles[] = $exportedTable;
+
+                $flightInfo['apTables'][] = [
+                    'pref' => $apPrefixes[$i],
+                    'file' => $exportedTable['filename']
+                ];
+            }
+
+            $bpPrefixes = $this->dic()->get('fdr')
+                ->getBinaryPrefixes($flight->getFdrId());
+
+            for ($i = 0; $i < count($bpPrefixes); $i++) {
+                $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getBpType().'_'.$bpPrefixes[$i];
+
+                $exportedTable = $this->connection()->exportTable(
+                    $table,
+                    $exportedFileDir.DIRECTORY_SEPARATOR.$table.'_'.$fileGuid,
+                    $link
+                );
+
+                $exportedFiles[] = $exportedTable;
+
+                $flightInfo['bpTables'][] = [
+                    'pref' => $bpPrefixes[$i],
+                    'file' => $exportedTable['filename']
+                ];
+            }
+
+            $eventTables = [
+                ['table' => $flightInfo['guid'].'_ex', 'label' => 'exTables'],
+                ['table' => $flightInfo['guid'].'_events', 'label' => 'eventsTable'],
+                ['table' => $flightInfo['guid'].'_settlements', 'label' => 'settlementsTable'],
+            ];
+
+            foreach ($eventTables as $item) {
+                $tableName = $item['table'];
+                if ($this->connection()->isExist($tableName, null, $link)) {
+                    $exportedTable = $this->connection()->exportTable(
+                        $tableName,
+                        $exportedFileDir.DIRECTORY_SEPARATOR.$tableName.'_'.$fileGuid,
+                        $link
+                    );
+                    $exportedFiles[] = $exportedTable;
+                    $flightInfo[$item['label']] = $exportedTable['filename'];
+                }
+            }
+
+            $exportedFileDesc = fopen($headerFile['root'], "w");
+            fwrite ($exportedFileDesc , json_encode($flightInfo));
+            fclose($exportedFileDesc);
         }
 
-        return json_encode($items);
-    }
+        $this->connection()->destroy($link);
 
-   public function itemExport($data)
-   {
-       if (!isset($data['id']) && !isset($data['folderDest'])) {
-           throw new BadRequestException(json_encode($data));
-       }
+        $zip = new ZipArchive;
+        if ($zip->open($exportedFilePath, ZipArchive::CREATE) === TRUE) {
+            for($i = 0; $i < count($exportedFiles); $i++) {
+                $zip->addFile($exportedFiles[$i]['root'], $exportedFiles[$i]['filename']);
+            }
+            $zip->close();
+        } else {
+            error_log('Failed zipping flight.');
+        }
 
-       $flightIds = [];
-       $folderDest = [];
-       if (isset($data['id'])) {
-           if(is_array($data['id'])) {
-               $flightIds = array_merge($flightIds, $data['id']);
-           } else {
-               $flightIds[] = $data['id'];
-           }
-       }
+        for ($i = 0; $i < count($exportedFiles); $i++) {
+            if (file_exists($exportedFiles[$i]['root'])) {
+                unlink($exportedFiles[$i]['root']);
+            }
+        }
 
-       $folderDest = [];
-       if(isset($data['folderDest']) &&
-           is_array($data['folderDest'])) {
-               $folderDest = array_merge($folderDest, $data['folderDest']);
-       }
+        error_reporting(E_ALL);
+        $zipUrl = $this->dic()->get('runtimeManager')
+            ->getExportedUrl($exportedFileName);
 
-       $zipUrl = $this->ExportFlightsAndFolders($flightIds, $folderDest);
+        $answ = [
+            'status' => 'empty',
+            'info' => 'No flights to export'
+        ];
 
-       $answ = [];
+        if ($zipUrl) {
+            $answ = [
+                'status' => 'ok',
+                'zipUrl' => $zipUrl
+            ];
+        }
 
-       if ($zipUrl) {
-           $answ = [
-               'status' => 'ok',
-               'zipUrl' => $zipUrl
-           ];
-
-           $answ = [
-               'status' => 'empty',
-               'info' => 'No flights to export'
-           ];
-       }
-
-       return json_encode($answ);
+        return json_encode($answ);
     }
 
     public function getFlightFdrId($data)
@@ -589,40 +498,5 @@ class FlightsController extends CController
 
         unset($U);
         return $figPrRow;
-    }
-
-    public function getFlightInfo($data)
-    {
-        if (!isset($data['flightId'])) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['flightId']);
-
-        $em = EM::get();
-
-        $items = [];
-        $flight = $em->getRepository('Entity\Flight')
-            ->findOneBy(['id' => $flightId]);
-
-        if (!$flight) {
-            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
-        }
-
-        $flightTiming = $this->GetFlightTiming($flightId);
-
-        return json_encode([
-            'data' => array_merge(
-                $flight->get(),
-                [
-                    'fdrId' => $flight->getFdr()->getName(),
-                    'fdrName' => $flight->getFdr()->getName(),
-                    'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
-                ]
-            ),
-            'duration' => $flightTiming['duration'],
-            'startFlightTime' => $flightTiming['startCopyTime'],
-            'stepLength' => $flightTiming['stepLength'],
-        ]);
     }
 }

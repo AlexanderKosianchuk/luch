@@ -2,32 +2,24 @@
 
 namespace Controller;
 
-use Model\UserOptions;
-use Model\Language;
+use \L;
 
-class IndexController extends CController
+class IndexController extends BaseController
 {
-    function __construct()
+    public function indexAction()
     {
-        $this->IsAppLoggedIn();
+        $te = $this->dic()->get('TemplateEngine');
+        $tpl = file_get_contents(SITE_ROOT_DIR . '/back/view/index.mustache');
+
+        return $te->render($tpl, [
+            'languange' => $this->user()->getLang(),
+            'login' => $this->user()->getLogin(),
+            'title' => L::title,
+            'script' => $this->gutScriptName()
+        ]);
     }
 
-    public function getUserLanguage()
-    {
-        return $this->userLang;
-    }
-
-    public function getAvaliableLanguages()
-    {
-        return implode(',', Language::getAvaliableLanguages());
-    }
-
-    public function getUserLogin()
-    {
-        return $this->_user->username;
-    }
-
-    public function PutScripts()
+    private function gutScriptName()
     {
         $files = scandir ('public/');
         $scriptName = '';
@@ -39,6 +31,7 @@ class IndexController extends CController
                 $scriptName = $item;
             }
         }
-        printf("<script type='text/javascript' src='/public/".$scriptName."'></script>");
+
+        return $scriptName;
     }
 }

@@ -2,73 +2,155 @@
 
 namespace Component;
 
-use Model\User;
-use Model\Flight;
-use Model\Fdr;
-use Model\Folder;
-use Model\Frame;
-
-use Entity\FlightEvent;
-use Entity\FlightSettlement;
-
-use Component\EntityManagerComponent as EM;
-use Component\RealConnectionFactory as LinkFactory;
-
 use Exception;
 
-class FlightComponent
+class FlightComponent extends BaseComponent
 {
-    public function DeleteFlight($flightId, $userId)
+    /**
+     * @Inject
+     * @var Component\FdrComponent
+     */
+    private $fdrComponent;
+
+    /**
+     * @Inject
+     * @var Entity\FlightSettlement
+     */
+    private $FlightSettlement;
+
+    /**
+     * @Inject
+     * @var Entity\FlightEvent
+     */
+    private $FlightEvent;
+
+    /**
+     * @Inject
+     * @var Entity\FlightEventOld
+     */
+    private $FlightEventOld;
+
+    /**
+     * @Inject
+     * @var Entity\CalibrationParam
+     */
+    private $CalibrationParam;
+
+    public function insert($guid, $flightInfo, $frdId, $userId, $calibrationId)
     {
-        if(!is_int($flightId)) {
-            throw new Exception("Incorrect flight id passed", 1);
-        }
+        $user = $this->em()->find('Entity\User', $userId);
+        $fdr = $this->em()->find('Entity\Fdr', $frdId);
+        $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
 
-        if(!is_int($userId)) {
-            throw new Exception("Incorrect user id passed", 1);
-        }
+        $copyCreationTime = $flightInfo['copyCreationTime'];
+        $copyCreationDate = $flightInfo['copyCreationDate'];
 
-        $U = new User;
-        $userInfo = $U->GetUserInfo($userId);
-        $role = $userInfo['role'];
-        if (User::isAdmin($role)) {
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            $fdrId = intval($flightInfo["id_fdr"]);
-
-            $fdr = new Fdr;
-            $fdrInfo = $fdr->getFdrInfo($fdrId);
-            $prefixApArr = $fdr->GetBruApCycloPrefixes($fdrId);
-            $prefixBpArr = $fdr->GetBruBpCycloPrefixes($fdrId);
-            unset($fdr);
-
-            $prefixes = [];
-            foreach ($prefixApArr as $num) {
-                $prefixes[] = '_ap_'.$num;
-            }
-            foreach ($prefixBpArr as $num) {
-                $prefixes[] = '_bp_'.$num;
-            }
-            $prefixes[] = FlightSettlement::getPrefix();
-            $prefixes[] = FlightEvent::getPrefix();
-            $prefixes[] = '_ex';
-
-            $Fl->DeleteFlight($flightId, $prefixes);
-
-            $Fd = new Folder;
-            $Fd->DeleteFlightFromFolders($flightId);
-            unset($Fd);
+        if (strlen($copyCreationTime) > 5) {
+            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime);
         } else {
-            $Fd = new Folder;
-            $Fd->DeleteFlightFromFolderForUser($flightId, $userId);
-            unset($Fd);
+            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime . ':00');
         }
 
-        unset($U);
+        if (!isset($flightInfo['performer'])) {
+            $flightInfo['performer'] = $user->getLogin();
+        }
+
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->insert($guid, $flightInfo, $fdr, $user, $calibration);
+
+        if ($this->member()->isUser()) {
+            $creator = $this->user()->getCreator();
+
+            if ($creator) {
+                $this->em()->getRepository('Entity\FlightToFolder')
+                    ->insert(0, $creator->getId(), $flight);
+            }
+        }
+
+        if ($this->member()->isUser()
+            || $this->member()->isLocal()
+            || $this->member()->isModerator()
+        ) {
+            $this->em()->getRepository('Entity\FlightToFolder')
+                ->insert(0, $this->user()->getId(), $flight);
+        }
+
+        $admins = $this->em()->getRepository('Entity\User')->getAdmins();
+
+        foreach ($admins as $user) {
+            $this->em()->getRepository('Entity\FlightToFolder')
+                ->insert(0, $user->getId(), $flight);
+        }
+
+        return $flight;
+    }
+
+    public function deleteFlight($flightId, $userId)
+    {
+        $criteria = ['id' => $flightId];
+
+        if (!$this->member()->isAdmin()) {
+            $criteria['userId'] = $userId;
+        }
+
+        $flightToFolder = $this->em()
+            ->getRepository('Entity\FlightToFolder')
+            ->findBy($criteria);
+
+        foreach ($flightToFolder as $item) {
+            $this->em()->remove($item);
+            $this->em()->flush();
+        }
+
+        if (!$this->rbac()->check('deleteFlightIrretrievably')) {
+            return;
+        }
+
+        $flight = $this->em()
+            ->getRepository('Entity\Flight')
+            ->findOneBy([
+                'id' => $flightId,
+                'userId' => $userId
+            ]);
+
+        if (!$flight) {
+            return true;
+        }
+
+        $fdr = $flight->getFdr();
+        $guid = $flight->getGuid();
+
+        $analogPrefixes = $this->fdrComponent->getAnalogPrefixes($fdr->getId());
+        $binaryPrefixes = $this->fdrComponent->getBinaryPrefixes($fdr->getId());
+        $tables = [];
+        foreach ($analogPrefixes as $num) {
+            $tables[] = $this->fdrComponent->getAnalogTable($guid, $num);
+        }
+
+        foreach ($binaryPrefixes as $num) {
+            $tables[] = $this->fdrComponent->getBinaryTable($guid, $num);
+        }
+
+        $link = $this->connection()->create('flights');
+        $tables[] = $this->FlightSettlement::getTable($link, $guid);
+        $tables[] = $this->FlightEvent::getTable($link, $guid);
+        $tables[] = $this->FlightEventOld::getTable($link, $guid);
+
+        foreach ($tables as $table) {
+            if ($table) {
+                $this->connection()->drop($table, null, $link);
+            }
+        }
+
+        $this->connection()->destroy($link);
+
+        $this->em()->remove($flight);
+        $this->em()->flush();
+
         return true;
     }
 
-    public static function getFlightEvents($flightId, $flightGuid = '')
+    public function getFlightEvents($flightId, $flightGuid = '')
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flightId passed. Integer is required. Passed: "
@@ -81,7 +163,7 @@ class FlightComponent
         }
 
         if ($flightGuid === '') {
-            $flight = $em->find('Entity\Flight', $flightId);
+            $flight = $this->em()->find('Entity\Flight', $flightId);
             $flightGuid = $flight->getGuid();
         }
 
@@ -96,23 +178,21 @@ class FlightComponent
             return [];
         }
 
-        $em = EM::get();
-        $em->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
-        $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
-        $events = $em->getRepository('Entity\FlightEvent')->findAll();
+        $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
+        $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+        $events = $this->em()->getRepository('Entity\FlightEvent')->findAll();
 
         return $events;
     }
 
-    public static function getFlightSettlements($flightId, $flightGuid = '')
+    public function getFlightSettlements($flightId, $flightGuid = '')
     {
         if (!is_int($flightId)) {
             throw new Exception("Incorrect flight id passed", 1);
         }
 
         if ($flightGuid === '') {
-            $em = EM::get();
-            $flight = $em->find('Entity\Flight', $flightId);
+            $flight = $this->em()->find('Entity\Flight', $flightId);
             $flightGuid = $flight->getGuid();
         }
 
@@ -129,36 +209,77 @@ class FlightComponent
         return $allFlightSettlements;
     }
 
-    public static function getTreeItem($flightId, $userId)
+    public function createParamTables($flightUid, $paramCyclo, $binaryCyclo)
     {
-        $em = EM::get();
-        $Fl = new Flight;
-        $fdr = new Fdr;
-        $Frame = new Frame;
+        $tables = [
+            'params' => [],
+            'binary' => [],
+        ];
 
-        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+        $link = $this->connection()->create('flights');
 
-        $flightInfo = $Fl->GetFlightInfo($flightToFolders->getFlightId());
-        $fdrInfo = $fdr->getFdrInfo(intval($flightInfo['id_fdr']));
-        $prefixArr = $fdr->GetBruApCycloPrefixes(intval($flightInfo['id_fdr']));
-        $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]);
+        foreach ($paramCyclo as $prefix => $cyclo) {
+            $table = $this->fdrComponent->getAnalogTable($flightUid, $prefix);
+            $tables['params'][] = $table;
 
-        $item = array_merge(
-            $flightToFolders->getFlight()->get(),
-            [
-                'noChildren' => true,
-                'type' => 'flight',
-                'parentId' => $flightToFolders->getFolderId(),
-                'startCopyTimeFormated' => date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime()),
-                'framesCount' => $framesCount
-            ]
-        );
+            $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT";
 
-        unset($Fl);
-        unset($fdr);
-        unset($Frame);
+            foreach ($cyclo as $param) {
+                $query .= ", `".$param["code"]."` FLOAT(7,2)";
+            }
 
-        return $item;
+            $query .= ", PRIMARY KEY (`frameNum`, `time`)) " .
+                    "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+            $stmt = $link->prepare($query);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        foreach ($binaryCyclo as $prefix => $prefixCyclo) {
+            $table = $this->fdrComponent->getBinaryTable($flightUid, $prefix);
+            $tables['binary'][] = $table;
+
+            $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
+                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+            $stmt = $link->prepare($query);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        $this->connection()->destroy($link);
+
+        return $tables;
+    }
+
+    public function getFlightTiming($flightId)
+    {
+        $flight = $this->em()->getRepository('Entity\Flight')
+            ->findOneBy(['id' => $flightId]);
+        $fdr = $flight->getFdr();
+        $stepLength = $fdr->getStepLength();
+
+        $prefixArr = $this->fdrComponent->getAnalogPrefixes($fdr->getId());
+        $framesCount = $this->getFramesCount($flight->getGuid(), $prefixArr[0]); //giving just some prefix
+        $stepsCount = $framesCount * $stepLength;
+
+        return [
+            'duration' => $stepsCount,
+            'startCopyTime' => $flight->getStartCopyTime(),
+            'stepLength' => $stepLength,
+            'framesCount' => $framesCount
+        ];
+    }
+
+    public function getFramesCount($apTableName, $prefix)
+    {
+        $link = $this->connection()->create('flights');
+        $query = "SELECT MAX(`frameNum`) FROM `".$apTableName."_ap_". $prefix ."` LIMIT 1;";
+        $result = $link->query($query);
+        $row = $result->fetch_array();
+        $framesCount = $row[0];
+        $this->connection()->destroy($link);
+
+        return $framesCount;
     }
 }

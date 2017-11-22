@@ -2,15 +2,6 @@
 
 namespace Controller;
 
-use Model\Language;
-use Model\FlightTemplate;
-use Model\Channel;
-use Model\Fdr;
-use Model\Flight;
-
-use Component\EntityManagerComponent as EM;
-use Component\FdrComponent;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -18,124 +9,29 @@ use Exception\ForbiddenException;
 
 use \Exception;
 
-class FdrController extends CController
+class FdrController extends BaseController
 {
-    function __construct()
+    public function getFdrsAction()
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
-
-        $L = new Language();
-        unset($L);
+        return json_encode(
+            $this->dic()
+                ->get('fdr')
+                ->getFdrs()
+        );
     }
 
-    public function getFdrs($args)
+    public function getCycloAction($flightId, $fdrId = null)
     {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
-
-        $fdrsAndCalibrations = FdrComponent::getAvaliableFdrs($userId);
-
-        return json_encode($fdrsAndCalibrations);
-    }
-
-    public function ShowParamList($fdrId)
-    {
-        if (!is_int($fdrId)) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $fdr = new Fdr;
-        $flightApHeaders = $fdr->GetBruApHeaders($fdrId);
-        $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
-        unset($fdr);
-
-        $paramList = sprintf ("<div class='BruTypeTemplatesParamsListContainer'>");
-        $paramList .= sprintf ("<div class='BruTypeTemplatesApList'>");
-
-        for ($i = 0; $i < count($flightApHeaders); $i++)
-        {
-            $paramList .= sprintf ("
-                <input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-                    data-colorpicker='false' readonly/>
-                <label style='display:inline;'><input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
-                %s, %s </label>
-                </br>",
-                    $flightApHeaders[$i]['color'],
-                    $flightApHeaders[$i]['color'],
-                    $flightApHeaders[$i]['code'],
-                    $flightApHeaders[$i]['color'],
-                    $flightApHeaders[$i]['code'],
-                    $flightApHeaders[$i]['name'],
-                    $flightApHeaders[$i]['code']);
-        }
-
-            $paramList .= sprintf ("</div><div class='BruTypeTemplatesBpList'>");
-
-        for ($i = 0; $i < count($flightBpHeaders); $i++)
-        {
-            $paramList .= sprintf ("<input size='1' class='colorpicker-popup' style='background-color:#%s; color:#%s; display:inline;' data-paramcode='%s' value='%s'
-                data-colorpicker='false' readonly/>
-            <label style='display:inline;'>
-            <input type='checkbox' class='ParamsCheckboxGroup' value='%s'/>
-            %s, %s</label></br>",
-                    $flightBpHeaders[$i]['color'],
-                    $flightBpHeaders[$i]['color'],
-                    $flightBpHeaders[$i]['code'],
-                    $flightBpHeaders[$i]['color'],
-                    $flightBpHeaders[$i]['code'],
-                    $flightBpHeaders[$i]['name'],
-                    $flightBpHeaders[$i]['code']);
-        }
-
-        $paramList .= sprintf("</div></div></div></br>");
-        return $paramList;
-    }
-
-    private function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
-
-
-    public function getCyclo($args)
-    {
-        if (!isset($args['fdrId'])
-            && !isset($args['flightId'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $fdrId = null;
-
-        if (!isset($args['fdrId'])) {
-            $flightId = intval($args['flightId']);
-
-            $Fl = new Flight;
-            $flightInfo = $Fl->GetFlightInfo($flightId);
-            $fdrId = intval($flightInfo['id_fdr']);
+        if ($fdrId === null) {
+            $flight = $this->em()->find('Entity\Flight', $flightId);
+            $fdrId = $flight->getFdrId();
             unset($Fl);
-        } else {
-            $fdrId = intval($args['fdrId']);
         }
-
-        $fdr = new Fdr;
-        $flightApHeaders = $fdr->GetBruApHeaders($fdrId);
-        $flightBpHeaders= $fdr->GetBruBpHeaders($fdrId);
-        unset($fdr);
 
         return json_encode([
             'fdrId' => $fdrId,
-            'analogParams' => $flightApHeaders,
-            'binaryParams' => $flightBpHeaders
+            'analogParams' => $this->dic()->get('fdr')->getParams($fdrId, true),
+            'binaryParams' => $this->dic()->get('fdr')->getBinaryParams($fdrId, true)
         ]);
     }
 

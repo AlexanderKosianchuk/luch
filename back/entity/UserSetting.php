@@ -54,5 +54,18 @@ class UserSetting
      */
     private $dtUp;
 
+    public function getName()
+    {
+        return $this->name;
+    }
 
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }

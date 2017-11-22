@@ -165,13 +165,12 @@ Legend.prototype.ReceiveLegend = function(){
                 flightId: self.flightId,
                 paramCodes: paramCodes
             },
-            type: "POST",
-            url: ENTRY_URL + "?action=chart/rcvLegend",
+            type: 'POST',
+            url: ENTRY_URL + 'chart/getLegend',
             dataType: 'json',
             success: function(inData){
                 self.dfr.resolve;
             },
-            async: true,
         }).done(function(inData){
             for (var i = 0; i < self.paramCount; i++) {
                 var $this = legndLabls.eq(i);
@@ -205,7 +204,7 @@ Legend.prototype.ShowLeadParamVal = function(val, label){
     if (this.pos.x > this.xax.min && this.pos.x < this.xax.max) {
         this.leadParamValBox.text(label + " = " + val);
         this.leadParamValBox.css({
-            'left': this.pos.pageX,
+            'left': this.pos.pageX + 10,
             'top': this.pos.pageY - 25,
             });
     }

@@ -8,7 +8,7 @@ export default function startEasyFlightUploading(payload) {
         });
 
         let checkProgress = function () {
-            fetch('/entry.php?action=uploader/getUploadingStatus&uploadingUid='+payload.uploadingUid, {
+            fetch(ENTRY_URL+'uploader/getUploadingStatus/uploadingUid/'+payload.uploadingUid, {
                 method: 'GET',
                 credentials: "same-origin"
             })
@@ -31,7 +31,6 @@ export default function startEasyFlightUploading(payload) {
                             progress: json.progress
                         }
                     });
-                    setTimeout(checkProgress, 1000);
                 }
 
                 if (json.status !== 'complete') {
@@ -42,7 +41,7 @@ export default function startEasyFlightUploading(payload) {
 
         setTimeout(checkProgress, 1000);
 
-        fetch('/entry.php?action=uploader/flightEasyUpload', {
+        fetch(ENTRY_URL + 'uploader/flightEasyUpload', {
             method: 'POST',
             body: payload.form,
             credentials: "same-origin"

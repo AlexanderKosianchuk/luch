@@ -2,6 +2,8 @@
 
 namespace Entity;
 
+use EntityTraits\dynamicTable;
+
 /**
  * FdrBinaryParam
  *
@@ -10,7 +12,8 @@ namespace Entity;
  */
 class FdrBinaryParam
 {
-    private static $_prefix = '_bp';
+    use dynamicTable;
+    public static $_prefix = '_bp';
 
     /**
      * @var integer
@@ -43,25 +46,11 @@ class FdrBinaryParam
     private $name;
 
     /**
-     * @var string
-     *
-     * @Column(name="dim", type="string", length=9, nullable=false)
-     */
-    private $color;
-
-    /**
      * @var integer
      *
      * @Column(name="type", type="integer", nullable=false)
      */
     private $type;
-
-    /**
-     * @var string
-     *
-     * @Column(name="prefix", type="string", length=9, nullable=false)
-     */
-    private $prefix;
 
     /**
      * @var integer
@@ -77,20 +66,75 @@ class FdrBinaryParam
      */
     private $basis;
 
-    public function get()
+    /**
+     * @var string
+     *
+     * @Column(name="color", type="string", length=9, nullable=false)
+     */
+    private $color;
+
+    /**
+     * @var string
+     *
+     * @Column(name="prefix", type="string", length=9, nullable=false)
+     */
+    private $prefix;
+
+    public function getCode()
     {
-        return [
+        return $this->code;
+    }
+
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    public function getFrequency()
+    {
+        $channels = $this->getChannel();
+        return is_array($channels) ? count($channels) : 1;
+    }
+
+    public function getChannel()
+    {
+        if (strpos($this->channel, ',') !== -1) {
+            $channels = explode(',', $this->channel);
+            $channels = array_map('trim', $channels);
+            return $channels;
+        }
+
+        return $this->channel;
+    }
+
+    public function get($isArray = false)
+    {
+        $channels = $this->channel;
+
+        $arr = [
             'id' => $this->id,
-            'channel' => $this->channel,
+            'channel' => $this->getChannel(),
             'code' => $this->code,
             'name' => $this->name,
             'color' => $this->color,
             'type' => $this->type,
             'prefix' => $this->prefix,
             'mask' => $this->mask,
-            'basis' => $this->basis
+            'basis' => $this->basis,
+            'minValue' => 0,
+            'maxValue' => 1,
+            'frequency' => $this->getFrequency(),
         ];
+
+        if ($isArray) {
+            return $arr;
+        }
+
+        return (object) $arr;
     }
 
-
+    public static function getTablePrefix()
+    {
+        return self::$_prefix;
+    }
 }

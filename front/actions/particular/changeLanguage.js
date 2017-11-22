@@ -6,7 +6,7 @@ export default function changeLanguage(payload) {
             type: 'PUT_LANGUAGE_START'
         });
 
-        fetch('/entry.php?action=users/userChangeLanguage&lang=' + payload.language,
+        fetch(ENTRY_URL + 'users/userChangeLanguage/lang/' + payload.language,
             { credentials: "same-origin" }
         ).then(() => {
             dispatch(setLocale(payload.language));

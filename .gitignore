@@ -16,7 +16,7 @@ Thumbs.db
 .tmp
 
 # composer vendor dir
-# /vendor
+/vendor
 /node_modules
 package-lock.json
 
@@ -34,11 +34,12 @@ phpunit.phar
 /phpunit.xml
 
 #config
-/back/config/db.php
+/back/config/db*.php
 
 #log
 /log
 npm-debug.log
+php_errors.log
 
 #server
 .bash_history

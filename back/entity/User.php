@@ -91,14 +91,51 @@ class User
      */
     private $creatorId;
 
+    /**
+     * One User has One User.
+     * @OneToOne(targetEntity="User")
+     * @JoinColumn(name="id_creator", referencedColumnName="id")
+     */
+    private $creator;
+
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    public function getId()
+    {
+        return intval($this->id);
+    }
+
     public function getRole()
     {
         return $this->role;
     }
 
+    public function getLogin()
+    {
+        return strval($this->login);
+    }
+
+    public function getName()
+    {
+        return strval($this->name);
+    }
+
+    public function getLang()
+    {
+        return strval($this->lang);
+    }
+
     public function getLogo()
     {
         return $this->logo;
+    }
+
+    public function getCompany()
+    {
+        return $this->company;
     }
 
     public function getCreatorId()
@@ -120,6 +157,11 @@ class User
             'company' => $this->company,
             'creatorId' => $this->creatorId,
         ];
+    }
+
+    public function setLanguage($lang)
+    {
+        $this->lang = $lang;
     }
 
     public function set($data)

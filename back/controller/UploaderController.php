@@ -2,51 +2,306 @@
 
 namespace Controller;
 
-use Model\Fdr;
-use Model\User;
-use Model\Airport;
-use Model\Frame;
-use Model\Flight;
-use Model\Calibration;
-use Model\Folder;
-use Model\FlightException;
-
-use Component\FlightComponent;
-use Component\EventProcessingComponent;
-use Component\RuntimeManager;
-use Component\RealConnectionFactory as LinkFactory;
-
 use Entity\FlightEvent;
 use Entity\FlightSettlement;
 
-use Evenement\EventEmitter;
-
-use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
 use ZipArchive;
-use \Exception;
+use Exception;
+use \L;
 
-class UploaderController extends CController
+class UploaderController extends BaseController
 {
-    function __construct()
+    public function storeFlightFileAction ($uploadingUid)
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        if (!isset($_FILES['flightFile']['tmp_name'])) {
+            throw new BadRequestException("necessary param flightFile not passed.");
+        }
+
+        $fileName = strval($_FILES['flightFile']['tmp_name']);
+        $uploadingUid = strval($uploadingUid);
+
+        $storedName = $this->dic()
+            ->get('runtimeManager')
+            ->storeUploadedFile($fileName, $uploadingUid);
+
+        return json_encode('ok');
     }
 
-    public function ShowFlightParams($index, $uploadingUid, $fdrId, $filePath, $calibrationId = null)
+    public function flightUploaderPreviewAction ($uploadingUid, $fdrId)
     {
+        $fdrId = intval($fdrId);
+
+        $uploadedFile = $this->dic()->get('runtimeManager')->getFilePathByIud($uploadingUid);
+        $response = $this->dic()->get('flightProcessor')->preview($fdrId, $uploadedFile);
+
+        return json_encode($response);
+    }
+
+    public function flightUploadingOptionsAction(
+        $index,
+        $uploadingUid,
+        $fdrId,
+        $calibrationId = null
+    ) {
+        $fdrId = intval($fdrId);
+        $uploadingUid = strval($uploadingUid);
+
+        if ($calibrationId !== null) {
+            $calibrationId = intval($calibrationId);
+        }
+
+        $uploadedFile = $this->dic()
+            ->get('runtimeManager')
+            ->getFilePathByIud($uploadingUid);
+
+        $flightParamsSrt = $this->ShowFlightParams(
+            $index,
+            $uploadingUid,
+            $fdrId,
+            $uploadedFile,
+            $calibrationId
+        );
+
+        return json_encode([
+            'status' => 'ok',
+            'data' => $flightParamsSrt
+        ]);
+    }
+
+    public function flightProccesAction(
+        $fdrId,
+        $uploadingUid,
+        $calibrationId,
+        $fileName,
+        $flightInfo,
+        $flightAditionalInfo = [],
+        $check = true
+    ) {
+        $fdrId = intval($fdrId);
+
+        if (($calibrationId !== null)
+            && !empty($calibrationId)
+            && is_int(intval($calibrationId))
+        ) {
+            $calibrationId = intval($calibrationId);
+        }
+
+        $userId = $this->user()->getId();
+
+        //in such way it was passed in js because of imposible to do it by usual aasoc arr
+        $flightInfoParsed = [];
+        for ($i = 0; $i < count($flightInfo); $i+=2) {
+            if ((string)$flightInfo[$i + 1] != '') {
+                $flightInfoParsed[(string)$flightInfo[$i]] =
+                    (string)$flightInfo[$i + 1];
+            } else {
+                $flightInfoParsed[(string)$flightInfo[$i]] = "x";
+            }
+        }
+
+        $aditionalInfoVars = '';
+        $flightAditionalInfoParsed = [];
+        if ($flightAditionalInfo != 0) {
+            for ($i = 0; $i < count($flightAditionalInfo); $i+=2) {
+                $flightAditionalInfoParsed[(string)$flightAditionalInfo[$i]] =
+                    (string)$flightAditionalInfo[$i + 1];
+            }
+
+            $aditionalInfoVars = json_encode($flightAditionalInfo);
+        }
+
+        $flightInfoParsed['aditionalInfo'] = $aditionalInfoVars;
+
+        $storedFlightFile = $this->dic()
+            ->get('runtimeManager')
+            ->storeFlight($fileName);
+
+        $flightInfo['path'] = $storedFlightFile;
+
+        $flight = $this->dic()
+            ->get('flight')
+            ->insert(
+                $uploadingUid,
+                $flightInfoParsed,
+                $fdrId,
+                $userId,
+                $calibrationId
+            );
+
+        $totalPersentage = 50;
+
+        $this->dic()
+            ->get('flightProcessor')
+            ->process(
+                $uploadingUid,
+                $storedFlightFile,
+                $flight->getStartCopyTime(),
+                $totalPersentage,
+                $fdrId,
+                $calibrationId
+            );
+
+        $this->dic()
+            ->get('eventProcessor')
+            ->analyze($flight);
+
+        $file = $this->dic()
+            ->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'close'
+            );
+
+        if (file_exists($file->path)) {
+            unlink($file->path);
+        }
+
+        return json_encode([
+            'status' => 'complete',
+            'uploadingUid' => $uploadingUid,
+            'item' => $this->em()
+                ->getRepository('Entity\FlightToFolder')
+                ->getTreeItem($flight->getId(), $userId)
+        ]);
+    }
+
+    public function flightEasyUploadAction(
+        $fdrId,
+        $uploadingUid,
+        $calibrationId = null
+    ) {
+        if (!isset($_FILES['flightFile']['tmp_name'])) {
+            throw new Exception("Necessary param flightFile not passed.", 1);
+        }
+
+        $fdrId = intval($fdrId);
+        $uploadingUid = strval($uploadingUid);
+        $fileName = strval($_FILES['flightFile']['tmp_name']);
+        $userId = $this->user()->getId();
+
+        if (!$this->dic()->get('fdr')->isAvaliable($fdrId)) {
+            throw new Exception("Trying to access unavaliable fdrType."
+                . " User id: " . $userId
+                . " Fdr id: " . $fdrId, 1);
+        }
+
+        $flightInfoFromHeader = $this->dic()
+            ->get('flightProcessor')
+            ->readHeader($fdrId, $fileName);
+
+        $bort = "x";
+        if(isset($flightInfoFromHeader["bort"])) {
+            $bort = $flightInfoFromHeader["bort"];
+        }
+
+        $voyage = "x";
+        if(isset($flightInfoFromHeader["voyage"])) {
+            $voyage = $flightInfoFromHeader["voyage"];
+        }
+
+        $departureAirport = "x";
+        if(isset($flightInfoFromHeader["departureAirport"])) {
+            $departureAirport = $flightInfoFromHeader["departureAirport"];
+        }
+
+        $arrivalAirport = "x";
+        if(isset($flightInfoFromHeader["arrivalAirport"])) {
+            $arrivalAirport = $flightInfoFromHeader["arrivalAirport"];
+        }
+
+        $copyCreationTime = "00:00:00";
+        $copyCreationDate = "2000-01-01";
+        if(isset($flightInfoFromHeader['startCopyTime'])) {
+            $startCopyTime = strtotime($flightInfoFromHeader['startCopyTime']);
+            $copyCreationTime = date('H:i:s', $startCopyTime);
+            $copyCreationDate = date('Y-m-d', $startCopyTime);
+        }
+
+        $performer = null;
+
+        $aditionalInfoVars = $this->dic()
+            ->get('flightProcessor')
+            ->checkAditionalInfoFromHeader($fdrId, $flightInfoFromHeader);
+
+        $totalPersentage = 50;
+
+        $storedFlightFile = $this->dic()
+            ->get('runtimeManager')
+            ->storeFlight($fileName);
+
+        $flightInfo = array_merge(
+            $flightInfoFromHeader,
+            ['aditionalInfo' => $aditionalInfoVars],
+            ['path' => $storedFlightFile]
+
+        );
+
+        $flight = $this->dic()
+            ->get('flight')
+            ->insert(
+                $uploadingUid,
+                $flightInfo,
+                $fdrId,
+                $userId,
+                $calibrationId
+            );
+
+        $this->dic()
+            ->get('flightProcessor')
+            ->process(
+                $uploadingUid,
+                $storedFlightFile,
+                0,
+                50,
+                $fdrId,
+                $calibrationId
+            );
+
+        $this->dic()
+            ->get('eventProcessor')
+            ->analyze($flight);
+
+        $file = $this->dic()
+            ->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'close'
+            );
+
+        if (file_exists($file->path)) {
+            unlink($file->path);
+        }
+
+        return json_encode([
+            "status" => "complete",
+            "uploadingUid" => $uploadingUid,
+            'item' => $this->em()
+                ->getRepository('Entity\FlightToFolder')
+                ->getTreeItem($flight->getId(), $userId)
+        ]);
+    }
+
+    public function ShowFlightParams(
+        $index,
+        $uploadingUid,
+        $fdrId,
+        $filePath,
+        $calibrationId = null
+    ) {
         $fileName = basename($filePath);
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $previewParams = $fdrInfo['previewParams'];
-        unset($fdr);
+        $fdr = $this->em()->find('\Entity\Fdr', $fdrId);
+        $previewParams = $fdr->getPreviewParams();
 
-        $flightInfoFromHeader = $this->ReadHeader($fdrId, $filePath);
+        $flightInfoFromHeader = $this->dic()
+            ->get('flightProcessor')
+            ->readHeader($fdrId, $filePath);
 
         $fileInfoColumnWidth = '100%';
         if ($previewParams != '') {
@@ -67,10 +322,10 @@ class UploaderController extends CController
 
             "<table border='0' style='margin-bottom:15px;'>" .
             "<tr>" .
-            "<td>" . $this->lang->bruType . "</td>";
+            "<td>" . L::uploader_bruType . "</td>";
 
         $flightParamsSrt .= "<td>"
-            ."<input id='bruType' name='fdrName' class='FlightUploadingInputs form-control' value='" . $fdrInfo['name'] .
+            ."<input id='bruType' name='fdrName' class='FlightUploadingInputs form-control' value='" . $fdr->getName() .
             "' readonly /></td>" .
             "</tr><tr>";
 
@@ -79,7 +334,7 @@ class UploaderController extends CController
             $bortFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["bort"]);
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->bortNum . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_bortNum . "</td>" .
             "<td><input id='bort' name='bort' type='text' class='FlightUploadingInputs form-control' ".
             "value='" . $bortFromHeader . "'/></td>" .
             "</tr>";
@@ -89,7 +344,7 @@ class UploaderController extends CController
             $voyageFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["voyage"]);
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->voyage . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_voyage . "</td>" .
             "<td><input id='voyage' name='voyage' type='text' class='FlightUploadingInputs form-control' ".
             "value='" . $voyageFromHeader . "'/></td>" .
             "</tr>";
@@ -99,7 +354,7 @@ class UploaderController extends CController
             $departureAirportFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["departureAirport"]);
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->departureAirport . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_departureAirport . "</td>" .
                 "<td><input id='departureAirport' name='departureAirport' type='text' class='FlightUploadingInputs form-control' ".
                 "value='" . $departureAirportFromHeader . "'/></td>" .
                 "</tr>";
@@ -109,9 +364,18 @@ class UploaderController extends CController
             $arrivalAirportFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["arrivalAirport"]);
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->arrivalAirport . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_arrivalAirport . "</td>" .
                 "<td><input id='arrivalAirport' name='arrivalAirport' type='text' class='FlightUploadingInputs form-control' ".
                 "value='" . $arrivalAirportFromHeader . "'/></td>" .
+                "</tr>";
+
+        $captainFromHeader = "";
+        if (isset($flightInfoFromHeader["captain"])) {
+            $captainFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',$flightInfoFromHeader["captain"]);
+        }
+        $flightParamsSrt .= "<tr><td>" . L::uploader_capitan . "</td>" .
+                "<td><input id='captain' name='captain' type='text' class='FlightUploadingInputs form-control' ".
+                "value='" . $captainFromHeader . "'/></td>" .
                 "</tr>";
 
         $copyCreationTimeFromHeader = "";
@@ -123,45 +387,39 @@ class UploaderController extends CController
             $copyCreationDateFromHeader = $flightInfoFromHeader["copyCreationDate"];
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->flightDate . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_flightDate . "</td>" .
                 "<td><input id='copyCreationTime' name='copyCreationTime' type='time' class='FlightUploadingInputs form-control' " .
                 "value='" . $copyCreationTimeFromHeader . "'/> <br>" .
                 "<input id='copyCreationDate' name='copyCreationDate' type='date' class='FlightUploadingInputs form-control'" .
                 "value='" . $copyCreationDateFromHeader . "'/>" .
                 "</td></tr>";
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->performer . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_performer . "</td>" .
                 "<td><input id='performer' name='performer' type='text' class='FlightUploadingInputs form-control' value='" .
-                $this->_user->username . "'/></td>" .
+                $this->user()->getLogin() . "'/></td>" .
                 "</tr>";
 
-        if ($fdrInfo['aditionalInfo'] != '') {
-            if (strpos($fdrInfo['aditionalInfo'], ";") !== 0) {
-                $aditionalInfo = explode(";", $fdrInfo['aditionalInfo']);
+        if ($fdr->getAditionalInfo() != '') {
+            $aditionalInfo = [];
+            if (strpos($fdr->getAditionalInfo(), ";") !== 0) {
+                $aditionalInfo = explode(";", $fdr->getAditionalInfo());
                 $aditionalInfo  = array_map('trim', $aditionalInfo);
             } else {
-                $aditionalInfo = (array)trim($fdrInfo['aditionalInfo']);
+                $aditionalInfo = (array)trim($fdr->getAditionalInfo());
             }
 
+            error_reporting(E_ERROR);
             for ($i = 0; $i < count($aditionalInfo); $i++) {
-
-                if (property_exists($this->lang, $aditionalInfo[$i])) {
-                    $labelsArr = get_object_vars($this->lang);
-                    $label = $labelsArr[$aditionalInfo[$i]];
-                } else {
-                    if(!(property_exists($this->lang, 'aditionalInfo'))) {
-                        $this->lang->aditionalInfo = "Aditional info";
-                    }
-
-                    $label = $this->lang->aditionalInfo;
-                }
+                $label = (L('uploader_'.$aditionalInfo[$i]) !== null)
+                    ? L('uploader_'.$aditionalInfo[$i])
+                    : $aditionalInfo[$i];
 
                 $flightParamsSrt .= "<tr><td>" . $label . "</td>";
 
                 $aditionalInfoFromHeader = "";
-                if(isset($flightInfoFromHeader[$aditionalInfo[$i]])) {
+                if (isset($flightInfoFromHeader[$aditionalInfo[$i]])) {
                     $aditionalInfoFromHeader = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '',
-                            $flightInfoFromHeader[$aditionalInfo[$i]]);
+                        $flightInfoFromHeader[$aditionalInfo[$i]]);
                 }
 
                 $flightParamsSrt .= "<td><input id='" . $aditionalInfo[$i] . "'
@@ -169,14 +427,15 @@ class UploaderController extends CController
                         "value='" . $aditionalInfoFromHeader . "'/></td>
                 </tr>";
             }
+            error_reporting(E_ALL);
         }
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->execProc . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_execProc . "</td>" .
             "<td><input id='execProc' type='checkbox' checked class='FlightUploadingInputs form-control'"
             ." style='height: 18px;'/></td>
             </tr>";
 
-        $flightParamsSrt .= "<tr><td>" . $this->lang->ignoreDueUploading . "</td>" .
+        $flightParamsSrt .= "<tr><td>" . L::uploader_ignoreDueUploading . "</td>" .
                 "<td><input id='ignoreDueUploading".$index."' type='checkbox' class='FlightUploadingInputs form-control'"
                 ." style='height: 18px;'/></td>
                 </tr>";
@@ -205,7 +464,7 @@ class UploaderController extends CController
                     "data-file='".$filePath."' " .
                     "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
-                    $this->lang->slice . "</button>";
+                    L::uploader_slice . "</button>";
 
             $flightParamsSrt .= "<button id='sliceCyclicFlightButt".$index."' ".
                     "class='SliceCyclicFlightButt btn btn-default' ".
@@ -214,7 +473,7 @@ class UploaderController extends CController
                     "data-file='".$filePath."' " .
                     "data-fdr-id='".$fdrId."' " .
                     "class='Button'>".
-                    $this->lang->sliceCyclic . "</button>";
+                    L::uploader_sliceCyclic . "</button>";
         }
 
         $flightParamsSrt .= "</br></form></div>";
@@ -222,195 +481,6 @@ class UploaderController extends CController
         $flightParamsSrt .= "</td></tr></table></div>";
 
         return $flightParamsSrt;
-    }
-
-    public function ReadHeader($fdrId, $file)
-    {
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $frameLength = $fdrInfo['frameLength'];
-        $stepLength = $fdrInfo['stepLength'];
-        $wordLength = $fdrInfo['wordLength'];
-        $headerLength = $fdrInfo['headerLength'];
-        $headerScr = $fdrInfo['headerScr'];
-        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
-        unset($fdr);
-
-        $flightInfo = [];
-
-        if (($headerScr != '') || ($headerScr != null)) {
-            $headerScr = str_replace('new Frame', 'new \Model\Frame', $headerScr);
-            eval($headerScr);
-
-            if (isset($Fl)) {
-                unset($Fl);
-            }
-
-            if (isset($flightInfo['startCopyTime'])) {
-                $startCopyTime = $flightInfo['startCopyTime'];
-                $flightInfo['startCopyTime'] = date('H:i:s Y-m-d', $startCopyTime);
-                $flightInfo['copyCreationTime'] = date('H:i:s', $startCopyTime);
-                $flightInfo['copyCreationDate'] = date('Y-m-d', $startCopyTime);
-            }
-
-            $airport = new Airport;
-            if (isset($flightInfo['takeOffLat']) && isset($flightInfo['takeOffLong'])) {
-                $lat = $flightInfo['takeOffLat'];
-                $long = $flightInfo['takeOffLong'];
-                $landingAirport = $airport->getAirportByLatAndLong($lat, $long);
-                if (!empty($landingAirport)) {
-                    $flightInfo['departureAirport'] = $landingAirport['ICAO'];
-                    $flightInfo['departureAirportName'] = $landingAirport['name'];
-                }
-            }
-
-            if (isset($flightInfo['landingLat']) && isset($flightInfo['landingLong'])) {
-                $lat = $flightInfo['landingLat'];
-                $long = $flightInfo['landingLong'];
-                $landingAirport = $airport->getAirportByLatAndLong($lat, $long);
-                if(!empty($landingAirport)) {
-                    $flightInfo['arrivalAirport'] = $landingAirport['ICAO'];
-                    $flightInfo['arrivalAirportName'] = $landingAirport['name'];
-                }
-            }
-            unset($airport);
-        }
-
-        return $flightInfo;
-    }
-
-    public function CheckAditionalInfoFromHeader($fdrId, $headerInfo)
-    {
-        $aditionalInfo = [];
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $aditionalInfoArr = explode(";", $fdrInfo["aditionalInfo"]);
-
-        foreach($aditionalInfoArr as $key => $val) {
-            if (isset($headerInfo[$val])) {
-                $aditionalInfo[$val] = $headerInfo[$val];
-            } else {
-                $aditionalInfo[$val] = "x";
-            }
-        }
-
-        unset($fdr);
-
-        return json_encode($aditionalInfo);
-    }
-
-    public function CopyPreview($fdrId, $file)
-    {
-        $fdrId = intval($fdrId);
-        $flightInfo['id_fdr'] = $fdrId;
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $frameLength = $fdrInfo['frameLength'];
-        $stepLength = $fdrInfo['stepLength'];
-        $wordLength = $fdrInfo['wordLength'];
-        $headerLength = $fdrInfo['headerLength'];
-        $headerScr = $fdrInfo['headerScr'];
-        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
-
-        $previewParams = $fdrInfo['previewParams'];
-        $cycloAp = $fdr->GetBruApCyclo($fdrId, -1, -1, -1);
-
-        $previewParams = explode(";", $previewParams);
-        $previewParams = array_map('trim', $previewParams);
-
-        $previewCyclo = array();
-        $cycloApByPrefixes = array();
-
-        foreach ($cycloAp as $row => $val) {
-            if(in_array($val['code'], $previewParams)) {
-                $previewCyclo[] = $val;
-                if(!in_array($val['prefix'], $cycloApByPrefixes)) {
-                    $prefixFreqArr[$val['prefix']] = count(explode(",",$val['channel']));
-                }
-
-                $cycloApByPrefixes[$val['prefix']][] = $val;
-            }
-        }
-
-        $prefixFreqArr = $fdr->GetBruApCycloPrefixFreq($fdrId);
-        unset($fdr);
-
-        $Fr = new Frame;
-        $fileDesc = $Fr->OpenFile($file);
-        $fileSize = $Fr->GetFileSize($file);
-
-        if(($headerScr != '') || ($headerScr != null))
-        {
-            $headerScr = str_replace('new Frame', 'new \Model\Frame', $headerScr);
-            eval ($headerScr);
-        }
-
-        $startCopyTime = 0; // to be 0 hours
-        /*if(isset($flightInfo['startCopyTime']))
-        {
-            $startCopyTime = $flightInfo['startCopyTime'] * 1000;
-        }*/
-
-        $Fr = new Frame;
-        $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $headerLength, $file);
-
-        $fileDesc = $Fr->OpenFile($file);
-        $fileSize = $Fr->GetFileSize($file);
-
-        $frameNum = 0;
-        $totalFrameNum = floor(($fileSize - $headerLength - $syncroWordOffset)  / $frameLength);
-
-        fseek($fileDesc, $syncroWordOffset, SEEK_SET);
-        $curOffset = $syncroWordOffset;
-
-        $algHeap = array();
-        $data = array();
-
-        while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
-        //while(($frameNum < 30) && ($curOffset < $fileSize))
-        {
-            $curOffset = ftell($fileDesc);
-            $frame = $Fr->ReadFrame($fileDesc, $frameLength);
-            $unpackedFrame = unpack("H*", $frame);
-
-            if($Fr->CheckSyncroWord($frameSyncroCode, $unpackedFrame[1]) === true)
-            {
-                $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-
-                $apPhisicsByPrefixes = array();
-                foreach($cycloApByPrefixes as $prefix => $cycloAp)
-                {
-                    $channelFreq = $prefixFreqArr[$prefix];
-                    $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
-
-                    $phisicsFrame = $phisicsFrame[0]; // 0 - ap 1 - bp
-
-                    for($i = 0; $i < count($cycloAp); $i++)
-                    {
-                        $data[$cycloAp[$i]['code']][] = array($phisicsFrame[1], $phisicsFrame[$i + 2]); //+2 because 0 - frameNum, 1 - time
-                    }
-                }
-
-                $frameNum++;
-            }
-            else
-            {
-                $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $curOffset, $file);
-
-                fseek($fileDesc, $syncroWordOffset, SEEK_SET);
-
-                $framesLeft = floor(($fileSize - $syncroWordOffset)  / $frameLength);
-                $totalFrameNum = $frameNum + $framesLeft;
-
-            }
-        }
-
-        $Fr->CloseFile($fileDesc);
-        unset($Fr);
-
-        return $data;
     }
 
     public function CutCopy (
@@ -542,606 +612,6 @@ class UploaderController extends CController
         }
     }
 
-    public function ProccessFlightData($tempFilePath,
-            $bort,
-            $voyage,
-            $copyCreationTime,
-            $copyCreationDate,
-            $fdrId,
-            $performer,
-            $departureAirport,
-            $arrivalAirport,
-            $aditionalInfo,
-            $fileName,
-            $totalPersentage,
-            $calibrationId = null
-    ) {
-        $fdrId = intval($fdrId);
-
-        if (strlen($copyCreationTime) > 5) {
-            $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime);
-        } else {
-            $startCopyTime = strtotime($copyCreationDate . " " . $copyCreationTime . ":00");
-        }
-
-        if ($performer == null) {
-            $performer = $this->_user->username;
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->GetFdrInfo($fdrId);
-        $fdrCode = $fdrInfo['code'];
-
-        $Fl = new Flight;
-        $flightId = $Fl->InsertNewFlight(
-            $bort,
-            $voyage,
-            $startCopyTime,
-            $fdrId,
-            $fdrCode,
-            $performer,
-            $departureAirport,
-            $arrivalAirport,
-            $fileName,
-            $aditionalInfo,
-            $userId
-        );
-
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $tableNameAp = $flightInfo['apTableName'];
-        $tableNameBp = $flightInfo['bpTableName'];
-        $flightId = $flightInfo['id'];
-
-        $frameLength = $fdrInfo['frameLength'];
-        $stepLength = $fdrInfo['stepLength'];
-        $wordLength = $fdrInfo['wordLength'];
-        $headerLength = $fdrInfo['headerLength'];
-        $headerScr = $fdrInfo['headerScr'];
-        $frameSyncroCode = $fdrInfo['frameSyncroCode'];
-        $cycloApByPrefixes = $fdr->GetBruApCycloPrefixOrganized($fdrId);
-
-        if ($calibrationId !== null) {
-            $calibration = new Calibration;
-            $fdrCalibration = $calibration->getCalibrationById($calibrationId, $userId);
-            $dynamicCalibrationTableName = $calibration->getTableName($fdrCode);
-            $calibratedParams = $calibration->getCalibrationParams($dynamicCalibrationTableName, $calibrationId);
-
-            foreach ($cycloApByPrefixes as $prefix => &$params) {
-                foreach ($params as &$param) {
-                    $paramId = $param['id'];
-
-                    if(isset($calibratedParams[$paramId])) {
-                        $param['xy'] = $calibratedParams[$paramId]['xy'];
-                    }
-                }
-            }
-        }
-
-        $prefixFreqArr = $fdr->GetBruApCycloPrefixFreq($fdrId);
-
-        $cycloBpByPrefixes = $fdr->GetBruBpCycloPrefixOrganized($fdrId);
-        $prefixBpFreqArr = $fdr->GetBruBpCycloPrefixFreq($fdrId);
-        unset($fdr);
-        $apTables = $Fl->CreateFlightParamTables($flightId, $cycloApByPrefixes, $cycloBpByPrefixes);
-        unset($Fl);
-
-        $Fr = new Frame;
-        $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $headerLength, $fileName);
-
-        $fileDesc = $Fr->OpenFile($fileName);
-        $fileSize = $Fr->GetFileSize($fileName);
-
-        $frameNum = 0;
-        $totalFrameNum = floor(($fileSize - $syncroWordOffset)  / $frameLength);
-
-        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
-
-        $fileNameApArr = array();
-        $fileNameApDescArr = array();
-        foreach ($cycloApByPrefixes as $prefix => $item) {
-            $fileNameAp = $tmpProccStatusFilesDir . "/" . $tableNameAp . "_".$prefix.".tbl";
-            $fileNameApArr[$prefix] = $fileNameAp;
-            $fileNameApDesc = fopen($fileNameAp, "w");
-            $fileNameApDescArr[$prefix] = $fileNameApDesc;
-        }
-
-        $fileNameBpArr = array();
-        $fileNameBpDescArr = array();
-        foreach ($cycloBpByPrefixes as $prefix => $item) {
-            $fileNameBp = $tmpProccStatusFilesDir . "/" . $tableNameBp . "_".$prefix.".tbl";
-            $fileNameBpArr[$prefix] = $fileNameBp;
-            $fileNameBpDesc = fopen($fileNameBp, "w");
-            $fileNameBpDescArr[$prefix] = $fileNameBpDesc;
-        }
-
-        fseek($fileDesc, $syncroWordOffset, SEEK_SET);
-        $curOffset = $syncroWordOffset;
-
-        //file can be accesed by ajax while try to open what can cause warning
-        error_reporting(E_ALL ^ E_WARNING);
-        set_time_limit (0);
-
-        $algHeap = array();
-        $tmpStatus = 0;
-        $newStatus = 0;
-        $this->writeStatus ($tempFilePath, $tmpStatus);
-
-        if ($frameSyncroCode != '') {
-            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
-            //while(($frameNum < 20) && ($curOffset < $fileSize))
-            {
-                $curOffset = ftell($fileDesc);
-                $frame = $Fr->ReadFrame($fileDesc, $frameLength);
-                $unpackedFrame = unpack("H*", $frame);
-
-                if($Fr->CheckSyncroWord($frameSyncroCode, $unpackedFrame[1]) === true)
-                {
-                    $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-
-                    $apPhisicsByPrefixes = array();
-                    foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
-                        $channelFreq = $prefixFreqArr[$prefix];
-                        $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
-                        $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
-                    }
-
-                    $bpPhisicsByPrefixes = array();
-                    foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
-                        $channelFreq = $prefixBpFreqArr[$prefix];
-                        $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
-                            $frameNum,
-                            $startCopyTime,
-                            $stepLength,
-                            $channelFreq,
-                            $cycloBp,
-                            $apPhisicsByPrefixes,
-                            $algHeap);
-
-                        $bpPhisicsByPrefixes[$prefix] = $convBinFrame;
-                    }
-
-                    $Fr->AppendFrameToFile($apPhisicsByPrefixes, $fileNameApDescArr);
-                    $Fr->AppendFrameToFile($bpPhisicsByPrefixes, $fileNameBpDescArr);
-
-                    $frameNum++;
-                } else {
-                    $syncroWordOffset = $Fr->SearchSyncroWord($frameSyncroCode, $curOffset, $fileName);
-
-                    fseek($fileDesc, $syncroWordOffset, SEEK_SET);
-
-                    $framesLeft = floor(($fileSize - $syncroWordOffset)  / $frameLength);
-                    $totalFrameNum = $frameNum + $framesLeft;
-
-                }
-
-                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-            }
-        } else {
-            while(($frameNum < $totalFrameNum) && ($curOffset < $fileSize))
-            //while(($frameNum < 20) && ($curOffset < $fileSize))
-            {
-                $curOffset = ftell($fileDesc);
-                $frame = $Fr->ReadFrame($fileDesc, $frameLength);
-                $unpackedFrame = unpack("H*", $frame);
-
-                $splitedFrame = str_split($unpackedFrame[1], $wordLength * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
-
-                $apPhisicsByPrefixes = array();
-                foreach ($cycloApByPrefixes as $prefix => $cycloAp) {
-                    $channelFreq = $prefixFreqArr[$prefix];
-                    $phisicsFrame = $Fr->ConvertFrameToPhisics($splitedFrame, $startCopyTime, $stepLength, $channelFreq, $frameNum, $cycloAp, $algHeap);
-                    $apPhisicsByPrefixes[$prefix] = $phisicsFrame;
-                }
-
-                $bpPhisicsByPrefixes = array();
-                foreach($cycloBpByPrefixes as $prefix => $cycloBp) {
-                    $channelFreq = $prefixBpFreqArr[$prefix];
-                    $convBinFrame = $Fr->ConvertFrameToBinaryParams($splitedFrame,
-                        $frameNum,
-                        $startCopyTime,
-                        $stepLength,
-                        $channelFreq,
-                        $cycloBp,
-                        $apPhisicsByPrefixes,
-                        $algHeap);
-
-                    $bpPhisicsByPrefixes[$prefix] = $convBinFrame;
-                }
-
-                $Fr->AppendFrameToFile($apPhisicsByPrefixes, $fileNameApDescArr);
-                $Fr->AppendFrameToFile($bpPhisicsByPrefixes, $fileNameBpDescArr);
-
-                $frameNum++;
-
-                $newStatus = round($totalPersentage / $fileSize * $frameNum * $frameLength);
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-            }
-        }
-
-        $this->writeStatus ($tempFilePath, $totalPersentage);
-
-        error_reporting(E_ALL);
-
-        //not need any more
-        $Fr->CloseFile($fileDesc);
-        unlink($fileName);
-
-        foreach($fileNameApArr as $prefix => $fileNameAp) {
-            fclose($fileNameApDescArr[$prefix]);
-            $Fr->LoadFileToTable($tableNameAp . "_" . $prefix, $fileNameAp);
-            unlink($fileNameAp);
-        }
-
-        foreach($fileNameBpArr as $prefix => $fileNameBp) {
-            fclose($fileNameBpDescArr[$prefix]);
-            $Fr->LoadFileToTable($tableNameBp . "_" . $prefix, $fileNameBp);
-            unlink($fileNameBp);
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $observerIds = $this->_user->GetObservers($userId);
-
-        if (!in_array($userId, $observerIds)) {
-            $observerIds[] = $userId;
-        }
-
-        $Fd = new Folder;
-        foreach ($observerIds as $id) {
-            $Fd->PutFlightInFolder($flightId, 0, $id); //we put currently uploaded file in root
-        }
-        unset($Fd);
-        unset($Fr);
-
-        return $flightId;
-    }
-
-    public function ProccesFlightException(
-        $flightId,
-        $tempFilePath
-    ) {
-        $flightId = intval($flightId);
-
-        $tmpProccStatusFilesDir = RuntimeManager::getRuntimeFolder();
-        if (!is_dir($tmpProccStatusFilesDir)) {
-            mkdir($tmpProccStatusFilesDir);
-        }
-
-        $this->writeStatus ($tempFilePath, 50);
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        $apTableName = $flightInfo["apTableName"];
-        $bpTableName = $flightInfo["bpTableName"];
-        $excEventsTableName = $flightInfo["exTableName"];
-        $startCopyTime = $flightInfo["startCopyTime"];
-        $tableGuid = substr($apTableName, 0, 14);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $excListTableName = $fdrInfo["excListTableName"];
-        $apGradiTableName = $fdrInfo["gradiApTableName"];
-        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-        $stepLength = $fdrInfo["stepLength"];
-
-        if ($excListTableName != "") {
-            $excListTableName = $fdrInfo["excListTableName"];
-            $apGradiTableName = $fdrInfo["gradiApTableName"];
-            $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-
-            $FEx = new FlightException;
-            $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
-            //Get exc refParam list
-            $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
-
-            $exList = $FEx->GetFlightExceptionTable($excListTableName);
-
-            //file can be accesed by ajax what can cause warning
-            error_reporting(E_ALL ^ E_WARNING);
-            set_time_limit (0);
-
-            //50 because we think previous 50 ware used during proc
-            $tmpStatus = 50;
-            $newStatus = 50;
-
-            for($i = 0; $i < count($exList); $i++) {
-                $newStatus = round(50 + (25 / count($exList) * $i));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-
-                $curExList = $exList[$i];
-                $FEx->PerformProcessingByExceptions($curExList,
-                        $flightInfo, $flightExTableName,
-                        $apTableName, $bpTableName,
-                        $startCopyTime, $stepLength);
-            }
-
-            $emitter = new EventEmitter();
-
-            $emitter->on('EventProcessing:start', function ($count) use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 75;
-                $this->writeStatus ($tempFilePath, $tmpStatus);
-            });
-
-            $emitter->on('EventProcessing:progress', function ($progress, $total) use ($tempFilePath, $tmpStatus, $newStatus) {
-                $newStatus = round(75 + (25 / count($total) * $progress));
-                if ($newStatus > $tmpStatus) {
-                    $tmpStatus = $newStatus;
-                    $this->writeStatus ($tempFilePath, $tmpStatus);
-                }
-            });
-
-            $emitter->on('EventProcessing:end', function () use ($tempFilePath, $tmpStatus) {
-                $tmpStatus = 100;
-                $this->writeStatus ($tempFilePath, $tmpStatus);
-            });
-
-            EventProcessingComponent::processEvents($flightId, $emitter);
-
-            error_reporting(E_ALL);
-        }
-
-        unset($fdr);
-    }
-
-    private function writeStatus ($path, $status)
-    {
-        if (file_exists($path)) {
-            try {
-                $fp = fopen($path, "w");
-                fwrite($fp, json_encode($status));
-                fclose($fp);
-            } catch (Exception $e) { }
-        }
-    }
-
-    public function DeleteFlight()
-    {
-         $FC = new FlightComponent;
-         $result = $FC->DeleteFlight($this->flightId, intval($this->_user->userInfo['id']));
-         unset($FC);
-
-         return $result;
-    }
-
-    public function ImportFlight($copiedFilePath)
-    {
-        $copiedFilesDir = RuntimeManager::getImportFolder() . DIRECTORY_SEPARATOR;
-
-        $zip = new ZipArchive;
-        $res = $zip->open($copiedFilePath);
-        $importFolderName = sprintf("Imported_%s", date('Y-m-d'));
-        $needToCreateImportedFolder = true;
-
-        $Fl = new Flight;
-        $fdr = new Fdr;
-        $Fr = new Frame;
-        $FlE = new FlightException;
-        $Fd = new Folder;
-
-        $folderInfo = [];
-        $userId = intval($this->_user->userInfo['id']);
-
-        if ($res === TRUE) {
-            $i = 0;
-            $headerFiles = [];
-            do {
-                $fileName = $zip->getNameIndex($i);
-                if((strpos($fileName, "header") !== false)) {
-                    $headerFiles[] = $fileName;
-                }
-                $i++;
-            } while($i < $zip->numFiles);
-
-            foreach ($headerFiles as $name) {
-                $zip->extractTo($copiedFilesDir, $name);
-
-                $json = file_get_contents($copiedFilesDir."/".$name);
-                unlink($copiedFilesDir."/".$name);
-                $flightInfoImported = json_decode($json, true);
-                $fdrId = intval($flightInfoImported['id_fdr']);
-
-                $flightId = $Fl->InsertNewFlight(
-                    $flightInfoImported['bort'],
-                    $flightInfoImported['voyage'],
-                    $flightInfoImported['startCopyTime'],
-                    $fdrId,
-                    $flightInfoImported['bruType'],
-                    $flightInfoImported['performer'],
-                    $flightInfoImported['departureAirport'],
-                    $flightInfoImported['arrivalAirport'],
-                    $copiedFilePath,
-                    $flightInfoImported['flightAditionalInfo'],
-                    $userId
-                );
-
-                $flightInfo = $Fl->GetFlightInfo($flightId);
-
-                $tableNameAp = $flightInfo['apTableName'];
-                $tableNameBp = $flightInfo['bpTableName'];
-                $flightGuid = $flightInfo["guid"];
-
-                $fdrInfo = $fdr->getFdrInfo($fdrId);
-                $apPrefixes = $fdr->GetBruApCycloPrefixes($fdrId);
-                $bpPrefixes = $fdr->GetBruBpCycloPrefixes($fdrId);
-
-                $apCyclo = $fdr->GetBruApCycloPrefixOrganized($fdrId);
-
-                $tables = $Fl->CreateFlightParamTables(
-                    $flightId,
-                    $apCyclo,
-                    $bpPrefixes
-                );
-
-                $apTables = $flightInfoImported["apTables"];
-
-                for($j = 0; $j < count($apTables); $j++) {
-                    $zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
-                    if (file_exists($copiedFilesDir.$apTables[$j]["file"])) {
-                        $Fr->LoadFileToTable($tableNameAp . "_" . $apTables[$j]["pref"], $copiedFilesDir.$apTables[$j]["file"]);
-                        unlink($copiedFilesDir.$apTables[$j]["file"]);
-                    }
-                }
-
-                $bpTables = $flightInfoImported["bpTables"];
-                for ($j = 0; $j < count($bpTables); $j++) {
-                    $zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
-                    if(file_exists($copiedFilesDir.$bpTables[$j]["file"])) {
-                        $Fr->LoadFileToTable($tableNameBp . "_" . $bpTables[$j]["pref"], $copiedFilesDir.$bpTables[$j]["file"]);
-                        unlink($copiedFilesDir.$bpTables[$j]["file"]);
-                    }
-                }
-
-                if (isset($flightInfoImported["exTableName"])
-                    && ($flightInfoImported["exTableName"] != "")
-                ) {
-                    $flightExTableName = $FlE->CreateFlightExceptionTable($flightId, $flightGuid);
-
-                    $exTables = $flightInfoImported["exTables"];
-                    $zip->extractTo($copiedFilesDir, $exTables);
-                    $Fr->LoadFileToTable($flightExTableName, $copiedFilesDir.$exTables);
-                    if (file_exists($copiedFilesDir.$exTables)) {
-                        unlink($copiedFilesDir.$exTables);
-                    }
-                }
-
-                if (isset($flightInfoImported["eventsTable"])
-                    && ($flightInfoImported["eventsTable"] != "")
-                ) {
-                    $link = LinkFactory::create();
-                    $flightEventTable = FlightEvent::createTable($link, $flightGuid);
-                    LinkFactory::destroy($link);
-
-                    $fileName = $flightInfoImported["eventsTable"];
-                    $zip->extractTo($copiedFilesDir, $fileName);
-                    $Fr->LoadFileToTable($flightEventTable, $copiedFilesDir.$fileName);
-                    if (file_exists($copiedFilesDir.$fileName)) {
-                        unlink($copiedFilesDir.$fileName);
-                    }
-                }
-
-                if (isset($flightInfoImported["settlementsTable"])
-                    && ($flightInfoImported["settlementsTable"] != "")
-                ) {
-                    $link = LinkFactory::create();
-                    $flightSettlementTable = FlightSettlement::createTable($link, $flightGuid);
-                    LinkFactory::destroy($link);
-
-                    $fileName = $flightInfoImported["settlementsTable"];
-                    $zip->extractTo($copiedFilesDir, $fileName);
-                    $Fr->LoadFileToTable($flightSettlementTable, $copiedFilesDir.$fileName);
-                    if (file_exists($copiedFilesDir.$fileName)) {
-                        unlink($copiedFilesDir.$fileName);
-                    }
-                }
-
-                if (count($headerFiles) > 1) {
-                    if ($needToCreateImportedFolder) {
-                        $folderInfo = $Fd->CreateFolder($importFolderName, 0, $userId);
-                        $needToCreateImportedFolder = false;
-                    }
-
-                    if (isset($folderInfo['folderId'])) {
-                        $Fd->PutFlightInFolder($flightId, $folderInfo['folderId'], $userId);
-                    } else {
-                        $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
-                    }
-                } else {
-                    //into root if only one
-                    $Fd->PutFlightInFolder($flightId, 0, $userId); //we put currently uploaded file in root
-                }
-            }
-
-            $zip->close();
-            unlink($copiedFilePath);
-
-            unset($zip);
-            unset($Fl);
-            unset($FlE);
-            unset($Fr);
-            unset($Fd);
-            unset($fdr);
-
-            if(count($headerFiles) <= 0) {
-                return false;
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-    * ==========================================
-    * REAL ACTIONS
-    * ==========================================
-    */
-
-    public function flightShowUploadingOptions($data)
-    {
-        if (!isset($data['index'])
-            || !isset($data['uploadingUid'])
-            || !isset($data['fdrId'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $index = $data['index'];
-        $fdrId = intval($data['fdrId']);
-        $uploadingUid = strval($data['uploadingUid']);
-
-        $calibrationId = null;
-        if(isset($data['calibrationId'])
-            && !empty($data['calibrationId'])
-            && is_int(intval($data['calibrationId']))
-        ) {
-            $calibrationId = intval($data['calibrationId']);
-        }
-
-        $uploadedFile = RuntimeManager::getFilePathByIud($uploadingUid);
-        $flightParamsSrt = $this->ShowFlightParams(
-            $index,
-            $uploadingUid,
-            $fdrId,
-            $uploadedFile,
-            $calibrationId
-        );
-
-        $answ["status"] = "ok";
-        $answ["data"] = $flightParamsSrt;
-        return json_encode($answ);
-    }
-
-    public function flightUploaderPreview($data)
-    {
-        if (!isset($data['fdrId'])
-            || !isset($data['uploadingUid'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $fdrId = intval($data['fdrId']);
-        $uploadingUid = strval($data['uploadingUid']);
-
-        $uploadedFile = RuntimeManager::getFilePathByIud($uploadingUid);
-        $resp = $this->CopyPreview($fdrId, $uploadedFile);
-
-        return json_encode($resp);
-    }
-
     public function flightCutFile($data)
     {
         if(!isset($data['fdrId'])
@@ -1215,313 +685,158 @@ class UploaderController extends CController
         return json_encode($resp);
     }
 
-    public function flightProcces($data)
-    {
-        if(!isset($data['fdrId'])
-            || !isset($data['fileName'])
-            || !isset($data['uploadingUid'])
-            || !isset($data['flightInfo'])
-            || !isset($data['flightAditionalInfo'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $fdrId = intval($data['fdrId']);
-        $uploadedFile = $data['fileName'];
-        $userId = intval($this->_user->userInfo['id']);
-
-        $uploadingUid = $data['uploadingUid'];
-        $receivedFlightInfo = $data['flightInfo'];
-        $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
-        $flightInfo = array();
-        $flightAditionalInfo = array();
-
-        $calibrationId = null;
-        if (isset($data['calibrationId'])
-            && !empty($data['calibrationId'])
-            && is_int(intval($data['calibrationId']))
-        ) {
-            $calibrationId = intval($data['calibrationId']);
-        }
-
-        //in such way it was passed in js because of imposible to do it by usual asoc arr
-        for($i = 0; $i < count($receivedFlightInfo); $i+=2) {
-            if((string)$receivedFlightInfo[$i + 1] != '') {
-                $flightInfo[(string)$receivedFlightInfo[$i]] =
-                    (string)$receivedFlightInfo[$i + 1];
-            } else {
-                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
-            }
-        }
-
-        $aditionalInfoVars = '';
-        if($receivedFlightAditionalInfo != '0') {
-            for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
-                $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
-                    (string)$receivedFlightAditionalInfo[$i + 1];
-            }
-
-            $aditionalInfoVars = json_encode($flightAditionalInfo);
-        }
-
-        $bort = $flightInfo["bort"];
-        $voyage = $flightInfo["voyage"];
-        $copyCreationTime = $flightInfo["copyCreationTime"];
-        $copyCreationDate = $flightInfo["copyCreationDate"];
-        $performer = $flightInfo["performer"];
-        $departureAirport = $flightInfo["departureAirport"];
-        $arrivalAirport = $flightInfo["arrivalAirport"];
-        $totalPersentage = 100;
-
-        $progressFileName = RuntimeManager::createProgressFile($uploadingUid);
-
-        $this->ProccessFlightData($progressFileName,
-            $bort,
-            $voyage,
-            $copyCreationTime,
-            $copyCreationDate,
-            $fdrId,
-            $performer,
-            $departureAirport,
-            $arrivalAirport,
-            $aditionalInfoVars,
-            $uploadedFile,
-            $totalPersentage,
-            $calibrationId
-        );
-
-        RuntimeManager::unlinkRuntimeFile($progressFilePath);
-
-        $answ = array(
-                "status" => "ok",
-                "data" => $uploadedFile,
-                "item" => FlightComponent::getTreeItem($flightId, $userId)
-        );
-        return json_encode($answ);
-    }
-
-    public function flightProccesAndCheck($data)
-    {
-        if (!isset($data['fdrId'])
-            || !isset($data['uploadingUid'])
-            || !isset($data['fileName'])
-            || !isset($data['flightInfo'])
-            || !isset($data['flightAditionalInfo'])
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $uploadingUid = $data['uploadingUid'];
-        $fdrId = intval($data['fdrId']);
-        $uploadedFile = $data['fileName'];
-
-        $receivedFlightInfo = $data['flightInfo'];
-        $receivedFlightAditionalInfo = $data['flightAditionalInfo'];
-        $flightInfo = array();
-        $flightAditionalInfo = array();
-
-        $calibrationId = null;
-        if (isset($data['calibrationId'])
-            && !empty($data['calibrationId'])
-            && is_int(intval($data['calibrationId']))
-        ) {
-            $calibrationId = intval($data['calibrationId']);
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-
-        //in such way it was passed in js because of imposible to do it by usual aasoc arr
-        for ($i = 0; $i < count($receivedFlightInfo); $i+=2) {
-            if ((string)$receivedFlightInfo[$i + 1] != '') {
-                $flightInfo[(string)$receivedFlightInfo[$i]] =
-                    (string)$receivedFlightInfo[$i + 1];
-            } else {
-                $flightInfo[(string)$receivedFlightInfo[$i]] = "x";
-            }
-        }
-
-        $aditionalInfoVars = '';
-        if ($receivedFlightAditionalInfo != 0) {
-            for($i = 0; $i < count($receivedFlightAditionalInfo); $i+=2) {
-                $flightAditionalInfo[(string)$receivedFlightAditionalInfo[$i]] =
-                    (string)$receivedFlightAditionalInfo[$i + 1];
-            }
-
-            $aditionalInfoVars = json_encode($flightAditionalInfo);
-        }
-
-        $bort = $flightInfo["bort"];
-        $voyage = $flightInfo["voyage"];
-        $copyCreationTime = $flightInfo["copyCreationTime"];
-        $copyCreationDate = $flightInfo["copyCreationDate"];
-        $performer = $flightInfo["performer"];
-        $departureAirport = $flightInfo["departureAirport"];
-        $arrivalAirport = $flightInfo["arrivalAirport"];
-        $totalPersentage = 50;
-
-        $progressFilePath = RuntimeManager::createProgressFile($uploadingUid);
-
-        $flightId = $this->ProccessFlightData($progressFilePath,
-            $bort,
-            $voyage,
-            $copyCreationTime,
-            $copyCreationDate,
-            $fdrId,
-            $performer,
-            $departureAirport,
-            $arrivalAirport,
-            $aditionalInfoVars,
-            $uploadedFile,
-            $totalPersentage,
-            $calibrationId
-        );
-
-        $this->ProccesFlightException(
-            $flightId,
-            $progressFilePath
-        );
-
-        RuntimeManager::unlinkRuntimeFile($progressFilePath);
-
-        return json_encode([
-            "status" => "complete",
-            "uploadingUid" => $uploadingUid,
-            "item" => FlightComponent::getTreeItem($flightId, $userId)
-        ]);
-    }
-
-    public function flightEasyUpload($data)
-    {
-        if (!isset($_POST['fdrId'])) {
-            throw new Exception("Necessary param fdrId not passed.", 1);
-        }
-
-        if (!isset($_POST['uploadingUid'])) {
-            throw new Exception("Necessary param uploadingUid not passed.", 1);
-        }
-
-        if (!isset($_FILES['flightFile']['tmp_name'])) {
-            throw new Exception("Necessary param flightFile not passed.", 1);
-        }
-
-        $fdrId = intval($_POST['fdrId']);
-        if (!is_int($fdrId)) {
-            throw new Exception("Incorrect fdrId passed. Integer is required. Passed: "
-                . json_encode($fdrId), 1);
-        }
-
-
-        $uploadingUid = strval($_POST['uploadingUid']);
-        if (!is_string($_POST['uploadingUid'])) {
-            throw new Exception("Incorrect uploadingUid passed. String is required. Passed: "
-                . json_encode($_POST['uploadingUid']), 1);
-        }
-
-        $fileName = strval($_FILES['flightFile']['tmp_name']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!$this->_user->checkFdrAvailable($fdrId, $userId)) {
-            throw new Exception("Trying to access unavaliable fdrType."
-                . " User id: " . $userId
-                . " Fdr id: " . $fdrId, 1);
-        }
-
-        $calibrationId = null;
-        if(isset($data['calibrationId'])
-            && !empty($data['calibrationId'])
-            && is_int(intval($data['calibrationId']))
-        ) {
-            $calibrationId = intval($data['calibrationId']);
-        }
-
-        $flightInfoFromHeader = $this->ReadHeader($fdrId, $fileName);
-
-        $bort = "x";
-        if(isset($flightInfoFromHeader["bort"])) {
-            $bort = $flightInfoFromHeader["bort"];
-        }
-
-        $voyage = "x";
-        if(isset($flightInfoFromHeader["voyage"])) {
-            $voyage = $flightInfoFromHeader["voyage"];
-        }
-
-        $departureAirport = "x";
-        if(isset($flightInfoFromHeader["departureAirport"])) {
-            $departureAirport = $flightInfoFromHeader["departureAirport"];
-        }
-
-        $arrivalAirport = "x";
-        if(isset($flightInfoFromHeader["arrivalAirport"])) {
-            $arrivalAirport = $flightInfoFromHeader["arrivalAirport"];
-        }
-
-        $copyCreationTime = "00:00:00";
-        $copyCreationDate = "2000-01-01";
-        if(isset($flightInfoFromHeader['startCopyTime'])) {
-            $startCopyTime = strtotime($flightInfoFromHeader['startCopyTime']);
-            $copyCreationTime = date('H:i:s', $startCopyTime);
-            $copyCreationDate = date('Y-m-d', $startCopyTime);
-        }
-
-        $performer = null;
-
-        $aditionalInfoVars = $this->CheckAditionalInfoFromHeader($fdrId, $flightInfoFromHeader);
-        $totalPersentage = 50;
-
-        $progressFilePath = RuntimeManager::createProgressFile($uploadingUid);
-
-        $flightId = $this->ProccessFlightData($progressFilePath,
-                $bort,
-                $voyage,
-                $copyCreationTime,
-                $copyCreationDate,
-                $fdrId,
-                $performer,
-                $departureAirport,
-                $arrivalAirport,
-                $aditionalInfoVars,
-                $fileName,
-                $totalPersentage,
-                $calibrationId
-        );
-
-        $this->ProccesFlightException($flightId, $progressFilePath);
-
-        RuntimeManager::unlinkRuntimeFile($progressFilePath);
-
-        return json_encode([
-            "status" => "complete",
-            "uploadingUid" => $uploadingUid,
-            "item" => FlightComponent::getTreeItem($flightId, $userId)
-        ]);
-    }
-
-    public function itemImport($data)
+    public function itemImportAction($flightGuid)
     {
         if (!isset($_FILES['flightFileArchive']['tmp_name'])) {
-            throw new Exception("Necessary param flightFileArchive not passed.", 1);
+            throw new BadRequestException('necessary param flightFileArchive not passed.');
         }
 
-        $fileName = strval($_FILES['flightFileArchive']['tmp_name']);
-        $result = $this->ImportFlight($fileName);
+        $uploadedArchivePath = strval($_FILES['flightFileArchive']['tmp_name']);
+        $copiedFilesDir = $this->dic()->get('runtimeManager')->getImportFolder();
+        $copiedFilePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$_FILES['flightFileArchive']['name'];
+
+        move_uploaded_file($uploadedArchivePath, $copiedFilePath);
+
+        $zip = new ZipArchive;
+        $res = $zip->open($copiedFilePath);
+        $importFolderName = sprintf("Imported_%s", date('Y-m-d'));
+        $needToCreateImportedFolder = true;
+
+        $folderInfo = [];
+        $userId = $this->user()->getId();
+
+        if ($res !== TRUE) {
+            echo json_encode('err');
+        }
+
+        $i = 0;
+        $headerFiles = [];
+        do {
+            $fileName = $zip->getNameIndex($i);
+            if((strpos($fileName, 'header') !== false)) {
+                $headerFiles[] = $fileName;
+            }
+            $i++;
+        } while($i < $zip->numFiles);
+
+        if (count($headerFiles) === 0) {
+            echo json_encode('err');
+        }
+
+        foreach ($headerFiles as $name) {
+            $zip->extractTo($copiedFilesDir, $name);
+
+            $json = file_get_contents($copiedFilesDir.'/'.$name);
+            unlink($copiedFilesDir.'/'.$name);
+            $flightInfoImported = json_decode($json, true);
+
+            $fdrId = $flightInfoImported['fdrId'];
+            $userId = $flightInfoImported['userId'];
+            $calibrationId = $flightInfoImported['calibrationId'];
+
+            $flightInfoImported['copyCreationTime'] = date('H:i:s', $flightInfoImported['startCopyTime']);
+            $flightInfoImported['copyCreationDate'] = date('Y-m-d', $flightInfoImported['startCopyTime']);
+
+            $flightInfoImported['aditionalInfo'] = json_encode($flightInfoImported['aditionalInfo']);
+            $flight = $this->dic()->get('flight')
+                ->insert($flightGuid, $flightInfoImported, $fdrId, $userId, $calibrationId);
+            $flightId = $flight->getId();
+
+            $analogParamsCyclo = $this->dic()->get('fdr')
+                ->getPrefixGroupedParams($fdrId);
+
+            $binaryParamsCyclo = $this->dic()->get('fdr')
+                ->getPrefixGroupedBinaryParams($fdrId);
+
+            $this->dic()->get('flight')->createParamTables(
+                $flightGuid,
+                $analogParamsCyclo,
+                $binaryParamsCyclo
+            );
+
+            $apTables = $flightInfoImported["apTables"];
+
+            for($j = 0; $j < count($apTables); $j++) {
+                $zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$apTables[$j]["file"];
+                $tableName = $this->dic()->get('fdr')->getAnalogTable($flightGuid, $apTables[$j]['pref']);
+
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            $bpTables = $flightInfoImported["bpTables"];
+            for ($j = 0; $j < count($bpTables); $j++) {
+                $zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$bpTables[$j]["file"];
+                $tableName = $this->dic()->get('fdr')->getBinaryTable($flightGuid, $bpTables[$j]['pref']);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["exTables"])
+                && ($flightInfoImported["exTables"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["exTables"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["exTables"]);
+                $tableName = $this->dic()->get('event')
+                    ->createOldEventsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["eventsTable"])
+                && ($flightInfoImported["eventsTable"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["eventsTable"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["eventsTable"]);
+                $tableName = $this->dic()->get('event')
+                    ->createEventsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+
+            if (isset($flightInfoImported["settlementsTable"])
+                && ($flightInfoImported["settlementsTable"] != "")
+            ) {
+                $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["settlementsTable"];
+                $zip->extractTo($copiedFilesDir, $flightInfoImported["settlementsTable"]);
+                $tableName = $this->dic()->get('event')
+                    ->createSettlementsTable($flightGuid);
+                if (file_exists($filePath)) {
+                    $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+                        $tableName, $filePath
+                    );
+                }
+            }
+        }
 
         return json_encode('ok');
     }
 
-    public function getUploadingStatus($data)
+    public function getUploadingStatusAction($uploadingUid)
     {
-        if (!isset($data['uploadingUid'])) {
-            throw new BadRequestException(json_encode($data));
-        }
+        $progressFile = $this->dic()->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'open',
+                'r'
+            );
 
-        $uploadingUid = strval($data['uploadingUid']);
-        if (!is_string($data['uploadingUid'])) {
-            throw new Exception("Incorrect uploadingUid passed. String is required. Passed: "
-                . json_encode($data['uploadingUid']), 1);
-        }
-
-        $progressFilePath = RuntimeManager::getProgressFilePath($uploadingUid);
+        $progressFilePath = $progressFile->path;
 
         //file can be accesed by ajax while try to open what can cause warning
         error_reporting(0);
@@ -1563,41 +878,5 @@ class UploaderController extends CController
                 "uploadingUid" => $uploadingUid
             ]);
         }
-    }
-
-    public function copyToRuntime($data)
-    {
-        if (!isset($_FILES['flightFile']['tmp_name'])) {
-            throw new BadRequestException(json_encode($_FILES));
-        }
-
-        $fileName = strval($_FILES['flightFile']['tmp_name']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $storedName = RuntimeManager::storeUploadedFile($fileName);
-
-        return json_encode([
-            'status' => 'ok',
-            'file' => $storedName
-        ]);
-    }
-
-    public function storeFlightFile ($args)
-    {
-        if (!isset($_FILES['flightFile']['tmp_name'])) {
-            throw new Exception("Necessary param flightFile not passed.", 1);
-        }
-
-        if (!isset($_POST['uploadingUid'])) {
-            throw new Exception("Necessary param uploadingUid not passed.", 1);
-        }
-
-        $fileName = strval($_FILES['flightFile']['tmp_name']);
-        $uploadingUid = strval($_POST['uploadingUid']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $storedName = RuntimeManager::storeUploadedFile($fileName, $uploadingUid);
-
-        return json_encode('ok');
     }
 }

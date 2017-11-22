@@ -13,7 +13,7 @@ use EntityTraits\dynamicTable;
  * FlightEvent
  *
  * @Table(name="NULL")
- * @Entity(repositoryClass="Repository\FlightEventRepository")
+ * @Entity
  */
 class FlightEvent
 {
@@ -56,13 +56,6 @@ class FlightEvent
     private $falseAlarm;
 
     /**
-     * Many FlightEvents have One Event.
-     * @ManyToOne(targetEntity="Event", inversedBy="flightEvents")
-     * @JoinColumn(name="id_event", referencedColumnName="id")
-     */
-    private $event;
-
-    /**
      * One FlightEvent has Many FlightSettlements.
      * @OneToMany(targetEntity="FlightSettlement", mappedBy="flightEvent")
      */
@@ -93,15 +86,21 @@ class FlightEvent
         return $this->flightSettlements;
     }
 
-    public function get()
+    public function get($isArray = false)
     {
-        return [
+        $flightEvent = [
             'id' => $this->id,
             'eventId' => $this->eventId,
             'startTime' => $this->startTime,
             'endTime' => $this->endTime,
             'falseAlarm' => $this->falseAlarm
         ];
+
+        if ($isArray) {
+            return $flightEvent;
+        }
+
+        return (object)$flightEvent;
     }
 
     public static function getPrefix()
@@ -154,7 +153,6 @@ class FlightEvent
         if (!isset($attributes['startTime'])
             || !isset($attributes['endTime'])
             || !isset($attributes['eventId'])
-            || !isset($attributes['event'])
         ) {
             throw new Exception("Not all necessary attributes passed. "
                 . "startTime, endTime, eventId are required. Passed: "
@@ -164,46 +162,8 @@ class FlightEvent
         $this->setStartTime($attributes['startTime']);
         $this->setEndTime($attributes['endTime']);
         $this->setEventId($attributes['eventId']);
-        $this->setEvent($attributes['event']);
 
         $falseAlarm = isset($attributes['falseAlarm']) ? $attributes['falseAlarm'] : false;
         $this->setFalseAlarm($falseAlarm);
-    }
-
-    public static function createTable($link, $guid)
-    {
-        if (!is_string($guid)) {
-            throw new Exception("Incorrect guid passed. String is required. Passed: "
-                . json_encode($guid), 1);
-        }
-
-        $dynamicTableName = $guid . self::$_prefix;
-        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
-        $result = $link->query($query);
-        if (!$result->fetch_array()) {
-            $query = "CREATE TABLE `".$dynamicTableName."` ("
-                . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
-                . "`start_time` BIGINT(20) NOT NULL, "
-                . "`end_time` BIGINT(20) NOT NULL, "
-                . "`id_event` BIGINT(20) NOT NULL, "
-                . "`false_alarm` BOOLEAN NOT NULL, "
-                . " INDEX (`id_event`), "
-                . " PRIMARY KEY (`id`)) "
-                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute()) {
-                throw new Exception("FlightEvent dynamic table creation query failed. Query: "
-                    . $query, 1);
-            }
-        } else {
-            $query = "DELETE FROM `".$dynamicTableName."` WHERE 1;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute()) {
-                throw new Exception("FlightEvent dynamic table truncating query failed. Query: "
-                    . $query, 1);
-            }
-        }
-
-        return $dynamicTableName;
     }
 }

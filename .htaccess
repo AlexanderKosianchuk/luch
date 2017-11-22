@@ -5,7 +5,7 @@
 #DocumentRoot PATH/PREFIX_luch15/
 
 #DirectoryIndex index.php
-SetEnv APPLICATION_ENVIRONMENT 'dev'
+SetEnv APPLICATION_ENV 'dev'
 
 #ErrorLog PATH/PREFIX_luch15/log/error.log
 #LogFormat "%h %l %u %t \"%r\" %>s %b" common
@@ -13,11 +13,12 @@ SetEnv APPLICATION_ENVIRONMENT 'dev'
 #LogLevel alert rewrite:trace5
 
 <IfModule mod_rewrite.c>
+    Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
     RewriteRule ^ - [L]
-    RewriteRule ^ /index.php [L]
+    RewriteRule ^(.*)$ index.php [NC,L]
 </IfModule>
 
 php_value upload_max_filesize 64M

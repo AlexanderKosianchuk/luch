@@ -2,11 +2,6 @@
 
 namespace Controller;
 
-use Model\Flight;
-use Model\Fdr;
-use Model\Frame;
-use Model\FlightException;
-use Model\User;
 use Component\RuntimeManager;
 
 use Exception\UnauthorizedException;
@@ -14,42 +9,104 @@ use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
-use Component\EntityManagerComponent as EM;
+use \L;
 
 use TCPDF;
 
-require_once (SITE_ROOT_DIR."/tcpdf/tcpdf.php");
-require_once (SITE_ROOT_DIR."/tcpdf/config/tcpdf_config.php");
+require_once (SITE_ROOT_DIR."/back/tcpdf/tcpdf.php");
+require_once (SITE_ROOT_DIR."/back/tcpdf/config/tcpdf_config.php");
 
-class FlightEventsController extends CController
+class FlightEventsController extends BaseController
 {
-    function __construct()
+    public function getFlightEventsAction($flightId)
     {
-        $this->IsAppLoggedIn();
-        $this->setAttributes();
+        $flightId = intval($flightId);
+        $userId = $this->user()->getId();
+
+        $flightToFolders = $this->em()->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+
+        if ($flightToFolders === null) {
+            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
+        }
+
+        $flight = $this->em()->find('Entity\Flight', $flightId);
+
+        if ($flight === null) {
+            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
+        }
+
+        $fdr = $flight->getFdr();
+
+        $isDisabled = true;
+        if ($this->member()->isAdmin() || $this->member()->isModerator()) {
+            $isDisabled = false;
+        }
+
+        $startCopyTime = $flight->getStartCopyTime();
+        $frameLength = $fdr->getFrameLength();
+        $flightEvents = $this->dic()
+            ->get('event')
+            ->getFormatedFlightEvents(
+                $flight->getId(),
+                $flight->getGuid(),
+                $isDisabled,
+                $startCopyTime,
+                $frameLength
+            );
+
+        if (empty($flightEvents) && (count($flightEvents) === 0)) {
+            return json_encode([
+                'items' => [],
+                'isProcessed' => true
+            ]);
+        }
+
+        $accordion = [];
+
+        for($ii = 0; $ii < count($flightEvents); $ii++) {
+            $codePrefix = substr($flightEvents[$ii]['code'], 0, 3);
+
+            if (in_array($codePrefix, self::$exceptionTypes)) {
+                if (!isset($accordion[$codePrefix])) {
+                    $accordion[$codePrefix] = [];
+                }
+                $accordion[$codePrefix][] = $flightEvents[$ii];
+            } else {
+                if (!isset($accordion[self::$exceptionTypeOther])) {
+                    $accordion[self::$exceptionTypeOther] = [];
+                }
+                $accordion[self::$exceptionTypeOther][] = $flightEvents[$ii];
+            }
+        }
+
+        return json_encode([
+            'items' => $accordion,
+            'isProcessed' => true
+        ]);
     }
 
-    public function ConstructFlightEventsList($flightId, $sections = [], $colored = false)
+    public function printBlankAction($flightId, $colored = false, $sections = [])
     {
-        $user = $this->_user->username;
+        $colored = $colored === 'true' ? true : false;
+        $flight = $this->em()->find('Entity\Flight', $flightId);
 
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $fdrId = intval($flightInfo['id_fdr']);
-        unset($Fl);
+        if (!$flight) {
+            throw new NotFoundException('flight not found. Id: '.$flightId);
+        }
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $flightApHeaders= $fdr->GetBruApHeaders($fdrId);
-        $flightBpHeaders = $fdr->GetBruBpHeaders($fdrId);
+        $prefixArr = $this->dic()
+            ->get('fdr')
+            ->getAnalogPrefixes($flight->getFdrId());
 
-        $prefixArr = $fdr->GetBruApCycloPrefixes($fdrId);
-        unset($fdr);
+        $framesCount = $this->dic()
+            ->get('flight')
+            ->getFramesCount(
+                $flight->getGuid(),
+                $prefixArr[0]
+            );
 
-        $Frame = new Frame;
-        $framesCount = $Frame->GetFramesCount($flightInfo['apTableName'], $prefixArr[0]); //giving just some prefix
-        unset($Frame);
-
+        $user = $this->user()->getName();
         // create new PDF document
         $pdf = new TCPDF ( 'L', 'mm', 'A4', true, 'UTF-8', false );
 
@@ -59,22 +116,20 @@ class FlightEventsController extends CController
         $pdf->SetTitle ( 'Flight events list' );
         $pdf->SetSubject ( 'Flight events list' );
 
-        $bort = $flightInfo['bort'];
-        $voyage = $flightInfo['voyage'];
-        $copyDate = date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] );
-
-        $Fr = new Frame;
-        $flightDuration = $Fr->FrameCountToDuration ($framesCount, $fdrInfo ['stepLength'] );
-        unset ($Fr);
-
-        $usrInfo = $this->_user->userInfo;
-
-        $headerStr = $usrInfo ['company'];
+        $bort = $flight->getBort();
+        $voyage = $flight->getVoyage();
+        $copyDate = date ( 'H:i:s d-m-Y', $flight->getStartCopyTime() );
+        $timing = $this->dic()->get('flight')->getFlightTiming($flight->getId());
+        $flightDuration = $timing['duration'];
+        $headerStr = $this->user()->getCompany();
         $imageFile = '';
 
-        if($colored && ($usrInfo['logo'] != '')) {
-            $imageFile = RuntimeManager::getRuntimeFolder().DIRECTORY_SEPARATOR.uniqid().'.png';
-            file_put_contents($imageFile, $usrInfo['logo']);
+        if($colored && ($this->user()->getLogo() != '')) {
+            $imageFile = $this->dic()
+                ->get('runtimeManager')
+                ->getRuntimeFolder().DIRECTORY_SEPARATOR.uniqid().'.png';
+
+            file_put_contents($imageFile, $this->user()->getLogo());
             $img = file_get_contents($imageFile);
 
             $pdf->SetHeaderData('$'.$img,
@@ -101,9 +156,9 @@ class FlightEventsController extends CController
         ));
 
         $pdf->setFooterFont ( Array (
-                PDF_FONT_NAME_DATA,
-                '',
-                PDF_FONT_SIZE_DATA
+            PDF_FONT_NAME_DATA,
+            '',
+            PDF_FONT_SIZE_DATA
         ));
 
         // set default monospaced font
@@ -141,45 +196,55 @@ class FlightEventsController extends CController
 
         // set text shadow effect
         $pdf->setTextShadow ( array (
-                'enabled' => true,
-                'depth_w' => 0.2,
-                'depth_h' => 0.2,
-                'color' => [196, 196, 196],
-                'opacity' => 1,
-                'blend_mode' => 'Normal'
+            'enabled' => true,
+            'depth_w' => 0.2,
+            'depth_h' => 0.2,
+            'color' => [196, 196, 196],
+            'opacity' => 1,
+            'blend_mode' => 'Normal'
         ));
 
         // Pasport
         $strStyle = "text-align:center; font-size: xx-large; font-weight: bold; color: rgb(0, 10, 64);";
-        $str = '<p style="' . $strStyle . '">' . $this->lang->pasport . '</p>';
+        $str = '<p style="' . $strStyle . '">' . L::flightEvents_pasport . '</p>';
 
         $pdf->writeHTML ( $str, true, false, false, false, '' );
 
         // Pasport info
         $strStyle = "text-align:center;";
-        $str = '<p style="' . $strStyle . '">' . $this->lang->bruType . ' - ' . $fdrInfo['name'] . '. <br>' .
-                $this->lang->bort . ' - ' . $flightInfo['bort'] . '; ' .
-                $this->lang->voyage . ' - ' . $flightInfo['voyage'] . '; ' .
+        $str = '<p style="' . $strStyle . '">' . L::flightEvents_bruType . ' - ' . $flight->getFdr()->getName() . '. <br>' .
+                L::flightEvents_bort . ' - ' . $flight->getBort() . '; ' .
+                L::flightEvents_voyage . ' - ' . $flight->getVoyage() . '; ' .
 
-        $this->lang->route . ' : ' . $new_string = preg_replace ( '/[^a-zA-z0-9]/', '', $flightInfo['departureAirport'] ) . ' - ' .
-        preg_replace ( '/[^a-zA-z1-9]/', '', $flightInfo['arrivalAirport'] ) . '. <br>' .
-        $this->lang->flightDate . ' - ' . date ( 'H:i:s d-m-Y', $flightInfo['startCopyTime'] ) . '; ' .
-        $this->lang->duration . ' - ' . $flightDuration . '. <br>';
+        L::flightEvents_route . ' : ' . $new_string = preg_replace ( '/[^a-zA-z0-9]/', '', $flight->getDepartureAirport() ) . ' - ' .
+        preg_replace ( '/[^a-zA-z1-9]/', '', $flight->getArrivalAirport() ) . '. <br>' .
+        L::flightEvents_flightDate . ' - ' . date ( 'H:i:s d-m-Y', $flight->getStartCopyTime() ) . '; ' .
+        L::flightEvents_duration . ' - ' . $flightDuration . '. <br>';
 
-        $fileName = date ( 'Y-m-d_H.i.s', $flightInfo['startCopyTime']) . '_' . $flightInfo['bort'] . '_' .  $flightInfo['voyage'] . '_' . $fdrInfo['name'];
+        $fileName = date ( 'Y-m-d_H.i.s', $flight->getStartCopyTime()) . '_' . $flight->getBort() . '_' .  $flight->getVoyage() . '_' . $flight->getFdr()->getName();
 
-        if ((strpos ( $fdrInfo ['aditionalInfo'], ";" ) >= 0)
-            && ($flightInfo['flightAditionalInfo'] !== null)
+        if ((strpos ( $flight->getFdr()->getAditionalInfo(), ";" ) >= 0)
+            && ($flight->getAditionalInfo() !== null)
         ) {
             $counterNeedBrake = false;
-            $aditionalInfoArr = json_decode($flightInfo['flightAditionalInfo'], true);
+            $aditionalInfoArr = $flight->getAditionalInfo();
             if (is_array($aditionalInfoArr)) {
                 foreach ( $aditionalInfoArr as $name => $val) {
                     if ($counterNeedBrake) {
-                        $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; </br>";
+                        $str .= (
+                                (L('uploader_'.$name) !== null)
+                                ? L('uploader_'.$name)
+                                : $name
+                            ).' - '.$val.'; </br>';
+
                         $counterNeedBrake = ! $counterNeedBrake;
                     } else {
-                        $str .= (isset($this->lang->$name) ? $this->lang->$name : $name) . " - " . $val . "; ";
+                        $str .= (
+                                (L('uploader_'.$name) !== null)
+                                ? L('uploader_'.$name)
+                                : $name
+                            ).' - '.$val.';';
+
                         $counterNeedBrake = ! $counterNeedBrake;
                     }
                 }
@@ -190,113 +255,109 @@ class FlightEventsController extends CController
 
         $pdf->writeHTML ( $str, true, false, false, false, '' );
 
-        if ($flightInfo ['exTableName'] != "") {
-            $FEx = new FlightException;
-            $excEventsList = $FEx->GetFlightEventsList ( $flightInfo ['exTableName'] );
+        $flightEvents = $this->dic()
+            ->get('event')
+            ->getFormatedFlightEvents(
+                $flight->getId(),
+                $flight->getGuid(),
+                false,
+                $flight->getStartCopyTime(),
+                $flight->getFdr()->getFrameLength()
+            );
 
-            $Frame = new Frame;
-            // change frame num to time
-            for($i = 0; $i < count ( $excEventsList ); $i ++) {
-                $event = $excEventsList [$i];
+        // if isset events
+        if (count($flightEvents) > 0) {
+            $pdf->SetFont ('dejavusans', '', 9, '', true);
 
-                $excEventsList [$i] ['start'] = date ( "H:i:s", $excEventsList [$i] ['startTime'] / 1000 );
-                $reliability = "checked";
-                // converting false alarm to reliability
-                if ($excEventsList [$i] ['falseAlarm'] == 0) {
-                    $reliability = true;
-                } else {
-                    $reliability = false;
+            $strStyle = 'style="text-align:center; font-weight: bold; background-color:#708090; color:#FFF"';
+            $str = '<p><table border="1" cellpadding="1" cellspacing="1">'
+                .'<tr ' . $strStyle . '><td width="70"> '
+                . L::flightEvents_start . '</td>'
+                . '<td width="70">'
+                . L::flightEvents_end
+                . '</td>'
+                . '<td width="70">'
+                . L::flightEvents_duration
+                . '</td>'
+                . '<td width="70">'
+                . L::flightEvents_code
+                . '</td>'
+                . '<td width="260">'
+                . L::flightEvents_eventName
+                . '</td>'
+                . '<td width="110">'
+                . L::flightEvents_algText
+                . '</td>'
+                . '<td width="180">'
+                . L::flightEvents_aditionalInfo
+                . '</td>'
+                . '<td width="110">'
+                . L::flightEvents_comment
+                . '</td></tr>';
+
+            for ($ii = 0; $ii < count ($flightEvents); $ii++) {
+                $event = $flightEvents[$ii];
+                $codePrefix = substr($event['code'], 0, 3);
+                $sectionsCheck = true;
+                if (count($sections) > 0) {
+                     $sectionsCheck = in_array($codePrefix, $sections)
+                         || (!preg_match('/00[0-9]/', $codePrefix) && in_array('other', $sections));
                 }
 
-                $excEventsList [$i] ['reliability'] = $reliability;
-                $excEventsList [$i] ['end'] = date ( "H:i:s", $excEventsList [$i] ['endTime'] / 1000 );
-                $excEventsList [$i] ['duration'] = $Frame->TimeStampToDuration ( $excEventsList [$i] ['endTime'] - $excEventsList [$i] ['startTime'] );
-            }
-            unset ( $Frame );
-
-            // if isset events
-            if (! (empty ( $excEventsList ))) {
-                $pdf->SetFont ( 'dejavusans', '', 9, '', true );
-
-                $strStyle = 'style="text-align:center; font-weight: bold; background-color:#708090; color:#FFF"';
-                $str = '<p><table border="1" cellpadding="1" cellspacing="1">' . '<tr ' . $strStyle . '><td width="70"> ' . $this->lang->start . '</td>' . '<td width="70">' . $this->lang->end . '</td>' . '<td width="70">' . $this->lang->duration . '</td>' . '<td width="70">' . $this->lang->code . '</td>' . '<td width="260">' . $this->lang->eventName . '</td>' . '<td width="110">' . $this->lang->algText . '</td>' . '<td width="180">' . $this->lang->aditionalInfo . '</td>' . '<td width="110">' . $this->lang->comment . '</td></tr>';
-
-                for ($i = 0; $i < count ( $excEventsList ); $i ++) {
-                    $event = $excEventsList [$i];
-                    $excInfo = $FEx->GetExcInfo ( $fdrInfo ['excListTableName'], $event ['refParam'], $event ['code'] );
-
-                    $codePrefix = substr($event['code'], 0, 3);
-
-                    $sectionsCheck = true;
-                    if (count($sections) > 0) {
-                         $sectionsCheck = in_array($codePrefix, $sections)
-                             || (!preg_match('/00[0-9]/', $codePrefix) && in_array('other', $sections));
+                if (!$event ['falseAlarm'] && $sectionsCheck) {
+                    if ($colored && $event ['status'] == "C") {
+                        $style = "background-color:LightCoral";
+                    } else if ($colored && $event ['status'] == "D") {
+                        $style = "background-color:LightYellow";
+                    } else if ($colored && $event ['status'] == "E") {
+                        $style = "background-color:LightGreen";
+                    } else {
+                        $style = "";
                     }
 
-                    if ($event ['reliability'] && $sectionsCheck) {
-                        if ($colored && $excInfo ['status'] == "C") {
-                            $style = "background-color:LightCoral";
-                        } else if ($colored && $excInfo ['status'] == "D") {
-                            $style = "background-color:LightYellow";
-                        } else if ($colored && $excInfo ['status'] == "E") {
-                            $style = "background-color:LightGreen";
-                        } else {
-                            $style = "";
-                        }
-
-                        $excAditionalInfo = $event ['excAditionalInfo'];
+                    $excAditionalInfo = '';
+                    if (is_array($event['excAditionalInfo'])) {
+                        $excAditionalInfo = implode(';<br>', $event['excAditionalInfo']);
+                    } else if (is_string($event['excAditionalInfo'])) {
                         $excAditionalInfo = str_replace ( ";", ";<br>", $excAditionalInfo );
-
-                        $excInfo ['algText'] = str_replace ( '<', "less", $excInfo ['algText'] );
-
-                        $str .= '<tr style="' . $style . '" nobr="true">' .
-                        '<td width="70" style="text-align:center;">' . $event ['start'] . '</td>' .
-                        '<td width="70" style="text-align:center;">' . $event ['end'] . '</td>' .
-                        '<td width="70" style="text-align:center;">' . $event ['duration'] . '</td>' .
-                        '<td width="70" style="text-align:center;">' . $event ['code'] . '</td>' .
-                        '<td width="260" style="text-align:center;">' . $excInfo ['comment'] . '</td>' .
-                        '<td width="110" style="text-align:center;">' . $excInfo ['algText'] . '</td>' .
-                        '<td width="180" style="text-align:center;">' . $excAditionalInfo . '</td>' .
-                        '<td width="110" style="text-align:center;"> ' . $event ['userComment'] . '</td></tr>';
                     }
+
+                    $event ['algText'] = str_replace ( '<', "less", $event ['algText'] );
+
+                    $str .= '<tr style="' . $style . '" nobr="true">' .
+                    '<td width="70" style="text-align:center;">' . $event ['start'] . '</td>' .
+                    '<td width="70" style="text-align:center;">' . $event ['end'] . '</td>' .
+                    '<td width="70" style="text-align:center;">' . $event ['duration'] . '</td>' .
+                    '<td width="70" style="text-align:center;">' . $event ['code'] . '</td>' .
+                    '<td width="260" style="text-align:center;">' . $event ['comment'] . '</td>' .
+                    '<td width="110" style="text-align:center;">' . $event ['algText'] . '</td>' .
+                    '<td width="180" style="text-align:center;">' . $excAditionalInfo . '</td>' .
+                    '<td width="110" style="text-align:center;"> ' . $event ['userComment'] . '</td></tr>';
                 }
-
-                unset ( $FEx );
-
-                $str .= "</table></p>";
-
-                $pdf->writeHTML ( $str, false, false, false, false, '' );
-
-                $pdf->SetFont ( 'dejavusans', '', 12, '', true );
-                $str = "</br></br>" . $this->lang->performer . ' : ' . '_____________________ ' . $flightInfo['performer']. ', ' . date ( 'd-m-Y' ) . '';
-
-                $pdf->writeHTML ( $str, false, false, false, false, '' );
-            } else {
-                $strStyle = "text-align:center; font-size: xx-large; font-weight: bold; color: rgb(128, 10, 0);";
-                $str = '<p style="' . $strStyle . '">' . $this->lang->noEvents . '</p>';
-
-                $pdf->writeHTML ( $str, false, false, false, false, '' );
             }
+
+            unset ( $FEx );
+
+            $str .= "</table></p>";
+
+            $pdf->writeHTML ( $str, false, false, false, false, '' );
+
+            $pdf->SetFont ( 'dejavusans', '', 12, '', true );
+            $str = "</br></br>" . L::flightEvents_performer
+                . ' : '
+                . '_____________________ '
+                . $flight->getPerformer()
+                . ', ' . date ( 'd-m-Y' ) . '';
+
+            $pdf->writeHTML ( $str, false, false, false, false, '' );
+        } else {
+            $strStyle = "text-align:center; font-size: xx-large; font-weight: bold; color: rgb(128, 10, 0);";
+            $str = '<p style="' . $strStyle . '">' . L::flightEvents_noEvents . '</p>';
+
+            $pdf->writeHTML ( $str, false, false, false, false, '' );
         }
 
         $pdf->Output ($fileName, 'I');
-    }
-
-    public function printBlank($args)
-    {
-        if (!isset($args['flightId'])
-            || empty($args['flightId'])
-            || !is_int(intval($args['flightId']))
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $flightId = intval($args['flightId']);
-        $sections = (isset($args['sections']) && is_array($args['sections'])) ? $args['sections'] : [];
-        $grayscale = (isset($args['grayscale']) && ($args['grayscale'] === 'true'))
-            ? true : false;
-
-        $this->ConstructFlightEventsList($flightId, $sections, !$grayscale);
     }
 
     private static $exceptionTypeOther = 'other';
@@ -304,160 +365,30 @@ class FlightEventsController extends CController
         '000', '001', '002', '003', 'other'
     ];
 
-    public function getFlightEvents($data)
+    public function changeReliabilityAction($flightId, $eventId, $eventType, $reliability = false)
     {
-        if (!isset($data['flightId'])
-            || !is_int(intval($data['flightId']))
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
+        $falseAlarm = $reliability === 'true' ? false : true;
+        $eventType = intval($eventType);
 
-        $flightId = intval($data['flightId']);
-        $userId = intval($this->_user->userInfo['id']);
-
-        $em = EM::get();
-
-        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
+        $flightToFolders = $this->em()->getRepository('Entity\FlightToFolder')
+            ->findOneBy(['userId' => $this->user()->getId(), 'flightId' => $flightId]);
 
         if ($flightToFolders === null) {
             throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
         }
 
-        $flight = $em->find('Entity\Flight', $flightId);
+        $flight = $this->em()->getRepository('Entity\Flight')->findOneById($flightId);
 
         if ($flight === null) {
             throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
         }
 
-        $flightInfo = $flight->get();
-        $fdr = $flight->getFdr();
-
-        $exTableName = FlightException::getTableName($flight->getGuid());
-        $excListTableName = FlightException::getTableName($fdr->getCode());
-
-        $role = $this->_user->userInfo['role'];
-        $isDisabled = true;
-        if (User::isAdmin($role) || User::isModerator($role)) {
-            $isDisabled = false;
-        }
-
-        $startCopyTime = $flight->getStartCopyTime();
-        $frameLength = $fdr->getFrameLength();
-        $flightEvents = $em->getRepository('Entity\FlightEvent')
-            ->getFormatedFlightEvents($flight->getGuid(), $isDisabled, $startCopyTime, $frameLength);
-
-        if (($exTableName === "") && ($flightEvents === null)) {
-            return json_encode([
-                'items' => [],
-                'isProcessed' => false
-            ]);
-        }
-
-        $FEx = new FlightException;
-        $excEventsList = $FEx->GetFlightEventsList($exTableName);
-
-        if (empty($excEventsList) && (count($flightEvents) === 0)) {
-            $analisysStatuts = false;
-            return json_encode([
-                'items' => [],
-                'isProcessed' => true
-            ]);
-        }
-
-        $Frame = new Frame;
-        //change frame num to time
-        for ($ii = 0; $ii < count($excEventsList); $ii++) {
-            $flightEvents[] = array_merge(
-                $excEventsList[$ii],
-                [
-                    'start' => date("H:i:s", $excEventsList[$ii]['startTime'] / 1000),
-                    'reliability' => (intval($excEventsList[$ii]['falseAlarm']) === 0),
-                    'end' => date("H:i:s", $excEventsList[$ii]['endTime'] / 1000),
-                    'duration' => $Frame->TimeStampToDuration($excEventsList[$ii]['endTime'] - $excEventsList[$ii]['startTime']),
-                    'eventType' => 1,
-                    'isDisabled' => $isDisabled
-                ],
-                $FEx->GetExcInfo(
-                    $excListTableName,
-                    $excEventsList[$ii]['refParam'],
-                    $excEventsList[$ii]['code']
-                )
-            );
-        }
-        unset($Frame);
-
-        $accordion = [];
-
-        for($ii = 0; $ii < count($flightEvents); $ii++) {
-            $codePrefix = substr($flightEvents[$ii]['code'], 0, 3);
-
-            if (in_array($codePrefix, self::$exceptionTypes)) {
-                if (!isset($accordion[$codePrefix])) {
-                    $accordion[$codePrefix] = [];
-                }
-                $accordion[$codePrefix][] = $flightEvents[$ii];
-            } else {
-                if (!isset($accordion[self::$exceptionTypeOther])) {
-                    $accordion[self::$exceptionTypeOther] = [];
-                }
-                $accordion[self::$exceptionTypeOther][] = $flightEvents[$ii];
-            }
-        }
-
-        unset($FEx);
-
-        return json_encode([
-            'items' => $accordion,
-            'isProcessed' => true
-        ]);
-    }
-
-    public function changeReliability($args)
-    {
-        if (!isset($args['flightId'])
-            || !is_int(intval($args['flightId']))
-            || !isset($args['eventId'])
-            || !is_int(intval($args['eventId']))
-            || !isset($args['eventType'])
-            || !is_int(intval($args['eventType']))
-            || !in_array(intval($args['eventType']), [1, 2])
-            || !isset($args['reliability'])
-            || !in_array($args['reliability'], ['true', 'false'])
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $flightId = intval($args['flightId']);
-        $eventId = intval($args['eventId']);
-        $eventType = intval($args['eventType']);
-        $reliability = ($args['reliability'] === 'true') ? true : false;
-        $em = EM::get();
-
-        $flightToFolders = $em->getRepository('Entity\FlightToFolder')
-            ->findOneBy(['userId' => $userId, 'flightId' => $flightId]);
-
-        if ($flightToFolders === null) {
-            throw new ForbiddenException('requested flight not avaliable for current user. Flight id: '. $flightId);
-        }
-
-        $flight = $em->getRepository('Entity\Flight')->findOneById($flightId);
-
-        if ($flight === null) {
-            throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
-        }
-
-        if ($eventType === 1) {
-            $FEx = new FlightException;
-            $extExcTableName = $FEx->getTableName($flight->getGuid());
-            $FEx->UpdateFalseAlarmState($extExcTableName, $eventId, $reliability);
-        }
-
-        if ($eventType === 2) {
-            $val = $em->getRepository('Entity\FlightEvent')
-                ->updateFalseAlarm($flight->getGuid(), $eventId, $reliability);
-        }
+        $this->dic()->get('event')->updateFalseAlarm(
+            $flight->getGuid(),
+            $eventType,
+            $eventId,
+            $falseAlarm
+        );
 
         return json_encode('ok');
     }

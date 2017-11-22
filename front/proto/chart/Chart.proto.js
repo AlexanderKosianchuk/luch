@@ -75,7 +75,7 @@ Chart.prototype.FillFactoryContaider = function(factoryContainer) {
     $.ajax({
         type: "GET",
         dataType: 'json',
-        url: ENTRY_URL + '?action=chart/putChartContainer',
+        url: ENTRY_URL + 'chart/putChartContainer',
         async: true
     }).fail(function(msg){
         console.log(msg);

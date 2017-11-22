@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import FileInput from 'react-file-input';
 import { Translate, I18n } from 'react-redux-i18n';
+import uuidV4 from 'uuid/v4';
 
 import trigger from 'actions/trigger';
 
@@ -32,7 +33,14 @@ class FlightImporterDropdown extends React.Component {
 
     handleChange() {
         this.setState({ isShown: false });
+
+        let guidInput = document.createElement('input');
+        guidInput.name = 'flightGuid';
+        guidInput.value = uuidV4().substring(0, 18).replace(/-/g, '');
+        this.importFlightForm.appendChild(guidInput);
+
         let form = new FormData(this.importFlightForm);
+
         this.props.trigger('importItem', [form]);
     }
 

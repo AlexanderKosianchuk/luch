@@ -60,18 +60,6 @@ class FlightSettlement
      */
     private $flightEvent;
 
-    /**
-     * Many FlightSettlements have One EventSettlement.
-     * @ManyToOne(targetEntity="EventSettlement", inversedBy="flightSettlements")
-     * @JoinColumn(name="id_settlement", referencedColumnName="id")
-     */
-    private $eventSettlement;
-
-    public function getEventSettlement()
-    {
-        return $this->eventSettlement;
-    }
-
     public function getValue()
     {
         return $this->value;
@@ -95,16 +83,6 @@ class FlightSettlement
         }
 
         $this->settlementId = $settlementId;
-    }
-
-    public function setEventSettlement($settlement)
-    {
-        if (!is_a($settlement, 'Entity\EventSettlement')) {
-            throw new Exception("Incorrect settlement passed. EventSettlement obj is required. Passed: "
-                . get_class($settlement) . '. ' . json_encode($settlement), 1);
-        }
-
-        $this->eventSettlement = $settlement;
     }
 
     public function setFlightEvent($flightEvent)
@@ -147,7 +125,6 @@ class FlightSettlement
         if (!isset($attributes['eventId'])
             || !isset($attributes['settlementId'])
             || !isset($attributes['flightEventId'])
-            || !isset($attributes['eventSettlement'])
             || !isset($attributes['flightEvent'])
             || !isset($attributes['value'])
         ) {
@@ -159,7 +136,6 @@ class FlightSettlement
         $this->setEventId($attributes['eventId']);
         $this->setSettlementId($attributes['settlementId']);
         $this->setFlightEventId($attributes['flightEventId']);
-        $this->setEventSettlement($attributes['eventSettlement']);
         $this->setFlightEvent($attributes['flightEvent']);
         $this->setValue($attributes['value']);
     }
@@ -178,44 +154,5 @@ class FlightSettlement
     public static function getPrefix ()
     {
         return self::$_prefix;
-    }
-
-    public static function createTable($link, $guid)
-    {
-        if (!is_string($guid)) {
-            throw new Exception("Incorrect guid passed. String is required. Passed: "
-                . json_encode($guid), 1);
-        }
-
-        $dynamicTableName = $guid . self::$_prefix;
-        $query = "SHOW TABLES LIKE '".$dynamicTableName."';";
-        $result = $link->query($query);
-        if (!$result->fetch_array()) {
-            $query = "CREATE TABLE `".$dynamicTableName."` ("
-                . "`id` BIGINT NOT NULL AUTO_INCREMENT, "
-                . "`id_event` BIGINT(20) NOT NULL, "
-                . "`id_settlement` BIGINT(20) NOT NULL, "
-                . "`id_flight_event` BIGINT(20) NOT NULL, "
-                . "`value` VARCHAR(20) NOT NULL, "
-                . " INDEX (`id_event`), "
-                . " INDEX (`id_settlement`), "
-                . " INDEX (`id_flight_event`), "
-                . " PRIMARY KEY (`id`)) "
-                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute()) {
-                throw new Exception("FlightSettlement dynamic table creation query failed. Query: "
-                    . $query, 1);
-            }
-        } else {
-            $query = "DELETE FROM `".$dynamicTableName."` WHERE 1;";
-            $stmt = $link->prepare($query);
-            if (!$stmt->execute()) {
-                throw new Exception("FlightSettlement dynamic table truncating query failed. Query: "
-                    . $query, 1);
-            }
-        }
-
-        return $dynamicTableName;
     }
 }

@@ -15,20 +15,21 @@ export default function request(
             });
         }
 
-        let url = ENTRY_URL+'?action='+action.join('/');
+        let url = ENTRY_URL + action.join('/');
         let options = {
             credentials: 'same-origin',
             method: 'get'
         };
+
         if (method === 'get') {
-            url += '&' + queryString.stringify(payload)
+            url += '/' + queryString.stringify(payload).replace(/[\&\?=]/g, '/');
         } else {
             options.method = 'post';
 
             if (isFormData(payload)) {
                 options.body = payload;
             } else {
-                options.headers = { "Content-Type" : "application/x-www-form-urlencoded; utf-8" };
+                options.headers = { 'Content-Type' : 'application/x-www-form-urlencoded; utf-8' };
                 options.body = isFormData(payload) ? payload : formurlencoded(payload);
             }
         }

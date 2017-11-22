@@ -70,7 +70,7 @@ FlightUploader.prototype.GetFlightParams = function(
                 calibrationId: calibrationId
             },
             dataType: 'json',
-            url: ENTRY_URL + "?action=uploader/flightShowUploadingOptions",
+            url: ENTRY_URL + "uploader/flightUploadingOptions",
             async: false
         }).fail(function(msg){
             console.log(msg);
@@ -134,7 +134,7 @@ FlightUploader.prototype.GetSlicedFlightParams = function(
             fdrId: fdrId
         },
         dataType: 'json',
-        url: ENTRY_URL + "?action=uploader/flightShowUploadingOptions",
+        url: ENTRY_URL + "uploader/flightUploadingOptions",
         async: false
     }).fail(function(msg){
         console.log(msg);
@@ -265,8 +265,7 @@ FlightUploader.prototype.PreviewChart = function (parent,
                 fdrId: fdrId,
             },
             dataType: 'json',
-            url: ENTRY_URL + "?action=uploader/flightUploaderPreview",
-            async: true
+            url: ENTRY_URL + "uploader/flightUploaderPreview",
         }).done(function(apDataArray){
             $("div#loadingBox" + index);//.remove();
             var prmData = Array(),
@@ -361,6 +360,7 @@ FlightUploader.prototype.UpdateLegend = function(previewParams,
 //Get value by x coord by interpolating
 FlightUploader.prototype.GetValue = function(previewParams, dataset, x) {
     var yArr = Array();
+
     for (var i = 0; i < previewParams.length; i++) {
         var series = dataset[i];
 
@@ -439,7 +439,7 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
                         type: "POST",
                         data: {
                             uploadingUid: uploadingUid,
-                            newUid: uuidV4(),
+                            newUid: uuidV4().substring(0, 18).replace(/-/g, ''),
                             fdrId: fdrId,
                             file: fileName,
 
@@ -449,7 +449,7 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
                             endSliceTime:  self.plotSelectedToRangeStack[curIndex]
                         },
                         dataType: 'json',
-                        url: ENTRY_URL + '?action=uploader/'+action,
+                        url: ENTRY_URL + 'uploader/'+action,
                         async: true
                     }).done(function(answ){
                         if(answ["status"] == 'ok') {
@@ -475,16 +475,15 @@ FlightUploader.prototype.SliceFlightButtSupport = function(parent, previewParams
     }
 };
 
-FlightUploader.prototype.InitiateFlightProccessing = function(pV) {
+FlightUploader.prototype.InitiateFlightProccessing = function(data) {
     var self = this,
-        uploadingUid = pV.data.uploadingUid;
+        uploadingUid = data.uploadingUid;
 
     $.ajax({
+        url: ENTRY_URL + 'uploader/flightProcces',
         type: "POST",
-        data: pV.data,
+        data: data,
         dataType: 'json',
-        url: ENTRY_URL + pV.action,
-        async: true
     }).done(function(answ){
         $(document).trigger("endProccessing", [uploadingUid, answ.item]);
     }).fail(function(mess){
@@ -502,12 +501,12 @@ FlightUploader.prototype.Import = function(form, dfd) {
     var self = this;
 
     $.ajax({
-        type: "POST",
+        type: 'POST',
         data: form,
         dataType: 'json',
         processData: false,
         contentType: false,
-        url: ENTRY_URL + "?action=uploader/itemImport"
+        url: ENTRY_URL+'uploader/itemImport'
     }).done(function(answ){
         if (answ["status"] == 'ok') {
             dfd.resolve();
@@ -568,26 +567,19 @@ FlightUploader.prototype.uploadPreviewed = function() {
                     flightAditionalInfo = 0;
                 }
 
-                var flightConvertionAction = "flightProcces",
-                    performProc = $el.find("input#execProc").prop('checked');
+                var check = $el.find("input#execProc").prop('checked');
 
-                if (performProc == true){
-                    flightConvertionAction = "flightProccesAndCheck";
-                }
-
-                var pV = {
-                    action: '?action=uploader/' + flightConvertionAction,
-                    data: {
-                        fdrId: fdrId,
-                        uploadingUid: uploadingUid,
-                        calibrationId: calibrationId,
-                        fileName: fileName,
-                        flightInfo: flightInfo,
-                        flightAditionalInfo : flightAditionalInfo
-                    }
+                var data = {
+                    fdrId: fdrId,
+                    uploadingUid: uploadingUid,
+                    calibrationId: calibrationId,
+                    fileName: fileName,
+                    flightInfo: flightInfo,
+                    flightAditionalInfo: flightAditionalInfo,
+                    check: check
                 };
 
-                self.InitiateFlightProccessing(pV);
+                self.InitiateFlightProccessing(data);
                 index++;
 
                 if (index === count) {

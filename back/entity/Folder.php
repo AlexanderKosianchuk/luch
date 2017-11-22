@@ -8,7 +8,7 @@ namespace Entity;
  * Folders
  *
  * @Table(name="folders")
- * @Entity
+ * @Entity(repositoryClass="Repository\FolderRepository")
  */
 class Folder
 {
@@ -54,6 +54,11 @@ class Folder
         return $this->id;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function getPath()
     {
         return $this->path;
@@ -73,6 +78,16 @@ class Folder
             'userId' => $this->userId,
             'isExpanded' => $this->isExpanded
         ];
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
     }
 
     public function set($obj)

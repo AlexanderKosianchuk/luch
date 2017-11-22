@@ -165,7 +165,7 @@ export default class Param extends Component {
                     </u></div>
                     <div>
                         <Translate value='calibrationForm.param.channels'/>:{' '}
-                        { this.props.param.description.channel }
+                        { this.props.param.description.channel.join(',') }
                     </div>
                     <div>
                         <Translate value='calibrationForm.param.minValue'/>:{' '}
@@ -209,7 +209,7 @@ Param.propTypes = {
         calibrationId: PropTypes.number,
         description: PropTypes.shape({
             id: PropTypes.number.isRequired,
-            channel: PropTypes.string.isRequired,
+            channel: PropTypes.array.isRequired,
             code: PropTypes.string.isRequired,
             color: PropTypes.string.isRequired,
             dim: PropTypes.string.isRequired,
