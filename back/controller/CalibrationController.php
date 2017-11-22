@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Framework\Application as App;
-
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
@@ -13,9 +11,9 @@ class CalibrationController extends BaseController
 {
     public function getCalibrationsListAction()
     {
-        $userId = App::user()->getId();
+        $userId = $this->user()->getId();
 
-        $calibrations = App::em()
+        $calibrations = $this->em()
             ->getRepository('Entity\Calibration')
             ->findBy(['userId' => $userId]);
 
@@ -27,149 +25,80 @@ class CalibrationController extends BaseController
         return json_encode($response);
     }
 
-    public function saveCalibration($data)
+    public function saveCalibrationAction($name, $fdrId, $calibrations, $calibrationId = null)
     {
-        $userId = intval($this->_user->userInfo['id']);
-        $fdrId = intval($data['fdrId']);
-        $calibrationsName = $data['name'];
-        $calibrations = $data['calibrations'];
+        $fdrToUser = $this->em()->getRepository('Entity\FdrToUser')
+            ->findBy(['fdrId' => $fdrId, 'userId' => $this->user()->getId()]);
 
-        $calibrationId = null;
-        if (isset($data['calibrationId'])
-            && !empty($data['calibrationId'])
-            && is_int(intval($data['calibrationId']))
-        ) {
-            $calibrationId = intval($data['calibrationId']);
-        }
+        $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
-        $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
-
-        if (!$isAvaliable) {
+        if (!$fdrToUser || !$fdr) {
             throw new ForbiddenException('requested FDR not avaliable for current user. FDR id: '. $fdrId);
         }
 
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $fdrCode = $fdrInfo['code'];
-        unset($fdr);
+        $userId = $this->user()->getId();
 
-        $calibration = new Calibration();
-        $calibrationDynamicTable = $calibration->createTable($fdrCode);
-        $calibrationInfo = [];
-
-        if ($calibrationId === null) {
-            $calibrationInfo = $calibration->createCalibration($calibrationDynamicTable,
-                $fdrId,
-                $userId,
-                $calibrationsName,
-                $calibrations
-            );
-
-            $calibrationId = $calibrationInfo['id'];
+        $calibration = null;
+        if (($calibrationId === null) || ($calibrationId === '')) {
+            $calibration = $this->dic()->get('calibration')
+                ->createCalibration(
+                    intval($fdrId),
+                    $name,
+                    $calibrations
+                );
         } else {
-            $calibration->updateCalibration($calibrationDynamicTable,
-                $calibrationId,
-                $userId,
-                $calibrationsName,
-                $calibrations
-            );
+            $calibration = $this->dic()->get('calibration')
+                ->updateCalibration(
+                    intval($calibrationId),
+                    $name,
+                    $calibrations
+                );
         }
-
-        unset($calibration);
-
-        $em = EM::get();
-
-        $calibration = $em->getRepository('Entity\Calibration')
-            ->findOneBy([
-                'userId' => $userId,
-                'id' => $calibrationId
-            ]);
 
         if (empty($calibration)) {
             throw new NotFoundException("saved calibration error. Cant find by id. Calibration id: ". $id);
         }
 
-        return json_encode($calibration->get());
+        return json_encode($calibration->get(true));
     }
 
-    public function deleteCalibration($data)
+    public function deleteCalibrationAction($calibrationId)
     {
-        $userId = intval($this->_user->userInfo['id']);
-        $calibrationId = intval($data['calibrationId']);
+        $userId = $this->user()->getId();
+        $calibrationId = intval($calibrationId);
 
-        $calibration = new Calibration();
-        $calibrationInfo = $calibration->getCalibrationById ($calibrationId, $userId);
+        $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
 
-        if (empty($calibrationInfo)) {
+        if (empty($calibration)) {
             throw new NotFoundException("requested calibration not found. Calibration id: ". $calibrationId);
         }
 
-        $fdrId = intval($calibrationInfo['id_fdr']);
-        $calibrationId = intval($calibrationInfo['id']);
+        $fdrToUser = $this->em()->getRepository('Entity\FdrToUser')
+            ->findBy([
+                'fdrId' => $calibration->getFdrId(),
+                'userId' => $this->user()->getId()
+            ]);
 
-        $isAvaliable = $this->_user->checkFdrAvailable($fdrId, $userId);
-
-        if (!$isAvaliable) {
+        if (!$fdrToUser) {
             throw new ForbiddenException('requested FDR not avaliable for current user. FDR id: '. $fdrId);
         }
 
-        $calibration->deleteCalibration ($calibrationId, $userId);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo($fdrId);
-        $fdrCode = $fdrInfo['code'];
-        unset($fdr);
-
-        $calibrationDynamicTable = $calibration->getTableName($fdrCode);
-
-        if($calibration->checkTableExist ($calibrationDynamicTable)) {
-            $calibration->deleteCalibrationParams ($calibrationDynamicTable, $calibrationId);
-        }
+        $this->dic()
+            ->get('calibration')
+            ->deleteCalibration ($calibrationId);
 
         return json_encode('ok');
     }
 
-
-
-    public function getCalibrationsPage($args)
+    public function getCalibrationsPageAction($page, $pageSize, $fdrId = null)
     {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
-
-        if (!isset($args['page'])
-            || empty($args['page'])
-            || !is_int(intval($args['page']))
-            || !isset($args['pageSize'])
-            || empty($args['pageSize'])
-            || !is_int(intval($args['pageSize']))
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $fdrId = null;
-
-        if (isset($args['fdrId'])
-            && !empty($args['fdrId'])
-            && is_int(intval($args['fdrId']))
-        ) {
-            $fdrId = $args['fdrId'];
-        }
-
-        $page = $args['page'];
-        $pageSize = $args['pageSize'];
-
-        $em = EM::get();
-
-        $criteria = ['userId' => $userId];
+        $criteria = ['userId' => $this->user()->getId()];
 
         if ($fdrId !== null) {
             $criteria = array_merge($criteria, ['fdrId' => $fdrId]);
         }
 
-        $calibrationResult = $em->getRepository('Entity\Calibration')
+        $calibrationResult = $this->em()->getRepository('Entity\Calibration')
             ->findBy(
                 $criteria,
                 ['dtUpdated' => 'DESC'],
@@ -182,11 +111,11 @@ class CalibrationController extends BaseController
             $activity[] = $item->get();
         }
 
-        $qb = $em->getRepository('Entity\Calibration')
+        $qb = $this->em()->getRepository('Entity\Calibration')
             ->createQueryBuilder('calibration')
             ->select('count(calibration.id)')
             ->where('calibration.userId = :userId')
-            ->setParameter('userId', $userId);
+            ->setParameter('userId', $this->user()->getId());
 
         if ($fdrId !== null) {
             $qb
@@ -204,28 +133,14 @@ class CalibrationController extends BaseController
         ]);
     }
 
-    public function getCalibrationById($args)
+    public function getCalibrationByIdAction($id)
     {
-        $userId = intval($this->_user->userInfo['id']);
 
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
+        $id = intval($id);
 
-        if (!isset($args['id'])
-            || empty($args['id'])
-            || !is_int(intval($args['id']))
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $id = intval($args['id']);
-
-        $em = EM::get();
-
-        $calibration = $em->getRepository('Entity\Calibration')
+        $calibration = $this->em()->getRepository('Entity\Calibration')
             ->findOneBy([
-                'userId' => $userId,
+                'userId' => $this->user()->getId(),
                 'id' => $id
             ]);
 
@@ -233,36 +148,23 @@ class CalibrationController extends BaseController
             throw new NotFoundException("requested calibration not found. Calibration id: ". $id);
         }
 
-        return json_encode(
-            $em->getRepository('Entity\Calibration')->getCalibration($id)
-        );
+        $calibration = $this->dic()
+            ->get('calibration')
+            ->getCalibration($id);
+
+        return json_encode($calibration);
     }
 
-    public function getCalibrationParams($args)
+    public function getCalibrationParamsAction($fdrId)
     {
-        $userId = intval($this->_user->userInfo['id']);
-
-        if (!is_int($userId)) {
-            throw new UnauthorizedException('user id - ' . strval($userId));
-        }
-
-        if (!isset($args['fdrId'])
-            || empty($args['fdrId'])
-            || !is_int(intval($args['fdrId']))
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $fdrId = intval($args['fdrId']);
-
-        $em = EM::get();
-        $fdr = $em->find('Entity\Fdr', $fdrId);
+        $fdrId = intval($fdrId);
+        $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
         if (empty($fdr)) {
             throw new NotFoundException("requested FDR not found. Received id: ". $fdrId);
         }
 
-        $params = $em->getRepository('Entity\Calibration')
+        $params = $this->dic()->get('calibration')
             ->getCalibratedParams($fdrId);
 
         $calibrationParams = [];

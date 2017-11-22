@@ -105,12 +105,16 @@ class Table extends Component {
 
         this.isLoading = true;
 
+        let obj = {};
+        if (this.props.fdrId !== null) {
+            obj.fdrId = this.props.fdrId;
+        }
+
         this.props.request(
             ['calibration', 'getCalibrationsPage'],
             'get',
-            null,
-            {
-                fdrId: this.props.fdrId,
+            null, {
+                ...obj,
                 page: this.props.page,
                 pageSize: this.props.pageSize
             }

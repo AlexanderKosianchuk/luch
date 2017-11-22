@@ -73,9 +73,14 @@ class Calibration
         return $this->fdr;
     }
 
-    public function get()
+    public function getFdrId()
     {
-        return [
+        return $this->fdr->getId();
+    }
+
+    public function get($isArray = false)
+    {
+        $arr = [
             'id' => $this->id,
             'name' => $this->name,
             'fdrId' => $this->fdrId,
@@ -84,7 +89,44 @@ class Calibration
             'dtCreated' => $this->dtCreated->format('y/m/d H:i:s'),
             'dtUpdated' => $this->dtUpdated->format('y/m/d H:i:s')
         ];
+
+        if ($isArray) {
+            return $arr;
+        }
+
+        return (object)$arr;
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
+    public function setDtUpdated($dtUpdated)
+    {
+        $this->dtUpdated = $dtUpdated;
+    }
+
+    public function setFdr($fdr)
+    {
+        return $this->fdr = $fdr;
+    }
+
+    public function set($data)
+    {
+        $this->name = $data['name'];
+        $this->userId = $data['userId'];
+        $this->fdr = $data['fdr'];
+        $this->dtCreated = $data['dtCreated'] ?? new \DateTime();
+        $this->dtUpdated = $data['dtUpdated'] ?? new \DateTime();
+    }
+
+    /**
+     * @PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->dtUpdated = date('Y-m-d H:m:s');
+        $this->dtCreated = date('Y-m-d H:m:s');
+    }
 }

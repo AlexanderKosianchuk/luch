@@ -29,6 +29,10 @@ return [
             'printBlankAction',
             'setTemplateAction',
             'mergeTemplatesAction',
+            'getCalibrationsPageAction',
+            'getCalibrationParamsAction',
+            'saveCalibrationAction',
+            'getCalibrationByIdAction',
             'logoutAction'
         ]
     ],
@@ -43,7 +47,8 @@ return [
             'flightEasyUploadAction',
             'removeTemplateAction',
             'itemExportAction',
-            'changeReliabilityAction'
+            'changeReliabilityAction',
+            'deleteCalibrationAction'
         ]
     ],
     'admin' => [
