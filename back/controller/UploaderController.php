@@ -15,6 +15,88 @@ use \L;
 
 class UploaderController extends BaseController
 {
+    public function syncAction($uuid, $login, $pass, $fdrId, $calibrationId = null)
+    {
+        if (!isset($_FILES['file']['tmp_name'])) {
+            throw new BadRequestException('necessary param flightFile not passed.');
+        }
+
+        $user = $this->em()->getRepository('Entity\User')
+            ->findOneBy(['login' => $login, 'pass' => md5($pass)]);
+
+        if (!$user) {
+            throw new BadRequestException('user not found. Login: '.$login.', pass: '.$pass);
+        }
+
+        $fileName = strval($_FILES['file']['tmp_name']);
+        $uploadingUid = strval($uuid);
+        $fdrId = intval($fdrId);
+        $userId = $user->getId();
+
+        if (!$this->dic()->get('fdr')->isAvaliable($fdrId)) {
+            throw new Exception("Trying to access unavaliable fdrType."
+                . " User id: " . $userId
+                . " Fdr id: " . $fdrId, 1);
+        }
+
+        $flightInfo = $this->dic()
+            ->get('flightProcessor')
+            ->readHeaderAndFillInfo($fdrId, $fileName);
+
+        $storedFlightFile = $this->dic()
+            ->get('runtimeManager')
+            ->storeFlight($fileName);
+
+        $flightInfo['path'] = $storedFlightFile;
+
+        $totalPersentage = 50;
+
+        $flight = $this->dic()
+            ->get('flight')
+            ->insert(
+                $uploadingUid,
+                $flightInfo,
+                $fdrId,
+                $userId,
+                $calibrationId
+            );
+
+        $this->dic()
+            ->get('flightProcessor')
+            ->process(
+                $uploadingUid,
+                $storedFlightFile,
+                0,
+                50,
+                $fdrId,
+                $calibrationId
+            );
+
+        $this->dic()
+            ->get('eventProcessor')
+            ->analyze($flight);
+
+        $file = $this->dic()
+            ->get('runtimeManager')
+            ->getTemporaryFileDesc(
+                $this->params()->folders->uploadingStatus,
+                $uploadingUid,
+                'close'
+            );
+
+        if (file_exists($file->path)) {
+            unlink($file->path);
+        }
+
+        return json_encode([
+            "status" => "complete",
+            "uploadingUid" => $uploadingUid,
+            'item' => $this->em()
+                ->getRepository('Entity\FlightToFolder')
+                ->getTreeItem($flight->getId(), $userId)
+        ]);
+    }
+
     public function storeFlightFileAction ($uploadingUid)
     {
         if (!isset($_FILES['flightFile']['tmp_name'])) {
@@ -190,56 +272,17 @@ class UploaderController extends BaseController
                 . " Fdr id: " . $fdrId, 1);
         }
 
-        $flightInfoFromHeader = $this->dic()
+        $flightInfo = $this->dic()
             ->get('flightProcessor')
-            ->readHeader($fdrId, $fileName);
-
-        $bort = "x";
-        if(isset($flightInfoFromHeader["bort"])) {
-            $bort = $flightInfoFromHeader["bort"];
-        }
-
-        $voyage = "x";
-        if(isset($flightInfoFromHeader["voyage"])) {
-            $voyage = $flightInfoFromHeader["voyage"];
-        }
-
-        $departureAirport = "x";
-        if(isset($flightInfoFromHeader["departureAirport"])) {
-            $departureAirport = $flightInfoFromHeader["departureAirport"];
-        }
-
-        $arrivalAirport = "x";
-        if(isset($flightInfoFromHeader["arrivalAirport"])) {
-            $arrivalAirport = $flightInfoFromHeader["arrivalAirport"];
-        }
-
-        $copyCreationTime = "00:00:00";
-        $copyCreationDate = "2000-01-01";
-        if(isset($flightInfoFromHeader['startCopyTime'])) {
-            $startCopyTime = strtotime($flightInfoFromHeader['startCopyTime']);
-            $copyCreationTime = date('H:i:s', $startCopyTime);
-            $copyCreationDate = date('Y-m-d', $startCopyTime);
-        }
-
-        $performer = null;
-
-        $aditionalInfoVars = $this->dic()
-            ->get('flightProcessor')
-            ->checkAditionalInfoFromHeader($fdrId, $flightInfoFromHeader);
-
-        $totalPersentage = 50;
+            ->readHeaderAndFillInfo($fdrId, $fileName);
 
         $storedFlightFile = $this->dic()
             ->get('runtimeManager')
             ->storeFlight($fileName);
 
-        $flightInfo = array_merge(
-            $flightInfoFromHeader,
-            ['aditionalInfo' => $aditionalInfoVars],
-            ['path' => $storedFlightFile]
+        $flightInfo['path'] = $storedFlightFile;
 
-        );
+        $totalPersentage = 50;
 
         $flight = $this->dic()
             ->get('flight')

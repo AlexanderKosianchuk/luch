@@ -61,7 +61,7 @@ class FlightProcessingComponent extends BaseComponent
             if (isset($flightInfo['takeOffLat']) && isset($flightInfo['takeOffLong'])) {
                 $lat = $flightInfo['takeOffLat'];
                 $long = $flightInfo['takeOffLong'];
-                $landingAirport = $this::em()
+                $landingAirport = $this->em()
                     ->getRepository('Entity\Airport')
                     ->getAirportByLatAndLong($lat, $long);
                 if (!empty($landingAirport)) {
@@ -73,7 +73,7 @@ class FlightProcessingComponent extends BaseComponent
             if (isset($flightInfo['landingLat']) && isset($flightInfo['landingLong'])) {
                 $lat = $flightInfo['landingLat'];
                 $long = $flightInfo['landingLong'];
-                $landingAirport = $this::em()
+                $landingAirport = $this->em()
                     ->getRepository('Entity\Airport')
                     ->getAirportByLatAndLong($lat, $long);
                 if(!empty($landingAirport)) {
@@ -81,8 +81,50 @@ class FlightProcessingComponent extends BaseComponent
                     $flightInfo['arrivalAirportName'] = $landingAirport['name'];
                 }
             }
-            unset($airport);
         }
+
+        return $flightInfo;
+    }
+
+    public function readHeaderAndFillInfo($fdrId, $file)
+    {
+        $flightInfoFromHeader = $this->readHeader($fdrId, $file);
+        $flightInfo = $flightInfoFromHeader;
+
+        $flightInfo['bort'] = "x";
+        if(isset($flightInfoFromHeader["bort"])) {
+            $flightInfo['bort'] = $flightInfoFromHeader["bort"];
+        }
+
+        $flightInfo['voyage'] = "x";
+        if(isset($flightInfoFromHeader["voyage"])) {
+            $flightInfo['voyage'] = $flightInfoFromHeader["voyage"];
+        }
+
+        $flightInfo['departureAirport'] = "x";
+        if(isset($flightInfoFromHeader["departureAirport"])) {
+            $flightInfo['departureAirport'] = $flightInfoFromHeader["departureAirport"];
+        }
+
+        $flightInfo['arrivalAirport'] = "x";
+        if(isset($flightInfoFromHeader["arrivalAirport"])) {
+            $flightInfo['arrivalAirport'] = $flightInfoFromHeader["arrivalAirport"];
+        }
+
+        $copyCreationTime = '00:00:00';
+        $copyCreationDate = '2000-01-01';
+        $flightInfo['copyCreationTime'] = $copyCreationTime;
+        $flightInfo['copyCreationDate'] = $copyCreationDate;
+        $flightInfo['startCopyTime'] = strtotime($copyCreationDate.' '.$copyCreationTime);
+        if (isset($flightInfoFromHeader['startCopyTime'])) {
+            $flightInfo['startCopyTime'] = strtotime($flightInfoFromHeader['startCopyTime']);
+        }
+
+        $flightInfo['aditionalInfo'] = $this
+            ->checkAditionalInfoFromHeader(
+                $fdrId,
+                $flightInfoFromHeader
+            );
 
         return $flightInfo;
     }
@@ -462,7 +504,7 @@ class FlightProcessingComponent extends BaseComponent
         }
     }
 
-    public function checkAditionalInfoFromHeader($fdrId, $headerInfo)
+    public function checkAditionalInfoFromHeader($fdrId, $headerInfo, $encoded = true)
     {
         $aditionalInfo = [];
 
@@ -477,8 +519,10 @@ class FlightProcessingComponent extends BaseComponent
             }
         }
 
-        unset($fdr);
+        if ($encoded) {
+            return json_encode($aditionalInfo);
+        }
 
-        return json_encode($aditionalInfo);
+        return $aditionalInfo;
     }
 }
