@@ -36,11 +36,15 @@ class FlightComponent extends BaseComponent
      */
     private $CalibrationParam;
 
-    public function insert($guid, $flightInfo, $frdId, $userId, $calibrationId)
+    public function insert($guid, $flightInfo, $frdId, $userId, $calibrationId = null)
     {
         $user = $this->em()->find('Entity\User', $userId);
         $fdr = $this->em()->find('Entity\Fdr', $frdId);
-        $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
+
+        $calibration = null;
+        if ($calibrationId !== null) {
+            $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
+        }
 
         $copyCreationTime = $flightInfo['copyCreationTime'];
         $copyCreationDate = $flightInfo['copyCreationDate'];
