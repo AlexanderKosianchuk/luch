@@ -8,6 +8,12 @@ use Exception;
 
 class UserManagementComponent extends BaseComponent
 {
+    /**
+     * @Inject
+     * @var Entity\FdrToUser
+     */
+    private $FdrToUser;
+
     public function getUsers()
     {
         $users = [];
@@ -42,5 +48,18 @@ class UserManagementComponent extends BaseComponent
         }
 
         return $usersWithLogo;
+    }
+
+    public function setFdrAvailable($userId, $fdr)
+    {
+        $FdrToUser = $this->FdrToUser;
+        $fdrToUser = new $FdrToUser;
+        $fdrToUser->setUserId($userId);
+        $fdrToUser->setFdr($fdr);
+
+        $this->em()->persist($fdrToUser);
+        $this->em()->flush();
+
+        return $fdrToUser;
     }
 }

@@ -83,6 +83,10 @@ class RuntimeManager extends BaseComponent
 
     public function storeFile($fileName, $folder, $name = null, $dim = 'tmpsf')
     {
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $runtimeDirName = basename($runtimeDirectory);
+        $folder = $runtimeDirName.DIRECTORY_SEPARATOR.$folder;
+
         if (!is_dir($folder)) {
             mkdir($folder, 0755, true);
         }

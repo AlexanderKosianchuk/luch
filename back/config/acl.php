@@ -48,7 +48,8 @@ return [
             'removeTemplateAction',
             'itemExportAction',
             'changeReliabilityAction',
-            'deleteCalibrationAction'
+            'deleteCalibrationAction',
+            'getUserActivityAction'
         ]
     ],
     'admin' => [
@@ -57,7 +58,10 @@ return [
             'deleteFlightAction',
             'deleteFlightIrretrievably',
             'deleteFolderContent',
-            'getUsersAction'
+            'getUsersAction',
+            'createUserAction',
+            'updateUserAction',
+            'deleteUserAction'
         ]
     ],
     'local' => [

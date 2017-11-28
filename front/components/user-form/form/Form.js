@@ -85,7 +85,7 @@ class Form extends Component {
 
     handleSaveClick() {
         this.props.request(
-            (this.props.type === EDIT_TYPE) ? ['users', 'update'] : ['users', 'create'],
+            (this.props.type === EDIT_TYPE) ? ['users', 'updateUser'] : ['users', 'createUser'],
             'post',
             (this.props.type === EDIT_TYPE) ? 'EDIT_USER' : 'CREATE_USER',
             new FormData(this.userForm)
