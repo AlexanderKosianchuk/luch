@@ -83,225 +83,6 @@ class FlightsController extends BaseController
         ]);
     }
 
-    public function processFlight($data)
-    {
-        if (!isset($data['id'])
-            || !(is_int(intval($data['id'])))
-        ) {
-            throw new BadRequestException(json_encode($data));
-        }
-
-        $flightId = intval($data['id']);
-
-        $Fl = new Flight;
-        $flightInfo = $Fl->GetFlightInfo($flightId);
-        $apTableName = $flightInfo["apTableName"];
-        $bpTableName = $flightInfo["bpTableName"];
-        $excEventsTableName = $flightInfo["exTableName"];
-        $startCopyTime = $flightInfo["startCopyTime"];
-        $tableGuid = substr($apTableName, 0, 14);
-        unset($Fl);
-
-        $fdr = new Fdr;
-        $fdrInfo = $fdr->getFdrInfo(intval($flightInfo["id_fdr"]));
-        $excListTableName = $fdrInfo["excListTableName"];
-        $apGradiTableName = $fdrInfo["gradiApTableName"];
-        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-        $stepLength = $fdrInfo["stepLength"];
-
-        if ($excListTableName != "") {
-           $excListTableName = $fdrInfo["excListTableName"];
-           $apGradiTableName = $fdrInfo["gradiApTableName"];
-           $bpGradiTableName = $fdrInfo["gradiBpTableName"];
-
-           $FEx = new FlightException;
-           $FEx->DropFlightExceptionTable($excEventsTableName);
-           $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
-           //Get exc refParam list
-           $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
-
-           $exList = $FEx->GetFlightExceptionTable($excListTableName);
-
-           //file can be accesed by ajax what can cause warning
-           error_reporting(E_ALL ^ E_WARNING);
-           set_time_limit (0);
-
-           //perform proc be cached table
-           for($i = 0; $i < count($exList); $i++)
-           {
-              $curExList = $exList[$i];
-              $FEx->PerformProcessingByExceptions($curExList,
-                    $flightInfo, $flightExTableName,
-                    $apTableName, $bpTableName,
-                    $startCopyTime, $stepLength);
-           }
-
-           EventProcessingComponent::processEvents($flightId, new EventEmitter);
-
-           error_reporting(E_ALL);
-        }
-
-        unset($fdr);
-        return json_encode('ok');
-   }
-
-   public function changeFlightPath($data)
-   {
-       if (!isset($data['id'])
-           || !isset($data['parentId'])
-           || !is_int(intval($data['id']))
-           || !is_int(intval($data['parentId']))
-       ) {
-           throw new BadRequestException(json_encode($data));
-       }
-
-       $userId = intval($this->_user->userInfo['id']);
-       $sender = intval($data['id']);
-       $target = intval($data['parentId']);
-
-       $Fd = new Folder;
-       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-       unset($Fd);
-
-       return json_encode([
-           'id' => $sender,
-           'parentId' => $target
-       ]);
-   }
-
-   public function GetEvents()
-   {
-       $list = [];
-       $userId = intval($this->_user->userInfo['id']);
-       $Fd = new Folder;
-       $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
-       unset($Fd);
-
-       $firstRow = true;
-       $excTables = [];
-       $FEx = new FlightException;
-       foreach($flightsInFolders as $flightInFolder)
-       {
-           $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
-           $excTable = $flight['exTableName'];
-           $rows = $FEx->GetFlightEventsList($excTable);
-
-           foreach ($rows as $row) {
-               $falseAlarm = $row['falseAlarm'];
-
-               if($falseAlarm) {
-                   continue;
-               }
-
-               $row = array(
-                   "code" => $row['code'],
-                   "startTime" => date('Y-m-d H:i:s', ($row['startTime'] / 1000)),
-                   "endTime" => date('Y-m-d H:i:s', ($row['endTime'] / 1000)),
-                   "excAditionalInfo" => $row['excAditionalInfo'],
-                   "userComment" => $row['userComment']
-               );
-
-               if ($firstRow) {
-                   $firstRow = false;
-
-                   $plainRow = [];
-                   foreach ($row as $key => $val) {
-                       if (gettype($key) === 'string') {
-                           $plainRow[] = $key;
-                       }
-                   }
-                   array_push($list, $plainRow);
-               }
-
-               $plainRow = [];
-               foreach ($row as $key => $val) {
-                   if (isset($val)) {
-                       $val = str_replace([PHP_EOL, ',', ';'], ' ', $val);
-
-                       $plainRow[] = $val;
-                   } else {
-                       $plainRow[] = '';
-                   }
-               }
-
-               array_push($list, $plainRow);
-           }
-       }
-       unset($FEx);
-
-       return $list;
-   }
-
-   public function GetCoordinates($flightId)
-   {
-       if (!is_int(intval($flightId))) {
-           throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
-       }
-
-       $Fl = new Flight;
-       $flight = $Fl->GetFlightInfo($flightId);
-       $fdrId = intval($flightInfo['id_fdr']);
-       unset($Fl);
-
-       $apTableName = $flight['apTableName'];
-       $bpTableName = $flight['bpTableName'];
-
-       $fdr = new Fdr;
-       $fdrInfo = $fdr->getFdrInfo($fdrId);
-       unset($fdr);
-
-       $kmlScript = $fdrInfo['kml_export_script'];
-       $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
-       $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
-
-       $c = new DataBaseConnector;
-       $link = $c->Connect();
-
-       $info = [];
-       $averageLat = 0;
-       $averageLong = 0;
-
-       if (!$link->multi_query($kmlScript)) {
-           //err log
-           error_log("Impossible to execute multiquery: (" .
-               $kmlScript . ") " . $link->error);
-       }
-
-       do
-       {
-           if ($res = $link->store_result())  {
-               while($row = $res->fetch_array()) {
-                   $lat = $row['LAT'];
-                   $long = $row['LONG'];
-                   $h = $row['H'];
-
-                   $averageLat += $lat;
-                   $averageLong += $long;
-                   $averageLat /= 2;
-                   $averageLong /= 2;
-
-                   if ($h < 0) {
-                       $h = 10.00;
-                   }
-                   $h = round($h, 2);
-                   $info[] = [
-                       $long,
-                       $lat,
-                       $h,
-                   ];
-               }
-
-               $res->free();
-           }
-       } while ($link->more_results() && $link->next_result());
-
-       $c->Disconnect();
-
-       unset($c);
-
-       return $info;
-   }
-
     public function itemExportAction($flightIds)
     {
         if (!is_array($flightIds)) {
@@ -320,8 +101,10 @@ class FlightsController extends BaseController
                 .'_'.$flightInfo['voyage']
                 .'_'.$fileGuid;
 
-            $exportedFileDir = $this->dic()->get('runtimeManager')->getExportFolder();
-            $exportedFilePath = $this->dic()->get('runtimeManager')->createExportedFile($exportedFileName);
+            $exportedFileDir = $this->dic()->get('runtimeManager')
+                ->getExportFolder();
+            $exportedFilePath = $this->dic()->get('runtimeManager')
+                ->createExportedFile($exportedFileName);
 
             $headerFile = [];
             $headerFile['filename'] = "header_".$flightInfo['bort']."_".$flightInfo['voyage'].$fileGuid.".json";
@@ -498,5 +281,224 @@ class FlightsController extends BaseController
 
         unset($U);
         return $figPrRow;
+    }
+
+    public function processFlight($data)
+    {
+        if (!isset($data['id'])
+            || !(is_int(intval($data['id'])))
+        ) {
+            throw new BadRequestException(json_encode($data));
+        }
+
+        $flightId = intval($data['id']);
+
+        $Fl = new Flight;
+        $flightInfo = $Fl->GetFlightInfo($flightId);
+        $apTableName = $flightInfo["apTableName"];
+        $bpTableName = $flightInfo["bpTableName"];
+        $excEventsTableName = $flightInfo["exTableName"];
+        $startCopyTime = $flightInfo["startCopyTime"];
+        $tableGuid = substr($apTableName, 0, 14);
+        unset($Fl);
+
+        $fdr = new Fdr;
+        $fdrInfo = $fdr->getFdrInfo(intval($flightInfo["id_fdr"]));
+        $excListTableName = $fdrInfo["excListTableName"];
+        $apGradiTableName = $fdrInfo["gradiApTableName"];
+        $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+        $stepLength = $fdrInfo["stepLength"];
+
+        if ($excListTableName != "") {
+           $excListTableName = $fdrInfo["excListTableName"];
+           $apGradiTableName = $fdrInfo["gradiApTableName"];
+           $bpGradiTableName = $fdrInfo["gradiBpTableName"];
+
+           $FEx = new FlightException;
+           $FEx->DropFlightExceptionTable($excEventsTableName);
+           $flightExTableName = $FEx->CreateFlightExceptionTable($flightId, $tableGuid);
+           //Get exc refParam list
+           $excRefParamsList = $FEx->GetFlightExceptionRefParams($excListTableName);
+
+           $exList = $FEx->GetFlightExceptionTable($excListTableName);
+
+           //file can be accesed by ajax what can cause warning
+           error_reporting(E_ALL ^ E_WARNING);
+           set_time_limit (0);
+
+           //perform proc be cached table
+           for($i = 0; $i < count($exList); $i++)
+           {
+              $curExList = $exList[$i];
+              $FEx->PerformProcessingByExceptions($curExList,
+                    $flightInfo, $flightExTableName,
+                    $apTableName, $bpTableName,
+                    $startCopyTime, $stepLength);
+           }
+
+           EventProcessingComponent::processEvents($flightId, new EventEmitter);
+
+           error_reporting(E_ALL);
+        }
+
+        unset($fdr);
+        return json_encode('ok');
+    }
+
+    public function changeFlightPath($data)
+    {
+       if (!isset($data['id'])
+           || !isset($data['parentId'])
+           || !is_int(intval($data['id']))
+           || !is_int(intval($data['parentId']))
+       ) {
+           throw new BadRequestException(json_encode($data));
+       }
+
+       $userId = intval($this->_user->userInfo['id']);
+       $sender = intval($data['id']);
+       $target = intval($data['parentId']);
+
+       $Fd = new Folder;
+       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
+       unset($Fd);
+
+       return json_encode([
+           'id' => $sender,
+           'parentId' => $target
+       ]);
+    }
+
+    public function GetEvents()
+    {
+       $list = [];
+       $userId = intval($this->_user->userInfo['id']);
+       $Fd = new Folder;
+       $flightsInFolders = $Fd->GetAllFlightsInFolders($userId);
+       unset($Fd);
+
+       $firstRow = true;
+       $excTables = [];
+       $FEx = new FlightException;
+       foreach($flightsInFolders as $flightInFolder)
+       {
+           $flight = $Fl->GetFlightInfo(intval($flightInFolder['flightId']));
+           $excTable = $flight['exTableName'];
+           $rows = $FEx->GetFlightEventsList($excTable);
+
+           foreach ($rows as $row) {
+               $falseAlarm = $row['falseAlarm'];
+
+               if($falseAlarm) {
+                   continue;
+               }
+
+               $row = array(
+                   "code" => $row['code'],
+                   "startTime" => date('Y-m-d H:i:s', ($row['startTime'] / 1000)),
+                   "endTime" => date('Y-m-d H:i:s', ($row['endTime'] / 1000)),
+                   "excAditionalInfo" => $row['excAditionalInfo'],
+                   "userComment" => $row['userComment']
+               );
+
+               if ($firstRow) {
+                   $firstRow = false;
+
+                   $plainRow = [];
+                   foreach ($row as $key => $val) {
+                       if (gettype($key) === 'string') {
+                           $plainRow[] = $key;
+                       }
+                   }
+                   array_push($list, $plainRow);
+               }
+
+               $plainRow = [];
+               foreach ($row as $key => $val) {
+                   if (isset($val)) {
+                       $val = str_replace([PHP_EOL, ',', ';'], ' ', $val);
+
+                       $plainRow[] = $val;
+                   } else {
+                       $plainRow[] = '';
+                   }
+               }
+
+               array_push($list, $plainRow);
+           }
+       }
+       unset($FEx);
+
+       return $list;
+    }
+
+    public function GetCoordinates($flightId)
+    {
+       if (!is_int(intval($flightId))) {
+           throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
+       }
+
+       $Fl = new Flight;
+       $flight = $Fl->GetFlightInfo($flightId);
+       $fdrId = intval($flightInfo['id_fdr']);
+       unset($Fl);
+
+       $apTableName = $flight['apTableName'];
+       $bpTableName = $flight['bpTableName'];
+
+       $fdr = new Fdr;
+       $fdrInfo = $fdr->getFdrInfo($fdrId);
+       unset($fdr);
+
+       $kmlScript = $fdrInfo['kml_export_script'];
+       $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
+       $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
+
+       $c = new DataBaseConnector;
+       $link = $c->Connect();
+
+       $info = [];
+       $averageLat = 0;
+       $averageLong = 0;
+
+       if (!$link->multi_query($kmlScript)) {
+           //err log
+           error_log("Impossible to execute multiquery: (" .
+               $kmlScript . ") " . $link->error);
+       }
+
+       do
+       {
+           if ($res = $link->store_result())  {
+               while($row = $res->fetch_array()) {
+                   $lat = $row['LAT'];
+                   $long = $row['LONG'];
+                   $h = $row['H'];
+
+                   $averageLat += $lat;
+                   $averageLong += $long;
+                   $averageLat /= 2;
+                   $averageLong /= 2;
+
+                   if ($h < 0) {
+                       $h = 10.00;
+                   }
+                   $h = round($h, 2);
+                   $info[] = [
+                       $long,
+                       $lat,
+                       $h,
+                   ];
+               }
+
+               $res->free();
+           }
+       } while ($link->more_results() && $link->next_result());
+
+       $c->Disconnect();
+
+       unset($c);
+
+       return $info;
     }
 }

@@ -91,18 +91,26 @@ class FlightComponent extends BaseComponent
 
     public function deleteFlight($flightId, $userId)
     {
-        $criteria = ['id' => $flightId];
+        $parameters = ['flightId' => $flightId];
+
+
+
+        $qb = $this->em()->createQueryBuilder();
+        $qb->select('f')
+            ->from('Entity\FlightToFolder', 'f')
+            ->where('f.flightId = :flightId');
 
         if (!$this->member()->isAdmin()) {
-            $criteria['userId'] = $userId;
+            $qb->andWhere('f.userId = :userId');
+            $parameters['userId'] = $userId;
         }
 
-        $flightToFolder = $this->em()
-            ->getRepository('Entity\FlightToFolder')
-            ->findBy($criteria);
+        $qb->setParameters($parameters);
+        $flightToFolder = $qb->getQuery()->getArrayResult();
 
         foreach ($flightToFolder as $item) {
-            $this->em()->remove($item);
+            $flightToFolder = $this->em()->find('Entity\FlightToFolder', $item['id']);
+            $this->em()->remove($flightToFolder);
             $this->em()->flush();
         }
 

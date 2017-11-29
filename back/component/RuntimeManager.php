@@ -24,7 +24,9 @@ class RuntimeManager extends BaseComponent
     public function getExportFolder()
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $exportedFilesDir = $this->params()->folders->exportedFolder;
+        $exportedFilesDir = $runtimeDirectory
+            .DIRECTORY_SEPARATOR
+            .$this->params()->folders->exportedFolder;
 
         if (!is_dir($exportedFilesDir)) {
             mkdir($exportedFilesDir, 0755, true);
@@ -36,7 +38,9 @@ class RuntimeManager extends BaseComponent
     public function getImportFolder()
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $importFilesDir = $this->params()->folders->importedFolder;
+        $importFilesDir = $runtimeDirectory
+            .DIRECTORY_SEPARATOR
+            .$this->params()->folders->importedFolder;
 
         if (!is_dir($importFilesDir)) {
             mkdir($importFilesDir, 0755, true);
@@ -63,18 +67,18 @@ class RuntimeManager extends BaseComponent
            $exportedUrl .= $_SERVER["SERVER_NAME"];
         }
 
-        return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $this->params()->folders->exportedFolder).'/'.$fileName . '.zip';
-    }
-
-    public function getExportedFilePath($fileName)
-    {
-        $exportedFileDir = $this->getExportFolder();
-        return $exportedFileDir . DIRECTORY_SEPARATOR . $fileName . '.zip';
+        return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $runtimeDirectory).'/'.$this->params()->folders->exportedFolder.'/'.$fileName . '.zip';
     }
 
     public function createExportedFile($fileName)
     {
-        $filePath = $this->getExportedFilePath($fileName);
+        $exportedFileDir = $this->getExportFolder();
+
+        $filePath = $exportedFileDir
+            .DIRECTORY_SEPARATOR
+            .$fileName
+            .'.zip';
+
         $fileNameDesc = fopen($filePath, "w");
         fclose($fileNameDesc);
 
@@ -108,7 +112,10 @@ class RuntimeManager extends BaseComponent
 
     public function storeFlight($fileName)
     {
-        $storedFlightsDir = $this->params()->folders->storedFlights;
+        $runtimeDirectory = $this->getRuntimeFolder();
+        $storedFlightsDir = $runtimeDirectory
+            .DIRECTORY_SEPARATOR
+            .$this->params()->folders->storedFlights;
 
         if (!is_dir($storedFlightsDir)) {
             mkdir($storedFlightsDir, 0755, true);
@@ -144,9 +151,9 @@ class RuntimeManager extends BaseComponent
     public function getFilePathByIud($uid)
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $uploadedFilesDir = $this->params()->folders->uploadedFlightsFolder;
-
-        $storedFilePath = $uploadedFilesDir.DIRECTORY_SEPARATOR.$uid.'.tmpsf';
+        $storedFilePath = $runtimeDirectory.DIRECTORY_SEPARATOR
+            .$this->params()->folders->uploadedFlightsFolder.DIRECTORY_SEPARATOR
+            .$uid.'.tmpsf';
 
         return $storedFilePath;
     }

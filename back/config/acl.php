@@ -45,6 +45,7 @@ return [
             'flightUploaderPreviewAction',
             'flightProccesAndCheckAction',
             'flightEasyUploadAction',
+            'deleteFlightAction',
             'removeTemplateAction',
             'itemExportAction',
             'changeReliabilityAction',
@@ -55,7 +56,6 @@ return [
     'admin' => [
         'parent' => 'moderator',
         'actions' => [
-            'deleteFlightAction',
             'deleteFlightIrretrievably',
             'deleteFolderContent',
             'getUsersAction',
