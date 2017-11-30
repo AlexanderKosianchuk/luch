@@ -11,7 +11,6 @@ class MainMenu extends React.Component {
     }
 
     render() {
-        console.log(this.props.userRole);
         return (
             <div className={ 'main-menu fluid-grid ' + ( this.props.isShown ? '' : 'is-hidden' ) } >
                 <div className='main-menu__row'

@@ -144,8 +144,8 @@ class CalibrationComponent extends BaseComponent
                 . json_encode($fdrCode), 1);
         }
 
-        $table = $fdr->getCode().$this->CalibrationParam::getPrefix();
-        $isExist = $this->checkTableExist ($table);
+        $table = $fdrCode.$this->CalibrationParam->getPrefix();
+        $isExist = $this->connection()->isExist($table);
         if(!$isExist) {
             $link = $this->connection()->create('fdrs');
             $q = "CREATE TABLE `".$table."` ("
@@ -175,6 +175,9 @@ class CalibrationComponent extends BaseComponent
         if (!$fdr) {
             throw new ForbiddenException('requested FDR not avaliable for current user. FDR id: '. $fdrId);
         }
+
+        //create table if not exist
+        $this->createTable ($fdr->getCode());
 
         $calibration = $this->getCalibrationsByName($calibrationsName, $userId);
         if (!$calibration) {
