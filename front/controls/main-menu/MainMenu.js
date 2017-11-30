@@ -3,6 +3,7 @@ import './main-menu.sass';
 import React from 'react';
 import { Translate } from 'react-redux-i18n';
 import onClickOutside from 'react-onclickoutside';
+import { connect } from 'react-redux';
 
 class MainMenu extends React.Component {
     handleClickOutside(event) {
@@ -10,6 +11,7 @@ class MainMenu extends React.Component {
     }
 
     render() {
+        console.log(this.props.userRole);
         return (
             <div className={ 'main-menu fluid-grid ' + ( this.props.isShown ? '' : 'is-hidden' ) } >
                 <div className='main-menu__row'
@@ -27,7 +29,7 @@ class MainMenu extends React.Component {
                     <span className='main-menu__glyphicon glyphicon glyphicon-screenshot'></span>
                     <span className='main-menu__label'><Translate value='mainMenu.calibration'/></span>
                 </div>
-                <div className='main-menu__row'
+                <div className={ 'main-menu__row' + ((this.props.userRole !== 'admin') ? ' is-hidden' : '') }
                         onClick={ this.props.handleMenuItemClick.bind(null, '/users') }>
                     <span className='main-menu__glyphicon glyphicon glyphicon-user'></span>
                     <span className='main-menu__label'><Translate value='mainMenu.users'/></span>
@@ -37,4 +39,10 @@ class MainMenu extends React.Component {
     }
 }
 
-export default onClickOutside(MainMenu);
+function mapStateToProps(state) {
+    return {
+        userRole: state.user.role
+    }
+}
+
+export default connect(mapStateToProps, () => { return {} })(onClickOutside(MainMenu));

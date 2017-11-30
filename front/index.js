@@ -35,11 +35,13 @@ if (($('html').attr('login') !== '')
     && ($('html').attr('lang') !== '')
 ) {
     let login = $('html').attr('login');
+    let role = $('html').attr('role');
     let lang = $('html').attr('lang');
     store.dispatch({
         type: 'USER_LOGGED_IN',
         payload: {
             login: login,
+            role: role,
             lang: lang
         }
     });

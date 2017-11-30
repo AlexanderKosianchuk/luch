@@ -5,6 +5,7 @@ export default function userReducer(state = {}, action) {
             if (pl && pl.login && (pl.login.length > 3) && pl.lang) {
                 return {
                     login: pl.login,
+                    role: pl.role,
                     lang: pl.lang
                 };
             } else {

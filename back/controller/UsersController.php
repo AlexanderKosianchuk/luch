@@ -31,6 +31,7 @@ class UsersController extends BaseController
         return json_encode([
             'status' => 'ok',
             'login' => $user->getLogin(),
+            'role' => $user->getRole(),
             'lang' => strtolower($user->getLang())
         ]);
     }

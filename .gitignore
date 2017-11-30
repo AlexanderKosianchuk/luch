@@ -22,7 +22,6 @@ package-lock.json
 .cache/
 .local/
 
-
 # composer itself is not needed
 composer.phar
 composer.lock

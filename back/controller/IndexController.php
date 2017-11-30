@@ -14,6 +14,7 @@ class IndexController extends BaseController
         return $te->render($tpl, [
             'languange' => $this->user()->getLang(),
             'login' => $this->user()->getLogin(),
+            'role' => $this->user()->getRole(),
             'title' => L::title,
             'script' => $this->gutScriptName()
         ]);
