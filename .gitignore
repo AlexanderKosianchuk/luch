@@ -19,6 +19,9 @@ Thumbs.db
 /vendor
 /node_modules
 package-lock.json
+.cache/
+.local/
+
 
 # composer itself is not needed
 composer.phar
