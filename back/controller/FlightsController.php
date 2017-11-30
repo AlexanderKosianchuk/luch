@@ -345,28 +345,40 @@ class FlightsController extends BaseController
         return json_encode('ok');
     }
 
-    public function changeFlightPath($data)
+    public function changeFlightPathAction($id, $parentId)
     {
-       if (!isset($data['id'])
-           || !isset($data['parentId'])
-           || !is_int(intval($data['id']))
-           || !is_int(intval($data['parentId']))
-       ) {
-           throw new BadRequestException(json_encode($data));
-       }
+        $userId = $this->user()->getId();
+        $sender = intval($id);
+        $target = intval($parentId);
 
-       $userId = intval($this->_user->userInfo['id']);
-       $sender = intval($data['id']);
-       $target = intval($data['parentId']);
+        $flight = $this->em()->find('Entity\Flight', $sender);
 
-       $Fd = new Folder;
-       $result = $Fd->ChangeFlightFolder($sender, $target, $userId);
-       unset($Fd);
+        if (!$flight) {
+            throw new NotFoundException('flight not found. Id: '.$sender);
+        }
 
-       return json_encode([
-           'id' => $sender,
-           'parentId' => $target
-       ]);
+        $flightToFolder = $this->em()
+            ->getRepository('Entity\FlightToFolder')
+            ->findBy(['flightId' => $sender, 'userId' => $userId]);
+
+        if ($flightToFolder) {
+            foreach ($flightToFolder as $item) {
+                $this->em()->remove($item);
+            }
+
+            $flightToFolder = new \Entity\FlightToFolder;
+            $flightToFolder->setFolderId($target);
+            $flightToFolder->setUserId($userId);
+            $flightToFolder->setFlight($flight);
+            $this->em()->persist($flightToFolder);
+        }
+
+        $this->em()->flush();
+
+        return json_encode([
+            'id' => $sender,
+            'parentId' => $target
+        ]);
     }
 
     public function GetEvents()

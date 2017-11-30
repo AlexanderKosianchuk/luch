@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Entity\Folder;
-
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
 
@@ -51,7 +49,7 @@ class FolderController extends BaseController
 
     public function createFolderAction($folderName)
     {
-        $folder = new Folder;
+        $folder = new \Entity\Folder;;
         $folder->set([
             'name' => $folderName,
             'path' => 0, // root

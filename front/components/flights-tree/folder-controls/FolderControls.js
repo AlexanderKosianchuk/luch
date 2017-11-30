@@ -23,7 +23,7 @@ class FolderControls extends Component {
                 ['folder', 'deleteFolder'],
                 'delete',
                 'FOLDER',
-                { id: this.props.folderInfo.id }
+                { id: this.props.folderInfo.id * -1 }
             );
         }
     }

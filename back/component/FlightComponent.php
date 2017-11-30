@@ -93,8 +93,6 @@ class FlightComponent extends BaseComponent
     {
         $parameters = ['flightId' => $flightId];
 
-
-
         $qb = $this->em()->createQueryBuilder();
         $qb->select('f')
             ->from('Entity\FlightToFolder', 'f')
@@ -121,8 +119,7 @@ class FlightComponent extends BaseComponent
         $flight = $this->em()
             ->getRepository('Entity\Flight')
             ->findOneBy([
-                'id' => $flightId,
-                'userId' => $userId
+                'id' => $flightId
             ]);
 
         if (!$flight) {

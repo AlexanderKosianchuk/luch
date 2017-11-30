@@ -48,10 +48,25 @@ class Tree extends Component {
             }
         }
 
+        let nextPropsList = nextProps.list.map((item) => {
+            if (item.type === 'folder') {
+                return {
+                    ...item,
+                    id: item.id * -1,
+                    parentId: item.parentId * -1
+                }
+            } else if (item.type === 'flight') {
+                return {
+                    ...item,
+                    parentId: item.parentId * -1
+                }
+            }
+        });
+
         this.setState({
             treeData: middleware(
                 getTreeFromFlatData({
-                    flatData: this.prepareTreeData(nextProps.list)
+                    flatData: this.prepareTreeData(nextPropsList)
                 })
             )
         });
@@ -210,6 +225,14 @@ class Tree extends Component {
         this.findParent(treeData, id, (found) => { parent = found });
         let data = { id: id, parentId: parent.id };
 
+        if (node.type === 'folder') {
+            data.id = id * -1;
+        };
+
+        if (parent.type === 'folder') {
+            data.parentId = parent.id * -1;
+        };
+
         if (node.type === FLIGHT_TYPE) {
             this.props.request(
                 ['flights', 'changeFlightPath'],
@@ -233,7 +256,7 @@ class Tree extends Component {
             'put',
             'FOLDER_EXPANDING',
             {
-                id: node.id,
+                id: node.id * -1,
                 expanded: expanded
             }
         );
