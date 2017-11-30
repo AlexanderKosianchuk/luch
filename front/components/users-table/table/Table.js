@@ -80,7 +80,7 @@ class Table extends Component {
     handleDeleteClick(id) {
         if (confirm(I18n.t('usersTable.table.confimUserDeleting'))) {
             this.props.request(
-                ['users', 'delete'],
+                ['users', 'deleteUser'],
                 'post',
                 'DELETE_USER',
                 { userId: id }

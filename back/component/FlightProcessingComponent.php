@@ -504,7 +504,7 @@ class FlightProcessingComponent extends BaseComponent
         }
     }
 
-    public function checkAditionalInfoFromHeader($fdrId, $headerInfo, $encoded = true)
+    public function checkAditionalInfoFromHeader($fdrId, $headerInfo)
     {
         $aditionalInfo = [];
 
@@ -517,10 +517,6 @@ class FlightProcessingComponent extends BaseComponent
             } else {
                 $aditionalInfo[$val] = "x";
             }
-        }
-
-        if ($encoded) {
-            return json_encode($aditionalInfo);
         }
 
         return $aditionalInfo;

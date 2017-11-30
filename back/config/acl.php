@@ -45,19 +45,23 @@ return [
             'flightUploaderPreviewAction',
             'flightProccesAndCheckAction',
             'flightEasyUploadAction',
+            'deleteFlightAction',
             'removeTemplateAction',
             'itemExportAction',
             'changeReliabilityAction',
-            'deleteCalibrationAction'
+            'deleteCalibrationAction',
+            'getUserActivityAction'
         ]
     ],
     'admin' => [
         'parent' => 'moderator',
         'actions' => [
-            'deleteFlightAction',
             'deleteFlightIrretrievably',
             'deleteFolderContent',
-            'getUsersAction'
+            'getUsersAction',
+            'createUserAction',
+            'updateUserAction',
+            'deleteUserAction'
         ]
     ],
     'local' => [

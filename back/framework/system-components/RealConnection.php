@@ -164,6 +164,7 @@ class RealConnection
                 //unlink($exportedFileName['tmp']);
             } catch(Exception $e) { }
         }
+
         return $exportedFileName;
     }
 }

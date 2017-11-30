@@ -31,7 +31,6 @@ export default function startFlightUploading(payload) {
                             progress: json.progress
                         }
                     });
-                    setTimeout(checkProgress, 1000);
                 }
 
                 if (json.status !== 'complete') {

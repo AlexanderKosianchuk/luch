@@ -20,7 +20,7 @@ import flightEvents from 'reducers/flightEvents';
 import userReducer from 'reducers/userReducer';
 import users from 'reducers/users';
 
-export default combineReducers({
+const appReducer = combineReducers({
     fdrs,
     flight,
     flights,
@@ -41,3 +41,15 @@ export default combineReducers({
     user: userReducer,
     users: users
 });
+
+const rootReducer = (state, action) => {
+    if (action.type === 'POST_USER_LOGOUT_COMPLETE') {
+        const { i18n, router } = state;
+        state = { i18n, router };
+    }
+
+    return appReducer(state, action)
+};
+
+
+export default rootReducer;

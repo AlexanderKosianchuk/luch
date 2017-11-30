@@ -167,14 +167,22 @@ class User
     public function set($data)
     {
         $this->login = $data['login'];
-        $this->pass = $data['pass'];
+        $this->pass = md5($data['pass']);
         $this->name = $data['name'];
         $this->email = $data['email'];
         $this->phone = $data['phone'];
-        $this->lang = $data['lang'];
         $this->role = $data['role'];
         $this->company = $data['company'];
-        $this->creatorId = $data['creatorId'];
-        $this->logo = $data['logo'];
+        $this->creator = $data['creator'];
+
+        if (isset($data['lang'])) {
+            $this->lang = $data['lang'];
+        }
+
+        $logoPath = SITE_ROOT_DIR.DIRECTORY_SEPARATOR.$data['logo'];
+
+        if (file_exists($logoPath)) {
+            $this->logo = stream_get_contents(fopen($logoPath,'rb'));
+        }
     }
 }

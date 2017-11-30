@@ -92,251 +92,212 @@ class UsersController extends BaseController
         return stream_get_contents($user->getLogo());
     }
 
-    public function getUser($args)
+    public function getUserAction($id)
     {
-        if (!isset($args['id'])) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $requestedUserId = $args['id'];
-        $userId = intval($this->_user->userInfo['id']);
-        $role = strval($this->_user->userInfo['role']);
+        $requestedUserId = intval($id);
+        $userId = $this->user()->getId();
+        $role = strval($this->user()->getRole());
 
         if (UserRepository::isUser($role) && $requestedUserId !== $userId) {
             throw new ForbiddenException('forbidden info for current user');
         }
 
-        $em = EM::get();
-
-        $user = $em->find('Entity\User', $requestedUserId);
+        $user = $this->em()->find('Entity\User', $requestedUserId);
         $creatorId = $user->getCreatorId();
 
-        if (UserRepository::isModerator($role) && $creatorId !== $userId) {
+        if ($this->member()->isModerator($role) && $creatorId !== $userId) {
             throw new ForbiddenException('forbidden info for current user');
         }
 
         return json_encode($user->get());
     }
 
-    public function create($args)
-    {
-        if (!isset($args['login'])
-            || empty($args['login'])
-            || !isset($args['pass'])
-            || empty($args['pass'])
-            || !isset($args['company'])
-            || empty($args['company'])
-            || !isset($args['avaliableFdrs'])
-            || empty($args['avaliableFdrs'])
-        ) {
-            throw new BadRequestException([json_encode($args), 'notAllNecessarySent']);
-        }
-
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $authorId = intval($this->_user->userInfo['id']);
+    public function createUserAction(
+        $login,
+        $pass,
+        $company,
+        $role,
+        $avaliableFdrs,
+        $email = '',
+        $name = '',
+        $phone = ''
+    ) {
+        $authorId = $this->user()->getId();
 
         $filePath = strval($_FILES['userLogo']['tmp_name']);
-        $fileForInserting = RuntimeManager::storeFile($filePath, 'user-logo');
-        $login = $args['login'];
-        $avaliableFdrs = $args['avaliableFdrs'];
+        $fileForInserting = $this->dic()
+            ->get('runtimeManager')
+            ->storeFile($filePath, 'user-logo');
 
-        if ($this->_user->CheckUserPersonalExist($login)) {
+        if ($this->em()->getRepository('Entity\User')->findBy(['login' => $login])) {
             throw new ForbiddenException(['user already exist', 'alreadyExist']);
         }
 
-        $createdUserId = intval($this->_user->CreateUserPersonal([
+        $createdUser = new \Entity\User;
+        $createdUser->set([
             'login' => $login,
-            'pass' => $args['pass'],
-            'name' => $args['name'],
-            'email' => $args['email'],
-            'phone' => $args['phone'],
-            'role' => $args['role'],
-            'company' => $args['company'],
-            'creatorId' => $authorId,
+            'pass' => $pass,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'lang' => 'en',
+            'role' => $role,
+            'company' => $company,
+            'creator' => $this->user(),
             'logo' => $fileForInserting,
-        ]));
+        ]);
+
+        $this->em()->persist($createdUser);
+        $this->em()->flush();
 
         foreach($avaliableFdrs as $id) {
-            $this->_user->SetFDRavailable($createdUserId, intval($id));
+            $fdr = $this->em()->find('Entity\Fdr', $id);
+
+            if ($fdr) {
+                $this->dic()->get('userManager')
+                    ->setFdrAvailable($createdUser->getId(), $fdr);
+            }
         }
 
-        RuntimeManager::unlinkRuntimeFile($fileForInserting);
-
-        $em = EM::get();
-        $user = $em->find('Entity\User', $createdUserId);
+        $this->dic()->get('runtimeManager')->unlinkRuntimeFile($fileForInserting);
 
         return json_encode([
-            'id' => $createdUserId,
+            'id' => $createdUser->getId(),
             'login' => $login,
-            'pass' => $args['pass'],
-            'name' => $args['name'],
-            'email' => $args['email'],
-            'phone' => $args['phone'],
-            'role' => $args['role'],
-            'company' => $args['company'],
+            'pass' => $pass,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'role' => $role,
+            'company' => $company,
             'creatorId' => $authorId,
-            'logo' => $em->getRepository('Entity\User')::getLogoUrl($createdUserId)
+            'logo' => 'users/getLogo/id/'.$createdUser->getId()
         ]);
     }
 
-    public function update($args)
-    {
-        if (!isset($args['id'])
-            || empty($args['id'])
-            || !isset($args['pass'])
-            || empty($args['pass'])
-            || !isset($args['avaliableFdrs'])
-            || empty($args['avaliableFdrs'])
-        ) {
-            throw new BadRequestException([json_encode($args), 'notAllNecessarySent']);
-        }
+    public function updateUserAction(
+        $id,
+        $login,
+        $pass,
+        $company,
+        $role,
+        $avaliableFdrs,
+        $email = '',
+        $name = '',
+        $phone = ''
+    ) {
+        $userId = $this->user()->getId();
+        $userIdToUpdate = intval($id);
 
-        if (!isset($this->_user->userInfo)) {
-            throw new ForbiddenException('user is not authorized');
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $userIdToUpdate = intval($args['id']);
-
-        $em = EM::get();
-
-        if (!$em->getRepository('Entity\User')->isAvaliable($userIdToUpdate, $userId)) {
+        if (!$this->em()->getRepository('Entity\User')->isAvaliable($userIdToUpdate, $userId)) {
             throw new ForbiddenException('current user not able to update this');
         }
 
         $filePath = strval($_FILES['userLogo']['tmp_name']);
-        $fileForUpdating = RuntimeManager::storeFile($filePath, 'user-logo');
-        $login = $args['login'];
-        $avaliableFdrs = $args['avaliableFdrs'];
+        $fileForUpdating = $this->dic()->get('runtimeManager')
+            ->storeFile($filePath, 'user-logo');
 
-        $user = $em->find('Entity\User', $userIdToUpdate);
+        $updatedUser = $this->em()->find('Entity\User', $userIdToUpdate);
 
-        if (!$user) {
+        if (!$updatedUser) {
             throw new NotFoundException('user with id '.$userIdToUpdate.' not found');
         }
 
-        $this->_user->UpdateUserPersonal(
-            $userIdToUpdate,
-            [
-                'login' => $login,
-                'pass' => $args['pass'],
-                'name' => $args['name'],
-                'email' => $args['email'],
-                'phone' => $args['phone'],
-                'role' => $args['role'],
-                'company' => $args['company'],
-                'id_creator' => $userId,
-                'logo' => $fileForUpdating
-            ]
-        );
+        $updatedUser->set([
+            'login' => $login,
+            'pass' => $pass,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'role' => $role,
+            'company' => $company,
+            'creator' => $this->user(),
+            'logo' => $fileForUpdating,
+        ]);
 
-        RuntimeManager::unlinkRuntimeFile($fileForUpdating);
+        $this->em()->merge($updatedUser);
+        $this->em()->flush();
 
-        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToUpdate]);
+        $this->dic()->get('runtimeManager')->unlinkRuntimeFile($fileForUpdating);
+
+        $fdrsToUser = $this->em()->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToUpdate]);
         if (isset($fdrToUser)) {
             foreach ($fdrsToUser as $fdrToUser) {
-                $em->remove($fdrToUser);
+                $this->em()->remove($fdrToUser);
             }
         }
 
         foreach($avaliableFdrs as $id) {
-            $this->_user->SetFDRavailable($userIdToUpdate, intval($id));
-        }
+            $fdr = $this->em()->find('Entity\Fdr', $id);
 
-        $em->flush();
+            if ($fdr) {
+                $this->dic()->get('userManager')
+                    ->setFdrAvailable($updatedUser->getId(), $fdr);
+            }
+        }
 
         return json_encode([
             'id' => $userIdToUpdate,
             'login' => $login,
-            'pass' => $args['pass'],
-            'name' => $args['name'],
-            'email' => $args['email'],
-            'phone' => $args['phone'],
-            'role' => $args['role'],
-            'company' => $args['company'],
+            'pass' => $pass,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'role' => $role,
+            'company' => $company,
             'creatorId' => $userId,
-            'logo' => $em->getRepository('Entity\User')::getLogoUrl($userIdToUpdate)
+            'logo' => 'users/getLogo/id/'.$userIdToUpdate
         ]);
     }
 
 
-    public function delete($args)
+    public function deleteUserAction($userId)
     {
-        if (!isset($args['userId'])
-            || empty($args['userId'])
-            || !is_int(intval($args['userId']))
+        $userIdToDelete = intval($userId);
+
+        if (!$this->em()->getRepository('Entity\User')
+                ->isAvaliable($userIdToDelete, $this->user()->getId())
         ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $userId = intval($this->_user->userInfo['id']);
-        $userIdToDelete = intval($args['userId']);
-
-        $em = EM::get();
-
-        if (!$em->getRepository('Entity\User')->isAvaliable($userIdToDelete, $userId)) {
             throw new ForbiddenException('current user not able to delete this');
         }
 
-        $user = $em->find('Entity\User', $userIdToDelete);
+        $user = $this->em()->find('Entity\User', $userIdToDelete);
         if (isset($user)) {
-            $em->remove($user);
+            $this->em()->remove($user);
         }
 
-        $fdrsToUser = $em->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToDelete]);
+        $fdrsToUser = $this->em()->getRepository('Entity\FdrToUser')->findBy(
+            ['userId' => $userIdToDelete]
+        );
+
         if (isset($fdrToUser)) {
             foreach ($fdrsToUser as $fdrToUser) {
-                $em->remove($fdrToUser);
+                $this->em()->remove($fdrToUser);
             }
         }
 
-        $flightsToFolders = $em->getRepository('Entity\FlightToFolder')->findBy(['userId' => $userIdToDelete]);
+        $flightsToFolders = $this->em()->getRepository('Entity\FlightToFolder')->findBy(['userId' => $userIdToDelete]);
         if (isset($flightToFolder)) {
             foreach ($flightsToFolders as $flightToFolder) {
-                $em->remove($flightToFolder);
+                $this->em()->remove($flightToFolder);
             }
         }
 
-        $flights = $em->getRepository('Entity\Flight')->findBy(['id_user' => $userIdToDelete]);
-        $FC = new FlightComponent;
+        $flights = $this->em()->getRepository('Entity\Flight')
+            ->findBy(['userId' => $userIdToDelete]);
+
         foreach ($flights as $flightId) {
-            $FC->DeleteFlight(intval($flightId), $userIdToDelete);
+            $this->dic()->get('flight')->deleteFlight(intval($flightId), $userIdToDelete);
         }
 
-        $em->flush();
+        $this->em()->flush();
 
         return json_encode('ok');
     }
 
-    public function getUserActivity($args)
+    public function getUserActivityAction($userId, $page, $pageSize)
     {
-        if (!isset($args['userId'])
-            || empty($args['userId'])
-            || !is_int(intval($args['userId']))
-            || !isset($args['page'])
-            || empty($args['page'])
-            || !is_int(intval($args['page']))
-            || !isset($args['pageSize'])
-            || empty($args['pageSize'])
-            || !is_int(intval($args['pageSize']))
-        ) {
-            throw new BadRequestException(json_encode($args));
-        }
-
-        $userId = $args['userId'];
-        $page = $args['page'];
-        $pageSize = $args['pageSize'];
-
-        $em = EM::get();
-
-        $userActivityResult = $em->getRepository('Entity\UserActivity')
+        $userActivityResult = $this->em()->getRepository('Entity\UserActivity')
             ->findBy(
                 ['userId' => $userId],
                 ['date' => 'DESC'],
@@ -349,7 +310,7 @@ class UsersController extends BaseController
             $activity[] = $item->get();
         }
 
-        $total = $em->getRepository('Entity\UserActivity')
+        $total = $this->em()->getRepository('Entity\UserActivity')
             ->createQueryBuilder('userActivity')
             ->select('count(userActivity.id)')
             ->where('userActivity.userId = :userId')
@@ -357,7 +318,7 @@ class UsersController extends BaseController
             ->getQuery()
             ->getSingleScalarResult();
 
-        echo json_encode([
+        return json_encode([
             'rows' => $activity,
             'pages' => round($total / $pageSize)
         ]);

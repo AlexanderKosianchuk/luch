@@ -185,18 +185,15 @@ class UploaderController extends BaseController
             }
         }
 
-        $aditionalInfoVars = '';
         $flightAditionalInfoParsed = [];
         if ($flightAditionalInfo != 0) {
             for ($i = 0; $i < count($flightAditionalInfo); $i+=2) {
                 $flightAditionalInfoParsed[(string)$flightAditionalInfo[$i]] =
                     (string)$flightAditionalInfo[$i + 1];
             }
-
-            $aditionalInfoVars = json_encode($flightAditionalInfo);
         }
 
-        $flightInfoParsed['aditionalInfo'] = $aditionalInfoVars;
+        $flightInfoParsed['aditionalInfo'] = $flightAditionalInfoParsed;
 
         $storedFlightFile = $this->dic()
             ->get('runtimeManager')
@@ -780,7 +777,7 @@ class UploaderController extends BaseController
             $flightInfoImported['copyCreationTime'] = date('H:i:s', $flightInfoImported['startCopyTime']);
             $flightInfoImported['copyCreationDate'] = date('Y-m-d', $flightInfoImported['startCopyTime']);
 
-            $flightInfoImported['aditionalInfo'] = json_encode($flightInfoImported['aditionalInfo']);
+            $flightInfoImported['aditionalInfo'] = $flightInfoImported['aditionalInfo'];
             $flight = $this->dic()->get('flight')
                 ->insert($flightGuid, $flightInfoImported, $fdrId, $userId, $calibrationId);
             $flightId = $flight->getId();
