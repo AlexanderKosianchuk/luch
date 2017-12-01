@@ -46,13 +46,8 @@ class FlightComponent extends BaseComponent
             $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
         }
 
-        $copyCreationTime = $flightInfo['copyCreationTime'];
-        $copyCreationDate = $flightInfo['copyCreationDate'];
-
-        if (strlen($copyCreationTime) > 5) {
-            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime);
-        } else {
-            $flightInfo['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime . ':00');
+        if (!isset($flightInfo['startCopyTime'])) {
+            $flightInfo['startCopyTime'] = time();
         }
 
         if (!isset($flightInfo['performer'])) {

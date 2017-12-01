@@ -233,17 +233,18 @@ class RuntimeManager extends BaseComponent
         $task = 'noop',
         $writeType = 'w'
     ) {
-        $file = $category
+        // this method is necessary runtime folder to be createExportedFile
+        // if it is not exist
+        $runtime = $this->getRuntimeFolder();
+        $file = $runtime
+            .DIRECTORY_SEPARATOR
+            .$category
             .DIRECTORY_SEPARATOR
             .$fileName
             .$this::$ext;
 
-        // this method is necessary runtime folder to be createExportedFile
-        // if it is not exist
-        $this->getRuntimeFolder();
-
-        if (!is_dir($category)) {
-            mkdir($category, 0755, true);
+        if (!is_dir($runtime.DIRECTORY_SEPARATOR.$category)) {
+            mkdir($runtime.DIRECTORY_SEPARATOR.$category, 0755, true);
         }
 
         $desc = null;

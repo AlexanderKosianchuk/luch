@@ -111,13 +111,15 @@ class FlightProcessingComponent extends BaseComponent
             $flightInfo['arrivalAirport'] = $flightInfoFromHeader["arrivalAirport"];
         }
 
-        $copyCreationTime = '00:00:00';
-        $copyCreationDate = '2000-01-01';
-        $flightInfo['copyCreationTime'] = $copyCreationTime;
-        $flightInfo['copyCreationDate'] = $copyCreationDate;
-        $flightInfo['startCopyTime'] = strtotime($copyCreationDate.' '.$copyCreationTime);
-        if (isset($flightInfoFromHeader['startCopyTime'])) {
-            $flightInfo['startCopyTime'] = strtotime($flightInfoFromHeader['startCopyTime']);
+        if (isset($flightInfo['copyCreationTime'])
+            && isset($flightInfo['copyCreationDate'])
+        ) {
+            $flightInfo['startCopyTime'] =
+                strtotime(
+                    $flightInfo['copyCreationDate']
+                    .' '
+                    .$flightInfo['copyCreationTime']
+                );
         }
 
         $flightInfo['aditionalInfo'] = $this

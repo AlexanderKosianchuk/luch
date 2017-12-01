@@ -193,13 +193,21 @@ class UploaderController extends BaseController
             }
         }
 
+        $copyCreationTime = $flightInfoParsed['copyCreationTime'] ?? '';
+        $copyCreationDate = $flightInfoParsed['copyCreationDate'] ?? '';
+        if (strlen($copyCreationTime) > 5) {
+            $flightInfoParsed['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime);
+        } else {
+            $flightInfoParsed['startCopyTime'] = strtotime($copyCreationDate . ' ' . $copyCreationTime . ':00');
+        }
+
         $flightInfoParsed['aditionalInfo'] = $flightAditionalInfoParsed;
 
         $storedFlightFile = $this->dic()
             ->get('runtimeManager')
             ->storeFlight($fileName);
 
-        $flightInfo['path'] = $storedFlightFile;
+        $flightInfoParsed['path'] = $storedFlightFile;
 
         $flight = $this->dic()
             ->get('flight')
