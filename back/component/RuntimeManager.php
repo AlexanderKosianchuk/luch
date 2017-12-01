@@ -52,7 +52,6 @@ class RuntimeManager extends BaseComponent
     public function getExportedUrl($fileName)
     {
         $runtimeDirectory = $this->getRuntimeFolder();
-        $runtimeDirName = basename($runtimeDirectory);
 
         $exportedUrl = 'http';
         if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on")) {
@@ -61,13 +60,29 @@ class RuntimeManager extends BaseComponent
         $exportedUrl .= "://";
         if ($_SERVER["SERVER_PORT"] != "80") {
            $exportedUrl .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
-        }
-        else
-        {
+        } else {
            $exportedUrl .= $_SERVER["SERVER_NAME"];
         }
 
         return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $runtimeDirectory).'/'.$this->params()->folders->exportedFolder.'/'.$fileName . '.zip';
+    }
+
+    public function getRuntimeFileUrl($filePath)
+    {
+        $runtimeDirectory = $this->getRuntimeFolder();
+
+        $exportedUrl = 'http';
+        if (isset($_SERVER["HTTPS"]) &&  ($_SERVER["HTTPS"] == "on")) {
+           $exportedUrl .= "s";
+        }
+        $exportedUrl .= "://";
+        if ($_SERVER["SERVER_PORT"] != "80") {
+           $exportedUrl .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
+        } else {
+           $exportedUrl .= $_SERVER["SERVER_NAME"];
+        }
+
+        return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $filePath);
     }
 
     public function createExportedFile($fileName)

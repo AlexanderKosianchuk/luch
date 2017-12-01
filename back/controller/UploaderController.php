@@ -39,6 +39,18 @@ class UploaderController extends BaseController
                 . " Fdr id: " . $fdrId, 1);
         }
 
+        $flight = $this->em()
+            ->getRepository('Entity\Flight')
+            ->findBy(['guid' => $uploadingUid]);
+
+        if ($flight) {
+            return json_encode([
+                "status" => "complete",
+                "uploadingUid" => $uploadingUid,
+                'item' => $flight->get(true)
+            ]);
+        }
+
         $flightInfo = $this->dic()
             ->get('flightProcessor')
             ->readHeaderAndFillInfo($fdrId, $fileName);
@@ -47,7 +59,9 @@ class UploaderController extends BaseController
             ->get('runtimeManager')
             ->storeFlight($fileName);
 
-        $flightInfo['path'] = $storedFlightFile;
+        $flightInfo['path'] = $this->dic()
+            ->get('runtimeManager')
+            ->getRuntimeFileUrl($storedFlightFile);
 
         $totalPersentage = 50;
 
@@ -66,7 +80,7 @@ class UploaderController extends BaseController
             ->process(
                 $uploadingUid,
                 $storedFlightFile,
-                0,
+                $flight->getStartCopyTime(),
                 50,
                 $fdrId,
                 $calibrationId
@@ -91,9 +105,7 @@ class UploaderController extends BaseController
         return json_encode([
             "status" => "complete",
             "uploadingUid" => $uploadingUid,
-            'item' => $this->em()
-                ->getRepository('Entity\FlightToFolder')
-                ->getTreeItem($flight->getId(), $userId)
+            'item' => $flight->get(true)
         ]);
     }
 
@@ -207,7 +219,9 @@ class UploaderController extends BaseController
             ->get('runtimeManager')
             ->storeFlight($fileName);
 
-        $flightInfoParsed['path'] = $storedFlightFile;
+        $flightInfoParsed['path'] = $this->dic()
+            ->get('runtimeManager')
+            ->getRuntimeFileUrl($storedFlightFile);
 
         $flight = $this->dic()
             ->get('flight')
@@ -285,7 +299,9 @@ class UploaderController extends BaseController
             ->get('runtimeManager')
             ->storeFlight($fileName);
 
-        $flightInfo['path'] = $storedFlightFile;
+        $flightInfo['path'] = $this->dic()
+            ->get('runtimeManager')
+            ->getRuntimeFileUrl($storedFlightFile);
 
         $totalPersentage = 50;
 
