@@ -470,7 +470,7 @@ class EventProcessingComponent extends BaseComponent
         $query = str_replace("[ap]", $apTableName, $query);
         $query = str_replace("[bp]", $bpTableName, $query);
         $query = str_replace("[ex]", $tableName, $query);
-        $query = str_replace("tester_su27_etap", $flightInfo['guid'], $query);
+        $query = str_replace("tester_su27_etap", $flightInfo['guid']."_etap", $query);
 
         foreach ($flightInfo as $key => $val) {
             if (is_string($val)) {
