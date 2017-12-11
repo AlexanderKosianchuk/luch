@@ -233,7 +233,7 @@ class FlightComponent extends BaseComponent
             }
 
             $query .= ", PRIMARY KEY (`frameNum`, `time`)) " .
-                    "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+                    "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;";
 
             $stmt = $link->prepare($query);
             $stmt->execute();

@@ -39,15 +39,15 @@ class UploaderController extends BaseController
                 . " Fdr id: " . $fdrId, 1);
         }
 
-        $flight = $this->em()
+        $flights = $this->em()
             ->getRepository('Entity\Flight')
             ->findBy(['guid' => $uploadingUid]);
 
-        if ($flight) {
+        if ($flights) {
             return json_encode([
                 "status" => "complete",
                 "uploadingUid" => $uploadingUid,
-                'item' => $flight->get(true)
+                'item' => $flights[0]->get(true)
             ]);
         }
 

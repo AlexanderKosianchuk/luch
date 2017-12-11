@@ -52,14 +52,14 @@ class FlightComments
      *
      * @Column(name="id_flight", type="integer", nullable=false)
      */
-    private $idFlight;
+    private $flightId;
 
     /**
      * @var integer
      *
      * @Column(name="id_user", type="integer", nullable=false)
      */
-    private $idUser;
+    private $userId;
 
     /**
      * @var \DateTime
@@ -68,5 +68,53 @@ class FlightComments
      */
     private $dt;
 
+    public function getComment()
+    {
+        return $this->comment;
+    }
 
+    public function getCommanderAdmitted()
+    {
+        return $this->commanderAdmitted;
+    }
+
+    public function getAircraftAllowed()
+    {
+        return $this->aircraftAllowed;
+    }
+
+    public function getGeneralAdmission()
+    {
+        return $this->generalAdmission;
+    }
+
+    public function setFlightId($flightId)
+    {
+        $this->flightId = $flightId;
+    }
+
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
+    public function setCommanderAdmitted($commanderAdmitted)
+    {
+        $this->commanderAdmitted = boolval($commanderAdmitted);
+    }
+
+    public function setAircraftAllowed($aircraftAllowed)
+    {
+        $this->aircraftAllowed = boolval($aircraftAllowed);
+    }
+
+    public function setGeneralAdmission($generalAdmission)
+    {
+        $this->generalAdmission = $generalAdmission;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
 }
