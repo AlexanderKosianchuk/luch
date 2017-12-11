@@ -245,7 +245,7 @@ class FlightComponent extends BaseComponent
             $tables['binary'][] = $table;
 
             $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT, `code` varchar(255)) " .
-                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;";
             $stmt = $link->prepare($query);
             $stmt->execute();
             $stmt->close();

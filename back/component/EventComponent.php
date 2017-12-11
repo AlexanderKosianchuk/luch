@@ -54,7 +54,7 @@ class EventComponent extends BaseComponent
             . " `falseAlarm` BOOL DEFAULT 0,"
             . " `userComment` TEXT,"
             . " PRIMARY KEY (`id`))"
-            . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+            . " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;";
 
         $stmt = $link->prepare($query);
         $stmt->execute();
@@ -87,7 +87,7 @@ class EventComponent extends BaseComponent
                 . "`false_alarm` BOOLEAN NOT NULL, "
                 . " INDEX (`id_event`), "
                 . " PRIMARY KEY (`id`)) "
-                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;";
             $stmt = $link->prepare($query);
             if (!$stmt->execute()) {
                 throw new Exception("FlightEvent dynamic table creation query failed. Query: "
@@ -131,7 +131,7 @@ class EventComponent extends BaseComponent
                 . " INDEX (`id_settlement`), "
                 . " INDEX (`id_flight_event`), "
                 . " PRIMARY KEY (`id`)) "
-                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
+                . " ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;";
             $stmt = $link->prepare($query);
             if (!$stmt->execute()) {
                 throw new Exception("FlightSettlement dynamic table creation query failed. Query: "
