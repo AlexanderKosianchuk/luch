@@ -135,6 +135,12 @@ const translationsEn = {
             formPrint: {
                 grayscale: 'Grayscale'
             },
+            flightComment: {
+                commanderAdmitted: 'Captain admitted',
+                aircraftAllowed: 'Aircraft allowed',
+                generalAdmission: 'General admission',
+                save: 'Save'
+            },
             title: {
                 fdrName: 'FDR',
                 bort: 'A/C',

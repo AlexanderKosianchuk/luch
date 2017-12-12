@@ -12,6 +12,7 @@ export default function Checkbox (props) {
                   type='checkbox'
                   value=''
                   name='check'
+                  disabled={ (props.disabled === true) ? 'disabled' : '' }
                   checked={ props.checkstate || false }
                   onChange={ props.changeCheckState || (() => {}) }
                 />

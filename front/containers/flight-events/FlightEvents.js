@@ -5,7 +5,6 @@ import Menu from 'controls/menu/Menu';
 import Toolbar from 'components/flight-events/toolbar/Toolbar';
 import List from 'components/flight-events/list/List';
 
-
 class FlightEvents extends React.Component {
     render () {
         return (

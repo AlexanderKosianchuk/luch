@@ -33,6 +33,7 @@ return [
             'getCalibrationParamsAction',
             'saveCalibrationAction',
             'getCalibrationByIdAction',
+            'getCommentAction',
             'logoutAction'
         ]
     ],
@@ -61,7 +62,8 @@ return [
             'getUsersAction',
             'createUserAction',
             'updateUserAction',
-            'deleteUserAction'
+            'deleteUserAction',
+            'setCommentAction'
         ]
     ],
     'local' => [

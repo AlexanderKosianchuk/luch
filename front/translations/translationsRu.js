@@ -128,6 +128,12 @@ const translationsRu = {
             formPrint: {
                 grayscale: 'Ч/Б'
             },
+            flightComment: {
+                commanderAdmitted: 'Коммандир допущен',
+                aircraftAllowed: 'ВС допущено',
+                generalAdmission: 'Общий допуск',
+                save: 'Сохранить'
+            },
             title: {
                 fdrName: 'Тип регистратора',
                 bort: 'Борт',

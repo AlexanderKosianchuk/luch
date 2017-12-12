@@ -29,21 +29,21 @@ class FlightComments
     /**
      * @var boolean
      *
-     * @Column(name="commander-admitted", type="boolean", nullable=false)
+     * @Column(name="commander_admitted", type="boolean", nullable=false)
      */
     private $commanderAdmitted;
 
     /**
      * @var boolean
      *
-     * @Column(name="aircraft-allowed", type="boolean", nullable=false)
+     * @Column(name="aircraft_allowed", type="boolean", nullable=false)
      */
     private $aircraftAllowed;
 
     /**
      * @var boolean
      *
-     * @Column(name="general-admission", type="boolean", nullable=false)
+     * @Column(name="general_admission", type="boolean", nullable=false)
      */
     private $generalAdmission;
 
@@ -88,6 +88,16 @@ class FlightComments
         return $this->generalAdmission;
     }
 
+    public function getFlightId()
+    {
+        return $this->flightId;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
     public function setFlightId($flightId)
     {
         $this->flightId = $flightId;
@@ -110,7 +120,7 @@ class FlightComments
 
     public function setGeneralAdmission($generalAdmission)
     {
-        $this->generalAdmission = $generalAdmission;
+        $this->generalAdmission = boolval($generalAdmission);
     }
 
     public function setUserId($userId)

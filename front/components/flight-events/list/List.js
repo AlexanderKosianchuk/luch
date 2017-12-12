@@ -10,6 +10,7 @@ import { Translate } from 'react-redux-i18n';
 import Title from 'components/flight-events/title/Title';
 import Accordion from 'components/flight-events/accordion/Accordion';
 import ContentLoader from 'controls/content-loader/ContentLoader';
+import FlightComment from 'components/flight-events/flight-comment/FlightComment';
 
 import request from 'actions/request';
 
@@ -87,6 +88,7 @@ class List extends React.Component {
         return (
             <div className='flight-events-list'>
                 { this.bulidTitle() }
+                <FlightComment flightId={ this.props.flightId }/>
                 { this.buildBody() }
             </div>
         );
