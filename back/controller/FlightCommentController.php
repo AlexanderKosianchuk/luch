@@ -28,9 +28,9 @@ class FlightCommentController extends BaseController
             throw new NotFoundException('flight not found. FlightId: '.$flightId);
         }
 
-        $fc= $this->em()
+        $fc = $this->em()
             ->getRepository('Entity\FlightComments')
-            ->findOneBy(['flightId' => $flightId, 'userId' => $userId]);
+            ->findOneBy(['flightId' => $flightId]);
 
         if (!$fc) {
             return json_encode([
