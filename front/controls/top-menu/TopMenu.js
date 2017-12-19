@@ -56,6 +56,18 @@ class TopMenu extends React.Component {
                 <div className='collapse navbar-collapse' id='top-menu-navbar-collapse'>
                   <ul className='nav navbar-nav'>
                     <li className='dropdown'>
+                      <a href='#'
+                        className='real-time-calibration dropdown-toggle is-hoverable'
+                        role='button'
+                        onClick={ () => { this.props.redirect('/real-time-calibration') }}
+                      >
+                        { I18n.t('topMenu.calibrate') }
+                      </a>
+                    </li>
+                  </ul>
+
+                  <ul className='nav navbar-nav'>
+                    <li className='dropdown'>
                       <a href='#' className='flight-importer-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
                         { I18n.t('topMenu.fileImport') }
                       </a>

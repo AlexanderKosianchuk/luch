@@ -16,6 +16,10 @@ export default function FlightTitle(props) {
 
     return (
         <div className='flights-tree-flight-title' data-flight-id={ props.flight.id }>
+            { props.flight.fdrName },&nbsp;
+            <Translate value='flightsTree.flightTitle.performer' />
+            &nbsp;-&nbsp;
+            { props.flight.performer },&nbsp;
             <Translate value='flightsTree.flightTitle.bort' />
             &nbsp;-&nbsp;
             { props.flight.bort },&nbsp;

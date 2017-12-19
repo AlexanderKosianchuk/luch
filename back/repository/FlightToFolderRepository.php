@@ -16,12 +16,15 @@ class FlightToFolderRepository extends EntityRepository
 
         $startCopyTimeFormated = date('d/m/y H:i:s', $flightToFolders->getFlight()->getStartCopyTime());
 
+        $flight = $flightToFolders->getFlight();
+
         $item = array_merge(
-            $flightToFolders->getFlight()->get(true), [
+            $flight->get(true), [
                 'noChildren' => true,
                 'type' => 'flight',
                 'parentId' => $flightToFolders->getFolderId(),
                 'startCopyTimeFormated' => $startCopyTimeFormated,
+                'fdrName' => $flight->getFdr()->getName()
             ]
         );
 
