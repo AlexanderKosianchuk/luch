@@ -48,6 +48,7 @@ php_errors.log
 .config
 .gitconfig
 .viminfo
+.remote-sync.json
 
 #map
 /public/**/*.map

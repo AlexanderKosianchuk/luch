@@ -45,7 +45,10 @@ class TopMenu extends React.Component {
             <nav className='top-menu navbar navbar-dark'>
               <div className='container-fluid'>
                 <div className='navbar-header'>
-                    <NavbarToggle/>
+                    <NavbarToggle
+                        target='#top-menu-navbar-collapse'
+                        styleClass='navbar-toggle__white'
+                    />
                     <a className='main-menu-toggle navbar-brand is-hoverable' href='#'>
                         <span className='main-menu-toggle top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger'></span>
                     </a>

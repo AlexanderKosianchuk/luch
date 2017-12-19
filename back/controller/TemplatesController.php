@@ -148,18 +148,20 @@ class TemplatesController extends BaseController
         }
 
         foreach ($binaryParams as $item) {
-            $param = $this->dic()
-                ->get('fdr')
-                ->getBinaryById(
-                    $flight->getFdrId(),
-                    intval($item['id'])
-                );
+            if (isset($item['id'])) {
+                $param = $this->dic()
+                    ->get('fdr')
+                    ->getBinaryById(
+                        $flight->getFdrId(),
+                        intval($item['id'])
+                    );
 
-            $paramsWithType[$this->dic()->get('fdr')->getBpType()][] = [
-                'code' => $param->getCode(),
-                'min' => 0,
-                'max' => 1
-            ];
+                $paramsWithType[$this->dic()->get('fdr')->getBpType()][] = [
+                    'code' => $param->getCode(),
+                    'min' => 0,
+                    'max' => 1
+                ];
+            }
         }
 
         $link = $this->connection()->create('fdrs');
