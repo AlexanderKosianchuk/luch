@@ -30,6 +30,9 @@ const translationsRu = {
                 templates: 'Шаблоны'
             },
             flightTitle: {
+                performer: 'Исп.',
+                bort: 'Борт',
+                voyage: 'Рейс',
                 bort: 'Борт',
                 voyage: 'Рейс',
                 startCopyTime: 'Начало полета',
@@ -275,8 +278,9 @@ const translationsRu = {
         },
         topMenu: {
             brand: 'Luch',
-            fileImport: 'Импортировать',
-            upload: 'Загрузить',
+            calibrate: 'Калибровка',
+            fileImport: 'Импорт',
+            upload: 'Загрузка',
             flightImporterDropdown: {
                 fileImport: 'Импортировать',
                 chooseFile: 'Выбрать файл',

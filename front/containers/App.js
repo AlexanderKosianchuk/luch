@@ -10,6 +10,7 @@ import FlightsTable from 'containers/flights-table/FlightsTable';
 import Settings from 'containers/settings/Settings';
 import Calibrations from 'containers/calibrations/Calibrations';
 import CalibrationForm from 'containers/calibration-form/CalibrationForm';
+import RealTimeCalibration from 'containers/real-time-calibration/RealTimeCalibration';
 import UsersTable from 'containers/users-table/UsersTable';
 import UserActivity from 'containers/user-activity/UserActivity';
 import UserForm from 'containers/user-form/UserForm';
@@ -47,6 +48,7 @@ const App = ({ history }) => (
 
             <Route exact path='/calibration/update/:calibrationId' component={ UserIsAuthenticated(CalibrationForm) } />
             <Route exact path='/calibration/create/fdr-id/:fdrId' component={ UserIsAuthenticated(CalibrationForm) } />
+            <Route exact path='/real-time-calibration' component={ UserIsAuthenticated(RealTimeCalibration) } />
 
             <Route exact path='/users' component={ UserIsAuthenticated(UsersTable) } />
             <Route exact path='/user/create/' component={ UserIsAuthenticated(UserForm) } />

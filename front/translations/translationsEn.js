@@ -30,6 +30,7 @@ const translationsEn = {
                 templates: 'Templates'
             },
             flightTitle: {
+                performer: 'Perf.',
                 bort: 'Bort',
                 voyage: 'Flight',
                 performer: 'Performer',
@@ -282,6 +283,7 @@ const translationsEn = {
         },
         topMenu: {
             brand: 'Luch',
+            calibrate: 'Сalibrate',
             fileImport: 'Import',
             upload: 'Upload',
             flightImporterDropdown: {

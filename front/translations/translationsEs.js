@@ -30,6 +30,7 @@ const translationsEs = {
                 templates: 'Templates'
             },
             flightTitle: {
+                performer: 'Perf.',
                 bort: 'Bort',
                 voyage: 'Flight',
                 startCopyTime: 'Flight start time',
@@ -275,6 +276,7 @@ const translationsEs = {
         },
         topMenu: {
             brand: 'Luche',
+            calibrate: 'Сalibrate',
             fileImport: 'Import',
             upload: 'Upload',
             flightImporterDropdown: {
