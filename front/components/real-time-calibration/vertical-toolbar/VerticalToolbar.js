@@ -1,3 +1,5 @@
+import './vertical-toolbar.sass';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,7 +13,10 @@ class VerticalToolbar extends Component {
 
     render() {
         return (
-            <div>2</div>
+            <div className='real-time-calibration-vertical-toolbar'
+            >
+            2
+            </div>
         );
     }
 }

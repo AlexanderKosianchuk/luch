@@ -45,7 +45,7 @@ class FolderControls extends Component {
                 'put',
                 'FOLDER_RENAME',
                 {
-                    id: this.props.folderInfo.id,
+                    id: this.props.folderInfo.id * -1,
                     name: this.state.name
                 }
             );

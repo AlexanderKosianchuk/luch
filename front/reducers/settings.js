@@ -17,7 +17,7 @@ export default function settings(state = initialState, action) {
             let key = action.payload.key;
             let value = action.payload.value;
 
-            if (items && items[key] && (items[key] !== value)) {
+            if (items && (items[key] !== null) && (items[key] !== value)) {
                 items[key] = value;
             }
 

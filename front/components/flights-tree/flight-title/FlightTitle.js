@@ -16,25 +16,29 @@ export default function FlightTitle(props) {
 
     return (
         <div className='flights-tree-flight-title' data-flight-id={ props.flight.id }>
-            { props.flight.fdrName },&nbsp;
-            <Translate value='flightsTree.flightTitle.performer' />
-            &nbsp;-&nbsp;
-            { props.flight.performer },&nbsp;
-            <Translate value='flightsTree.flightTitle.bort' />
-            &nbsp;-&nbsp;
-            { props.flight.bort },&nbsp;
-            <Translate value='flightsTree.flightTitle.voyage' />
-            &nbsp;-&nbsp;
-            { props.flight.voyage },&nbsp;
-            <Translate value='flightsTree.flightTitle.startCopyTime' />
-            &nbsp;-&nbsp;
-            { props.flight.startCopyTimeFormated },&nbsp;
-            <Translate value='flightsTree.flightTitle.departureAirport' />
-            &nbsp;-&nbsp;
-            { props.flight.departureAirport },&nbsp;
-            <Translate value='flightsTree.flightTitle.arrivalAirport' />
-            &nbsp;-&nbsp;
-            { props.flight.arrivalAirport }
+            <div>
+                { props.flight.fdrName }.&nbsp;
+                <Translate value='flightsTree.flightTitle.performer' />
+                &nbsp;-&nbsp;
+                { props.flight.performer },&nbsp;
+                <Translate value='flightsTree.flightTitle.startCopyTime' />
+                &nbsp;-&nbsp;
+                { props.flight.startCopyTimeFormated }
+            </div>
+            <div>
+                <Translate value='flightsTree.flightTitle.bort' />
+                &nbsp;-&nbsp;
+                { props.flight.bort },&nbsp;
+                <Translate value='flightsTree.flightTitle.voyage' />
+                &nbsp;-&nbsp;
+                { props.flight.voyage },&nbsp;
+                <Translate value='flightsTree.flightTitle.departureAirport' />
+                &nbsp;-&nbsp;
+                { props.flight.departureAirport },&nbsp;
+                <Translate value='flightsTree.flightTitle.arrivalAirport' />
+                &nbsp;-&nbsp;
+                { props.flight.arrivalAirport }
+            </div>
         </div>
     );
 }

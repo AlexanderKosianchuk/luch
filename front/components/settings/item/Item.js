@@ -1,8 +1,8 @@
 import './item.sass';
 
-import React from 'react';
+import React, { Component } from 'react';
 
-export default class Item extends React.Component {
+export default class Item extends Component {
     static textInput = null;
 
     changeHandle(event) {
