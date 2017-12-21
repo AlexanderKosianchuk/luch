@@ -274,6 +274,12 @@ const translationsEs = {
                 date: 'Date'
             }
         },
+        realtimeCalibration: {
+            verticalToolbar: {
+                connectionParams: 'Connection params',
+                fdrType: 'FDR type'
+            }
+        },
         topMenu: {
             brand: 'Luche',
             calibrate: 'Сalibrate',

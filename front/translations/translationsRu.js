@@ -276,6 +276,12 @@ const translationsRu = {
                 date: 'Дата'
             }
         },
+        realtimeCalibration: {
+            verticalToolbar: {
+                connectionParams: 'Параметры подключения',
+                fdrType: 'Тип регистратора'
+            }
+        },
         topMenu: {
             brand: 'Luch',
             calibrate: 'Калибровка',
