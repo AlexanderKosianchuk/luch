@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import Switch from 'react-bootstrap-switch';
 import 'react-bootstrap-switch/dist/css/bootstrap3/react-bootstrap-switch.min.css';
-import FileInput from 'react-file-input';
 import uuidV4 from 'uuid/v4';
 import { Translate, I18n } from 'react-redux-i18n';
 
+import FileInput from 'controls/file-input/FileInput';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import CalibrationSelector from 'controls/calibration-selector/CalibrationSelector';

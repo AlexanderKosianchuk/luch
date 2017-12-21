@@ -4,9 +4,10 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
-import FileInput from 'react-file-input';
 import { Translate, I18n } from 'react-redux-i18n';
 import uuidV4 from 'uuid/v4';
+
+import FileInput from 'controls/file-input/FileInput';
 
 import trigger from 'actions/trigger';
 

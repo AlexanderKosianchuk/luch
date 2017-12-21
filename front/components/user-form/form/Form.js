@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
-import FileInput from 'react-file-input';
 import PropTypes from 'prop-types';
 import _isEqual from 'lodash.isequal';
+
+import FileInput from 'controls/file-input/FileInput';
 
 import Row from 'components/user-form/row/Row';
 import RoleRadio from 'components/user-form/role-radio/RoleRadio';
