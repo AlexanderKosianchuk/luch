@@ -277,7 +277,18 @@ const translationsEs = {
         realtimeCalibration: {
             verticalToolbar: {
                 connectionParams: 'Connection params',
-                fdrType: 'FDR type'
+                fdrType: 'FDR type',
+                connectionType: 'Connection type',
+                sourceIps: 'Sources IP addresses',
+                addSource: 'Add source',
+                start: 'Run',
+                stop: 'Stop'
+            },
+            chartContainer: {
+                configureConnection: 'Please, configure connection to start',
+                init: 'Initialization',
+                connectionPending: 'Сonnection pending',
+                waitingData: 'Waiting data'
             }
         },
         topMenu: {

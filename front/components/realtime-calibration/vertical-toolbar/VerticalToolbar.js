@@ -9,6 +9,7 @@ import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import CalibrationSelector from 'controls/calibration-selector/CalibrationSelector';
 
 import request from 'actions/request';
+import transmit from 'actions/transmit';
 
 const TOP_MENU_HEIGHT = 51;
 const MIN_WINDOW_WIDTH = 768; // check is mobile
@@ -32,7 +33,7 @@ class VerticalToolbar extends Component {
 
     buildIpsInputs() {
         let ips = [];
-        console.log(this.state.sources);
+
         for (let ii = 0; ii < this.state.sources.length; ii++) {
             ips.push(<input
                 key={ ii }
@@ -54,13 +55,23 @@ class VerticalToolbar extends Component {
         this.setState({ sources: sources });
     }
 
-    handleClick(event) {
+    handleAddSourceClick(event) {
         event.preventDefault();
 
         let sources = this.state.sources.slice();
         sources.push('');
 
         this.setState({ sources: sources });
+    }
+
+    handleStartClick(event) {
+        event.preventDefault();
+
+        this.props.transmit(
+            'CHANGE_REALTIME_CALIBRATING_STATUS',
+            { status: 'init' }
+        );
+        console.log(this.form);
     }
 
     render() {
@@ -82,7 +93,7 @@ class VerticalToolbar extends Component {
                     </ul>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__label'>
-                    <Translate value='realtimeCalibration.verticalToolbar.fdrType'/>
+                    <Translate value='realtimeCalibration.verticalToolbar.connectionType'/>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__controll'>
                     <select className='form-control' name='connectionType'>
@@ -90,7 +101,7 @@ class VerticalToolbar extends Component {
                     </select>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__label'>
-                    <Translate value='realtimeCalibration.verticalToolbar.fdrType'/>
+                    <Translate value='realtimeCalibration.verticalToolbar.sourceIps'/>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__controll'>
                     { this.buildIpsInputs() }
@@ -98,9 +109,17 @@ class VerticalToolbar extends Component {
                 <div className='realtime-calibration-vertical-toolbar__button'>
                     <button
                         className='btn btn-default'
-                        onClick={ this.handleClick.bind(this) }
+                        onClick={ this.handleAddSourceClick.bind(this) }
                     >
-                        <Translate value='realtimeCalibration.verticalToolbar.fdrType'/>
+                        <Translate value='realtimeCalibration.verticalToolbar.addSource'/>
+                    </button>
+                </div>
+                <div className='realtime-calibration-vertical-toolbar__button'>
+                    <button
+                        className='btn btn-default'
+                        onClick={ this.handleStartClick.bind(this) }
+                    >
+                        <Translate value='realtimeCalibration.verticalToolbar.start'/>
                     </button>
                 </div>
             </form>
@@ -114,7 +133,8 @@ function mapStateToProps() {
 
 function mapDispatchToProps(dispatch) {
     return {
-        request: bindActionCreators(request, dispatch)
+        request: bindActionCreators(request, dispatch),
+        transmit: bindActionCreators(transmit, dispatch)
     }
 }
 

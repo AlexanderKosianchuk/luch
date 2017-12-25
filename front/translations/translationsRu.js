@@ -279,7 +279,18 @@ const translationsRu = {
         realtimeCalibration: {
             verticalToolbar: {
                 connectionParams: 'Параметры подключения',
-                fdrType: 'Тип регистратора'
+                fdrType: 'Тип регистратора',
+                connectionType: 'Тип подключения',
+                sourceIps: 'IP адреса источников',
+                addSource: 'Добавить источник',
+                start: 'Пуск',
+                stop: 'Стоп'
+            },
+            chartContainer: {
+                configureConnection: 'Ожидание конфигурации подключения',
+                init: 'Инициализация',
+                connectionPending: 'Установка соединения',
+                waitingData: 'Ожидание данных'
             }
         },
         topMenu: {
