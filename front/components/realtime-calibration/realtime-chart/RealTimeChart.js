@@ -27,7 +27,7 @@ class RealTimeChart extends Component {
     getData() {
         let lines = this.rotateData();
 
-        console.log(lines[2]);
+        console.log(lines[1][2]);
 
         return {
            labels: lines[0],
@@ -59,14 +59,18 @@ class RealTimeChart extends Component {
               yAxes: [{
                 id: 'A',
                 type: 'linear',
-                position: 'left',
+                display: false,
+                ticks: {
+                  max: 6000,
+                  min: 0
+                }
               }, {
                 id: 'B',
                 type: 'linear',
                 display: false,
                 ticks: {
-                  max: 2000,
-                  min: 0
+                  max: 4000,
+                  min: -2000
                 }
               }, {
                 id: 'D',
@@ -74,7 +78,7 @@ class RealTimeChart extends Component {
                 display: false,
                 ticks: {
                   max: 2000,
-                  min: 0
+                  min: -4000
                 }
               }]
             }

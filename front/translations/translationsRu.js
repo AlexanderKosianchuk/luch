@@ -284,7 +284,8 @@ const translationsRu = {
                 sourceIps: 'IP адреса источников',
                 addSource: 'Добавить источник',
                 start: 'Пуск',
-                stop: 'Стоп'
+                stop: 'Стоп',
+                enterIpToConnect: 'Пожалуйста введите IP для подключения'
             },
             chartContainer: {
                 configureConnection: 'Ожидание конфигурации подключения',

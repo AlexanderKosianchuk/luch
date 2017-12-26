@@ -3,12 +3,12 @@ import './vertical-toolbar.sass';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Translate } from 'react-redux-i18n';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import CalibrationSelector from 'controls/calibration-selector/CalibrationSelector';
 
-import request from 'actions/request';
+import interactionRequest from 'actions/particular/interactionRequest';
 import transmit from 'actions/transmit';
 
 const TOP_MENU_HEIGHT = 51;
@@ -21,7 +21,14 @@ class VerticalToolbar extends Component {
         super(props);
 
         this.state = {
-            sources: ['']
+            sources: ['192.168.1.2']
+        }
+
+        // this handler will be filled by FdrSelector
+        // by method that allows to get selected FDR ID
+        this.handler = {
+            getSelectedFdrId: null,
+            getSelectedCalibrationId: null,
         }
     }
 
@@ -67,11 +74,46 @@ class VerticalToolbar extends Component {
     handleStartClick(event) {
         event.preventDefault();
 
-        this.props.transmit(
-            'CHANGE_REALTIME_CALIBRATING_STATUS',
-            { status: 'init' }
-        );
-        console.log(this.form);
+        let fdrId = null;
+        let calibrationId = null;
+
+        if (typeof this.handler.getSelectedFdrId === 'function') {
+            fdrId = this.handler.getSelectedFdrId();
+        }
+
+        if (typeof this.handler.getSelectedCalibrationId === 'function') {
+            calibrationId = this.handler.getSelectedCalibrationId();
+        }
+
+        let ipInputs = this.form.querySelectorAll('input[name="ip[]"]');
+        let ips = [];
+
+        ipInputs.forEach((item) => {
+            if (item.value.length >= 7) {
+                ips.push(item.value);
+            }
+        });
+
+        if (ips.length === 0) {
+            alert(I18n.t('realtimeCalibration.verticalToolbar.enterIpToConnect'));
+            return;
+        }
+
+        var data = new FormData();
+        data.append('fdrId', fdrId);
+        data.append('calibrationId', calibrationId);
+        data.append('ips', ips);
+        data.append('cors', window.location.hostname);
+
+        this.props.interactionRequest(
+            this.props.interactionUrl,
+            '/realtimeCalibration/initConnection', data
+        ).then(() => {
+            this.props.transmit(
+                'CHANGE_REALTIME_CALIBRATING_STATUS',
+                { status: 'init' }
+            );
+        });
     }
 
     render() {
@@ -88,8 +130,12 @@ class VerticalToolbar extends Component {
                 </div>
                 <div>
                     <ul className='realtime-calibration-vertical-toolbar__fdr-type'>
-                        <FdrSelector />
-                        <CalibrationSelector/>
+                        <FdrSelector
+                            methodHandler={ this.handler }
+                        />
+                        <CalibrationSelector
+                            methodHandler={ this.handler }
+                        />
                     </ul>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__label'>
@@ -133,7 +179,7 @@ function mapStateToProps() {
 
 function mapDispatchToProps(dispatch) {
     return {
-        request: bindActionCreators(request, dispatch),
+        interactionRequest: bindActionCreators(interactionRequest, dispatch),
         transmit: bindActionCreators(transmit, dispatch)
     }
 }

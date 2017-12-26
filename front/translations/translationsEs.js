@@ -282,7 +282,8 @@ const translationsEs = {
                 sourceIps: 'Sources IP addresses',
                 addSource: 'Add source',
                 start: 'Run',
-                stop: 'Stop'
+                stop: 'Stop',
+                enterIpToConnect: 'Please enter IP to connect'
             },
             chartContainer: {
                 configureConnection: 'Please, configure connection to start',

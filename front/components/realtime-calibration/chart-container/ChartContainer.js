@@ -10,15 +10,13 @@ import RealTimeChart from 'components/realtime-calibration/realtime-chart/RealTi
 import request from 'actions/request';
 import bindRealtimeCalibrationSocketEvents from 'actions/socket/bindRealtimeCalibrationSocketEvents';
 
-const INTERACTION_URL = 'http://localhost:1337';
-
 class ChartContainer extends Component {
     componentWillReceiveProps(nextProps) {
         if ((nextProps.status === 'init')
             && (this.props.status !== nextProps.status)
         ) {
             this.props.bindRealtimeCalibrationSocketEvents({
-                interactionUrl: INTERACTION_URL
+                interactionUrl: this.props.interactionUrl
             });
         }
     }

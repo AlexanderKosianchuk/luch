@@ -12,6 +12,14 @@ import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class CalibrationSelector extends Component {
+    componentWillMount() {
+        if ((typeof this.props.methodHandler === 'object')
+            && (this.props.methodHandler.getSelectedCalibrationId === null)
+        ) {
+            this.props.methodHandler.getSelectedCalibrationId = this.getSelectedId.bind(this);
+        }
+    }
+
     componentDidMount() {
         if (this.props.pending === null) {
             this.props.request(
@@ -55,6 +63,10 @@ class CalibrationSelector extends Component {
         this.props.transmit('CHOOSE_CALIBRATION', chosen);
     }
 
+    getSelectedId() {
+        return this.props.chosen.id;
+    }
+
     render() {
         let isHidden = true;
 
@@ -82,6 +94,7 @@ class CalibrationSelector extends Component {
 
 CalibrationSelector.propTypes = {
     handleReady: PropTypes.func,
+    methodHandler: PropTypes.object,
 
     pending:  PropTypes.bool,
     calibrations: PropTypes.array,
