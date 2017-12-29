@@ -19,7 +19,8 @@
         "doctrine/annotations": "^1.5",
         "klein/klein": "^2.1",
         "mustache/mustache": "^2.12",
-        "philipp15b/php-i18n": "dev-master"
+        "philipp15b/php-i18n": "dev-master",
+        "guzzlehttp/guzzle": "^6.2"
     },
     "autoload": {
         "classmap": [

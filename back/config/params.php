@@ -8,6 +8,10 @@ return [
         'storedFlights' => 'flights',
         'uploadingStatus' => 'uploading-status',
         'exportedFolder' => 'exported',
-        'importedFolder' => 'imported',
+        'importedFolder' => 'imported'
+    ],
+    'interaction' => (object) [
+        'path' => '/var/www/luche-interaction',
+        'url' => 'http://localhost:1337'
     ]
 ];

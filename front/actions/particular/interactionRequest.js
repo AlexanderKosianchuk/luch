@@ -26,7 +26,6 @@ export default function interactionRequest(
                         });
                     },
                     (response) => {
-                        debugger;
                         reject(response);
                         return response;
                     }

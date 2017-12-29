@@ -14,6 +14,7 @@ import calibration from 'reducers/calibration';
 import calibrations from 'reducers/calibrations';
 import flightUploadingState from 'reducers/flightUploadingState';
 import realTimeCalibrationData from 'reducers/realTimeCalibrationData';
+import webSockets from 'reducers/webSockets';
 import settings from 'reducers/settings';
 import template from 'reducers/template';
 import flightTemplates from 'reducers/flightTemplates';
@@ -31,6 +32,7 @@ const appReducer = combineReducers({
     calibrations,
     flightUploadingState,
     realTimeCalibrationData,
+    webSockets,
     flightFilter,
     template,
     flightTemplates,

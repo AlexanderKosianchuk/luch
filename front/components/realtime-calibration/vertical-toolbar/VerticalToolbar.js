@@ -4,12 +4,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
+import uuidV4 from 'uuid/v4';
 
 import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import CalibrationSelector from 'controls/calibration-selector/CalibrationSelector';
 
 import interactionRequest from 'actions/particular/interactionRequest';
 import transmit from 'actions/transmit';
+import request from 'actions/request';
 
 const TOP_MENU_HEIGHT = 51;
 const MIN_WINDOW_WIDTH = 768; // check is mobile
@@ -21,6 +23,8 @@ class VerticalToolbar extends Component {
         super(props);
 
         this.state = {
+            isRunning: false,
+            fakeData: false,
             sources: ['192.168.1.2']
         }
 
@@ -100,20 +104,31 @@ class VerticalToolbar extends Component {
         }
 
         var data = new FormData();
+        data.append('uid', uuidV4().substring(0, 18).replace(/-/g, ''));
         data.append('fdrId', fdrId);
         data.append('calibrationId', calibrationId);
         data.append('ips', ips);
+        data.append('fakeData', this.state.fakeData);
         data.append('cors', window.location.hostname);
 
-        this.props.interactionRequest(
-            this.props.interactionUrl,
-            '/realtimeCalibration/initConnection', data
-        ).then(() => {
+        this.props.request(
+            ['interaction', 'up'],
+            'get'
+        ).then((resp) => {
+            return this.props.interactionRequest(
+                this.props.interactionUrl,
+                '/realtimeCalibration/initConnection', data
+            );
+        }).then(() => {
             this.props.transmit(
                 'CHANGE_REALTIME_CALIBRATING_STATUS',
                 { status: 'init' }
             );
         });
+    }
+
+    handleFakeDataClick() {
+        this.setState({ fakeData: !this.state.fakeData });
     }
 
     render() {
@@ -160,27 +175,48 @@ class VerticalToolbar extends Component {
                         <Translate value='realtimeCalibration.verticalToolbar.addSource'/>
                     </button>
                 </div>
+                <div className='realtime-calibration-vertical-toolbar__inline-label-container'>
+                    <div className='realtime-calibration-vertical-toolbar__inline-label'>
+                        <Translate value='realtimeCalibration.verticalToolbar.fakeData'/>
+                    </div>
+                    <div className='realtime-calibration-vertical-toolbar__inline-label'>
+                        <input className='form-control realtime-calibration-vertical-toolbar__checkbox' type='checkbox'
+                            onClick={ this.handleFakeDataClick.bind(this) }
+                            checked={ (this.state.fakeData === true) ? 'checked' : '' }
+                        />
+                    </div>
+                </div>
                 <div className='realtime-calibration-vertical-toolbar__button'>
-                    <button
-                        className='btn btn-default'
-                        onClick={ this.handleStartClick.bind(this) }
-                    >
-                        <Translate value='realtimeCalibration.verticalToolbar.start'/>
-                    </button>
+                    { this.state.isRunning ? (
+                        <button
+                          className='btn btn-default'
+                          onClick={ this.handleStopClick.bind(this) }
+                        >
+                            <Translate value='realtimeCalibration.verticalToolbar.stop'/>
+                        </button>
+                    ) : (
+                        <button
+                          className='btn btn-default'
+                          onClick={ this.handleStartClick.bind(this) }
+                        >
+                            <Translate value='realtimeCalibration.verticalToolbar.start'/>
+                        </button>
+                    )}
                 </div>
             </form>
         );
     }
 }
 
-function mapStateToProps() {
+function mapStateToProps(state) {
     return {};
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         interactionRequest: bindActionCreators(interactionRequest, dispatch),
-        transmit: bindActionCreators(transmit, dispatch)
+        transmit: bindActionCreators(transmit, dispatch),
+        request: bindActionCreators(request, dispatch)
     }
 }
 

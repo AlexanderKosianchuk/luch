@@ -10,7 +10,16 @@ export default function bindRealtimeCalibrationSocketEvents(payload) {
             }
         });
 
+        if (payload.status === true) {
+            return;
+        }
+
         let io = sailsIOClient(socketIOClient);
+
+        dispatch({
+            type: 'WEBSOCKETS_BINDED',
+            payload: { io: io }
+        });
 
         io.sails.url = payload.interactionUrl;
         io.sails.reconnection = true;

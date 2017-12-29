@@ -16,7 +16,8 @@ class ChartContainer extends Component {
             && (this.props.status !== nextProps.status)
         ) {
             this.props.bindRealtimeCalibrationSocketEvents({
-                interactionUrl: this.props.interactionUrl
+                interactionUrl: this.props.interactionUrl,
+                status: this.props.webSocketsStatus
             });
         }
     }
@@ -55,7 +56,8 @@ class ChartContainer extends Component {
 function mapStateToProps(state) {
     return {
         status: state.realTimeCalibrationData.status,
-        errorCode: state.realTimeCalibrationData.errorCode
+        errorCode: state.realTimeCalibrationData.errorCode,
+        webSocketsStatus: state.webSockets.status
     };
 }
 
