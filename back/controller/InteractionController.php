@@ -8,6 +8,7 @@ class InteractionController extends BaseController
     {
         $cmd = 'cd '.$this->params()->interaction->path.' && nodejs app.js > /dev/null &';
         $url = $this->params()->interaction->url . '/realtimeCalibration/getStatus';
+        $output = [];
 
         try {
             $ch = curl_init();
@@ -27,13 +28,13 @@ class InteractionController extends BaseController
                     pclose(popen("start /B ". $cmd, "r"));
                 }
                 else {
-                    exec($cmd);
+                    exec($cmd, $output);
                 }
             }
         } catch (Exception $ex) {
-            return json_encode('err');
+            return json_encode(['status' => 'err', 'cmd' => $cmd, 'message' => $ex]);
         }
 
-        return json_encode('ok');
+        return json_encode(['status' => 'ok', 'cmd' => $cmd, 'message' => $output]);
     }
 }

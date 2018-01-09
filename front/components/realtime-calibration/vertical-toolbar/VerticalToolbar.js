@@ -117,12 +117,19 @@ class VerticalToolbar extends Component {
         ).then((resp) => {
             return this.props.interactionRequest(
                 this.props.interactionUrl,
-                '/realtimeCalibration/initConnection', data
+                '/realtimeCalibration/initConnection',
+                data
             );
         }).then(() => {
             this.props.transmit(
                 'CHANGE_REALTIME_CALIBRATING_STATUS',
                 { status: 'init' }
+            );
+        }).then(() => {
+            return this.props.interactionRequest(
+                this.props.interactionUrl,
+                '/realtimeCalibration/startUdp',
+                data
             );
         });
     }

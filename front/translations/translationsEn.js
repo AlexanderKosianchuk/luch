@@ -288,6 +288,7 @@ const translationsEn = {
                 connectionType: 'Connection type',
                 sourceIps: 'Sources IP addresses',
                 addSource: 'Add source',
+                fakeData: 'Test data',
                 start: 'Run',
                 stop: 'Stop',
                 enterIpToConnect: 'Please enter IP to connect'

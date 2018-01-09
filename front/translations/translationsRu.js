@@ -283,6 +283,7 @@ const translationsRu = {
                 connectionType: 'Тип подключения',
                 sourceIps: 'IP адреса источников',
                 addSource: 'Добавить источник',
+                fakeData: 'Тестовые данные',
                 start: 'Пуск',
                 stop: 'Стоп',
                 enterIpToConnect: 'Пожалуйста введите IP для подключения'

@@ -27,8 +27,6 @@ class RealTimeChart extends Component {
     getData() {
         let lines = this.rotateData();
 
-        console.log(lines[1][2]);
-
         return {
            labels: lines[0],
            datasets: [{
