@@ -17,7 +17,8 @@ class ChartContainer extends Component {
         ) {
             this.props.bindRealtimeCalibrationSocketEvents({
                 interactionUrl: this.props.interactionUrl,
-                status: this.props.webSocketsStatus
+                status: this.props.webSocketsStatus,
+                uid: this.props.uid
             });
         }
     }

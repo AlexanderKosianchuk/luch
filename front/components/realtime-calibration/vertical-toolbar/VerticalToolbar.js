@@ -4,10 +4,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
-import uuidV4 from 'uuid/v4';
 
 import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import CalibrationSelector from 'controls/calibration-selector/CalibrationSelector';
+
+import ChooseParamsButtons from 'components/realtime-calibration/choose-params-buttons/ChooseParamsButtons';
 
 import interactionRequest from 'actions/particular/interactionRequest';
 import transmit from 'actions/transmit';
@@ -23,8 +24,8 @@ class VerticalToolbar extends Component {
         super(props);
 
         this.state = {
-            isRunning: false,
-            fakeData: false,
+            isRunning: null,
+            fakeData: true,
             sources: ['192.168.1.2']
         }
 
@@ -40,6 +41,16 @@ class VerticalToolbar extends Component {
         if (window.innerWidth > MIN_WINDOW_WIDTH) {
             this.form.style.height = (window.innerHeight - TOP_MENU_HEIGHT) + 'px';
         }
+    }
+
+    componentWillUnmount() {
+        let data = this.gatherInteractionData();
+
+        this.props.interactionRequest(
+            this.props.interactionUrl,
+            '/realtimeCalibration/stopUdp',
+            data
+        );
     }
 
     buildIpsInputs() {
@@ -75,9 +86,7 @@ class VerticalToolbar extends Component {
         this.setState({ sources: sources });
     }
 
-    handleStartClick(event) {
-        event.preventDefault();
-
+    gatherInteractionData() {
         let fdrId = null;
         let calibrationId = null;
 
@@ -104,12 +113,19 @@ class VerticalToolbar extends Component {
         }
 
         var data = new FormData();
-        data.append('uid', uuidV4().substring(0, 18).replace(/-/g, ''));
+        data.append('uid', this.props.uid);
         data.append('fdrId', fdrId);
         data.append('calibrationId', calibrationId);
         data.append('ips', ips);
         data.append('fakeData', this.state.fakeData);
         data.append('cors', window.location.hostname);
+
+        return data;
+    }
+
+    handleStartClick(event) {
+        event.preventDefault();
+        let data = this.gatherInteractionData();
 
         this.props.request(
             ['interaction', 'up'],
@@ -131,11 +147,64 @@ class VerticalToolbar extends Component {
                 '/realtimeCalibration/startUdp',
                 data
             );
+        }).then(() => {
+            this.setState({ isRunning: true });
+        });
+    }
+
+    handlePauseClick(event) {
+        event.preventDefault();
+        let data = this.gatherInteractionData();
+
+        this.props.interactionRequest(
+            this.props.interactionUrl,
+            '/realtimeCalibration/pauseUdp',
+            data
+        ).then(() => {
+            this.setState({ isRunning: false });
+        });
+    }
+
+    handleResumeClick(event) {
+        event.preventDefault();
+        let data = this.gatherInteractionData();
+
+        this.props.interactionRequest(
+            this.props.interactionUrl,
+            '/realtimeCalibration/startUdp',
+            data
+        ).then(() => {
+            this.setState({ isRunning: true });
         });
     }
 
     handleFakeDataClick() {
         this.setState({ fakeData: !this.state.fakeData });
+    }
+
+    putStateButton() {
+        if (this.state.isRunning === true) {
+            return (<button
+              className='btn btn-default'
+              onClick={ this.handlePauseClick.bind(this) }
+            >
+                <Translate value='realtimeCalibration.verticalToolbar.stop'/>
+            </button>);
+        } else if (this.state.isRunning === false) {
+            return (<button
+              className='btn btn-default'
+              onClick={ this.handleResumeClick.bind(this) }
+            >
+                <Translate value='realtimeCalibration.verticalToolbar.start'/>
+            </button>);
+        }
+
+        return (<button
+          className='btn btn-default'
+          onClick={ this.handleStartClick.bind(this) }
+        >
+            <Translate value='realtimeCalibration.verticalToolbar.start'/>
+        </button>);
     }
 
     render() {
@@ -182,33 +251,20 @@ class VerticalToolbar extends Component {
                         <Translate value='realtimeCalibration.verticalToolbar.addSource'/>
                     </button>
                 </div>
+                <ChooseParamsButtons/>
                 <div className='realtime-calibration-vertical-toolbar__inline-label-container'>
                     <div className='realtime-calibration-vertical-toolbar__inline-label'>
                         <Translate value='realtimeCalibration.verticalToolbar.fakeData'/>
                     </div>
                     <div className='realtime-calibration-vertical-toolbar__inline-label'>
                         <input className='form-control realtime-calibration-vertical-toolbar__checkbox' type='checkbox'
-                            onClick={ this.handleFakeDataClick.bind(this) }
+                            onChange={ this.handleFakeDataClick.bind(this) }
                             checked={ (this.state.fakeData === true) ? 'checked' : '' }
                         />
                     </div>
                 </div>
                 <div className='realtime-calibration-vertical-toolbar__button'>
-                    { this.state.isRunning ? (
-                        <button
-                          className='btn btn-default'
-                          onClick={ this.handleStopClick.bind(this) }
-                        >
-                            <Translate value='realtimeCalibration.verticalToolbar.stop'/>
-                        </button>
-                    ) : (
-                        <button
-                          className='btn btn-default'
-                          onClick={ this.handleStartClick.bind(this) }
-                        >
-                            <Translate value='realtimeCalibration.verticalToolbar.start'/>
-                        </button>
-                    )}
+                    { this.putStateButton() }
                 </div>
             </form>
         );

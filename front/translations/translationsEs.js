@@ -286,6 +286,11 @@ const translationsEs = {
                 stop: 'Stop',
                 enterIpToConnect: 'Please enter IP to connect'
             },
+            chooseParamsButtons: {
+                chooseParamsToShow: 'Choose params to show',
+                chartParams: 'On chart',
+                containerParams: 'In containers'
+            },
             chartContainer: {
                 configureConnection: 'Please, configure connection to start',
                 init: 'Initialization',

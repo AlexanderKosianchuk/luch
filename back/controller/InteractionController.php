@@ -29,6 +29,9 @@ class InteractionController extends BaseController
                 }
                 else {
                     exec($cmd, $output);
+
+                    // timeout to allow node up complete
+                    sleep(2);
                 }
             }
         } catch (Exception $ex) {

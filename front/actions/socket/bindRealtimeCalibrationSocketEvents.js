@@ -38,12 +38,14 @@ export default function bindRealtimeCalibrationSocketEvents(payload) {
         });
 
         io.socket.on('newData', (resp) => {
-            dispatch({
-                type: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME',
-                payload: {
-                    data: resp.data
-                }
-            });
+            if (resp.uid === payload.uid) {
+                dispatch({
+                    type: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME',
+                    payload: {
+                        data: resp.data
+                    }
+                });
+            }
         });
     }
 };
