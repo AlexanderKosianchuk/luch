@@ -291,7 +291,7 @@ const translationsEs = {
                 chartParams: 'On chart',
                 containerParams: 'In containers'
             },
-            chartContainer: {
+            dataContainer: {
                 configureConnection: 'Please, configure connection to start',
                 init: 'Initialization',
                 connectionPending: 'Сonnection pending',

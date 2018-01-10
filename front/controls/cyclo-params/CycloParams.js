@@ -11,16 +11,15 @@ import request from 'actions/request';
 
 class CycloParams extends React.Component {
     componentWillMount() {
-        if (this.props.flightId) {
-            this.props.request(
-                ['fdr', 'getCyclo'],
-                'get',
-                'FDR_CYCLO',
-                { flightId: this.props.flightId }
-            );
-        } else {
-            throw new Error('Invalid component configuretion. flightId not passed.')
-        }
+        this.props.request(
+            ['fdr', 'getCyclo'],
+            'get',
+            'FDR_CYCLO',
+            {
+                flightId: this.props.flightId || null,
+                fdrId: this.props.fdrId || null
+            }
+        );
     }
 
     buildBody() {

@@ -14,9 +14,6 @@ import interactionRequest from 'actions/particular/interactionRequest';
 import transmit from 'actions/transmit';
 import request from 'actions/request';
 
-const TOP_MENU_HEIGHT = 51;
-const MIN_WINDOW_WIDTH = 768; // check is mobile
-
 class VerticalToolbar extends Component {
     static form = null;
 
@@ -34,12 +31,6 @@ class VerticalToolbar extends Component {
         this.handler = {
             getSelectedFdrId: null,
             getSelectedCalibrationId: null,
-        }
-    }
-
-    componentDidMount() {
-        if (window.innerWidth > MIN_WINDOW_WIDTH) {
-            this.form.style.height = (window.innerHeight - TOP_MENU_HEIGHT) + 'px';
         }
     }
 
@@ -251,7 +242,9 @@ class VerticalToolbar extends Component {
                         <Translate value='realtimeCalibration.verticalToolbar.addSource'/>
                     </button>
                 </div>
-                <ChooseParamsButtons/>
+                <ChooseParamsButtons
+                    handler={ this.handler }
+                />
                 <div className='realtime-calibration-vertical-toolbar__inline-label-container'>
                     <div className='realtime-calibration-vertical-toolbar__inline-label'>
                         <Translate value='realtimeCalibration.verticalToolbar.fakeData'/>

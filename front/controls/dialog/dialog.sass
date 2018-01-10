@@ -1,0 +1,14 @@
+.dialog
+    display: none
+
+    &.is-shown
+        display: block
+
+    & .modal-dialog,
+    & .modal-content
+        height: 95%
+        width: 95%
+
+    & .modal-body
+        max-height: calc(100% - 120px)
+        overflow-y: scroll
