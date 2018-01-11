@@ -11,8 +11,24 @@ export default function Dialog (props) {
     }
 
     function buildBody() {
-        if (props.isShown ) {
+        if (props.isShown) {
             return props.buildBody();
+        }
+
+        return null;
+    }
+
+    function buildTitle() {
+        if (props.isShown) {
+            return props.buildTitle();
+        }
+
+        return null;
+    }
+
+    function buildFooter() {
+        if (props.isShown) {
+            return props.buildFooter();
         }
 
         return null;
@@ -31,13 +47,13 @@ export default function Dialog (props) {
                 >
                     &times;
                 </button>
-                <h4 className="modal-title">Modal Header</h4>
+                <h4 className="modal-title">{ buildTitle() }</h4>
               </div>
               <div className="modal-body">
                 { buildBody() }
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                { buildFooter() }
               </div>
             </div>
           </div>

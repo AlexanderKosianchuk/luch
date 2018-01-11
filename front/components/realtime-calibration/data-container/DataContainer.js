@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
-import RealTimeChart from 'components/realtime-calibration/realtime-chart/RealTimeChart';
+import RealtimeChart from 'components/realtime-calibration/realtime-chart/RealtimeChart';
+import ParamsContainer from 'components/realtime-calibration/params-container/ParamsContainer';
 
 import request from 'actions/request';
 import bindRealtimeCalibrationSocketEvents from 'actions/socket/bindRealtimeCalibrationSocketEvents';
@@ -23,32 +24,34 @@ class DataContainer extends Component {
         }
     }
 
-    buildBody() {
+    buildHeader() {
         if (this.props.status === null) {
-             return (<div className='realtime-calibration-data-container__label'>
-                 <Translate value='realtimeCalibration.dataContainer.configureConnection'/>
-             </div>);
+             return <Translate value='realtimeCalibration.dataContainer.configureConnection'/>;
         } else if (this.props.status === 'init') {
-             return (<div className='realtime-calibration-data-container__label'>
-                 <Translate value='realtimeCalibration.dataContainer.init'/>
-             </div>);
+             return <Translate value='realtimeCalibration.dataContainer.init'/>;
         } else if (this.props.status === 'bindingSocket') {
-             return (<div className='realtime-calibration-data-container__label'>
-                 <Translate value='realtimeCalibration.dataContainer.connectionPending'/>
-             </div>);
+             return <Translate value='realtimeCalibration.dataContainer.connectionPending'/>;
         } else if (this.props.status === 'waitingData') {
-            return (<div className='realtime-calibration-data-container__label'>
-                <Translate value='realtimeCalibration.dataContainer.waitingData'/>
-            </div>);
+            return <Translate value='realtimeCalibration.dataContainer.waitingData'/>;
         } else if (this.props.status === 'onAir') {
-            return <RealTimeChart/>;
+            return null;
         }
     }
 
     render() {
         return (
             <div className='realtime-calibration-data-container'>
-                { this.buildBody() }
+                <div className='realtime-calibration-data-container__label'>
+                    { this.buildHeader() }
+                </div>
+                <div className='realtime-calibration-data-container__output'>
+                    <div className='realtime-calibration-data-container__chart'>
+                        <RealtimeChart/>
+                    </div>
+                    <div className='realtime-calibration-data-container__params'>
+                        <ParamsContainer/>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -56,8 +59,8 @@ class DataContainer extends Component {
 
 function mapStateToProps(state) {
     return {
-        status: state.realTimeCalibrationData.status,
-        errorCode: state.realTimeCalibrationData.errorCode,
+        status: state.realtimeCalibrationData.status,
+        errorCode: state.realtimeCalibrationData.errorCode,
         webSocketsStatus: state.webSockets.status
     };
 }

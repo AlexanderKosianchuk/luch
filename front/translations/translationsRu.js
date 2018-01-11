@@ -291,7 +291,10 @@ const translationsRu = {
             chooseParamsButtons: {
                 chooseParamsToShow: 'Выберите параметры для отображения',
                 chartParams: 'На график',
-                containerParams: 'В контейнеры'
+                containerParams: 'В контейнеры',
+                chooseParamsToShowOnChart: 'Выберите параметры для отображения на графике',
+                chooseParamsToShowInContainer: 'Выберите параметры для числового отображения',
+                apply: 'Принять'
             },
             dataContainer: {
                 configureConnection: 'Ожидание конфигурации подключения',

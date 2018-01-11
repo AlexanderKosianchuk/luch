@@ -35,13 +35,15 @@ class VerticalToolbar extends Component {
     }
 
     componentWillUnmount() {
-        let data = this.gatherInteractionData();
+        if (this.state.isRunning !== null) {
+            let data = this.gatherInteractionData();
 
-        this.props.interactionRequest(
-            this.props.interactionUrl,
-            '/realtimeCalibration/stopUdp',
-            data
-        );
+            this.props.interactionRequest(
+                this.props.interactionUrl,
+                '/realtimeCalibration/stopUdp',
+                data
+            );
+        }
     }
 
     buildIpsInputs() {

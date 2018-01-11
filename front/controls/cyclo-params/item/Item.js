@@ -28,7 +28,8 @@ class Item extends React.Component {
                 {
                     id: this.props.param.id,
                     paramType: this.props.param.type,
-                    state: checkstate
+                    state: checkstate,
+                    context: this.props.context
                 }
             );
         }

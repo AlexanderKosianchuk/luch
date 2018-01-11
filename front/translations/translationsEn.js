@@ -296,7 +296,10 @@ const translationsEn = {
             chooseParamsButtons: {
                 chooseParamsToShow: 'Choose params to show',
                 chartParams: 'On chart',
-                containerParams: 'In containers'
+                containerParams: 'In containers',
+                chooseParamsToShowOnChart: 'Choose params to show on chart',
+                chooseParamsToShowInContainer: 'Choose params to show in container',
+                apply: 'Apply'
             },
             dataContainer: {
                 configureConnection: 'Please, configure connection to start',

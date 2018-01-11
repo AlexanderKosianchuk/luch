@@ -3,10 +3,13 @@ import './choose-params-buttons.sass';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Translate } from 'react-redux-i18n';
+import { Translate, I18n } from 'react-redux-i18n';
 
 import CycloParams from 'controls/cyclo-params/CycloParams';
 import Dialog from 'controls/dialog/Dialog';
+
+const CYCLO_CHART_PARAMS_CONTEXT = 'realtimeCalibrationChartParams';
+const CYCLO_CONTAINER_PARAMS_CONTEXT = 'realtimeCalibrationContainerParams';
 
 class ChooseParamsButtons extends Component {
     constructor(props) {
@@ -24,7 +27,7 @@ class ChooseParamsButtons extends Component {
         this.setState({ chartParamsDialogShown: !this.state.chartParamsDialogShown });
     }
 
-    handleContainerParamsDialogToggle() {
+    handleContainerParamsDialogToggle(event) {
         event.preventDefault();
 
         this.setState({ containerParamsDialogShown: !this.state.containerParamsDialogShown });
@@ -33,13 +36,35 @@ class ChooseParamsButtons extends Component {
     buildChartParamsDialogBody() {
         return <CycloParams
             fdrId={ this.props.handler.getSelectedFdrId() }
+            context={ CYCLO_CHART_PARAMS_CONTEXT }
+            chosenAnalogParams={ this.props.realtimeCalibrationParams.chosenChartAnalogParams }
+            chosenBinaryParams={ this.props.realtimeCalibrationParams.chosenChartBinaryParams }
         />
     }
 
     buildContainerParamsDialogBody() {
         return <CycloParams
             fdrId={ this.props.handler.getSelectedFdrId() }
+            context={ CYCLO_CONTAINER_PARAMS_CONTEXT }
+            chosenAnalogParams={ this.props.realtimeCalibrationParams.chosenContainerAnalogParams }
+            chosenBinaryParams={ this.props.realtimeCalibrationParams.chosenContainerBinaryParams }
         />
+    }
+
+    buildChartParamsDialogFooter() {
+        return <button type="button" className="btn btn-default"
+            onClick={ this.handleChartParamsDialogToggle.bind(this) }
+        >
+            <Translate value='realtimeCalibration.chooseParamsButtons.apply'/>
+        </button>;
+    }
+
+    buildContainerParamsDialogFooter() {
+        return <button type="button" className="btn btn-default"
+            onClick={ this.handleContainerParamsDialogToggle.bind(this) }
+        >
+            <Translate value='realtimeCalibration.chooseParamsButtons.apply'/>
+        </button>;
     }
 
     render() {
@@ -61,12 +86,16 @@ class ChooseParamsButtons extends Component {
                 <Dialog
                     isShown={ this.state.chartParamsDialogShown }
                     handleClose={ this.handleChartParamsDialogToggle.bind(this) }
+                    buildTitle={ () => { return I18n.t('realtimeCalibration.chooseParamsButtons.chooseParamsToShowOnChart') }}
                     buildBody={ this.buildChartParamsDialogBody.bind(this) }
+                    buildFooter={ this.buildChartParamsDialogFooter.bind(this) }
                 />
                 <Dialog
                     isShown={ this.state.containerParamsDialogShown }
                     handleClose={ this.handleContainerParamsDialogToggle.bind(this) }
+                    buildTitle={ () => { return I18n.t('realtimeCalibration.chooseParamsButtons.chooseParamsToShowInContainer') }}
                     buildBody={ this.buildContainerParamsDialogBody.bind(this) }
+                    buildFooter={ this.buildContainerParamsDialogFooter.bind(this) }
                 />
             </div>
         );
@@ -74,7 +103,9 @@ class ChooseParamsButtons extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        realtimeCalibrationParams: state.realtimeCalibrationParams
+    };
 }
 
 function mapDispatchToProps(dispatch) {

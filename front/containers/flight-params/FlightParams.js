@@ -8,13 +8,20 @@ import CycloParams from 'controls/cyclo-params/CycloParams';
 
 import showPage from 'actions/showPage';
 
+const CYCLO_CONTEXT = 'flightParams';
+
 class FlightParams extends React.Component {
     render () {
         return (
             <div>
                 <Menu/>
                 <Toolbar flightId={ this.props.flightId }/>
-                <CycloParams flightId={ this.props.flightId }/>
+                <CycloParams
+                    flightId={ this.props.flightId }
+                    context={ CYCLO_CONTEXT }
+                    chosenAnalogParams={ this.props.fdrCyclo.chosenAnalogParams }
+                    chosenBinaryParams={ this.props.fdrCyclo.chosenBinaryParams }
+                />
             </div>
         );
     }
@@ -22,7 +29,8 @@ class FlightParams extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     return {
-        flightId: ownProps.match.params.id
+        flightId: ownProps.match.params.id,
+        fdrCyclo: state.fdrCyclo
     };
 }
 
