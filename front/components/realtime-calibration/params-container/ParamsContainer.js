@@ -8,15 +8,6 @@ import { Translate } from 'react-redux-i18n';
 import TileItem from 'components/realtime-calibration/tile-item/TileItem';
 
 class ParamsContainer extends Component {
-    getIndexById (id, array) {
-        let itemIndex = null;
-        array.forEach((item, index) => {
-            if (item.id === id) itemIndex = index;
-        });
-
-        return itemIndex; // or undefined
-    };
-
     buildTile() {
         let analogParamsTile = [];
 
@@ -28,7 +19,9 @@ class ParamsContainer extends Component {
                 let cyclo = this.props.fdrCyclo;
                 let value = 0;
                 let frame = [];
-                let paramIndex = this.getIndexById(itemId, cyclo.analogParams);
+                let paramIndex = cyclo.analogParams.findIndex((element) => {
+                    return element.id === itemId;
+                });
 
                 if (!Number.isInteger(paramIndex)) {
                     return false;
@@ -38,9 +31,9 @@ class ParamsContainer extends Component {
 
                 if (itemId
                     && (data.length > 0)
-                    && data[data.length - 1][itemId]
+                    && data[data.length - 1][itemId + 1] // first(0) item is reserved (clock)
                 ) {
-                    value = data[data.length - 1][itemId];
+                    value = data[data.length - 1][itemId + 1];
                 }
 
                 analogParamsTile.push(<TileItem
