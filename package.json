@@ -1,6 +1,6 @@
 {
   "name": "luche",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Flight data processor. Initialy was developed for An 148, but got wide spread for many other aircrafts",
   "main": "index.js",
   "scripts": {
@@ -76,6 +76,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "chart.js": "^2.7.1",
     "chosen-js": "^1.7.0",
     "cross-env": "^5.0.5",
     "datatables": "^1.10.13",
@@ -99,6 +100,7 @@
     "rc-collapse": "^1.7.6",
     "react": "^16.2.0",
     "react-bootstrap-slider": "^2.0.0",
+    "react-chartjs-2": "^2.6.4",
     "react-circular-progressbar": "^0.1.5",
     "react-collapse": "^4.0.2",
     "react-color": "^2.11.7",
@@ -110,6 +112,8 @@
     "react-table": "^6.4.0",
     "recharts": "^0.22.4",
     "redux-auth-wrapper": "^1.1.0",
+    "sails.io.js": "^1.1.13",
+    "socket.io-client": "^2.0.4",
     "uuid": "^3.0.1"
   }
 }

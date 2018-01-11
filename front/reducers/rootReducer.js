@@ -13,6 +13,9 @@ import fdrCyclo from 'reducers/fdrCyclo';
 import calibration from 'reducers/calibration';
 import calibrations from 'reducers/calibrations';
 import flightUploadingState from 'reducers/flightUploadingState';
+import realtimeCalibrationData from 'reducers/realtimeCalibrationData';
+import realtimeCalibrationParams from 'reducers/realtimeCalibrationParams';
+import webSockets from 'reducers/webSockets';
 import settings from 'reducers/settings';
 import template from 'reducers/template';
 import flightTemplates from 'reducers/flightTemplates';
@@ -29,6 +32,9 @@ const appReducer = combineReducers({
     calibration,
     calibrations,
     flightUploadingState,
+    realtimeCalibrationData,
+    realtimeCalibrationParams,
+    webSockets,
     flightFilter,
     template,
     flightTemplates,

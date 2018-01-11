@@ -1,6 +1,6 @@
 import './cyclo-params.sass'
 
-import React from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -9,17 +9,26 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
 
-class CycloParams extends React.Component {
+class CycloParams extends Component {
     componentWillMount() {
-        if (this.props.flightId) {
+        if (this.props.flightId && this.props.flightId !== null) {
             this.props.request(
                 ['fdr', 'getCyclo'],
                 'get',
                 'FDR_CYCLO',
                 { flightId: this.props.flightId }
             );
-        } else {
-            throw new Error('Invalid component configuretion. flightId not passed.')
+
+            return;
+        }
+
+        if (this.props.fdrId && this.props.fdrId !== null) {
+            this.props.request(
+                ['fdr', 'getCycloByFdrId'],
+                'get',
+                'FDR_CYCLO',
+                { fdrId: this.props.fdrId }
+            );
         }
     }
 
@@ -30,10 +39,11 @@ class CycloParams extends React.Component {
             return <Tile
                 analogParams={ this.props.fdrCyclo.analogParams }
                 binaryParams={ this.props.fdrCyclo.binaryParams }
-                chosenAnalogParams={ this.props.fdrCyclo.chosenAnalogParams || [] }
-                chosenBinaryParams={ this.props.fdrCyclo.chosenBinaryParams || [] }
+                chosenAnalogParams={ this.props.chosenAnalogParams || [] }
+                chosenBinaryParams={ this.props.chosenBinaryParams || [] }
                 flightId={ this.props.flightId }
                 colorPickerEnabled={ this.props.colorPickerEnabled }
+                context={ this.props.context }
             />
         }
     }

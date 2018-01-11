@@ -35,6 +35,15 @@ class FdrController extends BaseController
         ]);
     }
 
+    public function getCycloByFdrIdAction($fdrId)
+    {
+        return json_encode([
+            'fdrId' => $fdrId,
+            'analogParams' => $this->dic()->get('fdr')->getParams($fdrId, true),
+            'binaryParams' => $this->dic()->get('fdr')->getBinaryParams($fdrId, true)
+        ]);
+    }
+
     public function setParamColor($args)
     {
         if ((!isset($args['fdrId']) && !isset($args['flightId']))

@@ -274,6 +274,33 @@ const translationsEs = {
                 date: 'Date'
             }
         },
+        realtimeCalibration: {
+            verticalToolbar: {
+                connectionParams: 'Connection params',
+                fdrType: 'FDR type',
+                connectionType: 'Connection type',
+                sourceIps: 'Sources IP addresses',
+                addSource: 'Add source',
+                fakeData: 'Test data',
+                start: 'Run',
+                stop: 'Stop',
+                enterIpToConnect: 'Please enter IP to connect'
+            },
+            chooseParamsButtons: {
+                chooseParamsToShow: 'Choose params to show',
+                chartParams: 'On chart',
+                containerParams: 'In containers',
+                chooseParamsToShowOnChart: 'Choose params to show on chart',
+                chooseParamsToShowInContainer: 'Choose params to show in container',
+                apply: 'Apply'
+            },
+            dataContainer: {
+                configureConnection: 'Please, configure connection to start',
+                init: 'Initialization',
+                connectionPending: 'Сonnection pending',
+                waitingData: 'Waiting data'
+            }
+        },
         topMenu: {
             brand: 'Luche',
             calibrate: 'Сalibrate',

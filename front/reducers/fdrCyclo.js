@@ -21,6 +21,10 @@ export default function fdrCyclo(state = initialState, action) {
                 }
             };
         case 'CHANGE_FLIGHT_PARAM_CHECKSTATE':
+            if (action.payload.context !== 'flightParams') {
+                return state;
+            }
+
             let getIndexById = function (id, array) {
                 let itemIndex = null;
                 array.forEach((item, index) => {

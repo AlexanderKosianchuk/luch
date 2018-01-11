@@ -13,6 +13,14 @@ import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class FdrSelector extends Component {
+    componentWillMount() {
+        if ((typeof this.props.methodHandler === 'object')
+            && (this.props.methodHandler.getSelectedFdrId === null)
+        ) {
+            this.props.methodHandler.getSelectedFdrId = this.getSelectedId.bind(this);
+        }
+    }
+
     componentDidMount() {
         if (this.props.pending === null) {
             this.props.request(
@@ -62,6 +70,10 @@ class FdrSelector extends Component {
         this.props.transmit('CHOOSE_FDR', chosen);
     }
 
+    getSelectedId() {
+        return this.props.chosen.id;
+    }
+
     render() {
         let isHidden = true;
 
@@ -102,6 +114,7 @@ FdrSelector.propTypes = {
     isClear: PropTypes.bool,
     chosenFdrId: PropTypes.number,
     handleChange: PropTypes.func,
+    methodHandler: PropTypes.object,
 
     pending:  PropTypes.bool,
     fdrs: PropTypes.array,

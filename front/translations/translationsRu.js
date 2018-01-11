@@ -276,6 +276,33 @@ const translationsRu = {
                 date: 'Дата'
             }
         },
+        realtimeCalibration: {
+            verticalToolbar: {
+                connectionParams: 'Параметры подключения',
+                fdrType: 'Тип регистратора',
+                connectionType: 'Тип подключения',
+                sourceIps: 'IP адреса источников',
+                addSource: 'Добавить источник',
+                fakeData: 'Тестовые данные',
+                start: 'Пуск',
+                stop: 'Стоп',
+                enterIpToConnect: 'Пожалуйста введите IP для подключения'
+            },
+            chooseParamsButtons: {
+                chooseParamsToShow: 'Выберите параметры для отображения',
+                chartParams: 'На график',
+                containerParams: 'В контейнеры',
+                chooseParamsToShowOnChart: 'Выберите параметры для отображения на графике',
+                chooseParamsToShowInContainer: 'Выберите параметры для числового отображения',
+                apply: 'Принять'
+            },
+            dataContainer: {
+                configureConnection: 'Ожидание конфигурации подключения',
+                init: 'Инициализация',
+                connectionPending: 'Установка соединения',
+                waitingData: 'Ожидание данных'
+            }
+        },
         topMenu: {
             brand: 'Luch',
             calibrate: 'Калибровка',
