@@ -22,8 +22,8 @@ class VerticalToolbar extends Component {
 
         this.state = {
             isRunning: null,
-            fakeData: true,
-            sources: ['192.168.1.2']
+            fakeData: false,
+            sources: ['192.168.11.1:2017']
         }
 
         // this handler will be filled by FdrSelector

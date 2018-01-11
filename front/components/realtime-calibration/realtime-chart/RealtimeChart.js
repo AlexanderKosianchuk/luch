@@ -17,6 +17,10 @@ class RealtimeChart extends Component {
             // NOTE:  first (0) item is counter
             // and it is suitable for labels
 
+            if (!Array.isArray(frame)) {
+                return;
+            }
+
             frame.forEach((point, channelIndex) => {
                 if (!Array.isArray(lines[channelIndex])) {
                     lines[channelIndex] = [];
@@ -157,6 +161,7 @@ class RealtimeChart extends Component {
         return (
             <div className='realtime-calibration-realtime-chart'>
             <Line
+                height={ 100 }
                 data={ this.getData() }
                 options={ this.getOptions() }
                 redraw={ true }
