@@ -6,5 +6,5 @@ use Exception;
 
 class UnauthorizedException extends BaseException
 {
-    public $message = 'Unauthorized user. Auth data: %s';
+  public $message = 'Unauthorized user. Auth data: %s';
 }

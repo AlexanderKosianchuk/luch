@@ -5,38 +5,38 @@ import { I18n } from 'react-redux-i18n';
 import PropTypes from 'prop-types';
 
 export default function Row (props) {
-    function buildInput() {
-        let controls = props.controls;
+  function buildInput() {
+    let controls = props.controls;
 
-        return controls.map((item, index) => {
-            return (
-                <div className='col-md-6' key={ index }>
-                    <div className='form-group'>
-                        <label htmlFor={ ('user-form-form__' + item.key) } className='col-sm-2 control-label'>{ item.label }</label>
-                        <div className='col-sm-10'>
-                            <input type={ item.type } className='form-control'
-                                id={ ('user-form-form__' + item.key) }
-                                name={ item.key }
-                                placeholder={ item.placeholder }
-                                value={ item.value || '' }
-                                data-key={ item.key }
-                                onChange={ props.handler }
-                            />
-                        </div>
-                    </div>
-                </div>
-            );
-        });
-    }
-
-    return (
-        <div className='row'>
-            { buildInput() }
+    return controls.map((item, index) => {
+      return (
+        <div className='col-md-6' key={ index }>
+          <div className='form-group'>
+            <label htmlFor={ ('user-form-form__' + item.key) } className='col-sm-2 control-label'>{ item.label }</label>
+            <div className='col-sm-10'>
+              <input type={ item.type } className='form-control'
+                id={ ('user-form-form__' + item.key) }
+                name={ item.key }
+                placeholder={ item.placeholder }
+                value={ item.value || '' }
+                data-key={ item.key }
+                onChange={ props.handler }
+              />
+            </div>
+          </div>
         </div>
-    );
+      );
+    });
+  }
+
+  return (
+    <div className='row'>
+      { buildInput() }
+    </div>
+  );
 }
 
 Row.propTypes = {
-    controls: PropTypes.array.isRequired,
-    handler: PropTypes.func.isRequired,
+  controls: PropTypes.array.isRequired,
+  handler: PropTypes.func.isRequired,
 };

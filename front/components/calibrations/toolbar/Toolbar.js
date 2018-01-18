@@ -12,82 +12,82 @@ import FdrSelector from 'controls/fdr-selector/FdrSelector';
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
-    handleChange(chosenFdr) {
-        let parsedUrl = new URL(window.location.href);
-        let url = parsedUrl.pathname;
+  handleChange(chosenFdr) {
+    let parsedUrl = new URL(window.location.href);
+    let url = parsedUrl.pathname;
 
-        if (url.indexOf('fdr-id') !== -1) {
-            url = url.replace(/fdr-id\/[0-9]+/, 'fdr-id/' + chosenFdr.id)
-        } else {
-            url = url.replace(/calibrations/, 'calibrations/fdr-id/' + chosenFdr.id)
-        }
-
-        this.props.redirect(url);
+    if (url.indexOf('fdr-id') !== -1) {
+      url = url.replace(/fdr-id\/[0-9]+/, 'fdr-id/' + chosenFdr.id)
+    } else {
+      url = url.replace(/calibrations/, 'calibrations/fdr-id/' + chosenFdr.id)
     }
 
-    handleCreate() {
-        if (typeof parseInt(this.props.fdrId) === 'number') {
-            this.props.redirect('/calibration/create/fdr-id/' + this.props.fdrId);
-        }
+    this.props.redirect(url);
+  }
+
+  handleCreate() {
+    if (typeof parseInt(this.props.fdrId) === 'number') {
+      this.props.redirect('/calibration/create/fdr-id/' + this.props.fdrId);
+    }
+  }
+
+  render() {
+    let isClear = true;
+    if (this.props.fdrId) {
+      isClear = false;
     }
 
-    render() {
-        let isClear = true;
-        if (this.props.fdrId) {
-            isClear = false;
-        }
+    return (
+      <nav className='calibrations-toolbar navbar navbar-default'>
+        <div className='container-fluid'>
+          <div className='navbar-header'>
+            <NavbarToggle/>
 
-        return (
-            <nav className='calibrations-toolbar navbar navbar-default'>
-                <div className='container-fluid'>
-                    <div className='navbar-header'>
-                      <NavbarToggle/>
+            <a className='navbar-brand' href='#'>
+            <Translate value='calibration.toolbar.title' />
+            </a>
+          </div>
 
-                      <a className='navbar-brand' href='#'>
-                        <Translate value='calibration.toolbar.title' />
-                      </a>
-                    </div>
-
-                    <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
-                        <ul className='nav navbar-nav navbar-right'>
-                            <FdrSelector
-                                chosenFdrId={ this.props.fdrId }
-                                isClear={ isClear }
-                                handleChange={ this.handleChange.bind(this) }
-                            />
-                            <li><a href='#'
-                                className={ isClear ? 'calibrations-toolbar__is-hidden' : ''}
-                                onClick={ this.handleCreate.bind(this) }
-                            >
-                                <span className='glyphicon glyphicon-plus' aria-hidden='true'></span>
-                            </a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        );
-    }
+          <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
+            <ul className='nav navbar-nav navbar-right'>
+              <FdrSelector
+                chosenFdrId={ this.props.fdrId }
+                isClear={ isClear }
+                handleChange={ this.handleChange.bind(this) }
+              />
+              <li><a href='#'
+                className={ isClear ? 'calibrations-toolbar__is-hidden' : ''}
+                onClick={ this.handleCreate.bind(this) }
+              >
+                <span className='glyphicon glyphicon-plus' aria-hidden='true'></span>
+              </a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 }
 
 Toolbar.propTypes = {
-    fdrId: PropTypes.number,
-    page:  PropTypes.number,
-    pageSize: PropTypes.number,
+  fdrId: PropTypes.number,
+  page:  PropTypes.number,
+  pageSize: PropTypes.number,
 
-    chosen: PropTypes.object.isRequired,
-    redirect: PropTypes.func.isRequired
+  chosen: PropTypes.object.isRequired,
+  redirect: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
-    return {
-        chosen: state.fdrs.chosen
-    }
+  return {
+    chosen: state.fdrs.chosen
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

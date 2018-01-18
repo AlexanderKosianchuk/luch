@@ -8,21 +8,21 @@ use \Entity\Flight;
 
 class FlightRepository extends EntityRepository
 {
-    public function insert($guid, $flightInfo, $fdr, $user, $calibration = null)
-    {
-        $em = $this->getEntityManager();
+  public function insert($guid, $flightInfo, $fdr, $user, $calibration = null)
+  {
+    $em = $this->getEntityManager();
 
-        $flight = new Flight;
-        $flight->set(
-            $guid,
-            $flightInfo,
-            $fdr,
-            $user,
-            $calibration
-        );
-        $em->persist($flight);
-        $em->flush();
+    $flight = new Flight;
+    $flight->set(
+      $guid,
+      $flightInfo,
+      $fdr,
+      $user,
+      $calibration
+    );
+    $em->persist($flight);
+    $em->flush();
 
-        return $flight;
-    }
+    return $flight;
+  }
 }

@@ -7,11 +7,11 @@ import Toolbar from 'components/flights-table/toolbar/Toolbar';
 import Table from 'components/flights-table/table/Table';
 
 export default function FlightsTable (props) {
-    return (
-        <div>
-            <Menu/>
-            <Toolbar viewType='table' />
-            <Table/>
-        </div>
-    );
+  return (
+    <div>
+      <Menu/>
+      <Toolbar viewType='table' />
+      <Table/>
+    </div>
+  );
 }

@@ -6,63 +6,63 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import SettlementsReportRow from 'components/results/settlements-report-row/SettlementsReportRow';
 
 class SettlementsReport extends React.Component {
-    buildReport(pending, report) {
-        if (pending === null) {
-            return I18n.t('results.settlementsReport.setParamsForReportGenerating');
-        }
+  buildReport(pending, report) {
+    if (pending === null) {
+      return I18n.t('results.settlementsReport.setParamsForReportGenerating');
+    }
 
-        if (pending) {
-            return <ContentLoader margin={ 5 } size={ 75 } />;;
-        }
+    if (pending) {
+      return <ContentLoader margin={ 5 } size={ 75 } />;;
+    }
 
-        if (!report || report.length === 0) {
-            return I18n.t('settlementsReport.noDataToGenerateReport');
-        }
+    if (!report || report.length === 0) {
+      return I18n.t('settlementsReport.noDataToGenerateReport');
+    }
 
-        let rows = [];
+    let rows = [];
+    rows.push(
+      <SettlementsReportRow key="title" i18n={ this.props.i18n } />
+    );
+    report.forEach((item, index) => {
+      if (item.text && item.values) {
+        let count = item.values.length
+        let sum = item.values.reduce((next, sum) => next + sum, 0);
+        let avg = sum / count;
+        let min = Math.min.apply(null, item.values);
+        let max = Math.max.apply(null, item.values);
         rows.push(
-            <SettlementsReportRow key="title" i18n={ this.props.i18n } />
+          <SettlementsReportRow
+            key={ index }
+            title={ item.text }
+            count={ count }
+            sum={ sum }
+            avg={ avg }
+            min={ min }
+            max={ max }
+          />
         );
-        report.forEach((item, index) => {
-            if (item.text && item.values) {
-                let count = item.values.length
-                let sum = item.values.reduce((next, sum) => next + sum, 0);
-                let avg = sum / count;
-                let min = Math.min.apply(null, item.values);
-                let max = Math.max.apply(null, item.values);
-                rows.push(
-                    <SettlementsReportRow
-                        key={ index }
-                        title={ item.text }
-                        count={ count }
-                        sum={ sum }
-                        avg={ avg }
-                        min={ min }
-                        max={ max }
-                    />
-                );
-            }
-        });
+      }
+    });
 
-        return rows;
-    }
+    return rows;
+  }
 
-    render() {
-        let body = this.buildReport(this.props.pending, this.props.report);
-        return (
-            <div>
-                <p><b><Translate value='results.settlementsReport.settlementsReport' /></b></p>
-                { body }
-            </div>
-        );
-    }
+  render() {
+    let body = this.buildReport(this.props.pending, this.props.report);
+    return (
+      <div>
+        <p><b><Translate value='results.settlementsReport.settlementsReport' /></b></p>
+        { body }
+      </div>
+    );
+  }
 }
 
 function mapStateToProps(store) {
-    return {
-        pending: store.settlementsReport.pending,
-        report: store.settlementsReport.report
-    }
+  return {
+    pending: store.settlementsReport.pending,
+    report: store.settlementsReport.report
+  }
 }
 
 export default connect(mapStateToProps)(SettlementsReport);

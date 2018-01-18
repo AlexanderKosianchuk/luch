@@ -9,28 +9,28 @@ import ShowChartButton from 'components/flight-params/show-chart-button/ShowChar
 import NavbarToggle from 'controls/navbar-toggle/NavbarToggle';
 
 export default class Toolbar extends React.Component {
-    render() {
-        return (
-            <nav className='flight-params-toolbar navbar navbar-default'>
-                <div className='container-fluid'>
-                    <div className='navbar-header'>
-                      <NavbarToggle/>
-                    </div>
+  render() {
+    return (
+      <nav className='flight-params-toolbar navbar navbar-default'>
+        <div className='container-fluid'>
+          <div className='navbar-header'>
+            <NavbarToggle/>
+          </div>
 
-                    <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
-                        <FlightViewOptionsSwitch
-                            view={ 'params' }
-                            flightId={ this.props.flightId }
-                        />
-                        <FlightRangeSlider
-                            flightId={ this.props.flightId }
-                        />
-                        <ShowChartButton
-                            flightId={ this.props.flightId }
-                        />
-                    </div>
-                </div>
-            </nav>
-        );
-    }
+          <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
+            <FlightViewOptionsSwitch
+              view={ 'params' }
+              flightId={ this.props.flightId }
+            />
+            <FlightRangeSlider
+              flightId={ this.props.flightId }
+            />
+            <ShowChartButton
+              flightId={ this.props.flightId }
+            />
+          </div>
+        </div>
+      </nav>
+    );
+  }
 }

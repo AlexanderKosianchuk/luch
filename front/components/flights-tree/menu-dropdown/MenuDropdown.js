@@ -15,187 +15,187 @@ import processFlight from 'actions/particular/processFlight';
 import redirect from 'actions/redirect';
 
 class MenuDropdown extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            isLoaderShown: false
-        };
+    this.state = {
+      isLoaderShown: false
+    };
+  }
+
+  buildMenuItems(type) {
+    const menuItems = {
+      noSelection: [
+        'expand',
+        'collapse'
+      ],
+      oneFlight: [
+        'expand',
+        'collapse',
+        'delete',
+        'export',
+        'process',
+        'exportCoordinates',
+        'removeSelection',
+        'events',
+        'params',
+        'templates'
+      ],
+      manyItems: [
+        'expand',
+        'collapse',
+        'export',
+        'delete',
+        'removeSelection'
+      ],
+    };
+
+    let currentMenuItems = menuItems[type];
+
+    function ucFirst(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    buildMenuItems(type) {
-        const menuItems = {
-            noSelection: [
-                'expand',
-                'collapse'
-            ],
-            oneFlight: [
-                'expand',
-                'collapse',
-                'delete',
-                'export',
-                'process',
-                'exportCoordinates',
-                'removeSelection',
-                'events',
-                'params',
-                'templates'
-            ],
-            manyItems: [
-                'expand',
-                'collapse',
-                'export',
-                'delete',
-                'removeSelection'
-            ],
-        };
+    return currentMenuItems.map(item => {
+      if (typeof this['handle' + ucFirst(item)] === 'function') {
+        return <li key={ item } >
+          <a onClick={ this['handle' + ucFirst(item)].bind(this) }
+            href='#'>{ I18n.t('flightsTree.menuDropdown.'+item) }
+          </a>
+        </li>;
+      }
+    });
+  }
 
-        let currentMenuItems = menuItems[type];
+  buildMenu() {
+    let flightsCount = this.props.flights.chosenItems.length;
 
-        function ucFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-        return currentMenuItems.map(item => {
-            if (typeof this['handle' + ucFirst(item)] === 'function') {
-                return <li key={ item } >
-                    <a onClick={ this['handle' + ucFirst(item)].bind(this) }
-                        href='#'>{ I18n.t('flightsTree.menuDropdown.'+item) }
-                    </a>
-                </li>;
-            }
-        });
+    if (flightsCount === 0) {
+      return this.buildMenuItems('noSelection');
+    } else if (flightsCount === 1) {
+      return this.buildMenuItems('oneFlight');
     }
 
-    buildMenu() {
-        let flightsCount = this.props.flights.chosenItems.length;
+    return this.buildMenuItems('manyItems');
+  }
 
-        if (flightsCount === 0) {
-            return this.buildMenuItems('noSelection');
-        } else if (flightsCount === 1) {
-            return this.buildMenuItems('oneFlight');
-        }
+  handleExpand(event) {
+    //TODO: use request to let server know abour expanding
+    this.props.transmit('FOLDER_LIST_EXPANDING_TOGGLE', { expanded: true });
+  }
 
-        return this.buildMenuItems('manyItems');
+  handleCollapse(event) {
+    //TODO: use request to let server know abour collapsing
+    this.props.transmit('FOLDER_LIST_EXPANDING_TOGGLE', { expanded: false });
+  }
+
+  handleDelete() {
+    for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
+      let item = this.props.flights.chosenItems[ii];
+      this.props.request(
+        ['flights', 'deleteFlight'],
+        'delete',
+        'FLIGHT',
+        { id: item.id }
+      );
+    }
+  }
+
+  handleExport() {
+    let items = [];
+
+    for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
+      items.push(this.props.flights.chosenItems[ii].id);
     }
 
-    handleExpand(event) {
-        //TODO: use request to let server know abour expanding
-        this.props.transmit('FOLDER_LIST_EXPANDING_TOGGLE', { expanded: true });
+    this.props.exportFlight(items);
+  }
+
+  handleProcess() {
+    if (this.props.flights.chosenItems.length === 1) {
+      this.setState({ isLoaderShown: true });
+      this.props.processFlight({
+        id: this.props.flights.chosenItems[0].id
+      }).then(() => {
+        this.setState({ isLoaderShown: false });
+      });
+    }
+  }
+
+  handleExportCoordinates() {
+    if (this.props.flights.chosenItems.length === 1) {
+      this.props.exportFlightCoordinates({
+        id: this.props.flights.chosenItems[0].id
+      });
+    }
+  }
+
+  handleRemoveSelection() {
+    this.props.transmit('FLIGHTS_UNCHOOSE_ALL');
+  }
+
+  handleEvents() {
+    if (this.props.flights.chosenItems.length === 1) {
+      this.props.redirect('/flight-events/' + this.props.flights.chosenItems[0].id);
+    }
+  }
+
+  handleParams() {
+    if (this.props.flights.chosenItems.length === 1) {
+      this.props.redirect('/flight-params/' + this.props.flights.chosenItems[0].id);
+    }
+  }
+
+  handleTemplates() {
+    if (this.props.flights.chosenItems.length === 1) {
+      this.props.redirect('/flight-templates/' + this.props.flights.chosenItems[0].id);
+    }
+  }
+
+  buildLoader() {
+    if (this.state.isLoaderShown) {
+      return (<li>
+        <a href='#' className='flights-tree-menu-dropdown__loader'>
+          <ContentLoader margin={ 1 } size={ 30 } border= { 3 } />
+        </a>
+      </li>);
     }
 
-    handleCollapse(event) {
-        //TODO: use request to let server know abour collapsing
-        this.props.transmit('FOLDER_LIST_EXPANDING_TOGGLE', { expanded: false });
-    }
+    return '';
+  }
 
-    handleDelete() {
-        for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
-            let item = this.props.flights.chosenItems[ii];
-            this.props.request(
-                ['flights', 'deleteFlight'],
-                'delete',
-                'FLIGHT',
-                { id: item.id }
-            );
-        }
-    }
-
-    handleExport() {
-        let items = [];
-
-        for (var ii = 0; ii < this.props.flights.chosenItems.length; ii++) {
-            items.push(this.props.flights.chosenItems[ii].id);
-        }
-
-        this.props.exportFlight(items);
-    }
-
-    handleProcess() {
-        if (this.props.flights.chosenItems.length === 1) {
-            this.setState({ isLoaderShown: true });
-            this.props.processFlight({
-                id: this.props.flights.chosenItems[0].id
-            }).then(() => {
-                this.setState({ isLoaderShown: false });
-            });
-        }
-    }
-
-    handleExportCoordinates() {
-        if (this.props.flights.chosenItems.length === 1) {
-            this.props.exportFlightCoordinates({
-                id: this.props.flights.chosenItems[0].id
-            });
-        }
-    }
-
-    handleRemoveSelection() {
-        this.props.transmit('FLIGHTS_UNCHOOSE_ALL');
-    }
-
-    handleEvents() {
-        if (this.props.flights.chosenItems.length === 1) {
-            this.props.redirect('/flight-events/' + this.props.flights.chosenItems[0].id);
-        }
-    }
-
-    handleParams() {
-        if (this.props.flights.chosenItems.length === 1) {
-            this.props.redirect('/flight-params/' + this.props.flights.chosenItems[0].id);
-        }
-    }
-
-    handleTemplates() {
-        if (this.props.flights.chosenItems.length === 1) {
-            this.props.redirect('/flight-templates/' + this.props.flights.chosenItems[0].id);
-        }
-    }
-
-    buildLoader() {
-        if (this.state.isLoaderShown) {
-            return (<li>
-                <a href='#' className='flights-tree-menu-dropdown__loader'>
-                    <ContentLoader margin={ 1 } size={ 30 } border= { 3 } />
-                </a>
-            </li>);
-        }
-
-        return '';
-    }
-
-    render() {
-        return (
-            <ul className='flights-tree-menu-dropdown nav navbar-nav'>
-                <li className='dropdown'>
-                  <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
-                    <Translate value='flightsTree.menuDropdown.fileMenu' /><span className='caret'></span>
-                  </a>
-                  <ul className='dropdown-menu'>
-                    { this.buildMenu() }
-                  </ul>
-                </li>
-                { this.buildLoader() }
-            </ul>
-        );
-    }
+  render() {
+    return (
+      <ul className='flights-tree-menu-dropdown nav navbar-nav'>
+        <li className='dropdown'>
+          <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+          <Translate value='flightsTree.menuDropdown.fileMenu' /><span className='caret'></span>
+          </a>
+          <ul className='dropdown-menu'>
+          { this.buildMenu() }
+          </ul>
+        </li>
+        { this.buildLoader() }
+      </ul>
+    );
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-         flights: state.flights
-     };
+  return {
+     flights: state.flights
+   };
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        transmit: bindActionCreators(transmit, dispatch),
-        request: bindActionCreators(request, dispatch),
-        exportFlight: bindActionCreators(exportFlight, dispatch),
-        exportFlightCoordinates: bindActionCreators(exportFlightCoordinates, dispatch),
-        processFlight: bindActionCreators(processFlight, dispatch),
-        redirect: bindActionCreators(redirect, dispatch),
-    }
+  return {
+    transmit: bindActionCreators(transmit, dispatch),
+    request: bindActionCreators(request, dispatch),
+    exportFlight: bindActionCreators(exportFlight, dispatch),
+    exportFlightCoordinates: bindActionCreators(exportFlightCoordinates, dispatch),
+    processFlight: bindActionCreators(processFlight, dispatch),
+    redirect: bindActionCreators(redirect, dispatch),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuDropdown);

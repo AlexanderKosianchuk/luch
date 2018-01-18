@@ -10,86 +10,86 @@ import redirect from 'actions/redirect';
 import request from 'actions/request';
 
 class SaveForm extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            inputValue: props.templateName || ''
-        }
+    this.state = {
+      inputValue: props.templateName || ''
+    }
+  }
+
+  saveTemplate() {
+    this.props.request(
+      ['templates', 'setTemplate'],
+      'post',
+      'TEMPLATE',
+      {
+        flightId: this.props.flightId,
+        templateName: this.state.inputValue,
+        analogParams: this.props.fdrCyclo.chosenAnalogParams,
+        binaryParams: this.props.fdrCyclo.chosenBinaryParams
+      }
+    ).then(() => {
+      this.props.redirect('/flight-templates/' + this.props.flightId);
+    });
+  }
+
+  buildButton() {
+    if (_isEmpty(this.props.fdrCyclo.chosenAnalogParams)
+      || this.state.inputValue.length < 4
+    ) {
+      return '';
     }
 
-    saveTemplate() {
-        this.props.request(
-            ['templates', 'setTemplate'],
-            'post',
-            'TEMPLATE',
-            {
-                flightId: this.props.flightId,
-                templateName: this.state.inputValue,
-                analogParams: this.props.fdrCyclo.chosenAnalogParams,
-                binaryParams: this.props.fdrCyclo.chosenBinaryParams
-            }
-        ).then(() => {
-            this.props.redirect('/flight-templates/' + this.props.flightId);
-        });
-    }
+    return (
+      <span
+        className='flight-template-edit-save-form__button glyphicon glyphicon-floppy-disk'
+        aria-hidden='true'
+        onClick={ this.saveTemplate.bind(this) }
+      >
+      </span>
+    );
+  }
 
-    buildButton() {
-        if (_isEmpty(this.props.fdrCyclo.chosenAnalogParams)
-            || this.state.inputValue.length < 4
-        ) {
-            return '';
-        }
+  handleChange(event) {
+    this.setState({
+      inputValue: event.target.value
+    });
+  }
 
-        return (
-            <span
-              className='flight-template-edit-save-form__button glyphicon glyphicon-floppy-disk'
-              aria-hidden='true'
-              onClick={ this.saveTemplate.bind(this) }
-            >
-            </span>
-        );
-    }
+  isDisabled() {
+    return this.props.servisePurpose && this.props.servisePurpose.isDefault;
+  }
 
-    handleChange(event) {
-        this.setState({
-            inputValue: event.target.value
-        });
-    }
-
-    isDisabled() {
-        return this.props.servisePurpose && this.props.servisePurpose.isDefault;
-    }
-
-    render() {
-        return (
-            <form className='flight-template-edit-save-form form-inline'>
-                <input className='form-control flight-template-edit-save-form__input'
-                    type='text'
-                    placeholder={ I18n.t('flightTemplateEdit.saveForm.templateName') }
-                    value={ this.state.inputValue }
-                    disabled={ this.isDisabled()   }
-                    onChange={ this.handleChange.bind(this) }
-                />
-                <span className='flight-template-edit-save-form__button-container'>
-                    { this.buildButton() }
-                </span>
-            </form>
-        );
-    }
+  render() {
+    return (
+      <form className='flight-template-edit-save-form form-inline'>
+        <input className='form-control flight-template-edit-save-form__input'
+          type='text'
+          placeholder={ I18n.t('flightTemplateEdit.saveForm.templateName') }
+          value={ this.state.inputValue }
+          disabled={ this.isDisabled()   }
+          onChange={ this.handleChange.bind(this) }
+        />
+        <span className='flight-template-edit-save-form__button-container'>
+          { this.buildButton() }
+        </span>
+      </form>
+    );
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        fdrCyclo: state.fdrCyclo
-    }
+  return {
+    fdrCyclo: state.fdrCyclo
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        request: bindActionCreators(request, dispatch),
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    request: bindActionCreators(request, dispatch),
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SaveForm);

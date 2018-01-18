@@ -6,5 +6,5 @@ use Exception;
 
 class BadRequestException extends BaseException
 {
-    public $message = 'Bad input data. Received: %s';
+  public $message = 'Bad input data. Received: %s';
 }

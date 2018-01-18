@@ -8,20 +8,20 @@ const INTERACTION_URL = 'http://localhost:1337';
 const UID = uuidV4().substring(0, 18).replace(/-/g, '');
 
 export default function Wrapper () {
-    return (
-        <div className='row'>
-            <div className='col-sm-3'>
-                <VerticalToolbar
-                    interactionUrl={ INTERACTION_URL }
-                    uid={ UID }
-                />
-            </div>
-            <div className='col-sm-9'>
-                <DataContainer
-                    interactionUrl={ INTERACTION_URL }
-                    uid={ UID }
-                />
-            </div>
-        </div>
-    );
+  return (
+    <div className='row'>
+      <div className='col-sm-3'>
+        <VerticalToolbar
+          interactionUrl={ INTERACTION_URL }
+          uid={ UID }
+        />
+      </div>
+      <div className='col-sm-9'>
+        <DataContainer
+          interactionUrl={ INTERACTION_URL }
+          uid={ UID }
+        />
+      </div>
+    </div>
+  );
 }

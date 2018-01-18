@@ -8,38 +8,38 @@ import ShowChartButton from 'components/flight-templates/show-chart-button/ShowC
 import CreateButton from 'components/flight-templates/create-button/CreateButton';
 
 export default class Toolbar extends React.Component {
-    render() {
-        return (
-            <nav className="flight-templates-toolbar navbar navbar-default">
-                <div className="container-fluid">
-                    <div className="navbar-header">
-                      <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-expanded="false">
-                        <span className="sr-only">Toggle navigation</span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                      </button>
-                    </div>
+  render() {
+    return (
+      <nav className="flight-templates-toolbar navbar navbar-default">
+        <div className="container-fluid">
+          <div className="navbar-header">
+            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-expanded="false">
+            <span className="sr-only">Toggle navigation</span>
+            <span className="icon-bar"></span>
+            <span className="icon-bar"></span>
+            <span className="icon-bar"></span>
+            </button>
+          </div>
 
-                    <div className="collapse navbar-collapse" id="bs-navbar-collapse">
-                        <FlightViewOptionsSwitch
-                            view={ 'templates' }
-                            flightId={ this.props.flightId }
-                        />
-                        <FlightRangeSlider
-                            flightId={ this.props.flightId }
-                        />
+          <div className="collapse navbar-collapse" id="bs-navbar-collapse">
+            <FlightViewOptionsSwitch
+              view={ 'templates' }
+              flightId={ this.props.flightId }
+            />
+            <FlightRangeSlider
+              flightId={ this.props.flightId }
+            />
 
-                        <ShowChartButton
-                            flightId={ this.props.flightId }
-                        />
+            <ShowChartButton
+              flightId={ this.props.flightId }
+            />
 
-                        <CreateButton
-                            flightId={ this.props.flightId }
-                        />
-                    </div>
-                </div>
-            </nav>
-        );
-    }
+            <CreateButton
+              flightId={ this.props.flightId }
+            />
+          </div>
+        </div>
+      </nav>
+    );
+  }
 }

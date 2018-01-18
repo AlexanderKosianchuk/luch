@@ -15,120 +15,120 @@ import redirect from 'actions/redirect';
 import request from 'actions/request';
 
 class TopMenu extends React.Component {
-    changeLanguage(event) {
-        let language = event.target.getAttribute('data-lang');
-        this.props.changeLanguage({ language: language.toLowerCase() });
-    }
+  changeLanguage(event) {
+    let language = event.target.getAttribute('data-lang');
+    this.props.changeLanguage({ language: language.toLowerCase() });
+  }
 
-    buildLanguageMenu() {
-        return Object.keys(this.props.avaliableLanguages).map(item => {
-            item = item.toUpperCase();
-            if ((item.length === 2) // language only 2 symbol length
-                && (item !== this.props.userLang.toUpperCase())
-            ) {
-                return <li key={ item }><a href='#' onClick={ this.changeLanguage.bind(this) } data-lang={ item }>{ item }</a></li>
-            }
-        });
-    }
+  buildLanguageMenu() {
+    return Object.keys(this.props.avaliableLanguages).map(item => {
+      item = item.toUpperCase();
+      if ((item.length === 2) // language only 2 symbol length
+        && (item !== this.props.userLang.toUpperCase())
+      ) {
+        return <li key={ item }><a href='#' onClick={ this.changeLanguage.bind(this) } data-lang={ item }>{ item }</a></li>
+      }
+    });
+  }
 
-    logout() {
-        this.props.request(
-            ['users', 'logout'],
-            'post',
-            'USER_LOGOUT'
-        ).then(() => this.props.redirect('/login'));
-    }
+  logout() {
+    this.props.request(
+      ['users', 'logout'],
+      'post',
+      'USER_LOGOUT'
+    ).then(() => this.props.redirect('/login'));
+  }
 
-    render() {
-        this.languageMenu = this.buildLanguageMenu();
-        return (
-            <nav className='top-menu navbar navbar-dark'>
-              <div className='container-fluid'>
-                <div className='navbar-header'>
-                    <NavbarToggle
-                        target='#top-menu-navbar-collapse'
-                        styleClass='navbar-toggle__white'
-                    />
-                    <a className='main-menu-toggle navbar-brand is-hoverable' href='#'>
-                        <span className='main-menu-toggle top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger'></span>
-                    </a>
-                    <a className='top-menu__navbar-brand navbar-brand' href='#' onClick={ () => { this.props.redirect('/') }}>
-                        <Translate value={ 'topMenu.brand' } />
-                    </a>
-                </div>
-                <div className='collapse navbar-collapse' id='top-menu-navbar-collapse'>
-                  <ul className='nav navbar-nav'>
-                    <li className='dropdown'>
-                      <a href='#'
-                        className='realtime-calibration dropdown-toggle is-hoverable'
-                        role='button'
-                        onClick={ () => { this.props.redirect('/realtime-calibration') }}
-                      >
-                        { I18n.t('topMenu.calibrate') }
-                      </a>
-                    </li>
-                  </ul>
+  render() {
+    this.languageMenu = this.buildLanguageMenu();
+    return (
+      <nav className='top-menu navbar navbar-dark'>
+        <div className='container-fluid'>
+        <div className='navbar-header'>
+          <NavbarToggle
+            target='#top-menu-navbar-collapse'
+            styleClass='navbar-toggle__white'
+          />
+          <a className='main-menu-toggle navbar-brand is-hoverable' href='#'>
+            <span className='main-menu-toggle top-menu__main-menu-toggle glyphicon glyphicon-menu-hamburger'></span>
+          </a>
+          <a className='top-menu__navbar-brand navbar-brand' href='#' onClick={ () => { this.props.redirect('/') }}>
+            <Translate value={ 'topMenu.brand' } />
+          </a>
+        </div>
+        <div className='collapse navbar-collapse' id='top-menu-navbar-collapse'>
+          <ul className='nav navbar-nav'>
+          <li className='dropdown'>
+            <a href='#'
+            className='realtime-calibration dropdown-toggle is-hoverable'
+            role='button'
+            onClick={ () => { this.props.redirect('/realtime-calibration') }}
+            >
+            { I18n.t('topMenu.calibrate') }
+            </a>
+          </li>
+          </ul>
 
-                  <ul className='nav navbar-nav'>
-                    <li className='dropdown'>
-                      <a href='#' className='flight-importer-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
-                        { I18n.t('topMenu.fileImport') }
-                      </a>
-                      <FlightImporterDropdown/>
-                    </li>
-                  </ul>
+          <ul className='nav navbar-nav'>
+          <li className='dropdown'>
+            <a href='#' className='flight-importer-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
+            { I18n.t('topMenu.fileImport') }
+            </a>
+            <FlightImporterDropdown/>
+          </li>
+          </ul>
 
-                  <ul className='nav navbar-nav'>
-                    <li className='dropdown'>
-                      <a href='#' className='flight-uploader-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
-                        { I18n.t('topMenu.upload') }
-                      </a>
-                      <FlightUploaderDropdown/>
-                    </li>
-                  </ul>
+          <ul className='nav navbar-nav'>
+          <li className='dropdown'>
+            <a href='#' className='flight-uploader-dropdown-toggle dropdown-toggle is-hoverable' role='button'>
+            { I18n.t('topMenu.upload') }
+            </a>
+            <FlightUploaderDropdown/>
+          </li>
+          </ul>
 
-                  <ul className='nav navbar-nav'>
-                      <FlightUploadingProgressIndicator />
-                  </ul>
+          <ul className='nav navbar-nav'>
+            <FlightUploadingProgressIndicator />
+          </ul>
 
-                  <ul className='nav navbar-nav navbar-right'>
-                    <li><span>{ this.props.userLogin }</span></li>
-                    <li className='dropdown'>
-                      <a href='#' className='dropdown-toggle is-hoverable' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
-                        { this.props.userLang.toUpperCase() }
-                     </a>
-                      <ul className='top-menu__dropdown-menu top-menu__language-menu dropdown-menu'>
-                        { this.languageMenu }
-                      </ul>
-                    </li>
-                    <li><a className='is-hoverable' onClick={ () => { this.props.redirect('/user-settings') }} href='#'>
-                        <span className='glyphicon glyphicon-cog'></span>
-                    </a></li>
-                    <li><a className='is-hoverable' onClick={ this.logout.bind(this) } href='#'>
-                        <span className='glyphicon glyphicon-log-out'></span>
-                    </a></li>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-        );
-    }
+          <ul className='nav navbar-nav navbar-right'>
+          <li><span>{ this.props.userLogin }</span></li>
+          <li className='dropdown'>
+            <a href='#' className='dropdown-toggle is-hoverable' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+            { this.props.userLang.toUpperCase() }
+           </a>
+            <ul className='top-menu__dropdown-menu top-menu__language-menu dropdown-menu'>
+            { this.languageMenu }
+            </ul>
+          </li>
+          <li><a className='is-hoverable' onClick={ () => { this.props.redirect('/user-settings') }} href='#'>
+            <span className='glyphicon glyphicon-cog'></span>
+          </a></li>
+          <li><a className='is-hoverable' onClick={ this.logout.bind(this) } href='#'>
+            <span className='glyphicon glyphicon-log-out'></span>
+          </a></li>
+          </ul>
+        </div>
+        </div>
+      </nav>
+    );
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        userLogin: state.user.login,
-        userLang: state.user.lang,
-        avaliableLanguages: state.i18n.translations
-    };
+  return {
+    userLogin: state.user.login,
+    userLang: state.user.lang,
+    avaliableLanguages: state.i18n.translations
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        request: bindActionCreators(request, dispatch),
-        changeLanguage: bindActionCreators(changeLanguage, dispatch),
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    request: bindActionCreators(request, dispatch),
+    changeLanguage: bindActionCreators(changeLanguage, dispatch),
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopMenu);

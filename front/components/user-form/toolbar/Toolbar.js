@@ -11,39 +11,39 @@ import ControlButtons from 'components/user-form/control-buttons/ControlButtons'
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
-    handleListClick() {
-        this.props.redirect('/users');
-    }
+  handleListClick() {
+    this.props.redirect('/users');
+  }
 
-    render() {
-        return (
-            <nav className='navbar navbar-default'>
-                <div className='container-fluid'>
-                    <div className='navbar-header'>
-                      <NavbarToggle/>
-                      <a className='navbar-brand' href='#'>
-                        { I18n.t('userForm.toolbar.' + this.props.type) }
-                      </a>
-                    </div>
+  render() {
+    return (
+      <nav className='navbar navbar-default'>
+        <div className='container-fluid'>
+          <div className='navbar-header'>
+            <NavbarToggle/>
+            <a className='navbar-brand' href='#'>
+            { I18n.t('userForm.toolbar.' + this.props.type) }
+            </a>
+          </div>
 
-                    <ControlButtons
-                        handleSaveClick={ this.props.submit }
-                        handleListClick={ this.handleListClick.bind(this) }
-                    />
-                </div>
-            </nav>
-        );
-    }
+          <ControlButtons
+            handleSaveClick={ this.props.submit }
+            handleListClick={ this.handleListClick.bind(this) }
+          />
+        </div>
+      </nav>
+    );
+  }
 }
 
 function mapStateToProps() {
-    return {};
+  return {};
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

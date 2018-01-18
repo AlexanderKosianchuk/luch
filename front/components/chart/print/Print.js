@@ -8,47 +8,47 @@ import { Translate } from 'react-redux-i18n';
 import flightDataTablePrint from 'actions/particular/flightDataTablePrint';
 
 class Print extends React.Component {
-    handleClick(event) {
-        this.props.flightDataTablePrint({
-            flightId: this.props.flightId,
-            startFrame: this.props.startFrame,
-            endFrame: this.props.endFrame,
-            analogParams: this.props.template.ap || [],
-            binaryParams: this.props.template.bp || [],
-        });
+  handleClick(event) {
+    this.props.flightDataTablePrint({
+      flightId: this.props.flightId,
+      startFrame: this.props.startFrame,
+      endFrame: this.props.endFrame,
+      analogParams: this.props.template.ap || [],
+      binaryParams: this.props.template.bp || [],
+    });
+  }
+
+  render() {
+    let modifyer = '';
+    if (this.props.startFrame === this.props.endFrame) {
+      modifyer = 'is-disabled';
     }
 
-    render() {
-        let modifyer = '';
-        if (this.props.startFrame === this.props.endFrame) {
-            modifyer = 'is-disabled';
-        }
-
-        return (
-            <ul className={ 'chart-print nav navbar-nav navbar-right ' + modifyer }>
-                <li><a href='#' onClick={ this.handleClick.bind(this) }>
-                    <span
-                      className='glyphicon glyphicon-print'
-                      aria-hidden='true'>
-                    </span>
-                </a></li>
-            </ul>
-        );
-    }
+    return (
+      <ul className={ 'chart-print nav navbar-nav navbar-right ' + modifyer }>
+        <li><a href='#' onClick={ this.handleClick.bind(this) }>
+          <span
+            className='glyphicon glyphicon-print'
+            aria-hidden='true'>
+          </span>
+        </a></li>
+      </ul>
+    );
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        startFrame: state.flight.selectedStartFrame,
-        endFrame: state.flight.selectedEndFrame,
-        template: state.template || { ap: null, bp: null }
-    };
+  return {
+    startFrame: state.flight.selectedStartFrame,
+    endFrame: state.flight.selectedEndFrame,
+    template: state.template || { ap: null, bp: null }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        flightDataTablePrint: bindActionCreators(flightDataTablePrint, dispatch)
-    };
+  return {
+    flightDataTablePrint: bindActionCreators(flightDataTablePrint, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Print);

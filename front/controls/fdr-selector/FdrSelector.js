@@ -13,130 +13,130 @@ import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class FdrSelector extends Component {
-    componentWillMount() {
-        if ((typeof this.props.methodHandler === 'object')
-            && (this.props.methodHandler.getSelectedFdrId === null)
-        ) {
-            this.props.methodHandler.getSelectedFdrId = this.getSelectedId.bind(this);
-        }
+  componentWillMount() {
+    if ((typeof this.props.methodHandler === 'object')
+      && (this.props.methodHandler.getSelectedFdrId === null)
+    ) {
+      this.props.methodHandler.getSelectedFdrId = this.getSelectedId.bind(this);
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.pending === null) {
+      this.props.request(
+        ['fdr', 'getFdrs'],
+        'get',
+        'FDRS'
+      );
+    }
+  }
+
+  buildList() {
+    if (!this.props.fdrs || this.props.fdrs.length === 0) {
+      return [];
     }
 
-    componentDidMount() {
-        if (this.props.pending === null) {
-            this.props.request(
-                ['fdr', 'getFdrs'],
-                'get',
-                'FDRS'
-            );
-        }
+    return this.props.fdrs.map((item) => {
+      return {
+        text: item.name,
+        id: item.id
+      };
+    });
+  }
+
+  handleSelect() {
+    if (!this.selectFdrType.el[0]) {
+      return;
     }
 
-    buildList() {
-        if (!this.props.fdrs || this.props.fdrs.length === 0) {
-            return [];
-        }
+    let el = this.selectFdrType.el[0];
+    let val = parseInt(el.options[el.selectedIndex].value);
 
-        return this.props.fdrs.map((item) => {
-            return {
-                text: item.name,
-                id: item.id
-            };
-        });
+    let index = this.props.fdrs.findIndex((item) => {
+      return item.id === val;
+    });
+
+    if (index === -1) {
+      return;
     }
 
-    handleSelect() {
-        if (!this.selectFdrType.el[0]) {
-            return;
-        }
+    let chosen = this.props.fdrs[index];
 
-        let el = this.selectFdrType.el[0];
-        let val = parseInt(el.options[el.selectedIndex].value);
-
-        let index = this.props.fdrs.findIndex((item) => {
-            return item.id === val;
-        });
-
-        if (index === -1) {
-            return;
-        }
-
-        let chosen = this.props.fdrs[index];
-
-        if (typeof this.props.handleChange === 'function') {
-            this.props.handleChange(chosen);
-            return;
-        }
-
-        this.props.transmit('CHOOSE_FDR', chosen);
+    if (typeof this.props.handleChange === 'function') {
+      this.props.handleChange(chosen);
+      return;
     }
 
-    getSelectedId() {
-        return this.props.chosen.id;
+    this.props.transmit('CHOOSE_FDR', chosen);
+  }
+
+  getSelectedId() {
+    return this.props.chosen.id;
+  }
+
+  render() {
+    let isHidden = true;
+
+    if (this.props.fdrs
+      && (this.props.fdrs.length > 0)
+      && (this.props.chosen)
+    ) {
+      isHidden = false;
     }
 
-    render() {
-        let isHidden = true;
-
-        if (this.props.fdrs
-            && (this.props.fdrs.length > 0)
-            && (this.props.chosen)
-        ) {
-            isHidden = false;
-        }
-
-        let chosen = this.props.chosenFdrId || this.props.chosen.id || null;
-        let allowClear = false;
-        if (this.props.isClear) {
-            chosen = null;
-            allowClear = true;
-        }
-
-        return (
-          <li className={ 'fdr-selector ' + (isHidden ? 'is-hidden' : '') }>
-              <a href='#'><Select
-                  className='fdr-selector__select'
-                  data={ this.buildList() }
-                  value={ chosen }
-                  onSelect={ this.handleSelect.bind(this) }
-                  ref={(select) => { this.selectFdrType = select; }}
-                  options={{
-                      placeholder: I18n.t('fdrSelector.placeholder'),
-                      allowClear: allowClear
-                  }}
-                />
-              </a>
-          </li>
-        );
+    let chosen = this.props.chosenFdrId || this.props.chosen.id || null;
+    let allowClear = false;
+    if (this.props.isClear) {
+      chosen = null;
+      allowClear = true;
     }
+
+    return (
+      <li className={ 'fdr-selector ' + (isHidden ? 'is-hidden' : '') }>
+        <a href='#'><Select
+          className='fdr-selector__select'
+          data={ this.buildList() }
+          value={ chosen }
+          onSelect={ this.handleSelect.bind(this) }
+          ref={(select) => { this.selectFdrType = select; }}
+          options={{
+            placeholder: I18n.t('fdrSelector.placeholder'),
+            allowClear: allowClear
+          }}
+        />
+        </a>
+      </li>
+    );
+  }
 }
 
 FdrSelector.propTypes = {
-    isClear: PropTypes.bool,
-    chosenFdrId: PropTypes.number,
-    handleChange: PropTypes.func,
-    methodHandler: PropTypes.object,
+  isClear: PropTypes.bool,
+  chosenFdrId: PropTypes.number,
+  handleChange: PropTypes.func,
+  methodHandler: PropTypes.object,
 
-    pending:  PropTypes.bool,
-    fdrs: PropTypes.array,
-    chosen: PropTypes.object,
+  pending:  PropTypes.bool,
+  fdrs: PropTypes.array,
+  chosen: PropTypes.object,
 
-    request: PropTypes.func,
-    transmit: PropTypes.func
+  request: PropTypes.func,
+  transmit: PropTypes.func
 };
 
 function mapStateToProps(state) {
-    return {
-        pending: state.fdrs.pending,
-        fdrs: state.fdrs.items,
-        chosen: state.fdrs.chosen
-    }
+  return {
+    pending: state.fdrs.pending,
+    fdrs: state.fdrs.items,
+    chosen: state.fdrs.chosen
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        request: bindActionCreators(request, dispatch),
-        transmit: bindActionCreators(transmit, dispatch),
-    }
+  return {
+    request: bindActionCreators(request, dispatch),
+    transmit: bindActionCreators(transmit, dispatch),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FdrSelector);

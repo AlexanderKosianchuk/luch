@@ -10,29 +10,29 @@ import SettlementFilter from 'components/results/settlements-filter/SettlementFi
 import SettlementsReport from 'components/results/settlements-report/SettlementsReport';
 
 export default class Results extends React.Component {
-    render() {
-        return (
-            <div>
-                <Menu />
-                <div className="results container-fluid">
-                    <div className="row">
-                        <div className="col-sm-12">
-                            <Toolbar/>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-sm-3">
-                            <FlightFilter/>
-                        </div>
-                        <div className="col-sm-3">
-                            <SettlementFilter/>
-                        </div>
-                        <div className="col-sm-6">
-                            <SettlementsReport/>
-                        </div>
-                    </div>
-                </div>
+  render() {
+    return (
+      <div>
+        <Menu />
+        <div className="results container-fluid">
+          <div className="row">
+            <div className="col-sm-12">
+              <Toolbar/>
             </div>
-        );
-    }
+          </div>
+          <div className="row">
+            <div className="col-sm-3">
+              <FlightFilter/>
+            </div>
+            <div className="col-sm-3">
+              <SettlementFilter/>
+            </div>
+            <div className="col-sm-6">
+              <SettlementsReport/>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }

@@ -9,27 +9,27 @@ import Table from 'components/calibrations/table/Table';
 import { DEFAULT_PAGE_SIZE } from 'controls/table/Table';
 
 function Calibrations (props) {
-    return (
-        <div>
-            <Menu />
-            <Toolbar
-                fdrId={ props.fdrId }
-            />
-            <Table
-                fdrId={ props.fdrId }
-                page={ props.page }
-                pageSize={ props.pageSize }
-            />
-        </div>
-    );
+  return (
+    <div>
+      <Menu />
+      <Toolbar
+        fdrId={ props.fdrId }
+      />
+      <Table
+        fdrId={ props.fdrId }
+        page={ props.page }
+        pageSize={ props.pageSize }
+      />
+    </div>
+  );
 }
 
 function mapStateToProps(state, ownProps) {
-    return {
-        fdrId: parseInt(ownProps.match.params.fdrId) || null,
-        page: parseInt(ownProps.match.params.page) || 1,
-        pageSize: parseInt(ownProps.match.params.pageSize) || DEFAULT_PAGE_SIZE
-    };
+  return {
+    fdrId: parseInt(ownProps.match.params.fdrId) || null,
+    page: parseInt(ownProps.match.params.page) || 1,
+    pageSize: parseInt(ownProps.match.params.pageSize) || DEFAULT_PAGE_SIZE
+  };
 }
 
 export default connect(mapStateToProps, () => { return {} })(Calibrations);

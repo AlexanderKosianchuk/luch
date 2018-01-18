@@ -9,19 +9,19 @@ use Exception;
 
 class FdrToUserRepository extends EntityRepository
 {
-    public function getAvaliableFdrs($userId)
-    {
-        $fdrsToUser = $this->findBy(['userId' => $userId]);
-        $fdrs = [];
+  public function getAvaliableFdrs($userId)
+  {
+    $fdrsToUser = $this->findBy(['userId' => $userId]);
+    $fdrs = [];
 
-        $ids = [];
-        foreach ($fdrsToUser as $item) {
-            if (!in_array($item->getFdrId(), $ids)) {
-                $fdrs[] = $item->getFdr();
-                $ids[] = $item->getFdrId();
-            }
-        }
-
-        return $fdrs;
+    $ids = [];
+    foreach ($fdrsToUser as $item) {
+      if (!in_array($item->getFdrId(), $ids)) {
+        $fdrs[] = $item->getFdr();
+        $ids[] = $item->getFdrId();
+      }
     }
+
+    return $fdrs;
+  }
 }

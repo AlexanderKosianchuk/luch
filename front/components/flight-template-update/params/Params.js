@@ -9,73 +9,73 @@ import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class Params extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            isReady: false
+    this.state = {
+      isReady: false
+    }
+
+    this.templateAnalogParams = [];
+    this.templateBinaryParams = [];
+  }
+
+  componentWillMount() {
+    this.props.request(
+      ['templates', 'getTemplate'],
+      'get',
+      'TEMPLATE',
+      {
+        flightId: this.props.flightId,
+        templateName: this.props.templateName
+      }
+    ).then((responce) => {
+      this.templateAnalogParams = responce.ap || [];
+      this.templateBinaryParams = responce.bp || [];
+      this.props.transmit(
+        'SET_CHECKED_FLIGHT_PARAMS',
+        {
+          ap: this.templateAnalogParams,
+          bp: this.templateBinaryParams
         }
+      );
+      this.setState({isReady: true})
+    });
+  }
 
-        this.templateAnalogParams = [];
-        this.templateBinaryParams = [];
+  buildBody() {
+    if (this.state.isReady === true) {
+      return <CycloParams
+        flightId={ this.props.flightId }
+        colorPickerEnabled={ false }
+        checkedAnalogParams={ this.templateAnalogParams }
+        checkedBinaryParams={ this.templateBinaryParams }
+      />;
+    } else {
+      return <ContentLoader/>;
     }
+  }
 
-    componentWillMount() {
-        this.props.request(
-            ['templates', 'getTemplate'],
-            'get',
-            'TEMPLATE',
-            {
-                flightId: this.props.flightId,
-                templateName: this.props.templateName
-            }
-        ).then((responce) => {
-            this.templateAnalogParams = responce.ap || [];
-            this.templateBinaryParams = responce.bp || [];
-            this.props.transmit(
-                'SET_CHECKED_FLIGHT_PARAMS',
-                {
-                    ap: this.templateAnalogParams,
-                    bp: this.templateBinaryParams
-                }
-            );
-            this.setState({isReady: true})
-        });
-    }
-
-    buildBody() {
-        if (this.state.isReady === true) {
-            return <CycloParams
-                flightId={ this.props.flightId }
-                colorPickerEnabled={ false }
-                checkedAnalogParams={ this.templateAnalogParams }
-                checkedBinaryParams={ this.templateBinaryParams }
-            />;
-        } else {
-            return <ContentLoader/>;
-        }
-    }
-
-    render () {
-        return (
-            <div>
-                { this.buildBody() }
-            </div>
-        );
-    }
+  render () {
+    return (
+      <div>
+        { this.buildBody() }
+      </div>
+    );
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        pending: state.flightTemplates.pending
-    };
+  return {
+    pending: state.flightTemplates.pending
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        request: bindActionCreators(request, dispatch),
-        transmit: bindActionCreators(transmit, dispatch)
-    }
+  return {
+    request: bindActionCreators(request, dispatch),
+    transmit: bindActionCreators(transmit, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Params);

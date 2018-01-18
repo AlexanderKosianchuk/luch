@@ -6,5 +6,5 @@ use Exception;
 
 class UnknownActionException extends BaseException
 {
-    public $message = 'Unknown action: %s';
+  public $message = 'Unknown action: %s';
 }

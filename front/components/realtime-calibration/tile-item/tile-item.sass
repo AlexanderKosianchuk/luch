@@ -1,72 +1,72 @@
 .realtime-calibration-tile-item
-    height: 85px
-    display: inline-block
+  height: 85px
+  display: inline-block
+  width: 100%
+  padding: 2px
+  margin: 2px
+  color: #333
+  user-select: none
+  border: 1px solid #efefef
+  border-radius: 2px
+  background: #ffffff
+  background: linear-gradient(to bottom, #ffffff 0%,#f3f3f3 50%,#ededed 51%,#ffffff 100%)
+
+  @media screen and (min-width: 480px)
+    width: calc(50% - 4px)
+
+  @media screen and (min-width:  768px)
+    width: calc(33% - 6px)
+
+  @media screen and (min-width:  992px)
+    width: calc(25% - 8px)
+
+  @media screen and (min-width:  1200px)
+    width: calc(20% - 10px)
+
+  & &__box
+    height: 100%
     width: 100%
+
+  &.is-chosen
+    color: #fff
+    background: #063a5c
+    border: 1px solid #555
+    animation-name: chooseParamAnimation
+    animation-duration: 0.5s
+
+  & &__colorbox
+    width: 6px
+    height: 80px
     padding: 2px
-    margin: 2px
-    color: #333
-    user-select: none
-    border: 1px solid #efefef
-    border-radius: 2px
-    background: #ffffff
-    background: linear-gradient(to bottom, #ffffff 0%,#f3f3f3 50%,#ededed 51%,#ffffff 100%)
+    float: left
+    cursor: pointer
 
-    @media screen and (min-width: 480px)
-        width: calc(50% - 4px)
+  & &__label
+    width: calc(100% - 6px)
+    height: 49px
+    padding: 2px
+    float: left
 
-    @media screen and (min-width:  768px)
-        width: calc(33% - 6px)
+  & &__code
+    height: 19px
+    padding: 2px
+    text-overflow: ellipsis
+    overflow: hidden
+    font-weight: bold
 
-    @media screen and (min-width:  992px)
-        width: calc(25% - 8px)
+  & &__name
+    height: 30px
+    padding: 2px
+    text-overflow: ellipsis
+    overflow: hidden
+    font-size: 10px
+    line-height: 9px
 
-    @media screen and (min-width:  1200px)
-        width: calc(20% - 10px)
-
-    & &__box
-        height: 100%
-        width: 100%
-
-    &.is-chosen
-        color: #fff
-        background: #063a5c
-        border: 1px solid #555
-        animation-name: chooseParamAnimation
-        animation-duration: 0.5s
-
-    & &__colorbox
-        width: 6px
-        height: 80px
-        padding: 2px
-        float: left
-        cursor: pointer
-
-    & &__label
-        width: calc(100% - 6px)
-        height: 49px
-        padding: 2px
-        float: left
-
-    & &__code
-        height: 19px
-        padding: 2px
-        text-overflow: ellipsis
-        overflow: hidden
-        font-weight: bold
-
-    & &__name
-        height: 30px
-        padding: 2px
-        text-overflow: ellipsis
-        overflow: hidden
-        font-size: 10px
-        line-height: 9px
-
-    & &__value
-        height: 30px
-        padding: 2px
-        text-overflow: ellipsis
-        overflow: hidden
-        font-size: 26px
-        font-weight: bold
-        line-height: 24px
+  & &__value
+    height: 30px
+    padding: 2px
+    text-overflow: ellipsis
+    overflow: hidden
+    font-size: 26px
+    font-weight: bold
+    line-height: 24px

@@ -7,13 +7,12 @@ import facade from 'facade';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { AppContainer } from 'react-hot-loader';
+
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
 import { setLocale, loadTranslations } from 'react-redux-i18n';
 
-import App from 'containers/App'
+import Root from 'containers/Root'
 
 import configureStore from 'store/configureStore';
 
@@ -21,42 +20,47 @@ import translationsEn from 'translations/translationsEn';
 import translationsEs from 'translations/translationsEs';
 import translationsRu from 'translations/translationsRu';
 
-const translationsObject = {...translationsEn, ...translationsEs, ...translationsRu};
 const history = createBrowserHistory({ queryKey: false });
 const routerMiddlewareInstance = routerMiddleware(history);
 const store = configureStore({}, routerMiddlewareInstance);
+const translationsObject = {...translationsEn, ...translationsEs, ...translationsRu};
 
 store.dispatch(loadTranslations(translationsObject));
-store.dispatch(setLocale('ru'));
 
 facade(store);
 
-if (($('html').attr('login') !== '')
-    && ($('html').attr('lang') !== '')
-) {
-    let login = $('html').attr('login');
-    let role = $('html').attr('role');
-    let lang = $('html').attr('lang');
-    store.dispatch({
-        type: 'USER_LOGGED_IN',
-        payload: {
-            login: login,
-            role: role,
-            lang: lang
-        }
-    });
-    store.dispatch(setLocale(lang.toLowerCase()));
+const html = document.getElementsByTagName('HTML')[0];
+const login = html.getAttribute('login');
+const role = html.getAttribute('role');
+const lang = html.getAttribute('lang');
+
+if ((login !== '') && (role !== '') && (lang !== '')) {
+  store.dispatch({
+    type: 'USER_LOGGED_IN',
+    payload: {
+      login: login,
+      role: role,
+      lang: lang
+    }
+  });
+
+  store.dispatch(setLocale(lang.toLowerCase()));
+} else {
+  store.dispatch(setLocale('ru'));
 }
 
-const render = () => {
-    ReactDOM.render(
-        <AppContainer>
-            <Provider store={ store }>
-                <App history={ history } />
-            </Provider>
-        </AppContainer>,
-        document.getElementById('root')
-    );
+const config = document.getElementsByClassName('config')[0];
+
+if (config.innerHTML !== '') {
+  store.dispatch({
+    type: 'APP_CONFIG_SET',
+    payload: {
+      config: JSON.parse(config.innerHTML)
+    }
+  });
 }
 
-render();
+ReactDOM.render(
+  <Root store={ store } history={ history } />,
+  document.getElementById('root')
+);

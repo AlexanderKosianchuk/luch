@@ -4,59 +4,59 @@ import React from 'react';
 import Guid from 'guid';
 
 export default function Dialog (props) {
-    let id = "dialog-" + Guid.create();
+  let id = "dialog-" + Guid.create();
 
-    if (props.hasOwnProperty('id')) {
-        id = props.id;
+  if (props.hasOwnProperty('id')) {
+    id = props.id;
+  }
+
+  function buildBody() {
+    if (props.isShown) {
+      return props.buildBody();
     }
 
-    function buildBody() {
-        if (props.isShown) {
-            return props.buildBody();
-        }
+    return null;
+  }
 
-        return null;
+  function buildTitle() {
+    if (props.isShown) {
+      return props.buildTitle();
     }
 
-    function buildTitle() {
-        if (props.isShown) {
-            return props.buildTitle();
-        }
+    return null;
+  }
 
-        return null;
+  function buildFooter() {
+    if (props.isShown) {
+      return props.buildFooter();
     }
 
-    function buildFooter() {
-        if (props.isShown) {
-            return props.buildFooter();
-        }
+    return null;
+  }
 
-        return null;
-    }
-
-    return (
-        <div id={ id }  className={ "dialog modal " + (props.isShown ? 'is-shown' : '') } role="dialog">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    onClick={ props.handleClose }
-                >
-                    &times;
-                </button>
-                <h4 className="modal-title">{ buildTitle() }</h4>
-              </div>
-              <div className="modal-body">
-                { buildBody() }
-              </div>
-              <div className="modal-footer">
-                { buildFooter() }
-              </div>
-            </div>
-          </div>
+  return (
+    <div id={ id }  className={ "dialog modal " + (props.isShown ? 'is-shown' : '') } role="dialog">
+      <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+        <button
+          type="button"
+          className="close"
+          data-dismiss="modal"
+          onClick={ props.handleClose }
+        >
+          &times;
+        </button>
+        <h4 className="modal-title">{ buildTitle() }</h4>
         </div>
-    );
+        <div className="modal-body">
+        { buildBody() }
+        </div>
+        <div className="modal-footer">
+        { buildFooter() }
+        </div>
+      </div>
+      </div>
+    </div>
+  );
 }

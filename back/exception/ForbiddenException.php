@@ -6,5 +6,5 @@ use Exception;
 
 class ForbiddenException extends BaseException
 {
-    public $message = 'Prohibited action. Details: %s';
+  public $message = 'Prohibited action. Details: %s';
 }

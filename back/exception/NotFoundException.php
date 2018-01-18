@@ -6,5 +6,5 @@ use Exception;
 
 class NotFoundException extends BaseException
 {
-    public $message = 'Requested data not found. Details: %s';
+  public $message = 'Requested data not found. Details: %s';
 }

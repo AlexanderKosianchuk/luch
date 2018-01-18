@@ -1,6 +1,6 @@
 {
     "name": "AT/luche",
-    "description": "Flight data processor.",
+    "description": "Flight data processor",
     "type": "project",
     "license": "MIT",
     "authors": [

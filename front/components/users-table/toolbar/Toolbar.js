@@ -11,38 +11,38 @@ import CreateUserButton from 'components/users-table/create-user-button/CreateUs
 import redirect from 'actions/redirect';
 
 class Toolbar extends Component {
-    handleClick() {
-        this.props.redirect('/user/create');
-    }
+  handleClick() {
+    this.props.redirect('/user/create');
+  }
 
-    render() {
-        return (
-            <nav className='users-table-toolbar navbar navbar-default'>
-                <div className='container-fluid'>
-                    <div className='navbar-header'>
-                      <NavbarToggle/>
-                      <a className='navbar-brand' href='#'><Translate value='usersTable.toolbar.list' /></a>
-                    </div>
+  render() {
+    return (
+      <nav className='users-table-toolbar navbar navbar-default'>
+        <div className='container-fluid'>
+          <div className='navbar-header'>
+            <NavbarToggle/>
+            <a className='navbar-brand' href='#'><Translate value='usersTable.toolbar.list' /></a>
+          </div>
 
-                    <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
-                      <CreateUserButton
-                        handleClick={ this.handleClick.bind(this) }
-                      />
-                    </div>
-                </div>
-            </nav>
-        );
-    }
+          <div className='collapse navbar-collapse' id='bs-navbar-collapse'>
+            <CreateUserButton
+            handleClick={ this.handleClick.bind(this) }
+            />
+          </div>
+        </div>
+      </nav>
+    );
+  }
 }
 
 function mapStateToProps() {
-    return {};
+  return {};
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

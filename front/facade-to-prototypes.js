@@ -18,59 +18,59 @@ import { push } from 'react-router-redux'
 import startFlightUploading from 'actions/particular/startFlightUploading';
 
 export default function facade(store) {
-    $(document).on('importItem', function (e, form) {
-        let dfd = $.Deferred();
-        let FU = new FlightUploader(store);
-        FU.Import(form, dfd);
-        dfd.promise();
+  $(document).on('importItem', function (e, form) {
+    let dfd = $.Deferred();
+    let FU = new FlightUploader(store);
+    FU.Import(form, dfd);
+    dfd.promise();
 
-        dfd.then(() => {
-            // TODO add item to redux flightsList
-        });
+    dfd.then(() => {
+      // TODO add item to redux flightsList
     });
+  });
 
-    $(document).on('uploadWithPreview', function (e, showcase, uploadingUid, fdrId, calibrationId) {
-        let FU = new FlightUploader(store);
-        FU.FillFactoryContaider(showcase, uploadingUid, fdrId, calibrationId);
-    });
+  $(document).on('uploadWithPreview', function (e, showcase, uploadingUid, fdrId, calibrationId) {
+    let FU = new FlightUploader(store);
+    FU.FillFactoryContaider(showcase, uploadingUid, fdrId, calibrationId);
+  });
 
-    $(document).on('startProccessing', function (e, uploadingUid) {
-        store.dispatch(startFlightUploading({
-            uploadingUid: uploadingUid
-        }));
-    });
+  $(document).on('startProccessing', function (e, uploadingUid) {
+    store.dispatch(startFlightUploading({
+      uploadingUid: uploadingUid
+    }));
+  });
 
-    $(document).on('endProccessing', function (e, uploadingUid, item) {
-        store.dispatch({
-            type: 'FLIGHT_UPLOADING_COMPLETE',
-            payload: {
-                uploadingUid: uploadingUid,
-                item: item
-            }
-        });
+  $(document).on('endProccessing', function (e, uploadingUid, item) {
+    store.dispatch({
+      type: 'FLIGHT_UPLOADING_COMPLETE',
+      payload: {
+        uploadingUid: uploadingUid,
+        item: item
+      }
     });
+  });
 
-    $(document).on('chartShow', function (
-        e, showcase,
-        flightId, tplName,
-        stepLength, startCopyTime,
-        startFrame, endFrame,
-        apParams, bpParams
-    ) {
-        var C = new ChartService(store);
-        C.SetChartData(
-            flightId, tplName,
-            stepLength, startCopyTime,
-            startFrame, endFrame,
-            apParams, bpParams
-        );
-        C.FillFactoryContaider(showcase);
-    });
+  $(document).on('chartShow', function (
+    e, showcase,
+    flightId, tplName,
+    stepLength, startCopyTime,
+    startFrame, endFrame,
+    apParams, bpParams
+  ) {
+    var C = new ChartService();
+    C.SetChartData(
+      flightId, tplName,
+      stepLength, startCopyTime,
+      startFrame, endFrame,
+      apParams, bpParams
+    );
+    C.FillFactoryContaider(showcase);
+  });
 
-    $(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {
-        let FU = new FlightUploader(store);
-        FU.uploadPreviewed().then(() => {
-            store.dispatch(push('/'));
-        });
+  $(document).on('uploadPreviewedFlight', function(uploadingUid, fdrId, calibrationId) {
+    let FU = new FlightUploader(store);
+    FU.uploadPreviewed().then(() => {
+      store.dispatch(push('/'));
     });
+  });
 }

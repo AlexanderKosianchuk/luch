@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import { i18nReducer } from 'react-redux-i18n';
 
+import appConfig from 'reducers/appConfig';
 import flightFilter from 'reducers/flightFilter';
 import settlementFilter from 'reducers/settlementFilter';
 import settlementsReport from 'reducers/settlementsReport';
@@ -24,37 +25,38 @@ import userReducer from 'reducers/userReducer';
 import users from 'reducers/users';
 
 const appReducer = combineReducers({
-    fdrs,
-    flight,
-    flights,
-    folders,
-    fdrCyclo,
-    calibration,
-    calibrations,
-    flightUploadingState,
-    realtimeCalibrationData,
-    realtimeCalibrationParams,
-    webSockets,
-    flightFilter,
-    template,
-    flightTemplates,
-    flightEvents,
-    settlementFilter,
-    settlementsReport,
-    settings,
-    router: routerReducer,
-    i18n: i18nReducer,
-    user: userReducer,
-    users: users
+  appConfig,
+  fdrs,
+  flight,
+  flights,
+  folders,
+  fdrCyclo,
+  calibration,
+  calibrations,
+  flightUploadingState,
+  realtimeCalibrationData,
+  realtimeCalibrationParams,
+  webSockets,
+  flightFilter,
+  template,
+  flightTemplates,
+  flightEvents,
+  settlementFilter,
+  settlementsReport,
+  settings,
+  router: routerReducer,
+  i18n: i18nReducer,
+  user: userReducer,
+  users: users
 });
 
 const rootReducer = (state, action) => {
-    if (action.type === 'POST_USER_LOGOUT_COMPLETE') {
-        const { i18n, router } = state;
-        state = { i18n, router };
-    }
+  if (action.type === 'POST_USER_LOGOUT_COMPLETE') {
+    const { i18n, router } = state;
+    state = { i18n, router };
+  }
 
-    return appReducer(state, action)
+  return appReducer(state, action)
 };
 
 

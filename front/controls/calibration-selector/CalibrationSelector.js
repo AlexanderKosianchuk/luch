@@ -12,111 +12,111 @@ import request from 'actions/request';
 import transmit from 'actions/transmit';
 
 class CalibrationSelector extends Component {
-    componentWillMount() {
-        if ((typeof this.props.methodHandler === 'object')
-            && (this.props.methodHandler.getSelectedCalibrationId === null)
-        ) {
-            this.props.methodHandler.getSelectedCalibrationId = this.getSelectedId.bind(this);
-        }
+  componentWillMount() {
+    if ((typeof this.props.methodHandler === 'object')
+      && (this.props.methodHandler.getSelectedCalibrationId === null)
+    ) {
+      this.props.methodHandler.getSelectedCalibrationId = this.getSelectedId.bind(this);
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.pending === null) {
+      this.props.request(
+        ['calibration', 'getCalibrationsList'],
+        'get',
+        'CALIBRATIONS'
+      );
+    }
+  }
+
+  buildList(calibrationList) {
+    if (!this.props.calibrations || this.props.calibrations.length === 0) {
+      return [];
     }
 
-    componentDidMount() {
-        if (this.props.pending === null) {
-            this.props.request(
-                ['calibration', 'getCalibrationsList'],
-                'get',
-                'CALIBRATIONS'
-            );
-        }
+    return this.props.calibrations.map((item) => {
+      return {
+        text: item.name,
+        id: item.id
+      };
+    });
+  }
+
+  handleSelect() {
+    if (!this.selectedCalibration.el[0]) {
+      return;
     }
 
-    buildList(calibrationList) {
-        if (!this.props.calibrations || this.props.calibrations.length === 0) {
-            return [];
-        }
+    let el = this.selectedCalibration.el[0];
+    let val = parseInt(el.options[el.selectedIndex].value);
 
-        return this.props.calibrations.map((item) => {
-            return {
-                text: item.name,
-                id: item.id
-            };
-        });
+    let index = this.props.calibrations.findIndex((item) => {
+      return item.id === val;
+    });
+
+    if (index === -1) {
+      return;
     }
 
-    handleSelect() {
-        if (!this.selectedCalibration.el[0]) {
-            return;
-        }
+    let chosen = this.props.calibrations[index];
+    this.props.transmit('CHOOSE_CALIBRATION', chosen);
+  }
 
-        let el = this.selectedCalibration.el[0];
-        let val = parseInt(el.options[el.selectedIndex].value);
+  getSelectedId() {
+    return this.props.chosen.id;
+  }
 
-        let index = this.props.calibrations.findIndex((item) => {
-            return item.id === val;
-        });
+  render() {
+    let isHidden = true;
 
-        if (index === -1) {
-            return;
-        }
-
-        let chosen = this.props.calibrations[index];
-        this.props.transmit('CHOOSE_CALIBRATION', chosen);
+    if (this.props.calibrations
+      && (this.props.calibrations.length > 0)
+      && (this.props.chosen)
+    ) {
+      isHidden = false;
     }
 
-    getSelectedId() {
-        return this.props.chosen.id;
-    }
-
-    render() {
-        let isHidden = true;
-
-        if (this.props.calibrations
-            && (this.props.calibrations.length > 0)
-            && (this.props.chosen)
-        ) {
-            isHidden = false;
-        }
-
-        return (
-          <li className={ "calibration-selector " + (isHidden ? 'is-hidden' : '') }>
-              <a href="#"><Select
-                  data={ this.buildList(this.props.calibrations) }
-                  value={ this.props.chosen.id || null }
-                  onSelect={ this.handleSelect.bind(this) }
-                  ref={(select) => { this.selectedCalibration = select; }}
-                />
-              </a>
-          </li>
-        );
-    }
+    return (
+      <li className={ "calibration-selector " + (isHidden ? 'is-hidden' : '') }>
+        <a href="#"><Select
+          data={ this.buildList(this.props.calibrations) }
+          value={ this.props.chosen.id || null }
+          onSelect={ this.handleSelect.bind(this) }
+          ref={(select) => { this.selectedCalibration = select; }}
+        />
+        </a>
+      </li>
+    );
+  }
 }
 
 
 CalibrationSelector.propTypes = {
-    handleReady: PropTypes.func,
-    methodHandler: PropTypes.object,
+  handleReady: PropTypes.func,
+  methodHandler: PropTypes.object,
 
-    pending:  PropTypes.bool,
-    calibrations: PropTypes.array,
-    chosen: PropTypes.object,
+  pending:  PropTypes.bool,
+  calibrations: PropTypes.array,
+  chosen: PropTypes.object,
 
-    request: PropTypes.func,
-    transmit: PropTypes.func
+  request: PropTypes.func,
+  transmit: PropTypes.func
 };
 
 function mapStateToProps(state) {
-    return {
-        pending: state.calibrations.pending,
-        calibrations: state.fdrs.chosen.calibrations,
-        chosen: state.fdrs.chosenCalibration
-    }
+  return {
+    pending: state.calibrations.pending,
+    calibrations: state.fdrs.chosen.calibrations,
+    chosen: state.fdrs.chosenCalibration
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        request: bindActionCreators(request, dispatch),
-        transmit: bindActionCreators(transmit, dispatch)
-    }
+  return {
+    request: bindActionCreators(request, dispatch),
+    transmit: bindActionCreators(transmit, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CalibrationSelector);

@@ -1,161 +1,161 @@
 #chartWorkspace {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 /* tell the SVG path to be a thin blue line without any area fill */
 .GraphContainer {
-    width: calc(100% - 5px);
-    position: absolute;
-    left: 0;
-    user-select: none;
-    box-sizing: border-box;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    border: 1px solid #ddd;
-    background: #fff;
-    background: linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
-    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  width: calc(100% - 5px);
+  position: absolute;
+  left: 0;
+  user-select: none;
+  box-sizing: border-box;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: 1px solid #ddd;
+  background: #fff;
+  background: linear-gradient(#f6f6f6 0, #fff 50px);
+  background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+  background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+  background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+  background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 @media print
 {
-    .GraphContainer {
-        border: none;
-        background: #fff;
-        box-shadow: none;
-    }
+  .GraphContainer {
+    border: none;
+    background: #fff;
+    box-shadow: none;
+  }
 
-    #placeholder {
-        background: #fff;
-    }
+  #placeholder {
+    background: #fff;
+  }
 
-    .title-for-print {
-        display: block;
-    }
+  .title-for-print {
+    display: block;
+  }
 }
 
 #placeholder {
-    margin-top: 30px;
-    font-size: 14px;
-    line-height: 1.2em;
-    overflow-x: hidden;
-    float:left;
-    width: 100%;
+  margin-top: 30px;
+  font-size: 14px;
+  line-height: 1.2em;
+  overflow-x: hidden;
+  float:left;
+  width: 100%;
 }
 
 .title-for-print {
-    display: none;
-    margin: 10px auto;
+  display: none;
+  margin: 10px auto;
 }
 
 .InfoFromRequest {
-    display: none;
+  display: none;
 }
 
 #legend {
-    margin-top: 35px;
-    overflow-y:auto;
-    text-align:left;
-    font-family: Tahoma, Geneva, sans-serif;
-    font-size:12px;
-    width: 175px;
+  margin-top: 35px;
+  overflow-y:auto;
+  text-align:left;
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size:12px;
+  width: 175px;
 }
 
 #legend.is-hidden {
-    width: 0px;
+  width: 0px;
 }
 
 .LoadingBox{
-    position: absolute;
-    top:300px;
-    width: 100%;
-    text-align: center;
-    z-index:1;
+  position: absolute;
+  top:300px;
+  width: 100%;
+  text-align: center;
+  z-index:1;
 }
 
 .LeadParamValBox{
-    background-color: #898989;
-    border-radius: 3px;
-    color: #fff;
-    opacity: 0.5;
-    position: absolute;
-    font-size: 14px;
-    padding: 2px;
-    z-index: 1;
-    display: none;
+  background-color: #898989;
+  border-radius: 3px;
+  color: #fff;
+  opacity: 0.5;
+  position: absolute;
+  font-size: 14px;
+  padding: 2px;
+  z-index: 1;
+  display: none;
 }
 
 .VisirTimeBox {
-    background-color: transparent;
-    position: absolute;
-    font-size: 14px;
-    top: 1px;
+  background-color: transparent;
+  position: absolute;
+  font-size: 14px;
+  top: 1px;
 }
 
 .BarLabel {
-    position: absolute;
-    display: none;
-    border: 0px;
-    padding: 2px;
-    z-index: 2;
-    font-size: 14px;
-    text-shadow: 1px 1px 0px grey, 0 0 7px white;
-    background-color: transparent;
-    opacity: 0.75;
+  position: absolute;
+  display: none;
+  border: 0px;
+  padding: 2px;
+  z-index: 2;
+  font-size: 14px;
+  text-shadow: 1px 1px 0px grey, 0 0 7px white;
+  background-color: transparent;
+  opacity: 0.75;
 }
 
 .BarMainLabel {
-    position: absolute;
-    display: none;
-    border: 1px solid #999;
-    padding: 2px;
-    top: 18px;
-    border-radius: 3px;
-    color: black;
-    background-color: white;
-    font-size: 12px;
-    opacity: 0.6;
+  position: absolute;
+  display: none;
+  border: 1px solid #999;
+  padding: 2px;
+  top: 18px;
+  border-radius: 3px;
+  color: black;
+  background-color: white;
+  font-size: 12px;
+  opacity: 0.6;
 }
 
 .vertical-text-container {
-    top: 38px;
-    width: 0px;
-    display: block;
-    position: absolute;
-    text-align: center;
-    writing-mode: vertical-rl;
-    text-orientation: sideways-right;
-    color: #555;
-    z-index: 2;
+  top: 38px;
+  width: 0px;
+  display: block;
+  position: absolute;
+  text-align: center;
+  writing-mode: vertical-rl;
+  text-orientation: sideways-right;
+  color: #555;
+  z-index: 2;
 }
 
 .horizontal-text-container {
-    top: 40px;
-    width: 100px;
-    display: block;
-    position: absolute;
-    text-align: center;
-    color: #333;
-    background-color: rgba(0,0,0,0);
-    z-index: 22;
+  top: 40px;
+  width: 100px;
+  display: block;
+  position: absolute;
+  text-align: center;
+  color: #333;
+  background-color: rgba(0,0,0,0);
+  z-index: 22;
 }
 
 .horizontal-text-container--is-active {
-    top: 40px;
-    width: 100px;
-    display: block;
-    position: absolute;
-    text-align: center;
-    color: #fff;
-    background-color: #888;
-    z-index: 22;
+  top: 40px;
+  width: 100px;
+  display: block;
+  position: absolute;
+  text-align: center;
+  color: #fff;
+  background-color: #888;
+  z-index: 22;
 }

@@ -5,35 +5,35 @@ import { connect } from 'react-redux';
 import redirect from 'actions/redirect';
 
 class CreateButton extends React.Component {
-    handleClick() {
-        this.props.redirect('/flight-template-edit/create/'
-            + 'flight-id/'+ this.props.flightId + '/'
-            + 'fdr-id/'+ this.props.fdrId
-        );
-    }
+  handleClick() {
+    this.props.redirect('/flight-template-edit/create/'
+      + 'flight-id/'+ this.props.flightId + '/'
+      + 'fdr-id/'+ this.props.fdrId
+    );
+  }
 
-    render() {
-        return <ul className="nav navbar-nav navbar-right">
-          <li><a href="#" onClick={ this.handleClick.bind(this) }>
-              <span
-                  className="glyphicon glyphicon-plus"
-                  aria-hidden="true">
-              </span>
-          </a></li>
-        </ul>;
-    }
+  render() {
+    return <ul className="nav navbar-nav navbar-right">
+      <li><a href="#" onClick={ this.handleClick.bind(this) }>
+        <span
+          className="glyphicon glyphicon-plus"
+          aria-hidden="true">
+        </span>
+      </a></li>
+    </ul>;
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        fdrId: state.flight.data.fdrId
-    }
+  return {
+    fdrId: state.flight.data.fdrId
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        redirect: bindActionCreators(redirect, dispatch)
-    }
+  return {
+    redirect: bindActionCreators(redirect, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateButton);
