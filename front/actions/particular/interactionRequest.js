@@ -1,5 +1,3 @@
-import formurlencoded from 'form-urlencoded';
-
 export default function interactionRequest(
   url,
   path,
@@ -36,22 +34,3 @@ export default function interactionRequest(
     });
   }
 };
-
-function isFormData (object) {
-  let isFormData = true;
-
-  let formDataMethods = [
-    'append',
-    'delete',
-    'get',
-    'getAll',
-    'has',
-    'set'
-  ];
-
-  formDataMethods.forEach((item) => {
-    isFormData = isFormData && (typeof object[item] === 'function');
-  });
-
-  return isFormData;
-}

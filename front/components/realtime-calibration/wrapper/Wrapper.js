@@ -4,23 +4,16 @@ import VerticalToolbar from 'components/realtime-calibration/vertical-toolbar/Ve
 import DataContainer from 'components/realtime-calibration/data-container/DataContainer';
 import uuidV4 from 'uuid/v4';
 
-const INTERACTION_URL = 'http://localhost:1337';
 const UID = uuidV4().substring(0, 18).replace(/-/g, '');
 
 export default function Wrapper () {
   return (
     <div className='row'>
       <div className='col-sm-3'>
-        <VerticalToolbar
-          interactionUrl={ INTERACTION_URL }
-          uid={ UID }
-        />
+        <VerticalToolbar uid={ UID }/>
       </div>
       <div className='col-sm-9'>
-        <DataContainer
-          interactionUrl={ INTERACTION_URL }
-          uid={ UID }
-        />
+        <DataContainer uid={ UID } />
       </div>
     </div>
   );

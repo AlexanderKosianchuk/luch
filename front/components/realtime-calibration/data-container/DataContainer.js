@@ -9,33 +9,27 @@ import RealtimeChart from 'components/realtime-calibration/realtime-chart/Realti
 import ParamsContainer from 'components/realtime-calibration/params-container/ParamsContainer';
 
 import request from 'actions/request';
-import bindRealtimeCalibrationSocketEvents from 'actions/socket/bindRealtimeCalibrationSocketEvents';
+import bindSocketEvent from 'actions/bindSocketEvent';
 
 class DataContainer extends Component {
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.status === 'init')
-      && (this.props.status !== nextProps.status)
-    ) {
-      this.props.bindRealtimeCalibrationSocketEvents({
-        interactionUrl: this.props.interactionUrl,
-        status: this.props.webSocketsStatus,
-        uid: this.props.uid
+    if (nextProps.status === true) {
+      this.props.bindSocketEvent({
+        io: this.props.io,
+        ioEvent: 'newData',
+        bindedEvents: this.props.bindedEvents,
+        registerUrl: this.props.appConfig.interactionUrl+'/realtimeCalibration/register?uid='+ this.props.uid,
+        reducerEvent: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME'
       });
     }
   }
 
   buildHeader() {
     if (this.props.status === null) {
-       return <Translate value='realtimeCalibration.dataContainer.configureConnection'/>;
-    } else if (this.props.status === 'init') {
-       return <Translate value='realtimeCalibration.dataContainer.init'/>;
-    } else if (this.props.status === 'bindingSocket') {
-       return <Translate value='realtimeCalibration.dataContainer.connectionPending'/>;
-    } else if (this.props.status === 'waitingData') {
-      return <Translate value='realtimeCalibration.dataContainer.waitingData'/>;
-    } else if (this.props.status === 'onAir') {
-      return null;
+      return <Translate value='realtimeCalibration.dataContainer.configureConnection'/>;
     }
+
+    return null;
   }
 
   render() {
@@ -59,16 +53,18 @@ class DataContainer extends Component {
 
 function mapStateToProps(state) {
   return {
+    appConfig: state.appConfig.config,
     status: state.realtimeCalibrationData.status,
+    io: state.webSockets.io,
+    bindedEvents: state.webSockets.bindedEvents,
     errorCode: state.realtimeCalibrationData.errorCode,
-    webSocketsStatus: state.webSockets.status
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     request: bindActionCreators(request, dispatch),
-    bindRealtimeCalibrationSocketEvents: bindActionCreators(bindRealtimeCalibrationSocketEvents, dispatch),
+    bindSocketEvent: bindActionCreators(bindSocketEvent, dispatch),
   }
 }
 

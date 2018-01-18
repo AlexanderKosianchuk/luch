@@ -21,7 +21,6 @@ class VerticalToolbar extends Component {
     super(props);
 
     this.state = {
-      isRunning: null,
       fakeData: false,
       sources: ['192.168.11.1:2017']
     }
@@ -35,12 +34,58 @@ class VerticalToolbar extends Component {
   }
 
   componentWillUnmount() {
-    if (this.state.isRunning !== null) {
+    if (this.props.isRunning !== null) {
       let data = this.gatherInteractionData();
 
-      this.props.interactionRequest(
-        this.props.interactionUrl,
-        '/realtimeCalibration/stopUdp',
+      this.props.request(
+        this.props.interactionUrl+'/realtimeCalibration/stopUdp',
+        'post',
+        'REALTIME_CALIBRATION_BREAK',
+        data
+      );
+    }
+  }
+
+  handleStartClick(event) {
+    event.preventDefault();
+
+    if (this.props.isRunning === null) {
+      let data = this.gatherInteractionData();
+
+      this.props.request(
+        this.props.interactionUrl+'/realtimeCalibration/startUdp',
+        'post',
+        'REALTIME_CALIBRATION_RECEIVING',
+        data
+      );
+    }
+  }
+
+  handlePauseClick(event) {
+    event.preventDefault();
+
+    if (this.props.isRunning === true) {
+      let data = this.gatherInteractionData();
+
+      this.props.request(
+        this.props.interactionUrl+'/realtimeCalibration/pauseUdp',
+        'post',
+        'REALTIME_CALIBRATION_FREEZE',
+        data
+      );
+    }
+  }
+
+  handleResumeClick(event) {
+    event.preventDefault();
+
+    if (this.props.isRunning === false) {
+      let data = this.gatherInteractionData();
+
+      this.props.request(
+        this.props.interactionUrl+'/realtimeCalibration/startUdp',
+        'post',
+        'REALTIME_CALIBRATION_RECEIVING',
         data
       );
     }
@@ -114,61 +159,6 @@ class VerticalToolbar extends Component {
     data.append('cors', window.location.hostname);
 
     return data;
-  }
-
-  handleStartClick(event) {
-    event.preventDefault();
-    let data = this.gatherInteractionData();
-
-    this.props.request(
-      ['interaction', 'up'],
-      'get'
-    ).then((resp) => {
-      return this.props.interactionRequest(
-        this.props.interactionUrl,
-        '/realtimeCalibration/initConnection',
-        data
-      );
-    }).then(() => {
-      this.props.transmit(
-        'CHANGE_REALTIME_CALIBRATING_STATUS',
-        { status: 'init' }
-      );
-    }).then(() => {
-      return this.props.interactionRequest(
-        this.props.interactionUrl,
-        '/realtimeCalibration/startUdp',
-        data
-      );
-    }).then(() => {
-      this.setState({ isRunning: true });
-    });
-  }
-
-  handlePauseClick(event) {
-    event.preventDefault();
-    let data = this.gatherInteractionData();
-
-    this.props.interactionRequest(
-      this.props.interactionUrl,
-      '/realtimeCalibration/pauseUdp',
-      data
-    ).then(() => {
-      this.setState({ isRunning: false });
-    });
-  }
-
-  handleResumeClick(event) {
-    event.preventDefault();
-    let data = this.gatherInteractionData();
-
-    this.props.interactionRequest(
-      this.props.interactionUrl,
-      '/realtimeCalibration/startUdp',
-      data
-    ).then(() => {
-      this.setState({ isRunning: true });
-    });
   }
 
   handleFakeDataClick() {
@@ -267,12 +257,14 @@ class VerticalToolbar extends Component {
 }
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    isRunning: state.realtimeCalibrationData.status,
+    interactionUrl: state.appConfig.interactionUrl
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    interactionRequest: bindActionCreators(interactionRequest, dispatch),
     transmit: bindActionCreators(transmit, dispatch),
     request: bindActionCreators(request, dispatch)
   }

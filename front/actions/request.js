@@ -15,7 +15,14 @@ export default function request(
       });
     }
 
-    let url = ENTRY_URL + action.join('/');
+    let url = '';
+
+    if (!Array.isArray(action)) {
+      url = action;
+    } else {
+      url = ENTRY_URL + action.join('/');
+    }
+
     let options = {
       credentials: 'same-origin',
       method: 'get'

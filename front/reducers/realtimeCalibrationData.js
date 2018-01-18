@@ -9,9 +9,17 @@ const MAX_POINT_COUNT = 100;
 
 export default function realtimeCalibrationData(state = initialState, action) {
   switch (action.type) {
-    case 'CHANGE_REALTIME_CALIBRATING_STATUS':
+    case 'POST_REALTIME_CALIBRATION_RECEIVING_COMPLETE':
       return { ...state,
-        ...{ status: action.payload.status }
+        ...{ status: true }
+      };
+    case 'POST_REALTIME_CALIBRATION_FREEZE_COMPLETE':
+      return { ...state,
+        ...{ status: false }
+      };
+    case 'POST_REALTIME_CALIBRATION_BREAK_COMPLETE':
+      return { ...state,
+        ...{ status: null }
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
       let data = state.data;
@@ -22,7 +30,7 @@ export default function realtimeCalibrationData(state = initialState, action) {
       }
 
       return { ...state, ...{
-          status: 'onAir',
+          status: true,
           data: data,
           currentFrame: ++state.currentFrame,
         }

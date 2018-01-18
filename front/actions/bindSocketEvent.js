@@ -1,5 +1,9 @@
 export default function bindSocketEvent(payload) {
   return function(dispatch) {
+    if (payload.bindedEvents.indexOf(payload.ioEvent) >= 0) {
+      return null;
+    }
+
     payload.io.socket.get(payload.registerUrl)
       .then(() => {
         dispatch({
