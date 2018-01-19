@@ -84,6 +84,11 @@ class FdrTemplate
     $this->userId = $userId;
   }
 
+  public function getId()
+  {
+    return $this->id;
+  }
+
   public function getName()
   {
     return $this->name;
@@ -102,6 +107,11 @@ class FdrTemplate
   public function getMaxYaxis()
   {
     return $this->maxYaxis;
+  }
+
+  public function getUserId()
+  {
+    return $this->userId;
   }
 
   public static function getPrefix()

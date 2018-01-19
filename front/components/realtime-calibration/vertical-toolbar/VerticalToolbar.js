@@ -10,7 +10,6 @@ import CalibrationSelector from 'controls/calibration-selector/CalibrationSelect
 
 import ChooseParamsButtons from 'components/realtime-calibration/choose-params-buttons/ChooseParamsButtons';
 
-import interactionRequest from 'actions/particular/interactionRequest';
 import transmit from 'actions/transmit';
 import request from 'actions/request';
 
@@ -21,15 +20,8 @@ class VerticalToolbar extends Component {
     super(props);
 
     this.state = {
-      fakeData: false,
+      fakeData: true,
       sources: ['192.168.11.1:2017']
-    }
-
-    // this handler will be filled by FdrSelector
-    // by method that allows to get selected FDR ID
-    this.handler = {
-      getSelectedFdrId: null,
-      getSelectedCalibrationId: null,
     }
   }
 
@@ -128,14 +120,6 @@ class VerticalToolbar extends Component {
     let fdrId = null;
     let calibrationId = null;
 
-    if (typeof this.handler.getSelectedFdrId === 'function') {
-      fdrId = this.handler.getSelectedFdrId();
-    }
-
-    if (typeof this.handler.getSelectedCalibrationId === 'function') {
-      calibrationId = this.handler.getSelectedCalibrationId();
-    }
-
     let ipInputs = this.form.querySelectorAll('input[name="ip[]"]');
     let ips = [];
 
@@ -152,8 +136,8 @@ class VerticalToolbar extends Component {
 
     var data = new FormData();
     data.append('uid', this.props.uid);
-    data.append('fdrId', fdrId);
-    data.append('calibrationId', calibrationId);
+    data.append('fdrId', this.props.chosenFdr.id);
+    data.append('calibrationId', this.props.chosenCalibration.id);
     data.append('ips', ips);
     data.append('fakeData', this.state.fakeData);
     data.append('cors', window.location.hostname);
@@ -205,11 +189,9 @@ class VerticalToolbar extends Component {
         <div>
           <ul className='realtime-calibration-vertical-toolbar__fdr-type'>
             <FdrSelector
-              methodHandler={ this.handler }
+              chosenFdrId={ this.props.fdrId }
             />
-            <CalibrationSelector
-              methodHandler={ this.handler }
-            />
+            <CalibrationSelector/>
           </ul>
         </div>
         <div className='realtime-calibration-vertical-toolbar__label'>
@@ -235,7 +217,7 @@ class VerticalToolbar extends Component {
           </button>
         </div>
         <ChooseParamsButtons
-          handler={ this.handler }
+          fdrId={ this.props.fdrId }
         />
         <div className='realtime-calibration-vertical-toolbar__inline-label-container'>
           <div className='realtime-calibration-vertical-toolbar__inline-label'>
@@ -259,7 +241,9 @@ class VerticalToolbar extends Component {
 function mapStateToProps(state) {
   return {
     isRunning: state.realtimeCalibrationData.status,
-    interactionUrl: state.appConfig.interactionUrl
+    interactionUrl: state.appConfig.interactionUrl,
+    chosenFdr: state.fdrs.chosen,
+    chosenCalibration: state.calibrations.chosen,
   };
 }
 

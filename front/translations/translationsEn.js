@@ -294,11 +294,12 @@ const translationsEn = {
         enterIpToConnect: 'Please enter IP to connect'
       },
       chooseParamsButtons: {
+        chooseSource: 'Choose params source',
+        template: 'Template',
+        manual: 'Manual',
         chooseParamsToShow: 'Choose params to show',
-        chartParams: 'On chart',
-        containerParams: 'In containers',
-        chooseParamsToShowOnChart: 'Choose params to show on chart',
-        chooseParamsToShowInContainer: 'Choose params to show in container',
+        containerParams: 'Show list',
+        chooseParamsToShowInContainer: 'Choose params to show',
         apply: 'Apply'
       },
       dataContainer: {

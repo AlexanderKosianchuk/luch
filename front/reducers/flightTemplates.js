@@ -1,7 +1,7 @@
 const initialState = {
   pending: null,
   chosenItems: [],
-  items: {},
+  items: [],
 };
 
 export default function flightTemplates(state = initialState, action) {
@@ -34,6 +34,11 @@ export default function flightTemplates(state = initialState, action) {
           pending: false,
           items: newItems
       }};
+    case 'CHOOSE_TEMPLATE':
+      return {
+        ...state,
+        ...{ chosenItems: [action.payload.name] }
+      };
     case 'TEMPLATE_CHOSEN':
       if (state.chosenItems.indexOf(action.payload.name) === -1) {
         state.chosenItems.push(action.payload.name)

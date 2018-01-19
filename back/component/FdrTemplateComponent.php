@@ -104,11 +104,65 @@ class FdrTemplateComponent extends BaseComponent
 
     $this->setFdrTemplateTable($fdrCode);
 
-    return $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+    $fdrTemplateParams = $this->em('fdrs')
+      ->getRepository('Entity\FdrTemplate')
       ->findBy(['name' => $templateName]);
+
+    $template = [
+      'id' => null,
+      'name' => $templateName,
+      'paramCodes' => [],
+      'ap' => [],
+      'bp' => [],
+      'userId' => null,
+      'servicePurpose' => $this->getServicePurpose($templateName)
+    ];
+
+    foreach ($fdrTemplateParams as $templateParam) {
+      if ($template['id'] === null) {
+        $template['id'] = $templateParam->getId();
+      }
+
+      $template['paramCodes'][] = $templateParam->getParamCode();
+      $template['userId'] = $templateParam->getUserId();
+
+      $param = $this->fdrComponent->getParamByCode(
+        $flight->getFdrId(),
+        $templateParam->getParamCode()
+      );
+
+      if ($param['type'] === $this->fdrComponent->getApType()) {
+        $template['ap'][] = $param;
+      }
+
+      if ($param['type'] === $this->fdrComponent->getBpType()) {
+        $template['bp'][] = $param;
+      }
+    }
+
+    return $template;
   }
 
-  public function getTemplates($flightId, $ignoreEventsTemplate = false, $userId = null)
+  private function getServicePurpose($name)
+  {
+    $servicePurpose = [
+      'isLast' => false,
+      'isEvents' => false,
+      'isDefault' => false
+    ];
+
+    if ($this->isLast($name)) {
+      $servicePurpose['isLast'] = true;
+    } else if ($this->isEvents($name)) {
+      $servicePurpose['isEvents'] = true;
+    } else if ($this->isDefault($name)) {
+      $servicePurpose['isDefault'] = true;
+    }
+
+    return $servicePurpose;
+  }
+
+  public function getFlightTemplates($flightId, $ignoreEventsTemplate = false, $userId = null)
   {
     if ($userId === null) {
       $userId = $this->user()->getId();
@@ -120,7 +174,22 @@ class FdrTemplateComponent extends BaseComponent
       throw new Exception('Flight not found. Id: '.$flightId, 1);
     }
 
-    $this->setFdrTemplateTable($flight->getFdr()->getCode());
+    return $this->getFdrTemplates($flight->getFdr()->getId());
+  }
+
+  public function getFdrTemplates($fdrId, $ignoreEventsTemplate = false, $userId = null)
+  {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    if (!$fdr) {
+      throw new Exception('FDR not found. Id: '.$fdrId, 1);
+    }
+
+    $this->setFdrTemplateTable($fdr->getCode());
 
     $names = $this->em('fdrs')
       ->getRepository('Entity\FdrTemplate')
@@ -134,6 +203,7 @@ class FdrTemplateComponent extends BaseComponent
 
     $templates = [];
     foreach ($names as $name) {
+      $id = null;
       $name = $name['name'];
       $rows = $this->em('fdrs')
         ->getRepository('Entity\FdrTemplate')
@@ -146,6 +216,11 @@ class FdrTemplateComponent extends BaseComponent
       $paramCodes = [];
 
       foreach ($rows as $templateRow) {
+        // workaround. Setting template id by its first row id
+        if ($id === null) {
+          $id = $templateRow['id'];
+        }
+
         $paramDesc = $this->fdrComponent->getParamByCode(
           $flight->getFdrId(),
           $templateRow->getParamCode()
@@ -159,20 +234,14 @@ class FdrTemplateComponent extends BaseComponent
         }
       }
 
-      $servicePurpose = [];
-      if ($this->isLast($name)) {
-        $servicePurpose['isLast'] = true;
-      } else if ($this->isEvents($name)) {
-        $servicePurpose['isEvents'] = true;
-      } else if ($this->isDefault($name)) {
-        $servicePurpose['isDefault'] = true;
-      }
+      $servicePurpose = $this->getServicePurpose($name);
 
       if ($ignoreEventsTemplate && $this->isEvents($name)) {
         continue;
       }
 
       $templates[] = [
+        'id' => $id,
         'name' => $name,
         'paramCodes' => $paramCodes,
         'params' => $params,
@@ -202,6 +271,8 @@ class FdrTemplateComponent extends BaseComponent
     }
 
     $this->em('fdrs')->flush();
+
+    return $this->getTemplateByName($fdrCode, $name, $userId);
   }
 
   public function delete($fdrCode, $name, $userId = null)

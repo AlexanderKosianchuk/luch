@@ -289,11 +289,12 @@ const translationsRu = {
         enterIpToConnect: 'Пожалуйста введите IP для подключения'
       },
       chooseParamsButtons: {
+        chooseSource: 'Выберите способ задания параметров',
+        template: 'Шаблон',
+        manual: 'Перечень',
         chooseParamsToShow: 'Выберите параметры для отображения',
-        chartParams: 'На график',
-        containerParams: 'В контейнеры',
-        chooseParamsToShowOnChart: 'Выберите параметры для отображения на графике',
-        chooseParamsToShowInContainer: 'Выберите параметры для числового отображения',
+        containerParams: 'Показать перечень',
+        chooseParamsToShowInContainer: 'Выберите параметры для вывода значений',
         apply: 'Принять'
       },
       dataContainer: {

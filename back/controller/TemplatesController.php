@@ -29,39 +29,45 @@ class TemplatesController extends BaseController
     }
 
     $templatesToSend = $this->dic()->get('fdrTemplate')->getTemplates($flightId, true);
-    $flightEvents = $this->dic()->get('event')->getFlightEvents($flightId);
+    $flightEventsParams = $this->dic()->get('event')->getFlightEventsRefParams($flightId);
 
-    //if performed exception search and isset events
-    if (count($flightEvents) > 0) {
-      $codesArr = [];
-      $params = [];
-      foreach ($flightEvents as $event) {
-        $paramDesc = $this->dic()->get('fdr')
-          ->getParamByCode(
-            $fdr->getId(),
-            $event['refParam']
-          );
-
-        if (!empty($paramDesc) && !in_array($event['refParam'], $codesArr)) {
-          $codesArr[] = $event['refParam'];
-          $params[] = $paramDesc;
-        }
-      }
-
-      $this->dic()->get('fdrTemplate')->create(
+    if (count($flightEventsParams) > 0) {
+      $createdEventsTemplate = $this->dic()->get('fdrTemplate')->create(
         $fdr->getCode(),
         $this->dic()->get('fdrTemplate')::getEventsName(),
         $params
       );
 
-      $templatesToSend[] = [
-        'name' =>  $this->dic()->get('fdrTemplate')::getEventsName(),
-        'paramCodes' => $codesArr,
-        'params' => $params,
-        'servicePurpose' => [
-          'isEvents' => true
-        ]
-      ];
+      $templatesToSend[] = $createdEventsTemplate;
+    }
+
+    return json_encode($templatesToSend);
+  }
+
+  public function getFdrTemplatesAction($fdrId)
+  {
+    $fdrId = intval($fdrId);
+    $userId = $this->user()->getId();
+
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    $isExist = $this->connection()->isExist($fdr->getCode().FdrTemplate::getPrefix());
+
+    if (!$isExist) {
+      $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
+    }
+
+    $templatesToSend = $this->dic()->get('fdrTemplate')->getTemplates($flightId, true);
+    $flightEventsParams = $this->dic()->get('event')->getFlightEventsRefParams($flightId);
+
+    if (count($flightEventsParams) > 0) {
+      $createdEventsTemplate = $this->dic()->get('fdrTemplate')->create(
+        $fdr->getCode(),
+        $this->dic()->get('fdrTemplate')::getEventsName(),
+        $params
+      );
+
+      $templatesToSend[] = $createdEventsTemplate;
     }
 
     return json_encode($templatesToSend);
@@ -77,37 +83,29 @@ class TemplatesController extends BaseController
       throw new NotFoundException('fligth id: '.$flightId);
     }
 
-    $fdrTemplateParams = $this->dic()->get('fdrTemplate')->getTemplateByName(
+    $template = $this->dic()->get('fdrTemplate')->getTemplateByName(
       $flight->getFdr()->getCode(),
       $templateName
     );
 
-    $analogParams = [];
-    $binaryParams = [];
-    foreach ($fdrTemplateParams as $templateParam) {
-      $param = $this->dic()->get('fdr')->getParamByCode(
-        $flight->getFdrId(),
-        $templateParam->getParamCode()
-      );
+    return json_encode($template);
+  }
 
-      if ($param['type'] === $this->dic()->get('fdr')->getApType()) {
-        $analogParams[] = $param;
-      }
+  public function getTemplateByFdrAction($fdrId, $templateName)
+  {
+    $fdrId = intval($fdrId);
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
-      if ($param['type'] === $this->dic()->get('fdr')->getBpType()) {
-        $binaryParams[] = $param;
-      }
+    if (!$fdr) {
+      throw new NotFoundException('FDR id: '.$fdrId);
     }
 
-    return json_encode([
-      'name' => $templateName,
-      'ap' => $analogParams,
-      'bp' => $binaryParams,
-      'servisePurpose' => (($this->dic()->get('fdrTemplate')->isDefault($templateName))
-        ? ['isDefault' => true]
-        : false
-      )
-    ]);
+    $template = $this->dic()->get('fdrTemplate')->getTemplateByName(
+      $fdr->getCode(),
+      $templateName
+    );
+
+    return json_encode($template);
   }
 
   public function setTemplateAction(
