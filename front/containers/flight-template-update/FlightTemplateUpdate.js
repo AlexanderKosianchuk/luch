@@ -1,24 +1,53 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import Menu from 'controls/menu/Menu';
 import FlightTemplateEditToolbar from 'controls/flight-template-edit-toolbar/FlightTemplateEditToolbar';
 import Params from 'components/flight-template-update/params/Params';
 
-class FlightTemplateUpdate extends React.Component {
-  render () {
-    return (
-      <div>
-        <Menu/>
+import Menu from 'controls/menu/Menu';
+import ContentLoader from 'controls/content-loader/ContentLoader';
+
+import request from 'actions/request';
+
+class FlightTemplateUpdate extends Component {
+  componentDidMount() {
+    if ((this.props.passedTemplateId !== this.props.storedTemplateId)) {
+      this.props.request(
+        ['templates', 'getTemplate'],
+        'get',
+        'TEMPLATE',
+        {
+          flightId: this.props.flightId,
+          templateId: this.props.passedTemplateId
+        }
+      );
+    }
+  }
+
+  buildBody() {
+    if ((this.props.passedTemplateId !== this.props.storedTemplateId)) {
+      return <ContentLoader/>;
+    } else {
+      return (<span>
         <FlightTemplateEditToolbar
           flightId={ this.props.flightId }
+          templateId={ this.props.passedTemplateId }
           templateName={ this.props.templateName }
         />
         <Params
           flightId={ this.props.flightId }
-          templateName={ this.props.templateName }
           colorPickerEnabled={ false }
         />
+      </span>);
+    }
+  }
+
+  render () {
+    return (
+      <div>
+        <Menu/>
+        { this.buildBody() }
       </div>
     );
   }
@@ -26,9 +55,18 @@ class FlightTemplateUpdate extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
+    templatePending: state.template.pending,
     flightId: ownProps.match.params.flightId,
-    templateName: ownProps.match.params.templateName
+    passedTemplateId: ownProps.match.params.templateId,
+    storedTemplateId: state.template.id,
+    templateName: state.template.name
   };
 }
 
-export default connect(mapStateToProps, () => { return {} })(FlightTemplateUpdate);
+function mapDispatchToProps(dispatch) {
+  return {
+    request: bindActionCreators(request, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlightTemplateUpdate);

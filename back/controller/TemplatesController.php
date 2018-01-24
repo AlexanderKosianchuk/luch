@@ -28,15 +28,47 @@ class TemplatesController extends BaseController
       $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
     }
 
-    $templatesToSend = $this->dic()->get('fdrTemplate')->getTemplates($flightId, true);
-    $flightEventsParams = $this->dic()->get('event')->getFlightEventsRefParams($flightId);
+    $templatesToSend = $this->dic()->get('fdrTemplate')->getFdrTemplates($flight->getFdr()->getId(), true);
 
-    if (count($flightEventsParams) > 0) {
-      $createdEventsTemplate = $this->dic()->get('fdrTemplate')->create(
-        $fdr->getCode(),
-        $this->dic()->get('fdrTemplate')::getEventsName(),
-        $params
+    $flightEvents = $this->dic()->get('event')->getFlightEvents($flight);
+
+    $codesArr = [];
+    foreach ($flightEvents as $event) {
+      if (!in_array($event['refParam'], $codesArr)) {
+        $codesArr[] = $event['refParam'];
+      }
+    }
+
+    $params = $this->dic()->get('fdr')
+      ->getParamsByCodes(
+        $fdr->getId(),
+        $codesArr
       );
+
+    if (count($params) > 0) {
+      $paramsWithMeasure = $this->dic()
+        ->get('channel')
+        ->getParamsMinMax(
+          $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+          $params,
+          $this->dic()->get('fdr')->getApType()
+        );
+
+      $this->dic()
+        ->get('fdrTemplate')
+        ->delete(
+          $fdr->getCode(),
+          $this->dic()->get('fdrTemplate')::getEventsName(),
+          $this->user()->getId()
+      );
+
+      $createdEventsTemplate = $this->dic()
+        ->get('fdrTemplate')
+        ->createWithDistributedParams(
+          $fdr->getCode(),
+          $this->dic()->get('fdrTemplate')::getEventsName(),
+          $paramsWithMeasure
+        );
 
       $templatesToSend[] = $createdEventsTemplate;
     }
@@ -57,23 +89,14 @@ class TemplatesController extends BaseController
       $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
     }
 
-    $templatesToSend = $this->dic()->get('fdrTemplate')->getTemplates($flightId, true);
-    $flightEventsParams = $this->dic()->get('event')->getFlightEventsRefParams($flightId);
-
-    if (count($flightEventsParams) > 0) {
-      $createdEventsTemplate = $this->dic()->get('fdrTemplate')->create(
-        $fdr->getCode(),
-        $this->dic()->get('fdrTemplate')::getEventsName(),
-        $params
-      );
-
-      $templatesToSend[] = $createdEventsTemplate;
-    }
-
-    return json_encode($templatesToSend);
+    return json_encode(
+      $this->dic()
+      ->get('fdrTemplate')
+      ->getFdrTemplates($fdrId, true)
+    );
   }
 
-  public function getTemplateAction($flightId, $templateName)
+  public function getTemplateAction($flightId, $templateId)
   {
     $flightId = intval($flightId);
 
@@ -83,9 +106,9 @@ class TemplatesController extends BaseController
       throw new NotFoundException('fligth id: '.$flightId);
     }
 
-    $template = $this->dic()->get('fdrTemplate')->getTemplateByName(
-      $flight->getFdr()->getCode(),
-      $templateName
+    $template = $this->dic()->get('fdrTemplate')->getTemplateById(
+      $flight->getFdr()->getId(),
+      $templateId
     );
 
     return json_encode($template);
@@ -112,54 +135,13 @@ class TemplatesController extends BaseController
     $flightId,
     $templateName,
     $analogParams,
-    $binaryParams = []
+    $binaryParams = [],
+    $templateId = null
   ) {
     $flight = $this->em()->find('Entity\Flight', intval($flightId));
 
     if (!$flight) {
       throw new NotFoundException('fligth id: '.$flightId);
-    }
-
-    $paramsWithType = [];
-    foreach ($analogParams as $item) {
-      $param = $this->dic()
-        ->get('fdr')
-        ->getAnalogById(
-          $flight->getFdrId(),
-          intval($item['id'])
-        );
-
-      $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$param->getPrefix();
-      $minMax = $this->dic()
-        ->get('channel')
-        ->getParamMinMax(
-          $table,
-          $param->getCode(),
-          $this->dic()->get('fdr')->getApType()
-        );
-
-      $paramsWithType[$this->dic()->get('fdr')->getApType()][] = [
-        'code' => $param->getCode(),
-        'min' => $minMax['min'],
-        'max' => $minMax['max']
-      ];
-    }
-
-    foreach ($binaryParams as $item) {
-      if (isset($item['id'])) {
-        $param = $this->dic()
-          ->get('fdr')
-          ->getBinaryById(
-            $flight->getFdrId(),
-            intval($item['id'])
-          );
-
-        $paramsWithType[$this->dic()->get('fdr')->getBpType()][] = [
-          'code' => $param->getCode(),
-          'min' => 0,
-          'max' => 1
-        ];
-      }
     }
 
     $link = $this->connection()->create('fdrs');
@@ -171,6 +153,48 @@ class TemplatesController extends BaseController
       $this->dic()
         ->get('fdrTemplate')
         ->createFdrTemplateTable($flight->getFdrCode());
+    } else {
+      $this->dic()
+        ->get('fdrTemplate')
+        ->delete(
+          $flight->getFdrCode(),
+          $templateName,
+          $this->user()->getId()
+      );
+    }
+
+    $fdrId = $flight->getFdr()->getId();
+    $paramsWithType = [];
+    foreach ($analogParams as $analogParam) {
+      $paramsWithType[] = $this->dic()
+        ->get('fdr')
+        ->getAnalogById($fdrId, $analogParam['id'])
+        ->get(true);
+    }
+
+    foreach ($binaryParams as $binaryParam) {
+      $paramsWithType[] = $this->dic()
+        ->get('fdr')
+        ->getBinaryById($fdrId, $binaryParam['id'])
+        ->get(true);
+    }
+
+    $paramsWithMeasure = $this->dic()
+      ->get('channel')
+      ->getParamsMinMax(
+        $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+        $paramsWithType,
+        $this->dic()->get('fdr')->getApType()
+      );
+
+    if ($templateId !== null) {
+      $this->dic()
+        ->get('fdrTemplate')
+        ->deleteById(
+          $flight->getFdrCode(),
+          $templateId,
+          $this->user()->getId()
+        );
     }
 
     $this->dic()
@@ -179,20 +203,20 @@ class TemplatesController extends BaseController
         $flight->getFdrCode(),
         $templateName,
         $this->user()->getId()
-    );
+      );
 
     $this->dic()
       ->get('fdrTemplate')
       ->createWithDistributedParams(
         $flight->getFdrCode(),
         $templateName,
-        $paramsWithType
+        $paramsWithMeasure
       );
 
     return json_encode('ok');
   }
 
-  public function removeTemplateAction($flightId, $templateName)
+  public function removeTemplateAction($flightId, $templateId)
   {
     $flight = $this->em()->find('Entity\Flight', intval($flightId));
 
@@ -202,9 +226,11 @@ class TemplatesController extends BaseController
 
     $this->dic()
       ->get('fdrTemplate')
-      ->delete($flight->getFdrCode(), $templateName);
+      ->deleteById($flight->getFdrCode(), $templateId);
 
-    return json_encode('ok');
+    return json_encode([
+      'id' => $templateId
+    ]);
   }
 
   public function mergeTemplatesAction(
@@ -218,49 +244,37 @@ class TemplatesController extends BaseController
       throw new NotFoundException('fligth id: '.$flightId);
     }
 
-    $templatesToMerge = json_decode(html_entity_decode($templatesToMerge));
+    $templatesToMerge = json_decode(html_entity_decode($templatesToMerge), true);
 
     $paramCodes = [];
-    foreach ($templatesToMerge as $templateName) {
-      $templateRows = $this->dic()
+    foreach ($templatesToMerge as $template) {
+      $templateWithParams = $this->dic()
         ->get('fdrTemplate')
-        ->getTemplateByName($flight->getFdrCode(), $templateName);
+        ->getTemplateById(
+          $flight->getFdr()->getId(),
+          $template['id']
+        );
 
-      foreach ($templateRows as $row) {
-        if (!in_array($row->getParamCode(), $paramCodes)) {
-          $paramCodes[] = $row->getParamCode();
+      foreach ($templateWithParams['params'] as $param) {
+        if (!in_array($param['code'], $paramCodes)) {
+          $paramCodes[] = $param['code'];
         }
       }
     }
 
-    $templatesParams = [];
-    foreach ($paramCodes as $code) {
-      $paramForTemplate = [
-        'code' => $code,
-        'min' => 0,
-        'max' => 1
-      ];
-
-      $param = $this->dic()->get('fdr')->getParamByCode(
-        $flight->getFdrId(),
-        $code
+    $params = $this->dic()->get('fdr')
+      ->getParamsByCodes(
+        $flight->getFdr()->getId(),
+        $paramCodes
       );
 
-      if ($param['type'] === $this->dic()->get('fdr')->getApType()) {
-        $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$param['prefix'];
-        $minMax = $this->dic()
-          ->get('channel')
-          ->getParamMinMax(
-            $table,
-            $code
-          );
-
-        $paramForTemplate['min'] = $minMax['min'];
-        $paramForTemplate['max'] = $minMax['max'];
-      }
-
-      $templatesParams[$param['type']][] = $paramForTemplate;
-    }
+    $paramsWithMeasure = $this->dic()
+      ->get('channel')
+      ->getParamsMinMax(
+        $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+        $params,
+        $this->dic()->get('fdr')->getApType()
+      );
 
     $this->dic()
       ->get('fdrTemplate')
@@ -270,14 +284,14 @@ class TemplatesController extends BaseController
         $this->user()->getId()
     );
 
-    $this->dic()
+    $resultTemplate = $this->dic()
       ->get('fdrTemplate')
       ->createWithDistributedParams(
         $flight->getFdrCode(),
         $resultTemplateName,
-        $templatesParams
+        $paramsWithMeasure
       );
 
-    return json_encode('ok');
+    return json_encode($resultTemplate);
   }
 }

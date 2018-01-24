@@ -35,6 +35,7 @@ class ChooseParamsButtons extends Component {
       context={ CYCLO_CONTAINER_PARAMS_CONTEXT }
       chosenAnalogParams={ this.props.realtimeCalibrationParams.chosenContainerAnalogParams }
       chosenBinaryParams={ this.props.realtimeCalibrationParams.chosenContainerBinaryParams }
+      storeCheckstate={ false }
     />
   }
 

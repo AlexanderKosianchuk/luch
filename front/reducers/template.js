@@ -1,9 +1,10 @@
 const initialState = {
   pending: null,
+  id: null,
   name: {},
-  servisePurpose: {},
-  ap: {},
-  bp: {}
+  params: [],
+  paramCodes: [],
+  servicePurpose: {},
 };
 
 export default function template(state = initialState, action) {
@@ -16,10 +17,11 @@ export default function template(state = initialState, action) {
     case 'GET_TEMPLATE_COMPLETE':
       return {
         pending: false,
+        id: action.payload.response.id,
         name: action.payload.response.name,
-        servisePurpose: action.payload.response.servisePurpose,
-        ap: action.payload.response.ap,
-        bp: action.payload.response.bp
+        params: action.payload.response.params,
+        paramCodes: action.payload.response.paramCodes,
+        servicePurpose: action.payload.response.servicePurpose,
       };
     default:
       return state;

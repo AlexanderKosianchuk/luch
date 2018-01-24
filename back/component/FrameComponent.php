@@ -21,7 +21,7 @@ class FrameComponent extends BaseComponent
       $paramCyclo = $cycloAp[$ind1];
       $channels = $paramCyclo['channel'];
 
-      $paramType = $paramCyclo['type'];
+      $paramType = $paramCyclo['calcType'];
       $paramTypeArr = array();
       $paramTypeArg = array();
 
@@ -747,9 +747,9 @@ class FrameComponent extends BaseComponent
     foreach($cycloBp as $binParam) {
       $channels = $binParam["channel"];
 
-      $binParamType = $binParam['type'];
+      $binParamType = $binParam['calcType'];
       if (strpos("/", $binParamType) > -1) {
-        $binParamTypeArr = explode("/", $binParam['type']);
+        $binParamTypeArr = explode("/", $binParam['calcType']);
 
         $binParamTypeArg = $binParamTypeArr[0];
         $binParamType = $binParamTypeArr[1];

@@ -1,81 +1,44 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import ContentLoader from 'controls/content-loader/ContentLoader'
 import CycloParams from 'controls/cyclo-params/CycloParams';
 
-import request from 'actions/request';
-import transmit from 'actions/transmit';
-
-class Params extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isReady: false
-    }
-
-    this.templateAnalogParams = [];
-    this.templateBinaryParams = [];
-  }
-
-  componentWillMount() {
-    this.props.request(
-      ['templates', 'getTemplate'],
-      'get',
-      'TEMPLATE',
-      {
-        flightId: this.props.flightId,
-        templateName: this.props.templateName
-      }
-    ).then((responce) => {
-      this.templateAnalogParams = responce.ap || [];
-      this.templateBinaryParams = responce.bp || [];
-      this.props.transmit(
-        'SET_CHECKED_FLIGHT_PARAMS',
-        {
-          ap: this.templateAnalogParams,
-          bp: this.templateBinaryParams
-        }
-      );
-      this.setState({isReady: true})
-    });
-  }
-
-  buildBody() {
-    if (this.state.isReady === true) {
-      return <CycloParams
-        flightId={ this.props.flightId }
-        colorPickerEnabled={ false }
-        checkedAnalogParams={ this.templateAnalogParams }
-        checkedBinaryParams={ this.templateBinaryParams }
-      />;
-    } else {
-      return <ContentLoader/>;
-    }
-  }
-
+class Params extends Component {
   render () {
+    let templateAnalogParams = this.props.params
+      .filter((item) => (item.type === 'ap'));
+
+    let templateBinaryParams = this.props.params
+      .filter((item) => (item.type === 'bp'));
+
     return (
       <div>
-        { this.buildBody() }
+        <CycloParams
+          flightId={ this.props.flightId }
+          colorPickerEnabled={ false }
+          chosenAnalogParams={ templateAnalogParams }
+          chosenBinaryParams={ templateBinaryParams }
+          storeCheckstate={ true }
+        />
       </div>
     );
   }
 }
 
+Params.propTypes = {
+  params: PropTypes.array.isRequired
+};
+
 function mapStateToProps(state) {
   return {
-    pending: state.flightTemplates.pending
+    params: state.template.params
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    request: bindActionCreators(request, dispatch),
-    transmit: bindActionCreators(transmit, dispatch)
-  }
+  return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Params);

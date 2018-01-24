@@ -11,14 +11,14 @@ class ItemControls extends React.Component {
   handlePencilClick () {
     this.props.redirect('/flight-template-edit/update/'
       + 'flight-id/'+ this.props.flightId + '/'
-      + 'template-name/'+ this.props.templateName
+      + 'template-id/'+ this.props.templateId
     );
   }
 
   handlePictureClick () {
     this.props.redirect('/chart/'
       + 'flight-id/'+ this.props.flightId + '/'
-      + 'template-name/'+ this.props.templateName + '/'
+      + 'template-id/'+ this.props.templateId + '/'
       + 'from-frame/'+ this.props.startFrame + '/'
       + 'to-frame/'+ this.props.endFrame
     );
@@ -31,7 +31,7 @@ class ItemControls extends React.Component {
       'TEMPLATE',
       {
         flightId: this.props.flightId,
-        templateName: this.props.templateName
+        templateId: this.props.templateId
       }
     );
   }

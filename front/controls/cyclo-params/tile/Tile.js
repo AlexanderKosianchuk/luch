@@ -36,7 +36,7 @@ export default function Tile(props) {
           isChosen={ isChosen }
           flightId={ props.flightId }
           colorPickerEnabled={ colorPickerEnabled }
-          context={ props.context }
+          storeCheckstate={ props.storeCheckstate }
         />);
       });
     }

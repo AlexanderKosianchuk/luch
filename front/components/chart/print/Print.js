@@ -13,8 +13,7 @@ class Print extends React.Component {
       flightId: this.props.flightId,
       startFrame: this.props.startFrame,
       endFrame: this.props.endFrame,
-      analogParams: this.props.template.ap || [],
-      binaryParams: this.props.template.bp || [],
+      params: this.props.params || [],
     });
   }
 
@@ -41,7 +40,7 @@ function mapStateToProps(state) {
   return {
     startFrame: state.flight.selectedStartFrame,
     endFrame: state.flight.selectedEndFrame,
-    template: state.template || { ap: null, bp: null }
+    params: state.template.params
   };
 }
 

@@ -32,6 +32,7 @@ class FlightTemplateEditToolbar extends React.Component {
 
             <SaveForm
               flightId={ this.props.flightId }
+              templateId={ this.props.templateId }
               templateName={ this.props.templateName }
               servisePurpose={ this.props.servisePurpose }
             />

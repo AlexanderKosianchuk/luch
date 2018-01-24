@@ -112,7 +112,7 @@ AxesWorker.prototype.DistributeByBinary = function(yAxArr, xAx, series, apCount)
 //=============================================================
 
 //=============================================================
-AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, flightId, tplName){
+AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, flightId, templateId){
   var self = this,
     paramsArr = apParams.concat(bpParams);
 
@@ -120,7 +120,7 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
     var pV = {
       flightId: flightId,
       code: paramsArr[i],
-      tplName: tplName,
+      templateId: templateId,
     };
 
     $.ajax({
@@ -144,7 +144,7 @@ AxesWorker.prototype.LoadDistribution = function(yAxArr, apParams, bpParams, fli
 //=============================================================
 
 //=============================================================
-AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, flightId, tplName){
+AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, flightId, templateId){
   var paramsArr = apParams.concat(bpParams),
     self = this;
 
@@ -158,7 +158,7 @@ AxesWorker.prototype.SaveDistribution = function(yAxArr, apParams, bpParams, fli
         data: {
           flightId: flightId,
           paramCode: paramsArr[i],
-          tplName: tplName,
+          templateId: templateId,
           max: yAxArr[i].max,
           min: yAxArr[i].min,
           username: this.user

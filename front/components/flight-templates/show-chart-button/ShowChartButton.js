@@ -22,13 +22,13 @@ class ShowChartByTemplates extends React.Component {
     if (this.props.flightTemplates.chosenItems.length === 1) {
       this.props.redirect('/chart/'
         + 'flight-id/'+ this.props.flightId + '/'
-        + 'template-name/'+ this.props.flightTemplates.chosenItems[0] + '/'
+        + 'template-id/'+ this.props.flightTemplates.chosenItems[0] + '/'
         + 'from-frame/'+ this.props.startFrame + '/'
         + 'to-frame/'+ this.props.endFrame
       );
     } else if (this.props.flightTemplates.chosenItems.length > 1) {
       let templateName = 'last';
-      Promise.resolve(this.props.request(
+      this.props.request(
         ['templates', 'mergeTemplates'],
         'post',
         'TEMPLATES_MERGE',
@@ -37,10 +37,10 @@ class ShowChartByTemplates extends React.Component {
           resultTemplateName: templateName,
           templatesToMerge: JSON.stringify(this.props.flightTemplates.chosenItems)
         }
-      )).then(() => {
+      ).then((resp) => {
         this.props.redirect('/chart/'
           + 'flight-id/'+ this.props.flightId + '/'
-          + 'template-name/'+ templateName + '/'
+          + 'template-id/'+ resp.id + '/'
           + 'from-frame/'+ this.props.startFrame + '/'
           + 'to-frame/'+ this.props.endFrame
         );

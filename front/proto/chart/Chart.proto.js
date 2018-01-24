@@ -19,7 +19,8 @@ import Legend from 'Legend';
 var PARAM_TYPE_AP = "ap";
 var PARAM_TYPE_BP = "bp";
 
-function Chart() {
+function Chart(store) {
+  this.store = store;
   this.chartFactoryContainer = null;
   this.chartWorkspace = null;
   this.chartContent = null;
@@ -48,7 +49,7 @@ function Chart() {
 
   //data need to display chart
   this.user = null;
-  this.tplName = null;
+  this.templateId = null;
   this.flightId = null;
   this.stepLength = null;
   this.startCopyTime = null;
@@ -209,12 +210,12 @@ Chart.prototype.ResizeChart = function(e, size = null) {
   return;
 }
 
-Chart.prototype.SetChartData = function(flightId, tplName,
+Chart.prototype.SetChartData = function(flightId, templateId,
     stepLength, startCopyTime, startFrame, endFrame,
     apParams, bpParams){
 
   this.flightId = parseInt(flightId);
-  this.tplName = tplName;
+  this.templateId = templateId;
   this.stepLength = parseFloat(stepLength);
   this.startCopyTime = parseInt(startCopyTime);
   this.startFrame = parseInt(startFrame);
@@ -297,7 +298,7 @@ Chart.prototype.LoadFlotChart = function() {
 
       self.AxesWrk = new AxesWorker(self.stepLength, self.startCopyTime, self.plotAxes);
 
-      self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+      self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
 
       self.Exc = new Exception(self.flightId,
           self.apParams, self.bpParams, self.Prm.refParamArr,
@@ -390,7 +391,7 @@ Chart.prototype.SupportPlotEvents = function(e) {
 
         //save distribution
         setTimeout(function(){
-          self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+          self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
         }, 500);
 
       } else {
@@ -405,7 +406,7 @@ Chart.prototype.SupportPlotEvents = function(e) {
 
         //save distribution
         setTimeout(function(){
-          self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+          self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
         }, 500);
       };
     } else {
@@ -632,7 +633,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
         self.plot.pan(0);
 
         //save distribution
-        self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+        self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
       } else {
         self.AxesWrk.distributeByBinaryCoef = 1;
         self.AxesWrk.Distribute(self.plotYaxArr, self.plotAxes, series, self.apParams.length);
@@ -640,7 +641,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
         self.plot.pan(0);
 
         //save distribution
-        self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+        self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
       }
     }
 
@@ -671,7 +672,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
       self.Prm.startFrame = Math.round((currXmin - self.startCopyTime) / self.stepLength);
       self.Prm.endFrame = Math.floor((currXmax - self.startCopyTime) / self.stepLength);
 
-      self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+      self.AxesWrk.SaveDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
 
       var lineWidth = self.placeholder.data('linewidth');
 
@@ -679,7 +680,7 @@ Chart.prototype.SupportKeyBoardEvents = function(e) {
         function(status) {
           self.plot.setData(self.Prm.data);
 
-          self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.tplName);
+          self.AxesWrk.LoadDistribution(self.plotYaxArr, self.apParams, self.bpParams, self.flightId, self.templateId);
 
           self.plot.draw();
           self.plot.pan(0);

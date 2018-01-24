@@ -370,4 +370,27 @@ class ChannelComponent extends BaseComponent
 
     return $minMax;
   }
+
+  public function getParamsMinMax($tableBase, $params, $measureType)
+  {
+    $paramsWithMeasure = [];
+
+    foreach ($params as $param) {
+      $paramWithMeasure = array_merge(
+        $param, ['min' => 0, 'max' => 1]
+      );
+
+      if ($param['type'] === $measureType) {
+        $table = $tableBase.'_'.$param['prefix'];
+        $minMax = $this->getParamMinMax($table, $param['code']);
+
+        $paramWithMeasure['min'] = $minMax['min'];
+        $paramWithMeasure['max'] = $minMax['max'];
+      }
+
+      $paramsWithMeasure[] = $paramWithMeasure;
+    }
+
+    return $paramsWithMeasure;
+  }
 }

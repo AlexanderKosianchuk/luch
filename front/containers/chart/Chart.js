@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -8,7 +8,7 @@ import Toolbar from 'components/chart/toolbar/Toolbar';
 import request from 'actions/request';
 import showPage from 'actions/showPage';
 
-class Chart extends React.Component {
+class Chart extends Component {
   componentDidMount() {
     Promise.all([
       this.props.request(
@@ -17,7 +17,7 @@ class Chart extends React.Component {
         'TEMPLATE',
         {
           flightId: this.props.flightId,
-          templateName: this.props.templateName
+          templateId: this.props.templateId
         }
       ),
       this.props.request(
@@ -27,23 +27,19 @@ class Chart extends React.Component {
         { flightId: this.props.flightId }
       )
     ]).then(() => {
-      let analogParams = this.props.templateAnalogParams || [];
-      let binaryParams = this.props.templateBinaryParams || [];
+      let params = this.props.params || [];
 
-      let analogParamsCodes = [];
-      let binaryParamsCodes = [];
+      let analogParamsCodes = params
+        .filter((item) => (item.type === 'ap'))
+        .map((item) => item.code);
 
-      analogParams.forEach((item) => {
-        analogParamsCodes.push(item.code);
-      });
-
-      binaryParams.forEach((item) => {
-        binaryParamsCodes.push(item.code);
-      });
+      let binaryParamsCodes = params
+        .filter((item) => (item.type === 'bp'))
+        .map((item) => item.code);
 
       this.props.showPage('chartShow', [
         this.props.flightId,
-        this.props.templateName,
+        this.props.templateId,
         this.props.stepLength,
         this.props.startFlightTime,
         this.props.fromFrame,
@@ -68,11 +64,10 @@ class Chart extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     flightId: ownProps.match.params.flightId,
-    templateName: ownProps.match.params.templateName,
+    templateId: ownProps.match.params.templateId,
     fromFrame: ownProps.match.params.fromFrame,
     toFrame: ownProps.match.params.toFrame,
-    templateAnalogParams: state.template.ap,
-    templateBinaryParams: state.template.bp,
+    params: state.template.params,
     stepLength: state.flight.stepLength,
     startFlightTime: state.flight.startFlightTime,
   };

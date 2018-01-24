@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Menu from 'controls/menu/Menu';
 import Toolbar from 'components/flight-templates/toolbar/Toolbar';
 import List from 'components/flight-templates/list/List';
 
-class FlightTemplates extends React.Component {
+class FlightTemplates extends Component {
   render () {
     return (
       <div>

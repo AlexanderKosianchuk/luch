@@ -52,14 +52,14 @@ export default function facade(store) {
 
   $(document).on('chartShow', function (
     e, showcase,
-    flightId, tplName,
+    flightId, templateId,
     stepLength, startCopyTime,
     startFrame, endFrame,
     apParams, bpParams
   ) {
-    var C = new ChartService();
+    var C = new ChartService(store);
     C.SetChartData(
-      flightId, tplName,
+      flightId, templateId,
       stepLength, startCopyTime,
       startFrame, endFrame,
       apParams, bpParams

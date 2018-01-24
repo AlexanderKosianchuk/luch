@@ -23,18 +23,18 @@ export default function flightDataTablePrint(payload) {
     endFrameInput.value = payload.endFrame;
     form.appendChild(endFrameInput);
 
-    payload.analogParams.forEach((item) => {
-      let analogParamsInput = document.createElement('input');
-      analogParamsInput.name = 'analogParams[]';
-      analogParamsInput.value = item.code || '';
-      form.appendChild(analogParamsInput);
-    });
-
-    payload.binaryParams.forEach((item) => {
-      let binaryParamsInput = document.createElement('input');
-      binaryParamsInput.name = 'binaryParams[]';
-      binaryParamsInput.value = item.code || '';
-      form.appendChild(binaryParamsInput);
+    payload.params.forEach((item) => {
+      if (item.type === 'ap') {
+        let analogParamsInput = document.createElement('input');
+        analogParamsInput.name = 'analogParams[]';
+        analogParamsInput.value = item.code || '';
+        form.appendChild(analogParamsInput);
+      } else if (item.type === 'bp') {
+        let binaryParamsInput = document.createElement('input');
+        binaryParamsInput.name = 'binaryParams[]';
+        binaryParamsInput.value = item.code || '';
+        form.appendChild(binaryParamsInput);
+      }
     });
 
     document.body.appendChild(form);

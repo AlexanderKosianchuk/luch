@@ -51,6 +51,7 @@ export default class Item extends React.Component {
 
           <div className='col-sm-1'>
             <ItemCheckbox
+              id={ this.props.id }
               name={ this.props.name }
               checkstate={ this.getCheckstate(this.props.servicePurpose) }
             />
@@ -71,7 +72,7 @@ export default class Item extends React.Component {
             <ItemControls
               servicePurpose={ this.props.servicePurpose }
               flightId={ this.props.flightId }
-              templateName={ this.props.name }
+              templateId={ this.props.id }
             />
           </div>
 

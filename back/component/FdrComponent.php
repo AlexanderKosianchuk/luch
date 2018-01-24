@@ -419,6 +419,25 @@ class FdrComponent extends BaseComponent
     return [];
   }
 
+  public function getParamsByCodes($fdrId, $codesArr)
+  {
+    $params = [];
+    $fetchedCodes = [];
+    foreach ($codesArr as $code) {
+      $paramDesc = $this->getParamByCode(
+          $fdrId,
+          $code
+        );
+
+      if (!empty($paramDesc) && !in_array($code, $fetchedCodes)) {
+        $params[] = $paramDesc;
+        $fetchedCodes[] = $code;
+      }
+    }
+
+    return $params;
+  }
+
   public function getAnalogTable($base = '', $appendix = '')
   {
     $table = $base.$this->FdrAnalogParam::getTablePrefix();

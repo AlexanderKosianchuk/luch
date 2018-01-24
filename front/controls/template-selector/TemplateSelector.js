@@ -28,7 +28,25 @@ class TemplateSelector extends Component {
         'get',
         'FLIGHT_TEMPLATES',
         { fdrId: this.props.fdrId }
-      );
+      ).then((resp) => {
+        if (resp.length < 1) {
+          return;
+        }
+
+        let defaultIndex = resp.findIndex((item)  => {
+          return item.servicePurpose
+            && item.servicePurpose.isDefault === true;
+        });
+
+        if (defaultIndex === -1) {
+          return;
+        }
+
+        this.props.transmit(
+          'CHOOSE_TEMPLATE',
+          { id: resp[defaultIndex].id }
+        );
+      });
     }
   }
 
@@ -98,8 +116,8 @@ class TemplateSelector extends Component {
     }
 
     return (
-      <li className={ 'template-selector ' + (isHidden ? 'is-hidden' : '') }>
-        <a href='#'><Select
+      <div className={ 'template-selector ' + (isHidden ? 'is-hidden' : '') }>
+        <Select
           className='template-selector__select'
           data={ this.buildList() }
           value={ chosen }
@@ -110,8 +128,7 @@ class TemplateSelector extends Component {
             allowClear: allowClear
           }}
         />
-        </a>
-      </li>
+      </div>
     );
   }
 }

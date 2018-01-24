@@ -22,12 +22,12 @@ class Wrapper extends Component {
         'FDRS'
       ).then(() => {
         if (this.props.fdrId !== this.props.chosen.id) {
-          this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id)
+          this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id, true)
         }
       });
     } else {
       if (this.props.fdrId !== this.props.chosen.id) {
-        this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id)
+        this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id, true)
       }
     }
   }
@@ -36,7 +36,7 @@ class Wrapper extends Component {
     if (newProps.chosen.id
         && (this.props.fdrId !== newProps.chosen.id)
     ) {
-      this.props.redirect('/realtime-calibration/fdr-id/' + newProps.chosen.id)
+      this.props.redirect('/realtime-calibration/fdr-id/' + newProps.chosen.id, true)
     }
   }
 

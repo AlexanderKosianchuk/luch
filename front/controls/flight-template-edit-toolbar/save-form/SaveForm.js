@@ -1,6 +1,6 @@
 import './save-form.sass'
 
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from 'react-redux-i18n';
@@ -9,7 +9,7 @@ import _isEmpty from 'lodash.isempty';
 import redirect from 'actions/redirect';
 import request from 'actions/request';
 
-class SaveForm extends React.Component {
+class SaveForm extends Component {
   constructor(props) {
     super(props);
 
@@ -25,6 +25,7 @@ class SaveForm extends React.Component {
       'TEMPLATE',
       {
         flightId: this.props.flightId,
+        templateId: this.props.templateId,
         templateName: this.state.inputValue,
         analogParams: this.props.fdrCyclo.chosenAnalogParams,
         binaryParams: this.props.fdrCyclo.chosenBinaryParams

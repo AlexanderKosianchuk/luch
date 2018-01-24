@@ -21,7 +21,7 @@ export default function fdrCyclo(state = initialState, action) {
         }
       };
     case 'CHANGE_FLIGHT_PARAM_CHECKSTATE':
-      if (action.payload.context !== 'flightParams') {
+      if (action.payload.storeCheckstate !== true) {
         return state;
       }
 

@@ -72,7 +72,7 @@ class FlightsController extends BaseController
     return json_encode([
       'data' => array_merge(
         $flight->get(true), [
-          'fdrId' => $flight->getFdr()->getName(),
+          'fdrId' => $flight->getFdr()->getId(),
           'fdrName' => $flight->getFdr()->getName(),
           'startCopyTimeFormated' => date('d/m/y H:i:s', $flight->getStartCopyTime()),
         ]

@@ -19,7 +19,7 @@ class ItemCheckbox extends React.Component {
     if (this.state.checkstate === 'checked') {
       this.props.transmit(
         'TEMPLATE_CHOSEN',
-        { name: this.props.name }
+        { id: this.props.id }
       );
     }
   }
@@ -30,16 +30,14 @@ class ItemCheckbox extends React.Component {
       newCheckstate = '';
       this.props.transmit(
         'TEMPLATE_UNCHOSEN',
-        { name: this.props.name }
+        { id: this.props.id }
       );
     } else {
       this.props.transmit(
         'TEMPLATE_CHOSEN',
-        { name: this.props.name }
+        { id: this.props.id }
       );
     }
-
-
 
     this.setState({ checkstate: newCheckstate });
   }
@@ -48,14 +46,14 @@ class ItemCheckbox extends React.Component {
     return (
       <section className='flight-templates-item-checkbox'>
         <div className='flight-templates-item-checkbox__container'>
-          <input id={ 'flight-templates-item-checkbox_' + this.props.name }
+          <input id={ 'flight-templates-item-checkbox_' + this.props.id }
             type='checkbox'
             value='None'
             name='check'
             checked={ this.state.checkstate }
             onChange={ this.changeCheckState.bind(this) }
            />
-          <label htmlFor={ 'flight-templates-item-checkbox_' + this.props.name }></label>
+          <label htmlFor={ 'flight-templates-item-checkbox_' + this.props.id }></label>
         </div>
         </section>
     );

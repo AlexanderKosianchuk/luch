@@ -136,23 +136,6 @@ class ChartController extends BaseController
     echo json_encode($paramInfo);
   }
 
-  public function getParamMinMaxAction($flightId, $code, $tplName)
-  {
-    $flight = $this->em()->find('Entity\Flight', $flightId);
-
-    if (!$flight) {
-      throw new NotFoundException("flightId: ".$flightId);
-    }
-
-    return json_encode($this->dic()->get('fdrTemplate')
-      ->GetParamMinMax(
-        $flight->getFdr()->getCode(),
-        $tplName,
-        $code
-      )
-    );
-  }
-
   public function getFlightExceptionsAction($flightId, $refParam)
   {
     $flight = $this->em()->find('Entity\Flight', $flightId);
@@ -241,28 +224,50 @@ class ChartController extends BaseController
     return json_encode($infoArray);
   }
 
+  public function getParamMinMaxAction($flightId, $code, $templateId)
+  {
+    $flight = $this->em()->find('Entity\Flight', $flightId);
+
+    if (!$flight) {
+      throw new NotFoundException('flightId: '.$flightId);
+    }
+
+    return json_encode($this->dic()->get('fdrTemplate')
+      ->getParamMinMax(
+        $flight->getFdr()->getCode(),
+        $templateId,
+        $code
+      )
+    );
+  }
+
   public function setParamMinMaxAction(
     $flightId,
     $paramCode,
-    $tplName,
+    $templateId,
     $min,
     $max
   ) {
     $flight = $this->em()->find('Entity\Flight', $flightId);
 
     if (!$flight) {
-      throw new NotFoundException("flightId: ".$flightId);
+      throw new NotFoundException('flightId: '.$flightId);
     }
 
     $this->dic()->get('fdrTemplate')
       ->setParamMinMax(
         $flight->getFdrCode(),
-        $tplName,
+        $templateId,
         $paramCode,
         (object)['min' => $min, 'max' => $max]
       );
 
-    return json_encode('ok');
+    return json_encode([
+      'id' => $templateId,
+      'paramCode' => $paramCode,
+      'min' => $min,
+      'max' => $max
+    ]);
   }
 
   public function figurePrintAction(

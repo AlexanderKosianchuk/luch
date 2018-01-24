@@ -226,27 +226,6 @@ class EventComponent extends BaseComponent
       ->getResult();
   }
 
-  public function getFlightEventsRefParams($flightId)
-  {
-    $flightEvents = $this->getFlightEvents($flightId);
-
-    $params = [];
-
-    foreach ($flightEvents as $event) {
-      $paramDesc = $this->dic()->get('fdr')
-        ->getParamByCode(
-          $fdr->getId(),
-          $event['refParam']
-        );
-
-      if (!empty($paramDesc) && !in_array($event['refParam'], $codesArr)) {
-        $params[] = $paramDesc;
-      }
-    }
-
-    return $params;
-  }
-
   public function getFlightEventsByRefParam(
     $flight,
     $refParam

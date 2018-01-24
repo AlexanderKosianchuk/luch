@@ -96,6 +96,55 @@ class FdrTemplateComponent extends BaseComponent
       ->setTableName($table);
   }
 
+  public function getTemplateById($fdrId, $templateId, $userId = null)
+  {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    $this->setFdrTemplateTable($fdr->getCode());
+
+    $fdrTemplateParam = $this->em('fdrs')
+      ->getRepository('Entity\FdrTemplate')
+      ->findOneBy(['id' => $templateId]);
+
+    $fdrTemplateParams = $this->em('fdrs')
+      ->getRepository('Entity\FdrTemplate')
+      ->findBy(['name' => $fdrTemplateParam->getName()]);
+
+    $templateName = $fdrTemplateParam->getName();
+
+    $template = [
+      'id' => $templateId,
+      'name' => $templateName,
+      'paramCodes' => [],
+      'params' => [],
+      'userId' => $fdrTemplateParam->getUserId(),
+      'servicePurpose' => $this->getServicePurpose($templateName)
+    ];
+
+    foreach ($fdrTemplateParams as $templateParam) {
+
+      $template['paramCodes'][] = $templateParam->getParamCode();
+      $template['userId'] = $templateParam->getUserId();
+
+      $param = $this->fdrComponent->getParamByCode(
+        $fdr->getId(),
+        $templateParam->getParamCode()
+      );
+
+      if (($param === null) || empty($param)) {
+        continue;
+      }
+
+      $template['params'][] = $param;
+    }
+
+    return $template;
+  }
+
   public function getTemplateByName($fdrCode, $templateName, $userId = null)
   {
     if ($userId === null) {
@@ -112,11 +161,14 @@ class FdrTemplateComponent extends BaseComponent
       'id' => null,
       'name' => $templateName,
       'paramCodes' => [],
-      'ap' => [],
-      'bp' => [],
+      'params' => [],
       'userId' => null,
       'servicePurpose' => $this->getServicePurpose($templateName)
     ];
+
+    $fdr = $this->em()
+      ->getRepository('Entity\Fdr')
+      ->findOneBy(['code' => $fdrCode]);
 
     foreach ($fdrTemplateParams as $templateParam) {
       if ($template['id'] === null) {
@@ -127,17 +179,15 @@ class FdrTemplateComponent extends BaseComponent
       $template['userId'] = $templateParam->getUserId();
 
       $param = $this->fdrComponent->getParamByCode(
-        $flight->getFdrId(),
+        $fdr->getId(),
         $templateParam->getParamCode()
       );
 
-      if ($param['type'] === $this->fdrComponent->getApType()) {
-        $template['ap'][] = $param;
+      if (($param === null) || empty($param)) {
+        continue;
       }
 
-      if ($param['type'] === $this->fdrComponent->getBpType()) {
-        $template['bp'][] = $param;
-      }
+      $template['params'][] = $param;
     }
 
     return $template;
@@ -176,6 +226,7 @@ class FdrTemplateComponent extends BaseComponent
 
     return $this->getFdrTemplates($flight->getFdr()->getId());
   }
+
 
   public function getFdrTemplates($fdrId, $ignoreEventsTemplate = false, $userId = null)
   {
@@ -218,11 +269,11 @@ class FdrTemplateComponent extends BaseComponent
       foreach ($rows as $templateRow) {
         // workaround. Setting template id by its first row id
         if ($id === null) {
-          $id = $templateRow['id'];
+          $id = $templateRow->getId();
         }
 
         $paramDesc = $this->fdrComponent->getParamByCode(
-          $flight->getFdrId(),
+          $fdr->getId(),
           $templateRow->getParamCode()
         );
 
@@ -245,11 +296,104 @@ class FdrTemplateComponent extends BaseComponent
         'name' => $name,
         'paramCodes' => $paramCodes,
         'params' => $params,
-        'servicePurpose' => $servicePurpose
+        'servicePurpose' => $servicePurpose,
+        'userId' => $userId
       ];
     }
 
     return $templates;
+  }
+
+  public function delete($fdrCode, $templateName, $userId = null)
+  {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $this->setFdrTemplateTable($fdrCode);
+
+    $templates = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+      ->findBy(['name' => $templateName]);
+
+    foreach ($templates as $template) {
+      $this->em('fdrs')->remove($template);
+    }
+
+    $this->em('fdrs')->flush();
+  }
+
+  public function deleteById($fdrCode, $templateId, $userId = null)
+  {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $this->setFdrTemplateTable($fdrCode);
+
+    $templateParam = $this->em('fdrs')
+      ->getRepository('Entity\FdrTemplate')
+      ->findOneBy(['id' => $templateId]);
+
+    $templates = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+      ->findBy(['name' => $templateParam->getName()]);
+
+    foreach ($templates as $template) {
+      $this->em('fdrs')->remove($template);
+    }
+
+    $this->em('fdrs')->flush();
+  }
+
+  public function getParamMinMax($fdrCode, $templateId, $code, $userId = null)
+  {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $this->setFdrTemplateTable($fdrCode);
+    $fdr = $this->em()->getRepository('Entity\Fdr')->findOneBy(['code' => $fdrCode]);
+    $template = $this->getTemplateById($fdr->getId(), $templateId, $userId);
+
+    $templateParam = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+      ->findOneBy([
+        'name' => $template['name'],
+        'paramCode' => $code,
+        'userId' => $userId
+      ]);
+
+    return [
+      'min' => $templateParam->getMinYaxis(),
+      'max' => $templateParam->getMaxYaxis()
+    ];
+  }
+
+  public function setParamMinMax(
+    $fdrCode,
+    $templateId,
+    $code,
+    $range,
+    $userId = null
+  ) {
+    if ($userId === null) {
+      $userId = $this->user()->getId();
+    }
+
+    $this->setFdrTemplateTable($fdrCode);
+    $fdr = $this->em()->getRepository('Entity\Fdr')->findOneBy(['code' => $fdrCode]);
+    $template = $this->getTemplateById($fdr->getId(), $templateId, $userId);
+
+    $templateParam = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
+      ->findOneBy([
+        'name' => $template['name'],
+        'paramCode' => $code,
+        'userId' => $userId
+      ]);
+
+    $templateParam->setMinYaxis($range->min);
+    $templateParam->setMaxYaxis($range->max);
+
+    $this->em('fdrs')->persist($templateParam);
+    $this->em('fdrs')->flush();
   }
 
   public function create($fdrCode, $name, $params, $userId = null)
@@ -275,84 +419,32 @@ class FdrTemplateComponent extends BaseComponent
     return $this->getTemplateByName($fdrCode, $name, $userId);
   }
 
-  public function delete($fdrCode, $name, $userId = null)
-  {
-    if ($userId === null) {
-      $userId = $this->user()->getId();
-    }
-
-    $this->setFdrTemplateTable($fdrCode);
-
-    $templates = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
-      ->findBy(['name' => $name]);
-
-    foreach ($templates as $template) {
-      $this->em('fdrs')->remove($template);
-    }
-
-    $this->em('fdrs')->flush();
-  }
-
-  public function getParamMinMax($fdrCode, $templateName, $code, $userId = null)
-  {
-    if ($userId === null) {
-      $userId = $this->user()->getId();
-    }
-
-    $this->setFdrTemplateTable($fdrCode);
-
-    $template = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
-      ->findOneBy([
-        'name' => $templateName,
-        'paramCode' => $code,
-        'userId' => $userId
-      ]);
-
-    return [
-      'min' => $template->getMinYaxis(),
-      'max' => $template->getMaxYaxis()
-    ];
-  }
-
-  public function setParamMinMax(
-    $fdrCode,
-    $templateName,
-    $code,
-    $range,
-    $userId = null
-  ) {
-    if ($userId === null) {
-      $userId = $this->user()->getId();
-    }
-
-    $this->setFdrTemplateTable($fdrCode);
-
-    $template = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
-      ->findOneBy([
-        'name' => $templateName,
-        'paramCode' => $code,
-        'userId' => $userId
-      ]);
-
-    $template->setMinYaxis($range->min);
-    $template->setMaxYaxis($range->max);
-
-    $this->em('fdrs')->persist($template);
-    $this->em('fdrs')->flush();
-  }
-
   public function createWithDistributedParams(
     $fdrCode,
     $tplName,
-    $paramsWithType,
+    $params,
     $userId = null
   ) {
     if ($userId === null) {
       $userId = $this->user()->getId();
     }
 
-    $apParams = $paramsWithType[$this->fdrComponent->getApType()];
+    $apParams = [];
+    foreach ($params as $param) {
+      if ($param['type'] === $this->fdrComponent->getApType()) {
+        $apParams[] = $param;
+      }
+    }
     $apCount = count($apParams);
+
+    $bpParams = [];
+    foreach ($params as $param) {
+      if ($param['type'] === $this->fdrComponent->getBpType()) {
+        $bpParams[] = $param;
+      }
+    }
+
+    $bpCount = count($bpParams);
 
     // start from top
     for ($i = ($apCount - 1); $i >= 0; $i--) {
@@ -391,12 +483,10 @@ class FdrTemplateComponent extends BaseComponent
         );
     }
 
-    if (isset($paramsWithType[$this->fdrComponent->getBpType()])) {
-      $bpParams = $paramsWithType[$this->fdrComponent->getBpType()];
+    if ($bpCount > 0) {
       $busyCorridor = (($apCount -1) / $apCount * 100);
       $freeCorridor = 100 - $busyCorridor;//100%
 
-      $bpCount = count($bpParams);
       $curCorridor = $freeCorridor / $bpCount;
       $j = 0;
 
@@ -420,5 +510,7 @@ class FdrTemplateComponent extends BaseComponent
     }
 
     $this->em('fdrs')->flush();
+
+    return $this->getTemplateByName($fdrCode, $tplName, $userId);
   }
 }

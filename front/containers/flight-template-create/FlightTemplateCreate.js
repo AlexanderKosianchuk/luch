@@ -16,6 +16,7 @@ class FlightTemplateCreate extends React.Component {
         <CycloParams
           flightId={ this.props.flightId }
           colorPickerEnabled={ false }
+          storeCheckstate={ true }
         />
       </div>
     );

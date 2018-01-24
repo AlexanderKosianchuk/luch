@@ -113,11 +113,12 @@ class FdrBinaryParam
 
     $arr = [
       'id' => $this->id,
+      'type' => 'bp',
       'channel' => $this->getChannel(),
       'code' => $this->code,
       'name' => $this->name,
       'color' => $this->color,
-      'type' => $this->type,
+      'calcType' => $this->type,
       'prefix' => $this->prefix,
       'mask' => $this->mask,
       'basis' => $this->basis,

@@ -1,8 +1,8 @@
-import { push } from 'react-router-redux'
+import { push, replace } from 'react-router-redux'
 
-export default function redirect(payload, replace = false) {
+export default function redirect(payload, useReplace = false) {
   return function(dispatch) {
-    if (replace) {
+    if (useReplace) {
       dispatch(replace(payload));
       return;
     }

@@ -183,6 +183,7 @@ class FdrAnalogParam
   {
     $arr = [
       'id' => $this->id,
+      'type' => 'ap',
       'channel' => $this->getChannel(),
       'code' => $this->code,
       'name' => $this->name,
@@ -190,7 +191,7 @@ class FdrAnalogParam
       'minValue' => $this->minValue,
       'maxValue' => $this->maxValue,
       'color' => $this->color,
-      'type' => $this->type,
+      'calcType' => $this->type,
       'prefix' => $this->prefix,
       'mask' => $this->mask,
       'shift' => $this->shift,

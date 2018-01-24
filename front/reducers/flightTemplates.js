@@ -23,33 +23,69 @@ export default function flightTemplates(state = initialState, action) {
         ...{ pending: true }
       };
     case 'DELETE_TEMPLATE_COMPLETE':
-      let newItems = [];
-      state.items.forEach((item) => {
-        if (item.name !== action.payload.request.templateName) {
-          newItems.push(item);
-        }
+      var indexToDelete = state.items.findIndex((item) => {
+        return item.id === action.payload.request.templateId;
       });
+
+      if (indexToDelete === -1) {
+        return {
+          ...state, ...{
+            pending: false
+        }};
+      }
+
+      state.items.splice(indexToDelete, 1);
       return {
         ...state, ...{
-          pending: false,
-          items: newItems
-      }};
+          pending: false
+      }};;
     case 'CHOOSE_TEMPLATE':
+      var chosenIndex = state.items.findIndex((item) => {
+        return item.id === action.payload.id;
+      });
+
+      if (chosenIndex === -1) {
+        console.warn('Chosen unexist template. Id: ' + action.payload.id);
+        return state;
+      }
+
       return {
         ...state,
-        ...{ chosenItems: [action.payload.name] }
+        ...{ chosenItems: [state.items[chosenIndex]] }
       };
     case 'TEMPLATE_CHOSEN':
-      if (state.chosenItems.indexOf(action.payload.name) === -1) {
-        state.chosenItems.push(action.payload.name)
-        return {
-          ...state,
-        };
+      var indexToChoose = state.items.findIndex((item) => {
+        return item.id === action.payload.id;
+      });
+
+      if (indexToChoose === -1) {
+        console.warn('Chosen unexist template. Id: ' + action.payload.id);
+        return state;
       }
-      return state;
+
+      var indexInChosen = state.chosenItems.findIndex((item) => {
+        return item.id === action.payload.id;
+      });
+
+      // already chosen
+      if (indexInChosen !== -1) {
+        return state;
+      }
+
+      state.chosenItems.push(state.items[indexToChoose])
+      return {
+        ...state,
+      };
     case 'TEMPLATE_UNCHOSEN':
-      var index = state.chosenItems.indexOf(action.payload.name);
-      state.chosenItems.splice(index, 1);
+      var indexToUnchoose = state.chosenItems.findIndex((item) => {
+        return item.id === action.payload.id;
+      });
+
+      if (indexToChoose === -1) {
+        return state;
+      }
+
+      state.chosenItems.splice(indexToUnchoose, 1);
       return {
         ...state
       };

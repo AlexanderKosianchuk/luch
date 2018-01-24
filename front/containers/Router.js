@@ -62,11 +62,11 @@ export default function Router ({ history }) {
       <Route path='/flight-events/:flightId' component={ UserIsAuthenticated(FlightEvents) } />
       <Route exact path='/flight-templates/:flightId' component={ UserIsAuthenticated(FlightTemplates) } />
       <Route path='/flight-template-edit/create/flight-id/:flightId/' component={ UserIsAuthenticated(FlightTemplateCreate) } />
-      <Route path='/flight-template-edit/update/flight-id/:flightId/template-name/:templateName' component={ UserIsAuthenticated(FlightTemplateUpdate) } />
+      <Route path='/flight-template-edit/update/flight-id/:flightId/template-id/:templateId' component={ UserIsAuthenticated(FlightTemplateUpdate) } />
       <Route path='/flight-params/:id' component={ UserIsAuthenticated(FlightParams) } />
       <Route exact path='/uploading/:uploadingUid/fdr-id/:fdrId' component={ UserIsAuthenticated(UploadingPreview) }/>
       <Route path='/uploading/:uploadingUid/fdr-id/:fdrId/calibration-id/:calibrationId' component={ UserIsAuthenticated(UploadingPreview) } />
-      <Route path='/chart/flight-id/:flightId/template-name/:templateName/from-frame/:fromFrame/to-frame/:toFrame' component={ UserIsAuthenticated(Chart) } />
+      <Route path='/chart/flight-id/:flightId/template-id/:templateId/from-frame/:fromFrame/to-frame/:toFrame' component={ UserIsAuthenticated(Chart) } />
       </div>
     </ConnectedRouter>
   )
