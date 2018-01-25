@@ -18,7 +18,8 @@ import realtimeCalibrationData from 'reducers/realtimeCalibrationData';
 import realtimeCalibrationParams from 'reducers/realtimeCalibrationParams';
 import webSockets from 'reducers/webSockets';
 import settings from 'reducers/settings';
-import template from 'reducers/template';
+import fdrTemplates from 'reducers/fdrTemplates';
+import flightTemplate from 'reducers/flightTemplate';
 import flightTemplates from 'reducers/flightTemplates';
 import flightEvents from 'reducers/flightEvents';
 import userReducer from 'reducers/userReducer';
@@ -38,7 +39,8 @@ const appReducer = combineReducers({
   realtimeCalibrationParams,
   webSockets,
   flightFilter,
-  template,
+  fdrTemplates,
+  flightTemplate,
   flightTemplates,
   flightEvents,
   settlementFilter,

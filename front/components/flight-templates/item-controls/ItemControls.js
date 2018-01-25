@@ -26,9 +26,9 @@ class ItemControls extends React.Component {
 
   handleTrashClick () {
     this.props.request(
-      ['templates', 'removeTemplate'],
+      ['flightTemplate', 'delete'],
       'delete',
-      'TEMPLATE',
+      'FLIGHT_TEMPLATE',
       {
         flightId: this.props.flightId,
         templateId: this.props.templateId

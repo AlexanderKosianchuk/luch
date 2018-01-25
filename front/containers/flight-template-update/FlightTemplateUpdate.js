@@ -14,9 +14,9 @@ class FlightTemplateUpdate extends Component {
   componentDidMount() {
     if ((this.props.passedTemplateId !== this.props.storedTemplateId)) {
       this.props.request(
-        ['templates', 'getTemplate'],
+        ['flightTemplate', 'get'],
         'get',
-        'TEMPLATE',
+        'FLIGHT_TEMPLATE',
         {
           flightId: this.props.flightId,
           templateId: this.props.passedTemplateId
@@ -55,11 +55,11 @@ class FlightTemplateUpdate extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    templatePending: state.template.pending,
+    templatePending: state.flightTemplate.pending,
     flightId: ownProps.match.params.flightId,
     passedTemplateId: ownProps.match.params.templateId,
-    storedTemplateId: state.template.id,
-    templateName: state.template.name
+    storedTemplateId: state.flightTemplate.id,
+    templateName: state.flightTemplate.name
   };
 }
 

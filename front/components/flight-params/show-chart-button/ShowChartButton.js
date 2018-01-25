@@ -21,9 +21,9 @@ class ShowChartButton extends React.Component {
   showChart() {
     let templateName = 'last';
     this.props.request(
-      ['templates', 'setTemplate'],
+      ['flightTemplate', 'set'],
       'post',
-      'TEMPLATE',
+      'FLIGHT_TEMPLATE',
       {
         flightId: this.props.flightId,
         templateName: templateName,

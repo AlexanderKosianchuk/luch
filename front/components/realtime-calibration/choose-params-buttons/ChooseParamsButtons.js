@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { Translate, I18n } from 'react-redux-i18n';
 import Switch from 'react-bootstrap-switch';
 
-import TemplateSelector from 'controls/template-selector/TemplateSelector';
+import FdrTemplateSelector from 'controls/fdr-template-selector/FdrTemplateSelector';
 import CycloParams from 'controls/cyclo-params/CycloParams';
 import Dialog from 'controls/dialog/Dialog';
 
@@ -69,9 +69,7 @@ class ChooseParamsButtons extends Component {
           />
         </div>
           { (this.state.paramsSource === 'template') ? (
-            <TemplateSelector
-              fdrId={ this.props.fdrId }
-            />
+            <FdrTemplateSelector fdrId={ this.props.fdrId }/>
           ) : (
             <div>
               <button

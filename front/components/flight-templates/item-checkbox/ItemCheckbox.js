@@ -18,7 +18,7 @@ class ItemCheckbox extends React.Component {
   componentDidMount() {
     if (this.state.checkstate === 'checked') {
       this.props.transmit(
-        'TEMPLATE_CHOSEN',
+        'FLIGHT_TEMPLATE_CHOSEN',
         { id: this.props.id }
       );
     }
@@ -29,12 +29,12 @@ class ItemCheckbox extends React.Component {
     if (this.state.checkstate === 'checked') {
       newCheckstate = '';
       this.props.transmit(
-        'TEMPLATE_UNCHOSEN',
+        'FLIGHT_TEMPLATE_UNCHOSEN',
         { id: this.props.id }
       );
     } else {
       this.props.transmit(
-        'TEMPLATE_CHOSEN',
+        'FLIGHT_TEMPLATE_CHOSEN',
         { id: this.props.id }
       );
     }

@@ -33,7 +33,7 @@ Params.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    params: state.template.params
+    params: state.flightTemplate.params
   };
 }
 

@@ -45,7 +45,7 @@ class FlightTemplateEditToolbar extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    servisePurpose: state.template.servisePurpose
+    servisePurpose: state.flightTemplate.servisePurpose
   }
 }
 

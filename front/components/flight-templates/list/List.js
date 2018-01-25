@@ -21,7 +21,7 @@ class List extends Component {
 
   componentDidMount() {
     this.props.request(
-      ['templates', 'getFlightTemplates'],
+      ['flightTemplate', 'getAll'],
       'get',
       'FLIGHT_TEMPLATES',
       { flightId: this.props.flightId }
@@ -40,7 +40,7 @@ class List extends Component {
       }
 
       this.props.transmit(
-        'CHOOSE_TEMPLATE',
+        'CHOOSE_FLIGHT_TEMPLATE',
         { id: resp[defaultIndex].id }
       );
     });

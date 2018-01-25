@@ -17,12 +17,12 @@ export default function flightTemplates(state = initialState, action) {
           pending: false,
           items: action.payload.response
       }};
-    case 'DELETE_TEMPLATE_START':
+    case 'DELETE_FLIGHT_TEMPLATE_START':
       return {
         ...state,
         ...{ pending: true }
       };
-    case 'DELETE_TEMPLATE_COMPLETE':
+    case 'DELETE_FLIGHT_TEMPLATE_COMPLETE':
       var indexToDelete = state.items.findIndex((item) => {
         return item.id === action.payload.request.templateId;
       });
@@ -39,7 +39,7 @@ export default function flightTemplates(state = initialState, action) {
         ...state, ...{
           pending: false
       }};;
-    case 'CHOOSE_TEMPLATE':
+    case 'CHOOSE_FLIGHT_TEMPLATE':
       var chosenIndex = state.items.findIndex((item) => {
         return item.id === action.payload.id;
       });
@@ -53,7 +53,7 @@ export default function flightTemplates(state = initialState, action) {
         ...state,
         ...{ chosenItems: [state.items[chosenIndex]] }
       };
-    case 'TEMPLATE_CHOSEN':
+    case 'FLIGHT_TEMPLATE_CHOSEN':
       var indexToChoose = state.items.findIndex((item) => {
         return item.id === action.payload.id;
       });
@@ -76,7 +76,7 @@ export default function flightTemplates(state = initialState, action) {
       return {
         ...state,
       };
-    case 'TEMPLATE_UNCHOSEN':
+    case 'FLIGHT_TEMPLATE_UNCHOSEN':
       var indexToUnchoose = state.chosenItems.findIndex((item) => {
         return item.id === action.payload.id;
       });

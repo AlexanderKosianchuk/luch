@@ -20,9 +20,9 @@ class SaveForm extends Component {
 
   saveTemplate() {
     this.props.request(
-      ['templates', 'setTemplate'],
+      ['flightTemplate', 'set'],
       'post',
-      'TEMPLATE',
+      'FLIGHT_TEMPLATE',
       {
         flightId: this.props.flightId,
         templateId: this.props.templateId,

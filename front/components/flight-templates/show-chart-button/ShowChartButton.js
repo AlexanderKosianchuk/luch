@@ -22,14 +22,14 @@ class ShowChartByTemplates extends React.Component {
     if (this.props.flightTemplates.chosenItems.length === 1) {
       this.props.redirect('/chart/'
         + 'flight-id/'+ this.props.flightId + '/'
-        + 'template-id/'+ this.props.flightTemplates.chosenItems[0] + '/'
+        + 'template-id/'+ this.props.flightTemplates.chosenItems[0].id + '/'
         + 'from-frame/'+ this.props.startFrame + '/'
         + 'to-frame/'+ this.props.endFrame
       );
     } else if (this.props.flightTemplates.chosenItems.length > 1) {
       let templateName = 'last';
       this.props.request(
-        ['templates', 'mergeTemplates'],
+        ['flightTemplate', 'merge'],
         'post',
         'TEMPLATES_MERGE',
         {

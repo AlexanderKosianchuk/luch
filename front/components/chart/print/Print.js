@@ -40,7 +40,7 @@ function mapStateToProps(state) {
   return {
     startFrame: state.flight.selectedStartFrame,
     endFrame: state.flight.selectedEndFrame,
-    params: state.template.params
+    params: state.flightTemplate.params
   };
 }
 

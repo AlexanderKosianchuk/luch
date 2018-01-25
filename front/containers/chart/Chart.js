@@ -12,9 +12,9 @@ class Chart extends Component {
   componentDidMount() {
     Promise.all([
       this.props.request(
-        ['templates', 'getTemplate'],
+        ['flightTemplate', 'get'],
         'get',
-        'TEMPLATE',
+        'FLIGHT_TEMPLATE',
         {
           flightId: this.props.flightId,
           templateId: this.props.templateId
@@ -67,7 +67,7 @@ function mapStateToProps(state, ownProps) {
     templateId: ownProps.match.params.templateId,
     fromFrame: ownProps.match.params.fromFrame,
     toFrame: ownProps.match.params.toFrame,
-    params: state.template.params,
+    params: state.flightTemplate.params,
     stepLength: state.flight.stepLength,
     startFlightTime: state.flight.startFlightTime,
   };
