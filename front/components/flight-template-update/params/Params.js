@@ -20,7 +20,6 @@ class Params extends Component {
           colorPickerEnabled={ false }
           chosenAnalogParams={ templateAnalogParams }
           chosenBinaryParams={ templateBinaryParams }
-          storeCheckstate={ true }
         />
       </div>
     );

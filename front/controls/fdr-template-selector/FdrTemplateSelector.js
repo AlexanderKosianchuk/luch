@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { I18n } from 'react-redux-i18n';
+import _isFunction from 'lodash.isfunction';
 
 import Select from 'react-select2-wrapper';
 import 'react-select2-wrapper/css/select2.min.css';
@@ -22,6 +23,14 @@ class FdrTemplateSelector extends Component {
   }
 
   componentDidMount() {
+    this.fetchTemplates();
+  }
+
+  componentDidUpdate() {
+    this.fetchTemplates();
+  }
+
+  fetchTemplates() {
     if (this.props.pending === null) {
       this.props.request(
         ['fdrTemplate', 'getAll'],
@@ -39,7 +48,11 @@ class FdrTemplateSelector extends Component {
         });
 
         if (defaultIndex === -1) {
-          return;
+          defaultIndex = 0;
+        }
+
+        if (_isFunction(this.props.handleChange)) {
+          this.props.handleChange(resp[defaultIndex]);
         }
 
         this.props.transmit(
@@ -57,10 +70,26 @@ class FdrTemplateSelector extends Component {
 
     return this.props.templates.map((item) => {
       return {
-        text: item.name,
+        text: this.getTemplateName(item.name, item.servicePurpose),
         id: item.id
       };
     });
+  }
+
+  getTemplateName(name, servicePurpose) {
+    let needTranslate = false;
+
+    Object.keys(servicePurpose).forEach((key) => {
+      if (servicePurpose[key] === true) {
+        needTranslate = true;
+      }
+    });
+
+    if (needTranslate) {
+      return I18n.t('fdrTemplateSelector.item.' + name);
+    }
+
+    return name;
   }
 
   handleSelect() {
@@ -84,6 +113,10 @@ class FdrTemplateSelector extends Component {
     if (typeof this.props.handleChange === 'function') {
       this.props.handleChange(chosen);
       return;
+    }
+
+    if (_isFunction(this.props.handleChange)) {
+      this.props.handleChange(chosen);
     }
 
     this.props.transmit('CHOOSE_FDR_TEMPLATE', chosen);
@@ -152,7 +185,8 @@ function mapStateToProps(state) {
   return {
     pending: state.fdrTemplates.pending,
     templates: state.fdrTemplates.items,
-    chosen: state.fdrTemplates.chosenItems
+    chosen: state.fdrTemplates.chosenItems,
+    chosenFdr: state.fdrs.chosen
   }
 }
 

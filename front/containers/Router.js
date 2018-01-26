@@ -48,7 +48,8 @@ export default function Router ({ history }) {
 
       <Route exact path='/calibration/update/:calibrationId' component={ UserIsAuthenticated(CalibrationForm) } />
       <Route exact path='/calibration/create/fdr-id/:fdrId' component={ UserIsAuthenticated(CalibrationForm) } />
-      <Route exact path='/realtime-calibration/fdr-id/:fdrId/template-id/:templateId' component={ UserIsAuthenticated(RealTimeCalibration) } />
+      <Route exact path='/realtime-calibration/fdr-id/:fdrId/params-sourse/:paramsSource/fdr-template-id/:fdrTemplateId' component={ UserIsAuthenticated(RealTimeCalibration) } />
+      <Route exact path='/realtime-calibration/fdr-id/:fdrId/params-sourse/:paramsSource/' component={ UserIsAuthenticated(RealTimeCalibration) } />
       <Route exact path='/realtime-calibration/fdr-id/:fdrId/' component={ UserIsAuthenticated(RealTimeCalibration) } />
       <Route exact path='/realtime-calibration/' component={ UserIsAuthenticated(RealTimeCalibration) } />
 

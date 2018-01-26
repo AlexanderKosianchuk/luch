@@ -10,7 +10,19 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 import request from 'actions/request';
 import transmit from 'actions/transmit';
 
+const DEFAULT_EVENT = 'CHANGE_FLIGHT_PARAM_CHECKSTATE';
+
 class CycloParams extends Component {
+  constructor(props) {
+    super(props);
+
+    if (props.eventToDispatch) {
+      this.eventToDispatch = props.eventToDispatch;
+    } else {
+      this.eventToDispatch = DEFAULT_EVENT;
+    }
+  }
+
   componentDidMount() {
     if (this.props.flightId && this.props.flightId !== null) {
       this.props.request(
@@ -30,33 +42,25 @@ class CycloParams extends Component {
       );
     }
 
-    if (this.props.storeCheckstate
-      && Array.isArray(this.props.chosenAnalogParams)
-    ) {
+    if (Array.isArray(this.props.chosenAnalogParams)) {
       this.props.chosenAnalogParams.forEach((item) => {
         this.props.transmit(
-          'CHANGE_FLIGHT_PARAM_CHECKSTATE',
+          this.eventToDispatch,
           {
-            id: item.id,
-            paramType: 'ap',
-            state: true,
-            storeCheckstate: true
+            ...item,
+            ...{ state: true }
           }
         );
       });
     }
 
-    if (this.props.storeCheckstate
-      && Array.isArray(this.props.chosenBinaryParams)
-    ) {
+    if (Array.isArray(this.props.chosenBinaryParams)) {
       this.props.chosenBinaryParams.forEach((item) => {
         this.props.transmit(
-          'CHANGE_FLIGHT_PARAM_CHECKSTATE',
+          this.eventToDispatch,
           {
-            id: item.id,
-            paramType: 'bp',
-            state: true,
-            storeCheckstate: true
+            ...item,
+            ...{ state: true }
           }
         );
       });
@@ -74,7 +78,7 @@ class CycloParams extends Component {
         chosenBinaryParams={ this.props.chosenBinaryParams || [] }
         flightId={ this.props.flightId }
         colorPickerEnabled={ this.props.colorPickerEnabled }
-        storeCheckstate={ this.props.storeCheckstate }
+        eventToDispatch={ this.eventToDispatch }
       />
     }
   }

@@ -10,61 +10,116 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
 import redirect from 'actions/redirect';
+import transmit from 'actions/transmit';
 
 const UID = uuidV4().substring(0, 18).replace(/-/g, '');
 
 class Wrapper extends Component {
-  componentDidMount() {
-    if (this.props.fdrsFetching === null) {
-      this.props.request(
-        ['fdr', 'getFdrs'],
-        'get',
-        'FDRS'
-      ).then(() => {
-        if (this.props.fdrId !== this.props.chosen.id) {
-          this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id, true)
-        }
-      });
-    } else {
-      if (this.props.fdrId !== this.props.chosen.id) {
-        this.props.redirect('/realtime-calibration/fdr-id/' + this.props.chosen.id, true)
-      }
-    }
-  }
+  navigate(paramsSource = null) {
+    let fdrId = this.props.fdrId;
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.chosen.id
-        && (this.props.fdrId !== newProps.chosen.id)
+    if ((
+        !this.props.fdrId
+          && Number.isInteger(parseInt(this.props.chosenFdr.id))
+        ) ||
+        (
+          Number.isInteger(parseInt(this.props.chosenFdr.id))
+          && (
+            parseInt(this.props.fdrId)
+            !== parseInt(this.props.chosenFdr.id)
+          )
+        )
     ) {
-      this.props.redirect('/realtime-calibration/fdr-id/' + newProps.chosen.id, true)
+      fdrId = this.props.chosenFdr.id;
     }
+
+    let fdrTemplateId = this.props.fdrTemplateId;
+
+    if ((
+        !this.props.fdrId
+          && this.props.chosenFdrTemplates[0]
+          && Number.isInteger(parseInt(this.props.chosenFdrTemplates[0].id))
+        ) ||
+        (
+          this.props.chosenFdrTemplates[0]
+          && Number.isInteger(parseInt(this.props.chosenFdrTemplates[0].id))
+          && (
+            parseInt(this.props.fdrTemplateId)
+            !== parseInt(this.props.chosenFdrTemplates[0].id)
+          )
+        )
+    ) {
+      fdrTemplateId = this.props.chosenFdrTemplates[0].id;
+    }
+
+    if (paramsSource === null) {
+      paramsSource = this.props.paramsSource;
+    }
+
+    let fdrTemplateIdUrl = '';
+    if ((paramsSource === 'template')
+      && (fdrTemplateId !== null)
+    ) {
+      fdrTemplateIdUrl = `/fdr-template-id/${fdrTemplateId}`;
+    }
+
+    this.props.redirect(`/realtime-calibration/fdr-id/${fdrId}`
+      + `/params-sourse/${paramsSource}`
+      + fdrTemplateIdUrl,
+      true
+    );
   }
 
-  buildBody() {
-    if (this.props.fdrsFetching !== false) {
-      return <ContentLoader/>
-    } else {
-      return (
-        <div><div className='col-sm-3'>
-          <VerticalToolbar
-            uid={ UID }
-            fdrId={ this.props.chosen.id }
-          />
-        </div>
-        <div className='col-sm-9'>
-          <DataContainer
-            uid={ UID }
-            fdrId={ this.props.chosen.id }
-          />
-        </div></div>
-      );
+  componentWillMount() {
+    this.navigate();
+    this.setContainerParams();
+  }
+
+  componentDidUpdate() {
+    this.navigate();
+    this.setContainerParams();
+  }
+
+  changeParamsSource(newSource) {
+    this.navigate(newSource);
+  }
+
+  setContainerParams() {
+    if ((this.props.paramsSource === 'template')
+      && (this.props.chosenFdrTemplates.length > 0)
+      && (this.props.chosenFdrTemplates[0].params.length > 0)
+    ) {
+      this.props.transmit('CLEAR_REALTIME_CALIBRATION_PARAMS')
+        .then(() => {
+          this.props.chosenFdrTemplates[0].params.forEach((param) => {
+            this.props.transmit('CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE', {
+              ...param,
+              ...{ state: true }
+            });
+          });
+        });
     }
   }
 
   render() {
+    if (!Number.isInteger(parseInt(this.props.fdrId))) {
+      return <ContentLoader/>
+    }
+
     return (
       <div className='row'>
-        { this.buildBody() }
+        <div className='col-sm-3'>
+          <VerticalToolbar
+            uid={ UID }
+            fdrId={ parseInt(this.props.fdrId) }
+            paramsSource={ this.props.paramsSource }
+            fdrTemplateId={ this.props.fdrTemplateId }
+            changeParamsSource={ this.changeParamsSource.bind(this) }
+          />
+        </div>
+        <div className='col-sm-9'>
+          <DataContainer uid={ UID } />
+        </div>
       </div>
     );
   }
@@ -73,7 +128,8 @@ class Wrapper extends Component {
 function mapStateToProps(state) {
   return {
     fdrsFetching: state.fdrs.pending,
-    chosen: state.fdrs.chosen,
+    chosenFdr: state.fdrs.chosen,
+    chosenFdrTemplates: state.fdrTemplates.chosenItems,
   }
 }
 
@@ -81,6 +137,7 @@ function mapDispatchToProps(dispatch) {
   return {
     request: bindActionCreators(request, dispatch),
     redirect: bindActionCreators(redirect, dispatch),
+    transmit: bindActionCreators(transmit, dispatch),
   }
 }
 

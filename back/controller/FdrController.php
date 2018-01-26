@@ -76,9 +76,9 @@ class FdrController extends BaseController
 
     $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
 
-    if ($paramInfo["paramType"] == PARAM_TYPE_AP) {
+    if ($paramInfo["type"] == PARAM_TYPE_AP) {
       $fdr->UpdateParamColor($cycloApTableName, $paramCode, $color);
-    } else if ($paramInfo["paramType"] == PARAM_TYPE_BP) {
+    } else if ($paramInfo["type"] == PARAM_TYPE_BP) {
       $fdr->UpdateParamColor($cycloBpTableName, $paramCode, $color);
     }
 

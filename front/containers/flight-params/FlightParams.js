@@ -21,7 +21,6 @@ class FlightParams extends React.Component {
           context={ CYCLO_CONTEXT }
           chosenAnalogParams={ this.props.fdrCyclo.chosenAnalogParams }
           chosenBinaryParams={ this.props.fdrCyclo.chosenBinaryParams }
-          storeCheckstate={ true }
         />
       </div>
     );

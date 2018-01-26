@@ -10,7 +10,11 @@ class RealTimeCalibration extends Component {
     return (
       <div>
         <Menu />
-        <Wrapper fdrId={ this.props.fdrId } />
+        <Wrapper
+          fdrId={ this.props.fdrId }
+          paramsSource={ this.props.paramsSource }
+          fdrTemplateId={ this.props.fdrTemplateId }
+        />
       </div>
     );
   }
@@ -18,7 +22,9 @@ class RealTimeCalibration extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    fdrId: parseInt(ownProps.match.params.fdrId) || null,
+    fdrId: ownProps.match.params.fdrId || null,
+    paramsSource: ownProps.match.params.paramsSource || 'template',
+    fdrTemplateId: ownProps.match.params.fdrTemplateId || null
   };
 }
 

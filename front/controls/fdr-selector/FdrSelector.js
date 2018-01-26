@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { I18n } from 'react-redux-i18n';
+import _isFunction from 'lodash.isfunction';
 
 import Select from 'react-select2-wrapper';
 import 'react-select2-wrapper/css/select2.min.css';
@@ -27,7 +28,44 @@ class FdrSelector extends Component {
         ['fdr', 'getFdrs'],
         'get',
         'FDRS'
-      );
+      ).then((resp) => {
+        if (resp.length < 1) {
+          return;
+        }
+
+        if (_isFunction(this.props.handleChange)) {
+          this.props.handleChange(resp[0]);
+        }
+
+        this.props.transmit('CHOOSE_FDR', resp[0])
+          .then(() => {
+            this.props.transmit('CLEAR_FDR_TEMPLATES');
+          });
+      });
+    } else {
+      if (Number.isInteger(parseInt(this.props.chosenFdrId))
+          && (this.props.chosenFdrId !== this.props.chosen.id)
+      ) {
+
+        let chosenIndex = this.props.fdrs.findIndex((item) => {
+          return item.id === this.props.chosenFdrId;
+        });
+
+        if (chosenIndex === -1) {
+          return;
+        }
+
+        if (_isFunction(this.props.handleChange)) {
+          this.props.handleChange(this.props.fdrs[chosenIndex]);
+        }
+
+        this.props.transmit(
+          'CHOOSE_FDR',
+          this.props.fdrs[chosenIndex]
+        ).then(() => {
+          this.props.transmit('CLEAR_FDR_TEMPLATES');
+        });
+      }
     }
   }
 
@@ -62,12 +100,14 @@ class FdrSelector extends Component {
 
     let chosen = this.props.fdrs[index];
 
-    if (typeof this.props.handleChange === 'function') {
+    if (_isFunction(this.props.handleChange)) {
       this.props.handleChange(chosen);
-      return;
     }
 
-    this.props.transmit('CHOOSE_FDR', chosen);
+    this.props.transmit('CHOOSE_FDR', chosen)
+      .then(() => {
+        this.props.transmit('CLEAR_FDR_TEMPLATES');
+      });
   }
 
   getSelectedId() {

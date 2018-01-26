@@ -41,7 +41,7 @@ class RealtimeChart extends Component {
     };
 
     this.props.realtimeCalibrationParams
-      .chosenChartAnalogParams
+      .chartAnalogParams
       .forEach((item, index) => {
         let itemId = item.id;
         let cyclo = this.props.fdrCyclo;
@@ -85,13 +85,13 @@ class RealtimeChart extends Component {
     };
 
     let count = this.props.realtimeCalibrationParams
-      .chosenChartAnalogParams
+      .chartAnalogParams
       .length - 1;
 
     let lines = this.rotateData();
 
     this.props.realtimeCalibrationParams
-      .chosenChartAnalogParams
+      .chartAnalogParams
       .forEach((item, index) => {
         let itemId = item.id;
         let cyclo = this.props.fdrCyclo;
@@ -152,7 +152,7 @@ class RealtimeChart extends Component {
 
   render() {
     if (this.props.realtimeCalibrationParams
-      .chosenChartAnalogParams
+      .chartAnalogParams
       .length === 0
     ) {
       return null;

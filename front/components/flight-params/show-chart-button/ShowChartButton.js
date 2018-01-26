@@ -30,10 +30,10 @@ class ShowChartButton extends React.Component {
         analogParams: this.props.fdrCyclo.chosenAnalogParams,
         binaryParams: this.props.fdrCyclo.chosenBinaryParams
       }
-    ).then(() => {
+    ).then((response) => {
       this.props.redirect('/chart/'
         + 'flight-id/'+ this.props.flightId + '/'
-        + 'template-name/'+ templateName + '/'
+        + 'template-id/'+ response.id + '/'
         + 'from-frame/'+ this.props.startFrame + '/'
         + 'to-frame/'+ this.props.endFrame
       );

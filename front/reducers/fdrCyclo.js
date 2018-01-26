@@ -21,10 +21,6 @@ export default function fdrCyclo(state = initialState, action) {
         }
       };
     case 'CHANGE_FLIGHT_PARAM_CHECKSTATE':
-      if (action.payload.storeCheckstate !== true) {
-        return state;
-      }
-
       let getIndexById = function (id, array) {
         let itemIndex = null;
         array.forEach((item, index) => {
@@ -35,9 +31,9 @@ export default function fdrCyclo(state = initialState, action) {
       }
 
       let chosenParams = [];
-      if (action.payload.paramType === 'ap') {
+      if (action.payload.type === 'ap') {
         chosenParams = state.chosenAnalogParams;
-      } else if (action.payload.paramType === 'bp') {
+      } else if (action.payload.type === 'bp') {
         chosenParams = state.chosenBinaryParams;
       }
 
@@ -57,7 +53,7 @@ export default function fdrCyclo(state = initialState, action) {
       ) {
         chosenParams.push({
           id: action.payload.id,
-          paramType: action.payload.paramType
+          type: action.payload.type
         });
       }
 

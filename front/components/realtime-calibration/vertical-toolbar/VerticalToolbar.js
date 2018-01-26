@@ -188,9 +188,7 @@ class VerticalToolbar extends Component {
         </div>
         <div>
           <ul className='realtime-calibration-vertical-toolbar__fdr-type'>
-            <FdrSelector
-              chosenFdrId={ this.props.fdrId }
-            />
+            <FdrSelector chosenFdrId={ this.props.fdrId } />
             <CalibrationSelector/>
           </ul>
         </div>
@@ -218,6 +216,9 @@ class VerticalToolbar extends Component {
         </div>
         <ChooseParamsButtons
           fdrId={ this.props.fdrId }
+          paramsSource={ this.props.paramsSource }
+          fdrTemplateId={ this.props.fdrTemplateId }
+          changeParamsSource={ this.props.changeParamsSource }
         />
         <div className='realtime-calibration-vertical-toolbar__inline-label-container'>
           <div className='realtime-calibration-vertical-toolbar__inline-label'>

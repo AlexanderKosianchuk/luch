@@ -1,6 +1,6 @@
 import './item.sass'
 
-import React from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
@@ -8,7 +8,7 @@ import ColorPicker from 'controls/cyclo-params/color-picker/ColorPicker';
 import transmit from 'actions/transmit';
 import request from 'actions/request';
 
-class Item extends React.Component {
+class Item extends Component {
   constructor(props) {
     super(props);
 
@@ -24,12 +24,10 @@ class Item extends React.Component {
       event.currentTarget.parentElement.classList.toggle('is-chosen');
 
       this.props.transmit(
-        'CHANGE_FLIGHT_PARAM_CHECKSTATE',
+        this.props.eventToDispatch,
         {
-          id: this.props.param.id,
-          paramType: this.props.param.type,
-          state: checkstate,
-          storeCheckstate: this.props.storeCheckstate
+          ...this.props.param,
+          ...{ state: checkstate }
         }
       );
     }

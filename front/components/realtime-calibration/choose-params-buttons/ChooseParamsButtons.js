@@ -18,7 +18,6 @@ class ChooseParamsButtons extends Component {
     super(props);
 
     this.state = {
-      paramsSource: 'template',
       containerParamsDialogShown: false
     }
   }
@@ -33,9 +32,8 @@ class ChooseParamsButtons extends Component {
     return <CycloParams
       fdrId={ this.props.fdrId }
       context={ CYCLO_CONTAINER_PARAMS_CONTEXT }
-      chosenAnalogParams={ this.props.realtimeCalibrationParams.chosenContainerAnalogParams }
-      chosenBinaryParams={ this.props.realtimeCalibrationParams.chosenContainerBinaryParams }
-      storeCheckstate={ false }
+      chosenAnalogParams={ this.props.realtimeCalibrationParams.containerAnalogParams }
+      chosenBinaryParams={ this.props.realtimeCalibrationParams.containerBinaryParams }
     />
   }
 
@@ -49,9 +47,9 @@ class ChooseParamsButtons extends Component {
 
   handleSwitch(elem, state) {
     if (state === true) {
-      this.setState({ paramsSource: 'template' });
+      this.props.changeParamsSource('template');
     } else {
-      this.setState({ paramsSource: 'manual' });
+      this.props.changeParamsSource('manual');
     }
   }
 
@@ -66,9 +64,12 @@ class ChooseParamsButtons extends Component {
             offText={ I18n.t('realtimeCalibration.chooseParamsButtons.manual') }
             onChange={(el, state) => this.handleSwitch(el, state)}
             name='paramsSource'
+            defaultValue={ (this.props.paramsSource === 'template') && (this.props.fdrId !== null) }
           />
         </div>
-          { (this.state.paramsSource === 'template') ? (
+          { ((this.props.paramsSource === 'template')
+            && (this.props.fdrId !== null))
+            ? (
             <FdrTemplateSelector fdrId={ this.props.fdrId }/>
           ) : (
             <div>
@@ -93,8 +94,8 @@ class ChooseParamsButtons extends Component {
 }
 
 ChooseParamsButtons.propTypes = {
-  fdrId: PropTypes.number.isRequired,
-
+  fdrId: PropTypes.number,
+  changeParamsSource: PropTypes.func.isRequired,
   realtimeCalibrationParams: PropTypes.object.isRequired
 }
 

@@ -1,29 +1,19 @@
 const initialState = {
-  chosenChartAnalogParams: [],
-  chosenChartBinaryParams: [],
-  chosenContainerAnalogParams: [],
-  chosenContainerBinaryParams: []
+  chartAnalogParams: [],
+  chartBinaryParams: [],
+  containerAnalogParams: [],
+  containerBinaryParams: []
 };
 
 export default function realtimeCalibrationParams(state = initialState, action) {
   switch (action.type) {
-    case 'CHANGE_FLIGHT_PARAM_CHECKSTATE':
+    case 'CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE':
       let chosenParams = [];
 
-      if (action.payload.context === 'realtimeCalibrationChartParams') {
-        if (action.payload.paramType === 'ap') {
-          chosenParams = state.chosenChartAnalogParams;
-        } else if (action.payload.paramType === 'bp') {
-          chosenParams = state.chosenChartBinaryParams;
-        }
-      } else if (action.payload.context === 'realtimeCalibrationContainerParams') {
-        if (action.payload.paramType === 'ap') {
-          chosenParams = state.chosenContainerAnalogParams;
-        } else if (action.payload.paramType === 'bp') {
-          chosenParams = state.chosenContainerBinaryParams;
-        }
-      } else {
-        return state;
+      if (action.payload.type === 'ap') {
+        chosenParams = state.containerAnalogParams;
+      } else if (action.payload.type === 'bp') {
+        chosenParams = state.containerBinaryParams;
       }
 
       let getIndexById = function (id, array) {
@@ -49,13 +39,12 @@ export default function realtimeCalibrationParams(state = initialState, action) 
       if ((action.payload.state === true)
         && (itemIndex === null)
       ) {
-        chosenParams.push({
-          id: action.payload.id,
-          paramType: action.payload.paramType
-        });
+        chosenParams.push(action.payload);
       }
 
       return { ...state };
+    case 'CLEAR_REALTIME_CALIBRATION_PARAMS':
+      return initialState;
     default:
       return state;
   }

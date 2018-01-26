@@ -160,7 +160,7 @@ class FlightTemplateController extends BaseController
         $this->user()->getId()
       );
 
-    $this->dic()
+    $template = $this->dic()
       ->get('fdrTemplate')
       ->createWithDistributedParams(
         $flight->getFdrCode(),
@@ -168,7 +168,7 @@ class FlightTemplateController extends BaseController
         $paramsWithMeasure
       );
 
-    return json_encode('ok');
+    return json_encode($template);
   }
 
   public function deleteAction($flightId, $templateId)

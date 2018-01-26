@@ -322,8 +322,13 @@ const translationsEs = {
     fdrSelector: {
       placeholder: 'Select FDR type'
     },
-    templateSelector: {
-      placeholder: 'Select template'
+    fdrTemplateSelector: {
+      placeholder: 'Select template',
+      item: {
+        default: 'Default',
+        last: 'Last',
+        events: 'Events',
+      }
     },
     cycloParams: {
       colorPicker: {

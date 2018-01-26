@@ -324,8 +324,13 @@ const translationsRu = {
     fdrSelector: {
       placeholder: 'Выберите тип регистратора'
     },
-    templateSelector: {
-      placeholder: 'Выберите шаблон'
+    fdrTemplateSelector: {
+      placeholder: 'Выберите шаблон',
+      item: {
+        default: 'По умолчанию',
+        last: 'Крайний обзор',
+        events: 'События',
+      }
     },
     cycloParams: {
       colorPicker: {

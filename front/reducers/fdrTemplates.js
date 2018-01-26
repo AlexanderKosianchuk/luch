@@ -67,6 +67,8 @@ export default function fdrTemplates(state = initialState, action) {
       return {
         ...state
       };
+    case 'CLEAR_FDR_TEMPLATES':
+      return initialState;
     default:
       return state;
   }
