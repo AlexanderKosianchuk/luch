@@ -242,7 +242,7 @@ class VerticalToolbar extends Component {
 function mapStateToProps(state) {
   return {
     isRunning: state.realtimeCalibrationData.status,
-    interactionUrl: state.appConfig.interactionUrl,
+    interactionUrl: state.appConfig.config.interactionUrl,
     chosenFdr: state.fdrs.chosen,
     chosenCalibration: state.calibrations.chosen,
   };

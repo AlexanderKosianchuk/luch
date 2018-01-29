@@ -15,29 +15,18 @@ class DataContainer extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.status === true) {
       this.props.bindSocketEvent({
-        io: this.props.io,
+        io: nextProps.io,
         ioEvent: 'newData',
-        bindedEvents: this.props.bindedEvents,
+        bindedEvents: nextProps.bindedEvents,
         registerUrl: this.props.appConfig.interactionUrl+'/realtimeCalibration/register?uid='+ this.props.uid,
         reducerEvent: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME'
       });
     }
   }
 
-  buildHeader() {
-    if (this.props.status === null) {
-      return <Translate value='realtimeCalibration.dataContainer.configureConnection'/>;
-    }
-
-    return null;
-  }
-
   render() {
     return (
       <div className='realtime-calibration-data-container'>
-        <div className='realtime-calibration-data-container__label'>
-          { this.buildHeader() }
-        </div>
         <div className='realtime-calibration-data-container__output'>
           <div className='realtime-calibration-data-container__chart'>
             <RealtimeChart/>
@@ -53,9 +42,9 @@ class DataContainer extends Component {
 
 function mapStateToProps(state) {
   return {
-    appConfig: state.appConfig.config,
-    status: state.realtimeCalibrationData.status,
+    status: state.webSockets.status,
     io: state.webSockets.io,
+    appConfig: state.appConfig.config,
     bindedEvents: state.webSockets.bindedEvents,
     errorCode: state.realtimeCalibrationData.errorCode,
   };

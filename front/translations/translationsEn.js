@@ -302,11 +302,8 @@ const translationsEn = {
         chooseParamsToShowInContainer: 'Choose params to show',
         apply: 'Apply'
       },
-      dataContainer: {
-        configureConnection: 'Please, configure connection to start',
-        init: 'Initialization',
-        connectionPending: 'Сonnection pending',
-        waitingData: 'Waiting data'
+      paramsContainer: {
+        chooseParams: 'Please, choose params to show'
       }
     },
     topMenu: {

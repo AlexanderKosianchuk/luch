@@ -297,11 +297,8 @@ const translationsRu = {
         chooseParamsToShowInContainer: 'Выберите параметры для вывода значений',
         apply: 'Принять'
       },
-      dataContainer: {
-        configureConnection: 'Ожидание конфигурации подключения',
-        init: 'Инициализация',
-        connectionPending: 'Установка соединения',
-        waitingData: 'Ожидание данных'
+      paramsContainer: {
+        chooseParams: 'Выберите параметры для наблюдения'
       }
     },
     topMenu: {

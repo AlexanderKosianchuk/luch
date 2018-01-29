@@ -11,7 +11,9 @@ import FdrTemplateSelector from 'controls/fdr-template-selector/FdrTemplateSelec
 import CycloParams from 'controls/cyclo-params/CycloParams';
 import Dialog from 'controls/dialog/Dialog';
 
-const CYCLO_CONTAINER_PARAMS_CONTEXT = 'realtimeCalibrationContainerParams';
+import transmit from 'actions/transmit';
+
+const EVENT_TO_DISPATCH = 'CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE';
 
 class ChooseParamsButtons extends Component {
   constructor(props) {
@@ -31,7 +33,7 @@ class ChooseParamsButtons extends Component {
   buildContainerParamsDialogBody() {
     return <CycloParams
       fdrId={ this.props.fdrId }
-      context={ CYCLO_CONTAINER_PARAMS_CONTEXT }
+      eventToDispatch={ EVENT_TO_DISPATCH }
       chosenAnalogParams={ this.props.realtimeCalibrationParams.containerAnalogParams }
       chosenBinaryParams={ this.props.realtimeCalibrationParams.containerBinaryParams }
     />
@@ -53,6 +55,10 @@ class ChooseParamsButtons extends Component {
     }
   }
 
+  handleFdrTemplateChange() {
+    this.props.transmit('CLEAR_REALTIME_CALIBRATION_PARAMS');
+  }
+
   render() {
     return (
       <div className='realtime-calibration-choose-params-buttons'>
@@ -70,7 +76,10 @@ class ChooseParamsButtons extends Component {
           { ((this.props.paramsSource === 'template')
             && (this.props.fdrId !== null))
             ? (
-            <FdrTemplateSelector fdrId={ this.props.fdrId }/>
+            <FdrTemplateSelector
+              fdrId={ this.props.fdrId }
+              handleChange={ this.handleFdrTemplateChange.bind(this) }
+            />
           ) : (
             <div>
               <button
@@ -106,7 +115,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {}
+  return {
+    transmit: bindActionCreators(transmit, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChooseParamsButtons);

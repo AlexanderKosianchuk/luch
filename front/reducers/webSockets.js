@@ -8,9 +8,10 @@ export default function webSockets(state = initialState, action) {
   switch (action.type) {
     case 'WEBSOCKET_CONNECTED':
       return {
+        ...state, ...{
         status: true,
         io: action.payload.io
-      };
+      }};
     case 'WEBSOCKET_EVENT_BINDED':
       if (state.bindedEvents.indexOf(action.payload.eventName) === -1) {
         state.bindedEvents.push(action.payload.eventName);

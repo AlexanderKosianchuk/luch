@@ -110,11 +110,6 @@ class FdrTemplateSelector extends Component {
 
     let chosen = this.props.templates[index];
 
-    if (typeof this.props.handleChange === 'function') {
-      this.props.handleChange(chosen);
-      return;
-    }
-
     if (_isFunction(this.props.handleChange)) {
       this.props.handleChange(chosen);
     }

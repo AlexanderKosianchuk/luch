@@ -11,9 +11,9 @@ export default function realtimeCalibrationParams(state = initialState, action) 
       let chosenParams = [];
 
       if (action.payload.type === 'ap') {
-        chosenParams = state.containerAnalogParams;
+        chosenParams = state.containerAnalogParams.slice(0);
       } else if (action.payload.type === 'bp') {
-        chosenParams = state.containerBinaryParams;
+        chosenParams = state.containerBinaryParams.slice(0);
       }
 
       let getIndexById = function (id, array) {
@@ -42,7 +42,15 @@ export default function realtimeCalibrationParams(state = initialState, action) 
         chosenParams.push(action.payload);
       }
 
-      return { ...state };
+      if (action.payload.type === 'ap') {
+        return { ...state,
+          ...{ containerAnalogParams: chosenParams }
+        };
+      } else if (action.payload.type === 'bp') {
+        return { ...state,
+          ...{ containerBinaryParams: chosenParams }
+        };
+      }
     case 'CLEAR_REALTIME_CALIBRATION_PARAMS':
       return initialState;
     default:

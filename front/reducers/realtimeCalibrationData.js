@@ -23,7 +23,7 @@ export default function realtimeCalibrationData(state = initialState, action) {
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
       let data = state.data;
-      data.push(action.payload.data);
+      data.push(action.payload.resp.data);
 
       if (state.data.length > MAX_POINT_COUNT) {
         data = state.data.splice(1, state.data.length - 1);

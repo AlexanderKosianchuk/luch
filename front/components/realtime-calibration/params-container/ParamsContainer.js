@@ -9,24 +9,26 @@ import TileItem from 'components/realtime-calibration/tile-item/TileItem';
 
 class ParamsContainer extends Component {
   buildTile() {
-    let analogParamsTile = [];
+    let ap = this.props.realtimeCalibrationParams.containerAnalogParams;
+    if (ap.length === 0) {
+        return <Translate value='realtimeCalibration.paramsContainer.chooseParams'/>;
+    }
 
-    this.props.realtimeCalibrationParams
-      .containerAnalogParams
-      .forEach((item, index) => {
-        let value = 0;
-        let frame = [];
+    let newFrame = new Array(ap.length);
+    if (this.props.data.length > 0) {
+      newFrame = this.props.data[this.props.data.length - 1];
+    }
 
-        analogParamsTile.push(<TileItem
-          key={ index }
-          value={ value }
-          paramColor={ item.color }
-          name={ item.name }
-          code={ item.code }
-        />);
-      });
-
-    return analogParamsTile;
+    return ap.map((item, index) => {
+      console.log(item.id, newFrame[item.id], newFrame);
+      return (<TileItem
+        key={ index }
+        value={ newFrame[item.id] || 0 }
+        paramColor={ item.color }
+        name={ item.name }
+        code={ item.code }
+      />);
+    });
   }
 
   render() {
