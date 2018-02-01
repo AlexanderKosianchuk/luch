@@ -1,7 +1,9 @@
 const initialState = {
   status: null,
   currentFrame: 0,
-  data: [],
+  phisics: [],
+  binary: [],
+  events: [],
   errorCode: null
 };
 
@@ -23,6 +25,7 @@ export default function realtimeCalibrationData(state = initialState, action) {
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
       let data = state.data;
+      debugger;
       data.push(action.payload.resp.data);
 
       if (state.data.length > MAX_POINT_COUNT) {

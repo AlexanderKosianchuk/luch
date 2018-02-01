@@ -392,7 +392,7 @@ class FlightProcessingComponent extends BaseComponent
     return $flightUid;
   }
 
-  private function convertFrame (
+  public function convertFrame (
     $flightUid,
     $analogParamsCyclo,
     $binaryParamsCyclo,
@@ -402,6 +402,7 @@ class FlightProcessingComponent extends BaseComponent
     $frameNum,
     &$algHeap
   ) {
+    $framesByFreq = [];
     $phisicsFrames = [];
     foreach ($analogParamsCyclo as $prefix => $cyclo) {
       $channelFreq = count($cyclo[0]['channel']);
@@ -419,6 +420,8 @@ class FlightProcessingComponent extends BaseComponent
         $algHeap,
         $channelFreq
       );
+
+      $framesByFreq[$channelFreq] = $phisicsFrames;
 
       foreach ($phisicsFrames as $frame) {
         $this->runtimeManager->writeToRuntimeTemporaryFile(
@@ -440,7 +443,7 @@ class FlightProcessingComponent extends BaseComponent
         $stepLength,
         $channelFreq,
         $cyclo,
-        $phisicsFrames,
+        $framesByFreq,
         $algHeap
       );
 
@@ -453,6 +456,11 @@ class FlightProcessingComponent extends BaseComponent
         );
       }
     }
+
+    return [
+      'phisicsByFreq' => $framesByFreq,
+      'binaryFlags' => $convBinFrame
+    ];
   }
 
   private function processFrame (

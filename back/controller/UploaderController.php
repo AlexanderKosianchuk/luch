@@ -943,4 +943,78 @@ class UploaderController extends BaseController
       ]);
     }
   }
+
+  public function processFrameAction(
+    $uploadingUid,
+    $startCopyTime,
+    $rawFrame,
+    $frameNum,
+    $userId,
+    $algHeap,
+    $fdrId,
+    $calibrationId = null
+  ) {
+    //TODO check user id token and fdr valiability to this user
+
+    $fdrId = intval($fdrId);
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    $analogParamsCyclo = $this->dic()->get('fdr')
+      ->getPrefixGroupedParams($fdrId);
+
+    if ($calibrationId !== null) {
+      $calibratedParams = $this->dic()->get('calibration')
+        ->getCalibrationParams($fdrId, $calibrationId);
+
+      foreach ($analogParamsCyclo as $prefix => &$params) {
+        foreach ($params as &$param) {
+          $paramId = $param['id'];
+
+          if (isset($calibratedParams[$paramId])) {
+            $param['xy'] = $calibratedParams[$paramId]->getXy();
+          }
+        }
+      }
+    }
+
+    $binaryParamsCyclo = $this->dic()->get('fdr')
+      ->getPrefixGroupedBinaryParams($fdrId);
+
+    $unpackedFrame = unpack("H*", $rawFrame);
+    $splitedFrame = str_split($unpackedFrame[1], $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
+    $fullFrame = [];
+
+    for ($ii = 0; $ii < $fdr->getFrameLength(); $ii++) {
+      if (isset($splitedFrame[$ii])) {
+        $fullFrame[] = $splitedFrame[$ii];
+      } else {
+        $fullFrame[] = 'ff';
+      }
+    }
+
+    $converted = $this->dic()
+      ->get('flightProcessor')
+      ->convertFrame(
+        $uploadingUid,
+        $analogParamsCyclo,
+        $binaryParamsCyclo,
+        $fullFrame,
+        $startCopyTime,
+        $fdr->getStepLength(),
+        $frameNum,
+        $algHeap
+      );
+
+    $phisicsByFreq = $converted['phisicsByFreq'];
+
+    return json_encode([
+      "uploadingUid" => $uploadingUid,
+      "rawFrame" => $rawFrame,
+      "frame" => $frame,
+      "binaryFlags" => $converted["binaryFlags"],
+      "algHeap" => $algHeap,
+      "fdrId" => $fdrId,
+      "calibrationId" => $calibrationId
+    ]);
+  }
 }

@@ -20,7 +20,6 @@ class ParamsContainer extends Component {
     }
 
     return ap.map((item, index) => {
-      console.log(item.id, newFrame[item.id], newFrame);
       return (<TileItem
         key={ index }
         value={ newFrame[item.id] || 0 }
@@ -43,7 +42,7 @@ class ParamsContainer extends Component {
 function mapStateToProps(state) {
   return {
     currentFrame: state.realtimeCalibrationData.currentFrame,
-    data: state.realtimeCalibrationData.data,
+    data: state.realtimeCalibrationData.phisics,
     realtimeCalibrationParams: state.realtimeCalibrationParams
   };
 }

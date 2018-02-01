@@ -150,14 +150,14 @@ class VerticalToolbar extends Component {
   }
 
   putStateButton() {
-    if (this.state.isRunning === true) {
+    if (this.props.isRunning === true) {
       return (<button
         className='btn btn-default'
         onClick={ this.handlePauseClick.bind(this) }
       >
         <Translate value='realtimeCalibration.verticalToolbar.stop'/>
       </button>);
-    } else if (this.state.isRunning === false) {
+    } else if (this.props.isRunning === false) {
       return (<button
         className='btn btn-default'
         onClick={ this.handleResumeClick.bind(this) }
