@@ -47,6 +47,7 @@ class Application
       || !isset($cfg['db']['default'])
       || !isset($cfg['db']['fdrs'])
       || !isset($cfg['db']['flights'])
+      || !isset($cfg['db']['runtime'])
     ) {
       throw new Exception('Config file does not contain doctrine databases config', 1);
     }

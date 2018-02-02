@@ -946,14 +946,15 @@ class UploaderController extends BaseController
 
   public function processFrameAction(
     $uploadingUid,
+    $frameNum,
     $startCopyTime,
     $rawFrame,
-    $frameNum,
     $userId,
     $algHeap,
     $fdrId,
     $calibrationId = null
   ) {
+    $algHeap = json_decode($algHeap, true);
     //TODO check user id token and fdr valiability to this user
 
     $fdrId = intval($fdrId);
@@ -1007,14 +1008,28 @@ class UploaderController extends BaseController
 
     $phisicsByFreq = $converted['phisicsByFreq'];
 
+    $normalizedFrame = $this->dic()->get('frame')
+      ->normalizeFrame($phisicsByFreq, $analogParamsCyclo);
+
+    $normalizedFrame = $this->dic()->get('frame')
+      ->normalizeFrame($phisicsByFreq, $analogParamsCyclo);
+
+    $currentTime = $startCopyTime;
+
+    $normalizedFrame = $this->dic()->get('rtDb')
+      ->putRealtimeCalibrationData($uploadingUid, $frameNum, $currentTime, $normalizedFrame);
+
     return json_encode([
-      "uploadingUid" => $uploadingUid,
-      "rawFrame" => $rawFrame,
-      "frame" => $frame,
-      "binaryFlags" => $converted["binaryFlags"],
-      "algHeap" => $algHeap,
-      "fdrId" => $fdrId,
-      "calibrationId" => $calibrationId
+      'uploadingUid' => $uploadingUid,
+      'frameNum' => $frameNum,
+      'startCopyTime' => $startCopyTime,
+      'rawFrame' => $rawFrame,
+      'frame' => $normalizedFrame,
+      'binaryFlags' => $converted['binaryFlags'],
+      'events' => [], //TODO
+      'algHeap' => $algHeap,
+      'fdrId' => $fdrId,
+      'calibrationId' => $calibrationId
     ]);
   }
 }

@@ -118,6 +118,31 @@ class EventProcessingComponent extends BaseComponent
     }
   }
 
+  public function getRealtimeCalibrationEvents($uid, $fdrId)
+  {
+    $fdr = $this->em()->find('\Entity\Fdr', $fdrId);
+    $eventsToFdr = $fdr->getEventsToFdr();
+    $stepLength = $fdr->getStepLength();
+    $flightEvents = [];
+
+    $ii = 0;
+    foreach ($eventsToFdr as $eventToFdr) {
+      $substitution = $eventToFdr->getSubstitution();
+      $event = $eventToFdr->getEvent();
+      $eventSettlements = $event->getEventSettlements();
+
+      $alg = $event->getAlg();
+
+      $eventAlg = $this->substituteParams(
+        $alg,
+        $substitution,
+        $fdrId,
+        $uid
+      );
+
+    }
+  }
+
   public function processEvents(\Entity\Flight $flight, $emitter)
   {
     $fdr = $flight->getFdr();

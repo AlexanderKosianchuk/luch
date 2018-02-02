@@ -18,9 +18,11 @@ return [
   'userSettings' => DI\object('Component\UserSettingsComponent'),
   'folder' => DI\object('Component\FolderComponent'),
   'runtimeManager' => DI\object('Component\RuntimeManager'),
+  'rtDb' => DI\object('Component\RuntimeDatabaseComponent'),
   'calibration' => DI\object('Component\CalibrationComponent'),
   'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
   'eventProcessor' => DI\object('Component\EventProcessingComponent'),
   'channel' => DI\object('Component\ChannelComponent'),
-  'osInfo' => DI\object('Component\OsInfoComponent')
+  'osInfo' => DI\object('Component\OsInfoComponent'),
+  'frame' => DI\object('Component\FrameComponent')
 ];

@@ -24,17 +24,18 @@ export default function realtimeCalibrationData(state = initialState, action) {
         ...{ status: null }
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
-      let data = state.data;
-      debugger;
-      data.push(action.payload.resp.data);
+      state.phisics.push(action.payload.resp.phisics);
+      state.binary.push(action.payload.resp.binary);
+      state.events.push(action.payload.resp.events);
 
-      if (state.data.length > MAX_POINT_COUNT) {
-        data = state.data.splice(1, state.data.length - 1);
+      if (state.phisics.length > MAX_POINT_COUNT) {
+        state.phisics = state.phisics.splice(1, state.phisics.length - 1);
+        state.binary = state.binary.splice(1, state.binary.length - 1);
+        state.events = state.events.splice(1, state.events.length - 1);
       }
 
       return { ...state, ...{
           status: true,
-          data: data,
           currentFrame: ++state.currentFrame,
         }
       };
