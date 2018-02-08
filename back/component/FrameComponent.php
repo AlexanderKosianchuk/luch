@@ -1657,27 +1657,23 @@ class FrameComponent extends BaseComponent
     return $phisicsBinaryParamsFrame;
   }
 
-  public function normalizeFrame($data, $cyclo)
-  {
-    $maxFreq = $this->findMaxFreq($cyclo);
-    $channelsCount = $this->getChannelsCount($cyclo);
+  public function normalizeFrame(
+    $stepLength,
+    $currentTime,
+    $phisicsByFreq,
+    $binaryFlags,
+    $analogParamsCyclo,
+    $binaryParamsCyclo
+  ) {
+    $maxFreq = $this->findMaxFreq($analogParamsCyclo);
 
     $frame = [];
-
-    $composed = $this->composeValue($data, $cyclo);
-    return $composed;
-
-  }
-
-  private function composeValue($data, $cyclo)
-  {
-    $frame = [];
-    foreach ($cyclo as $freq => $freqCyclo) {
-      if (!isset($data[$freq])) {
+    foreach ($analogParamsCyclo as $freq => $freqCyclo) {
+      if (!isset($phisicsByFreq[$freq])) {
         throw new Exception('Cyclo and data have frequency mismatch', 1);
       }
 
-      $freqData = $data[$freq];
+      $freqData = $phisicsByFreq[$freq];
       for ($ii = 0; $ii < count($freqCyclo); $ii++) {
         $dataIndex = $ii+2;
         $channel = $freqCyclo[$ii];
@@ -1694,13 +1690,66 @@ class FrameComponent extends BaseComponent
       }
     }
 
-    $normalizedFrame = [];
-
+    $plainFrame = [];
     foreach ($frame as $channel) {
-      $normalizedFrame[$channel['param']['id']] = floatval($channel['values'][0]);
+      $plainFrame[$channel['param']['id']] = floatval($channel['values'][0]);
     }
 
-    return $normalizedFrame;
+    $fullFrame = [];
+    foreach ($frame as $channel) {
+      $values = [];
+      $duplicates = ceil($maxFreq / count($channel['values']));
+      for ($jj = 0; $jj < count($channel['values']); $jj++) {
+        for ($kk = 0; $kk < $duplicates; $kk++) {
+          $values[] = floatval($channel['values'][$jj]);
+        }
+      }
+
+      $fullFrame[] = [
+        'param' => $channel['param'],
+        'values' => $values
+      ];
+    }
+
+    $step = 1000 * $stepLength / $maxFreq;
+    foreach ($binaryParamsCyclo as $freq => $freqCyclo) {
+      foreach ($freqCyclo as $channel) {
+        $frequency = $channel['frequency'];
+
+        $realValues = [];
+        for ($kk = 0; $kk < $maxFreq; $kk++) {
+          $realValues[$currentTime + $step * $kk] = 0;
+        }
+
+        foreach ($binaryFlags as $binary) {
+          if ($binary['code'] === $channel['code']) {
+            for (
+              $tt = $binary['time'];
+              $tt < $binary['time'] + $step * $maxFreq / $frequency;
+              $tt += $step
+            ) {
+              $realValues[$tt] = 1;
+            }
+          }
+        }
+
+        $values = [];
+        foreach ($realValues as $value) {
+          $values[] = $value;
+        }
+
+        $fullFrame[] = [
+          'param' => $channel,
+          'values' => $values
+        ];
+      }
+    }
+
+    return [
+      'rawFrame' => $frame,
+      'plainFrame' => $plainFrame,
+      'fullFrame' => $fullFrame
+    ];
   }
 
   private function findMaxFreq($cyclo)
@@ -1715,17 +1764,5 @@ class FrameComponent extends BaseComponent
     }
 
     return $maxFreq;
-  }
-
-  private function getChannelsCount($cyclo)
-  {
-    $count = 0;
-    foreach ($cyclo as $freq) {
-      foreach ($freq as $item) {
-        $count++;
-      }
-    }
-
-    return $count;
   }
 }

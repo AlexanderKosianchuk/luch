@@ -959,6 +959,8 @@ class UploaderController extends BaseController
 
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+    $stepLength = $fdr->getStepLength();
+    $currentTime = $startCopyTime * 1000 + (1000 * $stepLength * $frameNum);
 
     $analogParamsCyclo = $this->dic()->get('fdr')
       ->getPrefixGroupedParams($fdrId);
@@ -1001,32 +1003,54 @@ class UploaderController extends BaseController
         $binaryParamsCyclo,
         $fullFrame,
         $startCopyTime,
-        $fdr->getStepLength(),
+        $stepLength,
         $frameNum,
         $algHeap
       );
 
-    $phisicsByFreq = $converted['phisicsByFreq'];
+    $normalized = $this->dic()
+      ->get('frame')
+      ->normalizeFrame(
+        $stepLength,
+        $currentTime,
+        $converted['phisicsByFreq'],
+        $converted['binaryFlags'],
+        $analogParamsCyclo,
+        $binaryParamsCyclo
+      );
 
-    $normalizedFrame = $this->dic()->get('frame')
-      ->normalizeFrame($phisicsByFreq, $analogParamsCyclo);
+    $link = $this->connection()->create('runtime');
+    $this->dic()->get('runtimeDb')
+      ->putRealtimeCalibrationData(
+          $uploadingUid,
+          $frameNum,
+          $currentTime,
+          $stepLength,
+          $normalized['fullFrame'],
+          $link
+        );
 
-    $normalizedFrame = $this->dic()->get('frame')
-      ->normalizeFrame($phisicsByFreq, $analogParamsCyclo);
+    $tableName = $this->dic()->get('runtimeDb')
+      ->getDataTableName($uploadingUid);
 
-    $currentTime = $startCopyTime;
+    $prevEventResults = $this->dic()->get('runtimeDb')
+      ->getProcessResults($uploadingUid, $tableName, $frameNum - 1, $link);
 
-    $normalizedFrame = $this->dic()->get('rtDb')
-      ->putRealtimeCalibrationData($uploadingUid, $frameNum, $currentTime, $normalizedFrame);
+    $eventResults = $this->dic()->get('realtimeEvent')
+      ->process($fdrId, $tableName, $prevEventResults, $link);
+
+    $this->dic()->get('runtimeDb')
+      ->putRealtimeCalibrationEvents($uploadingUid, $tableName, $eventResults, $frameNum, $link);
+    $this->connection()->destroy($link);
 
     return json_encode([
       'uploadingUid' => $uploadingUid,
       'frameNum' => $frameNum,
       'startCopyTime' => $startCopyTime,
       'rawFrame' => $rawFrame,
-      'frame' => $normalizedFrame,
+      'frame' => $normalized['plainFrame'],
       'binaryFlags' => $converted['binaryFlags'],
-      'events' => [], //TODO
+      'events' => $eventResults,
       'algHeap' => $algHeap,
       'fdrId' => $fdrId,
       'calibrationId' => $calibrationId

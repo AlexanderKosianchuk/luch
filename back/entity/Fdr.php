@@ -119,6 +119,12 @@ class Fdr
   private $eventsToFdr;
 
   /**
+   * One Fdr has Many RealtimeEvents.
+   * @OneToMany(targetEntity="EventsRealtime", mappedBy="fdr")
+   */
+  private $realtimeEventsToFdr;
+
+  /**
    * One Fdr has Many FdrToUser.
    * @OneToMany(targetEntity="FdrToUser", mappedBy="fdr")
    */
@@ -127,7 +133,13 @@ class Fdr
   public function __construct()
   {
     $this->eventsToFdr = new ArrayCollection();
+    $this->realtimeEventsToFdr = new ArrayCollection();
     $this->fdrToUser = new ArrayCollection();
+  }
+
+  public function getRealtimeEvents()
+  {
+    return $this->realtimeEventsToFdr;
   }
 
   public function getId()
