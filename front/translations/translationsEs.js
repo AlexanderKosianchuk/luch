@@ -295,8 +295,15 @@ const translationsEs = {
         chooseParamsToShowInContainer: 'Choose params to show',
         apply: 'Apply'
       },
-      paramsContainer: {
+      physics: {
+        header: 'Physical parameter values',
         chooseParams: 'Please, choose params to show'
+      },
+      binary: {
+        header: 'Active binary params'
+      },
+      events: {
+        header: 'Stream data analysis'
       }
     },
     topMenu: {

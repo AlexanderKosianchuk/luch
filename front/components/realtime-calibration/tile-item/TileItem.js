@@ -6,8 +6,8 @@ export default function TileItem (props) {
   return (
     <div className='realtime-calibration-tile-item'>
       <div className='realtime-calibration-tile-item__box'>
-        <div className='realtime-calibration-tile-item__colorbox'
-          style={{ backgroundColor: ('#' + props.paramColor) }}
+        <div className='realtime-calibration-tile-item__params-colorbox'
+          style={{ backgroundColor: ('#' + props.color) }}
         >
         </div>
         <div className='realtime-calibration-tile-item__label'>
@@ -18,7 +18,7 @@ export default function TileItem (props) {
             { props.name }
           </div>
           <div className='realtime-calibration-tile-item__value'>
-            { Number((props.value).toFixed(2)) }
+            { props.value }
           </div>
         </div>
       </div>

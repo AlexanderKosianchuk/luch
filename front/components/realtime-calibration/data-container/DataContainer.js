@@ -6,7 +6,9 @@ import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
 import RealtimeChart from 'components/realtime-calibration/realtime-chart/RealtimeChart';
-import ParamsContainer from 'components/realtime-calibration/params-container/ParamsContainer';
+import Physics from 'components/realtime-calibration/physics/Physics';
+import Events from 'components/realtime-calibration/events/Events';
+import Binary from 'components/realtime-calibration/binary/Binary';
 
 import request from 'actions/request';
 import bindSocketEvent from 'actions/bindSocketEvent';
@@ -28,11 +30,17 @@ class DataContainer extends Component {
     return (
       <div className='realtime-calibration-data-container'>
         <div className='realtime-calibration-data-container__output'>
-          <div className='realtime-calibration-data-container__chart'>
-            <RealtimeChart/>
+          <div className='realtime-calibration-data-container__events'>
+            <Events/>
           </div>
           <div className='realtime-calibration-data-container__params'>
-            <ParamsContainer/>
+            <Physics/>
+          </div>
+          <div className='realtime-calibration-data-container__binary'>
+            <Binary/>
+          </div>
+          <div className='realtime-calibration-data-container__chart'>
+            <RealtimeChart/>
           </div>
         </div>
       </div>

@@ -34,15 +34,25 @@
     animation-name: chooseParamAnimation
     animation-duration: 0.5s
 
-  & &__colorbox
-    width: 6px
+  & &__params-colorbox,
+  & &__binary-colorbox
+    width: 8px
     height: 80px
     padding: 2px
     float: left
     cursor: pointer
 
+  & &__events-colorbox
+    width: calc(100% - 8px)
+    height: 8px
+    padding: 2px
+    cursor: pointer
+
+  & .is-hidden
+    display: none
+
   & &__label
-    width: calc(100% - 6px)
+    width: calc(100% - 8px)
     height: 49px
     padding: 2px
     float: left

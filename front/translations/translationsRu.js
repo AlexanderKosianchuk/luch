@@ -297,8 +297,15 @@ const translationsRu = {
         chooseParamsToShowInContainer: 'Выберите параметры для вывода значений',
         apply: 'Принять'
       },
-      paramsContainer: {
+      physics: {
+        header: 'Физические значения параметров',
         chooseParams: 'Выберите параметры для наблюдения'
+      },
+      binary: {
+        header: 'Активные бинарные параметры'
+      },
+      events: {
+        header: 'Результаты логического анализа входных данных'
       }
     },
     topMenu: {
