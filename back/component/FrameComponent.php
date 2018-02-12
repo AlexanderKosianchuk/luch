@@ -777,7 +777,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -792,7 +794,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -807,7 +811,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -822,7 +828,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -836,7 +844,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -852,7 +862,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -864,7 +876,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -876,7 +890,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -888,7 +904,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -903,7 +921,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -918,7 +938,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -933,7 +955,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -948,7 +972,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -963,7 +989,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -994,7 +1022,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
         }
@@ -1017,7 +1047,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
         }
@@ -1041,7 +1073,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
         }
@@ -1065,7 +1099,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
         }
@@ -1080,7 +1116,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -1095,7 +1133,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -1110,7 +1150,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -1125,7 +1167,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
           }
         }
@@ -1142,7 +1186,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
             }
             else
@@ -1158,7 +1204,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
             }
@@ -1176,7 +1224,9 @@ class FrameComponent extends BaseComponent
             $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+            );
             array_push($phisicsBinaryParamsFrame, $param);
             }
             else
@@ -1192,7 +1242,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               }
             }
@@ -1206,7 +1258,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             } else {
               $algHeap[$binParam['code']] = 0;
@@ -1218,7 +1272,9 @@ class FrameComponent extends BaseComponent
                 $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+                );
                 array_push($phisicsBinaryParamsFrame, $param);
               }
             }
@@ -1232,7 +1288,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             } else {
               $algHeap[$binParam['code']] = 0;
@@ -1244,7 +1302,9 @@ class FrameComponent extends BaseComponent
                 $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+                );
                 array_push($phisicsBinaryParamsFrame, $param);
               }
             }
@@ -1258,7 +1318,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             } else {
               $algHeap[$binParam['code']] = 0;
@@ -1270,7 +1332,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1284,7 +1348,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             } else {
               $algHeap[$binParam['code']] = 0;
@@ -1296,7 +1362,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1310,7 +1378,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+                );
                 array_push($phisicsBinaryParamsFrame, $param);
             } else {
               $algHeap[$binParam['code']] = 0;
@@ -1322,7 +1392,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1336,7 +1408,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1349,7 +1423,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1363,7 +1439,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1376,7 +1454,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1390,7 +1470,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1403,7 +1485,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1417,7 +1501,9 @@ class FrameComponent extends BaseComponent
                  $param = array("frameNum" => $frameNum,
                      "time" => ($startTime + ($frameNum * $stepLength) +
                          ($stepLength / $channelFreq * $chInd)) * 1000,
-                     "code" => $binParam['code']);
+                     "code" => $binParam['code'],
+                     "id" => $binParam['id']
+                 );
                  array_push($phisicsBinaryParamsFrame, $param);
                  $algHeap[$binParam['code']] = 1;
                } else {
@@ -1430,7 +1516,9 @@ class FrameComponent extends BaseComponent
                  $param = array("frameNum" => $frameNum,
                      "time" => ($startTime + ($frameNum * $stepLength) +
                          ($stepLength / $channelFreq * $chInd)) * 1000,
-                     "code" => $binParam['code']);
+                     "code" => $binParam['code'],
+                     "id" => $binParam['id']
+                 );
                  array_push($phisicsBinaryParamsFrame, $param);
                }
              }
@@ -1444,7 +1532,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1457,7 +1547,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1471,7 +1563,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                     ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1484,7 +1578,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1498,7 +1594,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1511,7 +1609,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1525,7 +1625,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1538,7 +1640,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1552,7 +1656,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1565,7 +1671,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1579,7 +1687,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1592,7 +1702,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1606,7 +1718,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                 "time" => ($startTime + ($frameNum * $stepLength) +
                   ($stepLength / $channelFreq * $chInd)) * 1000,
-                "code" => $binParam['code']);
+                "code" => $binParam['code'],
+                "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1619,7 +1733,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }
@@ -1633,7 +1749,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
               $algHeap[$binParam['code']] = 1;
             } else {
@@ -1646,7 +1764,9 @@ class FrameComponent extends BaseComponent
               $param = array("frameNum" => $frameNum,
                   "time" => ($startTime + ($frameNum * $stepLength) +
                       ($stepLength / $channelFreq * $chInd)) * 1000,
-                  "code" => $binParam['code']);
+                  "code" => $binParam['code'],
+                  "id" => $binParam['id']
+              );
               array_push($phisicsBinaryParamsFrame, $param);
             }
           }

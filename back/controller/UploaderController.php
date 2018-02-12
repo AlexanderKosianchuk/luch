@@ -1005,7 +1005,8 @@ class UploaderController extends BaseController
         $startCopyTime,
         $stepLength,
         $frameNum,
-        $algHeap
+        $algHeap,
+        false
       );
 
     $normalized = $this->dic()
@@ -1030,17 +1031,17 @@ class UploaderController extends BaseController
           $link
         );
 
+    $prevEventResults = $this->dic()->get('runtimeDb')
+      ->getProcessResults($uploadingUid, $frameNum - 1, $link);
+
     $tableName = $this->dic()->get('runtimeDb')
       ->getDataTableName($uploadingUid);
-
-    $prevEventResults = $this->dic()->get('runtimeDb')
-      ->getProcessResults($uploadingUid, $tableName, $frameNum - 1, $link);
 
     $eventResults = $this->dic()->get('realtimeEvent')
       ->process($fdrId, $tableName, $prevEventResults, $link);
 
     $this->dic()->get('runtimeDb')
-      ->putRealtimeCalibrationEvents($uploadingUid, $tableName, $eventResults, $frameNum, $link);
+      ->putRealtimeCalibrationEvents($uploadingUid, $eventResults, $frameNum, $link);
     $this->connection()->destroy($link);
 
     return json_encode([
@@ -1055,5 +1056,13 @@ class UploaderController extends BaseController
       'fdrId' => $fdrId,
       'calibrationId' => $calibrationId
     ]);
+  }
+
+  public function breakFramesProcessAction($uploadingUid)
+  {
+    $this->dic()->get('runtimeDb')
+      ->cleanUpRealtimeCalibrationData($uploadingUid);
+
+    return json_encode('ok');
   }
 }

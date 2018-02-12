@@ -5,21 +5,45 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
-import TileItem from 'components/realtime-calibration/tile-item/TileItem';
+import BinaryTileItem from 'components/realtime-calibration/binary-tile-item/BinaryTileItem';
 
 class Binary extends Component {
   buildTile() {
     let bp = this.props.params.containerBinaryParams;
 
-    let newFrame = new Array(bp.length);
-    if (this.props.data.length > 0) {
-      newFrame = this.props.data[this.props.data.length - 1];
-    }
+    let binaryData = bp.map((item, index) => {
+      if (this.props.data.length === 0) {
+        return {
+          ...item, ...{
+            value: false
+          }
+        };
+      }
 
-    return bp.map((item, index) => {
-      return (<TileItem
+      let lastTriggeredBp = this.props.data[this.props.data.length - 1];
+      let searchedIndex = lastTriggeredBp.findIndex((binary) => {
+        return item.id === binary.id;
+      });
+
+      if (searchedIndex !== -1) {
+        return {
+          ...item, ...{
+            value: true
+          }
+        };
+      }
+
+      return {
+        ...item, ...{
+          value: false
+        }
+      };
+    });
+
+    return binaryData.map((item, index) => {
+      return (<BinaryTileItem
         key={ index }
-        value={ this.getValue(newFrame[item.id]) }
+        value={ item.value }
         color={ item.color }
         name={ item.name }
         code={ item.code }

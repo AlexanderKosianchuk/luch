@@ -137,7 +137,6 @@ class RuntimeDatabaseComponent extends BaseComponent
 
   public function getProcessResults(
     $uploadingUid,
-    $tableName,
     $frameNum,
     $link = null
   ) {
@@ -175,7 +174,6 @@ class RuntimeDatabaseComponent extends BaseComponent
 
   public function putRealtimeCalibrationEvents(
     $uploadingUid,
-    $tableName,
     $eventResults,
     $frameNum,
     $link = null
@@ -200,6 +198,34 @@ class RuntimeDatabaseComponent extends BaseComponent
 
       $stmt = $internalLink->prepare($query);
       $stmt->execute();
+    }
+
+    if ($link === null) {
+      $this->connection()->destroy($internalLink);
+    }
+  }
+
+  public function cleanUpRealtimeCalibrationData(
+    $uploadingUid,
+    $link = null
+  ) {
+    $internalLink = $link;
+    if ($link === null) {
+      $internalLink = $this->connection()->create('runtime');
+    }
+
+    $tables = [
+      $this->getEventTableName($uploadingUid),
+      $this->getDataTableName($uploadingUid)
+    ];
+
+    foreach ($tables as $tableName) {
+      if ($this->connection()->isExist($tableName, 'runtime', $internalLink)) {
+        $query = 'DROP TABLE `'.$tableName.'`;';
+
+        $stmt = $internalLink->prepare($query);
+        $stmt->execute();
+      }
     }
 
     if ($link === null) {

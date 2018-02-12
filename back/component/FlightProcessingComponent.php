@@ -400,7 +400,8 @@ class FlightProcessingComponent extends BaseComponent
     $startCopyTime,
     $stepLength,
     $frameNum,
-    &$algHeap
+    &$algHeap,
+    $writeToFile = true
   ) {
     $framesByFreq = [];
     $phisicsFrames = [];
@@ -423,13 +424,15 @@ class FlightProcessingComponent extends BaseComponent
 
       $framesByFreq[$channelFreq] = $phisicsFrames;
 
-      foreach ($phisicsFrames as $frame) {
-        $this->runtimeManager->writeToRuntimeTemporaryFile(
-          $this->params()->folders->uploadingFlightsTables,
-          $this->fdrComponent->getAnalogTable($flightUid, $channelFreq),
-          $frame,
-          'csv'
-        );
+      if ($writeToFile) {
+        foreach ($phisicsFrames as $frame) {
+          $this->runtimeManager->writeToRuntimeTemporaryFile(
+            $this->params()->folders->uploadingFlightsTables,
+            $this->fdrComponent->getAnalogTable($flightUid, $channelFreq),
+            $frame,
+            'csv'
+          );
+        }
       }
     }
 
@@ -447,13 +450,15 @@ class FlightProcessingComponent extends BaseComponent
         $algHeap
       );
 
-      foreach ($convBinFrame as $frame) {
-        $this->runtimeManager->writeToRuntimeTemporaryFile(
-          $this->params()->folders->uploadingFlightsTables,
-          $this->fdrComponent->getBinaryTable($flightUid, $channelFreq),
-          $frame,
-          'csv'
-        );
+      if ($writeToFile) {
+        foreach ($convBinFrame as $frame) {
+          $this->runtimeManager->writeToRuntimeTemporaryFile(
+            $this->params()->folders->uploadingFlightsTables,
+            $this->fdrComponent->getBinaryTable($flightUid, $channelFreq),
+            $frame,
+            'csv'
+          );
+        }
       }
     }
 
