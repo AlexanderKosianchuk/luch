@@ -246,8 +246,13 @@ class RuntimeManager extends BaseComponent
     $category,
     $fileName,
     $task = 'noop',
-    $writeType = 'w'
+    $writeType = 'w',
+    $ext = ''
   ) {
+    if ($ext === '') {
+      $ext = $this::$ext;
+    }
+
     // this method is necessary runtime folder to be createExportedFile
     // if it is not exist
     $runtime = $this->getRuntimeFolder();
@@ -256,7 +261,7 @@ class RuntimeManager extends BaseComponent
       .$category
       .DIRECTORY_SEPARATOR
       .$fileName
-      .$this::$ext;
+      .$ext;
 
     if (!is_dir($runtime.DIRECTORY_SEPARATOR.$category)) {
       mkdir($runtime.DIRECTORY_SEPARATOR.$category, 0755, true);
@@ -293,5 +298,40 @@ class RuntimeManager extends BaseComponent
       'path' => $file,
       'desc' => $desc
     ];
+  }
+
+  public function write(
+    $category,
+    $fileName,
+    $data,
+    $descriptor = null,
+    $writeType = 'a'
+  ) {
+    // this method is necessary runtime folder to be createExportedFile
+    // if it is not exist
+    $runtime = $this->getRuntimeFolder();
+
+    $file = $runtime
+      .DIRECTORY_SEPARATOR
+      .$category
+      .DIRECTORY_SEPARATOR
+      .$fileName;
+
+    $internalDescriptor = $descriptor;
+    if ($descriptor === null) {
+      if (!is_dir($runtime.DIRECTORY_SEPARATOR.$category)) {
+        mkdir($runtime.DIRECTORY_SEPARATOR.$category, 0755, true);
+      }
+
+      $internalDescriptor = fopen($file, $writeType);
+    }
+
+    fwrite($internalDescriptor, $data);
+
+    if ($descriptor === null) {
+      fclose($internalDescriptor);
+    }
+
+    return $file;
   }
 }
