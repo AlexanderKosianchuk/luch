@@ -22,7 +22,7 @@ class RealtimeEventComponent extends BaseComponent
       $query = str_replace("[table]", $tableName, $event['alg']);
       $result = $link->query($query);
 
-      if ($result !== true) {
+      if (!$result) {
         error_log('REALTIME_EVENT error. Id: '.$eventObj->getId().'. Description: '. $link->error);
       }
 

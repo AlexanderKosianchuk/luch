@@ -149,6 +149,10 @@ class VerticalToolbar extends Component {
     this.setState({ fakeData: !this.state.fakeData });
   }
 
+  handleSaveClick() {
+
+  }
+
   putStateButton() {
     if (this.props.isRunning === true) {
       return (<button
@@ -158,12 +162,22 @@ class VerticalToolbar extends Component {
         <Translate value='realtimeCalibration.verticalToolbar.stop'/>
       </button>);
     } else if (this.props.isRunning === false) {
-      return (<button
-        className='btn btn-default'
-        onClick={ this.handleResumeClick.bind(this) }
-      >
-        <Translate value='realtimeCalibration.verticalToolbar.start'/>
-      </button>);
+      return (
+        <div>
+          <button
+            className='realtime-calibration-vertical-toolbar__btn btn btn-default'
+            onClick={ this.handleResumeClick.bind(this) }
+          >
+            <Translate value='realtimeCalibration.verticalToolbar.start'/>
+          </button>
+          <button
+            className='realtime-calibration-vertical-toolbar__btn btn btn-default'
+            onClick={ this.handleSaveClick.bind(this) }
+          >
+            <Translate value='realtimeCalibration.verticalToolbar.save'/>
+          </button>
+        </div>
+      );
     }
 
     return (<button
