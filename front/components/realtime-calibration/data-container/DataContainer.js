@@ -14,16 +14,26 @@ import request from 'actions/request';
 import bindSocketEvent from 'actions/bindSocketEvent';
 
 class DataContainer extends Component {
+  componentDidMount() {
+    if (this.props.status === true) {
+      this.bindSocketEvent();
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.status === true) {
-      this.props.bindSocketEvent({
-        io: nextProps.io,
-        ioEvent: 'newData',
-        bindedEvents: nextProps.bindedEvents,
-        registerUrl: this.props.appConfig.interactionUrl+'/realtimeCalibration/register?uid='+ this.props.uid,
-        reducerEvent: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME'
-      });
+      this.bindSocketEvent();
     }
+  }
+
+  bindSocketEvent() {
+    this.props.bindSocketEvent({
+      io: this.props.io,
+      ioEvent: 'newData',
+      bindedEvents: this.props.bindedEvents,
+      registerUrl: this.props.appConfig.interactionUrl+'/realtimeCalibration/register?uid='+ this.props.uid,
+      reducerEvent: 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME'
+    });
   }
 
   render() {
