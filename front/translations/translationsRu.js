@@ -286,6 +286,7 @@ const translationsRu = {
         fakeData: 'Тестовые данные',
         start: 'Пуск',
         stop: 'Стоп',
+        save: 'Сохранить',
         enterIpToConnect: 'Пожалуйста введите IP для подключения'
       },
       chooseParamsButtons: {

@@ -957,6 +957,13 @@ class UploaderController extends BaseController
     $algHeap = json_decode($algHeap, true);
     //TODO check user id token and fdr valiability to this user
 
+    $this->dic()->get('runtimeManager')
+      ->write(
+        $this->params()->folders->uploadedFlightsFolder,
+        $uploadingUid.'.tmpsf',
+        $rawFrame
+      );
+  
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
     $stepLength = $fdr->getStepLength();

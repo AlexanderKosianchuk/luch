@@ -12,6 +12,7 @@ import ChooseParamsButtons from 'components/realtime-calibration/choose-params-b
 
 import transmit from 'actions/transmit';
 import request from 'actions/request';
+import redirect from 'actions/redirect';
 
 class VerticalToolbar extends Component {
   static form = null;
@@ -149,6 +150,27 @@ class VerticalToolbar extends Component {
     this.setState({ fakeData: !this.state.fakeData });
   }
 
+  handleSaveClick() {
+    //88ac42ed2685402f/fdr-id/1/calibration-id/9
+    this.props.uid;
+    this.props.chosenFdr.id;
+    this.props.chosenCalibration.id;
+
+    let url = '/uploading/'
+      + this.props.uid
+      + '/fdr-id/'
+      + this.props.chosenFdr.id;
+
+    if (this.props.chosenCalibration
+        && this.props.chosenCalibration.id
+    ) {
+      url += '/calibration-id/'
+        + this.props.chosenCalibration.id;
+    }
+
+    this.props.redirect(url);
+  }
+
   putStateButton() {
     if (this.props.isRunning === true) {
       return (<button
@@ -158,12 +180,22 @@ class VerticalToolbar extends Component {
         <Translate value='realtimeCalibration.verticalToolbar.stop'/>
       </button>);
     } else if (this.props.isRunning === false) {
-      return (<button
-        className='btn btn-default'
-        onClick={ this.handleResumeClick.bind(this) }
-      >
-        <Translate value='realtimeCalibration.verticalToolbar.start'/>
-      </button>);
+      return (
+        <div>
+          <button
+            className='realtime-calibration-vertical-toolbar__btn btn btn-default'
+            onClick={ this.handleResumeClick.bind(this) }
+          >
+            <Translate value='realtimeCalibration.verticalToolbar.start'/>
+          </button>
+          <button
+            className='realtime-calibration-vertical-toolbar__btn btn btn-default'
+            onClick={ this.handleSaveClick.bind(this) }
+          >
+            <Translate value='realtimeCalibration.verticalToolbar.save'/>
+          </button>
+        </div>
+      );
     }
 
     return (<button
@@ -251,7 +283,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     transmit: bindActionCreators(transmit, dispatch),
-    request: bindActionCreators(request, dispatch)
+    request: bindActionCreators(request, dispatch),
+    redirect: bindActionCreators(redirect, dispatch)
   }
 }
 
