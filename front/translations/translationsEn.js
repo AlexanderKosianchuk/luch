@@ -291,6 +291,7 @@ const translationsEn = {
         fakeData: 'Test data',
         start: 'Run',
         stop: 'Stop',
+        save: 'Save',
         enterIpToConnect: 'Please enter IP to connect'
       },
       chooseParamsButtons: {
