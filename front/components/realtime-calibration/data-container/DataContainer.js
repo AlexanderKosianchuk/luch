@@ -9,6 +9,7 @@ import RealtimeChart from 'components/realtime-calibration/realtime-chart/Realti
 import Physics from 'components/realtime-calibration/physics/Physics';
 import Events from 'components/realtime-calibration/events/Events';
 import Binary from 'components/realtime-calibration/binary/Binary';
+import VoiceStreams from 'components/realtime-calibration/voice-streams/VoiceStreams';
 
 import request from 'actions/request';
 import bindSocketEvent from 'actions/bindSocketEvent';
@@ -51,6 +52,9 @@ class DataContainer extends Component {
           </div>
           <div className='realtime-calibration-data-container__chart'>
             <RealtimeChart/>
+          </div>
+          <div className='realtime-calibration-data-container__voice'>
+            <VoiceStreams/>
           </div>
         </div>
       </div>

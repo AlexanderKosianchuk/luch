@@ -4,6 +4,7 @@ const initialState = {
   phisics: [],
   binary: [],
   events: [],
+  voiceStreams: [],
   errorCode: null
 };
 
@@ -27,6 +28,7 @@ export default function realtimeCalibrationData(state = initialState, action) {
       state.phisics.push(action.payload.resp.phisics);
       state.binary.push(action.payload.resp.binary);
       state.events.push(action.payload.resp.events);
+      state.voiceStreams = action.payload.resp.voiceStreams;
 
       if (state.phisics.length > MAX_POINT_COUNT) {
         state.phisics = state.phisics.splice(1, state.phisics.length - 1);

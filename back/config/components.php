@@ -25,5 +25,6 @@ return [
   'realtimeEvent' => DI\object('Component\RealtimeEventComponent'),
   'channel' => DI\object('Component\ChannelComponent'),
   'osInfo' => DI\object('Component\OsInfoComponent'),
-  'frame' => DI\object('Component\FrameComponent')
+  'frame' => DI\object('Component\FrameComponent'),
+  'voice' => DI\object('Component\VoiceComponent')
 ];

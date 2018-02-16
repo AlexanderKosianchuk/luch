@@ -959,11 +959,11 @@ class UploaderController extends BaseController
 
     $this->dic()->get('runtimeManager')
       ->write(
-        $this->params()->folders->uploadedFlightsFolder,
+        $this->params()->folders->uploadedFlights,
         $uploadingUid.'.tmpsf',
         $rawFrame
       );
-  
+
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
     $stepLength = $fdr->getStepLength();
@@ -1051,6 +1051,46 @@ class UploaderController extends BaseController
       ->putRealtimeCalibrationEvents($uploadingUid, $eventResults, $frameNum, $link);
     $this->connection()->destroy($link);
 
+    $voiceCyclo = $this->dic()->get('voice')->getVoiceChannels($fdrId);
+    $voiceData = $this->dic()->get('voice')->processVoice($rawFrame, $voiceCyclo);
+
+    $voiceStreamsUrl = [];
+    foreach ($voiceData as $key => $arr) {
+      $isExist = $this->dic()->get('runtimeManager')
+        ->exist(
+          $this->params()->folders->uploadingVoice,
+          $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key)
+        );
+
+      if (!$isExist) {
+        $this->dic()->get('runtimeManager')
+          ->write(
+            $this->params()->folders->uploadingVoice,
+            $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key),
+            $this->dic()->get('voice')->getWavHeader()
+          );
+      }
+
+      $str = '';
+      foreach ($arr as $value) {
+        $str .= dechex($value);
+      }
+
+      $this->dic()->get('runtimeManager')
+        ->write(
+          $this->params()->folders->uploadingVoice,
+          $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key),
+          $str
+        );
+
+        $voiceStreamsUrl[] = $this->dic()
+          ->get('runtimeManager')
+          ->getUrl(
+            $this->params()->folders->uploadingVoice,
+            $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key)
+          );
+    }
+
     return json_encode([
       'uploadingUid' => $uploadingUid,
       'frameNum' => $frameNum,
@@ -1059,6 +1099,7 @@ class UploaderController extends BaseController
       'frame' => $normalized['plainFrame'],
       'binaryFlags' => $converted['binaryFlags'],
       'events' => $eventResults,
+      'voiceStreams' => $voiceStreamsUrl,
       'algHeap' => $algHeap,
       'fdrId' => $fdrId,
       'calibrationId' => $calibrationId
@@ -1069,6 +1110,23 @@ class UploaderController extends BaseController
   {
     $this->dic()->get('runtimeDb')
       ->cleanUpRealtimeCalibrationData($uploadingUid);
+
+    $scandirItems = $this->dic()
+      ->get('runtimeManager')
+      ->scandir(
+        $this->params()->folders->uploadingVoice
+      );
+
+    foreach ($scandirItems as $item) {
+      if (strpos($item, $uploadingUid) > -1) {
+        $this->dic()
+          ->get('runtimeManager')
+          ->delete(
+            $this->params()->folders->uploadingVoice,
+            $item
+          );
+      }
+    }
 
     return json_encode('ok');
   }

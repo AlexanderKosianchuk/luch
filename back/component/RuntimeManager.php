@@ -26,7 +26,7 @@ class RuntimeManager extends BaseComponent
     $runtimeDirectory = $this->getRuntimeFolder();
     $exportedFilesDir = $runtimeDirectory
       .DIRECTORY_SEPARATOR
-      .$this->params()->folders->exportedFolder;
+      .$this->params()->folders->exported;
 
     if (!is_dir($exportedFilesDir)) {
       mkdir($exportedFilesDir, 0755, true);
@@ -40,7 +40,7 @@ class RuntimeManager extends BaseComponent
     $runtimeDirectory = $this->getRuntimeFolder();
     $importFilesDir = $runtimeDirectory
       .DIRECTORY_SEPARATOR
-      .$this->params()->folders->importedFolder;
+      .$this->params()->folders->imported;
 
     if (!is_dir($importFilesDir)) {
       mkdir($importFilesDir, 0755, true);
@@ -64,7 +64,7 @@ class RuntimeManager extends BaseComponent
        $exportedUrl .= $_SERVER["SERVER_NAME"];
     }
 
-    return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $runtimeDirectory).'/'.$this->params()->folders->exportedFolder.'/'.$fileName . '.zip';
+    return $exportedUrl.str_replace(SITE_ROOT_DIR, '', $runtimeDirectory).'/'.$this->params()->folders->exported.'/'.$fileName . '.zip';
   }
 
   public function getRuntimeFileUrl($filePath)
@@ -158,7 +158,7 @@ class RuntimeManager extends BaseComponent
   {
     return basename($this->storeFile(
       $fileName,
-      $this->params()->folders->uploadedFlightsFolder,
+      $this->params()->folders->uploadedFlights,
       $uid
     ));
   }
@@ -167,7 +167,7 @@ class RuntimeManager extends BaseComponent
   {
     $runtimeDirectory = $this->getRuntimeFolder();
     $storedFilePath = $runtimeDirectory.DIRECTORY_SEPARATOR
-      .$this->params()->folders->uploadedFlightsFolder.DIRECTORY_SEPARATOR
+      .$this->params()->folders->uploadedFlights.DIRECTORY_SEPARATOR
       .$uid.'.tmpsf';
 
     return $storedFilePath;
@@ -176,7 +176,7 @@ class RuntimeManager extends BaseComponent
   public function getUploadedFilePath($fileName)
   {
     $runtimeDirectory = $this->getRuntimeFolder();
-    $uploadedFilesDir = $runtimeDirectory.DIRECTORY_SEPARATOR.$this->params()->folders->uploadedFlightsFolder;
+    $uploadedFilesDir = $runtimeDirectory.DIRECTORY_SEPARATOR.$this->params()->folders->uploadedFlights;
 
     $storedFilePath = $uploadedFilesDir . DIRECTORY_SEPARATOR . $fileName;
 
@@ -333,5 +333,73 @@ class RuntimeManager extends BaseComponent
     }
 
     return $file;
+  }
+
+  public function exist(
+    $category,
+    $fileName
+  ) {
+    // this method is necessary runtime folder to be createExportedFile
+    // if it is not exist
+    $runtime = $this->getRuntimeFolder();
+
+    $file = $runtime
+      .DIRECTORY_SEPARATOR
+      .$category
+      .DIRECTORY_SEPARATOR
+      .$fileName;
+
+    if (file_exists($file)) {
+      return $file;
+    }
+
+    return false;
+  }
+
+  public function getUrl(
+    $category,
+    $fileName
+  ) {
+    // this method is necessary runtime folder to be createExportedFile
+    // if it is not exist
+    $runtime = $this->getRuntimeFolder();
+
+    $url = 'http';
+    if (isset($_SERVER['HTTPS']) &&  ($_SERVER['HTTPS'] == 'on')) {
+       $url .= 's';
+    }
+    $url .= '://';
+    if ($_SERVER['SERVER_PORT'] != '80') {
+       $url .= $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+    } else {
+       $url .= $_SERVER['SERVER_NAME'];
+    }
+
+    return $url
+      .str_replace(SITE_ROOT_DIR, '', $runtime).'/'
+      .$category.'/'
+      .$fileName;
+  }
+
+  public function scandir($category) {
+    $runtime = $this->getRuntimeFolder();
+
+    return scandir($runtime.DIRECTORY_SEPARATOR.$category);
+  }
+
+  public function delete($category, $fileName) {
+    // this method is necessary runtime folder to be createExportedFile
+    // if it is not exist
+    $runtime = $this->getRuntimeFolder();
+
+    $file = $runtime
+      .DIRECTORY_SEPARATOR
+      .$category
+      .DIRECTORY_SEPARATOR
+      .$fileName;
+
+    if (file_exists($file)) {
+      return unlink($file);
+    }
   }
 }
