@@ -110,10 +110,7 @@ class FdrComponent extends BaseComponent
 
     $array = [];
     foreach ($params as $param) {
-      $array[] = array_merge(
-        $param->get(true),
-        ['type' => 'ap']
-      );
+      $array[] = $param->get(true);
     }
 
     return $array;
@@ -151,10 +148,7 @@ class FdrComponent extends BaseComponent
 
     $array = [];
     foreach ($params as $param) {
-      $array[] = array_merge(
-        $param->get(true),
-        ['type' => 'bp']
-      );
+      $array[] = $param->get(true);
     }
 
     return $array;
