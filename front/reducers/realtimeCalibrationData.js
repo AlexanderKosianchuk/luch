@@ -37,7 +37,6 @@ export default function realtimeCalibrationData(state = initialState, action) {
       }
 
       return { ...state, ...{
-          status: true,
           currentFrame: ++state.currentFrame,
         }
       };
