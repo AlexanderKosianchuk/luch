@@ -13,8 +13,12 @@ use \ReflectionClass;
 
 class BaseController extends BaseComponent
 {
-  protected function dic() {
-    return App::dic();
+  protected function dic($componentName = null) {
+    if ($componentName === null) {
+      return App::dic();
+    }
+
+    return App::dic()->get($componentName);
   }
 
   public function callAction($method, $arguments = []) {

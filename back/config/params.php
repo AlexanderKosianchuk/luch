@@ -1,6 +1,8 @@
 <?php
 
 return [
+  'serverName' => ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ?
+    'https' : 'http') . '://' . $_SERVER['SERVER_NAME'],
   'folders' => (object) [
     'runtimeDirectory' =>  SITE_ROOT_DIR.DIRECTORY_SEPARATOR.'runtime',
     'uploadedFlights' => 'uploaded-flights',

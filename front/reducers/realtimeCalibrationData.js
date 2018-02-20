@@ -25,6 +25,10 @@ export default function realtimeCalibrationData(state = initialState, action) {
         ...{ status: null }
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
+      if (!action.payload.resp.phisics) {
+        return state;
+      }
+
       state.phisics.push(action.payload.resp.phisics);
       state.binary.push(action.payload.resp.binary);
       state.events.push(action.payload.resp.events);

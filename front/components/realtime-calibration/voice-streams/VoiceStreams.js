@@ -30,15 +30,15 @@ class VoiceStreams extends Component {
 
   componentDidUpdate() {
     if (!this.props.isRunning) {
-      this.howls.forEach((howl) => {
-        howl.unload();
-      });
-
-      this.howls = [];
+      this.unloadHowls();
 
       return;
     }
 
+    this.loadHowls();
+  }
+
+  loadHowls() {
     if ((NODE_ENV === 'dev')
       && (this.props.streamUrls.length > 0)
     ) {
@@ -51,14 +51,33 @@ class VoiceStreams extends Component {
     });
   }
 
+  unloadHowls() {
+    this.howls.forEach((sound, index) => {
+      if (sound !== null) {
+          sound.stop();
+          sound.unload();
+          sound = null;
+      }
+    });
+
+    this.howls = [];
+  }
+
   howl(src) {
-    return new Howl({
+    let sound = new Howl({
       src: src,
       html5: true,
       format: ['wav'],
-      autoplay: true,
-      loop: true
     });
+
+    sound.play();
+
+    sound.on('end', () => {
+      this.unloadHowls()
+      this.loadHowls();
+    });
+
+    return sound;
   }
 
   render() {

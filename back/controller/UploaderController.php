@@ -1047,48 +1047,47 @@ class UploaderController extends BaseController
     $eventResults = $this->dic()->get('realtimeEvent')
       ->process($fdrId, $tableName, $prevEventResults, $link);
 
-    $this->dic()->get('runtimeDb')
+    $this->dic('runtimeDb')
       ->putRealtimeCalibrationEvents($uploadingUid, $eventResults, $frameNum, $link);
     $this->connection()->destroy($link);
 
-    $voiceCyclo = $this->dic()->get('voice')->getVoiceChannels($fdrId);
-    $voiceData = $this->dic()->get('voice')->processVoice($rawFrame, $voiceCyclo);
+    $voiceCyclo = $this->dic('voice')->getVoiceChannels($fdrId);
+    $voiceData = $this->dic('voice')->processVoice($rawFrame, $voiceCyclo);
 
     $voiceStreamsUrl = [];
     foreach ($voiceData as $key => $arr) {
+      $uploadingFileName = $this->dic('voice')->getUploadingFileName($uploadingUid, $key);
+
       $isExist = $this->dic()->get('runtimeManager')
         ->exist(
           $this->params()->folders->uploadingVoice,
-          $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key)
+          $uploadingFileName
         );
 
       if (!$isExist) {
         $this->dic()->get('runtimeManager')
           ->write(
             $this->params()->folders->uploadingVoice,
-            $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key),
+            $uploadingFileName,
             $this->dic()->get('voice')->getWavHeader()
           );
       }
 
       $str = '';
       foreach ($arr as $value) {
-        $str .= dechex($value);
+        $str .= dechex($value * $frameNum/30);
       }
 
-      $this->dic()->get('runtimeManager')
+      $this->dic('runtimeManager')
         ->write(
           $this->params()->folders->uploadingVoice,
-          $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key),
+          $uploadingFileName,
           $str
-        );
+      );
 
-        $voiceStreamsUrl[] = $this->dic()
-          ->get('runtimeManager')
-          ->getUrl(
-            $this->params()->folders->uploadingVoice,
-            $this->dic()->get('voice')->getUploadingFileName($uploadingUid, $key)
-          );
+      $voiceStreamsUrl[] = $this->params()->serverName
+        .'/voice/stream/fileName/'
+        .$uploadingFileName;
     }
 
     return json_encode([

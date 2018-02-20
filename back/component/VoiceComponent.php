@@ -13,10 +13,10 @@ class VoiceComponent extends BaseComponent
   private $FdrVoice;
 
   private $wavSingleChannelHeader = [
-    0x52,0x49,0x46,0x46,0x7B,0x35,0xF6,0x04,0x57,0x41,0x56,0x45,0x66,
+    0x52,0x49,0x46,0x46,0xEF,0xC7,0xBE,0x7B,0x57,0x41,0x56,0x45,0x66,
     0x6D,0x74,0x20,0x10,0x00,0x00,0x00,0x01,0x00,0x04,0x00,0x40,0x1F,
     0x00,0x00,0x00,0x7D,0x00,0x00,0x02,0x00,0x08,0x00,0x64,0x61,0x74,
-    0x61,0x0C,0x34,0xF6,0x04
+    0x61,0x80,0xC6,0xBE,0x7B
   ];
 
   private function setVoiceTable($fdrCode)
@@ -49,7 +49,11 @@ class VoiceComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setVoiceTable($fdr->getCode());
+    $table = $this->setVoiceTable($fdr->getCode());
+
+    if ($table === null) {
+      return [];
+    }
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrVoice')
@@ -90,8 +94,17 @@ class VoiceComponent extends BaseComponent
     return $channels;
   }
 
+  public function getUploadingFilePath($file)
+  {
+    return $this->params()->folders->runtimeDirectory
+      . DIRECTORY_SEPARATOR
+      . $this->params()->folders->uploadingVoice
+      . DIRECTORY_SEPARATOR
+      . $file;
+  }
+
   public function getUploadingFileName($uid, $code)
   {
-    return $uid.'_'.$code.'_.wav';
+    return $uid.'_'.$code.'.wav';
   }
 }
