@@ -5,11 +5,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
-import RealtimeChart from 'components/realtime-calibration/realtime-chart/RealtimeChart';
+import ChartsContainer from 'components/realtime-calibration/charts-container/ChartsContainer';
 import Physics from 'components/realtime-calibration/physics/Physics';
 import Events from 'components/realtime-calibration/events/Events';
 import Binary from 'components/realtime-calibration/binary/Binary';
 import VoiceStreams from 'components/realtime-calibration/voice-streams/VoiceStreams';
+import Timeline from 'components/realtime-calibration/timeline/Timeline';
 
 import request from 'actions/request';
 import bindSocketEvent from 'actions/bindSocketEvent';
@@ -50,11 +51,14 @@ class DataContainer extends Component {
           <div className='realtime-calibration-data-container__binary'>
             <Binary/>
           </div>
-          <div className='realtime-calibration-data-container__chart'>
-            <RealtimeChart/>
+          <div className='realtime-calibration-data-container__charts'>
+            <ChartsContainer/>
           </div>
           <div className='realtime-calibration-data-container__voice'>
             <VoiceStreams/>
+          </div>
+          <div className='realtime-calibration-data-container__timeline'>
+            <Timeline/>
           </div>
         </div>
       </div>

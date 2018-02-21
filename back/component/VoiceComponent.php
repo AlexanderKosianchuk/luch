@@ -49,7 +49,11 @@ class VoiceComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setVoiceTable($fdr->getCode());
+    $table = $this->setVoiceTable($fdr->getCode());
+
+    if ($table === null) {
+      return [];
+    }
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrVoice')

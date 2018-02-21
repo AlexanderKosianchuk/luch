@@ -175,8 +175,6 @@ function mapStateToProps(state) {
   return {
     currentFrame: state.realtimeCalibrationData.currentFrame,
     data: state.realtimeCalibrationData.data,
-    realtimeCalibrationParams: state.realtimeCalibrationParams,
-    fdrCyclo: state.fdrCyclo
   };
 }
 

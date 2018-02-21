@@ -1051,8 +1051,8 @@ class UploaderController extends BaseController
       ->putRealtimeCalibrationEvents($uploadingUid, $eventResults, $frameNum, $link);
     $this->connection()->destroy($link);
 
-    $voiceCyclo = $this->dic()->get('voice')->getVoiceChannels($fdrId);
-    $voiceData = $this->dic()->get('voice')->processVoice($rawFrame, $voiceCyclo);
+    $voiceCyclo = $this->dic('voice')->getVoiceChannels($fdrId);
+    $voiceData = $this->dic('voice')->processVoice($rawFrame, $voiceCyclo);
 
     $voiceStreamsUrl = [];
     foreach ($voiceData as $key => $arr) {
