@@ -25,7 +25,7 @@ export default class SpreadsheetRow extends Component {
   }
 
   handleChange(attr, event) {
-    let val = parseInt(event.target.value);
+    let val = parseFloat(event.target.value);
 
     if (isNaN(val)) {
       val = -1;

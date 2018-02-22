@@ -21,7 +21,7 @@ export default function Spreadsheet(props) {
             paramId={ props.paramId }
             key={ index }
             index={ index }
-            x={ parseInt(item.x) }
+            x={ parseFloat(item.x) }
             y={ parseInt(item.y) }
             update={ props.update }
           />

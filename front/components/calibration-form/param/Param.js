@@ -18,7 +18,7 @@ export default class Param extends Component {
     xy = this.sort(xy);
     xy = xy.map((item) => {
       return {
-        x: parseInt(item.x),
+        x: parseFloat(item.x),
         y: parseInt(item.y)
       }
     });

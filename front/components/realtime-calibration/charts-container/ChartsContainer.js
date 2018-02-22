@@ -7,9 +7,7 @@ import RealtimeChart from 'components/realtime-calibration/realtime-chart/Realti
 class ChartsContainer extends Component {
   render() {
     return (
-      <div className='realtime-calibration-realtime-chart'>
-
-      </div>
+      <div className='realtime-calibration-realtime-chart'></div>
     );
   }
 }
