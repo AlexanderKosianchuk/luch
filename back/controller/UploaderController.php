@@ -954,6 +954,15 @@ class UploaderController extends BaseController
     $fdrId,
     $calibrationId = null
   ) {
+    $fdrId = intval($fdrId);
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+    
+    $splitedFrame = str_split($rawFrame, $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
+    $dataToWrite = '';
+    foreach ($splitedFrame as $item) {
+      $dataToWrite .= pack('H*', $item);
+    }
+
     $algHeap = json_decode($algHeap, true);
     //TODO check user id token and fdr valiability to this user
 
@@ -961,11 +970,9 @@ class UploaderController extends BaseController
       ->write(
         $this->params()->folders->uploadedFlights,
         $uploadingUid.'.tmpsf',
-        $rawFrame
+        $dataToWrite
       );
 
-    $fdrId = intval($fdrId);
-    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
     $stepLength = $fdr->getStepLength();
     $currentTime = $startCopyTime * 1000 + (1000 * $stepLength * $frameNum);
 
@@ -990,8 +997,6 @@ class UploaderController extends BaseController
     $binaryParamsCyclo = $this->dic()->get('fdr')
       ->getPrefixGroupedBinaryParams($fdrId);
 
-    $unpackedFrame = unpack("H*", $rawFrame);
-    $splitedFrame = str_split($unpackedFrame[1], $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
     $fullFrame = [];
 
     for ($ii = 0; $ii < $fdr->getFrameLength(); $ii++) {

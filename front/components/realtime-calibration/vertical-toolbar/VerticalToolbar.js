@@ -21,8 +21,8 @@ class VerticalToolbar extends Component {
     super(props);
 
     this.state = {
-      fakeData: true,
-      sources: ['192.168.11.1:2017']
+      fakeData: false,
+      sources: ['192.168.88.101:2017', '192.168.88.102:2017']
     }
   }
 
