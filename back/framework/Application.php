@@ -19,6 +19,7 @@ class Application
   private static $_rbac;
   private static $_connect;
   private static $_i18n;
+  private static $_redis;
 
   private static $_instance;
 
@@ -39,6 +40,7 @@ class Application
     self::configureAcl($cfg);
     self::configureConnectionFactory($cfg);
     self::configureI18n($cfg);
+    self::configureRedis($cfg);
   }
 
   private static function configureDoctrine($cfg)
@@ -199,6 +201,26 @@ class Application
     self::$_i18n->init();
   }
 
+  private static function configureRedis($cfg)
+  {
+    if (!isset($cfg['redis'])) {
+      throw new Exception('Config file does not contain redis config', 1);
+    }
+
+    $client = [];
+
+    foreach ($cfg['redis'] as $key => $value) {
+      $client[$key] = new \Predis\Client([
+        'scheme' => $value['scheme'],
+        'host' => $value['host'],
+        'port' => $value['port'],
+        'password' => $value['password']
+      ]);
+    }
+
+    self::$_redis = (object)$client;
+  }
+
   private static function app()
   {
     if (is_null(self::$_instance)) {
@@ -248,5 +270,11 @@ class Application
   {
     $instance = self::app();
     return $instance::$_i18n;
+  }
+
+  public static function redis()
+  {
+    $instance = self::app();
+    return $instance::$_redis;
   }
 }

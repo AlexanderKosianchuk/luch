@@ -18,7 +18,7 @@ class RealtimeEvents extends Component {
     return lastEvent.map((item, index) => {
       return (<TileItem
         key={ index }
-        value={ this.getResultToShow(item.result, item.event.func) }
+        value={ this.getResultToShow(item.value, item.event.func) }
         color={ item.event.color }
         name={ item.event.text }
         code={ item.event.name }

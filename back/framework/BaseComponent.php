@@ -14,6 +14,14 @@ class BaseComponent
     return App::connection();
   }
 
+  protected function redis($store = 'default') {
+    if (!property_exists(App::redis(), $store)) {
+      throw new \Exception('Use of unconfigured redis store. Store: '. $store);
+    }
+
+    return App::redis()->$store;
+  }
+
   protected function user() {
     return App::user();
   }

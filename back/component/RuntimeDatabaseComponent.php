@@ -192,8 +192,8 @@ class RuntimeDatabaseComponent extends BaseComponent
         .'`frame_num`, '
         .'`id_event`, '
         .'`value`) VALUES ('
-        . $frameNum . ', ' . $eventResults[$ii]['event']['id'] . ', '
-        . $eventResults[$ii]['result']
+        . $frameNum . ', ' . $eventResults[$ii]['eventId'] . ', '
+        . $eventResults[$ii]['value']
         . ');';
 
       $stmt = $internalLink->prepare($query);

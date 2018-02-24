@@ -956,7 +956,7 @@ class UploaderController extends BaseController
   ) {
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
-    
+
     $splitedFrame = str_split($rawFrame, $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
     $dataToWrite = '';
     foreach ($splitedFrame as $item) {
@@ -1043,14 +1043,20 @@ class UploaderController extends BaseController
           $link
         );
 
-    $prevEventResults = $this->dic()->get('runtimeDb')
-      ->getProcessResults($uploadingUid, $frameNum - 1, $link);
+    $prevEventResults = json_decode($this->redis()->get($uploadingUid . '_LAST_EVENTS'), true);
+
+    if ($prevEventResults === null) {
+      $prevEventResults = $this->dic()->get('runtimeDb')
+        ->getProcessResults($uploadingUid, $frameNum - 1, $link);
+    }
 
     $tableName = $this->dic()->get('runtimeDb')
       ->getDataTableName($uploadingUid);
 
     $eventResults = $this->dic()->get('realtimeEvent')
-      ->process($fdrId, $tableName, $prevEventResults, $link);
+      ->process($fdrId, $tableName, $frameNum, $prevEventResults, $link);
+
+    $this->redis()->set($uploadingUid . '_LAST_EVENTS', json_encode($eventResults));
 
     $this->dic('runtimeDb')
       ->putRealtimeCalibrationEvents($uploadingUid, $eventResults, $frameNum, $link);
@@ -1112,25 +1118,27 @@ class UploaderController extends BaseController
 
   public function breakFramesProcessAction($uploadingUid)
   {
-    $this->dic()->get('runtimeDb')
-      ->cleanUpRealtimeCalibrationData($uploadingUid);
+    try {
+      $this->dic()->get('runtimeDb')
+        ->cleanUpRealtimeCalibrationData($uploadingUid);
 
-    $scandirItems = $this->dic()
-      ->get('runtimeManager')
-      ->scandir(
-        $this->params()->folders->uploadingVoice
-      );
+      $scandirItems = $this->dic()
+        ->get('runtimeManager')
+        ->scandir(
+          $this->params()->folders->uploadingVoice
+        );
 
-    foreach ($scandirItems as $item) {
-      if (strpos($item, $uploadingUid) > -1) {
-        $this->dic()
-          ->get('runtimeManager')
-          ->delete(
-            $this->params()->folders->uploadingVoice,
-            $item
-          );
+      foreach ($scandirItems as $item) {
+        if (strpos($item, $uploadingUid) > -1) {
+          $this->dic()
+            ->get('runtimeManager')
+            ->delete(
+              $this->params()->folders->uploadingVoice,
+              $item
+            );
+        }
       }
-    }
+    } catch(Exception $e) {}
 
     return json_encode('ok');
   }

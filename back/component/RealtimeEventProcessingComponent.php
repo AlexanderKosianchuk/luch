@@ -6,7 +6,7 @@ use Exception;
 
 class RealtimeEventComponent extends BaseComponent
 {
-  public function process($fdrId, $tableName, $prevEventResults, $link = null)
+  public function process($fdrId, $tableName, $frameNum, $prevEventResults, $link = null)
   {
     $internalLink = $link;
     if ($link === null) {
@@ -36,8 +36,10 @@ class RealtimeEventComponent extends BaseComponent
 
         if ($aggregationRes !== null) {
           $eventResults[] = [
+            'eventId' => $event['id'],
             'event' => $event,
-            'result' => $aggregationRes
+            'value' => $aggregationRes,
+            'frameNum' => $frameNum
           ];
         }
       }

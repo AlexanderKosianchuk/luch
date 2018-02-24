@@ -6,7 +6,7 @@ class InteractionController extends BaseController
 {
   public function upAction()
   {
-    $cmd = 'cd '.$this->params()->interaction->path.' && nodejs app.js > /dev/null &';
+    $cmd = 'nodejs '.$this->params()->interaction->path.'/app.js > /dev/null &';
     $url = $this->params()->interaction->url . '/realtimeCalibration/getStatus';
     $output = [];
 
@@ -31,13 +31,18 @@ class InteractionController extends BaseController
           exec($cmd, $output);
 
           // timeout to allow node up complete
-          sleep(2);
+          sleep(5);
         }
       }
     } catch (Exception $ex) {
       return json_encode(['status' => 'err', 'cmd' => $cmd, 'message' => $ex]);
     }
 
-    return json_encode(['status' => 'ok', 'cmd' => $cmd, 'message' => $output]);
+    return json_encode([
+      'status' => 'ok',
+      'cmd' => $cmd,
+      'message' => $output,
+      'httpCode' => $httpCode
+    ]);
   }
 }
