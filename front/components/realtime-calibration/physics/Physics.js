@@ -20,9 +20,8 @@ class Physics extends Component {
       return (<TileItem
         key={ index }
         value={ this.getValue(newFrame[item.id]) }
-        color={ item.color }
-        name={ item.name }
-        code={ item.code }
+        param={ item }
+        canChartDisplay={ true }
       />);
     });
   }

@@ -44,6 +44,7 @@
     display: none
 
   & &__label
+    position: relative
     width: calc(100% - 8px)
     height: 49px
     padding: 2px
@@ -72,3 +73,10 @@
     font-size: 26px
     font-weight: bold
     line-height: 24px
+
+  & &__checkbox
+    position: absolute
+    cursor: pointer
+    top: 0
+    right: 3px
+    color: #526571

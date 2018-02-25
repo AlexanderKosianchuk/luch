@@ -19,9 +19,11 @@ class RealtimeEvents extends Component {
       return (<TileItem
         key={ index }
         value={ this.getResultToShow(item.value, item.event.func) }
-        color={ item.event.color }
-        name={ item.event.text }
-        code={ item.event.name }
+        param={{
+          color: item.event.color,
+          name: item.event.text,
+          code: item.event.name
+        }}
       />);
     });
   }

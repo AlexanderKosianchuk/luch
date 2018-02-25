@@ -43,10 +43,7 @@ class Binary extends Component {
     return binaryData.map((item, index) => {
       return (<BinaryTileItem
         key={ index }
-        value={ item.value }
-        color={ item.color }
-        name={ item.name }
-        code={ item.code }
+        param={ item }
       />);
     });
   }

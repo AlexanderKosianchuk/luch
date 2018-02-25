@@ -8,13 +8,24 @@ const initialState = {
 export default function realtimeCalibrationParams(state = initialState, action) {
   switch (action.type) {
     case 'CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE':
-      let chosenParams = [];
+      let key = null;
+      let view = action.payload.view || 'number';
 
-      if (action.payload.type === 'ap') {
-        chosenParams = state.containerAnalogParams.slice(0);
-      } else if (action.payload.type === 'bp') {
-        chosenParams = state.containerBinaryParams.slice(0);
+      if ((view === 'number') && (action.payload.type === 'ap')) {
+        key = 'containerAnalogParams';
+      } else if ((view === 'number') && (action.payload.type === 'bp')) {
+        key = 'containerBinaryParams';
+      } else if ((view === 'chart') && (action.payload.type === 'ap')) {
+        key = 'chartAnalogParams';
+      } else if ((view === 'chart') && (action.payload.type === 'bp')) {
+        key = 'chartBinaryParams';
       }
+
+      if (key === null) {
+        throw Error('Invalid key passed in realtimeCalibrationParams');
+      }
+
+      let chosenParams = state[key].slice(0);
 
       let getIndexById = function (id, array) {
         let itemIndex = null;
@@ -42,15 +53,9 @@ export default function realtimeCalibrationParams(state = initialState, action) 
         chosenParams.push(action.payload);
       }
 
-      if (action.payload.type === 'ap') {
-        return { ...state,
-          ...{ containerAnalogParams: chosenParams }
-        };
-      } else if (action.payload.type === 'bp') {
-        return { ...state,
-          ...{ containerBinaryParams: chosenParams }
-        };
-      }
+      return { ...state,
+        ...{ [key]: chosenParams }
+      };
     case 'CLEAR_REALTIME_CALIBRATION_PARAMS':
       return initialState;
     default:
