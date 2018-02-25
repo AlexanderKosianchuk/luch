@@ -45,14 +45,14 @@ class DataContainer extends Component {
           <div className='realtime-calibration-data-container__events'>
             <Events/>
           </div>
+          <div className='realtime-calibration-data-container__charts'>
+            <ChartsContainer/>
+          </div>
           <div className='realtime-calibration-data-container__params'>
             <Physics/>
           </div>
           <div className='realtime-calibration-data-container__binary'>
             <Binary/>
-          </div>
-          <div className='realtime-calibration-data-container__charts'>
-            <ChartsContainer/>
           </div>
           <div className='realtime-calibration-data-container__voice'>
             <VoiceStreams/>

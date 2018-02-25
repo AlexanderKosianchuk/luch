@@ -1,6 +1,7 @@
 const initialState = {
   status: null,
   currentFrame: 0,
+  timeline: [],
   phisics: [],
   binary: [],
   events: [],
@@ -29,6 +30,8 @@ export default function realtimeCalibrationData(state = initialState, action) {
         return state;
       }
 
+      state.timeline.push(state.currentFrame);
+
       state.phisics.push(action.payload.resp.phisics);
 
       if (check(action.payload.resp.binary, 'object')) {
@@ -45,7 +48,8 @@ export default function realtimeCalibrationData(state = initialState, action) {
 
       state.voiceStreams = action.payload.resp.voiceStreams;
 
-      if (state.phisics.length > MAX_POINT_COUNT) {
+      if (state.timeline.length > MAX_POINT_COUNT) {
+        state.timeline = state.timeline.splice(1, state.timeline.length - 1);
         state.phisics = state.phisics.splice(1, state.phisics.length - 1);
         state.binary = state.binary.splice(1, state.binary.length - 1);
         state.events = state.events.splice(1, state.events.length - 1);
