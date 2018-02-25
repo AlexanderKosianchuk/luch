@@ -25,29 +25,57 @@ class ChartsContainer extends Component {
     return lines;
   }
 
-  build() {
-    let charts = this.props.params.chartAnalogParams;
-    let lines = this.rotateData(this.props.phisics);
+  getBinaryLine(data, id) {
+    return data.map((frame) => {
+      let index = frame.findIndex((item) => {
+        return item.id === id;
+      });
 
-    return charts.map((item, index) => {
-      let line = [];
-      if (lines.hasOwnProperty(item.id)) {
-        line = lines[item.id];
+      if (index === -1) {
+        return null;
       }
 
-      return <RealtimeChart
-        key={ index }
-        param={ item }
-        line={ line }
-        timeline={ this.props.timeline }
-      />
+      return 1
     });
+  }
+
+  buildAnalog() {
+    let lines = this.rotateData(this.props.phisics);
+
+    return this.props.params.chartAnalogParams
+      .map((item, index) => {
+        let line = [];
+        if (lines.hasOwnProperty(item.id)) {
+          line = lines[item.id];
+        }
+
+        return <RealtimeChart
+          key={ index }
+          param={ item }
+          line={ line }
+          timeline={ this.props.timeline }
+        />
+      });
+  }
+
+  buildBinary() {
+    return this.props.params.chartBinaryParams
+      .map((item, index) => {
+        return <RealtimeChart
+          key={ index }
+          param={ item }
+          line={ this.getBinaryLine(this.props.binary, item.id) }
+          timeline={ this.props.timeline }
+          isBinary={ true }
+        />
+      });
   }
 
   render() {
     return (
       <div className='realtime-calibration-realtime-chart-container'>
-        { this.build() }
+        { this.buildAnalog() }
+        { this.buildBinary() }
       </div>
     );
   }
@@ -57,6 +85,7 @@ function mapStateToProps(state) {
   return {
     params: state.realtimeCalibrationParams,
     phisics: state.realtimeCalibrationData.phisics,
+    binary: state.realtimeCalibrationData.binary,
     timeline: state.realtimeCalibrationData.timeline,
     currentFrame: state.realtimeCalibrationData.currentFrame,
   }
