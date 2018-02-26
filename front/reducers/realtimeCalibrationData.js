@@ -2,6 +2,7 @@ const initialState = {
   status: null,
   currentFrame: 0,
   timeline: [],
+  fullTimeline: [],
   phisics: [],
   binary: [],
   events: [],
@@ -18,6 +19,8 @@ export default function realtimeCalibrationData(state = initialState, action) {
         ...{ status: true }
       };
     case 'POST_REALTIME_CALIBRATION_FREEZE_COMPLETE':
+      state.fullTimeline.push(null);
+
       return { ...state,
         ...{ status: false }
       };
@@ -30,7 +33,8 @@ export default function realtimeCalibrationData(state = initialState, action) {
         return state;
       }
 
-      state.timeline.push(state.currentFrame);
+      state.timeline.push(action.payload.resp.timestamp);
+      state.fullTimeline.push(action.payload.resp.timestamp);
 
       state.phisics.push(action.payload.resp.phisics);
 
@@ -59,6 +63,14 @@ export default function realtimeCalibrationData(state = initialState, action) {
           currentFrame: ++state.currentFrame,
         }
       };
+    case 'GET_REALTIME_CALIBRATION_SEGMENT_COMPLETE':
+      return { ...state, ...{
+        currentFrame: action.payload.resp.currentFrame,
+        timeline: action.payload.resp.timeline,
+        phisics: action.payload.resp.phisics,
+        binary: action.payload.resp.binary,
+        events: action.payload.resp.events,
+      }}
     default:
       return state;
   }

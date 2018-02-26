@@ -1111,8 +1111,9 @@ class UploaderController extends BaseController
       'events' => $eventResults,
       'voiceStreams' => $voiceStreamsUrl,
       'algHeap' => $algHeap,
+      'timestamp' => $currentTime,
       'fdrId' => $fdrId,
-      'calibrationId' => $calibrationId
+      'calibrationId' => $calibrationId,
     ]);
   }
 

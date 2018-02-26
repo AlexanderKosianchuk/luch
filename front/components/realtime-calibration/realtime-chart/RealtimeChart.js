@@ -28,6 +28,14 @@ class RealtimeChart extends Component {
 
   getOptions() {
     return {
+      scales: {
+        xAxes: [{
+          type: 'time',
+          time: {
+            unit: 'second'
+          }
+        }]
+      },
       legend: {
         onClick: (e) => e.stopPropagation()
       }

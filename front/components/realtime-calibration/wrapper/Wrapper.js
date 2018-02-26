@@ -1,11 +1,13 @@
+import './wrapper.sass';
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import uuidV4 from 'uuid/v4';
 
 import VerticalToolbar from 'components/realtime-calibration/vertical-toolbar/VerticalToolbar';
 import DataContainer from 'components/realtime-calibration/data-container/DataContainer';
-import uuidV4 from 'uuid/v4';
-
+import Timeline from 'components/realtime-calibration/timeline/Timeline';
 import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
@@ -107,18 +109,23 @@ class Wrapper extends Component {
     }
 
     return (
-      <div className='row'>
-        <div className='col-sm-3'>
-          <VerticalToolbar
-            uid={ UID }
-            fdrId={ parseInt(this.props.fdrId) }
-            paramsSource={ this.props.paramsSource }
-            fdrTemplateId={ this.props.fdrTemplateId }
-            changeParamsSource={ this.changeParamsSource.bind(this) }
-          />
+      <div className='realtime-calibration-wrapper'>
+        <div className='row'>
+          <Timeline uid={ UID } />
         </div>
-        <div className='col-sm-9'>
-          <DataContainer uid={ UID } />
+        <div className='row'>
+          <div className='col-sm-3 col-lg-2'>
+            <VerticalToolbar
+              uid={ UID }
+              fdrId={ parseInt(this.props.fdrId) }
+              paramsSource={ this.props.paramsSource }
+              fdrTemplateId={ this.props.fdrTemplateId }
+              changeParamsSource={ this.changeParamsSource.bind(this) }
+            />
+          </div>
+          <div className='col-sm-9 col-lg-10'>
+            <DataContainer uid={ UID } />
+          </div>
         </div>
       </div>
     );

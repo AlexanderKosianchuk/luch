@@ -10,9 +10,7 @@ import Physics from 'components/realtime-calibration/physics/Physics';
 import Events from 'components/realtime-calibration/events/Events';
 import Binary from 'components/realtime-calibration/binary/Binary';
 import VoiceStreams from 'components/realtime-calibration/voice-streams/VoiceStreams';
-import Timeline from 'components/realtime-calibration/timeline/Timeline';
 
-import request from 'actions/request';
 import bindSocketEvent from 'actions/bindSocketEvent';
 
 class DataContainer extends Component {
@@ -57,9 +55,6 @@ class DataContainer extends Component {
           <div className='realtime-calibration-data-container__voice'>
             <VoiceStreams/>
           </div>
-          <div className='realtime-calibration-data-container__timeline'>
-            <Timeline/>
-          </div>
         </div>
       </div>
     );
@@ -78,7 +73,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    request: bindActionCreators(request, dispatch),
     bindSocketEvent: bindActionCreators(bindSocketEvent, dispatch),
   }
 }
