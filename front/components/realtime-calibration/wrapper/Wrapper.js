@@ -111,7 +111,7 @@ class Wrapper extends Component {
     return (
       <div className='realtime-calibration-wrapper'>
         <div className='row'>
-          <Timeline uid={ UID } />
+          <Timeline uid={ UID } fdrId={ parseInt(this.props.fdrId) }/>
         </div>
         <div className='row'>
           <div className='col-sm-3 col-lg-2'>

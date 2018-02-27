@@ -17,7 +17,8 @@ export default function bindSocketEvent(payload) {
       dispatch({
         type: payload.reducerEvent,
         payload: {
-          resp: resp
+          request: payload,
+          response: resp
         }
       });
     });

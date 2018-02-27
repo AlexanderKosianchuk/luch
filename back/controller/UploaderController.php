@@ -1143,4 +1143,122 @@ class UploaderController extends BaseController
 
     return json_encode('ok');
   }
+
+  public function getSegmentAction($uploadingUid, $fdrId, $timestamp, $limit = 100)
+  {
+    $phisics = [];
+    $binary = [];
+    $events = [];
+    $currentFrame = 0;
+    $timeline = [];
+
+    $fdrId = intval($fdrId);
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    try {
+      $link = $this->connection()->create('runtime');
+
+      $data = $this->dic('runtimeDb')
+        ->getRealtimeCalibrationData($uploadingUid, $timestamp, $limit, $link);
+
+      $analogParamsCyclo = $this->dic('fdr')->getParams($fdrId, true);
+      $binaryParamsCyclo = $this->dic('fdr')->getBinaryParams($fdrId, true);
+
+      $findByCode = function ($code, $cyclo) {
+        foreach ($cyclo as $param) {
+          if ($param['code'] === $code) {
+            return $param;
+          }
+        }
+
+        return null;
+      };
+
+      if (count($data) > 0) {
+        $currentFrame = intval($data[count($data) - 1]['frame_num']);
+      }
+
+      foreach ($data as $rawFrame) {
+        $timeline[] = intval($rawFrame['time']);
+      }
+
+      foreach ($data as $rawFrame) {
+        $frame = [];
+        $binaryData = [];
+        $frameNum = intval($rawFrame['frame_num']);
+        foreach ($rawFrame as $paramCode => $paramValue) {
+          $param = $findByCode($paramCode, $analogParamsCyclo);
+          $binaryParam = $findByCode($paramCode, $binaryParamsCyclo);
+
+          if ($param !== null) {
+            $frame[$param['id']] = floatval($paramValue);
+          }
+
+          if (($binaryParam !== null)
+            && ($paramValue > 0)
+          ) {
+            $binaryData[$paramCode] = [
+              'frameNum' => $frameNum,
+              'time' => intval($rawFrame['time']),
+              'code' => $paramCode,
+              'id' => intval($binaryParam['id'])
+            ];
+          }
+        }
+
+        $binaryDataArray = [];
+        foreach ($binaryData as $key => $binaryDataValue) {
+          $binaryDataArray[] = $binaryDataValue;
+        }
+        $phisics[] = $frame;
+        $binary[] = $binaryDataArray;
+      }
+
+      $registeredEvents = $this->dic('runtimeDb')
+        ->getRealtimeCalibrationEvents($uploadingUid, $timestamp, $limit, $link);
+
+      $findById = function ($id, $events) {
+        foreach ($events as $event) {
+          if ($event->getId() === $id) {
+            return $event->get(true);
+          }
+        }
+
+        return null;
+      };
+
+      $eventsList = $fdr->getRealtimeEvents();
+      $eventsAssoc = [];
+      foreach ($registeredEvents as $registeredEvent) {
+        $eventDescription = $findById(intval($registeredEvent['id_event']), $eventsList);
+
+        if ($eventDescription !== null) {
+          if (!isset($eventsAssoc[$registeredEvent['frame_num']])) {
+            $eventsAssoc[$registeredEvent['frame_num']] = [];
+          }
+
+          $eventsAssoc[$registeredEvent['frame_num']][] = [
+            'eventId' => intval($registeredEvent['id']),
+            'event' => $eventDescription,
+            'value' => $registeredEvent['value'],
+            'frameNum' => intval($registeredEvent['frame_num'])
+          ];
+        }
+      }
+
+      foreach ($eventsAssoc as $item) {
+        $events[] = $item;
+      }
+
+      $this->connection()->destroy($link);
+    } catch(Exception $e) {}
+
+    return json_encode([
+      'phisics' => $phisics,
+      'binary' => $binary,
+      'events' => $events,
+      'currentFrame' => $currentFrame,
+      'timeline' => $timeline
+    ]);
+  }
 }

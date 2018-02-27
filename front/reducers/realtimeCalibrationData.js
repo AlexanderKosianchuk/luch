@@ -1,5 +1,6 @@
 const initialState = {
   status: null,
+  previousFrame: -1,
   currentFrame: 0,
   timeline: [],
   fullTimeline: [],
@@ -29,28 +30,36 @@ export default function realtimeCalibrationData(state = initialState, action) {
         ...{ status: null }
       };
     case 'RECEIVED_REALTIME_CALIBRATING_NEW_FRAME':
-      if (!check(action.payload.resp.phisics, 'number')) {
+      if (!check(action.payload.response.phisics, 'number')) {
         return state;
       }
 
-      state.timeline.push(action.payload.resp.timestamp);
-      state.fullTimeline.push(action.payload.resp.timestamp);
+      if ((state.previousFrame + 1) !== state.currentFrame) {
+        state.currentFrame = state.previousFrame + 1;
+        state.timeline = [];
+        state.phisics = [];
+        state.binary = [];
+        state.events = [];
+      }
 
-      state.phisics.push(action.payload.resp.phisics);
+      state.timeline.push(action.payload.response.timestamp);
+      state.fullTimeline.push(action.payload.response.timestamp);
 
-      if (check(action.payload.resp.binary, 'object')) {
-        state.binary.push(action.payload.resp.binary);
+      state.phisics.push(action.payload.response.phisics);
+
+      if (check(action.payload.response.binary, 'object')) {
+        state.binary.push(action.payload.response.binary);
       } else {
         state.binary.push([]);
       }
 
-      if (check(action.payload.resp.events, 'object')) {
-        state.events.push(action.payload.resp.events);
+      if (check(action.payload.response.events, 'object')) {
+        state.events.push(action.payload.response.events);
       } else {
         state.events.push([]);
       }
 
-      state.voiceStreams = action.payload.resp.voiceStreams;
+      state.voiceStreams = action.payload.response.voiceStreams;
 
       if (state.timeline.length > MAX_POINT_COUNT) {
         state.timeline = state.timeline.splice(1, state.timeline.length - 1);
@@ -60,16 +69,17 @@ export default function realtimeCalibrationData(state = initialState, action) {
       }
 
       return { ...state, ...{
-          currentFrame: ++state.currentFrame,
+          currentFrame: state.currentFrame + 1,
+          previousFrame: state.currentFrame
         }
       };
     case 'GET_REALTIME_CALIBRATION_SEGMENT_COMPLETE':
       return { ...state, ...{
-        currentFrame: action.payload.resp.currentFrame,
-        timeline: action.payload.resp.timeline,
-        phisics: action.payload.resp.phisics,
-        binary: action.payload.resp.binary,
-        events: action.payload.resp.events,
+        currentFrame: action.payload.response.currentFrame,
+        timeline: action.payload.response.timeline,
+        phisics: action.payload.response.phisics,
+        binary: action.payload.response.binary,
+        events: action.payload.response.events,
       }}
     default:
       return state;

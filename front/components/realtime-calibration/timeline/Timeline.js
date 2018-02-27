@@ -1,6 +1,7 @@
 import './timeline.sass';
 
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Line, defaults } from 'react-chartjs-2';
 
@@ -106,6 +107,10 @@ class Timeline extends Component {
       },
       onClick: function (event, activeElements) {
         let elementIndex = activeElements[0];
+        if (!elementIndex) {
+          return;
+        }
+
         let value = this.data
           .datasets[elementIndex._datasetIndex]
           .data[elementIndex._index]
@@ -114,10 +119,11 @@ class Timeline extends Component {
           that.props.request(
             ['uploader', 'getSegment'],
             'get',
-            'REALTIME_CALIBRATION_SEGMENT_COMPLETE',
+            'REALTIME_CALIBRATION_SEGMENT',
             {
-              timestamp: value,
-              uploadingUid: that.props.uid
+              uploadingUid: that.props.uid,
+              fdrId: that.props.fdrId,
+              timestamp: value
             }
           );
       }

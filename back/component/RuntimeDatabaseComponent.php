@@ -232,4 +232,120 @@ class RuntimeDatabaseComponent extends BaseComponent
       $this->connection()->destroy($internalLink);
     }
   }
+
+  public function getRealtimeCalibrationFrameNum(
+    $uploadingUid,
+    $timestamp,
+    $link = null
+  ) {
+    $internalLink = $link;
+    if ($link === null) {
+      $internalLink = $this->connection()->create('runtime');
+    }
+
+    $tableName = $this->getDataTableName($uploadingUid);
+
+    $query = 'SELECT * FROM `'.$tableName.'` '
+      .'WHERE `time` = '.$timestamp.' LIMIT 1;';
+    $result = $link->query($query);
+
+    $frameNum = 0;
+    if ($row = $result->fetch_assoc()) {
+      $frameNum = $row['frame_num'];
+    }
+
+    if ($link === null) {
+      $this->connection()->destroy($internalLink);
+    }
+
+    return $frameNum;
+  }
+
+  public function getRealtimeCalibrationData(
+    $uploadingUid,
+    $timestamp,
+    $limit = 100,
+    $link = null
+  ) {
+    $internalLink = $link;
+    if ($link === null) {
+      $internalLink = $this->connection()->create('runtime');
+    }
+
+    $tableName = $this->getDataTableName($uploadingUid);
+
+    if (!$this->connection()->isExist($tableName, 'runtime', $internalLink)) {
+      return [];
+    }
+
+    $toFrameNum = $this->getRealtimeCalibrationFrameNum(
+      $uploadingUid,
+      $timestamp,
+      $link
+    );
+
+    $fromFrameNum = $toFrameNum - $limit;
+
+    $query = 'SELECT * FROM `'.$tableName.'` '
+      .'WHERE `frame_num` >= '.$fromFrameNum.' AND '
+      .'`frame_num` < '.$toFrameNum.';';
+    $result = $link->query($query);
+
+    $data = [];
+    $frames = [];
+    while ($row = $result->fetch_assoc()) {
+      if (!isset($frames[$row['frame_num']])) {
+        $data[] = $row;
+        $frames[$row['frame_num']] = 1;
+      }
+    }
+
+    if ($link === null) {
+      $this->connection()->destroy($internalLink);
+    }
+
+    return $data;
+  }
+
+  public function getRealtimeCalibrationEvents(
+    $uploadingUid,
+    $timestamp,
+    $limit = 100,
+    $link = null
+  ) {
+    $internalLink = $link;
+    if ($link === null) {
+      $internalLink = $this->connection()->create('runtime');
+    }
+
+    $tableName = $this->getEventTableName($uploadingUid);
+
+    if (!$this->connection()->isExist($tableName, 'runtime', $internalLink)) {
+      return [];
+    }
+
+    $toFrameNum = $this->getRealtimeCalibrationFrameNum(
+      $uploadingUid,
+      $timestamp,
+      $link
+    );
+
+    $fromFrameNum = $toFrameNum - $limit;
+
+    $query = 'SELECT * FROM `'.$tableName.'` '
+      .'WHERE `frame_num` >= '.$fromFrameNum.' AND '
+      .'`frame_num` < '.$toFrameNum.';';
+    $result = $link->query($query);
+
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+      $data[] = $row;
+    }
+
+    if ($link === null) {
+      $this->connection()->destroy($internalLink);
+    }
+
+    return $data;
+  }
 }
