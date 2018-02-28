@@ -130,10 +130,23 @@ class Timeline extends Component {
     };
   }
 
+  getVisibility() {
+    if (this.props.isRunning === false) {
+      return 'realtime-calibration-timeline--show';
+    }
+
+    return 'realtime-calibration-timeline--hide';
+  }
+
   render() {
     return (
-      <div className='realtime-calibration-timeline'>
+      <div className={
+        'realtime-calibration-timeline '
+        + this.getVisibility()
+        }
+      >
         <Line
+          ref={(line) => { this.line = line; }}
           height={ 50 }
           data={ this.getData() }
           options={ this.getOptions() }

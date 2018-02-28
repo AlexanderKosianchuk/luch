@@ -1086,7 +1086,7 @@ class UploaderController extends BaseController
 
       $str = '';
       foreach ($arr as $value) {
-        $str .= dechex($value * $frameNum/30);
+        $str .= dechex($value);
       }
 
       $this->dic('runtimeManager')

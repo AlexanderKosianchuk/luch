@@ -32,6 +32,8 @@ class VoiceComponent extends BaseComponent
     $this->em('fdrs')
       ->getClassMetadata('Entity\FdrVoice')
       ->setTableName($table);
+
+    return $table;
   }
 
   public function getWavHeader()
