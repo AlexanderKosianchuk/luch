@@ -9,7 +9,7 @@ import TileItem from 'components/realtime-calibration/tile-item/TileItem';
 
 class Physics extends Component {
   buildTile() {
-    let ap = this.props.params.containerAnalogParams;
+    let ap = this.props.params.analog;
 
     let newFrame = new Array(ap.length);
     if (this.props.data.length > 0) {
@@ -22,6 +22,7 @@ class Physics extends Component {
         value={ this.getValue(newFrame[item.id]) }
         param={ item }
         canChartDisplay={ true }
+        onlyBinaryValue={ false }
       />);
     });
   }
@@ -38,7 +39,7 @@ class Physics extends Component {
     return (
       <div className='realtime-calibration-physics'>
         <div className='realtime-calibration-physics__header'>
-          { (this.props.params.containerAnalogParams.length === 0) ? (
+          { (this.props.params.analog.length === 0) ? (
             <Translate value='realtimeCalibration.physics.chooseParams'/>
           ) : (
             <Translate value='realtimeCalibration.physics.header' />

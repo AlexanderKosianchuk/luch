@@ -1,24 +1,17 @@
 const initialState = {
-  chartAnalogParams: [],
-  chartBinaryParams: [],
-  containerAnalogParams: [],
-  containerBinaryParams: []
+  analog: [],
+  binary: []
 };
 
 export default function realtimeCalibrationParams(state = initialState, action) {
   switch (action.type) {
     case 'CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE':
       let key = null;
-      let view = action.payload.view || 'number';
 
-      if ((view === 'number') && (action.payload.type === 'ap')) {
-        key = 'containerAnalogParams';
-      } else if ((view === 'number') && (action.payload.type === 'bp')) {
-        key = 'containerBinaryParams';
-      } else if ((view === 'chart') && (action.payload.type === 'ap')) {
-        key = 'chartAnalogParams';
-      } else if ((view === 'chart') && (action.payload.type === 'bp')) {
-        key = 'chartBinaryParams';
+      if (action.payload.type === 'ap') {
+        key = 'analog';
+      } else if (action.payload.type === 'bp') {
+        key = 'binary';
       }
 
       if (key === null) {

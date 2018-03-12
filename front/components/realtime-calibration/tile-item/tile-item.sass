@@ -26,6 +26,15 @@
   & &__box
     height: 100%
     width: 100%
+    padding: 0
+    position: relative
+
+    &--active
+      color: #fff
+      background: #063a5c
+      border: 1px solid #555
+      animation-name: chooseParamAnimation
+      animation-duration: 0.5s
 
   & &__colorbox
     width: 8px
@@ -43,40 +52,33 @@
   & .is-hidden
     display: none
 
-  & &__label
+  & &__container
     position: relative
-    width: calc(100% - 8px)
-    height: 49px
-    padding: 2px
-    float: left
+    margin: 0 15px
+    display: flex
+    flex-flow: column
+    height: 100%
 
   & &__code
-    height: 19px
     padding: 2px
     text-overflow: ellipsis
     overflow: hidden
     font-weight: bold
+    flex: 1
 
   & &__name
-    height: 30px
     padding: 2px
     text-overflow: ellipsis
     overflow: hidden
-    font-size: 10px
-    line-height: 9px
+    font-size: 12px
+    line-height: 12px
+    flex: 1
 
   & &__value
-    height: 30px
     padding: 2px
     text-overflow: ellipsis
     overflow: hidden
     font-size: 26px
     font-weight: bold
     line-height: 24px
-
-  & &__checkbox
-    position: absolute
-    cursor: pointer
-    top: 0
-    right: 3px
-    color: #526571
+    flex: 1

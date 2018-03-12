@@ -42,7 +42,7 @@ class ChartsContainer extends Component {
   buildAnalog() {
     let lines = this.rotateData(this.props.phisics);
 
-    return this.props.params.chartAnalogParams
+    return this.props.params.analog
       .map((item, index) => {
         let line = [];
         if (lines.hasOwnProperty(item.id)) {
@@ -59,7 +59,7 @@ class ChartsContainer extends Component {
   }
 
   buildBinary() {
-    return this.props.params.chartBinaryParams
+    return this.props.params.binary
       .map((item, index) => {
         return <RealtimeChart
           key={ index }
@@ -83,7 +83,7 @@ class ChartsContainer extends Component {
 
 function mapStateToProps(state) {
   return {
-    params: state.realtimeCalibrationParams,
+    params: state.realtimeCalibrationCharts,
     phisics: state.realtimeCalibrationData.phisics,
     binary: state.realtimeCalibrationData.binary,
     timeline: state.realtimeCalibrationData.timeline,

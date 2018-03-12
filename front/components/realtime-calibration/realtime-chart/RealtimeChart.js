@@ -43,12 +43,9 @@ class RealtimeChart extends Component {
   }
 
   handleClick() {
-    this.props.transmit('CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE', {
+    this.props.transmit('CHANGE_REALTIME_CALIBRATION_CHART_PARAM_CHECKSTATE', {
       ...this.props.param,
-      ...{
-        state: false,
-        view: 'chart'
-      }
+      ...{ state: false }
     });
   }
 
