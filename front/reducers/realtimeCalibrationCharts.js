@@ -62,17 +62,28 @@ export default function realtimeCalibrationChartParams(state = initialState, act
         ...{ grouped: groupedToAdd }
       };
     case 'REMOVE_REALTIME_CALIBRATION_CHART_PARAM_GROUP':
-      let groupedWithRemoved = [];
+      let groupedWithoutRemoved = [];
 
       state.grouped.forEach((item, index) => {
-        if (item.group !== action.payload) {
-          groupedWithRemoved.push(item);
+        if (item.group !== action.payload.group) {
+          groupedWithoutRemoved.push(item);
         }
       });
 
       return { ...state,
-        ...{ grouped: groupedWithRemoved }
+        ...{ grouped: groupedWithoutRemoved }
       };
+    case 'REMOVE_REALTIME_CALIBRATION_CHART_PARAM_BY_CODE':
+      let indexToRemove = state.grouped.findIndex((item, index) => {
+        return (item.code === action.payload.code)
+          && (item.group === action.payload.group);
+      });
+
+      if (indexToRemove > -1) {
+        state.grouped.splice(indexToRemove, 1)
+      }
+
+      return state;
     default:
       return state;
   }

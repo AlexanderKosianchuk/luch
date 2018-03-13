@@ -1,6 +1,7 @@
 import './realtime-chart.sass';
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Line, defaults } from 'react-chartjs-2';
@@ -15,7 +16,7 @@ class RealtimeChart extends Component {
 
   getData() {
     return {
-      labels: this.props.timeline,
+      labels: this.props.timeline.length > 0 ? this.props.timeline : [0],
       datasets: [{
         fill: false,
         label: this.props.param.code,
@@ -68,6 +69,13 @@ class RealtimeChart extends Component {
     );
   }
 }
+
+RealtimeChart.propTypes = {
+  param: PropTypes.object.isRequired,
+  line: PropTypes.array.isRequired,
+  timeline: PropTypes.array.isRequired,
+  transmit: PropTypes.func.isRequired
+};
 
 function mapStateToProps(state) {
   return {};
