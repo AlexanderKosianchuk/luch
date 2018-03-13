@@ -40,11 +40,11 @@ class DataContainer extends Component {
     return (
       <div className='realtime-calibration-data-container'>
         <div className='realtime-calibration-data-container__output'>
-          <div className='realtime-calibration-data-container__events'>
-            <Events/>
-          </div>
           <div className='realtime-calibration-data-container__charts'>
             <ChartsContainer/>
+          </div>
+          <div className='realtime-calibration-data-container__events'>
+            <Events/>
           </div>
           <div className='realtime-calibration-data-container__params'>
             <Physics/>

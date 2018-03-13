@@ -1,63 +1,41 @@
 import './tile-item.sass';
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-import transmit from 'actions/transmit';
+import ChartGroupIndicator from 'components/realtime-calibration/chart-group-indicator/ChartGroupIndicator';
 
-class TileItem extends Component {
-  handleClick() {
-    this.props.transmit('CHANGE_REALTIME_CALIBRATION_PARAM_CHECKSTATE', {
-      ...this.props.param,
-      ...{
-        state: true,
-        view: 'chart'
+export default function TileItem (props) {
+  return (
+    <div className='realtime-calibration-tile-item'>
+      <div className={ 'realtime-calibration-tile-item__box ' +
+        (
+          ((props.value === true) && props.onlyBinaryValue)
+          ? 'realtime-calibration-tile-item__box--active'
+          : ''
+        )
       }
-    });
-  }
-
-  render() {
-    return (
-      <div className='realtime-calibration-tile-item'>
-        <div className='realtime-calibration-tile-item__box'>
-          <div className='realtime-calibration-tile-item__colorbox'
-            style={{ backgroundColor: ('#' + this.props.param.color) }}
-          >
-          </div>
-          <div className='realtime-calibration-tile-item__label'>
-            <div className='realtime-calibration-tile-item__code'>
-              { this.props.param.code }
-            </div>
-            <div className='realtime-calibration-tile-item__name'>
-              { this.props.param.name }
-            </div>
-            <div className='realtime-calibration-tile-item__value'>
-              { this.props.value }
-            </div>
-            { this.props.canChartDisplay &&
-              <div
-                className='realtime-calibration-tile-item__checkbox'
-                onClick={ this.handleClick.bind(this) }
-              >
-                <span className='glyphicon glyphicon-facetime-video'></span>
-              </div>
-            }
-          </div>
+      >
+        <div className='realtime-calibration-tile-item__colorbox'
+          style={{ backgroundColor: ('#' + props.param.color) }}
+        >
         </div>
+        <div className='realtime-calibration-tile-item__container'>
+          <div className='realtime-calibration-tile-item__code'>
+            { props.param.code }
+          </div>
+          <div className='realtime-calibration-tile-item__name'>
+            { props.param.name }
+          </div>
+          { !props.onlyBinaryValue &&
+            <div className='realtime-calibration-tile-item__value'>
+              { props.value }
+            </div>
+          }
+        </div>
+        { props.canChartDisplay &&
+          <ChartGroupIndicator param={ props.param }/>
+        }
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-function mapStateToProps(state) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    transmit: bindActionCreators(transmit, dispatch),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TileItem);

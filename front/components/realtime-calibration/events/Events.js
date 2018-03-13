@@ -24,6 +24,8 @@ class RealtimeEvents extends Component {
           name: item.event.text,
           code: item.event.name
         }}
+        canChartDisplay={ false }
+        onlyBinaryValue={ false }
       />);
     });
   }

@@ -176,7 +176,7 @@ class User extends BaseComponent
     session_write_close();
 
     if ($autologin) {
-      setcookie('token', $token);
+      setcookie('token', $token, time()+60*60*24*30);
     }
 
     return $token;

@@ -5,45 +5,30 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Translate } from 'react-redux-i18n';
 
-import BinaryTileItem from 'components/realtime-calibration/binary-tile-item/BinaryTileItem';
+import TileItem from 'components/realtime-calibration/tile-item/TileItem';
 
 class Binary extends Component {
   buildTile() {
-    let bp = this.props.params.containerBinaryParams;
+    return this.props.params.binary.map((item, index) => {
+      let value = false;
 
-    let binaryData = bp.map((item, index) => {
-      if (this.props.data.length === 0) {
-        return {
-          ...item, ...{
-            value: false
-          }
-        };
-      }
+      if (this.props.data.length > 0) {
+        let lastTriggeredBp = this.props.data[this.props.data.length - 1];
+        let searchedIndex = lastTriggeredBp.findIndex((binary) => {
+          return item.id === binary.id;
+        });
 
-      let lastTriggeredBp = this.props.data[this.props.data.length - 1];
-      let searchedIndex = lastTriggeredBp.findIndex((binary) => {
-        return item.id === binary.id;
-      });
-
-      if (searchedIndex !== -1) {
-        return {
-          ...item, ...{
-            value: true
-          }
-        };
-      }
-
-      return {
-        ...item, ...{
-          value: false
+        if (searchedIndex !== -1) {
+          value = true;
         }
-      };
-    });
+      }
 
-    return binaryData.map((item, index) => {
-      return (<BinaryTileItem
+      return (<TileItem
         key={ index }
         param={ item }
+        value={ value }
+        canChartDisplay={ true }
+        onlyBinaryValue={ true }
       />);
     });
   }
@@ -52,7 +37,7 @@ class Binary extends Component {
     return (
       <div className='realtime-calibration-binary'>
         <div className='realtime-calibration-binary__header'>
-          { (this.props.params.containerBinaryParams.length > 0) && (
+          { (this.props.params.binary.length > 0) && (
             <Translate value='realtimeCalibration.binary.header' />
           )}
         </div>
