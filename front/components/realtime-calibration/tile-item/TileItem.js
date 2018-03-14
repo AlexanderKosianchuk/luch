@@ -7,10 +7,19 @@ import ChartGroupIndicator from 'components/realtime-calibration/chart-group-ind
 export default function TileItem (props) {
   return (
     <div className='realtime-calibration-tile-item'>
-      <div className={ 'realtime-calibration-tile-item__box ' +
+      <div className={ 'realtime-calibration-tile-item__box' +
         (
           ((props.value === true) && props.onlyBinaryValue)
-          ? 'realtime-calibration-tile-item__box--active'
+          ? ' realtime-calibration-tile-item__box--active'
+          : ''
+        ) + (
+          (props.param.minValue
+            && props.param.maxValue
+            && ((props.value < props.param.minValue)
+            || (props.value > props.param.maxValue))
+            && !props.onlyBinaryValue
+          )
+          ? ' realtime-calibration-tile-item__box--alert'
           : ''
         )
       }
