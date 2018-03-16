@@ -12,6 +12,7 @@ import ContentLoader from 'controls/content-loader/ContentLoader';
 
 import request from 'actions/request';
 import redirect from 'actions/redirect';
+import formSubmit from 'actions/formSubmit';
 
 const TOP_CONTROLS_HEIGHT = 105;
 
@@ -45,6 +46,9 @@ class Table extends Component {
             <span className='calibrations-table__glyph-edit glyphicon glyphicon-edit'
               onClick={ this.handleEditClick.bind(this, props.value) }
             ></span>
+            <span className='calibrations-table__glyph-export glyphicon glyphicon-export'
+              onClick={ this.handleExportClick.bind(this, props.original) }
+            ></span>
             <span className='calibrations-table__glyph-trash glyphicon glyphicon-trash'
               onClick={ this.handleDeleteClick.bind(this, props.value) }
             ></span>
@@ -63,6 +67,19 @@ class Table extends Component {
 
   handleEditClick(id) {
     this.props.redirect('/calibration/update/' + id);
+  }
+
+  handleExportClick(row) {
+    this.props.formSubmit({
+      action: 'calibration/export/',
+      controls: [{
+        name: 'id',
+        value: row.id
+      }, {
+        name: 'fdrId',
+        value: row.fdrId
+      }]
+    });
   }
 
   handleDeleteClick(id) {
@@ -241,6 +258,7 @@ function mapDispatchToProps(dispatch) {
   return {
     request: bindActionCreators(request, dispatch),
     redirect: bindActionCreators(redirect, dispatch),
+    formSubmit: bindActionCreators(formSubmit, dispatch)
   }
 }
 
