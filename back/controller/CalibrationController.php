@@ -2,10 +2,15 @@
 
 namespace Controller;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use Exception\UnauthorizedException;
 use Exception\BadRequestException;
 use Exception\NotFoundException;
 use Exception\ForbiddenException;
+
+use \L;
 
 class CalibrationController extends BaseController
 {
@@ -135,7 +140,6 @@ class CalibrationController extends BaseController
 
   public function getCalibrationByIdAction($id)
   {
-
     $id = intval($id);
 
     $calibration = $this->em()->getRepository('Entity\Calibration')
@@ -184,5 +188,97 @@ class CalibrationController extends BaseController
       'fdrName' => $fdr->getName(),
       'params' => $calibrationParams
     ]);
+  }
+
+  public function exportAction($id, $fdrId)
+  {
+    $id = intval($id);
+    $fdrId = intval($fdrId);
+    $fdr = $this->em()->find('Entity\Fdr', $fdrId);
+
+    if (empty($fdr)) {
+      throw new NotFoundException("requested FDR not found. Received id: ". $fdrId);
+    }
+
+    $calibration = $this->em()->getRepository('Entity\Calibration')
+      ->findOneBy([
+        'userId' => $this->user()->getId(),
+        'id' => $id
+      ]);
+
+    if (empty($calibration)) {
+      throw new NotFoundException("requested calibration not found. Calibration id: ". $id);
+    }
+
+    $calibration = $this->dic('calibration')->getCalibration($id);
+
+    $spreadsheet = new Spreadsheet();
+
+    $headerData = [
+        [L::calibrations_name.':', $calibration['name']],
+        [L::calibrations_fdr.':', $calibration['fdrName']],
+        [L::calibrations_dtCreated.':', $calibration['dtCreated']],
+        [L::calibrations_dtUpdated.':', $calibration['dtUpdated']],
+    ];
+
+    $counter = 1;
+
+    $spreadsheet->getActiveSheet()
+      ->fromArray(
+        $headerData,// The data to set
+        NULL, // Array values with this value will not be set
+        'A'. $counter // Top left coordinate of the worksheet range where
+      );
+
+    $counter += count($headerData) + 5;
+
+    $params = $calibration['params'];
+
+    foreach ($params as $param) {
+      $description = $param['description'];
+
+      $paramDesc = [
+          [L::calibrations_paramCode.':', $description['code']],
+          [L::calibrations_paramName.':', $description['name']],
+          [L::calibrations_paramChannels.':', implode(',', $description['channel'])],
+          [L::calibrations_paramMinValue.':', $description['minValue']],
+          [L::calibrations_paramMaxValue.':', $description['maxValue']],
+      ];
+
+      $spreadsheet->getActiveSheet()
+        ->fromArray(
+          $paramDesc,
+          NULL,
+          'A' . $counter
+        );
+
+      $counter += count($paramDesc) + 1;
+
+      $xy = $param['xy'];
+      $array = [];
+      $array[0] = [L::calibrations_code];
+      $array[1] = [L::calibrations_physics];
+
+      foreach ($xy as $item) {
+        $array[0][] = $item->x;
+        $array[1][] = $item->y;
+      }
+
+      $spreadsheet->getActiveSheet()
+        ->fromArray(
+          $array,
+          NULL,
+          'A' . $counter
+        );
+
+      $counter += count($array) + 3;
+    }
+
+    $writer = new Xlsx($spreadsheet);
+
+    $file = $calibration['name'].'_'.date('Y-m-d').'.xls';
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment; filename="'.$file.'"');
+    $writer->save("php://output");
   }
 }
