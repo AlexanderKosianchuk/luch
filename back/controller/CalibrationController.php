@@ -45,14 +45,14 @@ class CalibrationController extends BaseController
 
     $calibration = null;
     if (($calibrationId === null) || ($calibrationId === '')) {
-      $calibration = $this->dic()->get('calibration')
+      $calibration = $this->dic('calibration')
         ->createCalibration(
           intval($fdrId),
           $name,
           $calibrations
         );
     } else {
-      $calibration = $this->dic()->get('calibration')
+      $calibration = $this->dic('calibration')
         ->updateCalibration(
           intval($calibrationId),
           $name,
@@ -168,7 +168,7 @@ class CalibrationController extends BaseController
       throw new NotFoundException("requested FDR not found. Received id: ". $fdrId);
     }
 
-    $params = $this->dic()->get('calibration')
+    $params = $this->dic('calibration')
       ->getCalibratedParams($fdrId);
 
     $calibrationParams = [];
@@ -260,8 +260,8 @@ class CalibrationController extends BaseController
       $array[1] = [L::calibrations_physics];
 
       foreach ($xy as $item) {
-        $array[0][] = $item->x;
-        $array[1][] = $item->y;
+        $array[0][] = $item->y;
+        $array[1][] = $item->x;
       }
 
       $spreadsheet->getActiveSheet()

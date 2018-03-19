@@ -92,7 +92,7 @@ class FolderController extends BaseController
       throw new ForbiddenException('action: deleteFolder. Folder id: '. $id);
     }
 
-    $result = $this->dic()->get('folder')->deleteFolderContent($id);
+    $result = $this->dic('folder')->deleteFolderContent($id);
 
     if (!$result) {
       throw new Exception('Cant delete folder. Folder id: '. $id);

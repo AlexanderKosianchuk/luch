@@ -51,7 +51,7 @@ class FlightsController extends BaseController
 
   public function deleteFlightAction($id)
   {
-    $this->dic()->get('flight')
+    $this->dic('flight')
       ->deleteFlight(intval($id), $this->user()->getId());
 
     return json_encode('ok');
@@ -67,7 +67,7 @@ class FlightsController extends BaseController
       throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
     }
 
-    $flightTiming = $this->dic()->get('flight')->getFlightTiming($flightId);
+    $flightTiming = $this->dic('flight')->getFlightTiming($flightId);
 
     return json_encode([
       'data' => array_merge(
@@ -101,9 +101,9 @@ class FlightsController extends BaseController
         .'_'.$flightInfo['voyage']
         .'_'.$fileGuid;
 
-      $exportedFileDir = $this->dic()->get('runtimeManager')
+      $exportedFileDir = $this->dic('runtimeManager')
         ->getExportFolder();
-      $exportedFilePath = $this->dic()->get('runtimeManager')
+      $exportedFilePath = $this->dic('runtimeManager')
         ->createExportedFile($exportedFileName);
 
       $headerFile = [];
@@ -111,13 +111,13 @@ class FlightsController extends BaseController
       $headerFile['root'] = $exportedFileDir.DIRECTORY_SEPARATOR.$headerFile['filename'];
       $exportedFiles[] = $headerFile;
 
-      $apPrefixes = $this->dic()->get('fdr')
+      $apPrefixes = $this->dic('fdr')
         ->getAnalogPrefixes($flight->getFdrId());
 
       $link = $this->connection()->create('flights');
 
       for ($i = 0; $i < count($apPrefixes); $i++) {
-        $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$apPrefixes[$i];
+        $table = $flight->getGuid().'_'.$this->dic('fdr')->getApType().'_'.$apPrefixes[$i];
         $exportedTable = $this->connection()->exportTable(
           $table,
           $exportedFileDir.DIRECTORY_SEPARATOR.$table."_".$fileGuid,
@@ -132,11 +132,11 @@ class FlightsController extends BaseController
         ];
       }
 
-      $bpPrefixes = $this->dic()->get('fdr')
+      $bpPrefixes = $this->dic('fdr')
         ->getBinaryPrefixes($flight->getFdrId());
 
       for ($i = 0; $i < count($bpPrefixes); $i++) {
-        $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getBpType().'_'.$bpPrefixes[$i];
+        $table = $flight->getGuid().'_'.$this->dic('fdr')->getBpType().'_'.$bpPrefixes[$i];
 
         $exportedTable = $this->connection()->exportTable(
           $table,
@@ -195,7 +195,7 @@ class FlightsController extends BaseController
     }
 
     error_reporting(E_ALL);
-    $zipUrl = $this->dic()->get('runtimeManager')
+    $zipUrl = $this->dic('runtimeManager')
       ->getExportedUrl($exportedFileName);
 
     $answ = [

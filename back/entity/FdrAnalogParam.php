@@ -209,6 +209,11 @@ class FdrAnalogParam
     return (object) $arr;
   }
 
+  public function setColor($color)
+  {
+    $this->color = $color;
+  }
+
   public static function getTablePrefix()
   {
     return self::$_prefix;

@@ -48,13 +48,13 @@ class UsersController extends BaseController
     $userId = $this->user()->getId();
 
     return json_encode(
-      $this->dic()->get('userSettings')->getSettings($userId)
+      $this->dic('userSettings')->getSettings($userId)
     );
   }
 
   public function setUserSettingsAction($settings)
   {
-    $this->dic()->get('userSettings')->updateSettings($settings);
+    $this->dic('userSettings')->updateSettings($settings);
 
     return json_encode('ok');
   }
@@ -155,12 +155,12 @@ class UsersController extends BaseController
       $fdr = $this->em()->find('Entity\Fdr', $id);
 
       if ($fdr) {
-        $this->dic()->get('userManager')
+        $this->dic('userManager')
           ->setFdrAvailable($createdUser->getId(), $fdr);
       }
     }
 
-    $this->dic()->get('runtimeManager')->unlinkRuntimeFile($fileForInserting);
+    $this->dic('runtimeManager')->unlinkRuntimeFile($fileForInserting);
 
     return json_encode([
       'id' => $createdUser->getId(),
@@ -195,7 +195,7 @@ class UsersController extends BaseController
     }
 
     $filePath = strval($_FILES['userLogo']['tmp_name']);
-    $fileForUpdating = $this->dic()->get('runtimeManager')
+    $fileForUpdating = $this->dic('runtimeManager')
       ->storeFile($filePath, 'user-logo');
 
     $updatedUser = $this->em()->find('Entity\User', $userIdToUpdate);
@@ -219,7 +219,7 @@ class UsersController extends BaseController
     $this->em()->merge($updatedUser);
     $this->em()->flush();
 
-    $this->dic()->get('runtimeManager')->unlinkRuntimeFile($fileForUpdating);
+    $this->dic('runtimeManager')->unlinkRuntimeFile($fileForUpdating);
 
     $fdrsToUser = $this->em()->getRepository('Entity\FdrToUser')->findBy(['userId' => $userIdToUpdate]);
     if (isset($fdrToUser)) {
@@ -232,7 +232,7 @@ class UsersController extends BaseController
       $fdr = $this->em()->find('Entity\Fdr', $id);
 
       if ($fdr) {
-        $this->dic()->get('userManager')
+        $this->dic('userManager')
           ->setFdrAvailable($updatedUser->getId(), $fdr);
       }
     }
@@ -288,7 +288,7 @@ class UsersController extends BaseController
       ->findBy(['userId' => $userIdToDelete]);
 
     foreach ($flights as $flightId) {
-      $this->dic()->get('flight')->deleteFlight(intval($flightId), $userIdToDelete);
+      $this->dic('flight')->deleteFlight(intval($flightId), $userIdToDelete);
     }
 
     $this->em()->flush();

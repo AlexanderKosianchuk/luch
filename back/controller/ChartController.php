@@ -11,8 +11,8 @@ class ChartController extends BaseController
 {
   public function putChartContainerAction()
   {
-    $mainChartColor = $this->dic()->get('userSettings')->getSettingValue('mainChartColor');
-    $lineWidth = $this->dic()->get('userSettings')->getSettingValue('lineWidth');
+    $mainChartColor = $this->dic('userSettings')->getSettingValue('mainChartColor');
+    $lineWidth = $this->dic('userSettings')->getSettingValue('lineWidth');
 
     $workspace = "<div id='chartWorkspace' class='WorkSpace'>".
       "<div id='graphContainer' class='GraphContainer'>" .
@@ -47,7 +47,7 @@ class ChartController extends BaseController
     }
 
     $startCopyTime = $flight->getStartCopyTime();
-    $timing = $this->dic()->get('flight')->getFlightTiming($flight->getId());
+    $timing = $this->dic('flight')->getFlightTiming($flight->getId());
     $framesCount = $timing['framesCount'];
 
     if ($startFrame == null) {
@@ -66,23 +66,23 @@ class ChartController extends BaseController
       $totalSeriesCount = 1;
     }
 
-    $param = $this->dic()->get('fdr')->getParamByCode(
+    $param = $this->dic('fdr')->getParamByCode(
       $flight->getFdrId(),
       $paramApCode
     );
 
-    $pointsMaxCount = $this->dic()->get('userSettings')->getSettingValue('pointsMaxCount');
+    $pointsMaxCount = $this->dic('userSettings')->getSettingValue('pointsMaxCount');
 
-    $compression = $this->dic()->get('channel')::getNoCompressionType();
+    $compression = $this->dic('channel')::getNoCompressionType();
     if (!$isPrintPage && (($startFrame !== 0) || ($endFrame !== $framesCount))) {
-      $compression = $this->dic()->get('channel')::getAroundRangeCompressionType();
+      $compression = $this->dic('channel')::getAroundRangeCompressionType();
     } else if (!$isPrintPage && ($framesCount * $totalSeriesCount > $pointsMaxCount)) {
-      $compression = $this->dic()->get('channel')::getGeneralCompressionType();
+      $compression = $this->dic('channel')::getGeneralCompressionType();
     }
 
-    $table = $this->dic()->get('fdr')->getAnalogTable($flight->getGuid(), $param['prefix']);
+    $table = $this->dic('fdr')->getAnalogTable($flight->getGuid(), $param['prefix']);
 
-    $syncParam = $this->dic()->get('channel')->get(
+    $syncParam = $this->dic('channel')->get(
       $table,
       $paramApCode,
       $startFrame,
@@ -104,17 +104,17 @@ class ChartController extends BaseController
       throw new NotFoundException("flightId: ".$flightId);
     }
 
-    $param = $this->dic()->get('fdr')->getParamByCode(
+    $param = $this->dic('fdr')->getParamByCode(
       $flight->getFdrId(),
       $code
     );
 
-    $table = $this->dic()->get('fdr')->getBinaryTable(
+    $table = $this->dic('fdr')->getBinaryTable(
       $flight->getGuid(),
       $param['prefix']
     );
 
-    return json_encode($this->dic()->get('channel')->getBinary(
+    return json_encode($this->dic('channel')->getBinary(
       $table,
       $code,
       $flight->getFdr()->getStepLength(),
@@ -130,7 +130,7 @@ class ChartController extends BaseController
       throw new NotFoundException("flightId: ".$flightId);
     }
 
-    $paramInfo = $this->dic()->get('fdr')
+    $paramInfo = $this->dic('fdr')
       ->getParamByCode($flight->getFdrId(), $code);
 
     echo json_encode($paramInfo);
@@ -144,7 +144,7 @@ class ChartController extends BaseController
       throw new NotFoundException("flightId: ".$flightId);
     }
 
-    $events = $this->dic()->get('event')
+    $events = $this->dic('event')
       ->getFlightEventsByRefParam(
         $flight,
         $refParam
@@ -153,14 +153,14 @@ class ChartController extends BaseController
     $chartEventBoxes = [];
 
     foreach ($events as $event) {
-      $param = $this->dic()->get('fdr')->getParamByCode(
+      $param = $this->dic('fdr')->getParamByCode(
         $flight->getFdrId(),
         $event['refParam']
       );
 
       $val = 1;
-      if ($param['type'] === $this->dic()->get('fdr')::getApType()) {
-        $val = $this->dic()->get('channel')->getParamValue(
+      if ($param['type'] === $this->dic('fdr')::getApType()) {
+        $val = $this->dic('channel')->getParamValue(
           $flight->getGuid().'_'.$param['type'].'_'.$param['prefix'],
           $event['refParam'],
           $event['frameNum']
@@ -209,14 +209,14 @@ class ChartController extends BaseController
 
     $infoArray = [];
     foreach ($paramCodes as $code) {
-      $param = $this->dic()->get('fdr')->getParamByCode(
+      $param = $this->dic('fdr')->getParamByCode(
         $flight->getFdrId(),
         $code
       );
 
-      if ($param['type'] === $this->dic()->get('fdr')::getApType()) {
+      if ($param['type'] === $this->dic('fdr')::getApType()) {
         $infoArray[] = $param['name'].', '.$param['dim'];
-      } else if ($param['type'] === $this->dic()->get('fdr')::getBpType()) {
+      } else if ($param['type'] === $this->dic('fdr')::getBpType()) {
         $infoArray[] = $param['name'];
       }
     }
@@ -232,7 +232,7 @@ class ChartController extends BaseController
       throw new NotFoundException('flightId: '.$flightId);
     }
 
-    return json_encode($this->dic()->get('fdrTemplate')
+    return json_encode($this->dic('fdrTemplate')
       ->getParamMinMax(
         $flight->getFdr()->getCode(),
         $templateId,
@@ -254,7 +254,7 @@ class ChartController extends BaseController
       throw new NotFoundException('flightId: '.$flightId);
     }
 
-    $this->dic()->get('fdrTemplate')
+    $this->dic('fdrTemplate')
       ->setParamMinMax(
         $flight->getFdrCode(),
         $templateId,
@@ -319,11 +319,11 @@ class ChartController extends BaseController
     array_push($globalRawParamArr, $normParam);
 
     for ($ii = 0; $ii < count($analogParams); $ii++) {
-      $param = $this->dic()->get('fdr')
+      $param = $this->dic('fdr')
         ->getParamByCode($flight->getFdrId(), $analogParams[$ii]);
 
       $paramsDescriprion[$analogParams[$ii]] = $param;
-      $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType().'_'.$param['prefix'];
+      $table = $flight->getGuid().'_'.$this->dic('fdr')->getApType().'_'.$param['prefix'];
 
       $normParam = $this->dic()
         ->get('channel')
@@ -340,10 +340,10 @@ class ChartController extends BaseController
     }
 
     for ($ii = 0; $ii < count($binaryParams); $ii++) {
-      $param = $this->dic()->get('fdr')
+      $param = $this->dic('fdr')
         ->getParamByCode($flight->getFdrId(), $binaryParams[$ii]);
       $paramsDescriprion[$binaryParams[$ii]] = $param;
-      $table = $flight->getGuid().'_'.$this->dic()->get('fdr')->getBpType().'_'.$param['prefix'];
+      $table = $flight->getGuid().'_'.$this->dic('fdr')->getBpType().'_'.$param['prefix'];
 
       $normParam = $this->dic()
         ->get('channel')
@@ -370,7 +370,7 @@ class ChartController extends BaseController
       $paramName = str_replace(["\n","\r\n","\r", ";", PHP_EOL], '', $paramInfo['name']);
 
       if (($this->user()->getLang() === 'ru')
-        && $this->dic()->get('osInfo')->isWindows()
+        && $this->dic('osInfo')->isWindows()
       ) {
         $figPrRow .= iconv('utf-8', 'windows-1251', $paramName) . ";";
       } else {

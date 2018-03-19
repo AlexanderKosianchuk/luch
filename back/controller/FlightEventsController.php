@@ -119,7 +119,7 @@ class FlightEventsController extends BaseController
     $bort = $flight->getBort();
     $voyage = $flight->getVoyage();
     $copyDate = date ( 'H:i:s d-m-Y', $flight->getStartCopyTime() );
-    $timing = $this->dic()->get('flight')->getFlightTiming($flight->getId());
+    $timing = $this->dic('flight')->getFlightTiming($flight->getId());
     $flightDuration = $timing['duration'];
     $headerStr = $this->user()->getCompany();
     $imageFile = '';
@@ -383,7 +383,7 @@ class FlightEventsController extends BaseController
       throw new NotFoundException("requested flight not found. Flight id: ". $flightId);
     }
 
-    $this->dic()->get('event')->updateFalseAlarm(
+    $this->dic('event')->updateFalseAlarm(
       $flight->getGuid(),
       $eventType,
       $eventId,

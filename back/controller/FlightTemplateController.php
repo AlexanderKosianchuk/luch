@@ -25,12 +25,12 @@ class FlightTemplateController extends BaseController
     $isExist = $this->connection()->isExist($fdr->getCode().FdrTemplate::getPrefix());
 
     if (!$isExist) {
-      $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
+      $this->dic('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
     }
 
-    $templatesToSend = $this->dic()->get('fdrTemplate')->getFdrTemplates($flight->getFdr()->getId(), true);
+    $templatesToSend = $this->dic('fdrTemplate')->getFdrTemplates($flight->getFdr()->getId(), true);
 
-    $flightEvents = $this->dic()->get('event')->getFlightEvents($flight);
+    $flightEvents = $this->dic('event')->getFlightEvents($flight);
 
     $codesArr = [];
     foreach ($flightEvents as $event) {
@@ -39,7 +39,7 @@ class FlightTemplateController extends BaseController
       }
     }
 
-    $params = $this->dic()->get('fdr')
+    $params = $this->dic('fdr')
       ->getParamsByCodes(
         $fdr->getId(),
         $codesArr
@@ -49,16 +49,16 @@ class FlightTemplateController extends BaseController
       $paramsWithMeasure = $this->dic()
         ->get('channel')
         ->getParamsMinMax(
-          $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+          $flight->getGuid().'_'.$this->dic('fdr')->getApType(),
           $params,
-          $this->dic()->get('fdr')->getApType()
+          $this->dic('fdr')->getApType()
         );
 
       $this->dic()
         ->get('fdrTemplate')
         ->delete(
           $fdr->getCode(),
-          $this->dic()->get('fdrTemplate')::getEventsName(),
+          $this->dic('fdrTemplate')::getEventsName(),
           $this->user()->getId()
       );
 
@@ -66,7 +66,7 @@ class FlightTemplateController extends BaseController
         ->get('fdrTemplate')
         ->createWithDistributedParams(
           $fdr->getCode(),
-          $this->dic()->get('fdrTemplate')::getEventsName(),
+          $this->dic('fdrTemplate')::getEventsName(),
           $paramsWithMeasure
         );
 
@@ -86,7 +86,7 @@ class FlightTemplateController extends BaseController
       throw new NotFoundException('fligth id: '.$flightId);
     }
 
-    $template = $this->dic()->get('fdrTemplate')->getTemplateById(
+    $template = $this->dic('fdrTemplate')->getTemplateById(
       $flight->getFdr()->getId(),
       $templateId
     );
@@ -147,9 +147,9 @@ class FlightTemplateController extends BaseController
     $paramsWithMeasure = $this->dic()
       ->get('channel')
       ->getParamsMinMax(
-        $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+        $flight->getGuid().'_'.$this->dic('fdr')->getApType(),
         $paramsWithType,
-        $this->dic()->get('fdr')->getApType()
+        $this->dic('fdr')->getApType()
       );
 
     $this->dic()
@@ -217,7 +217,7 @@ class FlightTemplateController extends BaseController
       }
     }
 
-    $params = $this->dic()->get('fdr')
+    $params = $this->dic('fdr')
       ->getParamsByCodes(
         $flight->getFdr()->getId(),
         $paramCodes
@@ -226,9 +226,9 @@ class FlightTemplateController extends BaseController
     $paramsWithMeasure = $this->dic()
       ->get('channel')
       ->getParamsMinMax(
-        $flight->getGuid().'_'.$this->dic()->get('fdr')->getApType(),
+        $flight->getGuid().'_'.$this->dic('fdr')->getApType(),
         $params,
-        $this->dic()->get('fdr')->getApType()
+        $this->dic('fdr')->getApType()
       );
 
     $this->dic()

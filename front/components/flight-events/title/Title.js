@@ -62,6 +62,9 @@ Title.propTypes = {
     arrivalAirport: PropTypes.string,
     startCopyTimeFormated: PropTypes.string,
     fdrName: PropTypes.string,
-    aditionalInfo: PropTypes.object
+    aditionalInfo: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array
+    ])
   }).isRequired
 };

@@ -25,13 +25,12 @@ class FdrController extends BaseController
     if ($fdrId === null) {
       $flight = $this->em()->find('Entity\Flight', $flightId);
       $fdrId = $flight->getFdrId();
-      unset($Fl);
     }
 
     return json_encode([
       'fdrId' => $fdrId,
-      'analogParams' => $this->dic()->get('fdr')->getParams($fdrId, true),
-      'binaryParams' => $this->dic()->get('fdr')->getBinaryParams($fdrId, true)
+      'analogParams' => $this->dic('fdr')->getParams($fdrId, true),
+      'binaryParams' => $this->dic('fdr')->getBinaryParams($fdrId, true)
     ]);
   }
 
@@ -39,50 +38,29 @@ class FdrController extends BaseController
   {
     return json_encode([
       'fdrId' => $fdrId,
-      'analogParams' => $this->dic()->get('fdr')->getParams($fdrId, true),
-      'binaryParams' => $this->dic()->get('fdr')->getBinaryParams($fdrId, true)
+      'analogParams' => $this->dic('fdr')->getParams($fdrId, true),
+      'binaryParams' => $this->dic('fdr')->getBinaryParams($fdrId, true)
     ]);
   }
 
-  public function setParamColor($args)
+  public function setParamColorAction($flightId, $paramCode, $color, $fdrId = null)
   {
-    if ((!isset($args['fdrId']) && !isset($args['flightId']))
-      || !isset($args['paramCode'])
-      || !isset($args['color'])
-    ) {
-      throw new BadRequestException(json_encode($args));
+    if ($fdrId === null) {
+      $flight = $this->em()->find('Entity\Flight', $flightId);
+      $fdrId = $flight->getFdrId();
     }
 
-    $fdrId = null;
-
-    if (!isset($args['fdrId'])) {
-      $flightId = intval($args['flightId']);
-
-      $Fl = new Flight;
-      $flightInfo = $Fl->GetFlightInfo($flightId);
-      $fdrId = intval($flightInfo['id_fdr']);
-      unset($Fl);
-    } else {
-      $fdrId = intval($args['fdrId']);
+    $paramInfo = $this->dic('fdr')->getParamByCode($fdrId, $paramCode);
+    $param = null;
+    if ($paramInfo['type'] == $this->dic('fdr')::getApType()) {
+      $param = $this->dic('fdr')->getAnalogById($fdrId, intval($paramInfo['id']));
+    } else if ($paramInfo['type'] == $this->dic('fdr')::getBpType()) {
+      $param = $this->dic('fdr')->getBinaryById($fdrId, intval($paramInfo['id']));
     }
 
-    $paramCode = $args['paramCode'];
-    $color = $args['color'];
-
-    $fdr = new Fdr;
-    $fdrInfo = $fdr->getFdrInfo($fdrId);
-    $cycloApTableName = $fdrInfo['gradiApTableName'];
-    $cycloBpTableName = $fdrInfo['gradiBpTableName'];
-
-    $paramInfo = $fdr->GetParamInfoByCode($cycloApTableName, $cycloBpTableName, $paramCode);
-
-    if ($paramInfo["type"] == PARAM_TYPE_AP) {
-      $fdr->UpdateParamColor($cycloApTableName, $paramCode, $color);
-    } else if ($paramInfo["type"] == PARAM_TYPE_BP) {
-      $fdr->UpdateParamColor($cycloBpTableName, $paramCode, $color);
-    }
-
-    unset($fdr);
+    $param->setColor($color);
+    $this->em('fdrs')->merge($param);
+    $this->em('fdrs')->flush();
 
     return json_encode('ok');
   }

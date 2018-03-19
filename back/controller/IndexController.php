@@ -8,7 +8,7 @@ class IndexController extends BaseController
 {
   public function indexAction()
   {
-    $te = $this->dic()->get('TemplateEngine');
+    $te = $this->dic('TemplateEngine');
     $tpl = file_get_contents(SITE_ROOT_DIR . '/back/view/index.mustache');
 
     return $te->render($tpl, [

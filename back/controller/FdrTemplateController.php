@@ -24,7 +24,7 @@ class FdrTemplateController extends BaseController
     $isExist = $this->connection()->isExist($fdr->getCode().FdrTemplate::getPrefix());
 
     if (!$isExist) {
-      $this->dic()->get('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
+      $this->dic('fdrTemplate')->createFdrTemplateTable($fdr->getCode());
     }
 
     return json_encode(

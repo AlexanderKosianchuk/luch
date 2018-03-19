@@ -33,7 +33,7 @@ class UploaderController extends BaseController
     $fdrId = intval($fdrId);
     $userId = $user->getId();
 
-    if (!$this->dic()->get('fdr')->isAvaliable($fdrId)) {
+    if (!$this->dic('fdr')->isAvaliable($fdrId)) {
       throw new Exception("Trying to access unavaliable fdrType."
         . " User id: " . $userId
         . " Fdr id: " . $fdrId, 1);
@@ -129,8 +129,8 @@ class UploaderController extends BaseController
   {
     $fdrId = intval($fdrId);
 
-    $uploadedFile = $this->dic()->get('runtimeManager')->getFilePathByIud($uploadingUid);
-    $response = $this->dic()->get('flightProcessor')->preview($fdrId, $uploadedFile);
+    $uploadedFile = $this->dic('runtimeManager')->getFilePathByIud($uploadingUid);
+    $response = $this->dic('flightProcessor')->preview($fdrId, $uploadedFile);
 
     return json_encode($response);
   }
@@ -285,7 +285,7 @@ class UploaderController extends BaseController
     $fileName = strval($_FILES['flightFile']['tmp_name']);
     $userId = $this->user()->getId();
 
-    if (!$this->dic()->get('fdr')->isAvaliable($fdrId)) {
+    if (!$this->dic('fdr')->isAvaliable($fdrId)) {
       throw new Exception("Trying to access unavaliable fdrType."
         . " User id: " . $userId
         . " Fdr id: " . $fdrId, 1);
@@ -756,7 +756,7 @@ class UploaderController extends BaseController
     }
 
     $uploadedArchivePath = strval($_FILES['flightFileArchive']['tmp_name']);
-    $copiedFilesDir = $this->dic()->get('runtimeManager')->getImportFolder();
+    $copiedFilesDir = $this->dic('runtimeManager')->getImportFolder();
     $copiedFilePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$_FILES['flightFileArchive']['name'];
 
     move_uploaded_file($uploadedArchivePath, $copiedFilePath);
@@ -802,17 +802,17 @@ class UploaderController extends BaseController
       $flightInfoImported['copyCreationDate'] = date('Y-m-d', $flightInfoImported['startCopyTime']);
 
       $flightInfoImported['aditionalInfo'] = $flightInfoImported['aditionalInfo'];
-      $flight = $this->dic()->get('flight')
+      $flight = $this->dic('flight')
         ->insert($flightGuid, $flightInfoImported, $fdrId, $userId, $calibrationId);
       $flightId = $flight->getId();
 
-      $analogParamsCyclo = $this->dic()->get('fdr')
+      $analogParamsCyclo = $this->dic('fdr')
         ->getPrefixGroupedParams($fdrId);
 
-      $binaryParamsCyclo = $this->dic()->get('fdr')
+      $binaryParamsCyclo = $this->dic('fdr')
         ->getPrefixGroupedBinaryParams($fdrId);
 
-      $this->dic()->get('flight')->createParamTables(
+      $this->dic('flight')->createParamTables(
         $flightGuid,
         $analogParamsCyclo,
         $binaryParamsCyclo
@@ -823,10 +823,10 @@ class UploaderController extends BaseController
       for($j = 0; $j < count($apTables); $j++) {
         $zip->extractTo($copiedFilesDir, $apTables[$j]["file"]);
         $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$apTables[$j]["file"];
-        $tableName = $this->dic()->get('fdr')->getAnalogTable($flightGuid, $apTables[$j]['pref']);
+        $tableName = $this->dic('fdr')->getAnalogTable($flightGuid, $apTables[$j]['pref']);
 
         if (file_exists($filePath)) {
-          $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+          $this->dic('flightProcessor')->loadParamFilesToTables(
             $tableName, $filePath
           );
         }
@@ -836,9 +836,9 @@ class UploaderController extends BaseController
       for ($j = 0; $j < count($bpTables); $j++) {
         $zip->extractTo($copiedFilesDir, $bpTables[$j]["file"]);
         $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$bpTables[$j]["file"];
-        $tableName = $this->dic()->get('fdr')->getBinaryTable($flightGuid, $bpTables[$j]['pref']);
+        $tableName = $this->dic('fdr')->getBinaryTable($flightGuid, $bpTables[$j]['pref']);
         if (file_exists($filePath)) {
-          $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+          $this->dic('flightProcessor')->loadParamFilesToTables(
             $tableName, $filePath
           );
         }
@@ -849,10 +849,10 @@ class UploaderController extends BaseController
       ) {
         $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["exTables"];
         $zip->extractTo($copiedFilesDir, $flightInfoImported["exTables"]);
-        $tableName = $this->dic()->get('event')
+        $tableName = $this->dic('event')
           ->createOldEventsTable($flightGuid);
         if (file_exists($filePath)) {
-          $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+          $this->dic('flightProcessor')->loadParamFilesToTables(
             $tableName, $filePath
           );
         }
@@ -863,10 +863,10 @@ class UploaderController extends BaseController
       ) {
         $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["eventsTable"];
         $zip->extractTo($copiedFilesDir, $flightInfoImported["eventsTable"]);
-        $tableName = $this->dic()->get('event')
+        $tableName = $this->dic('event')
           ->createEventsTable($flightGuid);
         if (file_exists($filePath)) {
-          $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+          $this->dic('flightProcessor')->loadParamFilesToTables(
             $tableName, $filePath
           );
         }
@@ -877,10 +877,10 @@ class UploaderController extends BaseController
       ) {
         $filePath = $copiedFilesDir.DIRECTORY_SEPARATOR.$flightInfoImported["settlementsTable"];
         $zip->extractTo($copiedFilesDir, $flightInfoImported["settlementsTable"]);
-        $tableName = $this->dic()->get('event')
+        $tableName = $this->dic('event')
           ->createSettlementsTable($flightGuid);
         if (file_exists($filePath)) {
-          $this->dic()->get('flightProcessor')->loadParamFilesToTables(
+          $this->dic('flightProcessor')->loadParamFilesToTables(
             $tableName, $filePath
           );
         }
@@ -892,7 +892,7 @@ class UploaderController extends BaseController
 
   public function getUploadingStatusAction($uploadingUid)
   {
-    $progressFile = $this->dic()->get('runtimeManager')
+    $progressFile = $this->dic('runtimeManager')
       ->getTemporaryFileDesc(
         $this->params()->folders->uploadingStatus,
         $uploadingUid,
@@ -966,7 +966,7 @@ class UploaderController extends BaseController
     $algHeap = json_decode($algHeap, true);
     //TODO check user id token and fdr valiability to this user
 
-    $this->dic()->get('runtimeManager')
+    $this->dic('runtimeManager')
       ->write(
         $this->params()->folders->uploadedFlights,
         $uploadingUid.'.tmpsf',
@@ -976,11 +976,11 @@ class UploaderController extends BaseController
     $stepLength = $fdr->getStepLength();
     $currentTime = $startCopyTime * 1000 + (1000 * $stepLength * $frameNum);
 
-    $analogParamsCyclo = $this->dic()->get('fdr')
+    $analogParamsCyclo = $this->dic('fdr')
       ->getPrefixGroupedParams($fdrId);
 
     if ($calibrationId !== null) {
-      $calibratedParams = $this->dic()->get('calibration')
+      $calibratedParams = $this->dic('calibration')
         ->getCalibrationParams($fdrId, $calibrationId);
 
       foreach ($analogParamsCyclo as $prefix => &$params) {
@@ -994,7 +994,7 @@ class UploaderController extends BaseController
       }
     }
 
-    $binaryParamsCyclo = $this->dic()->get('fdr')
+    $binaryParamsCyclo = $this->dic('fdr')
       ->getPrefixGroupedBinaryParams($fdrId);
 
     $fullFrame = [];
@@ -1033,7 +1033,7 @@ class UploaderController extends BaseController
       );
 
     $link = $this->connection()->create('runtime');
-    $this->dic()->get('runtimeDb')
+    $this->dic('runtimeDb')
       ->putRealtimeCalibrationData(
           $uploadingUid,
           $frameNum,
@@ -1046,14 +1046,14 @@ class UploaderController extends BaseController
     $prevEventResults = json_decode($this->redis()->get($uploadingUid . '_LAST_EVENTS'), true);
 
     if ($prevEventResults === null) {
-      $prevEventResults = $this->dic()->get('runtimeDb')
+      $prevEventResults = $this->dic('runtimeDb')
         ->getProcessResults($uploadingUid, $frameNum - 1, $link);
     }
 
-    $tableName = $this->dic()->get('runtimeDb')
+    $tableName = $this->dic('runtimeDb')
       ->getDataTableName($uploadingUid);
 
-    $eventResults = $this->dic()->get('realtimeEvent')
+    $eventResults = $this->dic('realtimeEvent')
       ->process($fdrId, $tableName, $frameNum, $prevEventResults, $link);
 
     $this->redis()->set($uploadingUid . '_LAST_EVENTS', json_encode($eventResults));
@@ -1069,18 +1069,18 @@ class UploaderController extends BaseController
     foreach ($voiceData as $key => $arr) {
       $uploadingFileName = $this->dic('voice')->getUploadingFileName($uploadingUid, $key);
 
-      $isExist = $this->dic()->get('runtimeManager')
+      $isExist = $this->dic('runtimeManager')
         ->exist(
           $this->params()->folders->uploadingVoice,
           $uploadingFileName
         );
 
       if (!$isExist) {
-        $this->dic()->get('runtimeManager')
+        $this->dic('runtimeManager')
           ->write(
             $this->params()->folders->uploadingVoice,
             $uploadingFileName,
-            $this->dic()->get('voice')->getWavHeader()
+            $this->dic('voice')->getWavHeader()
           );
       }
 
@@ -1120,7 +1120,7 @@ class UploaderController extends BaseController
   public function breakFramesProcessAction($uploadingUid)
   {
     try {
-      $this->dic()->get('runtimeDb')
+      $this->dic('runtimeDb')
         ->cleanUpRealtimeCalibrationData($uploadingUid);
 
       $scandirItems = $this->dic()

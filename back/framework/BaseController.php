@@ -24,7 +24,7 @@ class BaseController extends BaseComponent
   public function callAction($method, $arguments = []) {
     $fullAction = get_class($this).'\\'.$method;
     $userId = $this->user()->getId();
-    $rr = $this->dic()->get('responseRegistrator');
+    $rr = $this->dic('responseRegistrator');
 
     if (!method_exists($this, $method)) {
       $rr->faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);

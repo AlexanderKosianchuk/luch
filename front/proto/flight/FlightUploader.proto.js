@@ -487,6 +487,7 @@ FlightUploader.prototype.InitiateFlightProccessing = function(data) {
   }).done(function(answ){
     $(document).trigger("endProccessing", [uploadingUid, answ.item]);
   }).fail(function(mess){
+    $(document).trigger("endProccessing", [uploadingUid, answ.item]);
     console.log(mess);
   });
 

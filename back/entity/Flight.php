@@ -267,9 +267,10 @@ class Flight
     $this->performer = $data['performer'] ?? 'x';
     $this->departureAirport = $data['departureAirport'] ?? 'x';
     $this->arrivalAirport = $data['arrivalAirport'] ?? 'x';
-    $this->aditionalInfo = isset($data['aditionalInfo'])
+    $this->aditionalInfo = (isset($data['aditionalInfo'])
+      && !empty($data['aditionalInfo']))
       ? json_encode($data['aditionalInfo'])
-      : '';
+      : '{}';
 
     $this->path = $data['path'] ?? '';
 
