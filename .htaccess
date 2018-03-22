@@ -1,15 +1,15 @@
-#ServerName PREFIX_luch15.com
-#ServerAlias www.PREFIX_luch15.com
+#ServerName PREFIX.luch15.com
+#ServerAlias www.PREFIX.luch15.com
 
 #ServerAdmin webmaster@localhost
-#DocumentRoot PATH/PREFIX_luch15/
+#DocumentRoot PATH/luche/
 
 #DirectoryIndex index.php
 SetEnv APPLICATION_ENV 'dev'
 
-#ErrorLog PATH/PREFIX_luch15/log/error.log
+#ErrorLog PATH/luche/log/error.log
 #LogFormat "%h %l %u %t \"%r\" %>s %b" common
-#CustomLog PATH/PREFIX_luch15/log/access.log common
+#CustomLog PATH/luche/log/access.log common
 #LogLevel alert rewrite:trace5
 
 <IfModule mod_rewrite.c>
@@ -20,8 +20,3 @@ SetEnv APPLICATION_ENV 'dev'
     RewriteRule ^ - [L]
     RewriteRule ^(.*)$ index.php [NC,L]
 </IfModule>
-
-php_value upload_max_filesize 64M
-php_value post_max_size 64M
-php_value max_execution_time 400
-php_value short_open_tag 1

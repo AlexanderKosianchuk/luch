@@ -25,14 +25,12 @@ return [
     'driver' => 'pdo_mysql',
     'charset' => 'utf8'
   ],
-  'phinx' => [
-    'adapter' => 'mysql',
-    'host' => 'localhost',
-    'name' => 'DB',
+  'runtime' => [
+    'dbname' => 'DB',
     'user' => 'USER',
-    'pass' => 'PASS',
-    'port' => '3306',
-    'charset' => 'utf8',
-    'collation' => 'utf8_unicode_ci'
+    'password' => 'PASS',
+    'host' => 'localhost',
+    'driver' => 'pdo_mysql',
+    'charset' => 'utf8'
   ]
 ];
