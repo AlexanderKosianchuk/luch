@@ -84,7 +84,7 @@ class FlightEventOld
   /**
    * @var string
    *
-   * @Column(name="userComment", type="text", length=65255, nullable=false)
+   * @Column(name="userComment", type="text", length=65255, nullable=true)
    */
   private $userComment;
 

@@ -45,6 +45,7 @@ class FlightEventsController extends BaseController
 
     $startCopyTime = $flight->getStartCopyTime();
     $frameLength = $fdr->getFrameLength();
+
     $flightEvents = $this->dic()
       ->get('event')
       ->getFormatedFlightEvents(

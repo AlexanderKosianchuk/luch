@@ -175,7 +175,7 @@ class EventComponent extends BaseComponent
     $table = $this->FlightEventOld::getTable($link, $code);
     $this->connection()->destroy($link);
 
-    $this->em('fdrs')
+    $this->em('flights')
       ->getClassMetadata('Entity\FlightEventOld')
       ->setTableName($table);
   }
@@ -352,6 +352,7 @@ class EventComponent extends BaseComponent
     $oldEvents = [];
     $rp = $this->em('flights')
       ->getRepository('Entity\FlightEventOld');
+
 
     if ($refParamCode === null) {
       $oldEvents = $rp->findAll();
