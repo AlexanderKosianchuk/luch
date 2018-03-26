@@ -15,6 +15,6 @@ return [
   ],
   'interaction' => (object) [
     'path' => '/var/www/luche-interaction',
-    'url' => 'http://localhost:1337'
+    'url' => 'http://172.18.0.1:1337'
   ]
 ];

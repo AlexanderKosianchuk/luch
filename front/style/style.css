@@ -16,6 +16,7 @@ body {
   background-color:#fff;
   color:#000;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 body::scrollbar {
