@@ -12,6 +12,8 @@ SetEnv APPLICATION_ENV 'dev'
 #CustomLog PATH/luche/log/access.log common
 #LogLevel alert rewrite:trace5
 
+Header set Access-Control-Allow-Origin "*"
+
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On

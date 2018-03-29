@@ -1,6 +1,6 @@
 <?php
 
-require_once 'back/bootstrap.php';
+require_once 'src/bootstrap.php';
 
 use \Controller\IndexController;
 
@@ -18,11 +18,11 @@ if (count($exp) <= 1) {
 }
 
 $controller = ucfirst($exp[0] . 'Controller');
-if (!file_exists(SITE_ROOT_DIR."/back/controller/".$controller.'.php')) {
+if (!file_exists(SITE_ROOT_DIR."/src/controller/".$controller.'.php')) {
     $indexAction();
 }
 
-require_once(SITE_ROOT_DIR."/back/controller/".$controller.'.php');
+require_once(SITE_ROOT_DIR."/src/controller/".$controller.'.php');
 
 $controller = 'Controller\\' . $controller;
 $method = $exp[1] . 'Action';

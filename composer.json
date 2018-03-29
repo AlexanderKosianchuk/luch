@@ -9,8 +9,7 @@
             "email": "dedanaan00@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "minimum-stability": "stable",
     "require": {
         "doctrine/orm": "2.4.*",
         "symfony/yaml": "2.*",
@@ -20,20 +19,20 @@
         "doctrine/annotations": "^1.5",
         "klein/klein": "^2.1",
         "mustache/mustache": "^2.12",
-        "philipp15b/php-i18n": "dev-master",
+        "philipp15b/php-i18n": "^4.0.1",
         "guzzlehttp/guzzle": "^6.2",
         "predis/predis": "^2.0@dev",
         "phpoffice/phpspreadsheet": "^1.2"
     },
     "autoload": {
         "classmap": [
-            "back/framework/",
-            "back/framework/system-components/",
-            "back/repository/",
-            "back/entity/",
-            "back/controller/",
-            "back/component/",
-            "back/exception/"
+            "src/framework/",
+            "src/framework/system-components/",
+            "src/repository/",
+            "src/entity/",
+            "src/controller/",
+            "src/component/",
+            "src/exception/"
         ]
     }
 }
