@@ -26,6 +26,13 @@ class BaseController extends BaseComponent
     $userId = $this->user()->getId();
     $rr = $this->dic('responseRegistrator');
 
+    if (isset($_SERVER['HTTP_ORIGIN'])
+      && in_array($_SERVER['HTTP_ORIGIN'], $this->params()->front->origins)
+    ) {
+      header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'], true);
+      header('Access-Control-Allow-Credentials: true');
+    }
+
     if (!method_exists($this, $method)) {
       $rr->faultResponse('unknown', 400, 'Unknown action: ' . $fullAction, $userId);
 

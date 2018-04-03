@@ -3,6 +3,7 @@
 return [
   'user' => [
     'actions' => [
+      'changeLanguage',
       'getFdrsAction',
       'getCalibrationsListAction',
       'getFoldersAction',

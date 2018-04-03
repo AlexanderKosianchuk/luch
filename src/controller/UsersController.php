@@ -9,6 +9,28 @@ use Exception\ForbiddenException;
 
 class UsersController extends BaseController
 {
+  public function getAction()
+  {
+    $userId = $this->user()->getId();
+    $user = $this->em()->find('Entity\User', $userId);
+
+    if (!$user) {
+      return json_encode([
+        'login' => null,
+        'role' => 'guest',
+        'lang' => 'en',
+        'settings' => []
+      ]);
+    }
+
+    return json_encode([
+      'login' => $user->getLogin(),
+      'role' => $user->getRole(),
+      'lang' => strtolower($user->getLang()),
+      'settings' => $this->dic('userSettings')->getSettings($userId)
+    ]);
+  }
+
   public function loginAction ($login, $pass = '')
   {
     $lang = 'en';
@@ -59,7 +81,7 @@ class UsersController extends BaseController
     return json_encode('ok');
   }
 
-  public function userChangeLanguageAction($lang)
+  public function changeLanguageAction($lang)
   {
     $this->user()->setLanguage($lang);
     return json_encode('ok');
