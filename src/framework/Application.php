@@ -56,7 +56,7 @@ class Application
 
     // Create a simple 'default' Doctrine ORM configuration for Annotations
     $anotationConfig = Setup::createAnnotationMetadataConfiguration(
-      [SITE_ROOT_DIR.'/entity'],
+      [SITE_ROOT_DIR.'/src/entity'],
       true
     );
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'bootstrap.php';
+require_once 'src/bootstrap.php';
 
 use \Framework\Application as App;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
