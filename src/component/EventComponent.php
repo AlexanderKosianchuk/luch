@@ -353,7 +353,6 @@ class EventComponent extends BaseComponent
     $rp = $this->em('flights')
       ->getRepository('Entity\FlightEventOld');
 
-
     if ($refParamCode === null) {
       $oldEvents = $rp->findAll();
     } else {

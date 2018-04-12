@@ -9,7 +9,7 @@ use Exception\ForbiddenException;
 
 class FlightCommentController extends BaseController
 {
-  public function getCommentAction($flightId)
+  public function getAction($flightId)
   {
     $userId = $this->user()->getId();
 
@@ -53,7 +53,7 @@ class FlightCommentController extends BaseController
     ]);
   }
 
-  public function setCommentAction(
+  public function setAction(
     $flightId,
     $comment,
     $commanderAdmitted,

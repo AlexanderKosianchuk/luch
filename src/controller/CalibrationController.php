@@ -14,7 +14,7 @@ use \L;
 
 class CalibrationController extends BaseController
 {
-  public function getCalibrationsListAction()
+  public function getAllAction()
   {
     $userId = $this->user()->getId();
 
@@ -30,7 +30,7 @@ class CalibrationController extends BaseController
     return json_encode($response);
   }
 
-  public function saveCalibrationAction($name, $fdrId, $calibrations, $calibrationId = null)
+  public function saveAction($name, $fdrId, $calibrations, $calibrationId = null)
   {
     $fdrToUser = $this->em()->getRepository('Entity\FdrToUser')
       ->findBy(['fdrId' => $fdrId, 'userId' => $this->user()->getId()]);
@@ -67,7 +67,7 @@ class CalibrationController extends BaseController
     return json_encode($calibration->get(true));
   }
 
-  public function deleteCalibrationAction($calibrationId)
+  public function deleteAction($calibrationId)
   {
     $userId = $this->user()->getId();
     $calibrationId = intval($calibrationId);
@@ -95,7 +95,7 @@ class CalibrationController extends BaseController
     return json_encode('ok');
   }
 
-  public function getCalibrationsPageAction($page, $pageSize, $fdrId = null)
+  public function getPageAction($page, $pageSize, $fdrId = null)
   {
     $criteria = ['userId' => $this->user()->getId()];
 
@@ -138,7 +138,7 @@ class CalibrationController extends BaseController
     ]);
   }
 
-  public function getCalibrationByIdAction($id)
+  public function getAction($id)
   {
     $id = intval($id);
 
@@ -159,7 +159,7 @@ class CalibrationController extends BaseController
     return json_encode($calibration);
   }
 
-  public function getCalibrationParamsAction($fdrId)
+  public function getParamsAction($fdrId)
   {
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);

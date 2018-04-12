@@ -11,7 +11,7 @@ use \Exception;
 
 class FdrController extends BaseController
 {
-  public function getFdrsAction()
+  public function getAllAction()
   {
     return json_encode(
       $this->dic()

@@ -7,7 +7,7 @@ use Exception\ForbiddenException;
 
 class FolderController extends BaseController
 {
-  public function getFoldersAction()
+  public function getAllAction()
   {
     $userId = $this->user()->getId();
 
@@ -29,7 +29,7 @@ class FolderController extends BaseController
     return json_encode($items);
   }
 
-  public function toggleFolderExpandingAction($id, $expanded)
+  public function toggleExpandingAction($id, $expanded)
   {
     $id = intval($id);
     $expanded = ($expanded === 'true') ? true : false;
@@ -47,7 +47,7 @@ class FolderController extends BaseController
     ]);
   }
 
-  public function createFolderAction($folderName)
+  public function createAction($folderName)
   {
     $folder = new \Entity\Folder;;
     $folder->set([
@@ -68,7 +68,7 @@ class FolderController extends BaseController
      ));
   }
 
-  public function deleteFolderAction($id)
+  public function deleteAction($id)
   {
     $id = intval($id);
 
@@ -101,7 +101,7 @@ class FolderController extends BaseController
     return json_encode('ok');
   }
 
-  public function renameFolderAction($id, $name)
+  public function renameAction($id, $name)
   {
     $userId = $this->user()->getId();
 
@@ -122,7 +122,7 @@ class FolderController extends BaseController
     return json_encode('ok');
   }
 
-  public function changeFolderPathAction($id, $parentId)
+  public function changeFolderAction($id, $parentId)
   {
     $sender = intval($id);
     $target = intval($parentId);

@@ -65,7 +65,7 @@ class UsersController extends BaseController
     return json_encode('ok');
   }
 
-  public function getUserSettingsAction()
+  public function getSettingsAction()
   {
     $userId = $this->user()->getId();
 
@@ -74,7 +74,7 @@ class UsersController extends BaseController
     );
   }
 
-  public function setUserSettingsAction($settings)
+  public function setSettingsAction($settings)
   {
     $this->dic('userSettings')->updateSettings($settings);
 
@@ -87,7 +87,7 @@ class UsersController extends BaseController
     return json_encode('ok');
   }
 
-  public function getUsersAction()
+  public function getAllAction()
   {
     return json_encode(
       $this->dic()
@@ -135,7 +135,7 @@ class UsersController extends BaseController
     return json_encode($user->get());
   }
 
-  public function createUserAction(
+  public function createAction(
     $login,
     $pass,
     $company,
@@ -198,7 +198,7 @@ class UsersController extends BaseController
     ]);
   }
 
-  public function updateUserAction(
+  public function updateAction(
     $id,
     $login,
     $pass,
@@ -274,7 +274,7 @@ class UsersController extends BaseController
   }
 
 
-  public function deleteUserAction($userId)
+  public function deleteAction($userId)
   {
     $userIdToDelete = intval($userId);
 
@@ -318,7 +318,7 @@ class UsersController extends BaseController
     return json_encode('ok');
   }
 
-  public function getUserActivityAction($userId, $page, $pageSize)
+  public function getActivityAction($userId, $page, $pageSize)
   {
     $userActivityResult = $this->em()->getRepository('Entity\UserActivity')
       ->findBy(

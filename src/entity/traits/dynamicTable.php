@@ -3,7 +3,7 @@
 namespace EntityTraits;
 
 trait dynamicTable {
-  public static function getTable($link, $base)
+  public static function getTable($link, $base, $wrapper = '')
   {
     if (!is_string($base)) {
       throw new Exception("Incorrect base passed. String is required. Passed: "
@@ -17,6 +17,6 @@ trait dynamicTable {
       return null;
     }
 
-    return $base . self::$_prefix;
+    return $wrapper . $base . self::$_prefix . $wrapper;
   }
 }

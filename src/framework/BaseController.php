@@ -41,7 +41,7 @@ class BaseController extends BaseComponent
       );
     }
 
-    if (!$this->rbac()->check($method)) {
+    if (!$this->rbac()->check($fullAction)) {
       throw new ForbiddenException(
         'action ' . $method . ' execution forbidden for user with current privilege.'
       );

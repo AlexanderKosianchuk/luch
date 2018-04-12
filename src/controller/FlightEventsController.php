@@ -18,7 +18,7 @@ require_once (SITE_ROOT_DIR."/src/tcpdf/config/tcpdf_config.php");
 
 class FlightEventsController extends BaseController
 {
-  public function getFlightEventsAction($flightId)
+  public function getAction($flightId)
   {
     $flightId = intval($flightId);
     $userId = $this->user()->getId();
