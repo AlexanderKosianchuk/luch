@@ -79,6 +79,8 @@ return [
       'Controller\UploaderController\storeFlightFileAction',
       'Controller\UploaderController\getSegmentAction',
 
+      'Controller\ResultsController\getReportAction',
+
       'deleteFlight', // is not controller action
 
       // TODO: /*'Controller\UploaderController\processFrameAction',*/

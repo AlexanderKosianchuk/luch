@@ -2,10 +2,14 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class FlightComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
+
   /**
    * @Inject
    * @var Component\FdrComponent
@@ -171,19 +175,9 @@ class FlightComponent extends BaseComponent
       $flightGuid = $flight->getGuid();
     }
 
-    $link = LinkFactory::create();
-    $flightEventTable = FlightEvent::getTable($link, $flightGuid);
-    $flightSettlementTable = FlightSettlement::getTable($link, $flightGuid);
-    LinkFactory::destroy($link);
+    $this->setEntityTable('flights', $this->FlightEvent, $flightGuid);
+    $this->setEntityTable('flights', $this->FlightSettlement, $flightGuid);
 
-    if (!isset($flightEventTable)
-      || !isset($flightSettlementTable)
-    ) {
-      return [];
-    }
-
-    $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName($flightEventTable);
-    $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
     $events = $this->em()->getRepository('Entity\FlightEvent')->findAll();
 
     return $events;

@@ -2,10 +2,14 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class FdrTemplateComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
+
   const LAST_TPL_NAME = 'last';
   const EVENTS_TPL_NAME = 'events';
   const TPL_DEFAULT =  'default';
@@ -81,21 +85,6 @@ class FdrTemplateComponent extends BaseComponent
     return $tableName;
   }
 
-  private function setFdrTemplateTable($fdrCode)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrTemplate::getTable($link, $fdrCode);
-    $this->connection()->destroy($link);
-
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrTemplate')
-      ->setTableName($table);
-  }
-
   public function getTemplateById($fdrId, $templateId, $userId = null)
   {
     if ($userId === null) {
@@ -104,7 +93,7 @@ class FdrTemplateComponent extends BaseComponent
 
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
-    $this->setFdrTemplateTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdr->getCode());
 
     $fdrTemplateParam = $this->em('fdrs')
       ->getRepository('Entity\FdrTemplate')
@@ -151,7 +140,7 @@ class FdrTemplateComponent extends BaseComponent
       $userId = $this->user()->getId();
     }
 
-    $this->setFdrTemplateTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdrCode);
 
     $fdrTemplateParams = $this->em('fdrs')
       ->getRepository('Entity\FdrTemplate')
@@ -240,7 +229,7 @@ class FdrTemplateComponent extends BaseComponent
       throw new Exception('FDR not found. Id: '.$fdrId, 1);
     }
 
-    $this->setFdrTemplateTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdr->getCode());
 
     $names = $this->em('fdrs')
       ->getRepository('Entity\FdrTemplate')
@@ -310,7 +299,7 @@ class FdrTemplateComponent extends BaseComponent
       $userId = $this->user()->getId();
     }
 
-    $this->setFdrTemplateTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdrCode);
 
     $templates = $this->em('fdrs')->getRepository('Entity\FdrTemplate')
       ->findBy(['name' => $templateName]);
@@ -328,7 +317,7 @@ class FdrTemplateComponent extends BaseComponent
       $userId = $this->user()->getId();
     }
 
-    $this->setFdrTemplateTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdrCode);
 
     $templateParam = $this->em('fdrs')
       ->getRepository('Entity\FdrTemplate')
@@ -350,7 +339,7 @@ class FdrTemplateComponent extends BaseComponent
       $userId = $this->user()->getId();
     }
 
-    $this->setFdrTemplateTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdrCode);
     $fdr = $this->em()->getRepository('Entity\Fdr')->findOneBy(['code' => $fdrCode]);
     $template = $this->getTemplateById($fdr->getId(), $templateId, $userId);
 
@@ -378,7 +367,7 @@ class FdrTemplateComponent extends BaseComponent
       $userId = $this->user()->getId();
     }
 
-    $this->setFdrTemplateTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->FdrTemplate, $fdrCode);
     $fdr = $this->em()->getRepository('Entity\Fdr')->findOneBy(['code' => $fdrCode]);
     $template = $this->getTemplateById($fdr->getId(), $templateId, $userId);
 

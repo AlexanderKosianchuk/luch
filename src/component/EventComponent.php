@@ -2,10 +2,14 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class EventComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
+
   /**
    * @Inject
    * @var Entity\FdrEventOld
@@ -158,54 +162,9 @@ class EventComponent extends BaseComponent
     return $this->connection()->isExist($table, 'fdrs');
   }
 
-  private function setupFdrEventOldEntity($code)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrEventOld::getTable($link, $code);
-    $this->connection()->destroy($link);
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrEventOld')
-      ->setTableName($table);
-  }
-
-  private function setupFlightEventOldEntity($code)
-  {
-    $link = $this->connection()->create('flights');
-    $table = $this->FlightEventOld::getTable($link, $code);
-    $this->connection()->destroy($link);
-
-    $this->em('flights')
-      ->getClassMetadata('Entity\FlightEventOld')
-      ->setTableName($table);
-  }
-
-  private function setupFlightEventEntity($code)
-  {
-    $link = $this->connection()->create('flights');
-    $table = $this->FlightEvent::getTable($link, $code);
-    $this->connection()->destroy($link);
-
-    $this->em('flights')
-      ->getClassMetadata('Entity\FlightEvent')
-      ->setTableName($table);
-  }
-
-  private function setupFlightSettlementEntity($code)
-  {
-    $link = $this->connection()->create('flights');
-    $table = $this->FlightSettlement::getTable($link, $code);
-    $this->connection()->destroy($link);
-
-    $this->em('flights')
-      ->getClassMetadata('Entity\FlightSettlement')
-      ->setTableName($table);
-  }
-
-
   public function getRefParams($code)
   {
-    $this->setupFdrEventOldEntity($code);
+    $this->setEntityTable('fdrs', $this->FdrEventOld, $code);
 
     return $this->em('fdrs')
       ->getRepository('Entity\FdrEventOld')
@@ -217,7 +176,7 @@ class EventComponent extends BaseComponent
 
   public function getOldEvents($code)
   {
-    $this->setupFdrEventOldEntity($code);
+    $this->setEntityTable('fdrs', $this->FdrEventOld, $code);
 
     return $this->em('fdrs')
       ->getRepository('Entity\FdrEventOld')
@@ -255,11 +214,12 @@ class EventComponent extends BaseComponent
     $flight = $this->em()->find('Entity\Flight', $flightId);
 
     $fdr = $flight->getFdr();
-    $this->setupFdrEventOldEntity($fdr->getCode());
-    $this->setupFlightEventOldEntity($flight->getGuid());
+    $this->setEntityTable('fdrs', $this->FdrEventOld, $fdr->getCode());
+    $this->setEntityTable('flights', $this->FlightEventOld, $flight->getGuid());
 
     $oldEvents = $this->em('flights')
-      ->getRepository('Entity\FlightEventOld')->findAll();
+      ->getRepository('Entity\FlightEventOld')
+      ->findAll();
 
     $eventsArray = [];
 
@@ -267,8 +227,8 @@ class EventComponent extends BaseComponent
       $eventsArray[] = $event->get(true);
     }
 
-    $this->setupFlightEventEntity($flight->getGuid());
-    $this->setupFlightSettlementEntity($flight->getGuid());
+    $this->setEntityTable('flights', $this->FlightEvent, $flight->getGuid());
+    $this->setEntityTable('flights', $this->FlightSettlement, $flight->getGuid());
 
     $flightEvents = $this->em('flights')
       ->getRepository('Entity\FlightEvent')->findAll();
@@ -346,8 +306,8 @@ class EventComponent extends BaseComponent
   ) {
     $flight = $this->em()->find('Entity\Flight', $flightId);
     $fdr = $flight->getFdr();
-    $this->setupFdrEventOldEntity($fdr->getCode());
-    $this->setupFlightEventOldEntity($flightGuid);
+    $this->setEntityTable('fdrs', $this->FdrEventOld, $fdr->getCode());
+    $this->setEntityTable('flights', $this->FlightEventOld, $flightGuid);
 
     $oldEvents = [];
     $rp = $this->em('flights')
@@ -393,8 +353,8 @@ class EventComponent extends BaseComponent
     $isDisabled,
     $refParamCode = null
   ) {
-    $this->setupFlightEventEntity($flightGuid);
-    $this->setupFlightSettlementEntity($flightGuid);
+    $this->setEntityTable('flights', $this->FlightEvent, $flightGuid);
+    $this->setEntityTable('flights', $this->FlightSettlement, $flightGuid);
 
     $flightEvents = [];
 
@@ -508,7 +468,7 @@ class EventComponent extends BaseComponent
     $falseAlarm
   ) {
     if ($eventType === 1) {
-      $this->setupFlightEventOldEntity($flightGuid);
+      $this->setEntityTable('flights', $this->FlightEventOld, $flightGuid);
 
       $flightEventOld = $this->em('flights')
         ->find('Entity\FlightEventOld', $eventId);
@@ -517,7 +477,7 @@ class EventComponent extends BaseComponent
       $this->em('flights')->persist($flightEventOld);
       $this->em('flights')->flush();
     } else if ($eventType === 2) {
-      $this->setupFlightEventEntity($flightGuid);
+      $this->setEntityTable('flights', $this->FlightEvent, $flightGuid);
 
       $flightEvent = $this->em('flights')
         ->find('Entity\FlightEvent', $eventId);

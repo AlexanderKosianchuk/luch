@@ -2,10 +2,13 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class EventProcessingComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
   /**
    * @Inject
    * @var Entity\FlightEventOld
@@ -160,8 +163,8 @@ class EventProcessingComponent extends BaseComponent
     $flightSettlementTable = $this->eventComponent->createSettlementsTable($flightGuid);
     $this->connection()->destroy($link);
 
-    $this->em()->getClassMetadata('Entity\FlightEvent')->setTableName('`'.$flightEventTable.'`');
-    $this->em()->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+    $this->setEntityTable('flights', $this->FlightEvent, $flightGuid);
+    $this->setEntityTable('flights', $this->FlightSettlement, $flightGuid);
 
     $ii = 0;
     foreach ($eventsToFdr as $eventToFdr) {

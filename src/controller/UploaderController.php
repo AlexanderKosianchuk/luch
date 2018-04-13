@@ -320,7 +320,7 @@ class UploaderController extends BaseController
       ->process(
         $uploadingUid,
         $storedFlightFile,
-        0,
+        $flight->getStartCopyTime(),
         50,
         $fdrId,
         $calibrationId
@@ -512,7 +512,7 @@ class UploaderController extends BaseController
     $previewParams = trim($previewParams);
     if ($previewParams != '') {
       $flightParamsSrt .= "<div id='loadingBox".$index."' width='100%' style='position:absolute;top: 110px; left: calc(50% - 30px);'>
-          <img src='./images/loading.gif'/></div>";
+          <img src='/images/loading.gif'/></div>";
 
       $flightParamsSrt .= "<div id='previewChartContainer".$index."' " .
           "style='width:95%; border:0;'>

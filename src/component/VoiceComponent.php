@@ -2,10 +2,14 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class VoiceComponent extends BaseComponent
 {
+    use dynamicInjectedEntityTable;
+    
   /**
    * @Inject
    * @var Entity\FdrVoice
@@ -18,23 +22,6 @@ class VoiceComponent extends BaseComponent
     0x00,0x00,0x00,0x7D,0x00,0x00,0x02,0x00,0x08,0x00,0x64,0x61,0x74,
     0x61,0x80,0xC6,0xBE,0x7B
   ];
-
-  private function setVoiceTable($fdrCode)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrVoice::getTable($link, $fdrCode);
-    $this->connection()->destroy($link);
-
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrVoice')
-      ->setTableName($table);
-
-    return $table;
-  }
 
   public function getWavHeader()
   {
@@ -51,7 +38,7 @@ class VoiceComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $table = $this->setVoiceTable($fdr->getCode());
+    $table = $this->setEntityTable('fdrs', $this->FdrVoice, $fdr->getCode());
 
     if ($table === null) {
       return [];

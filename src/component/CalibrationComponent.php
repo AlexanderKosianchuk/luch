@@ -2,10 +2,13 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class CalibrationComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
   /**
    * @Inject
    * @var Entity\CalibrationParam
@@ -24,28 +27,11 @@ class CalibrationComponent extends BaseComponent
    */
   private $FdrAnalogParam;
 
-  private function setCalibrationParamsTable($fdrCode)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->CalibrationParam::getTable($link, $fdrCode);
-    $this->connection()->destroy($link);
-
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\CalibrationParam')
-      ->setTableName($table);
-
-    return $table;
-  }
-
   public function getCalibrationParams ($fdrId, $id)
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setCalibrationParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->CalibrationParam, $fdr->getCode());
 
     return $this->em('fdrs')
         ->getRepository('Entity\CalibrationParam')
@@ -64,16 +50,7 @@ class CalibrationComponent extends BaseComponent
       return null;
     }
 
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
-    $this->connection()->destroy($link);
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrAnalogParam')
-      ->setTableName($table);
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     $fdrAnalogParam = $this->em('fdrs')
       ->getRepository('Entity\FdrAnalogParam')
@@ -102,19 +79,8 @@ class CalibrationComponent extends BaseComponent
       return null;
     }
 
-    $link = $this->connection()->create('fdrs');
-    $calibrationParamTable = $this->CalibrationParam::getTable($link, $fdr->getCode());
-    $fdrAnalogParamTable = $this->FdrAnalogParam::getTable($link, $fdr->getCode());
-    $this->connection()->destroy($link);
-
-    if (($fdrAnalogParamTable === null)
-      || ($calibrationParamTable === null)
-    ) {
-      return null;
-    }
-
-    $this->em('fdrs')->getClassMetadata('Entity\CalibrationParam')->setTableName($calibrationParamTable);
-    $this->em('fdrs')->getClassMetadata('Entity\FdrAnalogParam')->setTableName($fdrAnalogParamTable);
+    $this->setEntityTable('fdrs', $this->CalibrationParam, $fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     $calibrationParams = $this->em('fdrs')->getRepository('Entity\CalibrationParam')->findBy([
       'calibrationId' => $id
@@ -258,7 +224,7 @@ class CalibrationComponent extends BaseComponent
     $calibration = $this->em()->find('Entity\Calibration', $calibrationId);
     $fdr = $this->em()->find('Entity\Fdr', $calibration->getFdrId());
 
-    $this->setCalibrationParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->CalibrationParam, $fdr->getCode());
 
     $calibrationParams = $this->em('fdrs')
       ->getRepository('Entity\CalibrationParam')
@@ -275,7 +241,7 @@ class CalibrationComponent extends BaseComponent
 
   public function deleteCalibrationParams($fdrCode, $calibrationId)
   {
-    $this->setCalibrationParamsTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->CalibrationParam, $fdrCode);
 
     $calibrations = $this->em('fdrs')
       ->getRepository('Entity\CalibrationParam')
@@ -294,7 +260,7 @@ class CalibrationComponent extends BaseComponent
     $paramId,
     $xy
   ) {
-    $this->setCalibrationParamsTable($fdrCode);
+    $this->setEntityTable('fdrs', $this->CalibrationParam, $fdrCode);
 
     $CalibrationParam = $this->CalibrationParam;
     $calibrationParam = new $CalibrationParam;

@@ -2,10 +2,14 @@
 
 namespace Component;
 
+use ComponentTraits\dynamicInjectedEntityTable;
+
 use Exception;
 
 class FdrComponent extends BaseComponent
 {
+  use dynamicInjectedEntityTable;
+
   const PARAM_TYPE_AP = 'ap';
   const PARAM_TYPE_BP = 'bp';
 
@@ -31,36 +35,6 @@ class FdrComponent extends BaseComponent
   public static function getBpType()
   {
     return self::PARAM_TYPE_BP;
-  }
-
-  private function setAnalogParamsTable($fdrCode)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrAnalogParam::getTable($link, $fdrCode);
-    $this->connection()->destroy($link);
-
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrAnalogParam')
-      ->setTableName($table);
-  }
-
-  private function setBinaryParamsTable($fdrCode)
-  {
-    $link = $this->connection()->create('fdrs');
-    $table = $this->FdrBinaryParam::getTable($link, $fdrCode);
-    $this->connection()->destroy($link);
-
-    if ($table === null) {
-      return null;
-    }
-
-    $this->em('fdrs')
-      ->getClassMetadata('Entity\FdrBinaryParam')
-      ->setTableName($table);
   }
 
   public function getFdrs()
@@ -98,7 +72,7 @@ class FdrComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setAnalogParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrAnalogParam')
@@ -136,7 +110,7 @@ class FdrComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setBinaryParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrBinaryParam, $fdr->getCode());
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrBinaryParam')
@@ -174,7 +148,7 @@ class FdrComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setAnalogParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrAnalogParam')
@@ -192,7 +166,7 @@ class FdrComponent extends BaseComponent
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setBinaryParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrBinaryParam, $fdr->getCode());
 
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrBinaryParam')
@@ -232,8 +206,8 @@ class FdrComponent extends BaseComponent
 
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 
-    $this->setAnalogParamsTable($fdr->getCode());
-    $this->setBinaryParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrBinaryParam, $fdr->getCode());
 
     $params = $this->getParams($fdrId);
     $binary = $this->getBinaryParams($fdrId);
@@ -313,7 +287,7 @@ class FdrComponent extends BaseComponent
       throw new Exception('FDR not found. Id: '.$fdrId, 1);
     }
 
-    $this->setAnalogParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     return $this->em('fdrs')
       ->getRepository('Entity\FdrAnalogParam')
@@ -335,7 +309,7 @@ class FdrComponent extends BaseComponent
       throw new Exception('FDR not found. Id: '.$fdrId, 1);
     }
 
-    $this->setAnalogParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
 
     return $this
       ->em('fdrs')
@@ -355,7 +329,7 @@ class FdrComponent extends BaseComponent
       throw new Exception('FDR not found. Id: '.$fdrId, 1);
     }
 
-    $this->setBinaryParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrBinaryParam, $fdr->getCode());
 
     return $this->em('fdrs')
       ->getRepository('Entity\FdrBinaryParam')
@@ -377,7 +351,7 @@ class FdrComponent extends BaseComponent
       throw new Exception('FDR not found. Id: '.$fdrId, 1);
     }
 
-    $this->setBinaryParamsTable($fdr->getCode());
+    $this->setEntityTable('fdrs', $this->FdrBinaryParam, $fdr->getCode());
 
     return $this
       ->em('fdrs')

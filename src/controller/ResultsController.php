@@ -2,19 +2,9 @@
 
 namespace Controller;
 
-use Component\EntityManagerComponent as EM;
-use Component\FlightComponent;
-use Component\RealConnectionFactory as LinkFactory;
 use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
-use Entity\Flight;
-use Entity\Fdr;
-use Entity\FlightSettlement;
 
-use Exception\BadRequestException;
-
-use \ReflectionMethod;
-
-class ResultsController extends CController
+class ResultsController extends BaseController
 {
   private static $flightFilterArgs = [
     "fdr-type" => "",
@@ -26,21 +16,13 @@ class ResultsController extends CController
     "to-date" => ""
   ];
 
-  function __construct()
-  {
-    $this->IsAppLoggedIn();
-    $this->setAttributes();
-  }
-
   private static function addFdrtypeCondition(&$qb, $fdrName)
   {
     if (empty($fdrName)) {
       return 0;
     }
 
-    $em = EM::get();
-
-    $result = $em->getRepository('Entity\Fdr')->createQueryBuilder('fdr')
+    $result = $this->em()->getRepository('Entity\Fdr')->createQueryBuilder('fdr')
        ->andWhere('fdr.name LIKE :fdrName')
        ->setParameter('fdrName', '%'.$fdrName.'%')
        ->getQuery()
@@ -144,9 +126,7 @@ class ResultsController extends CController
       $userId = intval($this->_user->userInfo['id']);
     }
 
-    $em = EM::get();
-
-    $qb = $em->createQueryBuilder()
+    $qb = $this->em()->createQueryBuilder()
       ->select('fl')
       ->from('Entity\Flight', 'fl');
     $conditionsCount = 0;
@@ -188,7 +168,7 @@ class ResultsController extends CController
 
     $flightSettlements = [];
     foreach ($flights as $flight) {
-      $currentFlightSettlements = FlightComponent::getFlightSettlements(
+      $currentFlightSettlements = $this->dic('flight')->getFlightSettlements(
         $flight->getId(),
         $flight->getGuid()
       );
@@ -211,38 +191,32 @@ class ResultsController extends CController
     return json_encode($resp);
   }
 
-  public function getReport($args)
+  public function getReportAction($chosenSettlements, $flightFilter)
   {
-    if (!isset($args['chosenSettlements'])
-      || !isset($args['flightFilter'])
-    ) {
-      throw new BadRequestException(json_encode($args));
-    }
-
-    $settlements = json_decode(html_entity_decode($args['chosenSettlements']), true);
-    $flightFilter = json_decode(html_entity_decode($args['flightFilter']), true);
+    $settlements = json_decode(html_entity_decode($chosenSettlements), true);
+    $flightFilter = json_decode(html_entity_decode($flightFilter), true);
 
     $userId = intval($this->_user->userInfo['id']);
     $flights = self::getFlightsByFilter($flightFilter, $userId);
     $report = [];
-    $em = EM::get();
 
     foreach ($flights as $flight) {
       $flightGuid = $flight->getGuid();
 
-      $link = LinkFactory::create();
+      $link = $this->connection()->create();
       $flightSettlementTable = FlightSettlement::getTable($link, $flightGuid);
+      $this->connection()->destroy($link);
 
-      LinkFactory::destroy($link);
-
-      $em->getClassMetadata('Entity\FlightSettlement')->setTableName($flightSettlementTable);
+      $this->em()
+        ->getClassMetadata('Entity\FlightSettlement')
+        ->setTableName('`'.$flightSettlementTable.'`');
 
       foreach ($settlements as $settlementId) {
         if (!isset($report[$settlementId])) {
           $report[$settlementId] = [];
         }
 
-        $flightSettlements = $em->getRepository('Entity\FlightSettlement')->findBy([
+        $flightSettlements = $this->em()->getRepository('Entity\FlightSettlement')->findBy([
           'settlementId' => $settlementId
         ]);
 
