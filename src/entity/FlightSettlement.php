@@ -65,6 +65,11 @@ class FlightSettlement
     return $this->value;
   }
 
+  public function getFlightEvent()
+  {
+    return $this->flightEvent;
+  }
+
   public function setEventId($eventId)
   {
     if (!is_int($eventId)) {

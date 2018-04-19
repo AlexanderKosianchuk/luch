@@ -512,4 +512,43 @@ class EventComponent extends BaseComponent
       return (float)($microsecsCount / 1000);
     }
   }
+
+  public function buildSettlementsReport($chosenSettlements, $flights)
+  {
+    $report = [];
+
+    foreach ($flights as $flight) {
+      $this->setEntityTable('flights', $this->FlightEvent, $flight->getGuid());
+      $this->setEntityTable('flights', $this->FlightSettlement, $flight->getGuid());
+
+      foreach ($chosenSettlements as $settlementId) {
+        if (!isset($report[$settlementId])) {
+          $report[$settlementId] = [];
+        }
+
+        $flightSettlements = $this->em('flights')->getRepository('Entity\FlightSettlement')->findBy([
+          'settlementId' => $settlementId
+        ]);
+
+        for ($ii = 0; $ii < count($flightSettlements); $ii++) {
+          $flightSettlement = $flightSettlements[$ii];
+
+          if (!isset($report[$settlementId]['text'])
+            && ($ii === 0)
+          ) {
+            $flightEventId = $flightSettlement->getFlightEvent()->getEventId();
+            $eventSettlement = $this->em()->find('Entity\EventSettlement', $flightEventId);
+            $report[$settlementId] = [
+              'text' => $eventSettlement->getText(),
+              'values' => []
+            ];
+          }
+
+          $report[$settlementId]['values'][] = $flightSettlement->getValue();
+        }
+      }
+    }
+
+    return $report;
+  }
 }

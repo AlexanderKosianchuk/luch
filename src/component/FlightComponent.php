@@ -2,6 +2,8 @@
 
 namespace Component;
 
+use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
+
 use ComponentTraits\dynamicInjectedEntityTable;
 
 use Exception;
@@ -178,7 +180,7 @@ class FlightComponent extends BaseComponent
     $this->setEntityTable('flights', $this->FlightEvent, $flightGuid);
     $this->setEntityTable('flights', $this->FlightSettlement, $flightGuid);
 
-    $events = $this->em()->getRepository('Entity\FlightEvent')->findAll();
+    $events = $this->em('flights')->getRepository('Entity\FlightEvent')->findAll();
 
     return $events;
   }
@@ -194,7 +196,7 @@ class FlightComponent extends BaseComponent
       $flightGuid = $flight->getGuid();
     }
 
-    $flightEvents = self::getFlightEvents($flightId, $flightGuid);
+    $flightEvents = $this->getFlightEvents($flightId, $flightGuid);
 
     $allFlightSettlements = [];
     foreach ($flightEvents as $flightEvent) {
@@ -279,5 +281,142 @@ class FlightComponent extends BaseComponent
     $this->connection()->destroy($link);
 
     return $framesCount;
+  }
+
+  public function getFlightsByFilter($filter, $userId)
+  {
+    $qb = $this->em()->createQueryBuilder()
+      ->select('fl')
+      ->from('Entity\Flight', 'fl');
+    $conditionsCount = 0;
+
+    foreach ($filter as $key => $val) {
+      $method = 'add' . ucfirst(str_replace('-', '', $key)) . 'Condition';
+
+      if (!method_exists($this, $method)) {
+        continue;
+      }
+
+      $conditionsCount += $this->$method($qb, $val);
+    }
+
+    if ($conditionsCount === 0) {
+      return null;
+    }
+
+    return $qb
+      ->join(
+        '\Entity\FlightToFolder',
+        'flightToFolders',
+        \Doctrine\ORM\Query\Expr\Join::WITH,
+        'fl.id = flightToFolders.flightId'
+      )
+      ->andWhere($qb->expr()->eq('flightToFolders.userId', $userId))
+      ->getQuery()
+      ->getResult();
+  }
+
+  private function addFdrtypeCondition(&$qb, $fdrName)
+  {
+    if (empty($fdrName)) {
+      return 0;
+    }
+
+    $result = $this->em()->getRepository('Entity\Fdr')->createQueryBuilder('fdr')
+       ->andWhere('fdr.name LIKE :fdrName')
+       ->setParameter('fdrName', '%'.$fdrName.'%')
+       ->getQuery()
+       ->getResult();
+
+    $fdrs = new ArrayCollection($result);
+
+    $count = 0;
+
+    foreach ($fdrs as $fdr) {
+      $qb->orWhere(
+        $qb->expr()->eq('fl.fdrId', $fdr->getId())
+      );
+
+      $count++;
+    }
+
+    return $count;
+  }
+
+  private function addBortCondition(&$qb, $val)
+  {
+    if (empty($val)) {
+      return 0;
+    }
+
+    $qb->andWhere(
+      $qb->expr()->like('fl.bort', $qb->expr()->literal($val))
+    );
+
+    return 1;
+  }
+
+  private function addFlightCondition(&$qb, $val)
+  {
+    if (empty($val)) {
+      return 0;
+    }
+
+    $qb->andWhere(
+      $qb->expr()->like('fl.voyage', $qb->expr()->literal($val))
+    );
+
+    return 1;
+  }
+
+  private function addDepartureairportCondition(&$qb, $val)
+  {
+    if (empty($val)) {
+      return 0;
+    }
+
+    $qb->andWhere(
+      $qb->expr()->like('fl.departureAirport', $qb->expr()->literal($val))
+    );
+
+    return 1;
+  }
+
+  private function addArrivalairportCondition(&$qb, $val)
+  {
+    if (empty($val)) {
+      return 0;
+    }
+
+    $qb->andWhere(
+      $qb->expr()->like('fl.arrivalAirport', $qb->expr()->literal($val))
+    );
+    return 1;
+  }
+
+  private function addFromdateCondition(&$qb, $val)
+  {
+    $timestamp = strtotime($val);
+
+    if ($timestamp === false) {
+      return 0;
+    }
+
+    $qb->andWhere($qb->expr()->gte('fl.startCopyTime', $timestamp));
+
+    return 1;
+  }
+
+  private function addTodateCondition($qb, $val)
+  {
+    $timestamp = strtotime($val);
+
+    if ($timestamp === false) {
+      return 0;
+    }
+
+    $qb->andWhere($qb->expr()->lte('fl.startCopyTime', $timestamp));
+
+    return 1;
   }
 }
