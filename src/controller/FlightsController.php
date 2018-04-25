@@ -80,6 +80,7 @@ class FlightsController extends BaseController
       'duration' => $flightTiming['duration'],
       'startFlightTime' => $flightTiming['startCopyTime'],
       'stepLength' => $flightTiming['stepLength'],
+      'hasCoordinates' => $this->dic('fdr')->checkHasCoordinates($flight->getFdrId())
     ]);
   }
 

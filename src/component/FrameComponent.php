@@ -158,7 +158,13 @@ class FrameComponent extends BaseComponent
         } else if($paramType == 42) {// simple HEX
           $apCode = (hexdec($codeValue) & $paramCyclo['mask']) >> $paramCyclo['shift'];
           $apCode = dechex($apCode);
-          $phisics = $apCode * $paramCyclo['k'];
+
+          if (is_int(intval($apCode))) {
+            $apCode = intval($apCode);
+            $phisics = $apCode * $paramCyclo['k'];
+          } else {
+            $phisics = 0;
+          }
 
           array_push($interview, $phisics);
         } else if($paramType == 5) {//signed params with coef

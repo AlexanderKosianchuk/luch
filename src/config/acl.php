@@ -20,12 +20,14 @@ return [
       'Controller\FdrController\getCycloAction',
       'Controller\FdrController\getCycloByFdrIdAction',
       'Controller\FdrController\setParamColorAction',
+      'Controller\FdrController\getParamInfoAction',
 
       'Controller\FdrTemplateController\getAllAction',
 
       'Controller\FlightCommentController\getAction',
 
-      'Controller\FlightEventsController\getction',
+      'Controller\FlightEventsController\getAction',
+      'Controller\FlightEventsController\getByCode',
       'Controller\FlightEventsController\printBlankAction',
 
       'Controller\FlightsController\getAllAction',
@@ -39,6 +41,11 @@ return [
       'Controller\FlightTemplateController\setAction',
       'Controller\FlightTemplateController\deleteAction',
       'Controller\FlightTemplateController\mergeAction',
+      'Controller\FlightTemplateController\setParamMinMaxAction',
+      'Controller\FlightTemplateController\getParamMinMaxAction',
+
+      'Controller\FlightDataController\getApParamDataAction',
+      'Controller\FlightDataController\getBpParamDataAction',
 
       'Controller\FolderController\getAllAction',
       'Controller\FolderController\toggleExpandingAction',
@@ -46,14 +53,8 @@ return [
       'Controller\FolderController\renameAction',
       'Controller\FolderController\changePathAction',
 
-      'Controller\ChartController\getApParamDataAction',
-      'Controller\ChartController\getBpParamDataAction',
-      'Controller\ChartController\getParamInfoAction',
-      'Controller\ChartController\getParamMinMaxAction',
-      'Controller\ChartController\getFlightExceptionsAction',
-      'Controller\ChartController\getLegendAction',
-      'Controller\ChartController\setParamMinMaxAction',
       'Controller\ChartController\figurePrintAction',
+      'Controller\ChartController\getLegendAction',
     ]
   ],
   'moderator' => [

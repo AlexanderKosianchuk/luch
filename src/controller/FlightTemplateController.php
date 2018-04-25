@@ -139,10 +139,12 @@ class FlightTemplateController extends BaseController
     }
 
     foreach ($binaryParams as $binaryParam) {
-      $paramsWithType[] = $this->dic()
-        ->get('fdr')
-        ->getBinaryById($fdrId, $binaryParam['id'])
-        ->get(true);
+      if (isset($binaryParam['id'])) {
+        $paramsWithType[] = $this->dic()
+          ->get('fdr')
+          ->getBinaryById($fdrId, $binaryParam['id'])
+          ->get(true);
+      }
     }
 
     $paramsWithMeasure = $this->dic()
@@ -249,5 +251,51 @@ class FlightTemplateController extends BaseController
       );
 
     return json_encode($resultTemplate);
+  }
+
+  public function getParamMinMaxAction($flightId, $code, $templateId)
+  {
+    $flight = $this->em()->find('Entity\Flight', $flightId);
+
+    if (!$flight) {
+      throw new NotFoundException('flightId: '.$flightId);
+    }
+
+    return json_encode($this->dic('fdrTemplate')
+      ->getParamMinMax(
+        $flight->getFdr()->getCode(),
+        $templateId,
+        $code
+      )
+    );
+  }
+
+  public function setParamMinMaxAction(
+    $flightId,
+    $paramCode,
+    $templateId,
+    $min,
+    $max
+  ) {
+    $flight = $this->em()->find('Entity\Flight', $flightId);
+
+    if (!$flight) {
+      throw new NotFoundException('flightId: '.$flightId);
+    }
+
+    $this->dic('fdrTemplate')
+      ->setParamMinMax(
+        $flight->getFdrCode(),
+        $templateId,
+        $paramCode,
+        (object)['min' => $min, 'max' => $max]
+      );
+
+    return json_encode([
+      'id' => $templateId,
+      'paramCode' => $paramCode,
+      'min' => $min,
+      'max' => $max
+    ]);
   }
 }

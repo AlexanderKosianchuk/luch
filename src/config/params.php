@@ -21,6 +21,7 @@ return [
   ],
   'front' => (object) [
     'origins' => [
+      'http://localhost:8082',
       'http://localhost:8081',
       'http://localhost:8080',
       'http://front.luche.com:81'

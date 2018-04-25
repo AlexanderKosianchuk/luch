@@ -347,6 +347,25 @@ class ChannelComponent extends BaseComponent
     return $normTime;
   }
 
+  public function normalizeTimestamp(
+    $stepDivider,
+    $stepLength,
+    $totalFrameNum,
+    $startCopyTime,
+    $startFrame,
+    $endFrame
+  ) {
+    $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
+
+    $normTime = [];
+    $currTime = $startCopyTime * 1000;
+    for ($ii = $startFrame; $ii < ($endFrame * $stepDivider); $ii++) {
+      array_push($normTime, $currTime);
+      $currTime += $stepMicroTime;
+    }
+    return $normTime;
+  }
+
   public function getParamMinMax($table, $paramCode)
   {
     $minMax = [

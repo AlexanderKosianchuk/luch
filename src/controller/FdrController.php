@@ -43,6 +43,20 @@ class FdrController extends BaseController
     ]);
   }
 
+  public function getParamInfoAction($flightId, $code)
+  {
+    $flight = $this->em()->find('Entity\Flight', $flightId);
+
+    if (!$flight) {
+      throw new NotFoundException("flightId: ".$flightId);
+    }
+
+    $paramInfo = $this->dic('fdr')
+      ->getParamByCode($flight->getFdrId(), $code);
+
+    echo json_encode($paramInfo);
+  }
+  
   public function setParamColorAction($flightId, $paramCode, $color, $fdrId = null)
   {
     if ($fdrId === null) {

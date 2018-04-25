@@ -144,7 +144,7 @@ class UploaderController extends BaseController
     $fdrId = intval($fdrId);
     $uploadingUid = strval($uploadingUid);
 
-    if ($calibrationId !== null) {
+    if (($calibrationId !== null) && !empty($calibrationId)) {
       $calibrationId = intval($calibrationId);
     }
 
@@ -182,6 +182,8 @@ class UploaderController extends BaseController
       && is_int(intval($calibrationId))
     ) {
       $calibrationId = intval($calibrationId);
+    } else {
+      $calibrationId = null;
     }
 
     $userId = $this->user()->getId();

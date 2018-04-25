@@ -87,6 +87,70 @@ class FlightEventsController extends BaseController
     ]);
   }
 
+
+  public function getByCodeAction($flightId, $refParam)
+  {
+    $flight = $this->em()->find('Entity\Flight', $flightId);
+
+    if (!$flight) {
+      throw new NotFoundException("flightId: ".$flightId);
+    }
+
+    $events = $this->dic('event')
+      ->getFlightEventsByRefParam(
+        $flight,
+        $refParam
+      );
+
+    $chartEventBoxes = [];
+
+    foreach ($events as $event) {
+      $param = $this->dic('fdr')->getParamByCode(
+        $flight->getFdrId(),
+        $event['refParam']
+      );
+
+      $val = 1;
+      if ($param['type'] === $this->dic('fdr')::getApType()) {
+        $val = $this->dic('channel')->getParamValue(
+          $flight->getGuid().'_'.$param['type'].'_'.$param['prefix'],
+          $event['refParam'],
+          $event['frameNum']
+        );
+      }
+
+      //Because of cyrillic string
+      $unicodeConv = function($key, $param) {
+        if (($param[$key] != "") && ($param[$key] != " ") && ($param[$key] != null)) {
+          $str = is_array($param[$key]) ? implode('; ', $param[$key]) : $param[$key];
+          // The four \\\\ in the pattern here are necessary to match \u in the original string
+          $replacedString = preg_replace("/\\\\u(\w{4})/", "&#$1;", $str);
+          $unicodeString = mb_convert_encoding($replacedString, 'UTF-8', 'HTML-ENTITIES');
+          return $unicodeString . "; ";
+        }
+
+        return '';
+      };
+
+      $comment = '';
+      foreach (['text', 'status', 'algText', 'userComment', 'excAditionalInfo'] as $key) {
+        $comment .= $unicodeConv($key, $event);
+      }
+
+      $chartEventBoxes[] = [
+        $event['startTime'],
+        $event['endTime'],
+        $event['code'],
+        $val,
+        $comment,
+        $event['visualization'],
+        $event['refParam']
+      ];
+    }
+
+    return json_encode($chartEventBoxes);
+  }
+
   public function printBlankAction($flightId, $colored = false, $sections = [])
   {
     $colored = $colored === 'true' ? true : false;

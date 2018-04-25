@@ -13,6 +13,8 @@ class FdrComponent extends BaseComponent
   const PARAM_TYPE_AP = 'ap';
   const PARAM_TYPE_BP = 'bp';
 
+  const POS_PARAMS = ['LAT_DEG', 'LAT_MIN', 'LONG_DEG', 'LONG_MIN', 'HG', 'KK', 'KR', 'TG'];
+
   private static $_codeToTable = [];
 
   /**
@@ -35,6 +37,11 @@ class FdrComponent extends BaseComponent
   public static function getBpType()
   {
     return self::PARAM_TYPE_BP;
+  }
+
+  public static function getPosParams()
+  {
+    return self::POS_PARAMS;
   }
 
   public function getFdrs()
@@ -77,6 +84,41 @@ class FdrComponent extends BaseComponent
     $params = $this->em('fdrs')
       ->getRepository('Entity\FdrAnalogParam')
       ->findAll();
+
+    if (!$isArray) {
+      return $params;
+    }
+
+    $array = [];
+    foreach ($params as $param) {
+      $array[] = $param->get(true);
+    }
+
+    return $array;
+  }
+
+  public function checkHasCoordinates($fdrId)
+  {
+    $params = $this->findByCode($fdrId, self::POS_PARAMS);
+
+    if (count($params) === count(self::POS_PARAMS)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private function findByCode($fdrId, $codes, $isArray = false)
+  {
+    $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
+
+    $this->setEntityTable('fdrs', $this->FdrAnalogParam, $fdr->getCode());
+
+    $params = $this->em('fdrs')
+      ->getRepository('Entity\FdrAnalogParam')
+      ->findBy([
+        'code' => $codes
+      ]);
 
     if (!$isArray) {
       return $params;
