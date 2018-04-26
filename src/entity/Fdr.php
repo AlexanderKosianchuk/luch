@@ -207,6 +207,11 @@ class Fdr
     return $this->aditionalInfo;
   }
 
+  public function getKmlExportScript()
+  {
+    return $this->kmlExportScript;
+  }
+
   public function get($isArray = false)
   {
     $arr = [

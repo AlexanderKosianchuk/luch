@@ -214,41 +214,34 @@ class FlightsController extends BaseController
     return json_encode($answ);
   }
 
-  public function coordinatesAction($data)
+  public function coordinatesAction($id)
   {
-    if (!isset($data['id'])) {
-      throw new BadRequestException(json_encode($data));
+    header('Content-Type: text/comma-separated-values; charset=utf-8');
+    header('Content-Disposition: attachment; filename=coordinates.kml');  //File name extension was wrong
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Cache-Control: private', false);
+
+    if (!is_int(intval($id))) {
+      throw new BadRequestException('incorrect flightId passed into GetCoordinates FlightsController.' . $flightId, 1);
     }
 
-    header("Content-Type: text/comma-separated-values; charset=utf-8");
-    header("Content-Disposition: attachment; filename=coordinates.kml");  //File name extension was wrong
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Cache-Control: private", false);
+    $flight = $this->em()->find('Entity\Flight', $id);
 
-    $id = $data['id'];
-    if (!is_int(intval($flightId))) {
-      throw new Exception("Incorrect flightId passed into GetCoordinates FlightsController." . $flightId, 1);
-    }
+    $link = $this->connection()->create('fdrs');
 
-    $Fl = new Flight;
-    $flight = $Fl->GetFlightInfo($flightId);
-    $fdrId = intval($flightInfo['id_fdr']);
-    unset($Fl);
+    $kmlScript = $flight->getFdr()->getKmlExportScript();
+    $kmlScript = str_replace('[ap]',
+      $flight->getGuid().'_'.$this->dic('fdr')::getApType(),
+      $kmlScript
+    );
+    $kmlScript = str_replace('[bp]',
+      $flight->getGuid().'_'.$this->dic('fdr')::getBpType(),
+      $kmlScript
+    );
 
-    $apTableName = $flight['apTableName'];
-    $bpTableName = $flight['bpTableName'];
-
-    $fdr = new Fdr;
-    $fdrInfo = $fdr->getFdrInfo($fdrId);
-    unset($fdr);
-
-    $kmlScript = $fdrInfo['kml_export_script'];
-    $kmlScript = str_replace("[ap]", $apTableName, $kmlScript);
-    $kmlScript = str_replace("[bp]", $bpTableName, $kmlScript);
-
-    $c = new DataBaseConnector;
-    $link = $c->Connect();
+    $this->connection()->destroy($link);
+    $link = $this->connection()->create('flights');
 
     $info = [];
     $averageLat = 0;
@@ -256,14 +249,13 @@ class FlightsController extends BaseController
 
     if (!$link->multi_query($kmlScript)) {
       //err log
-      error_log("Impossible to execute multiquery: (" .
-        $kmlScript . ") " . $link->error);
+      throw new Exception('Impossible to execute multiquery: (' .
+        $kmlScript . ') ' . $link->error);
     }
 
-    do
-    {
+    do {
       if ($res = $link->store_result())  {
-        while($row = $res->fetch_array()) {
+        while ($row = $res->fetch_array()) {
           $lat = $row['LAT'];
           $long = $row['LONG'];
           $h = $row['H'];
@@ -276,21 +268,16 @@ class FlightsController extends BaseController
           if ($h < 0) {
             $h = 10.00;
           }
+
           $h = round($h, 2);
-          $info[] = [
-            $long,
-            $lat,
-            $h,
-          ];
+          $info[] = [$long, $lat, $h];
         }
 
         $res->free();
       }
     } while ($link->more_results() && $link->next_result());
 
-    $c->Disconnect();
-
-    unset($c);
+    $this->connection()->destroy($link);
 
     $figPrRow = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL
      .'<kml xmlns="http://www.opengis.net/kml/2.2"' . PHP_EOL
@@ -303,7 +290,7 @@ class FlightsController extends BaseController
       .'<coordinates>' . PHP_EOL;
 
     foreach ($info as $fields) {
-      for($i = 0; $i < count($fields); $i++) {
+      for ($i = 0; $i < count($fields); $i++) {
         $figPrRow .= $fields[$i] . ",";
       }
 
@@ -316,7 +303,6 @@ class FlightsController extends BaseController
       .'</Placemark>' . PHP_EOL
       .'</kml>';
 
-    unset($U);
     return $figPrRow;
   }
 
