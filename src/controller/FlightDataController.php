@@ -152,7 +152,13 @@ class FlightDataController extends BaseController
       $result['latitude'] = [];
 
       for ($ii = 0; $ii < count($result['LAT_DEG']); $ii++) {
-        $result['latitude'][] = $result['LAT_DEG'][$ii] - ($result['LAT_MIN'][$ii] / 60);
+        if ($result['LAT_NORTH'][$ii] === 0) {
+          $result['latitude'][] =
+            $result['LAT_DEG'][$ii] - ($result['LAT_MIN'][$ii] / 60);
+        } else {
+          $result['latitude'][] =
+            $result['LAT_DEG'][$ii] + ($result['LAT_MIN'][$ii] / 60);
+        }
       }
     }
 
@@ -163,7 +169,13 @@ class FlightDataController extends BaseController
       $result['longitude'] = [];
 
       for ($ii = 0; $ii < count($result['LONG_DEG']); $ii++) {
-        $result['longitude'][] = $result['LONG_DEG'][$ii] - ($result['LONG_MIN'][$ii] / 60);
+        if ($result['LONG_EAST'][$ii] === 0) {
+          $result['longitude'][] =
+            $result['LONG_DEG'][$ii] - ($result['LONG_MIN'][$ii] / 60);
+        } else {
+          $result['longitude'][] =
+            $result['LONG_DEG'][$ii] + ($result['LONG_MIN'][$ii] / 60);
+        }
       }
     }
 

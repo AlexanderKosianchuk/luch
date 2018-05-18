@@ -13,7 +13,18 @@ class FdrComponent extends BaseComponent
   const PARAM_TYPE_AP = 'ap';
   const PARAM_TYPE_BP = 'bp';
 
-  const POS_PARAMS = ['LAT_DEG', 'LAT_MIN', 'LONG_DEG', 'LONG_MIN', 'HG', 'KK', 'KR', 'TG'];
+  const POS_PARAMS = [
+    'LAT_NORTH',
+    'LONG_EAST',
+    'LAT_DEG',
+    'LAT_MIN',
+    'LONG_DEG',
+    'LONG_MIN',
+    'HG',
+    'KK',
+    'KR',
+    'TG'
+  ];
 
   private static $_codeToTable = [];
 
