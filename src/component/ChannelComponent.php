@@ -50,6 +50,49 @@ class ChannelComponent extends BaseComponent
   public function get(
     $tableName,
     $code,
+    $divider = null
+  ) {
+    $pointPairList = [];
+
+    if (!$divider) {
+      $query = "SELECT `time`, `".$code."` FROM `".$tableName."` WHERE 1 "
+        . "ORDER BY `time` ASC";
+
+      $link = $this->connection()->create('flights');
+      $result = $link->query($query);
+
+      while ($row = $result->fetch_array()) {
+        $point = array(intval($row['time']), floatval($row[$code]));
+        $pointPairList[] = $point;
+      }
+
+      $result->free();
+      $this->connection()->destroy($link);
+
+      return $pointPairList;
+    }
+
+    $query = "SELECT `time`, `".$code."` FROM `".$tableName."` WHERE"
+      . " (`frameNum` % ".$divider." = 0)"
+      . " ORDER BY `time` ASC";
+
+    $link = $this->connection()->create('flights');
+    $result = $link->query($query);
+
+    while($row = $result->fetch_array()) {
+      $point = array(intval($row['time']), floatval($row[$code]));
+      $pointPairList[] = $point;
+    }
+
+    $result->free();
+    $this->connection()->destroy($link);
+
+    return $pointPairList;
+  }
+
+  public function getRange(
+    $tableName,
+    $code,
     $startFrame,
     $endFrame,
     $seriesCount,
@@ -353,14 +396,21 @@ class ChannelComponent extends BaseComponent
     $totalFrameNum,
     $startCopyTime,
     $startFrame,
-    $endFrame
+    $endFrame,
+    $divider = 1
   ) {
     $stepMicroTime = round($stepLength * 1000 / $stepDivider, 0);
+    $currentDividingVal = 0;
 
     $normTime = [];
     $currTime = $startCopyTime * 1000;
     for ($ii = $startFrame; $ii < ($endFrame * $stepDivider); $ii++) {
-      array_push($normTime, $currTime);
+      $currentDividingVal++;
+      if ($currentDividingVal === $divider) {
+        array_push($normTime, $currTime);
+        $currentDividingVal = 0;
+      }
+
       $currTime += $stepMicroTime;
     }
     return $normTime;

@@ -101,16 +101,23 @@ class Fdr
   /**
    * @var string
    *
-   * @Column(name="id_user", type="integer",  nullable=false)
+   * @Column(name="kml_export_script", type="text", length=65535, nullable=false)
    */
-  private $userId;
+  private $kmlExportScript;
 
   /**
    * @var string
    *
-   * @Column(name="kml_export_script", type="text", length=65535, nullable=false)
+   * @Column(name="model_url", type="string", length=255, nullable=false)
    */
-  private $kmlExportScript;
+  private $modelUrl;
+
+  /**
+   * @var string
+   *
+   * @Column(name="id_user", type="integer",  nullable=false)
+   */
+  private $userId;
 
   /**
    * One Fdr has Many EventToFdrs.
@@ -212,6 +219,11 @@ class Fdr
     return $this->kmlExportScript;
   }
 
+  public function getModelUrl()
+  {
+    return $this->modelUrl;
+  }
+
   public function get($isArray = false)
   {
     $arr = [
@@ -228,6 +240,7 @@ class Fdr
       'frameSyncroCode' => $this->frameSyncroCode,
       'previewParams' => $this->previewParams,
       'kmlExportScript' => $this->kmlExportScript,
+      'modelUrl' => $modelUrl,
       'userId' => $this->userId
     ];
 

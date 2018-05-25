@@ -9,6 +9,8 @@ use Exception\ForbiddenException;
 
 class FlightDataController extends BaseController
 {
+  const GEO_DATA_CUTTER = 100;
+
   public function getApParamDataAction(
     $flightId,
     $paramApCode,
@@ -20,7 +22,7 @@ class FlightDataController extends BaseController
     $flight = $this->em()->find('Entity\Flight', $flightId);
 
     if (!$flight) {
-      throw new NotFoundException("flightId: ".$flightId);
+      throw new NotFoundException('flightId: '.$flightId);
     }
 
     $startCopyTime = $flight->getStartCopyTime();
@@ -59,7 +61,7 @@ class FlightDataController extends BaseController
 
     $table = $this->dic('fdr')->getAnalogTable($flight->getGuid(), $param['prefix']);
 
-    $syncParam = $this->dic('channel')->get(
+    $syncParam = $this->dic('channel')->getRange(
       $table,
       $paramApCode,
       $startFrame,
@@ -123,7 +125,8 @@ class FlightDataController extends BaseController
         $framesCount,
         $startCopyTime,
         $startFrame,
-        $endFrame
+        $endFrame,
+        self::GEO_DATA_CUTTER
       );
 
     $posParams = $this->dic('fdr')->getPosParams();
@@ -151,8 +154,8 @@ class FlightDataController extends BaseController
     ) {
       $result['latitude'] = [];
 
-      for ($ii = 0; $ii < count($result['LAT_DEG']); $ii++) {
-        if ($result['LAT_NORTH'][$ii] === 0) {
+      for ($ii = 0; $ii < count($result['LAT_DEG']); $ii+=self::GEO_DATA_CUTTER) {
+        if (intval($result['LAT_NORTH'][$ii]) === 0) {
           $result['latitude'][] =
             $result['LAT_DEG'][$ii] - ($result['LAT_MIN'][$ii] / 60);
         } else {
@@ -168,8 +171,8 @@ class FlightDataController extends BaseController
     ) {
       $result['longitude'] = [];
 
-      for ($ii = 0; $ii < count($result['LONG_DEG']); $ii++) {
-        if ($result['LONG_EAST'][$ii] === 0) {
+      for ($ii = 0; $ii < count($result['LONG_DEG']); $ii+=self::GEO_DATA_CUTTER) {
+        if (intval($result['LONG_EAST'][$ii]) === 0) {
           $result['longitude'][] =
             $result['LONG_DEG'][$ii] - ($result['LONG_MIN'][$ii] / 60);
         } else {
@@ -180,24 +183,43 @@ class FlightDataController extends BaseController
     }
 
     if (isset($result['HG'])) {
-      $result['altitude'] = $result['HG'];
+      $result['altitude'] = [];
+
+      for ($ii = 0; $ii < count($result['HG']); $ii+=self::GEO_DATA_CUTTER) {
+        $result['altitude'][] = $result['HG'][$ii];
+      }
     }
 
     if (isset($result['KK'])) {
-      $result['yaw'] = $result['KK'];
+      $result['yaw'] = [];
+
+      for ($ii = 0; $ii < count($result['KK']); $ii+=self::GEO_DATA_CUTTER) {
+        $result['yaw'][] = $result['KK'][$ii];
+      }
     }
 
     if (isset($result['KR'])) {
-      $result['roll'] = $result['KR'];
+      $result['roll'] = [];
+
+      for ($ii = 0; $ii < count($result['KR']); $ii+=self::GEO_DATA_CUTTER) {
+        $result['roll'][] = $result['KR'][$ii];
+      }
     }
 
     if (isset($result['TG'])) {
-      $result['pitch'] = $result['TG'];
+      $result['pitch'] = [];
+
+      for ($ii = 0; $ii < count($result['TG']); $ii+=self::GEO_DATA_CUTTER) {
+        $result['pitch'][] = $result['TG'][$ii];
+      }
     }
 
     return json_encode(
-      array_merge(
-        ['timeline' => $timeline], $result
+      array_merge([
+          'timeline' => $timeline,
+          'modelUrl' => $flight->getFdr()->getModelUrl()
+        ],
+        $result
       )
     );
   }
