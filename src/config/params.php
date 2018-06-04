@@ -15,10 +15,6 @@ return [
     'exported' => 'exported',
     'imported' => 'imported',
   ],
-  'interaction' => (object) [
-    'path' => '/var/www/luche-interaction',
-    'url' => 'http://172.18.0.1:1337'
-  ],
   'front' => (object) [
     'origins' => [
       'http://localhost:8082',

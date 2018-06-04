@@ -6,6 +6,7 @@ return [
     'user' => 'USER',
     'password' => 'PASS',
     'host' => 'localhost',
+    'port' => '3306',
     'driver' => 'pdo_mysql',
     'charset' => 'utf8'
   ],
@@ -14,6 +15,7 @@ return [
     'user' => 'USER',
     'password' => 'PASS',
     'host' => 'localhost',
+    'port' => '3306',
     'driver' => 'pdo_mysql',
     'charset' => 'utf8'
   ],
@@ -22,6 +24,7 @@ return [
     'user' => 'USER',
     'password' => 'PASS',
     'host' => 'localhost',
+    'port' => '3306',
     'driver' => 'pdo_mysql',
     'charset' => 'utf8'
   ],
@@ -30,6 +33,7 @@ return [
     'user' => 'USER',
     'password' => 'PASS',
     'host' => 'localhost',
+    'port' => '3306',
     'driver' => 'pdo_mysql',
     'charset' => 'utf8'
   ]
