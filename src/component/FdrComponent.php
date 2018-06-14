@@ -119,7 +119,7 @@ class FdrComponent extends BaseComponent
     return false;
   }
 
-  private function findByCode($fdrId, $codes, $isArray = false)
+  public function findByCode($fdrId, $codes, $isArray = false)
   {
     $fdr = $this->em()->find('Entity\Fdr', ['id' => $fdrId]);
 

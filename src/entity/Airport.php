@@ -258,4 +258,9 @@ class Airport
    * @Column(name="MMLong", type="float", precision=10, scale=7, nullable=false)
    */
   private $mmLong;
+
+  public function getId()
+  {
+    return $this->id;
+  }
 }

@@ -47,6 +47,12 @@ class FrameComponent extends BaseComponent
 
       $interview = array();
       for ($ind2 = 0; $ind2 < count($channels); $ind2++) {
+        if (intval($channels[$ind2]) < 0) {
+          /* probably second pass calculated params, just fill 0 for now*/
+          array_push($interview, 0);
+          continue;
+        }
+
         $codeValue = $frame[$channels[$ind2]];
 
         //get phisics analog param from code

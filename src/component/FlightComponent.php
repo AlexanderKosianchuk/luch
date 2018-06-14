@@ -225,7 +225,7 @@ class FlightComponent extends BaseComponent
       $query = "CREATE TABLE `".$table."` (`frameNum` MEDIUMINT, `time` BIGINT";
 
       foreach ($cyclo as $param) {
-        $query .= ", `".$param["code"]."` FLOAT(7,2)";
+        $query .= ", `".$param["code"]."` " . $param["dataType"];
       }
 
       $query .= ", PRIMARY KEY (`frameNum`, `time`)) " .

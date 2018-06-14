@@ -90,6 +90,36 @@ class ChannelComponent extends BaseComponent
     return $pointPairList;
   }
 
+  public function getAllByCode(
+    $tableName,
+    $code,
+    $link = null
+  ) {
+    $pointPairList = [];
+
+    $query = "SELECT `frameNum`, `time`, `".$code."` FROM `".$tableName."` WHERE 1 "
+      . "ORDER BY `time` ASC";
+
+    $internalLink = $link;
+    if (!$link) {
+      $internalLink = $this->connection()->create('flights');
+    }
+
+    $result = $internalLink->query($query);
+
+    while ($row = $result->fetch_assoc()) {
+      $pointPairList[] = $row;
+    }
+
+    $result->free();
+
+    if (!$link) {
+      $this->connection()->destroy($internalLink);
+    }
+
+    return $pointPairList;
+  }
+
   public function getRange(
     $tableName,
     $code,

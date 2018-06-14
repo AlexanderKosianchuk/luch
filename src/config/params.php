@@ -4,7 +4,7 @@ return [
   'serverName' => (isset($_SERVER) && isset($_SERVER['SERVER_NAME']))
       ? (((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ?
         'https' : 'http') . '://' . $_SERVER['SERVER_NAME'])
-      : 'https://rest.luche.com',
+      : 'https://localhost',
   'folders' => (object) [
     'runtimeDirectory' =>  SITE_ROOT_DIR.DIRECTORY_SEPARATOR.'runtime',
     'uploadedFlights' => 'uploaded-flights',
@@ -21,10 +21,10 @@ return [
   ],
   'front' => (object) [
     'origins' => [
-      'http://localhost:8082',
+      'http://localhost:818',
       'http://localhost:8081',
       'http://localhost:8080',
-      'http://front.luche.com:81'
+      'http://luch15.com:818/',
     ]
   ]
 ];

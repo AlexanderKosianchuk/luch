@@ -21,6 +21,7 @@ return [
   'runtimeDb' => DI\object('Component\RuntimeDatabaseComponent'),
   'calibration' => DI\object('Component\CalibrationComponent'),
   'flightProcessor' => DI\object('Component\FlightProcessingComponent'),
+  'postProcessor' => DI\object('Component\PostProcessingComponent'),
   'eventProcessor' => DI\object('Component\EventProcessingComponent'),
   'realtimeEvent' => DI\object('Component\RealtimeEventComponent'),
   'channel' => DI\object('Component\ChannelComponent'),

@@ -235,22 +235,25 @@ class UploaderController extends BaseController
         $calibrationId
       );
 
-    $totalPersentage = 50;
-
     $this->dic()
       ->get('flightProcessor')
       ->process(
         $uploadingUid,
         $storedFlightFile,
         $flight->getStartCopyTime(),
-        $totalPersentage,
+        100, /* total persentage */
         $fdrId,
         $calibrationId
       );
 
+    //TODO: add persentage calc in second pass
     $this->dic()
+      ->get('postProcessor')
+      ->secondPassProcess($flight);
+
+    /*$this->dic()
       ->get('eventProcessor')
-      ->analyze($flight);
+      ->analyze($flight);*/
 
     $file = $this->dic()
       ->get('runtimeManager')

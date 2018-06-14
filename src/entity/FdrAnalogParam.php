@@ -53,6 +53,13 @@ class FdrAnalogParam
   private $dim;
 
   /**
+   * @var string
+   *
+   * @Column(name="data_type", type="string", length=20, nullable=false)
+   */
+  private $dataType;
+
+  /**
    * @var integer
    *
    * @Column(name="minValue", type="integer", nullable=false)
@@ -139,6 +146,11 @@ class FdrAnalogParam
     return $this->prefix;
   }
 
+  public function getDataType()
+  {
+    return $this->dataType;
+  }
+
   public function getFrequency()
   {
     $channels = $this->getChannel();
@@ -171,6 +183,11 @@ class FdrAnalogParam
     return $this->channel;
   }
 
+  public function getRawChannel()
+  {
+    return $this->channel;
+  }
+
   public function isCalibrated()
   {
     return isset($this->xy)
@@ -188,6 +205,7 @@ class FdrAnalogParam
       'code' => $this->code,
       'name' => $this->name,
       'dim' => $this->dim,
+      'dataType' => $this->dataType,
       'minValue' => $this->minValue,
       'maxValue' => $this->maxValue,
       'color' => $this->color,

@@ -148,7 +148,8 @@ class RuntimeManager extends BaseComponent
     $res = null;
 
     if (file_exists($fileName) && !file_exists($storedFilePath)) {
-      $res = rename($fileName, $storedFilePath);
+      //$res = rename($fileName, $storedFilePath);
+      $res = copy($fileName, $storedFilePath);
     }
 
     return $storedFilePath;
