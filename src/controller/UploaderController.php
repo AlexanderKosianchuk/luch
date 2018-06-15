@@ -247,13 +247,13 @@ class UploaderController extends BaseController
       );
 
     //TODO: add persentage calc in second pass
-    $this->dic()
-      ->get('postProcessor')
-      ->secondPassProcess($flight);
-
     /*$this->dic()
+      ->get('postProcessor')
+      ->secondPassProcess($flight);*/
+
+    $this->dic()
       ->get('eventProcessor')
-      ->analyze($flight);*/
+      ->analyze($flight);
 
     $file = $this->dic()
       ->get('runtimeManager')
