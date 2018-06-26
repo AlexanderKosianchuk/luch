@@ -107,6 +107,7 @@
  * @version 6.0.089
  */
 
+error_reporting(E_ALL ^ E_DEPRECATED);
 // TCPDF configuration
 require_once(dirname(__FILE__).'/tcpdf_autoconfig.php');
 // TCPDF static font methods and data

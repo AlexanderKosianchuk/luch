@@ -984,7 +984,9 @@ class UploaderController extends BaseController
     $analogParamsCyclo = $this->dic('fdr')
       ->getPrefixGroupedParams($fdrId);
 
-    if ($calibrationId !== null) {
+    if (($calibrationId !== null)
+      && (($calibrationId === 0) || (intval($calibrationId) !== 0))
+    ) {
       $calibratedParams = $this->dic('calibration')
         ->getCalibrationParams($fdrId, $calibrationId);
 
@@ -997,6 +999,8 @@ class UploaderController extends BaseController
           }
         }
       }
+    } else {
+      $calibrationId = null;
     }
 
     $binaryParamsCyclo = $this->dic('fdr')

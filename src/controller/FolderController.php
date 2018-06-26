@@ -122,7 +122,7 @@ class FolderController extends BaseController
     return json_encode('ok');
   }
 
-  public function changeFolderAction($id, $parentId)
+  public function changePathAction($id, $parentId)
   {
     $sender = intval($id);
     $target = intval($parentId);
