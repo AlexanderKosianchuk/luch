@@ -31,17 +31,54 @@ class RealtimeEventComponent extends BaseComponent
           continue;
         }
 
-        $prevVal = $this->findPrevVal($eventObj->getId(), $prevEventResults);
-        $aggregationRes = $this->agregate($row[0], $prevVal, $event['stresshold'], $event['func']);
+        $newEventValue = $row[0];
+        $prevEvents = $this->filterById($eventObj->getId(), $prevEventResults);
+        $prevValue = null;
 
-        if ($aggregationRes !== null) {
-          $eventResults[] = [
-            'eventId' => $event['id'],
-            'event' => $event,
-            'value' => $aggregationRes,
-            'frameNum' => $frameNum
-          ];
+        if (count($prevEvents)
+          && isset($prevEvents[0]['value'])
+          && (intval($prevEvents[0]['frameNum']) === $frameNum - 1)
+        ) {
+          $prevValue = $prevEvents[0]['value'];
         }
+
+        $aggregationRes = $this->agregate(
+          $newEventValue,
+          $prevValue,
+          $event['stresshold'],
+          $event['func']
+        );
+
+        if ($aggregationRes === null) {
+          $eventResults = array_merge($eventResults, $prevEvents);
+          continue;
+        }
+
+        if (count($prevEvents)
+          && isset($prevEvents[0]['frameNum'])
+        ) {
+          if (intval($prevEvents[0]['frameNum']) === $frameNum - 1) {
+            $prevEvents[0]['frameNum'] = $frameNum;
+            $prevEvents[0]['value'] = $aggregationRes;
+          } else {
+            $eventResults[] = [
+              'eventId' => $event['id'],
+              'event' => $event,
+              'value' => $aggregationRes,
+              'frameNum' => $frameNum
+            ];
+          }
+
+          $eventResults = array_merge($eventResults, $prevEvents);
+          continue;
+        }
+
+        $eventResults[] = [
+          'eventId' => $event['id'],
+          'event' => $event,
+          'value' => $aggregationRes,
+          'frameNum' => $frameNum
+        ];
       }
 
       $result->free();
@@ -50,7 +87,27 @@ class RealtimeEventComponent extends BaseComponent
     return $eventResults;
   }
 
-  public function agregate($value, $prevVal, $stresshold, $func)
+  public function filterById($eventId, $prevEventResults)
+  {
+    $prevEvents = [];
+    foreach ($prevEventResults as $item) {
+      if ($item['eventId'] === $eventId) {
+        $prevEvents[] = $item;
+      }
+    }
+
+    $sort = function ($a, $b) {
+      $a = $a['value'];
+      $b = $b['value'];
+
+      if ($a == $b) return 0;
+      return ($a > $b) ? -1 : 1;
+    };
+
+    return $prevEvents;
+  }
+
+  public function agregate($value, $prevEventValue, $stresshold, $func)
   {
     if (strpos ($stresshold, '<', 0) === 0) {
       $stresshold = floatval(str_replace('<', '', $stresshold));
@@ -66,54 +123,43 @@ class RealtimeEventComponent extends BaseComponent
 
     switch ($func) {
       case 'MIN':
-        if ($prevVal === null) {
+        if ($prevEventValue === null) {
           return $value;
         } else {
-          return min($value, $prevVal);
+          return min($value, $prevEventValue);
         }
       break;
       case 'MAX':
-        if ($prevVal === null) {
+        if ($prevEventValue === null) {
           return $value;
         } else {
-          return max($value, $prevVal);
+          return max($value, $prevEventValue);
         }
       break;
       case 'AVG':
-        if ($prevVal === null) {
+        if ($prevEventValue === null) {
           return $value;
         } else {
-          return ($value + $prevVal) / 2;
+          return ($value + $prevEventValue) / 2;
         }
       break;
       case 'SUM':
-        if ($prevVal === null) {
+        if ($prevEventValue === null) {
           return $value;
         } else {
-          return ($value + $prevVal);
+          return ($value + $prevEventValue);
         }
       break;
       case 'COUNTER':
       /* is the same that counter but view know that stopwatch */
       /* shoud be output as 00:00:00 */
       case 'STOPWATCH':
-        if ($prevVal === null) {
+        if ($prevEventValue === null) {
           return 0;
         } else {
-          return $prevVal + 1;
+          return $prevEventValue + 1;
         }
       break;
-    }
-
-    return null;
-  }
-
-  public function findPrevVal($eventId, $prevEventResults)
-  {
-    foreach ($prevEventResults as $item) {
-      if ($item['eventId'] === $eventId) {
-        return $item['value'];
-      }
     }
 
     return null;

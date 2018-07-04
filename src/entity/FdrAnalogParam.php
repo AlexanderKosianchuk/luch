@@ -83,7 +83,7 @@ class FdrAnalogParam
   /**
    * @var integer
    *
-   * @Column(name="type", type="integer", nullable=false)
+   * @Column(name="type",  type="string", length=3, nullable=false)
    */
   private $type;
 

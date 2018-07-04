@@ -56,10 +56,13 @@ class RuntimeDatabaseComponent extends BaseComponent
         $query .= ', '.$value;
       }
 
-      $query .= ')';
+      $query .= ');';
 
       $stmt = $internalLink->prepare($query);
-      $stmt->execute();
+      if ($stmt->execute() === false) {
+        error_log(mysqli_error($internalLink));
+      }
+      $stmt->close();
     }
 
     if ($link === null) {
@@ -91,7 +94,12 @@ class RuntimeDatabaseComponent extends BaseComponent
 
       $codes[$code] = true;
 
-      $query .= ', `'.$code.'` FLOAT(7,2)';
+      $dataType = 'FLOAT(1,0)'; // for binaries
+      if (isset($item['param']['dataType'])) {
+        $dataType = $item['param']['dataType'];
+      }
+
+      $query .= ', `'.$code.'` ' . $dataType;
     }
 
     $query .= ', PRIMARY KEY (`frame_num`, `time`)) ' .

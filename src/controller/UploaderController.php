@@ -949,6 +949,7 @@ class UploaderController extends BaseController
     }
   }
 
+  /* /uploader/processFrame/uploadingUid/111/frameNum/1/startCopyTime/0/rawFrame/aa00/userId/1/algHeap/0/fdrId/1 */
   public function processFrameAction(
     $uploadingUid,
     $frameNum,
