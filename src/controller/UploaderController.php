@@ -995,8 +995,15 @@ class UploaderController extends BaseController
         foreach ($params as &$param) {
           $paramId = $param['id'];
 
-          if (isset($calibratedParams[$paramId])) {
-            $param['xy'] = $calibratedParams[$paramId]->getXy();
+          $calibrationForParam = null;
+          foreach ($calibratedParams as $calibratedParam) {
+            if ($calibratedParam->getParamId() === $paramId) {
+              $calibrationForParam = $calibratedParam;
+            }
+          }
+
+          if ($calibrationForParam !== null) {
+            $param['xy'] = $calibrationForParam->getXy();
           }
         }
       }
