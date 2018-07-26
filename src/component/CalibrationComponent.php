@@ -329,4 +329,35 @@ class CalibrationComponent extends BaseComponent
 
     return $this->getCalibrationById ($calibrationId);
   }
+
+  public function putGradiToPrefixGroupedCyclo(
+    $calibrationId,
+    $fdrId,
+    $analogParamsCyclo
+  ) {
+    if (($calibrationId !== null)
+      && (($calibrationId === 0) || (intval($calibrationId) !== 0))
+    ) {
+      $calibratedParams = $this->getCalibrationParams($fdrId, $calibrationId);
+
+      foreach ($analogParamsCyclo as $prefix => &$params) {
+        foreach ($params as &$param) {
+          $paramId = $param['id'];
+
+          $calibrationForParam = null;
+          foreach ($calibratedParams as $calibratedParam) {
+            if ($calibratedParam->getParamId() === $paramId) {
+              $calibrationForParam = $calibratedParam;
+            }
+          }
+
+          if ($calibrationForParam !== null) {
+            $param['xy'] = $calibrationForParam->getXy();
+          }
+        }
+      }
+    }
+
+    return $analogParamsCyclo;
+  }
 }

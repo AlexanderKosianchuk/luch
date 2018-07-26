@@ -253,20 +253,12 @@ class FlightProcessingComponent extends BaseComponent
     $analogParamsCyclo = $this->fdrComponent
       ->getPrefixGroupedParams($fdrId);
 
-    if ($calibrationId !== null) {
-      $calibratedParams = $this->calibrationComponent
-        ->getCalibrationParams($fdrId, $calibrationId);
-
-      foreach ($analogParamsCyclo as $prefix => &$params) {
-        foreach ($params as &$param) {
-          $paramId = $param['id'];
-
-          if (isset($calibratedParams[$paramId])) {
-            $param['xy'] = $calibratedParams[$paramId]->getXy();
-          }
-        }
-      }
-    }
+    $analogParamsCyclo = $this->calibrationComponent
+      ->putGradiToPrefixGroupedCyclo(
+        $calibrationId,
+        $fdrId,
+        $analogParamsCyclo
+      );
 
     $binaryParamsCyclo = $this->fdrComponent
       ->getPrefixGroupedBinaryParams($fdrId);
