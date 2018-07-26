@@ -31,7 +31,7 @@ class FlightTemplateController extends BaseController
     $templatesToSend = $this->dic('fdrTemplate')
       ->getFdrTemplates($flight->getFdr()->getId(), true);
 
-    $flightEvents = $this->dic('event')->getFlightEvents($flight);
+    $flightEvents = $this->dic('event')->getFlightEvents($flightId);
 
     $codesArr = [];
     foreach ($flightEvents as $event) {
