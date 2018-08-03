@@ -93,7 +93,7 @@ class FlightDataController extends BaseController
       $param['prefix']
     );
 
-    return json_encode($this->dic('channel')->getBinary(
+    return json_encode($this->dic('channel')->GetBinaryParam(
       $table,
       $code,
       $flight->getFdr()->getStepLength(),

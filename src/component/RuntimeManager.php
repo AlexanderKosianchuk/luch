@@ -385,6 +385,10 @@ class RuntimeManager extends BaseComponent
   public function scandir($category) {
     $runtime = $this->getRuntimeFolder();
 
+    if (!file_exists($runtime.DIRECTORY_SEPARATOR.$category)) {
+      return [];
+    }
+
     return scandir($runtime.DIRECTORY_SEPARATOR.$category);
   }
 
