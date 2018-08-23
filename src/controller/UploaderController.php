@@ -963,6 +963,10 @@ class UploaderController extends BaseController
     $fdrId = intval($fdrId);
     $fdr = $this->em()->find('Entity\Fdr', $fdrId);
 
+    if (!$fdr) {
+      throw new NotFoundException("processing frame error. Cant find by fdr id. FDR id: ". $fdrId);
+    }
+
     $splitedFrame = str_split($rawFrame, $fdr->getWordLength() * 2);// div 2 because each byte 2 hex digits. $unpackedFrame[1] - dont know why [1], but hexdec($b[$i]) what we need
     $dataToWrite = '';
     foreach ($splitedFrame as $item) {
